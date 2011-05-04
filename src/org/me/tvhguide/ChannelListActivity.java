@@ -149,13 +149,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     chAdapter.notifyDataSetChanged();
-                    chAdapter.sort(new Comparator() {
+                    chAdapter.sort(new Comparator<Channel>() {
 
-                        public int compare(Object x, Object y) {
-                            Channel c1 = (Channel) x;
-                            Channel c2 = (Channel) y;
-
-                            return c1.number - c2.number;
+                        public int compare(Channel x, Channel y) {
+                            return x.number - y.number;
                         }
                     });
                 }
@@ -182,7 +179,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         }
     }
 
-    class ChannelListAdapter extends ArrayAdapter {
+    class ChannelListAdapter extends ArrayAdapter<Channel> {
 
         Activity context;
         List<Channel> list;
