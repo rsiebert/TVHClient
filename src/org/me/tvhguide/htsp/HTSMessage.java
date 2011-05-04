@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @author john-tornblom
  */
-public class HTSMessage extends HashMap {
+public class HTSMessage extends HashMap<String, Object> {
 
     public static final long HTSP_VERSION = 4;
     private static final byte HMF_MAP = 1;
@@ -321,7 +321,7 @@ public class HTSMessage extends HashMap {
                     ByteBuffer sub = ByteBuffer.allocateDirect((int) datalen);
                     sub.put(bData);
                     sub.flip();
-                    obj = new ArrayList(deserializeBinary(sub).values());
+                    obj = new ArrayList<Object>(deserializeBinary(sub).values());
                     break;
                 }
                 default:
