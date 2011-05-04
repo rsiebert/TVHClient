@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.me.tvhguide">
+    <application android:name=".TVHGuideApplication">
+        <activity android:name=".ChannelListActivity" android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ProgrammeActivity"/>
+        <service android:name=".htsp.HTSService" android:enabled="true"/>
+        <activity android:name=".SettingsActivity" android:label="@string/app_settings"/>
+    </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

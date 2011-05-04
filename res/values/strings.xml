@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">TVHGuide</string>
+    <string name="app_version">0.0.1</string>
+    <string name="app_settings">TVHGuide settings</string>
+
+    <string name="menu_help">Help</string>
+    <string name="menu_settings">Settings</string>
+
+    <string name="pref_host">Hostname</string>
+    <string name="pref_host_sum">Enter Server Hostname</string>
+
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Enter Server Port</string>
+
+    <string name="pref_user">Username</string>
+    <string name="pref_user_sum">Enter Username</string>
+
+    <string name="pref_pass">Password</string>
+    <string name="pref_pass_sum">Enter Password</string>
+
+    <string name="err_auth">Access denied</string>
+    <string name="err_inv">Invalid response from server</string>
+
+    <string name="inf_load">Loading...</string>
+</resources>
