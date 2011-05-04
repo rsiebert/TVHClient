@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     android:layout_width="fill_parent">
     <ImageView
-        android:src="@drawable/channel_logo"
         android:layout_width="64sp"
         android:layout_height="64sp"
         android:id="@+id/ch_icon">
