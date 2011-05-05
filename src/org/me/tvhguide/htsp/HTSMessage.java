@@ -42,7 +42,9 @@ public class HTSMessage extends HashMap<String, Object> {
     private ByteBuffer buf;
 
     public void putField(String name, Object value) {
-        put(name, value);
+        if(value != null) {
+            put(name, value);
+        }
     }
 
     public void setMethod(String name) {
