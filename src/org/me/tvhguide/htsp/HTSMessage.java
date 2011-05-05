@@ -67,8 +67,29 @@ public class HTSMessage extends HashMap<String, Object> {
         return getBigInteger(name).longValue();
     }
 
+    public long getLong(String name, long std) {
+        if(!containsFiled(name)) {
+            return std;
+        }
+        return getLong(name);
+    }
+
     public int getInt(String name) {
         return getBigInteger(name).intValue();
+    }
+
+    public int getInt(String name, int std) {
+        if(!containsFiled(name)) {
+            return std;
+        }
+        return getInt(name);
+    }
+
+    public String getString(String name, String std) {
+        if(!containsFiled(name)) {
+            return std;
+        }
+        return getString(name);
     }
 
     public String getString(String name) {
@@ -76,7 +97,6 @@ public class HTSMessage extends HashMap<String, Object> {
         if (obj == null) {
             return null;
         }
-
         return obj.toString();
     }
 
