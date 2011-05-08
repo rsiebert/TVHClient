@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  *
  * @author john-tornblom
  */
-public class Channel {
+public class Channel implements Comparable<Channel> {
 
     public long id;
     public String name;
@@ -34,4 +34,8 @@ public class Channel {
     public int number;
     public Set<Programme> epg = new ConcurrentSkipListSet<Programme>();
     public Bitmap iconBitmap;
+
+    public int compareTo(Channel that) {
+        return this.number - that.number;
+    }
 }
