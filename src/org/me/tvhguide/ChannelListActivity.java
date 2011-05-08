@@ -75,14 +75,23 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.mi_settings:
+            case R.id.mi_settings: {
                 Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
                 startActivityForResult(intent, R.id.mi_settings);
                 return true;
-            case R.id.mi_help:
+            }
+            case R.id.mi_refresh: {
+                Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
+                intent.setAction(HTSService.ACTION_REFRESH);
+                startService(intent);
                 return true;
-            default:
+            }
+            case R.id.mi_help: {
+                return true;
+            }
+            default: {
                 return super.onOptionsItemSelected(item);
+            }
         }
     }
 

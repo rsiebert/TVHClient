@@ -52,6 +52,7 @@ import org.me.tvhguide.model.Programme;
 public class HTSService extends Service {
 
     public static final String ACTION_CONNECT = "org.me.tvhguide.htsp.CONNECT";
+    public static final String ACTION_REFRESH = "org.me.tvhguide.htsp.REFRESH";
     private static final String TAG = "HTSService";
     private SelectionThread t;
     private ByteBuffer inBuf;
