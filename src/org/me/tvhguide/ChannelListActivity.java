@@ -23,6 +23,7 @@ import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Channel;
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -37,6 +38,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -50,14 +52,23 @@ import org.me.tvhguide.htsp.HTSListener;
 public class ChannelListActivity extends ListActivity implements HTSListener {
 
     private ChannelListAdapter chAdapter;
+    private List<Channel> chList;
+    private ProgressDialog pd;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
-        chAdapter = new ChannelListAdapter(this, app.getChannels());
+        chList = new ArrayList<Channel>();
+        chList.addAll(app.getChannels());
+        chAdapter = new ChannelListAdapter(this, chList);
+        chAdapter.sort(new Comparator<Channel>() {
 
+            public int compare(Channel x, Channel y) {
+                return x.number - y.number;
+            }
+        });
         setListAdapter(chAdapter);
         Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_CONNECT);
@@ -154,11 +165,52 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     }
 
     public void onMessage(String action, final Object obj) {
-        if (action.equals(TVHGuideApplication.ACTION_LOADING) && !(Boolean) obj) {
+        if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
 
             runOnUiThread(new Runnable() {
 
                 public void run() {
+                    boolean loading = (Boolean) obj;
+                    if (loading) {
+                        pd = ProgressDialog.show(ChannelListActivity.this,
+                                getString(R.string.inf_load),
+                                "Please wait a few seconds...", true);
+                        return;
+                    } else if (pd != null) {
+                        pd.cancel();
+                    }
+
+                    TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                    chList.clear();
+                    chList.addAll(app.getChannels());
+                    chAdapter.notifyDataSetChanged();
+                    chAdapter.sort(new Comparator<Channel>() {
+
+                        public int compare(Channel x, Channel y) {
+                            return x.number - y.number;
+                        }
+                    });
+                }
+            });
+        } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
+            runOnUiThread(new Runnable() {
+
+                public void run() {
+                    chAdapter.add((Channel) obj);
+                    chAdapter.notifyDataSetChanged();
+                    chAdapter.sort(new Comparator<Channel>() {
+
+                        public int compare(Channel x, Channel y) {
+                            return x.number - y.number;
+                        }
+                    });
+                }
+            });
+        } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
+            runOnUiThread(new Runnable() {
+
+                public void run() {
+                    chAdapter.remove((Channel) obj);
                     chAdapter.notifyDataSetChanged();
                     chAdapter.sort(new Comparator<Channel>() {
 
