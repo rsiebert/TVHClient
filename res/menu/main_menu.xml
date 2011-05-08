@@ -4,6 +4,10 @@
           android:icon="@android:drawable/ic_menu_preferences"
           android:title="@string/menu_settings" />
 
+    <item android:id="@+id/mi_refresh"
+          android:icon="@android:drawable/ic_menu_rotate"
+          android:title="@string/menu_refresh" />
+
     <item android:id="@+id/mi_help"
           android:icon="@android:drawable/ic_menu_help"
           android:title="@string/menu_help" />
