@@ -60,6 +60,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         setListAdapter(chAdapter);
         Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
+        intent.setAction(HTSService.ACTION_CONNECT);
         startService(intent);
         registerForContextMenu(getListView());
     }
