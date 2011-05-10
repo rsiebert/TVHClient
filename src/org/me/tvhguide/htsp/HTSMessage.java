@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -98,6 +99,25 @@ public class HTSMessage extends HashMap<String, Object> {
             return null;
         }
         return obj.toString();
+    }
+
+    public List getList(String name, Class cls) {
+        ArrayList<Object> list = new ArrayList<Object>();
+        if (!containsFiled(name)) {
+            return list;
+        }
+
+        for (Object obj : (List)get(name)) {
+            if(cls == Integer.class && obj instanceof BigInteger) {
+                list.add(((BigInteger)obj).intValue());
+            } else if(cls == Long.class && obj instanceof BigInteger) {
+                list.add(((BigInteger)obj).longValue());
+            } else {
+                list.add(obj);
+            }
+        }
+
+        return list;
     }
 
     public byte[] getByteArray(String name) {
