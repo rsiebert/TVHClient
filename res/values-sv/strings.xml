@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">TVHGuide klient</string>
-    
-    <string name="app_settings">TVHGuide inställningar</string>
+    <string name="app_name">TVHGuide</string>
+    <string name="app_settings">Inställningar för TVHGuide</string>
 
     <string name="menu_help">Hjälp</string>
     <string name="menu_settings">Inställningar</string>
+    <string name="menu_refresh">Uppdatera</string>
+    <string name="menu_tags">Tagggar</string>
 
     <string name="pref_host">Värdnamn</string>
     <string name="pref_host_sum">Skriv in värdnamn</string>
@@ -23,4 +24,5 @@
     <string name="err_inv">Felaktigt svar från server</string>
 
     <string name="inf_load">Laddar...</string>
+    <string name="inf_load_ext">Var god vänta några sekunder...</string>
 </resources>

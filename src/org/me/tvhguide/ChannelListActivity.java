@@ -175,7 +175,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     if (loading) {
                         pd = ProgressDialog.show(ChannelListActivity.this,
                                 getString(R.string.inf_load),
-                                "Please wait a few seconds...", true);
+                                getString(R.string.inf_load_ext), true);
                         return;
                     } else if (pd != null) {
                         pd.cancel();
