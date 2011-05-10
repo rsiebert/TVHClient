@@ -13,6 +13,12 @@
         android:id="@+id/pr_title">
     </TextView>
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="3dip"
+        android:id="@+id/pr_time">
+    </TextView>
+    <TextView
         android:gravity="right"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

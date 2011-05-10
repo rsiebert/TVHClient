@@ -27,7 +27,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
+import android.widget.ViewAnimator;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
 
@@ -37,19 +37,15 @@ import org.me.tvhguide.model.Programme;
  */
 public class ProgrammeActivity extends Activity {
 
-    ViewFlipper vf;
+    ViewAnimator va;
     Channel channel;
     float oldTouchValue;
+    int programmeCounter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        setContentView(R.layout.pr_flipper);
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.pr_title);
-
-        vf = (ViewFlipper) findViewById(R.id.pr_switcher);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         long id = getIntent().getLongExtra("channelId", 0);
 
@@ -63,13 +59,18 @@ public class ProgrammeActivity extends Activity {
             return;
         }
 
+        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+        setContentView(R.layout.pr_flipper);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.pr_title);
+
+        va = (ViewAnimator) findViewById(R.id.pr_switcher);
+
         TextView text = (TextView) findViewById(R.id.pr_title);
         text.setText(channel.name);
-
+        programmeCounter = 1;
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        int count = 0;
-        for (Programme p : channel.epg) {
+        for (final Programme p : channel.epg) {
             View view = inflater.inflate(R.layout.pr_widget, null);
 
             text = (TextView) view.findViewById(R.id.pr_name);
@@ -79,21 +80,37 @@ public class ProgrammeActivity extends Activity {
             text.setText(p.description);
 
             text = (TextView) view.findViewById(R.id.pr_time);
-            text.setText(DateFormat.getTimeFormat(this).format(p.start)
+            text.setText(
+                    DateFormat.getLongDateFormat(view.getContext()).format(p.start)
+                    + "   "
+                    + DateFormat.getTimeFormat(view.getContext()).format(p.start)
                     + " - "
-                    + DateFormat.getTimeFormat(this).format(p.stop));
-
-            vf.addView(view);
-            count++;
+                    + DateFormat.getTimeFormat(view.getContext()).format(p.stop));
+            va.addView(view);
         }
 
         text = (TextView) findViewById(R.id.pr_count);
-        text.setText("1/" + count);
+        text.setText(programmeCounter + "/" + channel.epg.size());
+    }
+
+    private void toggleView(boolean forward) {
+        if (forward && programmeCounter < channel.epg.size()) {
+            programmeCounter++;
+            va.showNext();
+        } else if (!forward && programmeCounter > 1) {
+            programmeCounter--;
+            va.showPrevious();
+        } else {
+            return;
+        }
+
+        TextView text = (TextView) findViewById(R.id.pr_count);
+        text.setText(programmeCounter + "/" + channel.epg.size());
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        View currentView = vf.getCurrentView();
+        View currentView = va.getCurrentView();
 
         if (currentView == null) {
             return false;
@@ -106,26 +123,13 @@ public class ProgrammeActivity extends Activity {
                 oldTouchValue = event.getX();
                 break;
             case MotionEvent.ACTION_MOVE:
-                currentView.layout((int) (diff),
-                        currentView.getTop(), currentView.getRight(),
-                        currentView.getBottom());
-
                 break;
             case MotionEvent.ACTION_UP:
-                if (Math.abs(diff / currentView.getRight()) < 0.25) {
-
-                    currentView.layout((int) 0,
-                            currentView.getTop(), currentView.getRight(),
-                            currentView.getBottom());
-
+                if (Math.abs(diff / currentView.getRight()) < 0.10) {
                     break;
                 }
 
-                if (diff < 0) {
-                    vf.showNext();
-                } else {
-                    vf.showPrevious();
-                }
+                toggleView(diff < 0);
                 break;
         }
 
