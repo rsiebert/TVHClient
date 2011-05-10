@@ -42,7 +42,7 @@ public class HTSMessage extends HashMap<String, Object> {
     private ByteBuffer buf;
 
     public void putField(String name, Object value) {
-        if(value != null) {
+        if (value != null) {
             put(name, value);
         }
     }
@@ -68,7 +68,7 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     public long getLong(String name, long std) {
-        if(!containsFiled(name)) {
+        if (!containsFiled(name)) {
             return std;
         }
         return getLong(name);
@@ -79,14 +79,14 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     public int getInt(String name, int std) {
-        if(!containsFiled(name)) {
+        if (!containsFiled(name)) {
             return std;
         }
         return getInt(name);
     }
 
     public String getString(String name, String std) {
-        if(!containsFiled(name)) {
+        if (!containsFiled(name)) {
             return std;
         }
         return getString(name);
