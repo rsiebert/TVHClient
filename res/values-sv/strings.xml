@@ -12,7 +12,7 @@
     <string name="pref_host_sum">Skriv in värdnamn</string>
 
     <string name="pref_port">Port</string>
-    <string name="pref_port_sum">Skriv in Portnummer</string>
+    <string name="pref_port_sum">Skriv in portnummer</string>
 
     <string name="pref_user">Användarnamn</string>
     <string name="pref_user_sum">Skriv in användarnamn</string>
