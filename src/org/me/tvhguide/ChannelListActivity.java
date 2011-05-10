@@ -283,7 +283,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             Iterator<Programme> it = ch.epg.iterator();
             if (it.hasNext()) {
                 Programme p = it.next();
-                wrapper.nextTime.setText(
+                wrapper.nowTime.setText(
                         DateFormat.getTimeFormat(getContext()).format(p.start)
                         + " - "
                         + DateFormat.getTimeFormat(getContext()).format(p.stop));
