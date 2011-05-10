@@ -230,9 +230,9 @@ public class HTSService extends Service {
         } else if (method.equals("channelAdd")) {
             final Channel ch = new Channel();
             ch.id = response.getLong("channelId");
-            ch.name = response.getString("channelName");
-            ch.number = response.getInt("channelNumber");
-            ch.icon = response.getString("channelIcon");
+            ch.name = response.getString("channelName", null);
+            ch.number = response.getInt("channelNumber", 0);
+            ch.icon = response.getString("channelIcon", null);
             //ch.tags = (ArrayList) msg.get("tags");
 
             if (ch.number == 0) {
