@@ -207,7 +207,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     });
                 }
             });
-        } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
+        } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_DELETE)) {
             runOnUiThread(new Runnable() {
 
                 public void run() {
