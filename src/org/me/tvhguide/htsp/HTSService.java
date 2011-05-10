@@ -54,6 +54,10 @@ public class HTSService extends Service {
 
     public static final String ACTION_CONNECT = "org.me.tvhguide.htsp.CONNECT";
     public static final String ACTION_REFRESH = "org.me.tvhguide.htsp.REFRESH";
+    public static final String ACTION_EPG_QUERY = "org.me.tvhguide.htsp.EPG_QUERY";
+    public static final String ACTION_GET_EVENT = "org.me.tvhguide.htsp.GET_EVENT";
+    public static final String ACTION_DVR_ADD = "org.me.tvhguide.htsp.DVR_ADD";
+    public static final String ACTION_DVR_DEL = "org.me.tvhguide.htsp.DVR_DEL";
     private static final String TAG = "HTSService";
     private SelectionThread t;
     private ByteBuffer inBuf;
@@ -88,34 +92,82 @@ public class HTSService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-
-
-        try {
-            String host = prefs.getString("serverHostPref", "localhost");
-            int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
-            InetSocketAddress ad = new InetSocketAddress(host, port);
-            String user = prefs.getString("usernamePref", "");
-            String pw = prefs.getString("passwordPref", "");
-
-            if (ad.equals(addr) && user.equals(username) && pw.equals(password)) {
-                return START_NOT_STICKY;
+        if (ACTION_CONNECT.equals(intent.getAction())) {
+            try {
+                connect(intent, false);
+            } catch (Throwable ex) {
+                Log.e(TAG, "Can't connect to server", ex);
             }
+        } else if (ACTION_REFRESH.equals(intent.getAction())) {
+            try {
+                TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                app.getChannelTags().clear();
+                app.getChannels().clear();
+                connect(intent, true);
+            } catch (Throwable ex) {
+                Log.e(TAG, "Can't connect to server", ex);
+            }
+        } else if (ACTION_GET_EVENT.equals(intent.getAction())) {
+            HTSMessage request = new HTSMessage();
+            request.setMethod("getEvent");
+            request.putField("eventId", intent.getStringExtra("eventId"));
+            request.putField("seq", seq);
+            requestQue.add(request);
+            responseHandelers.put(seq, new HTSResponseListener() {
 
-            addr = ad;
-            username = user;
-            password = pw;
+                public void handleResonse(HTSMessage response) throws Exception {
+                    Programme p = new Programme();
+                    p.id = response.getLong("eventId");
+                    if (response.containsFiled("ext_desc")) {
+                        p.description = response.getString("ext_desc");
+                    } else if (response.containsFiled("description")) {
+                        p.description = response.getString("description");
+                    }
+                    p.title = response.getString("title");
+                    p.start = response.getDate("start");
+                    p.stop = response.getDate("stop");
 
-            SocketChannel sChannel = SocketChannel.open();
-            sChannel.configureBlocking(false);
-            sChannel.connect(addr);
-            t.register(sChannel, SelectionKey.OP_CONNECT, true);
-        } catch (Throwable ex) {
-            Log.e(TAG, "Can't connect to server", ex);
+                    TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                    for (Channel ch : app.getChannels()) {
+                        if (ch.id == response.getLong("channelId")) {
+                            ch.epg.add(p);
+                            break;
+                        }
+                    }
+                }
+            });
+            seq++;
+        } else if (ACTION_DVR_ADD.equals(intent.getAction())) {
+        } else if (ACTION_DVR_DEL.equals(intent.getAction())) {
+        } else if (ACTION_EPG_QUERY.equals(intent.getAction())) {
         }
 
         return START_NOT_STICKY;
+    }
+
+    private boolean connect(Intent intent, boolean force) throws IOException {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String host = prefs.getString("serverHostPref", "localhost");
+        int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
+        InetSocketAddress ad = new InetSocketAddress(host, port);
+        String user = prefs.getString("usernamePref", "");
+        String pw = prefs.getString("passwordPref", "");
+
+        if (!force && ad.equals(addr) && user.equals(username) && pw.equals(password)) {
+            return false;
+        }
+
+        addr = ad;
+        username = user;
+        password = pw;
+
+        SocketChannel sChannel = SocketChannel.open();
+        sChannel.configureBlocking(false);
+        sChannel.connect(addr);
+        t.register(sChannel, SelectionKey.OP_CONNECT, true);
+
+        return true;
     }
 
     @Override
