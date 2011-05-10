@@ -54,12 +54,14 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
     private ChannelListAdapter chAdapter;
     private ProgressDialog pd;
-
+    private long tagId;
+    
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
+        tagId = 0;
         List<Channel> chList = new ArrayList<Channel>();
         chList.addAll(app.getChannels());
         chAdapter = new ChannelListAdapter(this, chList);
@@ -113,6 +115,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         menu.setHeaderTitle(R.string.menu_tags);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         menu.add(0, R.string.pr_all_channels, 0, getString(R.string.pr_all_channels));
+        
         for (ChannelTag tag : app.getChannelTags()) {
             menu.add(0, tag.hashCode(), 0, tag.name);
         }
@@ -120,13 +123,32 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        long id = 0;
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         for (ChannelTag tag : app.getChannelTags()) {
             if (tag.hashCode() == item.getItemId()) {
-                return true;
+                id = tag.id;
             }
         }
-        return false;
+
+        chAdapter.clear();
+        for(Channel ch : app.getChannels()) {
+            if(id == 0 || ch.hasTag(id)) {
+                chAdapter.add(ch);
+            }
+        }
+
+        chAdapter.sort(new Comparator<Channel>() {
+
+            public int compare(Channel x, Channel y) {
+                return x.number - y.number;
+            }
+        });
+        
+        tagId = id;
+
+        chAdapter.notifyDataSetChanged();
+        return id != 0;
     }
 
     @Override
