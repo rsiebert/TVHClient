@@ -241,70 +241,39 @@ public class HTSService extends Service {
 
             app.addChannel(ch);
 
-            //Get the icon. Could use some optimization ;)
             if (ch.icon != null) {
-                new Thread(new Runnable() {
-
-                    public void run() {
-
-                        try {
-                            URL url = new URL(ch.icon);
-                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                            conn.setDoInput(true);
-                            conn.connect();
-                            ch.iconBitmap = BitmapFactory.decodeStream(conn.getInputStream());
-                        } catch (Throwable ex) {
-                        }
-
-                    }
-                }).start();
-
+                loadChannelIcon(ch);
             }
 
-            final long eventId = response.getLong("eventId");
-            if (eventId < 1) {
-                return;
+            long eventId = response.getLong("eventId", 0);
+            if (eventId > 0) {
+                loadProgrammes(ch, eventId, 5);
             }
-
-            HTSMessage request = new HTSMessage();
-            request.setMethod("getEvents");
-            request.putField("eventId", eventId);
-            request.putField("numFollowing", 24);
-            request.putField("seq", seq);
-
-            responseHandelers.put(seq, new HTSResponseListener() {
-
-                public void handleResonse(HTSMessage response) throws Exception {
-
-                    if (!response.containsKey("events")) {
-                        return;
-                    }
-
-                    for (HTSMessage sub : (List<HTSMessage>) response.get("events")) {
-                        Programme p = new Programme();
-                        p.id = eventId;
-                        if (sub.containsFiled("ext_desc")) {
-                            p.description = sub.getString("ext_desc");
-                        } else if (sub.containsFiled("description")) {
-                            p.description = sub.getString("description");
-                        }
-                        p.title = sub.getString("title");
-                        p.start = sub.getDate("start");
-                        p.stop = sub.getDate("stop");
-                        ch.epg.add(p);
-                    }
-                }
-            });
-            requestQue.add(request);
-            seq++;
 
         } else if (method.equals("channelUpdate")) {
-            //Channel ch = channelMap.get((Long) msg.get("channelId"));
-            //ch.name = (String) msg.get("channelName");
-            //ch.number = (Long) msg.get("channelNumber");
-            //ch.icon = (String) msg.get("channelIcon");
-            //ch.eventId = (Long) msg.get("eventId");
-            //ch.tags = (ArrayList) msg.get("tags");
+            for (Channel ch : app.getChannels()) {
+                if (ch.id == response.getLong("channelId")) {
+                    ch.name = response.getString("channelName", ch.name);
+                    ch.number = response.getInt("channelNumber", ch.number);
+                    ch.icon = response.getString("channelIcon", ch.icon);
+
+                    //Remove programmes that have ended
+                    long eventId = response.getLong("eventId", 0);
+                    Iterator<Programme> it = ch.epg.iterator();
+                    while (it.hasNext()) {
+                        Programme p = it.next();
+                        if (p.id != eventId) {
+                            ch.epg.remove(p);
+                        }
+                    }
+
+                    if (eventId > 0 && ch.epg.size() < 2) {
+                        loadProgrammes(ch, eventId, 5);
+                    }
+                    //ch.tags = (ArrayList) msg.get("tags");
+                    break;
+                }
+            }
         } else if (method.equals("channelDelete")) {
             app.removeChannel(response.getLong("channelId"));
         } else if (method.equals("initialSyncCompleted")) {
