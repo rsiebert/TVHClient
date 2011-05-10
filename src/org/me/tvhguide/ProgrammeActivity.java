@@ -21,9 +21,11 @@ package org.me.tvhguide;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import org.me.tvhguide.model.Channel;
@@ -42,9 +44,12 @@ public class ProgrammeActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.pr_flipper);
-        vf = (ViewFlipper) findViewById(R.id.p_switcher);
 
+        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+        setContentView(R.layout.pr_flipper);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.pr_title);
+
+        vf = (ViewFlipper) findViewById(R.id.pr_switcher);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         long id = getIntent().getLongExtra("channelId", 0);
 
@@ -58,20 +63,32 @@ public class ProgrammeActivity extends Activity {
             return;
         }
 
-        setTitle(channel.name);
+        TextView text = (TextView) findViewById(R.id.pr_title);
+        text.setText(channel.name);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        int count = 0;
         for (Programme p : channel.epg) {
             View view = inflater.inflate(R.layout.pr_widget, null);
 
-            TextView text = (TextView) view.findViewById(R.id.pr_name);
+            text = (TextView) view.findViewById(R.id.pr_name);
             text.setText(p.title);
 
             text = (TextView) view.findViewById(R.id.pr_desc);
             text.setText(p.description);
+
+            text = (TextView) view.findViewById(R.id.pr_time);
+            text.setText(DateFormat.getTimeFormat(this).format(p.start)
+                    + " - "
+                    + DateFormat.getTimeFormat(this).format(p.stop));
+
             vf.addView(view);
+            count++;
         }
+
+        text = (TextView) findViewById(R.id.pr_count);
+        text.setText("1/" + count);
     }
 
     @Override
