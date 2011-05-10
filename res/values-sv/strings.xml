@@ -25,4 +25,6 @@
 
     <string name="inf_load">Laddar...</string>
     <string name="inf_load_ext">Var god vänta några sekunder...</string>
+
+    <string name="pr_all_channels">Alla kanaler</string>
 </resources>

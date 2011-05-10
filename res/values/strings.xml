@@ -26,4 +26,6 @@
 
     <string name="inf_load">Loading...</string>
     <string name="inf_load_ext">Please wait a few seconds...</string>
+
+    <string name="pr_all_channels">All channels</string>
 </resources>

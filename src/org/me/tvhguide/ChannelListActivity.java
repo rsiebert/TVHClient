@@ -113,6 +113,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         menu.setHeaderTitle(R.string.menu_tags);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        menu.add(0, R.string.pr_all_channels, 0, getString(R.string.pr_all_channels));
         for (ChannelTag tag : app.getChannelTags()) {
             menu.add(0, tag.hashCode(), 0, tag.name);
         }
