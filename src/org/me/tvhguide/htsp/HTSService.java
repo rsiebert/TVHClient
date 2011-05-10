@@ -313,4 +313,56 @@ public class HTSService extends Service {
             Log.d(TAG, method.toString());
         }
     }
+
+    private void loadChannelIcon(final Channel ch) {
+        new Thread(new Runnable() {
+
+            public void run() {
+
+                try {
+                    URL url = new URL(ch.icon);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setDoInput(true);
+                    conn.connect();
+                    ch.iconBitmap = BitmapFactory.decodeStream(conn.getInputStream());
+                } catch (Throwable ex) {
+                }
+
+            }
+        }).start();
+    }
+
+    private void loadProgrammes(final Channel ch, final long eventId, int cnt) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getEvents");
+        request.putField("eventId", eventId);
+        request.putField("numFollowing", cnt);
+        request.putField("seq", seq);
+
+        responseHandelers.put(seq, new HTSResponseListener() {
+
+            public void handleResonse(HTSMessage response) throws Exception {
+
+                if (!response.containsKey("events")) {
+                    return;
+                }
+
+                for (HTSMessage sub : (List<HTSMessage>) response.get("events")) {
+                    Programme p = new Programme();
+                    p.id = eventId;
+                    if (sub.containsFiled("description")) {
+                        p.description = sub.getString("description");
+                    } else if (sub.containsFiled("ext_desc")) {
+                        p.description = sub.getString("ext_desc");
+                    }
+                    p.title = sub.getString("title");
+                    p.start = sub.getDate("start");
+                    p.stop = sub.getDate("stop");
+                    ch.epg.add(p);
+                }
+            }
+        });
+        requestQue.add(request);
+        seq++;
+    }
 }
