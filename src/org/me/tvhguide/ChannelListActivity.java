@@ -53,7 +53,6 @@ import org.me.tvhguide.htsp.HTSListener;
 public class ChannelListActivity extends ListActivity implements HTSListener {
 
     private ChannelListAdapter chAdapter;
-    private List<Channel> chList;
     private ProgressDialog pd;
 
     @Override
@@ -61,7 +60,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         super.onCreate(icicle);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
-        chList = new ArrayList<Channel>();
+        List<Channel> chList = new ArrayList<Channel>();
         chList.addAll(app.getChannels());
         chAdapter = new ChannelListAdapter(this, chList);
         chAdapter.sort(new Comparator<Channel>() {
@@ -183,8 +182,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     }
 
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                    chList.clear();
-                    chList.addAll(app.getChannels());
+                    chAdapter.list.clear();
+                    chAdapter.list.addAll(app.getChannels());
                     chAdapter.notifyDataSetChanged();
                     chAdapter.sort(new Comparator<Channel>() {
 
