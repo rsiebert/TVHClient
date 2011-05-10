@@ -19,6 +19,7 @@
 package org.me.tvhguide.model;
 
 import android.graphics.Bitmap;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -34,8 +35,18 @@ public class Channel implements Comparable<Channel> {
     public int number;
     public Set<Programme> epg = new ConcurrentSkipListSet<Programme>();
     public Bitmap iconBitmap;
+    public List<Integer> tags;
 
     public int compareTo(Channel that) {
         return this.number - that.number;
+    }
+
+    public boolean hasTag(long id) {
+        for (Integer i : tags) {
+            if (i == id) {
+                return true;
+            }
+        }
+        return false;
     }
 }

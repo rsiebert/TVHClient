@@ -286,7 +286,7 @@ public class HTSService extends Service {
             ch.name = response.getString("channelName", null);
             ch.number = response.getInt("channelNumber", 0);
             ch.icon = response.getString("channelIcon", null);
-            //ch.tags = (ArrayList) msg.get("tags");
+            ch.tags = (List<Integer>) response.getList("tags", Integer.class);
 
             if (ch.number == 0) {
                 ch.number = (int) (ch.id + 25000);
@@ -369,7 +369,7 @@ public class HTSService extends Service {
                     return;
                 }
 
-                for (HTSMessage sub : (List<HTSMessage>) response.get("events")) {
+                for (HTSMessage sub : (List<HTSMessage>)response.getList("events", HTSMessage.class)) {
                     Programme p = new Programme();
                     p.id = eventId;
                     if (sub.containsFiled("description")) {
