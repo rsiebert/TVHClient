@@ -25,6 +25,7 @@ import java.util.List;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
 import org.me.tvhguide.htsp.HTSListener;
+import org.me.tvhguide.model.Recording;
 
 /**
  *
@@ -46,6 +47,7 @@ public class TVHGuideApplication extends Application {
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
+    private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
     private volatile boolean loading = false;
 
     public void addListener(HTSListener l) {
@@ -117,6 +119,35 @@ public class TVHGuideApplication extends Application {
         for (Channel ch : getChannels()) {
             if (ch.id == id) {
                 removeChannel(ch);
+                return;
+            }
+        }
+    }
+
+    public void addRecording(Recording rec) {
+        recordings.add(rec);
+
+        if (!loading) {
+            broadcastMessage(ACTION_DVR_ADD, rec);
+        }
+    }
+
+    public List<Recording> getRecordings() {
+        return recordings;
+    }
+
+    public void removeRecording(Recording rec) {
+        recordings.remove(rec);
+
+        if (!loading) {
+            broadcastMessage(ACTION_DVR_DELETE, rec);
+        }
+    }
+
+    public void removeRecording(long id) {
+        for (Recording rec : getRecordings()) {
+            if (rec.id == id) {
+                removeRecording(rec);
                 return;
             }
         }
