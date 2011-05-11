@@ -344,6 +344,8 @@ public class HTSService extends Service {
             rec.state = response.getString("state", null);
             rec.stop = response.getDate("stop");
             rec.title = response.getString("title", null);
+            rec.channel = app.getChannel(response.getLong("channel"));
+
             app.addRecording(rec);
         } else if (method.equals("dvrEntryUpdate")) {
             for (Recording rec : app.getRecordings()) {

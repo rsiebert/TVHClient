@@ -115,6 +115,15 @@ public class TVHGuideApplication extends Application {
         }
     }
 
+    public Channel getChannel(long id) {
+        for (Channel ch : getChannels()) {
+            if (ch.id == id) {
+                return ch;
+            }
+        }
+        return null;
+    }
+
     public void removeChannel(long id) {
         for (Channel ch : getChannels()) {
             if (ch.id == id) {
