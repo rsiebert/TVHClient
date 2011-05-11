@@ -25,10 +25,12 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.ClipDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,9 +40,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.me.tvhguide.model.ChannelTag;
@@ -55,7 +59,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     private ChannelListAdapter chAdapter;
     private ProgressDialog pd;
     private long tagId;
-    
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -115,7 +119,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         menu.setHeaderTitle(R.string.menu_tags);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         menu.add(0, R.string.pr_all_channels, 0, getString(R.string.pr_all_channels));
-        
+
         for (ChannelTag tag : app.getChannelTags()) {
             menu.add(0, tag.hashCode(), 0, tag.name);
         }
@@ -254,10 +258,19 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         TextView nextTitle;
         TextView nextTime;
         ImageView icon;
+        ClipDrawable nowProgress;
 
         public ViewWarpper(View base) {
             name = (TextView) base.findViewById(R.id.ch_name);
             nowTitle = (TextView) base.findViewById(R.id.ch_now_title);
+
+            TableRow tblRow = (TableRow) base.findViewById(R.id.ch_now_row);
+            tblRow.setBackgroundResource(android.R.drawable.progress_horizontal);
+            nowProgress = new ClipDrawable(tblRow.getBackground(), Gravity.LEFT, ClipDrawable.HORIZONTAL);
+            nowProgress.setAlpha(64);
+
+            tblRow.setBackgroundDrawable(nowProgress);
+
             nowTime = (TextView) base.findViewById(R.id.ch_now_time);
             nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
             nextTime = (TextView) base.findViewById(R.id.ch_next_time);
@@ -301,6 +314,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             wrapper.nowTitle.setText("");
             wrapper.nextTime.setText("");
             wrapper.nextTitle.setText("");
+            wrapper.nowProgress.setLevel(0);
 
             Iterator<Programme> it = ch.epg.iterator();
             if (it.hasNext()) {
@@ -310,6 +324,11 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                         + " - "
                         + DateFormat.getTimeFormat(getContext()).format(p.stop));
 
+                double duration = (p.stop.getTime() - p.start.getTime());
+                double elapsed = new Date().getTime() - p.start.getTime();
+                double percent = elapsed / duration;
+
+                wrapper.nowProgress.setLevel((int) Math.floor(percent * 10000));
                 wrapper.nowTitle.setText(p.title);
             }
             if (it.hasNext()) {
