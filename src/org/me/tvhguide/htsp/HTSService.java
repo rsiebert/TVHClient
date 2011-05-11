@@ -334,6 +334,30 @@ public class HTSService extends Service {
             app.removeChannel(response.getLong("channelId"));
         } else if (method.equals("initialSyncCompleted")) {
             app.setLoading(false);
+        } else if (method.equals("dvrEntryAdd")) {
+            Recording rec = new Recording();
+            rec.id = response.getLong("id");
+            rec.description = response.getString("description", null);
+            rec.error = response.getString("error", null);
+            rec.start = response.getDate("start");
+            rec.state = response.getString("state", null);
+            rec.stop = response.getDate("stop");
+            rec.title = response.getString("title", null);
+            app.addRecording(rec);
+        } else if (method.equals("dvrEntryUpdate")) {
+            for (Recording rec : app.getRecordings()) {
+                if (rec.id == response.getLong("id")) {
+                    rec.description = response.getString("description", rec.description);
+                    rec.error = response.getString("error", rec.error);
+                    rec.start = response.getDate("start");
+                    rec.state = response.getString("state", rec.state);
+                    rec.stop = response.getDate("stop");
+                    rec.title = response.getString("title", rec.title);
+                    break;
+                }
+            }
+        } else if (method.equals("dvrEntryDelete")) {
+            app.removeRecording(response.getLong("id"));
         } else {
             Log.d(TAG, method.toString());
         }
