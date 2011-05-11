@@ -20,12 +20,11 @@ package org.me.tvhguide.model;
 
 import java.util.Date;
 
-
 /**
  *
  * @author john-tornblom
  */
-public class Programme implements Comparable<Programme>{
+public class Programme implements Comparable<Programme> {
 
     public long id;
     public Date start;
