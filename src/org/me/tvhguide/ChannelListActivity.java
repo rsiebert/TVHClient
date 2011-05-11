@@ -132,8 +132,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         }
 
         chAdapter.clear();
-        for(Channel ch : app.getChannels()) {
-            if(id == 0 || ch.hasTag(id)) {
+        for (Channel ch : app.getChannels()) {
+            if (id == 0 || ch.hasTag(id)) {
                 chAdapter.add(ch);
             }
         }
@@ -144,7 +144,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return x.number - y.number;
             }
         });
-        
+
         tagId = id;
 
         chAdapter.notifyDataSetChanged();
