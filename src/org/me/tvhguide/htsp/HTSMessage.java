@@ -101,23 +101,32 @@ public class HTSMessage extends HashMap<String, Object> {
         return obj.toString();
     }
 
-    public List getList(String name, Class cls) {
-        ArrayList<Object> list = new ArrayList<Object>();
+    public List<Integer> getIntList(String name) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+
         if (!containsFiled(name)) {
             return list;
         }
 
-        for (Object obj : (List)get(name)) {
-            if(cls == Integer.class && obj instanceof BigInteger) {
-                list.add(((BigInteger)obj).intValue());
-            } else if(cls == Long.class && obj instanceof BigInteger) {
-                list.add(((BigInteger)obj).longValue());
-            } else {
-                list.add(obj);
+        for (Object obj : (List) get(name)) {
+            if (obj instanceof BigInteger) {
+                list.add(((BigInteger) obj).intValue());
             }
         }
 
         return list;
+    }
+
+    List<Integer> getIntList(String name, List<Integer> std) {
+        if (!containsFiled(name)) {
+            return std;
+        }
+
+        return getIntList(name);
+    }
+
+    public List getList(String name) {
+        return (List) get(name);
     }
 
     public byte[] getByteArray(String name) {

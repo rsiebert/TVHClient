@@ -37,7 +37,6 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import java.util.Map;
 import org.me.tvhguide.R;
@@ -271,13 +270,14 @@ public class HTSService extends Service {
             tag.id = response.getLong("tagId");
             tag.name = response.getString("tagName", null);
             tag.icon = response.getString("tagIcon", null);
-            //tag.members = (ArrayList) msg.get("members");
+            //tag.members = response.getIntList("members");
             app.addChannelTag(tag);
         } else if (method.equals("tagUpdate")) {
             for (ChannelTag tag : app.getChannelTags()) {
                 if (tag.id == response.getLong("tagId")) {
                     tag.name = response.getString("tagName", tag.name);
                     tag.icon = response.getString("tagIcon", tag.icon);
+                    //tag.members = response.getIntList("members");
                     break;
                 }
             }
@@ -289,7 +289,7 @@ public class HTSService extends Service {
             ch.name = response.getString("channelName", null);
             ch.number = response.getInt("channelNumber", 0);
             ch.icon = response.getString("channelIcon", null);
-            ch.tags = (List<Integer>) response.getList("tags", Integer.class);
+            ch.tags = response.getIntList("tags", ch.tags);
 
             if (ch.number == 0) {
                 ch.number = (int) (ch.id + 25000);
@@ -312,6 +312,7 @@ public class HTSService extends Service {
                     ch.name = response.getString("channelName", ch.name);
                     ch.number = response.getInt("channelNumber", ch.number);
                     ch.icon = response.getString("channelIcon", ch.icon);
+                    ch.tags = response.getIntList("tags", ch.tags);
 
                     //Remove programmes that have ended
                     long eventId = response.getLong("eventId", 0);
@@ -326,7 +327,6 @@ public class HTSService extends Service {
                     if (eventId > 0 && ch.epg.size() < 2) {
                         loadProgrammes(ch, eventId, 5);
                     }
-                    //ch.tags = (ArrayList) msg.get("tags");
                     break;
                 }
             }
@@ -396,9 +396,10 @@ public class HTSService extends Service {
                     return;
                 }
 
-                for (HTSMessage sub : (List<HTSMessage>)response.getList("events", HTSMessage.class)) {
+                for (Object obj : response.getList("events")) {
                     Programme p = new Programme();
                     p.id = eventId;
+                    HTSMessage sub = (HTSMessage) obj;
                     if (sub.containsFiled("description")) {
                         p.description = sub.getString("description");
                     } else if (sub.containsFiled("ext_desc")) {
