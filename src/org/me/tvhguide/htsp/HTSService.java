@@ -274,10 +274,13 @@ public class HTSService extends Service {
             //tag.members = (ArrayList) msg.get("members");
             app.addChannelTag(tag);
         } else if (method.equals("tagUpdate")) {
-            //ChannelTag tag = msg.get((Long) msg.get("tagId"));
-            //tag.name = (String) msg.get("tagName");
-            //tag.icon = (String) msg.get("tagIcon");
-            //tag.members = (ArrayList) msg.get("members");
+            for (ChannelTag tag : app.getChannelTags()) {
+                if (tag.id == response.getLong("tagId")) {
+                    tag.name = response.getString("tagName", tag.name);
+                    tag.icon = response.getString("tagIcon", tag.icon);
+                    break;
+                }
+            }
         } else if (method.equals("tagDelete")) {
             app.removeChannelTag(response.getLong("tagId"));
         } else if (method.equals("channelAdd")) {
