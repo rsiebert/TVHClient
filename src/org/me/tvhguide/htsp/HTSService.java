@@ -44,6 +44,7 @@ import org.me.tvhguide.TVHGuideApplication;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
 import org.me.tvhguide.model.Programme;
+import org.me.tvhguide.model.Recording;
 
 /**
  *
