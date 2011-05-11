@@ -269,8 +269,8 @@ public class HTSService extends Service {
         if (method.equals("tagAdd")) {
             ChannelTag tag = new ChannelTag();
             tag.id = response.getLong("tagId");
-            tag.name = response.getString("tagName");
-            tag.icon = response.getString("tagIcon");
+            tag.name = response.getString("tagName", null);
+            tag.icon = response.getString("tagIcon", null);
             //tag.members = (ArrayList) msg.get("members");
             app.addChannelTag(tag);
         } else if (method.equals("tagUpdate")) {
