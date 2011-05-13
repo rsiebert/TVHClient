@@ -58,7 +58,7 @@ public class HTSService extends Service {
     public static final String ACTION_EPG_QUERY = "org.me.tvhguide.htsp.EPG_QUERY";
     public static final String ACTION_GET_EVENT = "org.me.tvhguide.htsp.GET_EVENT";
     public static final String ACTION_DVR_ADD = "org.me.tvhguide.htsp.DVR_ADD";
-    public static final String ACTION_DVR_DEL = "org.me.tvhguide.htsp.DVR_DEL";
+    public static final String ACTION_DVR_DELETE = "org.me.tvhguide.htsp.DVR_DELETE";
     private static final String TAG = "HTSService";
     private SelectionThread t;
     private ByteBuffer inBuf;
@@ -68,6 +68,7 @@ public class HTSService extends Service {
     private String password;
     private InetSocketAddress addr;
     private int seq = 0;
+    private SocketChannel socketChannel;
 
     public class LocalBinder extends Binder {
 
@@ -139,6 +140,7 @@ public class HTSService extends Service {
                 }
             });
             seq++;
+            t.register(socketChannel, SelectionKey.OP_WRITE, true);
         } else if (ACTION_DVR_ADD.equals(intent.getAction())) {
             HTSMessage request = new HTSMessage();
             request.setMethod("addDvrEntry");
@@ -154,10 +156,11 @@ public class HTSService extends Service {
                 }
             });
             seq++;
-        } else if (ACTION_DVR_DEL.equals(intent.getAction())) {
+            t.register(socketChannel, SelectionKey.OP_WRITE, true);
+        } else if (ACTION_DVR_DELETE.equals(intent.getAction())) {
             HTSMessage request = new HTSMessage();
             request.setMethod("deleteDvrEntry");
-            request.putField("eventId", intent.getLongExtra("eventId", 0));
+            request.putField("id", intent.getLongExtra("id", 0));
             request.putField("seq", seq);
             requestQue.add(request);
             responseHandelers.put(seq, new HTSResponseListener() {
@@ -168,6 +171,7 @@ public class HTSService extends Service {
                 }
             });
             seq++;
+            t.register(socketChannel, SelectionKey.OP_WRITE, true);
         } else if (ACTION_EPG_QUERY.equals(intent.getAction())) {
         }
 
@@ -190,10 +194,13 @@ public class HTSService extends Service {
         username = user;
         password = pw;
 
-        SocketChannel sChannel = SocketChannel.open();
-        sChannel.configureBlocking(false);
-        sChannel.connect(addr);
-        t.register(sChannel, SelectionKey.OP_CONNECT, true);
+        if(socketChannel != null) {
+            socketChannel.close();
+        }
+        socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(false);
+        socketChannel.connect(addr);
+        t.register(socketChannel, SelectionKey.OP_CONNECT, true);
 
         return true;
     }

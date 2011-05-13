@@ -8,6 +8,7 @@
     <string name="menu_refresh">Uppdatera</string>
     <string name="menu_tags">Tagggar</string>
     <string name="menu_record">Spela in</string>
+    <string name="menu_remove">Ta bort</string>
     <string name="tab_recordings">Inspelningar</string>
 
     <string name="pref_host">Värdnamn</string>

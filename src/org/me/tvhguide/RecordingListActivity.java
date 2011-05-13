@@ -20,11 +20,16 @@ package org.me.tvhguide;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -33,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import org.me.tvhguide.htsp.HTSListener;
+import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Recording;
 
@@ -79,6 +85,33 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Recording rec = (Recording) recAdapter.getItem(position);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuItem item = menu.add(ContextMenu.NONE, R.string.menu_remove, ContextMenu.NONE, R.string.menu_remove);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        Recording rec = recAdapter.getItem(info.position);
+        
+        Intent intent = new Intent(RecordingListActivity.this, HTSService.class);
+        intent.setAction(HTSService.ACTION_DVR_DELETE);
+        intent.putExtra("id", rec.id);
+        item.setIntent(intent);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.string.menu_remove: {
+                startService(item.getIntent());
+                return true;
+            }
+            default: {
+                return false;
+            }
+        }
     }
 
     public void onMessage(String action, final Object obj) {
