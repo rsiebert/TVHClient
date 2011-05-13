@@ -147,9 +147,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
                 return true;
             }
-            case R.id.mi_search: {
-                return true;
-            }
             default: {
                 return super.onOptionsItemSelected(item);
             }
