@@ -7,6 +7,7 @@
     <string name="menu_settings">Inställningar</string>
     <string name="menu_refresh">Uppdatera</string>
     <string name="menu_tags">Tagggar</string>
+    <string name="tab_recordings">Inspelningar</string>
 
     <string name="pref_host">Värdnamn</string>
     <string name="pref_host_sum">Skriv in värdnamn</string>
@@ -27,4 +28,10 @@
     <string name="inf_load_ext">Var god vänta några sekunder...</string>
 
     <string name="pr_all_channels">Alla kanaler</string>
+
+    <string name="pvr_scheduled">Schemalagd</string>
+    <string name="pvr_recording">Splear in</string>
+    <string name="pvr_completed">Avslutad</string>
+    <string name="pvr_missed">Missad</string>
+    <string name="pvr_invalid">Ogiltig</string>
 </resources>

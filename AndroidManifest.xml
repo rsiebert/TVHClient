@@ -8,9 +8,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".RecordingListActivity"/>
         <activity android:name=".ProgrammeActivity"/>
-        <service android:name=".htsp.HTSService" android:enabled="true"/>
         <activity android:name=".SettingsActivity" android:label="@string/app_settings"/>
+        <service android:name=".htsp.HTSService" android:enabled="true"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
