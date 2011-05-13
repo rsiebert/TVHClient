@@ -140,7 +140,34 @@ public class HTSService extends Service {
             });
             seq++;
         } else if (ACTION_DVR_ADD.equals(intent.getAction())) {
+            HTSMessage request = new HTSMessage();
+            request.setMethod("addDvrEntry");
+            request.putField("eventId", intent.getLongExtra("eventId", 0));
+            request.putField("seq", seq);
+            requestQue.add(request);
+            responseHandelers.put(seq, new HTSResponseListener() {
+
+                public void handleResonse(HTSMessage response) throws Exception {
+
+                    boolean success = response.getInt("success", 0) == 1;
+                    String error = response.getString("error", null);
+                }
+            });
+            seq++;
         } else if (ACTION_DVR_DEL.equals(intent.getAction())) {
+            HTSMessage request = new HTSMessage();
+            request.setMethod("deleteDvrEntry");
+            request.putField("eventId", intent.getLongExtra("eventId", 0));
+            request.putField("seq", seq);
+            requestQue.add(request);
+            responseHandelers.put(seq, new HTSResponseListener() {
+
+                public void handleResonse(HTSMessage response) throws Exception {
+
+                    boolean success = response.getInt("success", 0) == 1;
+                }
+            });
+            seq++;
         } else if (ACTION_EPG_QUERY.equals(intent.getAction())) {
         }
 
@@ -402,9 +429,10 @@ public class HTSService extends Service {
                     return;
                 }
 
+                long id = eventId;
                 for (Object obj : response.getList("events")) {
                     Programme p = new Programme();
-                    p.id = eventId;
+                    p.id = id;
                     HTSMessage sub = (HTSMessage) obj;
                     if (sub.containsFiled("description")) {
                         p.description = sub.getString("description");
@@ -415,6 +443,7 @@ public class HTSService extends Service {
                     p.start = sub.getDate("start");
                     p.stop = sub.getDate("stop");
                     ch.epg.add(p);
+                    id = sub.getLong("nextEventId", id);
                 }
             }
         });
