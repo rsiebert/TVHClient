@@ -95,7 +95,6 @@ public class HTSService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         if (ACTION_CONNECT.equals(intent.getAction())) {
             try {
                 connect(intent, false);
@@ -255,7 +254,7 @@ public class HTSService extends Service {
 
                         HTSMessage request = new HTSMessage();
                         request.setMethod("enableAsyncMetadata");
-                        request.putField("username", "john");
+                        request.putField("username", username);
                         request.putField("digest", md.digest());
                         requestQue.add(request);
                     }
