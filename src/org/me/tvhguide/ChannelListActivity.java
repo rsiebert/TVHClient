@@ -58,14 +58,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
     private ChannelListAdapter chAdapter;
     private ProgressDialog pd;
-    private long tagId;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
-        tagId = 0;
         List<Channel> chList = new ArrayList<Channel>();
         chList.addAll(app.getChannels());
         chAdapter = new ChannelListAdapter(this, chList);
@@ -153,8 +151,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return x.number - y.number;
             }
         });
-
-        tagId = id;
 
         chAdapter.notifyDataSetChanged();
         return id != 0;
