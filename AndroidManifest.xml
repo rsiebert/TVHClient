@@ -10,6 +10,7 @@
         </activity>
         <activity android:name=".RecordingListActivity"/>
         <activity android:name=".ProgrammeActivity"/>
+        <activity android:name=".RecordingActivity"/>
         <activity android:name=".SettingsActivity" android:label="@string/app_settings"/>
         <service android:name=".htsp.HTSService" android:enabled="true"/>
     </application>

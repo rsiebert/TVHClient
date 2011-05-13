@@ -85,6 +85,10 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Recording rec = (Recording) recAdapter.getItem(position);
+
+        Intent intent = new Intent(this, RecordingActivity.class);
+        intent.putExtra("id", rec.id);
+        startActivity(intent);
     }
 
     @Override
@@ -92,7 +96,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuItem item = menu.add(ContextMenu.NONE, R.string.menu_remove, ContextMenu.NONE, R.string.menu_remove);
 
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = recAdapter.getItem(info.position);
 
         menu.setHeaderTitle(rec.title);
