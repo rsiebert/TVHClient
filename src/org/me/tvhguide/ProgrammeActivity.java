@@ -52,20 +52,13 @@ public class ProgrammeActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        long id = getIntent().getLongExtra("channelId", 0);
-
-        for (Channel ch : app.getChannels()) {
-            if (ch.id == id) {
-                channel = ch;
-            }
-        }
-
+        channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
         if (channel == null) {
             return;
         }
 
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        setContentView(R.layout.pr_flipper);
+        setContentView(R.layout.pr_layout);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.pr_title);
 
         va = (ViewAnimator) findViewById(R.id.pr_switcher);
