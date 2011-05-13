@@ -20,14 +20,20 @@ package org.me.tvhguide;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
+import java.util.Iterator;
+import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
 
@@ -86,11 +92,39 @@ public class ProgrammeActivity extends Activity {
                     + DateFormat.getTimeFormat(view.getContext()).format(p.start)
                     + " - "
                     + DateFormat.getTimeFormat(view.getContext()).format(p.stop));
+
+            view.setTag(p);
             va.addView(view);
         }
 
         text = (TextView) findViewById(R.id.pr_count);
         text.setText(programmeCounter + "/" + channel.epg.size());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.pr_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mi_record: {
+                Programme p = (Programme) va.getCurrentView().getTag();
+
+                Intent intent = new Intent(ProgrammeActivity.this, HTSService.class);
+                intent.setAction(HTSService.ACTION_DVR_ADD);
+                intent.putExtra("eventId", p.id);
+
+                startService(intent);
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 
     private void toggleView(boolean forward) {
