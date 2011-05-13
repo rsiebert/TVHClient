@@ -153,6 +153,15 @@ public class TVHGuideApplication extends Application {
         }
     }
 
+    public Recording getRecording(long id) {
+        for (Recording rec : getRecordings()) {
+            if (rec.id == id) {
+                return rec;
+            }
+        }
+        return null;
+    }
+
     public void removeRecording(long id) {
         for (Recording rec : getRecordings()) {
             if (rec.id == id) {

@@ -130,11 +130,9 @@ public class HTSService extends Service {
                     p.stop = response.getDate("stop");
 
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                    for (Channel ch : app.getChannels()) {
-                        if (ch.id == response.getLong("channelId")) {
-                            ch.epg.add(p);
-                            break;
-                        }
+                    Channel ch = app.getChannel(response.getLong("channelId"));
+                    if (ch != null) {
+                        ch.epg.add(p);
                     }
                 }
             });
@@ -309,27 +307,25 @@ public class HTSService extends Service {
             }
 
         } else if (method.equals("channelUpdate")) {
-            for (Channel ch : app.getChannels()) {
-                if (ch.id == response.getLong("channelId")) {
-                    ch.name = response.getString("channelName", ch.name);
-                    ch.number = response.getInt("channelNumber", ch.number);
-                    ch.icon = response.getString("channelIcon", ch.icon);
-                    ch.tags = response.getIntList("tags", ch.tags);
+            Channel ch = app.getChannel(response.getLong("channelId"));
+            if (ch != null) {
+                ch.name = response.getString("channelName", ch.name);
+                ch.number = response.getInt("channelNumber", ch.number);
+                ch.icon = response.getString("channelIcon", ch.icon);
+                ch.tags = response.getIntList("tags", ch.tags);
 
-                    //Remove programmes that have ended
-                    long eventId = response.getLong("eventId", 0);
-                    Iterator<Programme> it = ch.epg.iterator();
-                    while (it.hasNext()) {
-                        Programme p = it.next();
-                        if (p.id != eventId) {
-                            ch.epg.remove(p);
-                        }
+                //Remove programmes that have ended
+                long eventId = response.getLong("eventId", 0);
+                Iterator<Programme> it = ch.epg.iterator();
+                while (it.hasNext()) {
+                    Programme p = it.next();
+                    if (p.id != eventId) {
+                        ch.epg.remove(p);
                     }
+                }
 
-                    if (eventId > 0 && ch.epg.size() < 2) {
-                        loadProgrammes(ch, eventId, 5);
-                    }
-                    break;
+                if (eventId > 0 && ch.epg.size() < 2) {
+                    loadProgrammes(ch, eventId, 5);
                 }
             }
         } else if (method.equals("channelDelete")) {
@@ -349,16 +345,14 @@ public class HTSService extends Service {
 
             app.addRecording(rec);
         } else if (method.equals("dvrEntryUpdate")) {
-            for (Recording rec : app.getRecordings()) {
-                if (rec.id == response.getLong("id")) {
-                    rec.description = response.getString("description", rec.description);
-                    rec.error = response.getString("error", rec.error);
-                    rec.start = response.getDate("start");
-                    rec.state = response.getString("state", rec.state);
-                    rec.stop = response.getDate("stop");
-                    rec.title = response.getString("title", rec.title);
-                    break;
-                }
+            Recording rec = app.getRecording(response.getLong("id"));
+            if (rec != null) {
+                rec.description = response.getString("description", rec.description);
+                rec.error = response.getString("error", rec.error);
+                rec.start = response.getDate("start");
+                rec.state = response.getString("state", rec.state);
+                rec.stop = response.getDate("stop");
+                rec.title = response.getString("title", rec.title);
             }
         } else if (method.equals("dvrEntryDelete")) {
             app.removeRecording(response.getLong("id"));
