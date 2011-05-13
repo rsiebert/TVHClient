@@ -210,7 +210,7 @@ public class HTSService extends Service {
         username = user;
         password = pw;
 
-        if(socketChannel != null) {
+        if (socketChannel != null) {
             socketChannel.close();
         }
         socketChannel = SocketChannel.open();
