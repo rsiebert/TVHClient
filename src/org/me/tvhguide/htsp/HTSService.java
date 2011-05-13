@@ -436,21 +436,19 @@ public class HTSService extends Service {
                     return;
                 }
 
-                long id = eventId;
                 for (Object obj : response.getList("events")) {
                     Programme p = new Programme();
-                    p.id = id;
                     HTSMessage sub = (HTSMessage) obj;
                     if (sub.containsFiled("description")) {
                         p.description = sub.getString("description");
                     } else if (sub.containsFiled("ext_desc")) {
                         p.description = sub.getString("ext_desc");
                     }
+                    p.id = sub.getLong("eventId");
                     p.title = sub.getString("title");
                     p.start = sub.getDate("start");
                     p.stop = sub.getDate("stop");
                     ch.epg.add(p);
-                    id = sub.getLong("nextEventId", id);
                 }
             }
         });
