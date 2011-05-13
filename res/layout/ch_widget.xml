@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="64sp"
         android:layout_height="64sp"
-        android:padding="3dip"
+        android:layout_margin="3dip"
         android:id="@+id/ch_icon">
     </ImageView>
     <LinearLayout

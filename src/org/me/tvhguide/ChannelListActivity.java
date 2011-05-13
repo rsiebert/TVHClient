@@ -308,7 +308,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             }
 
             wrapper.name.setText(ch.name);
-            wrapper.icon.setImageBitmap(ch.iconBitmap);
+            wrapper.icon.setBackgroundDrawable(ch.iconBitmap);
             //Reset
             wrapper.nowTime.setText("");
             wrapper.nowTitle.setText("");

@@ -22,6 +22,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -376,7 +377,7 @@ public class HTSService extends Service {
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setDoInput(true);
                     conn.connect();
-                    ch.iconBitmap = BitmapFactory.decodeStream(conn.getInputStream());
+                    ch.iconBitmap = new BitmapDrawable(BitmapFactory.decodeStream(conn.getInputStream()));
                 } catch (Throwable ex) {
                 }
 
