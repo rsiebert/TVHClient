@@ -103,8 +103,10 @@ public class HTSService extends Service {
         } else if (ACTION_REFRESH.equals(intent.getAction())) {
             try {
                 TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                //TODO: fix memory leak
                 app.getChannelTags().clear();
                 app.getChannels().clear();
+                app.getRecordings().clear();
                 connect(intent, true);
             } catch (Throwable ex) {
                 Log.e(TAG, "Can't connect to server", ex);
