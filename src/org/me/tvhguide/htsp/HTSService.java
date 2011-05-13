@@ -59,6 +59,7 @@ public class HTSService extends Service {
     public static final String ACTION_GET_EVENT = "org.me.tvhguide.htsp.GET_EVENT";
     public static final String ACTION_DVR_ADD = "org.me.tvhguide.htsp.DVR_ADD";
     public static final String ACTION_DVR_DELETE = "org.me.tvhguide.htsp.DVR_DELETE";
+    public static final String ACTION_DVR_CANCEL = "org.me.tvhguide.htsp.DVR_CANCEL";
     private static final String TAG = "HTSService";
     private SelectionThread t;
     private ByteBuffer inBuf;
@@ -160,6 +161,21 @@ public class HTSService extends Service {
         } else if (ACTION_DVR_DELETE.equals(intent.getAction())) {
             HTSMessage request = new HTSMessage();
             request.setMethod("deleteDvrEntry");
+            request.putField("id", intent.getLongExtra("id", 0));
+            request.putField("seq", seq);
+            requestQue.add(request);
+            responseHandelers.put(seq, new HTSResponseListener() {
+
+                public void handleResonse(HTSMessage response) throws Exception {
+
+                    boolean success = response.getInt("success", 0) == 1;
+                }
+            });
+            seq++;
+            t.register(socketChannel, SelectionKey.OP_WRITE, true);
+        } else if (ACTION_DVR_CANCEL.equals(intent.getAction())) {
+            HTSMessage request = new HTSMessage();
+            request.setMethod("cancelDvrEntry");
             request.putField("id", intent.getLongExtra("id", 0));
             request.putField("seq", seq);
             requestQue.add(request);

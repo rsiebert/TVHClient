@@ -94,9 +94,16 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         Recording rec = recAdapter.getItem(info.position);
-        
+
+        menu.setHeaderTitle(rec.title);
         Intent intent = new Intent(RecordingListActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_DELETE);
+        intent.putExtra("id", rec.id);
+        item.setIntent(intent);
+
+        item = menu.add(ContextMenu.NONE, R.string.menu_cancel, ContextMenu.NONE, R.string.menu_cancel);
+        intent = new Intent(RecordingListActivity.this, HTSService.class);
+        intent.setAction(HTSService.ACTION_DVR_CANCEL);
         intent.putExtra("id", rec.id);
         item.setIntent(intent);
     }
@@ -104,6 +111,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.string.menu_cancel:
             case R.string.menu_remove: {
                 startService(item.getIntent());
                 return true;
