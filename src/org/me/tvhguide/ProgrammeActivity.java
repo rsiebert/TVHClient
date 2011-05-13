@@ -32,7 +32,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
-import java.util.Iterator;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;

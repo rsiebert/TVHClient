@@ -221,19 +221,19 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             if (rec.error != null) {
                 wrapper.message.setText(rec.error == null ? rec.state : rec.error);
                 wrapper.icon.setImageResource(R.drawable.ic_error_small);
-            } else if("completed".equals(rec.state)) {
+            } else if ("completed".equals(rec.state)) {
                 wrapper.message.setText(getString(R.string.pvr_completed));
                 wrapper.icon.setImageResource(R.drawable.ic_success_small);
-            } else if("invalid".equals(rec.state)) {
+            } else if ("invalid".equals(rec.state)) {
                 wrapper.message.setText(getString(R.string.pvr_invalid));
                 wrapper.icon.setImageResource(R.drawable.ic_error_small);
-            } else if("missed".equals(rec.state)) {
+            } else if ("missed".equals(rec.state)) {
                 wrapper.message.setText(getString(R.string.pvr_missed));
                 wrapper.icon.setImageResource(R.drawable.ic_error_small);
-            } else if("recording".equals(rec.state)) {
+            } else if ("recording".equals(rec.state)) {
                 wrapper.message.setText(getString(R.string.pvr_recording));
                 wrapper.icon.setImageResource(R.drawable.ic_rec_small);
-            } else if("scheduled".equals(rec.state)) {
+            } else if ("scheduled".equals(rec.state)) {
                 wrapper.message.setText(getString(R.string.pvr_scheduled));
                 wrapper.icon.setImageDrawable(null);
             } else {
