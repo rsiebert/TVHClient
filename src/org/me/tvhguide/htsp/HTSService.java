@@ -342,7 +342,9 @@ public class HTSService extends Service {
             rec.stop = response.getDate("stop");
             rec.title = response.getString("title", null);
             rec.channel = app.getChannel(response.getLong("channel"));
-
+            if (rec.channel != null) {
+                rec.channel.recordings.add(rec);
+            }
             app.addRecording(rec);
         } else if (method.equals("dvrEntryUpdate")) {
             Recording rec = app.getRecording(response.getLong("id"));
@@ -355,7 +357,11 @@ public class HTSService extends Service {
                 rec.title = response.getString("title", rec.title);
             }
         } else if (method.equals("dvrEntryDelete")) {
-            app.removeRecording(response.getLong("id"));
+            Recording rec = app.getRecording(response.getLong("id"));
+            if (rec.channel != null) {
+                rec.channel.recordings.remove(rec);
+            }
+            app.removeRecording(rec);
         } else {
             Log.d(TAG, method.toString());
         }

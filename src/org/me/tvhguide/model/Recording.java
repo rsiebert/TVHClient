@@ -24,7 +24,7 @@ import java.util.Date;
  *
  * @author john-tornblom
  */
-public class Recording {
+public class Recording implements Comparable<Recording> {
 
     public long id;
     public Date start;
@@ -34,4 +34,8 @@ public class Recording {
     public String state;
     public String error;
     public Channel channel;
+
+    public int compareTo(Recording that) {
+        return (int) (this.start.getTime() - that.start.getTime());
+    }
 }

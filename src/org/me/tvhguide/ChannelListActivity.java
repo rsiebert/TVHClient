@@ -309,6 +309,11 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
             wrapper.name.setText(ch.name);
             wrapper.icon.setBackgroundDrawable(ch.iconBitmap);
+            if(ch.isRecording()) {
+                wrapper.icon.setImageResource(R.drawable.ic_rec_small);
+            } else {
+                wrapper.icon.setImageDrawable(null);
+            }
             //Reset
             wrapper.nowTime.setText("");
             wrapper.nowTitle.setText("");

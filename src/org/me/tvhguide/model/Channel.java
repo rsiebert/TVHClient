@@ -34,6 +34,7 @@ public class Channel implements Comparable<Channel> {
     public String icon;
     public int number;
     public Set<Programme> epg = new ConcurrentSkipListSet<Programme>();
+    public Set<Recording> recordings = new ConcurrentSkipListSet<Recording>();
     public BitmapDrawable iconBitmap;
     public List<Integer> tags;
 
@@ -44,6 +45,15 @@ public class Channel implements Comparable<Channel> {
     public boolean hasTag(long id) {
         for (Integer i : tags) {
             if (i == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isRecording() {
+        for (Recording rec : recordings) {
+            if ("recording".equals(rec.state)) {
                 return true;
             }
         }

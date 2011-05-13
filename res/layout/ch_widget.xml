@@ -7,6 +7,7 @@
         android:layout_width="64sp"
         android:layout_height="64sp"
         android:layout_margin="3dip"
+        android:scaleType="matrix"
         android:id="@+id/ch_icon">
     </ImageView>
     <LinearLayout
