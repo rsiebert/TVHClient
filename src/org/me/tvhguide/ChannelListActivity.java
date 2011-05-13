@@ -18,18 +18,19 @@
  */
 package org.me.tvhguide;
 
+import android.content.DialogInterface;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Channel;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.drawable.ClipDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -77,7 +78,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_CONNECT);
         startService(intent);
-        registerForContextMenu(getListView());
     }
 
     @Override
@@ -109,51 +109,51 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             case R.id.mi_help: {
                 return true;
             }
+            case R.id.mi_tags: {
+                final TVHGuideApplication app = (TVHGuideApplication) getApplication();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.menu_tags);
+
+                final ArrayAdapter<ChannelTag> tagAdapter = new ArrayAdapter<ChannelTag>(
+                        this,
+                        android.R.layout.simple_dropdown_item_1line,
+                        app.getChannelTags());
+
+                builder.setAdapter(tagAdapter, new OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int pos) {
+
+                        chAdapter.clear();
+                        ChannelTag tag = tagAdapter.getItem(pos);
+                        for (Channel ch : app.getChannels()) {
+                            if (ch.hasTag(tag.id)) {
+                                chAdapter.add(ch);
+                            }
+                        }
+
+                        chAdapter.sort(new Comparator<Channel>() {
+
+                            public int compare(Channel x, Channel y) {
+                                return x.number - y.number;
+                            }
+                        });
+
+                        chAdapter.notifyDataSetChanged();
+                    }
+                });
+
+                builder.show();
+
+                return true;
+            }
+            case R.id.mi_search: {
+                return true;
+            }
             default: {
                 return super.onOptionsItemSelected(item);
             }
         }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        menu.setHeaderTitle(R.string.menu_tags);
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        menu.add(0, R.string.pr_all_channels, 0, getString(R.string.pr_all_channels));
-
-        for (ChannelTag tag : app.getChannelTags()) {
-            menu.add(0, tag.hashCode(), 0, tag.name);
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        long id = 0;
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        for (ChannelTag tag : app.getChannelTags()) {
-            if (tag.hashCode() == item.getItemId()) {
-                id = tag.id;
-            }
-        }
-
-        chAdapter.clear();
-        for (Channel ch : app.getChannels()) {
-            if (id == 0 || ch.hasTag(id)) {
-                chAdapter.add(ch);
-            }
-        }
-
-        chAdapter.sort(new Comparator<Channel>() {
-
-            public int compare(Channel x, Channel y) {
-                return x.number - y.number;
-            }
-        });
-
-        chAdapter.notifyDataSetChanged();
-        return id != 0;
     }
 
     @Override

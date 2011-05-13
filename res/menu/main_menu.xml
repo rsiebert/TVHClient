@@ -4,6 +4,10 @@
           android:icon="@android:drawable/ic_menu_save"
           android:title="@string/tab_recordings" />
 
+    <item android:id="@+id/mi_tags"
+          android:icon="@android:drawable/ic_menu_delete"
+          android:title="@string/menu_tags" />
+
     <item android:id="@+id/mi_settings"
           android:icon="@android:drawable/ic_menu_preferences"
           android:title="@string/menu_settings" />
