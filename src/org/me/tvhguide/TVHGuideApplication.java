@@ -177,4 +177,15 @@ public class TVHGuideApplication extends Application {
         }
         loading = b;
     }
+
+    public void clearAll() {
+        tags.clear();
+        recordings.clear();
+
+        for (Channel ch : channels) {
+            ch.epg.clear();
+            ch.recordings.clear();
+        }
+        channels.clear();
+    }
 }

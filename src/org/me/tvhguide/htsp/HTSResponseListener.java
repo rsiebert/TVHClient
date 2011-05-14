@@ -24,5 +24,5 @@ package org.me.tvhguide.htsp;
  */
 public interface HTSResponseListener {
 
-    public void handleResonse(HTSMessage response) throws Exception;
+    public void handleResponse(HTSMessage response) throws Exception;
 }

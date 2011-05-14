@@ -104,90 +104,21 @@ public class HTSService extends Service {
         } else if (ACTION_REFRESH.equals(intent.getAction())) {
             try {
                 TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                //TODO: fix memory leak
-                app.getChannelTags().clear();
-                app.getChannels().clear();
-                app.getRecordings().clear();
+                app.clearAll();
                 connect(intent, true);
             } catch (Throwable ex) {
                 Log.e(TAG, "Can't connect to server", ex);
             }
         } else if (ACTION_GET_EVENT.equals(intent.getAction())) {
-            HTSMessage request = new HTSMessage();
-            request.setMethod("getEvent");
-            request.putField("eventId", intent.getStringExtra("eventId"));
-            request.putField("seq", seq);
-            requestQue.add(request);
-            responseHandelers.put(seq, new HTSResponseListener() {
-
-                public void handleResonse(HTSMessage response) throws Exception {
-                    Programme p = new Programme();
-                    p.id = response.getLong("eventId");
-                    if (response.containsFiled("ext_desc")) {
-                        p.description = response.getString("ext_desc");
-                    } else if (response.containsFiled("description")) {
-                        p.description = response.getString("description");
-                    }
-                    p.title = response.getString("title");
-                    p.start = response.getDate("start");
-                    p.stop = response.getDate("stop");
-
-                    TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                    Channel ch = app.getChannel(response.getLong("channelId"));
-                    if (ch != null) {
-                        ch.epg.add(p);
-                    }
-                }
-            });
-            seq++;
-            t.register(socketChannel, SelectionKey.OP_WRITE, true);
+            getEvent(intent.getLongExtra("eventId", 0));
         } else if (ACTION_DVR_ADD.equals(intent.getAction())) {
-            HTSMessage request = new HTSMessage();
-            request.setMethod("addDvrEntry");
-            request.putField("eventId", intent.getLongExtra("eventId", 0));
-            request.putField("seq", seq);
-            requestQue.add(request);
-            responseHandelers.put(seq, new HTSResponseListener() {
-
-                public void handleResonse(HTSMessage response) throws Exception {
-
-                    boolean success = response.getInt("success", 0) == 1;
-                    String error = response.getString("error", null);
-                }
-            });
-            seq++;
-            t.register(socketChannel, SelectionKey.OP_WRITE, true);
+            addDvrEntry(intent.getLongExtra("eventId", 0));
         } else if (ACTION_DVR_DELETE.equals(intent.getAction())) {
-            HTSMessage request = new HTSMessage();
-            request.setMethod("deleteDvrEntry");
-            request.putField("id", intent.getLongExtra("id", 0));
-            request.putField("seq", seq);
-            requestQue.add(request);
-            responseHandelers.put(seq, new HTSResponseListener() {
-
-                public void handleResonse(HTSMessage response) throws Exception {
-
-                    boolean success = response.getInt("success", 0) == 1;
-                }
-            });
-            seq++;
-            t.register(socketChannel, SelectionKey.OP_WRITE, true);
+            deleteDvrEntry(intent.getLongExtra("id", 0));
         } else if (ACTION_DVR_CANCEL.equals(intent.getAction())) {
-            HTSMessage request = new HTSMessage();
-            request.setMethod("cancelDvrEntry");
-            request.putField("id", intent.getLongExtra("id", 0));
-            request.putField("seq", seq);
-            requestQue.add(request);
-            responseHandelers.put(seq, new HTSResponseListener() {
-
-                public void handleResonse(HTSMessage response) throws Exception {
-
-                    boolean success = response.getInt("success", 0) == 1;
-                }
-            });
-            seq++;
-            t.register(socketChannel, SelectionKey.OP_WRITE, true);
+            cancelDvrEntry(intent.getLongExtra("id", 0));
         } else if (ACTION_EPG_QUERY.equals(intent.getAction())) {
+            epgQuery(intent.getStringExtra("query"));
         }
 
         return START_NOT_STICKY;
@@ -247,7 +178,7 @@ public class HTSService extends Service {
 
                 responseHandelers.put(seq, new HTSResponseListener() {
 
-                    public void handleResonse(HTSMessage response) throws Exception {
+                    public void handleResponse(HTSMessage response) throws Exception {
                         MessageDigest md = MessageDigest.getInstance("SHA1");
                         md.update(password.getBytes());
                         md.update(response.getByteArray("challenge"));
@@ -308,7 +239,7 @@ public class HTSService extends Service {
 
         if (response.containsKey("seq")) {
             int respSeq = response.getInt("seq");
-            responseHandelers.get(respSeq).handleResonse(response);
+            responseHandelers.get(respSeq).handleResponse(response);
             responseHandelers.remove(respSeq);
             return;
         }
@@ -349,12 +280,12 @@ public class HTSService extends Service {
             app.addChannel(ch);
 
             if (ch.icon != null) {
-                loadChannelIcon(ch);
+                getChannelIcon(ch);
             }
 
             long eventId = response.getLong("eventId", 0);
             if (eventId > 0) {
-                loadProgrammes(ch, eventId, 5);
+                getEvents(ch, eventId, 5);
             }
 
         } else if (method.equals("channelUpdate")) {
@@ -376,7 +307,7 @@ public class HTSService extends Service {
                 }
 
                 if (eventId > 0 && ch.epg.size() < 2) {
-                    loadProgrammes(ch, eventId, 5);
+                    getEvents(ch, eventId, 5);
                 }
             }
         } else if (method.equals("channelDelete")) {
@@ -418,7 +349,7 @@ public class HTSService extends Service {
         }
     }
 
-    private void loadChannelIcon(final Channel ch) {
+    private void getChannelIcon(final Channel ch) {
         new Thread(new Runnable() {
 
             public void run() {
@@ -436,7 +367,7 @@ public class HTSService extends Service {
         }).start();
     }
 
-    private void loadProgrammes(final Channel ch, final long eventId, int cnt) {
+    private void getEvents(final Channel ch, final long eventId, int cnt) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getEvents");
         request.putField("eventId", eventId);
@@ -445,7 +376,7 @@ public class HTSService extends Service {
 
         responseHandelers.put(seq, new HTSResponseListener() {
 
-            public void handleResonse(HTSMessage response) throws Exception {
+            public void handleResponse(HTSMessage response) throws Exception {
 
                 if (!response.containsKey("events")) {
                     return;
@@ -469,5 +400,110 @@ public class HTSService extends Service {
         });
         requestQue.add(request);
         seq++;
+    }
+
+    private void getEvent(long eventId) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getEvent");
+        request.putField("eventId", eventId);
+        request.putField("seq", seq);
+        requestQue.add(request);
+        responseHandelers.put(seq, new HTSResponseListener() {
+
+            public void handleResponse(HTSMessage response) throws Exception {
+                Programme p = new Programme();
+                p.id = response.getLong("eventId");
+                if (response.containsFiled("ext_desc")) {
+                    p.description = response.getString("ext_desc");
+                } else if (response.containsFiled("description")) {
+                    p.description = response.getString("description");
+                }
+                p.title = response.getString("title");
+                p.start = response.getDate("start");
+                p.stop = response.getDate("stop");
+
+                TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                Channel ch = app.getChannel(response.getLong("channelId"));
+                if (ch != null) {
+                    ch.epg.add(p);
+                }
+            }
+        });
+        seq++;
+        t.register(socketChannel, SelectionKey.OP_WRITE, true);
+    }
+
+    private void epgQuery(String query) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("epgQuery");
+        request.putField("query", query);
+        request.putField("seq", seq);
+        requestQue.add(request);
+        responseHandelers.put(seq, new HTSResponseListener() {
+
+            public void handleResponse(HTSMessage response) throws Exception {
+
+                if (!response.containsKey("eventIds")) {
+                    return;
+                }
+
+                for (Long id : response.getLongList("eventIds")) {
+                }
+            }
+        });
+        seq++;
+        t.register(socketChannel, SelectionKey.OP_WRITE, true);
+    }
+
+    private void cancelDvrEntry(long id) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("cancelDvrEntry");
+        request.putField("id", id);
+        request.putField("seq", seq);
+        requestQue.add(request);
+        responseHandelers.put(seq, new HTSResponseListener() {
+
+            public void handleResponse(HTSMessage response) throws Exception {
+
+                boolean success = response.getInt("success", 0) == 1;
+            }
+        });
+        seq++;
+        t.register(socketChannel, SelectionKey.OP_WRITE, true);
+    }
+
+    private void deleteDvrEntry(long id) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("deleteDvrEntry");
+        request.putField("id", id);
+        request.putField("seq", seq);
+        requestQue.add(request);
+        responseHandelers.put(seq, new HTSResponseListener() {
+
+            public void handleResponse(HTSMessage response) throws Exception {
+
+                boolean success = response.getInt("success", 0) == 1;
+            }
+        });
+        seq++;
+        t.register(socketChannel, SelectionKey.OP_WRITE, true);
+    }
+
+    private void addDvrEntry(long eventId) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("addDvrEntry");
+        request.putField("eventId", eventId);
+        request.putField("seq", seq);
+        requestQue.add(request);
+        responseHandelers.put(seq, new HTSResponseListener() {
+
+            public void handleResponse(HTSMessage response) throws Exception {
+
+                boolean success = response.getInt("success", 0) == 1;
+                String error = response.getString("error", null);
+            }
+        });
+        seq++;
+        t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 }
