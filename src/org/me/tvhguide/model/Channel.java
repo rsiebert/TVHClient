@@ -18,7 +18,7 @@
  */
 package org.me.tvhguide.model;
 
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -34,9 +34,9 @@ public class Channel implements Comparable<Channel> {
     public String name;
     public String icon;
     public int number;
+    public Drawable iconDrawable;
     public Set<Programme> epg = Collections.synchronizedSortedSet(new TreeSet<Programme>());
     public Set<Recording> recordings = Collections.synchronizedSortedSet(new TreeSet<Recording>());
-    public BitmapDrawable iconBitmap;
     public List<Integer> tags;
 
     public int compareTo(Channel that) {

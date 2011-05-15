@@ -21,20 +21,20 @@ package org.me.tvhguide.htsp;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -362,11 +362,10 @@ public class HTSService extends Service {
             public void run() {
 
                 try {
-                    URL url = new URL(ch.icon);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setDoInput(true);
-                    conn.connect();
-                    ch.iconBitmap = new BitmapDrawable(BitmapFactory.decodeStream(conn.getInputStream()));
+                    InputStream inputStream = new URL(ch.getIcon()).openStream();
+                    ch.setDrawableIcon(Drawable.createFromStream(inputStream, ch.getIcon()));
+                    TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                    app.updateChannel(ch);
                 } catch (Throwable ex) {
                 }
 
