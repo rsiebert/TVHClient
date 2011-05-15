@@ -216,7 +216,14 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     chAdapter.remove((Channel) obj);
                     chAdapter.notifyDataSetChanged();
                     chAdapter.sort();
+                }
+            });
+        } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
+            runOnUiThread(new Runnable() {
 
+                public void run() {
+                    Channel channel = (Channel) obj;
+                    chAdapter.updateView(getListView(), channel);
                 }
             });
         }
@@ -224,15 +231,16 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
     private class ViewWarpper {
 
-        TextView name;
-        TextView nowTitle;
-        TextView nowTime;
-        TextView nextTitle;
-        TextView nextTime;
-        ImageView icon;
-        ClipDrawable nowProgress;
+        private TextView name;
+        private TextView nowTitle;
+        private TextView nowTime;
+        private TextView nextTitle;
+        private TextView nextTime;
+        private ImageView icon;
+        private ClipDrawable nowProgress;
+        public final long channelId;
 
-        public ViewWarpper(View base) {
+        public ViewWarpper(View base, long channelId) {
             name = (TextView) base.findViewById(R.id.ch_name);
             nowTitle = (TextView) base.findViewById(R.id.ch_now_title);
 
@@ -247,6 +255,56 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
             nextTime = (TextView) base.findViewById(R.id.ch_next_time);
             icon = (ImageView) base.findViewById(R.id.ch_icon);
+
+            this.channelId = channelId;
+        }
+
+        public void repaint(Channel channel) {
+            nowTime.setText("");
+            nowTitle.setText("");
+            nextTime.setText("");
+            nextTitle.setText("");
+            nowProgress.setLevel(0);
+
+            name.setText(channel.getName());
+            name.invalidate();
+            icon.setBackgroundDrawable(channel.getDrawableIcon());
+            if (channel.isRecording()) {
+                icon.setImageResource(R.drawable.ic_rec_small);
+            } else {
+                icon.setImageDrawable(null);
+            }
+            icon.invalidate();
+
+            Iterator<Programme> it = channel.epg.iterator();
+            if (it.hasNext()) {
+                Programme p = it.next();
+                nowTime.setText(
+                        DateFormat.getTimeFormat(nowTime.getContext()).format(p.start)
+                        + " - "
+                        + DateFormat.getTimeFormat(nowTime.getContext()).format(p.stop));
+
+                double duration = (p.stop.getTime() - p.start.getTime());
+                double elapsed = new Date().getTime() - p.start.getTime();
+                double percent = elapsed / duration;
+
+                nowProgress.setLevel((int) Math.floor(percent * 10000));
+                nowTitle.setText(p.title);
+            }
+            nowTime.invalidate();
+            nowTitle.invalidate();
+
+            if (it.hasNext()) {
+                Programme p = it.next();
+                nextTime.setText(
+                        DateFormat.getTimeFormat(nextTime.getContext()).format(p.start)
+                        + " - "
+                        + DateFormat.getTimeFormat(nextTime.getContext()).format(p.stop));
+
+                nextTitle.setText(p.title);
+            }
+            nextTime.invalidate();
+            nextTitle.invalidate();
         }
     }
 
@@ -270,6 +328,21 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             });
         }
 
+        public void updateView(ListView listView, Channel channel) {
+            for (int i = 0; i < listView.getChildCount(); i++) {
+                View view = listView.getChildAt(i);
+
+                if (view.getTag() == null) {
+                    continue;
+                }
+                ViewWarpper wrapper = (ViewWarpper) view.getTag();
+                if (wrapper.channelId == channel.id) {
+                    wrapper.repaint(channel);
+                    break;
+                }
+            }
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
@@ -280,53 +353,15 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
                 row = inflater.inflate(R.layout.ch_widget, null, false);
-
-                wrapper = new ViewWarpper(row);
+                row.requestLayout();
+                wrapper = new ViewWarpper(row, ch.id);
                 row.setTag(wrapper);
 
             } else {
                 wrapper = (ViewWarpper) row.getTag();
             }
 
-            wrapper.name.setText(ch.name);
-            wrapper.icon.setBackgroundDrawable(ch.iconBitmap);
-            if (ch.isRecording()) {
-                wrapper.icon.setImageResource(R.drawable.ic_rec_small);
-            } else {
-                wrapper.icon.setImageDrawable(null);
-            }
-            //Reset
-            wrapper.nowTime.setText("");
-            wrapper.nowTitle.setText("");
-            wrapper.nextTime.setText("");
-            wrapper.nextTitle.setText("");
-            wrapper.nowProgress.setLevel(0);
-
-            Iterator<Programme> it = ch.epg.iterator();
-            if (it.hasNext()) {
-                Programme p = it.next();
-                wrapper.nowTime.setText(
-                        DateFormat.getTimeFormat(getContext()).format(p.start)
-                        + " - "
-                        + DateFormat.getTimeFormat(getContext()).format(p.stop));
-
-                double duration = (p.stop.getTime() - p.start.getTime());
-                double elapsed = new Date().getTime() - p.start.getTime();
-                double percent = elapsed / duration;
-
-                wrapper.nowProgress.setLevel((int) Math.floor(percent * 10000));
-                wrapper.nowTitle.setText(p.title);
-            }
-            if (it.hasNext()) {
-                Programme p = it.next();
-                wrapper.nextTime.setText(
-                        DateFormat.getTimeFormat(getContext()).format(p.start)
-                        + " - "
-                        + DateFormat.getTimeFormat(getContext()).format(p.stop));
-
-                wrapper.nextTitle.setText(p.title);
-            }
-
+            wrapper.repaint(ch);
             return row;
         }
     }
