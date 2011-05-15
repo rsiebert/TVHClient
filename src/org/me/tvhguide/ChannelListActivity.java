@@ -194,10 +194,13 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     }
 
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                    chAdapter.list.clear();
-                    chAdapter.list.addAll(app.getChannels());
-                    chAdapter.notifyDataSetChanged();
+                    chAdapter.clear();
+                    for(Channel ch : app.getChannels()) {
+                        chAdapter.add(ch);
+                    }
                     chAdapter.sort();
+                    chAdapter.notifyDataSetChanged();
+                    
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
@@ -310,13 +313,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
     class ChannelListAdapter extends ArrayAdapter<Channel> {
 
-        Activity context;
-        List<Channel> list;
-
         ChannelListAdapter(Activity context, List<Channel> list) {
             super(context, R.layout.ch_widget, list);
-            this.context = context;
-            this.list = list;
         }
 
         public void sort() {
@@ -348,10 +346,11 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             View row = convertView;
             ViewWarpper wrapper = null;
 
-            Channel ch = list.get(position);
+            Channel ch = getItem(position);
+            Activity activity = (Activity) getContext();
 
             if (row == null) {
-                LayoutInflater inflater = context.getLayoutInflater();
+                LayoutInflater inflater = activity.getLayoutInflater();
                 row = inflater.inflate(R.layout.ch_widget, null, false);
                 row.requestLayout();
                 wrapper = new ViewWarpper(row, ch.id);
