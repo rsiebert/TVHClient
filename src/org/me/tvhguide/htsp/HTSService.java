@@ -299,13 +299,17 @@ public class HTSService extends Service {
                 //Remove programmes that have ended
                 long eventId = response.getLong("eventId", 0);
                 Iterator<Programme> it = ch.epg.iterator();
+                ArrayList<Programme> tmp = new ArrayList<Programme>();
+
                 while (it.hasNext()) {
                     Programme p = it.next();
                     if (p.id != eventId) {
-                        ch.epg.remove(p);
+                        tmp.add(p);
+                    } else {
+                        break;
                     }
                 }
-
+                ch.epg.removeAll(tmp);
                 if (eventId > 0 && ch.epg.size() < 2) {
                     getEvents(ch, eventId, 5);
                 }
