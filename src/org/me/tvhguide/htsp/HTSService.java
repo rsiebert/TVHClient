@@ -97,16 +97,16 @@ public class HTSService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (ACTION_CONNECT.equals(intent.getAction())) {
             try {
-                connect(intent, false);
+                connect(false);
             } catch (Throwable ex) {
+                showError(R.string.err_connect);
                 Log.e(TAG, "Can't connect to server", ex);
             }
         } else if (ACTION_REFRESH.equals(intent.getAction())) {
             try {
-                TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                app.clearAll();
-                connect(intent, true);
+                connect(true);
             } catch (Throwable ex) {
+                showError(R.string.err_connect);
                 Log.e(TAG, "Can't connect to server", ex);
             }
         } else if (ACTION_GET_EVENT.equals(intent.getAction())) {
@@ -124,7 +124,7 @@ public class HTSService extends Service {
         return START_NOT_STICKY;
     }
 
-    private boolean connect(Intent intent, boolean force) throws IOException {
+    private void connect(boolean force) throws IOException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String host = prefs.getString("serverHostPref", "localhost");
         int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
@@ -132,28 +132,41 @@ public class HTSService extends Service {
         String user = prefs.getString("usernamePref", "");
         String pw = prefs.getString("passwordPref", "");
 
-        if (!force && ad.equals(addr) && user.equals(username) && pw.equals(password)) {
-            return false;
+        if (!ad.equals(addr)
+                || !user.equals(username)
+                || !pw.equals(password)
+                || (socketChannel != null && !socketChannel.isConnected())
+                || force) {
+
+            addr = ad;
+            username = user;
+            password = pw;
+
+            if (socketChannel != null) {
+                t.close(socketChannel);
+            }
+
+            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+            app.clearAll();
+
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(false);
+            socketChannel.connect(addr);
+            t.register(socketChannel, SelectionKey.OP_CONNECT, true);
         }
-
-        addr = ad;
-        username = user;
-        password = pw;
-
-        if (socketChannel != null) {
-            socketChannel.close();
-        }
-        socketChannel = SocketChannel.open();
-        socketChannel.configureBlocking(false);
-        socketChannel.connect(addr);
-        t.register(socketChannel, SelectionKey.OP_CONNECT, true);
-
-        return true;
     }
 
     @Override
     public void onDestroy() {
         t.setRunning(false);
+    }
+
+    private void showError(final String error) {
+        Log.d(TAG, error);
+    }
+
+    private void showError(int recourceId) {
+        showError(getString(recourceId));
     }
 
     @Override
@@ -227,24 +240,39 @@ public class HTSService extends Service {
                 }
                 break;
             }
+            case -1: {
+                showError(R.string.err_con_lost);
+                socketChannel = null;
+                break;
+            }
             default:
                 return;
         }
     }
 
     private void handleResponse(HTSMessage response) throws Exception {
-        if (!response.containsKey("method") && !response.containsKey("seq")) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+
+        if (response.containsFiled("error")) {
+            showError(response.getString("error"));
+            app.setLoading(false);
+        }
+
+        if (1 == response.getInt("noaccess", 0)) {
+            showError(R.string.err_auth);
+            app.setLoading(false);
+        }
+
+        if (!response.containsFiled("method") && !response.containsFiled("seq")) {
             return;
         }
 
-        if (response.containsKey("seq")) {
+        if (response.containsFiled("seq")) {
             int respSeq = response.getInt("seq");
             responseHandelers.get(respSeq).handleResponse(response);
             responseHandelers.remove(respSeq);
             return;
         }
-
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
         String method = response.getMethod();
         if (method.equals("tagAdd")) {

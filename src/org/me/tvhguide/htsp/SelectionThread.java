@@ -25,6 +25,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.AbstractSelectableChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
@@ -52,6 +53,16 @@ public abstract class SelectionThread extends Thread {
         try {
             lock.lock();
             running = false;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    void close(AbstractSelectableChannel channel) throws IOException {
+        lock.lock();
+        try {
+            regBuf.remove(channel);
+            channel.close();
         } finally {
             lock.unlock();
         }
@@ -136,17 +147,21 @@ public abstract class SelectionThread extends Thread {
 
         try {
             lock.lock();
+            ArrayList<AbstractSelectableChannel> tmp = new ArrayList<AbstractSelectableChannel>();
             for (AbstractSelectableChannel ch : regBuf.keySet()) {
                 try {
                     int ops = regBuf.get(ch);
                     ch.register(selector, ops);
                 } catch (Throwable t) {
-                    regBuf.remove(ch);
+                    tmp.add(ch);
                     Log.e(TAG, "Can't register channel", t);
                     if (ch instanceof SocketChannel) {
                         onError((SocketChannel) ch);
                     }
                 }
+            }
+            for (AbstractSelectableChannel ch : tmp) {
+                regBuf.remove(ch);
             }
         } finally {
             lock.unlock();

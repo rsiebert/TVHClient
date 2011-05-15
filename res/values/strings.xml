@@ -28,6 +28,8 @@
 
     <string name="err_auth">Access denied</string>
     <string name="err_inv">Invalid response from server</string>
+    <string name="err_connect">Can\'t connect to server</string>
+    <string name="err_con_lost">Lost connection to server</string>
 
     <string name="inf_load">Loading...</string>
     <string name="inf_load_ext">Please wait a few seconds...</string>
