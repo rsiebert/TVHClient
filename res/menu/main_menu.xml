@@ -5,7 +5,7 @@
           android:title="@string/tab_recordings" />
 
     <item android:id="@+id/mi_tags"
-          android:icon="@android:drawable/ic_menu_delete"
+          android:icon="@drawable/ic_menu_tags"
           android:title="@string/menu_tags" />
 
     <item android:id="@+id/mi_settings"
