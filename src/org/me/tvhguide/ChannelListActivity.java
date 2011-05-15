@@ -68,12 +68,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         List<Channel> chList = new ArrayList<Channel>();
         chList.addAll(app.getChannels());
         chAdapter = new ChannelListAdapter(this, chList);
-        chAdapter.sort(new Comparator<Channel>() {
-
-            public int compare(Channel x, Channel y) {
-                return x.number - y.number;
-            }
-        });
+        chAdapter.sort();
         setListAdapter(chAdapter);
         Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_CONNECT);
@@ -131,14 +126,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                                 chAdapter.add(ch);
                             }
                         }
-
-                        chAdapter.sort(new Comparator<Channel>() {
-
-                            public int compare(Channel x, Channel y) {
-                                return x.number - y.number;
-                            }
-                        });
-
+                        chAdapter.sort();
                         chAdapter.notifyDataSetChanged();
                     }
                 });
@@ -209,12 +197,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     chAdapter.list.clear();
                     chAdapter.list.addAll(app.getChannels());
                     chAdapter.notifyDataSetChanged();
-                    chAdapter.sort(new Comparator<Channel>() {
-
-                        public int compare(Channel x, Channel y) {
-                            return x.number - y.number;
-                        }
-                    });
+                    chAdapter.sort();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
@@ -223,12 +206,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 public void run() {
                     chAdapter.add((Channel) obj);
                     chAdapter.notifyDataSetChanged();
-                    chAdapter.sort(new Comparator<Channel>() {
-
-                        public int compare(Channel x, Channel y) {
-                            return x.number - y.number;
-                        }
-                    });
+                    chAdapter.sort();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_DELETE)) {
@@ -237,12 +215,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 public void run() {
                     chAdapter.remove((Channel) obj);
                     chAdapter.notifyDataSetChanged();
-                    chAdapter.sort(new Comparator<Channel>() {
+                    chAdapter.sort();
 
-                        public int compare(Channel x, Channel y) {
-                            return x.number - y.number;
-                        }
-                    });
                 }
             });
         }
@@ -285,6 +259,15 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             super(context, R.layout.ch_widget, list);
             this.context = context;
             this.list = list;
+        }
+
+        public void sort() {
+            sort(new Comparator<Channel>() {
+
+                public int compare(Channel x, Channel y) {
+                    return x.compareTo(y);
+                }
+            });
         }
 
         @Override
