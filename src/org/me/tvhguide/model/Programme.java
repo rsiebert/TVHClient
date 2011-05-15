@@ -31,7 +31,8 @@ public class Programme implements Comparable<Programme> {
     public Date stop;
     public String title;
     public String description;
-
+    public Channel channel;
+    
     public int compareTo(Programme that) {
         return (int) (this.start.getTime() - that.start.getTime());
     }

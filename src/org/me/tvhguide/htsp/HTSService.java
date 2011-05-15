@@ -400,6 +400,7 @@ public class HTSService extends Service {
                     p.title = sub.getString("title");
                     p.start = sub.getDate("start");
                     p.stop = sub.getDate("stop");
+                    p.channel = ch;
                     ch.epg.add(p);
                 }
 
@@ -432,11 +433,11 @@ public class HTSService extends Service {
                 p.stop = response.getDate("stop");
 
                 TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                Channel ch = app.getChannel(response.getLong("channelId"));
-                if (ch != null) {
-                    ch.epg.add(p);
+                p.channel = app.getChannel(response.getLong("channelId"));
+                if (p.channel != null) {
+                    p.channel.epg.add(p);
                 }
-                app.updateChannel(ch);
+                app.updateChannel(p.channel);
             }
         });
         seq++;

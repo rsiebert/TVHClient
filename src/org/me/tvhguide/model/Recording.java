@@ -18,24 +18,12 @@
  */
 package org.me.tvhguide.model;
 
-import java.util.Date;
-
 /**
  *
  * @author john-tornblom
  */
-public class Recording implements Comparable<Recording> {
+public class Recording extends Programme {
 
-    public long id;
-    public Date start;
-    public Date stop;
-    public String title;
-    public String description;
     public String state;
     public String error;
-    public Channel channel;
-
-    public int compareTo(Recording that) {
-        return (int) (this.start.getTime() - that.start.getTime());
-    }
 }
