@@ -133,6 +133,12 @@ public class TVHGuideApplication extends Application {
         }
     }
 
+    public void updateChannel(Channel ch) {
+        if (!loading) {
+            broadcastMessage(ACTION_CHANNEL_UPDATE, ch);
+        }
+    }
+
     public void addRecording(Recording rec) {
         recordings.add(rec);
 
@@ -168,6 +174,12 @@ public class TVHGuideApplication extends Application {
                 removeRecording(rec);
                 return;
             }
+        }
+    }
+
+    public void updateRecording(Recording rec) {
+        if (!loading) {
+            broadcastMessage(ACTION_DVR_UPDATE, rec);
         }
     }
 
