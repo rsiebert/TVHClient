@@ -362,8 +362,8 @@ public class HTSService extends Service {
             public void run() {
 
                 try {
-                    InputStream inputStream = new URL(ch.getIcon()).openStream();
-                    ch.setDrawableIcon(Drawable.createFromStream(inputStream, ch.getIcon()));
+                    InputStream inputStream = new URL(ch.icon).openStream();
+                    ch.iconDrawable = Drawable.createFromStream(inputStream, ch.icon);
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     app.updateChannel(ch);
                 } catch (Throwable ex) {

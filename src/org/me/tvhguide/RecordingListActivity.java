@@ -226,7 +226,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             }
 
             wrapper.title.setText(rec.title);
-            wrapper.icon.setBackgroundDrawable(ch.iconBitmap);
+            wrapper.icon.setBackgroundDrawable(ch.iconDrawable);
             wrapper.channel.setText(ch.name);
             wrapper.date.setText(DateFormat.getMediumDateFormat(getContext()).format(rec.start));
 

@@ -266,9 +266,9 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             nextTitle.setText("");
             nowProgress.setLevel(0);
 
-            name.setText(channel.getName());
+            name.setText(channel.name);
             name.invalidate();
-            icon.setBackgroundDrawable(channel.getDrawableIcon());
+            icon.setBackgroundDrawable(channel.iconDrawable);
             if (channel.isRecording()) {
                 icon.setImageResource(R.drawable.ic_rec_small);
             } else {
