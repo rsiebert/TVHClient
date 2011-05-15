@@ -8,6 +8,10 @@
           android:icon="@drawable/ic_menu_tags"
           android:title="@string/menu_tags" />
 
+    <item android:id="@+id/mi_search"
+          android:icon="@android:drawable/ic_menu_search"
+          android:title="@string/menu_search" />
+
     <item android:id="@+id/mi_settings"
           android:icon="@android:drawable/ic_menu_preferences"
           android:title="@string/menu_settings" />
