@@ -312,6 +312,8 @@ public class HTSService extends Service {
                 ch.epg.removeAll(tmp);
                 if (eventId > 0 && ch.epg.size() < 2) {
                     getEvents(ch, eventId, 5);
+                } else {
+                    app.updateChannel(ch);
                 }
             }
         } else if (method.equals("channelDelete")) {
@@ -342,6 +344,7 @@ public class HTSService extends Service {
                 rec.stop = response.getDate("stop");
                 rec.title = response.getString("title", rec.title);
             }
+            app.updateRecording(rec);
         } else if (method.equals("dvrEntryDelete")) {
             Recording rec = app.getRecording(response.getLong("id"));
             if (rec.channel != null) {
@@ -400,6 +403,9 @@ public class HTSService extends Service {
                     p.stop = sub.getDate("stop");
                     ch.epg.add(p);
                 }
+
+                TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                app.updateChannel(ch);
             }
         });
         requestQue.add(request);
@@ -431,6 +437,7 @@ public class HTSService extends Service {
                 if (ch != null) {
                     ch.epg.add(p);
                 }
+                app.updateChannel(ch);
             }
         });
         seq++;
