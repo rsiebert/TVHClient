@@ -252,6 +252,8 @@ public class HTSService extends Service {
 
     private void handleResponse(HTSMessage response) throws Exception {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean loadIcons = prefs.getBoolean("loadIcons", false);
 
         if (response.containsFiled("error")) {
             showError(response.getString("error"));
@@ -307,7 +309,7 @@ public class HTSService extends Service {
 
             app.addChannel(ch);
 
-            if (ch.icon != null) {
+            if (loadIcons && ch.icon != null) {
                 getChannelIcon(ch);
             }
 

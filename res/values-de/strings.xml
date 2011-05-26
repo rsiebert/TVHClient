@@ -25,6 +25,9 @@
 
     <string name="pref_pass">Passwort</string>
     <string name="pref_pass_sum">Passwort eingeben</string>
+    
+    <string name="pref_icons">Kanal-Logos</string>
+    <string name="pref_icons_sum">Kanal-Logos anzeigen?</string>
 
     <string name="err_auth">Zugriff verweigert</string>
     <string name="err_inv">Ungültige Antwort des Servers</string>
