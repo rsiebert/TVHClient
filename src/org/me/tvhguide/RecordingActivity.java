@@ -19,9 +19,16 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
+
+import org.me.tvhguide.htsp.HTSService;
+import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
 
 /**
@@ -30,33 +37,60 @@ import org.me.tvhguide.model.Recording;
  */
 public class RecordingActivity extends Activity {
 
-    Recording rec;
+	Recording rec;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        rec = app.getRecording(getIntent().getLongExtra("id", 0));
-        if (rec == null) {
-            return;
-        }
+		TVHGuideApplication app = (TVHGuideApplication) getApplication();
+		rec = app.getRecording(getIntent().getLongExtra("id", 0));
+		if (rec == null) {
+			return;
+		}
 
-        setContentView(R.layout.rec_layout);
+		setContentView(R.layout.rec_layout);
 
-        TextView text = (TextView) findViewById(R.id.rec_name);
-        text.setText(rec.title);
+		TextView text = (TextView) findViewById(R.id.rec_name);
+		text.setText(rec.title);
 
-        text = (TextView) findViewById(R.id.rec_desc);
-        text.setText(rec.description);
+		text = (TextView) findViewById(R.id.rec_desc);
+		text.setText(rec.description);
 
-        text = (TextView) findViewById(R.id.rec_time);
-        text.setText(
-                DateFormat.getLongDateFormat(this).format(rec.start)
-                + "   "
-                + DateFormat.getTimeFormat(this).format(rec.start)
-                + " - "
-                + DateFormat.getTimeFormat(this).format(rec.stop));
+		text = (TextView) findViewById(R.id.rec_time);
+		text.setText(
+				DateFormat.getLongDateFormat(this).format(rec.start)
+				+ "   "
+				+ DateFormat.getTimeFormat(this).format(rec.start)
+				+ " - "
+				+ DateFormat.getTimeFormat(this).format(rec.stop));
 
-    }
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.rc_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.mi_remove: {
+				Intent intent = new Intent(getBaseContext(), HTSService.class);
+				intent.setAction(HTSService.ACTION_DVR_DELETE);
+				intent.putExtra("id", rec.id);	
+				startService(intent);
+				
+                intent = new Intent(getBaseContext(), RecordingListActivity.class);
+                startActivity(intent);
+			
+				return true;
+			}
+			default: {
+				return super.onOptionsItemSelected(item);
+			}
+		}
+	}
 }
