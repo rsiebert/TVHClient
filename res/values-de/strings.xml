@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">TVHGuide</string>
+    <string name="app_version">0.0.1</string>
+    <string name="app_settings">TVHGuide settings</string>
+
+    <string name="menu_help">Hilfe</string>
+    <string name="menu_settings">Einstellungen</string>
+    <string name="menu_refresh">Aktualisieren</string>
+    <string name="menu_tags">Tags</string>
+    <string name="menu_record">Aufnehmen</string>
+    <string name="menu_remove">Entfernen</string>
+    <string name="menu_cancel">Abbrechen</string>
+    <string name="menu_search">Suchen</string>
+    <string name="tab_recordings">Aufnahmen</string>
+
+    <string name="pref_host">Hostname</string>
+    <string name="pref_host_sum">Hostnamen des Servers eingeben</string>
+
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Port der Servers eingeben</string>
+
+    <string name="pref_user">Benutzername</string>
+    <string name="pref_user_sum">Benutzernamen eingeben</string>
+
+    <string name="pref_pass">Passwort</string>
+    <string name="pref_pass_sum">Passwort eingeben</string>
+
+    <string name="err_auth">Zugriff verweigert</string>
+    <string name="err_inv">Ungültige Antwort des Servers</string>
+    <string name="err_connect">Konnte nicht mit dem Server verbinden</string>
+    <string name="err_con_lost">Verbindung zum Server verloren</string>
+
+    <string name="inf_load">Lade...</string>
+    <string name="inf_load_ext">Bitte warten Sie einen Moment...</string>
+
+    <string name="pr_all_channels">Alle Kanäle</string>
+
+    <string name="pvr_scheduled">Geplant</string>
+    <string name="pvr_recording">Aufnahme</string>
+    <string name="pvr_completed">Fertig</string>
+    <string name="pvr_missed">Verpasst</string>
+    <string name="pvr_invalid">Ungültig</string>
+</resources>
