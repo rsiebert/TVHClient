@@ -3,10 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
+    	android:name="@string/pref_host"
         android:summary="@string/pref_host_sum"
         android:defaultValue="localhost"
         android:title="@string/pref_host"
-        android:key="serverHostPref" android:name="@string/pref_host"/>
+        android:key="serverHostPref" />
 
     <EditTextPreference
         android:name="@string/pref_port"
@@ -24,10 +25,12 @@
         android:key="usernamePref" />
 
     <EditTextPreference
+    	android:name="@string/pref_pass"
         android:summary="@string/pref_pass_sum"
         android:defaultValue=""
         android:title="@string/pref_pass"
-        android:key="passwordPref" android:password="true" android:name="@string/pref_pass"/>
+        android:key="passwordPref"
+        android:password="true" />
         
     <CheckBoxPreference
     	android:summary="@string/pref_icons_sum"
