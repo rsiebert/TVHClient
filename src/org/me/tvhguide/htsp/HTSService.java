@@ -40,6 +40,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.me.tvhguide.R;
 import org.me.tvhguide.TVHGuideApplication;
 import org.me.tvhguide.model.Channel;
@@ -70,6 +72,7 @@ public class HTSService extends Service {
     private InetSocketAddress addr;
     private int seq = 0;
     private SocketChannel socketChannel;
+    private ExecutorService execService;
 
     public class LocalBinder extends Binder {
 
@@ -82,6 +85,8 @@ public class HTSService extends Service {
     public void onCreate() {
         inBuf = ByteBuffer.allocateDirect(1024 * 1024);
         inBuf.limit(4);
+
+        execService = Executors.newFixedThreadPool(5);
 
         t = new SelectionThread() {
 
@@ -159,6 +164,7 @@ public class HTSService extends Service {
     @Override
     public void onDestroy() {
         t.setRunning(false);
+        execService.shutdown();
     }
 
     private void showError(final String error) {
@@ -387,7 +393,7 @@ public class HTSService extends Service {
     }
 
     private void getChannelIcon(final Channel ch) {
-        new Thread(new Runnable() {
+        execService.execute(new Runnable() {
 
             public void run() {
 
@@ -398,9 +404,8 @@ public class HTSService extends Service {
                     app.updateChannel(ch);
                 } catch (Throwable ex) {
                 }
-
             }
-        }).start();
+        });
     }
 
     private void getEvents(final Channel ch, final long eventId, int cnt) {
