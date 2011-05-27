@@ -21,7 +21,9 @@ package org.me.tvhguide;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -192,6 +194,11 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             date = (TextView) base.findViewById(R.id.rec_date);
             message = (TextView) base.findViewById(R.id.rec_message);
             icon = (ImageView) base.findViewById(R.id.rec_icon);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(base.getContext());
+            if(!prefs.getBoolean("loadIcons", false)) {
+                icon.setVisibility(ImageView.GONE);
+            }
         }
     }
 

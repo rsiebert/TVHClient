@@ -28,8 +28,10 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ClipDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -59,10 +61,15 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
     private ChannelListAdapter chAdapter;
     private ProgressDialog pd;
+    private boolean showIcons;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        showIcons = prefs.getBoolean("loadIcons", false);
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
         List<Channel> chList = new ArrayList<Channel>();
@@ -258,6 +265,11 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
             nextTime = (TextView) base.findViewById(R.id.ch_next_time);
             icon = (ImageView) base.findViewById(R.id.ch_icon);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(base.getContext());
+            if(!prefs.getBoolean("loadIcons", false)) {
+                icon.setVisibility(ImageView.GONE);
+            }
 
             this.channelId = channelId;
         }
