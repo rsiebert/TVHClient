@@ -33,8 +33,9 @@
         android:password="true" />
         
     <CheckBoxPreference
+        android:name="@string/pref_icons"
     	android:summary="@string/pref_icons_sum"
     	android:defaultValue="false"
     	android:title="@string/pref_icons"
-    	android:key="loadIcons" android:name="@string/pref_icons"/>
+    	android:key="loadIcons" />
 </PreferenceScreen>
