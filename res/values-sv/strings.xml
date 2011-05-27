@@ -25,6 +25,9 @@
     <string name="pref_pass">Lösenord</string>
     <string name="pref_pass_sum">Skriv in lösenord</string>
 
+    <string name="pref_icons">Kanallogotyper</string>
+    <string name="pref_icons_sum">Visa kanalers logotyper?</string>
+    
     <string name="err_auth">Åtkomst nekad</string>
     <string name="err_inv">Felaktigt svar från server</string>
 
