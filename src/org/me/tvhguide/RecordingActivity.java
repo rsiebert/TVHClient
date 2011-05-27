@@ -82,9 +82,7 @@ public class RecordingActivity extends Activity {
                 intent.putExtra("id", rec.id);
                 startService(intent);
 
-                intent = new Intent(getBaseContext(), RecordingListActivity.class);
-                startActivity(intent);
-
+                finish();
                 return true;
             }
             default: {
