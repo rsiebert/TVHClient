@@ -345,15 +345,19 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         public void updateView(ListView listView, Channel channel) {
             for (int i = 0; i < listView.getChildCount(); i++) {
                 View view = listView.getChildAt(i);
+                int pos = listView.getPositionForView(view);
+                Channel ch = (Channel) listView.getItemAtPosition(pos);
 
-                if (view.getTag() == null) {
+                if (view.getTag() == null || ch == null) {
                     continue;
                 }
-                ViewWarpper wrapper = (ViewWarpper) view.getTag();
-                if (wrapper.channelId == channel.id) {
-                    wrapper.repaint(channel);
-                    break;
+
+                if (channel.id != ch.id) {
+                    continue;
                 }
+
+                ViewWarpper wrapper = (ViewWarpper) view.getTag();
+                wrapper.repaint(channel);
             }
         }
 
