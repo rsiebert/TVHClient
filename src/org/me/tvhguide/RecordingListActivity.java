@@ -52,7 +52,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
     private RecordingListAdapter recAdapter;
     private boolean hideIcons;
-    
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -71,7 +71,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         super.onResume();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean b = !prefs.getBoolean("loadIcons", false);
-        if(b != hideIcons) {
+        if (b != hideIcons) {
             recAdapter.notifyDataSetInvalidated();
         }
         hideIcons = b;
