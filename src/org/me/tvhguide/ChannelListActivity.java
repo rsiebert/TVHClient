@@ -98,6 +98,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
                 intent.setAction(HTSService.ACTION_REFRESH);
                 startService(intent);
+                chAdapter.clear();
                 return true;
             }
             case R.id.mi_recordings: {
