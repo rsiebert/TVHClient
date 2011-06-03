@@ -160,7 +160,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
                     recAdapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
+        } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
             runOnUiThread(new Runnable() {
 
                 public void run() {
