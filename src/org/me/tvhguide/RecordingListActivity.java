@@ -164,7 +164,8 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             runOnUiThread(new Runnable() {
 
                 public void run() {
-                    recAdapter.notifyDataSetInvalidated();
+                    Recording rec = (Recording) obj;
+                    recAdapter.updateView(getListView(), rec);
                 }
             });
         }
@@ -188,6 +189,56 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             message = (TextView) base.findViewById(R.id.rec_message);
             icon = (ImageView) base.findViewById(R.id.rec_icon);
         }
+
+        public void repaint(Recording rec) {
+            Channel ch = rec.channel;
+
+            title.setText(rec.title);
+            title.invalidate();
+
+            icon.setBackgroundDrawable(ch.iconDrawable);
+            if (hideIcons) {
+                icon.setVisibility(ImageView.GONE);
+            } else {
+                icon.setVisibility(ImageView.VISIBLE);
+            }
+            channel.setText(ch.name);
+            channel.invalidate();
+
+            date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(rec.start));
+            date.invalidate();
+
+            if (rec.error != null) {
+                message.setText(rec.error == null ? rec.state : rec.error);
+                icon.setImageResource(R.drawable.ic_error_small);
+            } else if ("completed".equals(rec.state)) {
+                message.setText(getString(R.string.pvr_completed));
+                icon.setImageResource(R.drawable.ic_success_small);
+            } else if ("invalid".equals(rec.state)) {
+                message.setText(getString(R.string.pvr_invalid));
+                icon.setImageResource(R.drawable.ic_error_small);
+            } else if ("missed".equals(rec.state)) {
+                message.setText(getString(R.string.pvr_missed));
+                icon.setImageResource(R.drawable.ic_error_small);
+            } else if ("recording".equals(rec.state)) {
+                message.setText(getString(R.string.pvr_recording));
+                icon.setImageResource(R.drawable.ic_rec_small);
+            } else if ("scheduled".equals(rec.state)) {
+                message.setText(getString(R.string.pvr_scheduled));
+                icon.setImageDrawable(null);
+            } else {
+                message.setText("");
+                icon.setImageDrawable(null);
+            }
+            message.invalidate();
+            icon.invalidate();
+
+            time.setText(
+                    DateFormat.getTimeFormat(time.getContext()).format(rec.start)
+                    + " - "
+                    + DateFormat.getTimeFormat(time.getContext()).format(rec.stop));
+            time.invalidate();
+        }
     }
 
     class RecordingListAdapter extends ArrayAdapter<Recording> {
@@ -210,13 +261,31 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             });
         }
 
+        public void updateView(ListView listView, Recording recording) {
+            for (int i = 0; i < listView.getChildCount(); i++) {
+                View view = listView.getChildAt(i);
+                int pos = listView.getPositionForView(view);
+                Recording rec = (Recording) listView.getItemAtPosition(pos);
+
+                if (view.getTag() == null || rec == null) {
+                    continue;
+                }
+
+                if (recording.id != rec.id) {
+                    continue;
+                }
+
+                ViewWarpper wrapper = (ViewWarpper) view.getTag();
+                wrapper.repaint(recording);
+            }
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
             ViewWarpper wrapper = null;
 
             Recording rec = list.get(position);
-            Channel ch = rec.channel;
 
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
@@ -229,43 +298,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
                 wrapper = (ViewWarpper) row.getTag();
             }
 
-            wrapper.title.setText(rec.title);
-            wrapper.icon.setBackgroundDrawable(ch.iconDrawable);
-            if(hideIcons) {
-                wrapper.icon.setVisibility(ImageView.GONE);
-            } else {
-                wrapper.icon.setVisibility(ImageView.VISIBLE);
-            }
-            wrapper.channel.setText(ch.name);
-            wrapper.date.setText(DateFormat.getMediumDateFormat(getContext()).format(rec.start));
-
-            if (rec.error != null) {
-                wrapper.message.setText(rec.error == null ? rec.state : rec.error);
-                wrapper.icon.setImageResource(R.drawable.ic_error_small);
-            } else if ("completed".equals(rec.state)) {
-                wrapper.message.setText(getString(R.string.pvr_completed));
-                wrapper.icon.setImageResource(R.drawable.ic_success_small);
-            } else if ("invalid".equals(rec.state)) {
-                wrapper.message.setText(getString(R.string.pvr_invalid));
-                wrapper.icon.setImageResource(R.drawable.ic_error_small);
-            } else if ("missed".equals(rec.state)) {
-                wrapper.message.setText(getString(R.string.pvr_missed));
-                wrapper.icon.setImageResource(R.drawable.ic_error_small);
-            } else if ("recording".equals(rec.state)) {
-                wrapper.message.setText(getString(R.string.pvr_recording));
-                wrapper.icon.setImageResource(R.drawable.ic_rec_small);
-            } else if ("scheduled".equals(rec.state)) {
-                wrapper.message.setText(getString(R.string.pvr_scheduled));
-                wrapper.icon.setImageDrawable(null);
-            } else {
-                wrapper.message.setText("");
-                wrapper.icon.setImageDrawable(null);
-            }
-
-            wrapper.time.setText(
-                    DateFormat.getTimeFormat(getContext()).format(rec.start)
-                    + " - "
-                    + DateFormat.getTimeFormat(getContext()).format(rec.stop));
+            wrapper.repaint(rec);
             return row;
         }
     }
