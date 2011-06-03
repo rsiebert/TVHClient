@@ -252,7 +252,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         private TextView nextTime;
         private ImageView icon;
         private ClipDrawable nowProgress;
-        public final long channelId;
 
         public ViewWarpper(View base, long channelId) {
             name = (TextView) base.findViewById(R.id.ch_name);
@@ -269,8 +268,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
             nextTime = (TextView) base.findViewById(R.id.ch_next_time);
             icon = (ImageView) base.findViewById(R.id.ch_icon);
-
-            this.channelId = channelId;
         }
 
         public void repaint(Channel channel) {
