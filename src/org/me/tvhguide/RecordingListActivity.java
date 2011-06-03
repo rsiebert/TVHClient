@@ -61,12 +61,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         List<Recording> recList = new ArrayList<Recording>();
         recList.addAll(app.getRecordings());
         recAdapter = new RecordingListAdapter(this, recList);
-        recAdapter.sort(new Comparator<Recording>() {
-
-            public int compare(Recording x, Recording y) {
-                return (int) (y.start.getTime() - x.start.getTime());
-            }
-        });
+        recAdapter.sort();
         setListAdapter(recAdapter);
         registerForContextMenu(getListView());
     }
@@ -145,12 +140,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
                     recAdapter.list.clear();
                     recAdapter.list.addAll(app.getRecordings());
                     recAdapter.notifyDataSetChanged();
-                    recAdapter.sort(new Comparator<Recording>() {
-
-                        public int compare(Recording x, Recording y) {
-                            return (int) (y.start.getTime() - x.start.getTime());
-                        }
-                    });
+                    recAdapter.sort();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_ADD)) {
@@ -159,12 +149,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
                 public void run() {
                     recAdapter.add((Recording) obj);
                     recAdapter.notifyDataSetChanged();
-                    recAdapter.sort(new Comparator<Recording>() {
-
-                        public int compare(Recording x, Recording y) {
-                            return (int) (y.start.getTime() - x.start.getTime());
-                        }
-                    });
+                    recAdapter.sort();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_DELETE)) {
@@ -173,12 +158,13 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
                 public void run() {
                     recAdapter.remove((Recording) obj);
                     recAdapter.notifyDataSetChanged();
-                    recAdapter.sort(new Comparator<Recording>() {
+                }
+            });
+        } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
+            runOnUiThread(new Runnable() {
 
-                        public int compare(Recording x, Recording y) {
-                            return (int) (y.start.getTime() - x.start.getTime());
-                        }
-                    });
+                public void run() {
+                    recAdapter.notifyDataSetInvalidated();
                 }
             });
         }
@@ -213,6 +199,15 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             super(context, R.layout.rec_widget, list);
             this.context = context;
             this.list = list;
+        }
+
+        public void sort() {
+            sort(new Comparator<Recording>() {
+
+                public int compare(Recording x, Recording y) {
+                    return x.compareTo(y);
+                }
+            });
         }
 
         @Override
