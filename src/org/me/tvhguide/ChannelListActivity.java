@@ -230,7 +230,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 public void run() {
                     chAdapter.remove((Channel) obj);
                     chAdapter.notifyDataSetChanged();
-                    chAdapter.sort();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
