@@ -51,7 +51,8 @@ import org.me.tvhguide.model.Recording;
 public class RecordingListActivity extends ListActivity implements HTSListener {
 
     private RecordingListAdapter recAdapter;
-
+    private boolean hideIcons;
+    
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -73,6 +74,12 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     @Override
     protected void onResume() {
         super.onResume();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean b = !prefs.getBoolean("loadIcons", false);
+        if(b != hideIcons) {
+            recAdapter.notifyDataSetInvalidated();
+        }
+        hideIcons = b;
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
     }
@@ -194,11 +201,6 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             date = (TextView) base.findViewById(R.id.rec_date);
             message = (TextView) base.findViewById(R.id.rec_message);
             icon = (ImageView) base.findViewById(R.id.rec_icon);
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(base.getContext());
-            if(!prefs.getBoolean("loadIcons", false)) {
-                icon.setVisibility(ImageView.GONE);
-            }
         }
     }
 
@@ -234,6 +236,11 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
             wrapper.title.setText(rec.title);
             wrapper.icon.setBackgroundDrawable(ch.iconDrawable);
+            if(hideIcons) {
+                wrapper.icon.setVisibility(ImageView.GONE);
+            } else {
+                wrapper.icon.setVisibility(ImageView.VISIBLE);
+            }
             wrapper.channel.setText(ch.name);
             wrapper.date.setText(DateFormat.getMediumDateFormat(getContext()).format(rec.start));
 
