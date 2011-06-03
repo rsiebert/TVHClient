@@ -160,7 +160,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         super.onResume();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean b = !prefs.getBoolean("loadIcons", false);
-        if(b != hideIcons) {
+        if (b != hideIcons) {
             chAdapter.notifyDataSetInvalidated();
         }
         hideIcons = b;
@@ -207,12 +207,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     chAdapter.clear();
-                    for(Channel ch : app.getChannels()) {
+                    for (Channel ch : app.getChannels()) {
                         chAdapter.add(ch);
                     }
                     chAdapter.sort();
                     chAdapter.notifyDataSetChanged();
-                    
+
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
@@ -284,7 +284,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             name.setText(channel.name);
             name.invalidate();
             icon.setBackgroundDrawable(channel.iconDrawable);
-            if(hideIcons) {
+            if (hideIcons) {
                 icon.setVisibility(ImageView.GONE);
             } else {
                 icon.setVisibility(ImageView.VISIBLE);
