@@ -423,6 +423,8 @@ public class HTSService extends Service {
                     return;
                 }
 
+                TVHGuideApplication app = (TVHGuideApplication) getApplication();
+
                 for (Object obj : response.getList("events")) {
                     Programme p = new Programme();
                     HTSMessage sub = (HTSMessage) obj;
@@ -436,10 +438,10 @@ public class HTSService extends Service {
                     p.start = sub.getDate("start");
                     p.stop = sub.getDate("stop");
                     p.channel = ch;
-                    ch.epg.add(p);
+                    if (ch.epg.add(p)) {
+                        app.addProgramme(p);
+                    }
                 }
-
-                TVHGuideApplication app = (TVHGuideApplication) getApplication();
                 app.updateChannel(ch);
             }
         });
@@ -456,6 +458,8 @@ public class HTSService extends Service {
         responseHandelers.put(seq, new HTSResponseListener() {
 
             public void handleResponse(HTSMessage response) throws Exception {
+                TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                Channel ch = app.getChannel(response.getLong("channelId"));
                 Programme p = new Programme();
                 p.id = response.getLong("eventId");
                 if (response.containsFiled("ext_desc")) {
@@ -466,13 +470,12 @@ public class HTSService extends Service {
                 p.title = response.getString("title");
                 p.start = response.getDate("start");
                 p.stop = response.getDate("stop");
+                p.channel = ch;
 
-                TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                p.channel = app.getChannel(response.getLong("channelId"));
-                if (p.channel != null) {
-                    p.channel.epg.add(p);
+                if (ch.epg.add(p)) {
+                    app.addProgramme(p);
+                    app.updateChannel(ch);
                 }
-                app.updateChannel(p.channel);
             }
         });
         seq++;

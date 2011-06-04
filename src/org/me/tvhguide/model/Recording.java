@@ -26,4 +26,12 @@ public class Recording extends Programme {
 
     public String state;
     public String error;
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Programme) {
+            return ((Programme)o).id == id;
+        }
+
+        return false;
+    }
 }

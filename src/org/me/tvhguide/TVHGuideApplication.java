@@ -25,6 +25,7 @@ import java.util.List;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
 import org.me.tvhguide.htsp.HTSListener;
+import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
 
 /**
@@ -42,6 +43,8 @@ public class TVHGuideApplication extends Application {
     public static final String ACTION_DVR_ADD = "org.me.tvhguide.DVR_ADD";
     public static final String ACTION_DVR_DELETE = "org.me.tvhguide.DVR_DELETE";
     public static final String ACTION_DVR_UPDATE = "org.me.tvhguide.DVR_UPDATE";
+    public static final String ACTION_PROGRAMME_ADD = "org.me.tvhguide.PROGRAMME_ADD";
+    public static final String ACTION_PROGRAMME_DELETE = "org.me.tvhguide.PROGRAMME_DELETE";
     public static final String ACTION_SIGNAL_STATUS = "org.me.tvhguide.SIGNAL_STATUS";
     public static final String ACTION_LOADING = "org.me.tvhguide.LOADING";
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
@@ -136,6 +139,18 @@ public class TVHGuideApplication extends Application {
     public void updateChannel(Channel ch) {
         if (!loading) {
             broadcastMessage(ACTION_CHANNEL_UPDATE, ch);
+        }
+    }
+
+    public void addProgramme(Programme p) {
+        if (!loading) {
+            broadcastMessage(ACTION_PROGRAMME_ADD, p);
+        }
+    }
+
+    public void removeProgramme(Programme p) {
+        if (!loading) {
+            broadcastMessage(ACTION_PROGRAMME_DELETE, p);
         }
     }
 

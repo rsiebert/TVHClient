@@ -36,4 +36,13 @@ public class Programme implements Comparable<Programme> {
     public int compareTo(Programme that) {
         return (int) (this.start.getTime() - that.start.getTime());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Programme) {
+            return ((Programme)o).id == id;
+        }
+        
+        return false;
+    }
 }
