@@ -45,6 +45,7 @@ public class RecordingActivity extends Activity {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         rec = app.getRecording(getIntent().getLongExtra("id", 0));
         if (rec == null) {
+            finish();
             return;
         }
 
@@ -63,7 +64,6 @@ public class RecordingActivity extends Activity {
                 + DateFormat.getTimeFormat(this).format(rec.start)
                 + " - "
                 + DateFormat.getTimeFormat(this).format(rec.stop));
-
     }
 
     @Override

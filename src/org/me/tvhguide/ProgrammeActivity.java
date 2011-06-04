@@ -54,6 +54,7 @@ public class ProgrammeActivity extends Activity {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
         if (channel == null) {
+            finish();
             return;
         }
 
