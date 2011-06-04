@@ -31,6 +31,7 @@ public class Programme implements Comparable<Programme> {
     public Date stop;
     public String title;
     public String description;
+    public String ext_desc;
     public Channel channel;
     
     public int compareTo(Programme that) {
