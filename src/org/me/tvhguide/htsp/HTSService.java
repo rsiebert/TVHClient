@@ -353,6 +353,11 @@ public class HTSService extends Service {
                     }
                 }
                 ch.epg.removeAll(tmp);
+
+                for (Programme p : tmp) {
+                    app.removeProgramme(p);
+                }
+
                 if (eventId > 0 && ch.epg.size() < 2) {
                     getEvents(ch, eventId, 5);
                 } else {
