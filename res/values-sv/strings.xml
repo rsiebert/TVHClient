@@ -37,7 +37,7 @@
     <string name="pr_all_channels">Alla kanaler</string>
 
     <string name="pvr_scheduled">Schemalagd</string>
-    <string name="pvr_recording">Splear in</string>
+    <string name="pvr_recording">Spelar in</string>
     <string name="pvr_completed">Avslutad</string>
     <string name="pvr_missed">Missad</string>
     <string name="pvr_invalid">Ogiltig</string>
