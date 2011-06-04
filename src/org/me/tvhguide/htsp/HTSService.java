@@ -59,6 +59,7 @@ public class HTSService extends Service {
     public static final String ACTION_REFRESH = "org.me.tvhguide.htsp.REFRESH";
     public static final String ACTION_EPG_QUERY = "org.me.tvhguide.htsp.EPG_QUERY";
     public static final String ACTION_GET_EVENT = "org.me.tvhguide.htsp.GET_EVENT";
+    public static final String ACTION_GET_EVENTS = "org.me.tvhguide.htsp.GET_EVENTS";
     public static final String ACTION_DVR_ADD = "org.me.tvhguide.htsp.DVR_ADD";
     public static final String ACTION_DVR_DELETE = "org.me.tvhguide.htsp.DVR_DELETE";
     public static final String ACTION_DVR_CANCEL = "org.me.tvhguide.htsp.DVR_CANCEL";
@@ -116,6 +117,12 @@ public class HTSService extends Service {
             }
         } else if (ACTION_GET_EVENT.equals(intent.getAction())) {
             getEvent(intent.getLongExtra("eventId", 0));
+        } else if (ACTION_GET_EVENTS.equals(intent.getAction())) {
+            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+            Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
+            getEvents(ch,
+                    intent.getLongExtra("eventId", 0),
+                    intent.getIntExtra("count", 10));
         } else if (ACTION_DVR_ADD.equals(intent.getAction())) {
             addDvrEntry(intent.getLongExtra("eventId", 0));
         } else if (ACTION_DVR_DELETE.equals(intent.getAction())) {
@@ -409,6 +416,10 @@ public class HTSService extends Service {
     }
 
     private void getEvents(final Channel ch, final long eventId, int cnt) {
+        if (ch == null) {
+            return;
+        }
+
         HTSMessage request = new HTSMessage();
         request.setMethod("getEvents");
         request.putField("eventId", eventId);
@@ -444,6 +455,7 @@ public class HTSService extends Service {
         });
         requestQue.add(request);
         seq++;
+        t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 
     private void getEvent(long eventId) {
