@@ -26,6 +26,28 @@ public class Recording extends Programme {
 
     public String state;
     public String error;
+
+    @Override
+    public int compareTo(Programme that) {
+        //Order by state
+        if(that instanceof Recording) {
+            int diff = state() - ((Recording)that).state();
+            if(diff != 0) {
+                return diff;
+            }
+        }
+        return super.compareTo(that);
+    }
+
+    private int state() {
+        if("recording".equals(state)) {
+            return 0;
+        } else if("scheduled".equals(state)) {
+            return 1;
+        }
+        return 2;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(o instanceof Programme) {
