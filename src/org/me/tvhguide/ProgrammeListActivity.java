@@ -218,10 +218,10 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         public void repaint(Programme p) {
             Channel ch = p.channel;
 
-            icon.setBackgroundDrawable(ch.iconDrawable);
             if (hideIcons || pattern == null) {
                 icon.setVisibility(ImageView.GONE);
             } else {
+                icon.setBackgroundDrawable(ch.iconDrawable);
                 icon.setVisibility(ImageView.VISIBLE);
             }
 
@@ -297,8 +297,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             View row = convertView;
             ViewWarpper wrapper = null;
 
-            Programme p = list.get(position);
-
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
                 row = inflater.inflate(R.layout.pr_widget, null, false);
@@ -310,6 +308,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                 wrapper = (ViewWarpper) row.getTag();
             }
 
+            Programme p = getItem(position);
             wrapper.repaint(p);
             return row;
         }
