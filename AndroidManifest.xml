@@ -16,4 +16,5 @@
         <service android:name=".htsp.HTSService" android:enabled="true"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
 </manifest>

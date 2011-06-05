@@ -23,17 +23,13 @@
     </LinearLayout>
     <ScrollView
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:paddingTop="5dip">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textSize="16sp"
-                android:id="@+id/rec_desc">
-            </TextView>
-        </LinearLayout>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="16sp"
+            android:id="@+id/rec_desc">
+        </TextView>
     </ScrollView>
 </LinearLayout>
