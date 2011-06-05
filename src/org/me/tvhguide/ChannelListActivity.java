@@ -124,11 +124,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                         intent.putExtra("query", query);
                         startActivity(intent);
 
-
-                        intent = new Intent(ChannelListActivity.this, HTSService.class);
-                        intent.setAction(HTSService.ACTION_EPG_QUERY);
-                        intent.putExtra("query", query);
-                        startService(intent);
+                        if(query.length() > 0) {
+                            intent = new Intent(ChannelListActivity.this, HTSService.class);
+                            intent.setAction(HTSService.ACTION_EPG_QUERY);
+                            intent.putExtra("query", query);
+                            startService(intent);
+                        }
                     }
                 });
 
