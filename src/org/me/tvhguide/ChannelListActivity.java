@@ -151,6 +151,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == R.id.mi_settings) {
             Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
+            intent.setAction(HTSService.ACTION_CONNECT);
             startService(intent);
         }
     }
