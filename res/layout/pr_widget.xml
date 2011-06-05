@@ -1,39 +1,65 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent">
+    <ImageView
+        android:layout_width="64sp"
+        android:layout_height="64sp"
+        android:layout_margin="3dip"
+        android:scaleType="matrix"
+        android:id="@+id/pr_icon">
+    </ImageView>
     <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_width="fill_parent">
         <TextView
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:id="@+id/pr_name"
             android:textSize="18sp"
-            android:textStyle="bold">
-        </TextView>
-        <TextView
-            android:layout_width="wrap_content"
+            android:maxLines="1"
             android:layout_height="wrap_content"
-            android:id="@+id/pr_time">
+            android:id="@+id/pr_title">
         </TextView>
-    </LinearLayout>
-    <ScrollView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:paddingTop="5dip">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:layout_height="wrap_content"
+        <TableLayout
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:shrinkColumns="0"
+            android:stretchColumns="0">
+            <TableRow
                 android:layout_width="wrap_content"
-                android:textSize="16sp"
-                android:id="@+id/pr_desc">
-            </TextView>
-        </LinearLayout>
-    </ScrollView>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:id="@+id/pr_type">
+                </TextView>
+                <TextView
+                    android:gravity="right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="3dip"
+                    android:id="@+id/pr_date">
+                </TextView>
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:id="@+id/pr_desc">
+                </TextView>
+                <TextView
+                    android:gravity="right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="3dip"
+                    android:id="@+id/pr_time">
+                </TextView>
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
 </LinearLayout>

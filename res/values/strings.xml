@@ -38,6 +38,19 @@
     <string name="inf_load_ext">Please wait a few seconds...</string>
 
     <string name="pr_all_channels">All channels</string>
+    <string name="pr_get_more">Get more</string>
+    <string-array name="pr_type">
+        <item>Movie / Drama</item>
+        <item>News / Current affairs</item>
+        <item>Show / Games</item>
+        <item>Sports</item>
+        <item>Children\'s / Youth</item>
+        <item>Music</item>
+        <item>Art / Culture</item>
+        <item>Social / Political issues / Economics</item>
+        <item>Education / Science / Factual topics</item>
+        <item>Leisure hobbies</item>
+    </string-array>
 
     <string name="pvr_scheduled">Scheduled</string>
     <string name="pvr_recording">Recording</string>

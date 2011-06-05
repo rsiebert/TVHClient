@@ -35,6 +35,19 @@
     <string name="inf_load_ext">Var god vänta några sekunder...</string>
 
     <string name="pr_all_channels">Alla kanaler</string>
+    <string name="pr_get_more">Hämta flera</string>
+    <string-array name="pr_type">
+        <item>Film / Drama</item>
+        <item>Nyheter / Aktuellt</item>
+        <item>Show / Spel</item>
+        <item>Sport</item>
+        <item>Barnprogram</item>
+        <item>Musik</item>
+        <item>Konst / Kultur</item>
+        <item>Samhälle / Politik / Ekonomi</item>
+        <item>Utbildning / Vetenskap / Fakta</item>
+        <item>Fritid</item>
+    </string-array>
 
     <string name="pvr_scheduled">Schemalagd</string>
     <string name="pvr_recording">Spelar in</string>

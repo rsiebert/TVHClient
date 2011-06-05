@@ -184,7 +184,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             return;
         }
 
-        Intent intent = new Intent(getBaseContext(), ProgrammeActivity.class);
+        Intent intent = new Intent(getBaseContext(), ProgrammeListActivity.class);
         intent.putExtra("channelId", ch.id);
         startActivity(intent);
     }
