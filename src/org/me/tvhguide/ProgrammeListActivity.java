@@ -113,6 +113,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         contentTypes = getResources().getStringArray(R.array.pr_type);
 
         prAdapter = new ProgrammeListAdapter(this, prList);
+        prAdapter.sort();
         setListAdapter(prAdapter);
     }
 
