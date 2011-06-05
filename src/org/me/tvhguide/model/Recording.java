@@ -34,6 +34,8 @@ public class Recording extends Programme {
             int diff = state() - ((Recording)that).state();
             if(diff != 0) {
                 return diff;
+            } else if (state() != 1){
+                return (int) (that.start.getTime() - this.start.getTime());
             }
         }
         return super.compareTo(that);
