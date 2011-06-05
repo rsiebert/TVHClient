@@ -130,7 +130,11 @@ public class HTSService extends Service {
         } else if (ACTION_DVR_CANCEL.equals(intent.getAction())) {
             cancelDvrEntry(intent.getLongExtra("id", 0));
         } else if (ACTION_EPG_QUERY.equals(intent.getAction())) {
-            epgQuery(intent.getStringExtra("query"));
+            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+            Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
+            epgQuery(ch,
+                    intent.getStringExtra("query"),
+                    intent.getLongExtra("tagId", 0));
         }
 
         return START_NOT_STICKY;
@@ -495,10 +499,16 @@ public class HTSService extends Service {
         t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 
-    private void epgQuery(String query) {
+    private void epgQuery(final Channel ch, String query, long tagId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("epgQuery");
         request.putField("query", query);
+        if (ch != null) {
+            request.putField("channelId", ch.id);
+        }
+        if (tagId > 0) {
+            request.putField("tagId", tagId);
+        }
         request.putField("seq", seq);
         requestQue.add(request);
         responseHandelers.put(seq, new HTSResponseListener() {
@@ -510,6 +520,7 @@ public class HTSService extends Service {
                 }
 
                 for (Long id : response.getLongList("eventIds")) {
+                    getEvent(id);
                 }
             }
         });
