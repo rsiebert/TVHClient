@@ -41,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TableRow;
@@ -107,6 +108,42 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return true;
             }
             case R.id.mi_help: {
+                return true;
+            }
+            case R.id.mi_search: {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.menu_search);
+
+                final EditText input = new EditText(this);
+                builder.setView(input);
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String query = input.getText().toString();
+
+                        Intent intent = new Intent(getBaseContext(), ProgrammeListActivity.class);
+                        intent.setAction("search");
+                        intent.putExtra("query", query);
+                        startActivity(intent);
+
+
+                        intent = new Intent(ChannelListActivity.this, HTSService.class);
+                        intent.setAction(HTSService.ACTION_EPG_QUERY);
+                        intent.putExtra("query", query);
+                        startService(intent);
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+
+                builder.show();
+
                 return true;
             }
             case R.id.mi_tags: {
