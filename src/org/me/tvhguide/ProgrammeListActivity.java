@@ -146,12 +146,11 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         TextView time;
         TextView date;
         TextView description;
-        TextView type;
         ImageView icon;
 
         public ViewWarpper(View base) {
             title = (TextView) base.findViewById(R.id.pr_title);
-            type = (TextView) base.findViewById(R.id.pr_type);
+            channel = (TextView) base.findViewById(R.id.pr_channel);
             description = (TextView) base.findViewById(R.id.pr_desc);
 
             time = (TextView) base.findViewById(R.id.pr_time);
@@ -162,6 +161,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         }
 
         public void repaint(Programme p) {
+            Channel ch = p.channel;
             title.setText(p.title);
             title.invalidate();
 
@@ -171,13 +171,14 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             description.setText(p.description);
             description.invalidate();
 
-            if(p.type > 0 && p.type < 11) {
-                type.setText(contentTypes[p.type-1]);
+            if (p.type > 0 && p.type < 11) {
+                String str = contentTypes[p.type - 1];
+                channel.setText(ch.name + " (" + str + ")");
             } else {
-                type.setText("");
+                channel.setText(ch.name);
             }
-            type.invalidate();
-            
+            channel.invalidate();
+
             date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
             date.invalidate();
 
