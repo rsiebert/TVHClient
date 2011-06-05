@@ -447,6 +447,7 @@ public class HTSService extends Service {
                     p.description = sub.getString("description", null);
                     p.ext_desc = sub.getString("ext_text", p.description);
                     p.id = sub.getLong("eventId");
+                    p.type = sub.getInt("contentType", 0);
                     p.title = sub.getString("title");
                     p.start = sub.getDate("start");
                     p.stop = sub.getDate("stop");
@@ -478,6 +479,7 @@ public class HTSService extends Service {
                 p.id = response.getLong("eventId");
                 p.description = response.getString("description", null);
                 p.ext_desc = response.getString("ext_text", p.description);
+                p.type = response.getInt("contentType", 0);
                 p.title = response.getString("title");
                 p.start = response.getDate("start");
                 p.stop = response.getDate("stop");

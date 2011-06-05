@@ -27,6 +27,7 @@ import java.util.Date;
 public class Programme implements Comparable<Programme> {
 
     public long id;
+    public int type;
     public Date start;
     public Date stop;
     public String title;
