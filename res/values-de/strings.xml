@@ -11,7 +11,6 @@
     <string name="menu_record">Aufnehmen</string>
     <string name="menu_remove">Entfernen</string>
     <string name="menu_cancel">Abbrechen</string>
-    <string name="menu_search">Suchen</string>
     <string name="tab_recordings">Aufnahmen</string>
 
     <string name="pref_host">Hostname</string>

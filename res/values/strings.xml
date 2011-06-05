@@ -11,7 +11,6 @@
     <string name="menu_record">Record</string>
     <string name="menu_remove">Remove</string>
     <string name="menu_cancel">Cancel</string>
-    <string name="menu_search">Search</string>
     <string name="tab_recordings">Recordings</string>
 
     <string name="pref_host">Hostname</string>

@@ -10,7 +10,7 @@
 
     <item android:id="@+id/mi_search"
           android:icon="@android:drawable/ic_menu_search"
-          android:title="@string/menu_search" />
+          android:title="@android:string/search_go" />
 
     <item android:id="@+id/mi_settings"
           android:icon="@android:drawable/ic_menu_preferences"

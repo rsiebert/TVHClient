@@ -109,12 +109,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             }
             case R.id.mi_search: {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.menu_search);
+                builder.setTitle(android.R.string.search_go);
 
                 final EditText input = new EditText(this);
                 builder.setView(input);
 
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(android.R.string.search_go, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String query = input.getText().toString();
@@ -132,7 +132,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     }
                 });
 
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Canceled.
