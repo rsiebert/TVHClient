@@ -107,9 +107,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 startActivity(intent);
                 return true;
             }
-            case R.id.mi_help: {
-                return true;
-            }
             case R.id.mi_search: {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.menu_search);
