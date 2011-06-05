@@ -448,9 +448,10 @@ public class HTSService extends Service {
                 for (Object obj : response.getList("events")) {
                     Programme p = new Programme();
                     HTSMessage sub = (HTSMessage) obj;
+                    p.id = sub.getLong("eventId");
+                    p.nextId = sub.getLong("nextEventId", 0);
                     p.description = sub.getString("description", null);
                     p.ext_desc = sub.getString("ext_text", p.description);
-                    p.id = sub.getLong("eventId");
                     p.type = sub.getInt("contentType", 0);
                     p.title = sub.getString("title");
                     p.start = sub.getDate("start");
@@ -481,6 +482,7 @@ public class HTSService extends Service {
                 Channel ch = app.getChannel(response.getLong("channelId"));
                 Programme p = new Programme();
                 p.id = response.getLong("eventId");
+                p.nextId = response.getLong("nextEventId", 0);
                 p.description = response.getString("description", null);
                 p.ext_desc = response.getString("ext_text", p.description);
                 p.type = response.getInt("contentType", 0);

@@ -36,6 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.me.tvhguide.htsp.HTSListener;
@@ -83,11 +84,29 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             btn.setOnClickListener(new OnClickListener() {
 
                 public void onClick(View view) {
-                    Programme p = prAdapter.getItem(prAdapter.getCount() - 1);
+                    Programme p = null;
 
+                    Iterator<Programme> it = channel.epg.iterator();
+                    long nextId = 0;
+
+                    while(it.hasNext()) {
+                        p = it.next();
+                        if(p.id != nextId && nextId != 0) {
+                            break;
+                        }
+                        nextId = p.nextId;
+                    }
+                    
+                    if(nextId == 0) {
+                        nextId = p.nextId;
+                    }
+                    if(nextId == 0) {
+                        nextId = p.id;
+                        return;
+                    }
                     Intent intent = new Intent(ProgrammeListActivity.this, HTSService.class);
                     intent.setAction(HTSService.ACTION_GET_EVENTS);
-                    intent.putExtra("eventId", p.id);
+                    intent.putExtra("eventId", nextId);
                     intent.putExtra("channelId", channel.id);
                     intent.putExtra("count", 10);
                     startService(intent);
