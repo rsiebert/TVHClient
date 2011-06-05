@@ -149,10 +149,13 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.menu_tags);
 
+                List<ChannelTag> list = new ArrayList<ChannelTag>();
+                list.addAll(app.getChannelTags());
+
                 final ArrayAdapter<ChannelTag> tagAdapter = new ArrayAdapter<ChannelTag>(
                         this,
                         android.R.layout.simple_dropdown_item_1line,
-                        app.getChannelTags());
+                        list);
 
                 builder.setAdapter(tagAdapter, new OnClickListener() {
 
