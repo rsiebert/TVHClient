@@ -214,5 +214,10 @@ public class TVHGuideApplication extends Application {
             ch.recordings.clear();
         }
         channels.clear();
+        
+        ChannelTag tag = new ChannelTag();
+        tag.id = 0;
+        tag.name = getString(R.string.pr_all_channels);
+        tags.add(tag);
     }
 }
