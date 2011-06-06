@@ -97,6 +97,7 @@ public class HTSService extends Service {
                 onNetworkEvent(selectionKey, ch);
             }
         };
+        t.setPriority(Thread.MIN_PRIORITY);
         t.start();
     }
 
