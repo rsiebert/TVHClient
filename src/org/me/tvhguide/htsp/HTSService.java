@@ -181,7 +181,10 @@ public class HTSService extends Service {
     }
 
     private void showError(final String error) {
-        Log.d(TAG, error);
+        Log.e(TAG, error);
+        
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.broadcastError(error);
     }
 
     private void showError(int recourceId) {
@@ -201,6 +204,7 @@ public class HTSService extends Service {
 
                 HTSMessage request = new HTSMessage();
                 PackageInfo packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+
                 request.setMethod("hello");
                 request.putField("clientname", getString(R.string.app_name));
                 request.putField("clientversion", packInfo.versionName);
