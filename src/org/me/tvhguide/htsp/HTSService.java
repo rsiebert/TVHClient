@@ -21,6 +21,7 @@ package org.me.tvhguide.htsp;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.IBinder;
