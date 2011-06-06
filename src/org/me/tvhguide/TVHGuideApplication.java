@@ -19,6 +19,8 @@
 package org.me.tvhguide;
 
 import android.app.Application;
+import android.os.Handler;
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,11 +49,13 @@ public class TVHGuideApplication extends Application {
     public static final String ACTION_PROGRAMME_DELETE = "org.me.tvhguide.PROGRAMME_DELETE";
     public static final String ACTION_SIGNAL_STATUS = "org.me.tvhguide.SIGNAL_STATUS";
     public static final String ACTION_LOADING = "org.me.tvhguide.LOADING";
+    public static final String ACTION_ERROR = "org.me.tvhguide.ERROR";
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
     private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
     private volatile boolean loading = false;
+    private Handler handler = new Handler();
 
     public void addListener(HTSListener l) {
         listeners.add(l);
@@ -67,6 +71,21 @@ public class TVHGuideApplication extends Application {
                 l.onMessage(action, obj);
             }
         }
+    }
+
+    public void broadcastError(final String error) {
+        handler.post(new Runnable() {
+
+            public void run() {
+
+                try {
+                    Toast toast = Toast.makeText(TVHGuideApplication.this, error, Toast.LENGTH_LONG);
+                    toast.show();
+                } catch (Throwable ex) {
+                }
+            }
+        });
+        broadcastMessage(ACTION_ERROR, error);
     }
 
     public List<ChannelTag> getChannelTags() {
