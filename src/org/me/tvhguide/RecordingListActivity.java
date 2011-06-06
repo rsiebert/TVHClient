@@ -56,6 +56,8 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_recordings));
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
         List<Recording> recList = new ArrayList<Recording>();

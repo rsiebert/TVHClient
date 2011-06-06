@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/mi_recordings"
           android:icon="@android:drawable/ic_menu_save"
-          android:title="@string/tab_recordings" />
+          android:title="@string/menu_recordings" />
 
     <item android:id="@+id/mi_tags"
           android:icon="@drawable/ic_menu_tags"

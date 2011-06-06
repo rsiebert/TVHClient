@@ -15,7 +15,7 @@
         <activity android:name=".ProgrammeListActivity"/>
         <activity android:name=".ProgrammeActivity"/>
         <activity android:name=".RecordingActivity"/>
-        <activity android:name=".SettingsActivity" android:label="@string/app_settings"/>
+        <activity android:name=".SettingsActivity"/>
         <service android:name=".htsp.HTSService" android:enabled="true"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />

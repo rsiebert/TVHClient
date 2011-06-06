@@ -31,5 +31,6 @@ public class SettingsActivity extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_settings));
     }
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="app_name">TVHGuide</string>
-    <string name="app_settings">Inställningar för TVHGuide</string>
 
     <string name="menu_help">Hjälp</string>
     <string name="menu_settings">Inställningar</string>
@@ -10,7 +9,7 @@
     <string name="menu_record">Spela in</string>
     <string name="menu_remove">Ta bort</string>
     <string name="menu_cancel">Avbryt</string>
-    <string name="tab_recordings">Inspelningar</string>
+    <string name="menu_recordings">Inspelningar</string>
 
     <string name="pref_host">Värdnamn</string>
     <string name="pref_host_sum">Skriv in värdnamn</string>
