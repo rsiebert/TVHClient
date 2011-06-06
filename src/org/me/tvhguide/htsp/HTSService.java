@@ -198,9 +198,10 @@ public class HTSService extends Service {
                 t.register(ch, SelectionKey.OP_CONNECT, false);
 
                 HTSMessage request = new HTSMessage();
+                PackageInfo packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
                 request.setMethod("hello");
                 request.putField("clientname", getString(R.string.app_name));
-                request.putField("clientversion", getString(R.string.app_version));
+                request.putField("clientversion", packInfo.versionName);
                 request.putField("htspversion", HTSMessage.HTSP_VERSION);
                 request.putField("username", username);
                 request.putField("seq", seq);

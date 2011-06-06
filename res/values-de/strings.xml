@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="app_name">TVHGuide</string>
-    <string name="app_version">0.0.1</string>
     <string name="app_settings">TVHGuide settings</string>
 
     <string name="menu_help">Hilfe</string>
