@@ -182,7 +182,7 @@ public class HTSService extends Service {
 
     private void showError(final String error) {
         Log.e(TAG, error);
-        
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.broadcastError(error);
     }

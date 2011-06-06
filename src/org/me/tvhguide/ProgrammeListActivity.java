@@ -55,7 +55,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
     private String[] contentTypes;
     private Pattern pattern;
     private boolean hideIcons;
-    
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -89,18 +89,18 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                     Iterator<Programme> it = channel.epg.iterator();
                     long nextId = 0;
 
-                    while(it.hasNext()) {
+                    while (it.hasNext()) {
                         p = it.next();
-                        if(p.id != nextId && nextId != 0) {
+                        if (p.id != nextId && nextId != 0) {
                             break;
                         }
                         nextId = p.nextId;
                     }
-                    
-                    if(nextId == 0) {
+
+                    if (nextId == 0) {
                         nextId = p.nextId;
                     }
-                    if(nextId == 0) {
+                    if (nextId == 0) {
                         nextId = p.id;
                         return;
                     }
