@@ -21,7 +21,6 @@ package org.me.tvhguide;
 import android.app.Application;
 import android.os.Handler;
 import android.widget.Toast;
-import com.googlecode.javacpp.Loader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
