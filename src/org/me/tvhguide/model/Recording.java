@@ -30,11 +30,11 @@ public class Recording extends Programme {
     @Override
     public int compareTo(Programme that) {
         //Order by state
-        if(that instanceof Recording) {
-            int diff = state() - ((Recording)that).state();
-            if(diff != 0) {
+        if (that instanceof Recording) {
+            int diff = state() - ((Recording) that).state();
+            if (diff != 0) {
                 return diff;
-            } else if (state() != 1){
+            } else if (state() != 1) {
                 return (int) (that.start.getTime() - this.start.getTime());
             }
         }
@@ -42,9 +42,9 @@ public class Recording extends Programme {
     }
 
     private int state() {
-        if("recording".equals(state)) {
+        if ("recording".equals(state)) {
             return 0;
-        } else if("scheduled".equals(state)) {
+        } else if ("scheduled".equals(state)) {
             return 1;
         }
         return 2;
@@ -52,8 +52,8 @@ public class Recording extends Programme {
 
     @Override
     public boolean equals(Object o) {
-        if(o instanceof Programme) {
-            return ((Programme)o).id == id;
+        if (o instanceof Programme) {
+            return ((Programme) o).id == id;
         }
 
         return false;

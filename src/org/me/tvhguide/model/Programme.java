@@ -35,17 +35,17 @@ public class Programme implements Comparable<Programme> {
     public String description;
     public String ext_desc;
     public Channel channel;
-    
+
     public int compareTo(Programme that) {
         return (int) (this.start.getTime() - that.start.getTime());
     }
 
     @Override
     public boolean equals(Object o) {
-        if(o instanceof Programme) {
-            return ((Programme)o).id == id;
+        if (o instanceof Programme) {
+            return ((Programme) o).id == id;
         }
-        
+
         return false;
     }
 }

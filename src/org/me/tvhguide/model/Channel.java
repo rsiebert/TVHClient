@@ -44,10 +44,10 @@ public class Channel implements Comparable<Channel> {
     }
 
     public boolean hasTag(long id) {
-        if(id == 0) {
+        if (id == 0) {
             return true;
         }
-        
+
         for (Integer i : tags) {
             if (i == id) {
                 return true;
