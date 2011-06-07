@@ -82,6 +82,12 @@ public class TVHGuideApplication extends Application {
     }
 
     public void broadcastError(final String error) {
+        //Don't show error if no views are open
+        synchronized (listeners) {
+            if(listeners.isEmpty()) {
+                return;
+            }
+        }
         handler.post(new Runnable() {
 
             public void run() {
