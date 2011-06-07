@@ -53,7 +53,7 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     public String getMethod() {
-        return getString("method");
+        return getString("method", "");
     }
 
     public boolean containsFiled(String name) {

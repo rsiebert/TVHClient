@@ -290,10 +290,13 @@ public class HTSService extends Service {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean loadIcons = prefs.getBoolean("loadIcons", false);
 
-        if (response.containsFiled("error")) {
+        if (response.containsFiled("error")
+                && !response.getMethod().equals("dvrEntryUpdate")
+                && !response.getMethod().equals("dvrEntryAdd")) {
             showError(response.getString("error"));
             app.setLoading(false);
         }
+
 
         if (1 == response.getInt("noaccess", 0)) {
             showError(R.string.err_auth);
