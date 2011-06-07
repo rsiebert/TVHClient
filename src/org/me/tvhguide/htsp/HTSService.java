@@ -184,6 +184,7 @@ public class HTSService extends Service {
         Log.e(TAG, error);
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.setLoading(false);
         app.broadcastError(error);
     }
 
