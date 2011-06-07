@@ -64,6 +64,8 @@ public class HTSService extends Service {
     public static final String ACTION_DVR_ADD = "org.me.tvhguide.htsp.DVR_ADD";
     public static final String ACTION_DVR_DELETE = "org.me.tvhguide.htsp.DVR_DELETE";
     public static final String ACTION_DVR_CANCEL = "org.me.tvhguide.htsp.DVR_CANCEL";
+    public static final String ACTION_SUBSCRIBE = "org.me.tvhguide.htsp.SUBSCRIBE";
+    public static final String ACTION_UNSUBSCRIBE = "org.me.tvhguide.htsp.UNSUBSCRIBE";
     private static final String TAG = "HTSService";
     private SelectionThread t;
     private ByteBuffer inBuf;
@@ -137,6 +139,11 @@ public class HTSService extends Service {
             epgQuery(ch,
                     intent.getStringExtra("query"),
                     intent.getLongExtra("tagId", 0));
+        } else if (ACTION_SUBSCRIBE.equals(intent.getAction())) {
+            subscribe(intent.getLongExtra("channelId", 0),
+                    intent.getLongExtra("subscriptionId", 0));
+        } else if (ACTION_UNSUBSCRIBE.equals(intent.getAction())) {
+            unsubscribe(intent.getLongExtra("subscriptionId", 0));
         }
 
         return START_NOT_STICKY;
@@ -411,6 +418,15 @@ public class HTSService extends Service {
                 rec.channel.recordings.remove(rec);
             }
             app.removeRecording(rec);
+        } else if (method.equals("muxpkt")) {
+            Log.d(TAG, "stream: " + response.getLong("stream"));
+            Log.d(TAG, "pts: " + response.getLong("pts"));
+            Log.d(TAG, "dts: " + response.getLong("dts"));
+            Log.d(TAG, "duration: " + response.getLong("duration"));
+            Log.d(TAG, "--------------------------");
+
+            byte[] payload = response.getByteArray("payload");
+
         } else {
             Log.d(TAG, method.toString());
         }
@@ -587,6 +603,23 @@ public class HTSService extends Service {
             }
         });
         seq++;
+        t.register(socketChannel, SelectionKey.OP_WRITE, true);
+    }
+
+    private void subscribe(long channelId, long subscriptionId) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("subscribe");
+        request.putField("channelId", channelId);
+        request.putField("subscriptionId", subscriptionId);
+        requestQue.add(request);
+        t.register(socketChannel, SelectionKey.OP_WRITE, true);
+    }
+
+    private void unsubscribe(long subscriptionId) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("unsubscribe");
+        request.putField("subscriptionId", subscriptionId);
+        requestQue.add(request);
         t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 }
