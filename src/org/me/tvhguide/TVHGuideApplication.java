@@ -21,14 +21,17 @@ package org.me.tvhguide;
 import android.app.Application;
 import android.os.Handler;
 import android.widget.Toast;
+import com.googlecode.javacpp.Loader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
 import org.me.tvhguide.htsp.HTSListener;
+import org.me.tvhguide.model.Packet;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
+import org.me.tvhguide.model.Subscription;
 
 /**
  *
@@ -47,13 +50,18 @@ public class TVHGuideApplication extends Application {
     public static final String ACTION_DVR_UPDATE = "org.me.tvhguide.DVR_UPDATE";
     public static final String ACTION_PROGRAMME_ADD = "org.me.tvhguide.PROGRAMME_ADD";
     public static final String ACTION_PROGRAMME_DELETE = "org.me.tvhguide.PROGRAMME_DELETE";
+    public static final String ACTION_SUBSCRIPTION_ADD = "org.me.tvhguide.SUBSCRIPTION_ADD";
+    public static final String ACTION_SUBSCRIPTION_DELETE = "org.me.tvhguide.SUBSCRIPTION_DELETE";
+    public static final String ACTION_SUBSCRIPTION_UPDATE = "org.me.tvhguide.SUBSCRIPTION_UPDATE";
     public static final String ACTION_SIGNAL_STATUS = "org.me.tvhguide.SIGNAL_STATUS";
+    public static final String ACTION_PLAYBACK_PACKET = "org.me.tvhguide.PLAYBACK_PACKET";
     public static final String ACTION_LOADING = "org.me.tvhguide.LOADING";
     public static final String ACTION_ERROR = "org.me.tvhguide.ERROR";
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
     private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
+    private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private volatile boolean loading = false;
     private Handler handler = new Handler();
 
@@ -86,6 +94,10 @@ public class TVHGuideApplication extends Application {
             }
         });
         broadcastMessage(ACTION_ERROR, error);
+    }
+
+    public void broadcastPacket(Packet p) {
+        broadcastMessage(ACTION_PLAYBACK_PACKET, p);
     }
 
     public List<ChannelTag> getChannelTags() {
@@ -238,5 +250,49 @@ public class TVHGuideApplication extends Application {
         tag.id = 0;
         tag.name = getString(R.string.pr_all_channels);
         tags.add(tag);
+    }
+
+    public void addSubscription(Subscription s) {
+        subscriptions.add(s);
+
+        if (!loading) {
+            broadcastMessage(ACTION_SUBSCRIPTION_ADD, s);
+        }
+    }
+
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void removeSubscription(Subscription s) {
+        subscriptions.remove(s);
+
+        if (!loading) {
+            broadcastMessage(ACTION_SUBSCRIPTION_DELETE, s);
+        }
+    }
+
+    public Subscription getSubscription(long id) {
+        for (Subscription s : getSubscriptions()) {
+            if (s.id == id) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public void removeSubscription(long id) {
+        for (Subscription s : getSubscriptions()) {
+            if (s.id == id) {
+                removeSubscription(s);
+                return;
+            }
+        }
+    }
+
+    public void updateSubscription(Subscription s) {
+        if (!loading) {
+            broadcastMessage(ACTION_SUBSCRIPTION_UPDATE, s);
+        }
     }
 }

@@ -47,8 +47,11 @@ import org.me.tvhguide.R;
 import org.me.tvhguide.TVHGuideApplication;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
+import org.me.tvhguide.model.Packet;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
+import org.me.tvhguide.model.Stream;
+import org.me.tvhguide.model.Subscription;
 
 /**
  *
@@ -418,15 +421,54 @@ public class HTSService extends Service {
                 rec.channel.recordings.remove(rec);
             }
             app.removeRecording(rec);
+        } else if (method.equals("subscriptionStart")) {
+            Subscription subscription = new Subscription();
+            subscription.id = response.getLong("subscriptionId");
+            subscription.status = "Subscribing";
+
+            for (Object obj : response.getList("streams")) {
+                Stream s = new Stream();
+                HTSMessage sub = (HTSMessage) obj;
+
+                s.index = sub.getInt("index");
+                s.type = sub.getString("type");
+                s.language = sub.getString("language", "");
+                s.width = sub.getInt("width", 0);
+                s.height = sub.getInt("height", 0);
+
+                subscription.streams.add(s);
+            }
+            app.addSubscription(subscription);
+        } else if (method.equals("subscriptionStatus")) {
+            String status = response.getString("status", null);
+            Subscription s = app.getSubscription(response.getLong("subscriptionId"));
+            if (s.status == null ? status != null : !s.status.equals(status)) {
+                s.status = status;
+                app.updateSubscription(s);
+            }
+        } else if (method.equals("subscriptionStop")) {
+            String status = response.getString("status", null);
+            Subscription s = app.getSubscription(response.getLong("subscriptionId"));
+            if (s.status == null ? status != null : !s.status.equals(status)) {
+                s.status = status;
+                app.updateSubscription(s);
+            }
+            app.removeSubscription(s);
         } else if (method.equals("muxpkt")) {
-            Log.d(TAG, "stream: " + response.getLong("stream"));
-            Log.d(TAG, "pts: " + response.getLong("pts"));
-            Log.d(TAG, "dts: " + response.getLong("dts"));
-            Log.d(TAG, "duration: " + response.getLong("duration"));
-            Log.d(TAG, "--------------------------");
+            Packet packet = new Packet();
+            packet.dts = response.getLong("dts");
+            packet.duration = response.getLong("duration");
+            packet.frametype = response.getInt("frametype");
+            packet.payload = response.getByteArray("payload");
 
-            byte[] payload = response.getByteArray("payload");
-
+            Subscription sub = app.getSubscription(response.getLong("subscriptionId"));
+            for (Stream st : sub.streams) {
+                if (st.index == response.getInt("stream")) {
+                    packet.stream = st;
+                }
+            }
+            packet.subscription = sub;
+            app.broadcastPacket(packet);
         } else {
             Log.d(TAG, method.toString());
         }
