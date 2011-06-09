@@ -219,13 +219,14 @@ public class HTSMessage extends HashMap<String, Object> {
 
     private static long uIntToLong(byte b1, byte b2, byte b3, byte b4) {
         long i = 0;
-        i |= b1 & 0xFF;
-        i <<= 24;
-        i |= b2 & 0xFF;
-        i <<= 16;
-        i |= b3 & 0xFF;
         i <<= 8;
-        i |= b4 & 0xFF;
+        i ^= b1 & 0xFF;
+        i <<= 8;
+        i ^= b2 & 0xFF;
+        i <<= 8;
+        i ^= b3 & 0xFF;
+        i <<= 8;
+        i ^= b4 & 0xFF;
         return i;
     }
 
@@ -238,7 +239,8 @@ public class HTSMessage extends HashMap<String, Object> {
 
         len = uIntToLong(buf.get(0), buf.get(1), buf.get(2), buf.get(3));
 
-        if (len > 1024 * 1024) {
+        if (len + 4 > buf.capacity()) {
+            buf.clear();
             throw new Exception("Mesage is to long");
         }
 
