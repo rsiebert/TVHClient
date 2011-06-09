@@ -102,7 +102,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                     }
                     if (nextId == 0) {
                         nextId = p.id;
-                        return;
                     }
                     Intent intent = new Intent(ProgrammeListActivity.this, HTSService.class);
                     intent.setAction(HTSService.ACTION_GET_EVENTS);
