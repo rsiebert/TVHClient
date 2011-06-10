@@ -426,9 +426,10 @@ public class HTSService extends Service {
             }
             app.removeRecording(rec);
         } else if (method.equals("subscriptionStart")) {
-            Subscription subscription = new Subscription();
-            subscription.id = response.getLong("subscriptionId");
-            subscription.status = "Subscribing";
+            Subscription subscription = app.getSubscription(response.getLong("subscriptionId"));
+            if (subscription == null) {
+                return;
+            }
 
             for (Object obj : response.getList("streams")) {
                 Stream s = new Stream();
@@ -442,30 +443,40 @@ public class HTSService extends Service {
 
                 subscription.streams.add(s);
             }
-            app.addSubscription(subscription);
         } else if (method.equals("subscriptionStatus")) {
-            String status = response.getString("status", null);
             Subscription s = app.getSubscription(response.getLong("subscriptionId"));
+            if (s == null) {
+                return;
+            }
+            String status = response.getString("status", null);
             if (s.status == null ? status != null : !s.status.equals(status)) {
                 s.status = status;
                 app.updateSubscription(s);
             }
         } else if (method.equals("subscriptionStop")) {
-            String status = response.getString("status", null);
             Subscription s = app.getSubscription(response.getLong("subscriptionId"));
+            if (s == null) {
+                return;
+            }
+            String status = response.getString("status", null);
             if (s.status == null ? status != null : !s.status.equals(status)) {
                 s.status = status;
                 app.updateSubscription(s);
             }
             app.removeSubscription(s);
+
         } else if (method.equals("muxpkt")) {
+            Subscription sub = app.getSubscription(response.getLong("subscriptionId"));
+            if (sub == null) {
+                return;
+            }
+
             Packet packet = new Packet();
             packet.dts = response.getLong("dts");
             packet.duration = response.getLong("duration");
             packet.frametype = response.getInt("frametype");
             packet.payload = response.getByteArray("payload");
 
-            Subscription sub = app.getSubscription(response.getLong("subscriptionId"));
             for (Stream st : sub.streams) {
                 if (st.index == response.getInt("stream")) {
                     packet.stream = st;
@@ -670,6 +681,13 @@ public class HTSService extends Service {
     }
 
     private void subscribe(long channelId, long subscriptionId) {
+        Subscription subscription = new Subscription();
+        subscription.id = subscriptionId;
+        subscription.status = "Subscribing";
+
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.addSubscription(subscription);
+
         HTSMessage request = new HTSMessage();
         request.setMethod("subscribe");
         request.putField("channelId", channelId);
@@ -679,10 +697,15 @@ public class HTSService extends Service {
     }
 
     private void unsubscribe(long subscriptionId) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.removeSubscription(subscriptionId);
+
         HTSMessage request = new HTSMessage();
         request.setMethod("unsubscribe");
         request.putField("subscriptionId", subscriptionId);
         requestQue.add(request);
         t.register(socketChannel, SelectionKey.OP_WRITE, true);
+
+
     }
 }
