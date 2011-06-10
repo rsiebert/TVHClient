@@ -29,6 +29,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -472,6 +473,23 @@ public class HTSService extends Service {
             }
             packet.subscription = sub;
             app.broadcastPacket(packet);
+        } else if (method.equals("queueStatus")) {
+            Subscription sub = app.getSubscription(response.getLong("subscriptionId"));
+            if (sub == null) {
+                return;
+            }
+            if (response.containsFiled("delay")) {
+                BigInteger delay = response.getBigInteger("delay");
+                delay = delay.divide(BigInteger.valueOf((1000)));
+                sub.delay = delay.longValue();
+            }
+            sub.droppedBFrames = response.getLong("Bdrops", sub.droppedBFrames);
+            sub.droppedIFrames = response.getLong("Idrops", sub.droppedIFrames);
+            sub.droppedPFrames = response.getLong("Pdrops", sub.droppedPFrames);
+            sub.packetCount = response.getLong("packets", sub.packetCount);
+            sub.queSize = response.getLong("bytes", sub.queSize);
+
+            app.updateSubscription(sub);
         } else {
             Log.d(TAG, method.toString());
         }
