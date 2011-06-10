@@ -33,6 +33,8 @@ import android.graphics.drawable.ClipDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,6 +42,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -75,6 +78,9 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         chAdapter = new ChannelListAdapter(this, chList);
         chAdapter.sort();
         setListAdapter(chAdapter);
+
+        registerForContextMenu(getListView());
+        
         Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_CONNECT);
         startService(intent);
@@ -85,6 +91,34 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.string.ch_play:{
+                startActivity(item.getIntent());
+                return true;
+            }
+            default: {
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuItem item = menu.add(ContextMenu.NONE, R.string.ch_play, ContextMenu.NONE, R.string.ch_play);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        Channel ch = chAdapter.getItem(info.position);
+
+        menu.setHeaderTitle(ch.name);
+        Intent intent = new Intent(this, PlaybackActivity.class);
+        intent.putExtra("channelId", ch.id);
+        item.setIntent(intent);
     }
 
     @Override
