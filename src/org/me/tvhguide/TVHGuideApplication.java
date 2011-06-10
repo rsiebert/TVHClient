@@ -251,6 +251,11 @@ public class TVHGuideApplication extends Application {
         }
         channels.clear();
 
+        for (Subscription s : subscriptions) {
+            s.streams.clear();
+        }
+        subscriptions.clear();
+
         ChannelTag tag = new ChannelTag();
         tag.id = 0;
         tag.name = getString(R.string.pr_all_channels);
@@ -270,6 +275,7 @@ public class TVHGuideApplication extends Application {
     }
 
     public void removeSubscription(Subscription s) {
+        s.streams.clear();
         subscriptions.remove(s);
 
         if (!loading) {
