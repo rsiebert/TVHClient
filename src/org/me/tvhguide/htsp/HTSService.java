@@ -464,7 +464,6 @@ public class HTSService extends Service {
                 app.updateSubscription(s);
             }
             app.removeSubscription(s);
-
         } else if (method.equals("muxpkt")) {
             Subscription sub = app.getSubscription(response.getLong("subscriptionId"));
             if (sub == null) {
@@ -472,7 +471,8 @@ public class HTSService extends Service {
             }
 
             Packet packet = new Packet();
-            packet.dts = response.getLong("dts");
+            packet.dts = response.getLong("dts", 0);
+            packet.pts = response.getLong("pts", 0);
             packet.duration = response.getLong("duration");
             packet.frametype = response.getInt("frametype");
             packet.payload = response.getByteArray("payload");
