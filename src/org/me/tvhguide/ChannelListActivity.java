@@ -19,6 +19,7 @@
 package org.me.tvhguide;
 
 import android.content.DialogInterface;
+import android.view.KeyEvent;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Channel;
@@ -41,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -80,10 +82,22 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         setListAdapter(chAdapter);
 
         registerForContextMenu(getListView());
-        
+
         Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_CONNECT);
         startService(intent);
+
+        getListView().setOnKeyListener(new OnKeyListener() {
+
+            public boolean onKey(View view, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_SEARCH
+                        && event.getAction() == KeyEvent.ACTION_UP) {
+                    showSearch();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -93,11 +107,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         return true;
     }
 
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.string.ch_play:{
+            case R.string.ch_play: {
                 startActivity(item.getIntent());
                 return true;
             }
@@ -121,6 +134,42 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         item.setIntent(intent);
     }
 
+    private void showSearch() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(android.R.string.search_go);
+
+        final EditText input = new EditText(this);
+        builder.setView(input);
+
+        builder.setPositiveButton(android.R.string.search_go, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String query = input.getText().toString();
+
+                Intent intent = new Intent(getBaseContext(), ProgrammeListActivity.class);
+                intent.setAction("search");
+                intent.putExtra("query", query);
+                startActivity(intent);
+
+                if (query.length() > 0) {
+                    intent = new Intent(ChannelListActivity.this, HTSService.class);
+                    intent.setAction(HTSService.ACTION_EPG_QUERY);
+                    intent.putExtra("query", query);
+                    startService(intent);
+                }
+            }
+        });
+
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        builder.show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -142,40 +191,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return true;
             }
             case R.id.mi_search: {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(android.R.string.search_go);
-
-                final EditText input = new EditText(this);
-                builder.setView(input);
-
-                builder.setPositiveButton(android.R.string.search_go, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String query = input.getText().toString();
-
-                        Intent intent = new Intent(getBaseContext(), ProgrammeListActivity.class);
-                        intent.setAction("search");
-                        intent.putExtra("query", query);
-                        startActivity(intent);
-
-                        if (query.length() > 0) {
-                            intent = new Intent(ChannelListActivity.this, HTSService.class);
-                            intent.setAction(HTSService.ACTION_EPG_QUERY);
-                            intent.putExtra("query", query);
-                            startService(intent);
-                        }
-                    }
-                });
-
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
-
-                builder.show();
-
+                showSearch();
                 return true;
             }
             case R.id.mi_tags: {
