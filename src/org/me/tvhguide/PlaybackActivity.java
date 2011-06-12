@@ -189,7 +189,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
                     status.setText(subscription.status);
                 }
             });
-        } else if (subscription != null && action.equals(TVHGuideApplication.ACTION_PLAYBACK_PACKET)) {
+        } else if (action.equals(TVHGuideApplication.ACTION_PLAYBACK_PACKET)) {
             runOnUiThread(new Runnable() {
 
                 public void run() {
