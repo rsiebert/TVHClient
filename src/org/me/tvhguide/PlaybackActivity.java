@@ -47,7 +47,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
     private TextView queSize;
     private TextView packetCount;
     private TextView status;
-    private Subscription subscription;
     private int seconds;
 
     @Override
@@ -132,7 +131,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
             public void onClick(View arg0) {
                 Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
                 intent.setAction(HTSService.ACTION_UNSUBSCRIBE);
-                intent.putExtra("subscriptionId", subscription.id);
+                intent.putExtra("subscriptionId", (long) 1);
                 startService(intent);
                 finish();
             }
@@ -169,18 +168,18 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_ADD)) {
-            subscription = (Subscription) obj;
-
             runOnUiThread(new Runnable() {
 
                 public void run() {
+                    Subscription subscription = (Subscription) obj;
                     status.setText(subscription.status);
                 }
             });
-        } else if (subscription != null && action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
+        } else if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
             runOnUiThread(new Runnable() {
 
                 public void run() {
+                    Subscription subscription = (Subscription) obj;
                     bDrops.setText(Long.toString(subscription.droppedBFrames));
                     iDrops.setText(Long.toString(subscription.droppedIFrames));
                     pDrops.setText(Long.toString(subscription.droppedPFrames));
