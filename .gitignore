@@ -1,3 +1,8 @@
 build
 dist
 nbproject
+*~
+*.o
+*.d
+*.so
+*.a
