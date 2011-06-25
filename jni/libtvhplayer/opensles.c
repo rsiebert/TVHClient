@@ -12,7 +12,7 @@ typedef SLresult (*slCreateEngine_t)(SLObjectItf*,
 				     const SLboolean*);
 
 static void opensles_callback(SLAndroidSimpleBufferQueueItf caller,  void *pContext);
-static int opensles_play(aout_sys_t *p_aout);
+static int opensles_play(aout_sys_t *ao);
 
 #define BUFF_QUEUE  128
 
@@ -29,100 +29,103 @@ static int opensles_play(aout_sys_t *p_aout);
     goto error;						     \
   }
 
-static void opensles_clear(aout_sys_t *p_aout) {
+static void opensles_clear(aout_sys_t *ao) {
   // Destroy buffer queue audio player object
   // and invalidate all associated interfaces
-  if(p_aout->playerObject != NULL) {
-    (*p_aout->playerObject)->Destroy(p_aout->playerObject);
-    p_aout->playerObject = NULL;
+  if(ao->playerObject != NULL) {
+    (*ao->playerObject)->Destroy(ao->playerObject);
+    ao->playerObject = NULL;
   }
   
   // destroy output mix object, and invalidate all associated interfaces
-  if(p_aout->outputMixObject != NULL) {
-    (*p_aout->outputMixObject)->Destroy(p_aout->outputMixObject);
-    p_aout->outputMixObject = NULL;
+  if(ao->outputMixObject != NULL) {
+    (*ao->outputMixObject)->Destroy(ao->outputMixObject);
+    ao->outputMixObject = NULL;
   }
   
   // destroy engine object, and invalidate all associated interfaces
-  if(p_aout->engineObject != NULL) {
-    (*p_aout->engineObject)->Destroy(p_aout->engineObject);
-    p_aout->engineObject = NULL;
+  if(ao->engineObject != NULL) {
+    (*ao->engineObject)->Destroy(ao->engineObject);
+    ao->engineObject = NULL;
   }
   
-  if(p_aout->p_so_handle != NULL) {
-    dlclose(p_aout->p_so_handle);
-    p_aout->p_so_handle = NULL;
+  if(ao->so_handle != NULL) {
+    dlclose(ao->so_handle);
+    ao->so_handle = NULL;
   }
-
+  
   // Clear queues.
   aout_buffer_t *ab;
-  while (ab = TAILQ_FIRST(&p_aout->play_queue)) {
-    TAILQ_REMOVE(&p_aout->play_queue, ab, entry);
+  while (ab = TAILQ_FIRST(&ao->play_queue)) {
+    TAILQ_REMOVE(&ao->play_queue, ab, entry);
     free(ab);
   }
   
-  while (ab = TAILQ_FIRST(&p_aout->free_queue)) {
-    TAILQ_REMOVE(&p_aout->free_queue, ab, entry);
+  while (ab = TAILQ_FIRST(&ao->free_queue)) {
+    TAILQ_REMOVE(&ao->free_queue, ab, entry);
     free(ab);
   }
   
-  p_aout->play_size = 0;
-  p_aout->free_size = 0;
+  ao->play_size = 0;
+  ao->free_size = 0;
+  
+  pthread_mutex_destroy(&ao->mutex);
 }
 
-int opensles_open(aout_sys_t *p_aout) {
+int opensles_open(aout_sys_t *ao) {
   SLresult result;
   
   DEBUG("Opening OpenSLES");
   
-  p_aout->playerObject     = NULL;
-  p_aout->engineObject     = NULL;
-  p_aout->outputMixObject  = NULL;
-  p_aout->play_size        = -BUFF_QUEUE;
+  ao->playerObject     = NULL;
+  ao->engineObject     = NULL;
+  ao->outputMixObject  = NULL;
+  ao->play_size        = -BUFF_QUEUE;
   
-  TAILQ_INIT(&p_aout->play_queue);
-  TAILQ_INIT(&p_aout->free_queue);
+  pthread_mutex_init(&ao->mutex, NULL);
+  TAILQ_INIT(&ao->play_queue);
+  TAILQ_INIT(&ao->free_queue);
   
   // Acquiring LibOpenSLES symbols :
-  p_aout->p_so_handle = dlopen("libOpenSLES.so", RTLD_NOW);
-  if(p_aout->p_so_handle == NULL) {
+  ao->so_handle = dlopen("libOpenSLES.so", RTLD_NOW);
+  if(ao->so_handle == NULL) {
     ERROR("Failed to load libOpenSLES");
     goto error;
   }
-
+  
   slCreateEngine_t    slCreateEnginePtr = NULL;
-
-  OPENSL_DLSYM(slCreateEnginePtr, p_aout->p_so_handle, "slCreateEngine");
-  OPENSL_DLSYM(p_aout->SL_IID_ENGINE, p_aout->p_so_handle, "SL_IID_ENGINE");
-  OPENSL_DLSYM(p_aout->SL_IID_PLAY, p_aout->p_so_handle, "SL_IID_PLAY");
-  OPENSL_DLSYM(p_aout->SL_IID_VOLUME, p_aout->p_so_handle, "SL_IID_VOLUME");
-  OPENSL_DLSYM(p_aout->SL_IID_ANDROIDSIMPLEBUFFERQUEUE, p_aout->p_so_handle, 
+  
+  OPENSL_DLSYM(slCreateEnginePtr, ao->so_handle, "slCreateEngine");
+  OPENSL_DLSYM(ao->SL_IID_ENGINE, ao->so_handle, "SL_IID_ENGINE");
+  OPENSL_DLSYM(ao->SL_IID_PLAY, ao->so_handle, "SL_IID_PLAY");
+  OPENSL_DLSYM(ao->SL_IID_VOLUME, ao->so_handle, "SL_IID_VOLUME");
+  OPENSL_DLSYM(ao->SL_IID_ANDROIDSIMPLEBUFFERQUEUE, ao->so_handle, 
 	       "SL_IID_ANDROIDSIMPLEBUFFERQUEUE");
-
+  
   // create engine
-  result = slCreateEnginePtr(&p_aout->engineObject, 0, NULL, 0, NULL, NULL);
+  result = slCreateEnginePtr(&ao->engineObject, 0, NULL, 0, NULL, NULL);
   CHECK_OPENSL_ERROR(result, "Failed to create engine");
-
+  
   // realize the engine in synchronous mode
-  result = (*p_aout->engineObject)->Realize(p_aout->engineObject,
-					    SL_BOOLEAN_FALSE);
+  result = (*ao->engineObject)->Realize(ao->engineObject,
+					SL_BOOLEAN_FALSE);
   CHECK_OPENSL_ERROR(result, "Failed to realize engine");
   
   // get the engine interface, needed to create other objects
-  result = (*p_aout->engineObject)->GetInterface(p_aout->engineObject,
-						*p_aout->SL_IID_ENGINE, &p_aout->engineEngine);
+  result = (*ao->engineObject)->GetInterface(ao->engineObject,
+					     *ao->SL_IID_ENGINE, &ao->engineEngine);
   CHECK_OPENSL_ERROR(result, "Failed to get the engine interface");
-
+  
   // create output mix, with environmental reverb specified as a non-required interface
-  const SLInterfaceID ids1[] = {*p_aout->SL_IID_VOLUME};
+  const SLInterfaceID ids1[] = {*ao->SL_IID_VOLUME};
   const SLboolean req1[] = {SL_BOOLEAN_FALSE};
-  result = (*p_aout->engineEngine)->CreateOutputMix(p_aout->engineEngine,
-						   &p_aout->outputMixObject, 1, ids1, req1);
+  result = (*ao->engineEngine)->CreateOutputMix(ao->engineEngine,
+						&ao->outputMixObject, 1, ids1, req1);
   CHECK_OPENSL_ERROR(result, "Failed to create output mix");
-
+  
   // realize the output mix in synchronous mode
-  result = (*p_aout->outputMixObject)->Realize(p_aout->outputMixObject,
-					      SL_BOOLEAN_FALSE);
+  result = (*ao->outputMixObject)->Realize(ao->outputMixObject,
+					   SL_BOOLEAN_FALSE);
   CHECK_OPENSL_ERROR(result, "Failed to realize output mix");
   
   // configure audio source - this defines the number of samples you can enqueue.
@@ -130,7 +133,7 @@ int opensles_open(aout_sys_t *p_aout) {
     SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
     BUFF_QUEUE
   };
-
+  
   SLDataFormat_PCM format_pcm;
   format_pcm.formatType       = SL_DATAFORMAT_PCM;
   format_pcm.numChannels      = 2;
@@ -139,139 +142,132 @@ int opensles_open(aout_sys_t *p_aout) {
   format_pcm.containerSize    = SL_PCMSAMPLEFORMAT_FIXED_16;
   format_pcm.channelMask      = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
   format_pcm.endianness       = SL_BYTEORDER_LITTLEENDIAN;
-
+  
   SLDataSource audioSrc = {&loc_bufq, &format_pcm};
-
+  
   // configure audio sink
   SLDataLocator_OutputMix loc_outmix = {
     SL_DATALOCATOR_OUTPUTMIX,
-    p_aout->outputMixObject
+    ao->outputMixObject
   };
   SLDataSink audioSnk = {&loc_outmix, NULL};
-
+  
   // create audio player
-  const SLInterfaceID ids2[] = {*p_aout->SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
+  const SLInterfaceID ids2[] = {*ao->SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
   const SLboolean     req2[] = {SL_BOOLEAN_TRUE};
-  result = (*p_aout->engineEngine)->CreateAudioPlayer(p_aout->engineEngine,
-						     &p_aout->playerObject, &audioSrc,
-						     &audioSnk, 
-						     sizeof(ids2)/sizeof(*ids2),
-						     ids2, req2);
+  result = (*ao->engineEngine)->CreateAudioPlayer(ao->engineEngine,
+						  &ao->playerObject, &audioSrc,
+						  &audioSnk, 
+						  sizeof(ids2)/sizeof(*ids2),
+						  ids2, req2);
   CHECK_OPENSL_ERROR(result, "Failed to create audio player");
-
+  
   // realize the player
-  result = (*p_aout->playerObject)->Realize(p_aout->playerObject,
-					   SL_BOOLEAN_FALSE);
+  result = (*ao->playerObject)->Realize(ao->playerObject,
+					SL_BOOLEAN_FALSE);
   CHECK_OPENSL_ERROR(result, "Failed to realize player object.");
-
+  
   // get the play interface
-  result = (*p_aout->playerObject)->GetInterface(p_aout->playerObject,
-						*p_aout->SL_IID_PLAY, &p_aout->playerPlay);
+  result = (*ao->playerObject)->GetInterface(ao->playerObject,
+					     *ao->SL_IID_PLAY, &ao->playerPlay);
   CHECK_OPENSL_ERROR(result, "Failed to get player interface.");
-
+  
   // get the buffer queue interface
-  result = (*p_aout->playerObject)->GetInterface(p_aout->playerObject,
-						*p_aout->SL_IID_ANDROIDSIMPLEBUFFERQUEUE,
-						&p_aout->playerBufferQueue);
+  result = (*ao->playerObject)->GetInterface(ao->playerObject,
+					     *ao->SL_IID_ANDROIDSIMPLEBUFFERQUEUE,
+					     &ao->playerBufferQueue);
   CHECK_OPENSL_ERROR(result, "Failed to get buff queue interface");
-
-  result = (*p_aout->playerBufferQueue)->RegisterCallback(p_aout->playerBufferQueue,
-							 opensles_callback,
-							 (void*)p_aout);
+  
+  result = (*ao->playerBufferQueue)->RegisterCallback(ao->playerBufferQueue,
+						      opensles_callback,
+						      (void*)ao);
   CHECK_OPENSL_ERROR(result, "Failed to register buff queue callback.");
-
+  
   // set the player's state to playing
-  result = (*p_aout->playerPlay)->SetPlayState(p_aout->playerPlay,
-					      SL_PLAYSTATE_PLAYING);
+  result = (*ao->playerPlay)->SetPlayState(ao->playerPlay,
+					   SL_PLAYSTATE_PLAYING);
   CHECK_OPENSL_ERROR(result, "Failed to switch to playing state");
-
+  
   return 0;
   
  error:
-  opensles_clear(p_aout);
+  opensles_clear(ao);
   return -1;
 }
 
-void opensles_close(aout_sys_t *p_aout) {
+void opensles_close(aout_sys_t *ao) {
   DEBUG("Closing OpenSLES");
-
-  pthread_mutex_lock(&p_aout->mutex);
-
-  (*p_aout->playerPlay)->SetPlayState(p_aout->playerPlay, SL_PLAYSTATE_STOPPED);
+  
+  pthread_mutex_lock(&ao->mutex);
+  
+  (*ao->playerPlay)->SetPlayState(ao->playerPlay, SL_PLAYSTATE_STOPPED);
   // Flush remaining buffers if any.
-  if(p_aout->playerBufferQueue != NULL) {
-    (*p_aout->playerBufferQueue)->Clear(p_aout->playerBufferQueue);
-    p_aout->playerBufferQueue = NULL;
+  if(ao->playerBufferQueue != NULL) {
+    (*ao->playerBufferQueue)->Clear(ao->playerBufferQueue);
+    ao->playerBufferQueue = NULL;
   }
-
-  pthread_mutex_unlock(&p_aout->mutex);
-
-  opensles_clear(p_aout);
+  
+  pthread_mutex_unlock(&ao->mutex);
+  
+  opensles_clear(ao);
 }
 
-void opensles_enqueue(aout_sys_t *p_aout, uint8_t *p_buf, size_t i_buf) {
-  aout_buffer_t *ab = (aout_buffer_t *) malloc(sizeof(aout_buffer_t));
-  ab->ptr = malloc(i_buf);
-  ab->len = i_buf;
-  memcpy(ab->ptr, p_buf, i_buf);
+void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) { 
+  pthread_mutex_lock(&ao->mutex);
   
-  pthread_mutex_lock(&p_aout->mutex);
-
-  TAILQ_INSERT_TAIL(&p_aout->play_queue, ab, entry);
-  p_aout->play_size++;
-
-  if(p_aout->play_size == BUFF_QUEUE) {
-    p_aout->play_size -= opensles_play(p_aout);
+  TAILQ_INSERT_TAIL(&ao->play_queue, ab, entry);
+  ao->play_size++;
+  
+  if(ao->play_size >= BUFF_QUEUE) {
+    ao->play_size -= opensles_play(ao);
   }
-
-  pthread_mutex_unlock(&p_aout->mutex);
+  
+  pthread_mutex_unlock(&ao->mutex);
 }
 
 
 static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pContext) {
-  aout_sys_t *p_aout = (aout_sys_t*)pContext;
-
-  pthread_mutex_lock(&p_aout->mutex);
-
+  aout_sys_t *ao = (aout_sys_t*)pContext;
+  
+  pthread_mutex_lock(&ao->mutex);
+  
   // old callback, just return since we free memory in opensles_clear()
-  if(caller != p_aout->playerBufferQueue) {
+  if(caller != ao->playerBufferQueue) {
     return;
   }
-
-  aout_buffer_t *ab = TAILQ_FIRST(&p_aout->free_queue);
+  
+  aout_buffer_t *ab = TAILQ_FIRST(&ao->free_queue);
   free(ab->ptr);
-  TAILQ_REMOVE(&p_aout->free_queue, ab, entry);
-  p_aout->free_size--;
-
-  if(p_aout->free_size == 0) {
-    p_aout->play_size -= opensles_play(p_aout);
+  TAILQ_REMOVE(&ao->free_queue, ab, entry);
+  ao->free_size--;
+  
+  if(ao->free_size == 0) {
+    ao->play_size -= opensles_play(ao);
   }
-
+  
   // TODO: check for starvation and take actions against them somehow (back-off size of buffer??)
-
-  pthread_mutex_unlock(&p_aout->mutex);
+  
+  pthread_mutex_unlock(&ao->mutex);
 }
 
 
-static int opensles_play(aout_sys_t *p_aout) {
+static int opensles_play(aout_sys_t *ao) {
   SLresult result;
   aout_buffer_t *ab;
-
   int i = 0;
-
-
-  while (ab = TAILQ_FIRST(&p_aout->play_queue)) {
-    if(p_aout->free_size >= BUFF_QUEUE) {
+  
+  while (ab = TAILQ_FIRST(&ao->play_queue)) {
+    if(ao->free_size >= BUFF_QUEUE) {
       break;
     }
 
-    TAILQ_REMOVE(&p_aout->play_queue, ab, entry);
-    TAILQ_INSERT_TAIL(&p_aout->free_queue, ab, entry);
-    result = (*p_aout->playerBufferQueue)->Enqueue(p_aout->playerBufferQueue, 
-						   ab->ptr,
-						   ab->len);
+    TAILQ_REMOVE(&ao->play_queue, ab, entry);
+    TAILQ_INSERT_TAIL(&ao->free_queue, ab, entry);
+    result = (*ao->playerBufferQueue)->Enqueue(ao->playerBufferQueue, 
+					       ab->ptr,
+					       ab->len);
     i++;
-    p_aout->free_size++;
+    ao->free_size++;
     if(result == SL_RESULT_SUCCESS) {
       continue;
     }
@@ -280,6 +276,6 @@ static int opensles_play(aout_sys_t *p_aout) {
   }
 
   DEBUG("Flushing %d frames", i);
-
+  
   return i;
 }

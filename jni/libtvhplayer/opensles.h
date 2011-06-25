@@ -25,7 +25,7 @@ typedef struct aout_sys {
   SLInterfaceID                 * SL_IID_ANDROIDSIMPLEBUFFERQUEUE;
   SLInterfaceID                 * SL_IID_VOLUME;
   SLInterfaceID                 * SL_IID_PLAY;
-  void                          * p_so_handle;
+  void                          * so_handle;
   pthread_mutex_t                 mutex;
   int                             play_size;
   struct audio_queue              play_queue;
@@ -33,8 +33,8 @@ typedef struct aout_sys {
   struct audio_queue              free_queue;
 } aout_sys_t;
 
-int opensles_open(aout_sys_t *p_aout);
-void opensles_close(aout_sys_t *p_aout);
-void opensles_enqueue(aout_sys_t *p_aout, uint8_t *p_buf, size_t i_buf);
+int opensles_open(aout_sys_t *ao);
+void opensles_close(aout_sys_t *ao);
+void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab);
 
 #endif
