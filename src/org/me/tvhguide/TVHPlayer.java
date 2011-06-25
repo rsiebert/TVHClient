@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright (C) 2011 John Törnblom
+ *
+ * This file is part of TVHGuide.
+ *
+ * TVHGuide is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TVHGuide is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.me.tvhguide;
 
@@ -11,17 +25,20 @@ import org.me.tvhguide.model.Subscription;
 
 /**
  *
- * @author john
+ * @author john-tornblom
  */
 public class TVHPlayer {
 
     private static long subscriptionId;
     private static int audioStream;
     private static int videoStream;
-    private static Surface surface;
 
     static {
         System.loadLibrary("tvhplayer");
+    }
+
+    public static int getVideoStreamIndex() {
+        return videoStream;
     }
 
     public static long stop() {
@@ -44,7 +61,6 @@ public class TVHPlayer {
                 audioStream = st.index;
             } else if (videoStream == 0 && setVideoCodec(st.type)) {
                 videoStream = st.index;
-                surface.setSize(st.width, st.height);
             }
         }
 
@@ -64,12 +80,8 @@ public class TVHPlayer {
 
         return false;
     }
-
-    public static void setVideoSurface(Surface s) {
-        TVHPlayer.surface = s;
-        setSurface(surface);
-    }
-    private static native void setSurface(Surface surface);
+    
+    public static native void setSurface(Surface surface);
 
     private static native boolean setAudioCodec(String codec);
 

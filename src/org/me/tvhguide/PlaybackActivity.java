@@ -19,9 +19,6 @@
 package org.me.tvhguide;
 
 import android.widget.LinearLayout;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import org.me.tvhguide.htsp.HTSService;
 import android.content.Intent;
 import org.me.tvhguide.model.Subscription;
@@ -36,10 +33,9 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Packet;
+import org.me.tvhguide.model.Stream;
 
 /**
  *
@@ -47,17 +43,10 @@ import org.me.tvhguide.model.Packet;
  */
 public class PlaybackActivity extends Activity implements HTSListener {
 
-    private TextView bDrops;
-    private TextView iDrops;
-    private TextView pDrops;
-    private TextView delay;
-    private TextView queSize;
-    private TextView packetCount;
-    private TextView status;
-    private int seconds;
     private long subId;
     private long channelId;
     private static long nextSubId = 1;
+    private SurfaceHolder surfaceHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,87 +64,16 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-/*
-        LinearLayout l = new LinearLayout(this);
-        TextView textView = new TextView(this);
-        textView.setText("Status: ");
-        l.addView(textView);
-        status = new TextView(this);
-        l.addView(status);
-        layout.addView(l);
+        SurfaceView surface = new SurfaceView(this);
+        surface.setMinimumHeight(100);
+        surface.setMinimumWidth(100);
+        surfaceHolder = surface.getHolder();
+        surfaceHolder.setKeepScreenOn(true);
+        surfaceHolder.setFormat(PixelFormat.RGBA_8888);
+        surfaceHolder.addCallback(surfaceCallback);
 
-        l = new LinearLayout(this);
-        textView = new TextView(this);
-        textView.setText("Dropped B-Frames: ");
-        l.addView(textView);
-        bDrops = new TextView(this);
-        l.addView(bDrops);
-        layout.addView(l);
+        layout.addView(surface);
 
-        l = new LinearLayout(this);
-        textView = new TextView(this);
-        textView.setText("Dropped I-Frames: ");
-        l.addView(textView);
-        iDrops = new TextView(this);
-        l.addView(iDrops);
-        layout.addView(l);
-
-        l = new LinearLayout(this);
-        textView = new TextView(this);
-        textView.setText("Dropped P-Frames: ");
-        l.addView(textView);
-        pDrops = new TextView(this);
-        l.addView(pDrops);
-        layout.addView(l);
-
-        l = new LinearLayout(this);
-        textView = new TextView(this);
-        textView.setText("Runtime: ");
-        l.addView(textView);
-        delay = new TextView(this);
-        l.addView(delay);
-        layout.addView(l);
-
-        l = new LinearLayout(this);
-        textView = new TextView(this);
-        textView.setText("Que size: ");
-        l.addView(textView);
-        queSize = new TextView(this);
-        l.addView(queSize);
-        layout.addView(l);
-
-        l = new LinearLayout(this);
-        textView = new TextView(this);
-        textView.setText("Packets in que: ");
-        l.addView(textView);
-        packetCount = new TextView(this);
-        l.addView(packetCount);
-        layout.addView(l);
-
-        Button btn = new Button(this);
-        btn.setText("Stop");
-
-        btn.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View arg0) {
-                stopPlayback();
-                finish();
-            }
-        });
-        layout.addView(btn);
-        setContentView(view);
-
-*/
-        SurfaceView mSurface = new SurfaceView(this);
-        mSurface.setMinimumHeight(100);
-        mSurface.setMinimumWidth(100);
-        SurfaceHolder mSurfaceHolder = mSurface.getHolder();
-        mSurfaceHolder.setKeepScreenOn(true);
-        mSurfaceHolder.setFormat(PixelFormat.RGBA_8888);
-        mSurfaceHolder.addCallback(surfaceCallback);
-
-        layout.addView(mSurface);
-        
         setContentView(layout);
 
         subId = nextSubId++;
@@ -166,12 +84,10 @@ public class PlaybackActivity extends Activity implements HTSListener {
         layout.setKeepScreenOn(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
-
     private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
 
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            TVHPlayer.setVideoSurface(holder.getSurface());
-            //TVHPlayer.setSurfaceSize(width, height);
+            TVHPlayer.setSurface(holder.getSurface());
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
@@ -239,6 +155,20 @@ public class PlaybackActivity extends Activity implements HTSListener {
             }
             runOnUiThread(new Runnable() {
 
+                public void run() {
+                    Subscription subscription = (Subscription) obj;
+                    for (Stream st : subscription.streams) {
+                        if (st.index == TVHPlayer.getVideoStreamIndex()) {
+
+                            surfaceHolder.setFixedSize(st.width, st.height);
+                            break;
+                        }
+                    }
+                }
+            });
+
+            runOnUiThread(new Runnable() {
+
                 public void run() {/*
                     Subscription subscription = (Subscription) obj;
                     bDrops.setText(Long.toString(subscription.droppedBFrames));
@@ -248,6 +178,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
                     queSize.setText(Long.toString(subscription.queSize));
                     packetCount.setText(Long.toString(subscription.packetCount));
                     status.setText(subscription.status);*/
+
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PLAYBACK_PACKET)) {
