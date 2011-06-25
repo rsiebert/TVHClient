@@ -33,6 +33,8 @@ typedef struct aout_buffer {
   size_t len;
 } aout_buffer_t;
 
+typedef void(aout_callback_t)(aout_buffer_t *ab, void *args);
+
 typedef struct aout_sys {
   SLObjectItf                     engineObject;
   SLEngineItf                     engineEngine;
@@ -50,10 +52,13 @@ typedef struct aout_sys {
   struct audio_queue              play_queue;
   int                             free_size;
   struct audio_queue              free_queue;
+  aout_callback_t               * callback;
+  void                          * callback_args;
 } aout_sys_t;
 
 int opensles_open(aout_sys_t *ao);
 void opensles_close(aout_sys_t *ao);
+void opensles_set_callback(aout_sys_t *ao, aout_callback_t *f, void *args);
 void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab);
 
 #endif

@@ -244,6 +244,13 @@ void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) {
   pthread_mutex_unlock(&ao->mutex);
 }
 
+void opensles_set_callback(aout_sys_t *ao, aout_callback_t *f, void *args) {
+  pthread_mutex_lock(&ao->mutex);
+  ao->callback = f;
+  ao->callback_args = args;
+  pthread_mutex_unlock(&ao->mutex);
+}
+
 static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pContext) {
   aout_sys_t *ao = (aout_sys_t*)pContext;
   
@@ -255,7 +262,6 @@ static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pConte
   }
   
   aout_buffer_t *ab = TAILQ_FIRST(&ao->free_queue);
-  free(ab->ptr);
   TAILQ_REMOVE(&ao->free_queue, ab, entry);
   ao->free_size--;
   
@@ -263,8 +269,13 @@ static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pConte
     ao->play_size -= opensles_play(ao);
   }
   
+  ao->callback(ab, ao->callback_args);
+  free(ab->ptr);
+  free(ab);
+
   // TODO: check for starvation and take actions against them somehow (back-off size of buffer??)
   
+
   pthread_mutex_unlock(&ao->mutex);
 }
 

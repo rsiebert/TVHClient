@@ -23,6 +23,8 @@
 
 #include "tvhplayer.h"
 
+static void tvh_audio_callback(aout_buffer_t *ab, void *args);
+
 int tvh_init(tvh_object_t *tvh) {
   avcodec_init();
   avcodec_register_all();
@@ -42,6 +44,9 @@ int tvh_init(tvh_object_t *tvh) {
   if(opensles_open(tvh->ao) < 0) {
     return -1;
   }
+
+  opensles_set_callback(tvh->ao, &tvh_audio_callback, tvh);
+
   if(surface_init(tvh->vo) < 0) {
     return -1;
   }
@@ -259,6 +264,10 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len) {
     packet.data = ptr;
     packet.size = len;    
   } while(len);
+}
+
+static void tvh_audio_callback(aout_buffer_t *ab, void *args) {
+  tvh_object_t *tvh = (tvh_object_t *)args;
 }
 
 int tvh_audio_close(tvh_object_t *tvh) {
