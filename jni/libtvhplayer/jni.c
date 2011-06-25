@@ -75,11 +75,11 @@ void Java_org_me_tvhguide_TVHPlayer_clear(JNIEnv* env, jobject thiz) {
 
 }
 
-void Java_org_me_tvhguide_TVHPlayer_enqueueAudioFrame(JNIEnv* env, jobject thiz, jbyteArray byteArray) {
+void Java_org_me_tvhguide_TVHPlayer_enqueueAudioFrame(JNIEnv* env, jobject thiz, jbyteArray byteArray, jlong pts, jlong dts, jlong duration) {
   jint len = (*env)->GetArrayLength(env, byteArray);
   jbyte *buf = (*env)->GetByteArrayElements(env, byteArray, NULL);
   
-  tvh_audio_enqueue(instance, buf, len);
+  tvh_audio_enqueue(instance, buf, len, pts, dts, duration);
 
   (*env)->ReleaseByteArrayElements(env, byteArray, buf, JNI_ABORT);
 }

@@ -136,6 +136,14 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts
     return;
   }
 
+  if(pts) {
+    cs->frame->pts = pts;
+  } else if(packet.dts != AV_NOPTS_VALUE) {
+    cs->frame->pts = packet.dts;
+  } else if(cs->frame->pts == AV_NOPTS_VALUE) {
+    cs->frame->pts = 0;
+  }
+
   memset(&pict, 0, sizeof(pict));
 
   vo->lock(vo->surface, (void*)&vo->surface_info, 1);
@@ -233,7 +241,7 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
   return 0;
 }
 
-void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len) {
+void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts, uint64_t dts, uint64_t dur) {
   uint8_t *ptr;
   AVPacket packet;
   int length;
@@ -254,6 +262,7 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len) {
     aout_buffer_t *ab = (aout_buffer_t *) malloc(sizeof(aout_buffer_t));
     ab->ptr = malloc(cs->len);
     ab->len = cs->len;
+    ab->pts = pts;
     memcpy(ab->ptr, cs->buf, cs->len);
 
     opensles_enqueue(ao, ab);
@@ -268,6 +277,8 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len) {
 
 static void tvh_audio_callback(aout_buffer_t *ab, void *args) {
   tvh_object_t *tvh = (tvh_object_t *)args;
+
+  tvh->cur_pts = ab->pts;
 }
 
 int tvh_audio_close(tvh_object_t *tvh) {

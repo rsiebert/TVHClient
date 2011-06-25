@@ -71,7 +71,7 @@ public class TVHPlayer {
 
     public static boolean enqueuePacket(Packet p) {
         if (p.subscription.id == subscriptionId && p.stream.index == audioStream) {
-            enqueueAudioFrame(p.payload);
+            enqueueAudioFrame(p.payload, p.pts, p.dts, p.duration);
             return true;
         } else if (p.subscription.id == subscriptionId && p.stream.index == videoStream) {
             enqueueVideoFrame(p.payload, p.pts, p.dts, p.duration);
@@ -87,7 +87,7 @@ public class TVHPlayer {
 
     private static native boolean setVideoCodec(String codec);
 
-    private static native void enqueueAudioFrame(byte[] frame);
+    private static native void enqueueAudioFrame(byte[] frame, long pts, long dts, long duration);
 
     private static native void enqueueVideoFrame(byte[] frame, long pts, long dts, long duration);
 }

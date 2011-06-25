@@ -31,6 +31,7 @@ typedef struct aout_buffer {
   TAILQ_ENTRY(aout_buffer) entry;
   void *ptr;
   size_t len;
+  int64_t pts;
 } aout_buffer_t;
 
 typedef void(aout_callback_t)(aout_buffer_t *ab, void *args);
