@@ -1,3 +1,22 @@
+/*
+ *  Copyright (C) 2011 John Törnblom
+ *
+ * This file is part of TVHGuide.
+ *
+ * TVHGuide is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TVHGuide is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <stdlib.h>
 #include <dlfcn.h>
 
@@ -225,7 +244,6 @@ void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) {
   pthread_mutex_unlock(&ao->mutex);
 }
 
-
 static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pContext) {
   aout_sys_t *ao = (aout_sys_t*)pContext;
   
@@ -249,7 +267,6 @@ static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pConte
   
   pthread_mutex_unlock(&ao->mutex);
 }
-
 
 static int opensles_play(aout_sys_t *ao) {
   SLresult result;

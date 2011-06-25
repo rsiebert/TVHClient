@@ -1,3 +1,22 @@
+/*
+ *  Copyright (C) 2011 John Törnblom
+ *
+ * This file is part of TVHGuide.
+ *
+ * TVHGuide is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TVHGuide is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <jni.h>  
 #include <string.h>  
 #include <stdlib.h>
@@ -29,8 +48,6 @@ jboolean Java_org_me_tvhguide_TVHPlayer_setVideoCodec(JNIEnv* env, jobject thiz,
 }
 
 void Java_org_me_tvhguide_TVHPlayer_setSurface(JNIEnv* env, jobject thiz, jobject surface) {
-  DEBUG("set surface handle");
-
   void *handle;
   jclass clz = (*env)->GetObjectClass(env, surface);
   jfieldID fid = fid = (*env)->GetFieldID(env, clz, "mSurface", "I");
