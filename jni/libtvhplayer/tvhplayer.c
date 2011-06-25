@@ -135,6 +135,11 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts
 				  NULL,
 				  NULL);
 
+  if(cs->ctx->width != vo->surface_info.width || 
+     cs->ctx->height != vo->surface_info.height) {
+    DEBUG("scaling %dx%d -> %dx%d", cs->ctx->width, cs->ctx->height, 
+	  vo->surface_info.width, vo->surface_info.height);
+  }
   sws_scale(cs->conv, 
 	    (const uint8_t * const*)cs->frame->data, 
 	    cs->frame->linesize,
