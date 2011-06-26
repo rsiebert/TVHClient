@@ -48,7 +48,7 @@ static int opensles_play(aout_sys_t *ao);
     goto error;						     \
   }
 
-static void opensles_clear(aout_sys_t *ao) {
+void opensles_destroy(aout_sys_t *ao) {
   // Destroy buffer queue audio player object
   // and invalidate all associated interfaces
   if(ao->playerObject != NULL) {
@@ -73,29 +73,14 @@ static void opensles_clear(aout_sys_t *ao) {
     ao->so_handle = NULL;
   }
   
-  // Clear queues.
-  aout_buffer_t *ab;
-  while(ab = TAILQ_FIRST(&ao->play_queue)) {
-    TAILQ_REMOVE(&ao->play_queue, ab, entry);
-    free(ab);
-  }
-  
-  while(ab = TAILQ_FIRST(&ao->free_queue)) {
-    TAILQ_REMOVE(&ao->free_queue, ab, entry);
-    free(ab);
-  }
-  
-  ao->play_size = 0;
-  ao->free_size = 0;
-  
   pthread_mutex_destroy(&ao->mutex);
 }
 
-int opensles_open(aout_sys_t *ao) {
+int opensles_init(aout_sys_t *ao) {
   SLresult result;
-  
-  DEBUG("Opening OpenSLES");
-  
+
+  DEBUG("Initializing OpenSL ES");
+
   ao->playerObject     = NULL;
   ao->engineObject     = NULL;
   ao->outputMixObject  = NULL;
@@ -202,33 +187,55 @@ int opensles_open(aout_sys_t *ao) {
 						      (void*)ao);
   CHECK_OPENSL_ERROR(result, "Failed to register buff queue callback.");
   
+  return 0;
+  
+ error:
+  opensles_destroy(ao);
+  return -1;
+}
+
+int opensles_open(aout_sys_t *ao) {
+  SLresult result;
+
+  DEBUG("Opening OpenSL ES for playback");
   // set the player's state to playing
   result = (*ao->playerPlay)->SetPlayState(ao->playerPlay,
 					   SL_PLAYSTATE_PLAYING);
   CHECK_OPENSL_ERROR(result, "Failed to switch to playing state");
-  
+
   return 0;
   
  error:
-  opensles_clear(ao);
   return -1;
 }
 
 void opensles_close(aout_sys_t *ao) {
-  DEBUG("Closing OpenSLES");
-  
+  DEBUG("Closing OpenSL ES");
+
   pthread_mutex_lock(&ao->mutex);
   
   (*ao->playerPlay)->SetPlayState(ao->playerPlay, SL_PLAYSTATE_STOPPED);
   // Flush remaining buffers if any.
   if(ao->playerBufferQueue != NULL) {
     (*ao->playerBufferQueue)->Clear(ao->playerBufferQueue);
-    ao->playerBufferQueue = NULL;
   }
   
-  pthread_mutex_unlock(&ao->mutex);
+  // Clear queues.
+  aout_buffer_t *ab;
+  while(ab = TAILQ_FIRST(&ao->play_queue)) {
+    TAILQ_REMOVE(&ao->play_queue, ab, entry);
+    free(ab);
+  }
   
-  opensles_clear(ao);
+  while(ab = TAILQ_FIRST(&ao->free_queue)) {
+    TAILQ_REMOVE(&ao->free_queue, ab, entry);
+    free(ab);
+  }
+  
+  ao->play_size = 0;
+  ao->free_size = 0;
+
+  pthread_mutex_unlock(&ao->mutex);
 }
 
 void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) { 
@@ -291,6 +298,7 @@ static int opensles_play(aout_sys_t *ao) {
 
     TAILQ_REMOVE(&ao->play_queue, ab, entry);
     TAILQ_INSERT_TAIL(&ao->free_queue, ab, entry);
+
     result = (*ao->playerBufferQueue)->Enqueue(ao->playerBufferQueue, 
 					       ab->ptr,
 					       ab->len);

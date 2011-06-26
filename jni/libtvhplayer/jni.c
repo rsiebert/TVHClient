@@ -71,8 +71,14 @@ void Java_org_me_tvhguide_TVHPlayer_setSurface(JNIEnv* env, jobject thiz, jobjec
   (*env)->DeleteLocalRef(env, clz);
 }
 
-void Java_org_me_tvhguide_TVHPlayer_clear(JNIEnv* env, jobject thiz) {
+void Java_org_me_tvhguide_TVHPlayer_start(JNIEnv* env, jobject thiz) {
+  DEBUG("Starting playback");
+  tvh_start(instance);
+}
 
+void Java_org_me_tvhguide_TVHPlayer_stop(JNIEnv* env, jobject thiz) {
+  DEBUG("Stoping playback");
+  tvh_stop(instance);
 }
 
 void Java_org_me_tvhguide_TVHPlayer_enqueueAudioFrame(JNIEnv* env, jobject thiz, jbyteArray byteArray, jlong pts, jlong dts, jlong duration) {
@@ -95,6 +101,8 @@ void Java_org_me_tvhguide_TVHPlayer_enqueueVideoFrame(JNIEnv* env, jobject obj, 
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
   instance = (tvh_object_t*)malloc(sizeof(tvh_object_t));
+  memset(instance, 0, sizeof(tvh_object_t));
+
   tvh_init(instance);
 
   return JNI_VERSION_1_6;

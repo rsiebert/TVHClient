@@ -127,7 +127,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
     }
 
     private void stopPlayback() {
-        long id = TVHPlayer.stop();
+        long id = TVHPlayer.stopPlayback();
         if (id > 0) {
             Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
             intent.setAction(HTSService.ACTION_UNSUBSCRIBE);
@@ -158,7 +158,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
         } else if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
             if (!TVHPlayer.isPlaying()) {
                 Subscription subscription = (Subscription) obj;
-                TVHPlayer.play(subscription);
+                TVHPlayer.startPlayback(subscription);
             }
             runOnUiThread(new Runnable() {
 

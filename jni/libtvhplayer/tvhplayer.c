@@ -49,8 +49,8 @@ int tvh_init(tvh_object_t *tvh) {
   tvh->vcs = malloc(sizeof(vcodec_sys_t));
   memset(tvh->vcs, 0, sizeof(vcodec_sys_t));
 
-  if(opensles_open(tvh->ao) < 0) {
-    DEBUG("Anable to open OpenSL ES device");
+  if(opensles_init(tvh->ao) < 0) {
+    DEBUG("Unable to initilize OpenSL ES");
     return -1;
   }
 
@@ -60,25 +60,14 @@ int tvh_init(tvh_object_t *tvh) {
     DEBUG("Unable to initilize the surface library");
     return -1;
   }
-
-  //TODO: move to tvh_play()
-  tvh->running = 1;
-  tvh->cur_pts = 0;
-  pthread_create(&tvh->thread, NULL, (void*)&tvh_sync_thread, (void *)tvh);
   return 0;
 }
 
 void tvh_destroy(tvh_object_t *tvh) {
-  //TODO: move to tvh_stop()
-  tvh->running = 0;
-  pthread_join(tvh->thread, NULL);
-
-  tvh_audio_close(tvh);
-  opensles_close(tvh->ao);
+  opensles_destroy(tvh->ao);
   free(tvh->acs);
   free(tvh->ao);
 
-  tvh_video_close(tvh);
   surface_destroy(tvh->vo);
   free(tvh->vcs);
   free(tvh->vo);
@@ -86,9 +75,40 @@ void tvh_destroy(tvh_object_t *tvh) {
   free(tvh);
 }
 
+void tvh_start(tvh_object_t *tvh) {
+  if(tvh->running) {
+    return;
+  }
+
+  opensles_open(tvh->ao);
+
+  tvh->running = 1;
+  tvh->cur_pts = 0;
+  tvh->pre_pts = 0;
+  tvh->sys_delay = 0;
+  pthread_create(&tvh->thread, NULL, (void*)&tvh_sync_thread, (void *)tvh);
+}
+
+void tvh_stop(tvh_object_t *tvh) {
+  if(!tvh->running) {
+    return;
+  }
+
+  tvh->running = 0;
+  pthread_join(tvh->thread, NULL);
+
+  surface_close(tvh->vo);
+  opensles_close(tvh->ao);
+
+  tvh_audio_close(tvh);
+  tvh_video_close(tvh);
+}
+
 int tvh_video_init(tvh_object_t *tvh, const char *codec) {
   int codec_id = 0;
   vcodec_sys_t *cs = tvh->vcs;
+
+  DEBUG("Initializing video codec");
 
   if(!strcmp(codec, "H264")) {
     codec_id = CODEC_ID_H264;
@@ -135,7 +155,7 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
   vcodec_sys_t *cs = tvh->vcs;
   vout_sys_t *vo = tvh->vo;
 
-  if(!vo->surface) {
+  if(!vo->surface || !tvh->running) {
     return;
   }
 
@@ -154,12 +174,7 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
   if(!got_picture) {
     return;
   }
-  /*
-  DEBUG("Video PTS0: %lld", pts);
-  DEBUG("Video PTS1: %lld", packet.pts);
-  DEBUG("Video PTS2: %lld", cs->frame->pts);
-  DEBUG("Video PTS3: %lld", packet.dts);
-*/
+
   if(pts) {
     cs->frame->pts = pts;
   } else if(packet.dts != AV_NOPTS_VALUE && packet.dts) {
@@ -210,6 +225,8 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
 }
 
 void tvh_video_close(tvh_object_t *tvh) {
+  DEBUG("Closing video codec");
+
   vcodec_sys_t *cs = tvh->vcs;
   
   if(cs->ctx != NULL) {
@@ -228,6 +245,8 @@ void tvh_video_close(tvh_object_t *tvh) {
 int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
   int codec_id = 0;
   acodec_sys_t *cs = tvh->acs;
+
+  DEBUG("Initializing audio codec");
 
   if(!strcmp(codec, "AC3")) {
     codec_id = CODEC_ID_AC3;
@@ -275,6 +294,10 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
   acodec_sys_t *cs = tvh->acs;
   aout_sys_t *ao = tvh->ao;
 
+  if(!tvh->running) {
+    return;
+  }
+  
   av_init_packet(&packet);
   packet.data = ptr = buf;
   packet.size = len;
@@ -308,6 +331,7 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
 }
 
 int tvh_audio_close(tvh_object_t *tvh) {
+  DEBUG("Closing audio codec");
   acodec_sys_t *cs = tvh->acs;
 
   if(cs->ctx != NULL) {
@@ -347,6 +371,10 @@ static void tvh_video_render(tvh_object_t *tvh) {
 static void tvh_audio_callback(aout_buffer_t *ab, void *args) {
   tvh_object_t *tvh = (tvh_object_t *)args;
   vout_sys_t *vo = tvh->vo;
+
+  if(!tvh->running) {
+    return;
+  }
 
   tvh->pre_pts = tvh->cur_pts;
   tvh->cur_pts = ab->pts;

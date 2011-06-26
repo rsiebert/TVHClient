@@ -31,6 +31,8 @@
   }							     \
 
 int surface_init(vout_sys_t *vo) {
+  DEBUG("Initializing Surface library");
+
   vo->so_handle = dlopen("libsurfaceflinger_client.so", RTLD_NOW);
   if(vo->so_handle == NULL) {
     vo->so_handle = dlopen("libui.so", RTLD_NOW);
@@ -56,6 +58,8 @@ int surface_init(vout_sys_t *vo) {
 }
 
 void surface_open(vout_sys_t *vo, void* handle) {
+  DEBUG("Opening surface for rendering");
+
   vo->surface = handle;
 
   //Clear the buffer and get surface info
@@ -82,6 +86,8 @@ void surface_render(vout_sys_t *vo, vout_buffer_t *vb) {
 }
 
 void surface_close(vout_sys_t *vo) {
+  DEBUG("Closing surface");
+
   vo->surface = NULL;
 
   vout_buffer_t *vb;
