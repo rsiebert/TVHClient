@@ -72,7 +72,7 @@ void opensles_destroy(aout_sys_t *ao) {
     dlclose(ao->so_handle);
     ao->so_handle = NULL;
   }
-  
+
   pthread_mutex_destroy(&ao->mutex);
 }
 
@@ -199,13 +199,18 @@ int opensles_open(aout_sys_t *ao) {
 
   DEBUG("Opening OpenSL ES for playback");
   // set the player's state to playing
+
+  pthread_mutex_lock(&ao->mutex);
+
   result = (*ao->playerPlay)->SetPlayState(ao->playerPlay,
 					   SL_PLAYSTATE_PLAYING);
   CHECK_OPENSL_ERROR(result, "Failed to switch to playing state");
-
+  pthread_mutex_unlock(&ao->mutex);
+  
   return 0;
   
  error:
+  pthread_mutex_unlock(&ao->mutex);
   return -1;
 }
 
@@ -265,6 +270,7 @@ static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pConte
   
   // old callback, just return since we free memory in opensles_clear()
   if(caller != ao->playerBufferQueue) {
+    pthread_mutex_unlock(&ao->mutex);
     return;
   }
   

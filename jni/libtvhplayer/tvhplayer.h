@@ -52,28 +52,29 @@ typedef struct vcodec_sys {
 } vcodec_sys_t;
 
 typedef struct tvh_object {
-  aout_sys_t    *ao;
-  vout_sys_t    *vo;
-  acodec_sys_t  *acs;
-  vcodec_sys_t  *vcs;
-  int            running;
-  int64_t        cur_pts;
-  int64_t        pre_pts;
-  int64_t        sys_time;
-  int64_t        sys_delay;
-  pthread_t      thread;
+  aout_sys_t     * ao;
+  vout_sys_t     * vo;
+  acodec_sys_t   * acs;
+  vcodec_sys_t   * vcs;
+  int              running;
+  int64_t          cur_pts;
+  int64_t          pre_pts;
+  int64_t          sys_time;
+  int64_t          sys_delay;
+  pthread_t        thread;
+  pthread_mutex_t  mutex;
 } tvh_object_t;
 
 
 int tvh_init(tvh_object_t *tvh);
+void tvh_start(tvh_object_t *tvh);
+void tvh_stop(tvh_object_t *tvh);
 void tvh_destroy(tvh_object_t *tvh);
 
 int tvh_video_init(tvh_object_t *tvh, const char *codec);
 void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur);
-void tvh_video_close(tvh_object_t *tvh);
 
 int tvh_audio_init(tvh_object_t *tvh, const char *codec);
 void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur);
-int tvh_audio_close(tvh_object_t *tvh);
 
 #endif

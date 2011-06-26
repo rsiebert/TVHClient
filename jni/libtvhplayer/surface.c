@@ -59,6 +59,7 @@ int surface_init(vout_sys_t *vo) {
 
 void surface_open(vout_sys_t *vo, void* handle) {
   DEBUG("Opening surface for rendering");
+  pthread_mutex_lock(&vo->mutex);
 
   vo->surface = handle;
 
@@ -66,8 +67,11 @@ void surface_open(vout_sys_t *vo, void* handle) {
   vo->lock(vo->surface, (void*)&vo->surface_info, 1);
   memset(vo->surface_info.bits, 0, sizeof(uint32_t) * vo->surface_info.size);
   vo->unlockAndPost(vo->surface);
+
+  pthread_mutex_unlock(&vo->mutex);
 }
 
+//Not thread safe!
 void surface_render(vout_sys_t *vo, vout_buffer_t *vb) {
   if(!vo->surface) {
     return;
@@ -86,6 +90,7 @@ void surface_render(vout_sys_t *vo, vout_buffer_t *vb) {
 }
 
 void surface_close(vout_sys_t *vo) {
+  pthread_mutex_lock(&vo->mutex);
   DEBUG("Closing surface");
 
   vo->surface = NULL;
@@ -95,6 +100,7 @@ void surface_close(vout_sys_t *vo) {
     TAILQ_REMOVE(&vo->render_queue, vb, entry);
     free(vb);
   }
+  pthread_mutex_unlock(&vo->mutex);
 }
 
 void surface_destroy(vout_sys_t *vo) {

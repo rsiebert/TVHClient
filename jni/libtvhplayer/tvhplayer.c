@@ -24,6 +24,8 @@
 #include <time.h>
 #include "tvhplayer.h"
 
+static void tvh_video_close(tvh_object_t *tvh);
+static void tvh_audio_close(tvh_object_t *tvh);
 static void tvh_audio_callback(aout_buffer_t *ab, void *args);
 static void tvh_sync_thread(void *args);
 
@@ -36,6 +38,8 @@ static int64_t tvh_system_clock() {
 int tvh_init(tvh_object_t *tvh) {
   avcodec_init();
   avcodec_register_all();
+
+  pthread_mutex_init(&tvh->mutex, NULL);
 
   tvh->ao = malloc(sizeof(aout_sys_t));
   memset(tvh->ao, 0, sizeof(aout_sys_t));
@@ -72,11 +76,15 @@ void tvh_destroy(tvh_object_t *tvh) {
   free(tvh->vcs);
   free(tvh->vo);
 
+  pthread_mutex_destroy(&tvh->mutex);
   free(tvh);
 }
 
 void tvh_start(tvh_object_t *tvh) {
+  pthread_mutex_lock(&tvh->mutex);
+
   if(tvh->running) {
+    pthread_mutex_unlock(&tvh->mutex);
     return;
   }
 
@@ -86,22 +94,31 @@ void tvh_start(tvh_object_t *tvh) {
   tvh->cur_pts = 0;
   tvh->pre_pts = 0;
   tvh->sys_delay = 0;
+
   pthread_create(&tvh->thread, NULL, (void*)&tvh_sync_thread, (void *)tvh);
+
+  pthread_mutex_unlock(&tvh->mutex);
 }
 
 void tvh_stop(tvh_object_t *tvh) {
+  pthread_mutex_lock(&tvh->mutex);
+
   if(!tvh->running) {
+    pthread_mutex_unlock(&tvh->mutex);
     return;
   }
 
   tvh->running = 0;
-  pthread_join(tvh->thread, NULL);
+
+  tvh_audio_close(tvh);
+  tvh_video_close(tvh);
+
+  pthread_mutex_unlock(&tvh->mutex);
 
   surface_close(tvh->vo);
   opensles_close(tvh->ao);
 
-  tvh_audio_close(tvh);
-  tvh_video_close(tvh);
+  pthread_join(tvh->thread, NULL);
 }
 
 int tvh_video_init(tvh_object_t *tvh, const char *codec) {
@@ -109,7 +126,8 @@ int tvh_video_init(tvh_object_t *tvh, const char *codec) {
   vcodec_sys_t *cs = tvh->vcs;
 
   DEBUG("Initializing video codec");
-
+  pthread_mutex_lock(&tvh->mutex);
+  
   if(!strcmp(codec, "H264")) {
     codec_id = CODEC_ID_H264;
   } else if(!strcmp(codec, "MPEG2VIDEO")) {
@@ -118,18 +136,18 @@ int tvh_video_init(tvh_object_t *tvh, const char *codec) {
 
   if(!codec_id) {
     DEBUG("Unknown video codec %s", codec);
-    return -1;
+    goto error;
   }
 
   cs->codec = avcodec_find_decoder(codec_id);
   if(!cs->codec) {
     DEBUG("Unable to open video codec %s", codec);
-    return -1;
+    goto error;
   }
 
   if(cs->codec->type != CODEC_TYPE_VIDEO) {
     DEBUG("Invalid codec type for video decoding");
-    return -1;
+    goto error;
   }
   
   cs->ctx = avcodec_alloc_context2(CODEC_TYPE_VIDEO);
@@ -139,11 +157,17 @@ int tvh_video_init(tvh_object_t *tvh, const char *codec) {
   if(avcodec_open(cs->ctx, cs->codec) < 0) {
     DEBUG("Unable to open video codec");
     tvh_video_close(tvh);
-    return -1;
+    goto error;
   }
 
   tvh->cur_pts = 0;
+  pthread_mutex_unlock(&tvh->mutex);
+
   return 0;
+
+ error:
+  pthread_mutex_unlock(&tvh->mutex);
+  return -1;
 }
 
 void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur) {
@@ -154,8 +178,11 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
   int pix_fmt = PIX_FMT_BGR32;
   vcodec_sys_t *cs = tvh->vcs;
   vout_sys_t *vo = tvh->vo;
+  
+  pthread_mutex_lock(&tvh->mutex);
 
   if(!vo->surface || !tvh->running) {
+    pthread_mutex_unlock(&tvh->mutex);
     return;
   }
 
@@ -172,6 +199,7 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
   }
 
   if(!got_picture) {
+    pthread_mutex_unlock(&tvh->mutex);
     return;
   }
 
@@ -218,13 +246,15 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
 	    pict.data, 
 	    pict.linesize);
 
+  pthread_mutex_unlock(&tvh->mutex);
+
   pthread_mutex_lock(&vo->mutex);
   TAILQ_INSERT_TAIL(&vo->render_queue, vb, entry);
   pthread_mutex_unlock(&vo->mutex);
   pthread_cond_signal(&vo->cond);
 }
 
-void tvh_video_close(tvh_object_t *tvh) {
+static void tvh_video_close(tvh_object_t *tvh) {
   DEBUG("Closing video codec");
 
   vcodec_sys_t *cs = tvh->vcs;
@@ -240,6 +270,7 @@ void tvh_video_close(tvh_object_t *tvh) {
   cs->ctx = NULL;
   cs->codec = NULL;
   cs->frame = NULL;
+  
 }
 
 int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
@@ -247,6 +278,7 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
   acodec_sys_t *cs = tvh->acs;
 
   DEBUG("Initializing audio codec");
+  pthread_mutex_lock(&tvh->mutex);
 
   if(!strcmp(codec, "AC3")) {
     codec_id = CODEC_ID_AC3;
@@ -260,18 +292,18 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
 
   if(!codec_id) {
     DEBUG("Unknown audio codec %s", codec);
-    return -1;
+    goto error;
   }
 
   cs->codec = avcodec_find_decoder(codec_id);
   if(!cs->codec) {
     DEBUG("Unable to open audio codec %s", codec);
-    return -1;
+    goto error;
   }
 
   if(cs->codec->type != CODEC_TYPE_AUDIO) {
     DEBUG("Invalid codec type for audio decoding");
-    return -1;
+    goto error;
   }
   
   cs->ctx = avcodec_alloc_context2(CODEC_TYPE_AUDIO);
@@ -280,11 +312,17 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
   if(avcodec_open(cs->ctx, cs->codec) < 0) {
     DEBUG("Unable to open audio codec");
     tvh_audio_close(tvh);
-    return -1;
+    goto error;
   }
 
   tvh->cur_pts = 0;
+  pthread_mutex_unlock(&tvh->mutex);
+
   return 0;
+
+ error:
+  pthread_mutex_unlock(&tvh->mutex);
+  return -1;
 }
 
 void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur) {
@@ -294,7 +332,10 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
   acodec_sys_t *cs = tvh->acs;
   aout_sys_t *ao = tvh->ao;
 
+  pthread_mutex_lock(&tvh->mutex);
+
   if(!tvh->running) {
+    pthread_mutex_unlock(&tvh->mutex);
     return;
   }
   
@@ -328,9 +369,11 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
     packet.data = ptr;
     packet.size = len;    
   } while(len);
+
+  pthread_mutex_unlock(&tvh->mutex);
 }
 
-int tvh_audio_close(tvh_object_t *tvh) {
+static void tvh_audio_close(tvh_object_t *tvh) {
   DEBUG("Closing audio codec");
   acodec_sys_t *cs = tvh->acs;
 
@@ -345,27 +388,6 @@ int tvh_audio_close(tvh_object_t *tvh) {
   cs->ctx = NULL;
   cs->codec = NULL;
   cs->buf = NULL;
-}
-
-static void tvh_video_render(tvh_object_t *tvh) {
-  vout_sys_t *vo = tvh->vo;
-  vout_buffer_t *vb = TAILQ_FIRST(&vo->render_queue);
-
-  if(!vb) {
-    return;
-  }
-
-  int64_t aclock = tvh->pre_pts + tvh->sys_delay;
-
-  if(vb->pts != AV_NOPTS_VALUE && vb->pts >= aclock) {
-    return;
-  }
-
-  surface_render(vo, vb);
-    
-  TAILQ_REMOVE(&vo->render_queue, vb, entry);
-  free(vb->ptr);
-  free(vb);
 }
 
 static void tvh_audio_callback(aout_buffer_t *ab, void *args) {
@@ -385,7 +407,7 @@ static void tvh_audio_callback(aout_buffer_t *ab, void *args) {
   pthread_cond_signal(&vo->cond);
 }
 
-int tvh_cond_wait_timeout(pthread_cond_t *c, pthread_mutex_t *m, int delta) {
+static int tvh_cond_wait_timeout(pthread_cond_t *c, pthread_mutex_t *m, int delta) {
   struct timespec ts;
   
   clock_gettime(CLOCK_REALTIME, &ts);
@@ -405,9 +427,20 @@ static void tvh_sync_thread(void *args) {
   
   while(tvh->running) {
     tvh_cond_wait_timeout(&vo->cond, &vo->mutex, 100);
-    tvh_video_render(tvh);
+    int64_t aclock = tvh->pre_pts + tvh->sys_delay;
+    vout_buffer_t *vb = TAILQ_FIRST(&vo->render_queue);
+
+    if(!vb || (vb->pts != AV_NOPTS_VALUE && vb->pts >= aclock)) {
+      continue;
+    }
+
+    surface_render(vo, vb);
+    
+    TAILQ_REMOVE(&vo->render_queue, vb, entry);
+    free(vb->ptr);
+    free(vb);
+
     pthread_mutex_unlock(&vo->mutex);
   }
-  
   pthread_exit(0);
 }
