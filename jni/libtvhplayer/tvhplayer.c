@@ -42,12 +42,14 @@ int tvh_init(tvh_object_t *tvh) {
   memset(tvh->vcs, 0, sizeof(vcodec_sys_t));
 
   if(opensles_open(tvh->ao) < 0) {
+    DEBUG("Anable to open OpenSL ES device");
     return -1;
   }
 
   opensles_set_callback(tvh->ao, &tvh_audio_callback, tvh);
 
   if(surface_init(tvh->vo) < 0) {
+    DEBUG("Unable to initilize the surface library");
     return -1;
   }
 
