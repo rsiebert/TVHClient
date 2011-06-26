@@ -41,9 +41,10 @@ public class TVHPlayer {
         return videoStream;
     }
 
-    public static long stop() {
+    public static long stopPlayback() {
         long ret = subscriptionId;
         subscriptionId = audioStream = videoStream = 0;
+        stop();
         return ret;
     }
 
@@ -51,7 +52,7 @@ public class TVHPlayer {
         return subscriptionId != 0;
     }
 
-    public static void play(Subscription s) {
+    public static void startPlayback(Subscription s) {
         if (subscriptionId != 0) {
             return;
         }
@@ -66,6 +67,7 @@ public class TVHPlayer {
 
         if (audioStream != 0 || videoStream != 0) {
             subscriptionId = s.id;
+            start();
         }
     }
 
@@ -80,8 +82,12 @@ public class TVHPlayer {
 
         return false;
     }
-    
+
     public static native void setSurface(Surface surface);
+
+    public static native void start();
+
+    public static native void stop();
 
     private static native boolean setAudioCodec(String codec);
 
