@@ -21,12 +21,24 @@
 #define __SURFACE_H__
 
 #include <stdint.h>
+#include <pthread.h>
 
 // _ZN7android7Surface4lockEPNS0_11SurfaceInfoEb
 typedef void (*Surface_lock)(void *, void *, int);
 // _ZN7android7Surface13unlockAndPostEv
 typedef void (*Surface_unlockAndPost)(void *);
 
+TAILQ_HEAD(video_queue, vout_buffer);
+
+typedef struct vout_buffer {
+  TAILQ_ENTRY(vout_buffer) entry;
+  void   * ptr;     // pointer to buffer
+  size_t   len;     // length of buffer
+  uint32_t width;   // picture width
+  uint32_t height;  // picture height
+  int64_t  pts;     // presentation time stamp
+  int64_t  sts;     // system time stamp
+} vout_buffer_t;
 
 typedef struct surface_info {
     uint32_t    width;
@@ -44,10 +56,14 @@ typedef struct vout_sys {
   void                          * so_handle;
   void                          * surface;
   surface_info_t                  surface_info;
+  pthread_mutex_t                 mutex;
+  pthread_cond_t                  cond;
+  struct video_queue              render_queue;
 } vout_sys_t;
 
 int surface_init(vout_sys_t *vo);
 void surface_open(vout_sys_t *vo, void* handle);
+void surface_render(vout_sys_t *vo, vout_buffer_t *vb);
 void surface_close(vout_sys_t *vo);
 void surface_destroy(vout_sys_t *vo);
 

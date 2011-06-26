@@ -44,6 +44,10 @@ int surface_init(vout_sys_t *vo) {
   SURFACE_DLSYM(vo->lock, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEb");
   SURFACE_DLSYM(vo->unlockAndPost, vo->so_handle, "_ZN7android7Surface13unlockAndPostEv");
 
+  pthread_mutex_init(&vo->mutex, NULL);
+  pthread_cond_init(&vo->cond, NULL);
+  TAILQ_INIT(&vo->render_queue);
+
   return 0;
   
  error:
@@ -53,10 +57,38 @@ int surface_init(vout_sys_t *vo) {
 
 void surface_open(vout_sys_t *vo, void* handle) {
   vo->surface = handle;
+
+  //Clear the buffer and get surface info
+  vo->lock(vo->surface, (void*)&vo->surface_info, 1);
+  memset(vo->surface_info.bits, 0, sizeof(uint32_t) * vo->surface_info.size);
+  vo->unlockAndPost(vo->surface);
+}
+
+void surface_render(vout_sys_t *vo, vout_buffer_t *vb) {
+  if(!vo->surface) {
+    return;
+  }
+
+  vo->lock(vo->surface, (void*)&vo->surface_info, 1);
+
+  if(vb->width != vo->surface_info.width || 
+     vb->height != vo->surface_info.height) {
+    memset(vo->surface_info.bits, 0, sizeof(uint32_t) * vo->surface_info.size);
+  } else {
+    memcpy(vo->surface_info.bits, vb->ptr, vb->len);
+  }
+
+  vo->unlockAndPost(vo->surface);
 }
 
 void surface_close(vout_sys_t *vo) {
   vo->surface = NULL;
+
+  vout_buffer_t *vb;
+  while(vb = TAILQ_FIRST(&vo->render_queue)) {
+    TAILQ_REMOVE(&vo->render_queue, vb, entry);
+    free(vb);
+  }
 }
 
 void surface_destroy(vout_sys_t *vo) {
@@ -66,4 +98,7 @@ void surface_destroy(vout_sys_t *vo) {
     dlclose(vo->so_handle);
     vo->so_handle = NULL;
   }
+
+  pthread_mutex_destroy(&vo->mutex);
+  pthread_cond_destroy(&vo->cond);
 }

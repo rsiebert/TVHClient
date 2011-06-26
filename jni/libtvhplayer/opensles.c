@@ -33,7 +33,7 @@ typedef SLresult (*slCreateEngine_t)(SLObjectItf*,
 static void opensles_callback(SLAndroidSimpleBufferQueueItf caller,  void *pContext);
 static int opensles_play(aout_sys_t *ao);
 
-#define BUFF_QUEUE  128
+#define BUFF_QUEUE  64
 
 #define CHECK_OPENSL_ERROR(res, msg)		    \
   if(res != SL_RESULT_SUCCESS) {		    \
@@ -75,12 +75,12 @@ static void opensles_clear(aout_sys_t *ao) {
   
   // Clear queues.
   aout_buffer_t *ab;
-  while (ab = TAILQ_FIRST(&ao->play_queue)) {
+  while(ab = TAILQ_FIRST(&ao->play_queue)) {
     TAILQ_REMOVE(&ao->play_queue, ab, entry);
     free(ab);
   }
   
-  while (ab = TAILQ_FIRST(&ao->free_queue)) {
+  while(ab = TAILQ_FIRST(&ao->free_queue)) {
     TAILQ_REMOVE(&ao->free_queue, ab, entry);
     free(ab);
   }

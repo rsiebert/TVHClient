@@ -29,9 +29,10 @@ TAILQ_HEAD(audio_queue, aout_buffer);
 
 typedef struct aout_buffer {
   TAILQ_ENTRY(aout_buffer) entry;
-  void *ptr;
-  size_t len;
-  int64_t pts;
+  void   * ptr;  // pointer to buffer
+  size_t   len;  // length of buffer
+  int64_t  pts;  // presentation time stamp
+  int64_t  sts;  // system time stamp
 } aout_buffer_t;
 
 typedef void(aout_callback_t)(aout_buffer_t *ab, void *args);

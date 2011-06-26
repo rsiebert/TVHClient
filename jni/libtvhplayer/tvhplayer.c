@@ -20,10 +20,18 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-
+#include <sys/time.h>
+#include <time.h>
 #include "tvhplayer.h"
 
 static void tvh_audio_callback(aout_buffer_t *ab, void *args);
+static void tvh_sync_thread(void *args);
+
+static int64_t tvh_system_clock() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return (int64_t)tv.tv_sec * 1000000LL + tv.tv_usec;
+}
 
 int tvh_init(tvh_object_t *tvh) {
   avcodec_init();
@@ -53,10 +61,18 @@ int tvh_init(tvh_object_t *tvh) {
     return -1;
   }
 
+  //TODO: move to tvh_play()
+  tvh->running = 1;
+  tvh->cur_pts = 0;
+  pthread_create(&tvh->thread, NULL, (void*)&tvh_sync_thread, (void *)tvh);
   return 0;
 }
 
 void tvh_destroy(tvh_object_t *tvh) {
+  //TODO: move to tvh_stop()
+  tvh->running = 0;
+  pthread_join(tvh->thread, NULL);
+
   tvh_audio_close(tvh);
   opensles_close(tvh->ao);
   free(tvh->acs);
@@ -106,10 +122,11 @@ int tvh_video_init(tvh_object_t *tvh, const char *codec) {
     return -1;
   }
 
+  tvh->cur_pts = 0;
   return 0;
 }
 
-void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts, uint64_t dts, uint64_t dur) {
+void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur) {
   AVPacket packet;
   AVPicture pict;
   int length;
@@ -137,43 +154,47 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts
   if(!got_picture) {
     return;
   }
-
+  /*
+  DEBUG("Video PTS0: %lld", pts);
+  DEBUG("Video PTS1: %lld", packet.pts);
+  DEBUG("Video PTS2: %lld", cs->frame->pts);
+  DEBUG("Video PTS3: %lld", packet.dts);
+*/
   if(pts) {
     cs->frame->pts = pts;
-  } else if(packet.dts != AV_NOPTS_VALUE) {
+  } else if(packet.dts != AV_NOPTS_VALUE && packet.dts) {
     cs->frame->pts = packet.dts;
-  } else if(cs->frame->pts == AV_NOPTS_VALUE) {
-    cs->frame->pts = 0;
   }
 
   memset(&pict, 0, sizeof(pict));
-
-  vo->lock(vo->surface, (void*)&vo->surface_info, 1);
+  vout_buffer_t *vb = (vout_buffer_t *) malloc(sizeof(vout_buffer_t));
+  
+  vb->len = avpicture_get_size(pix_fmt, vo->surface_info.size ? vo->surface_info.size : cs->ctx->width, cs->ctx->height);
+  vb->ptr = av_malloc(vb->len);
+  vb->pts = cs->frame->pts;
+  vb->sts = tvh_system_clock();
+  vb->width = cs->ctx->width;
+  vb->height = cs->ctx->height;
 
   avpicture_fill(&pict, 
-		 (uint8_t *)vo->surface_info.bits, 
-		 pix_fmt, 
-		 vo->surface_info.width, 
-		 vo->surface_info.height);
-  pict.linesize[0] = 4*vo->surface_info.size;
+		 vb->ptr, 
+		 pix_fmt,
+		 vo->surface_info.size ? vo->surface_info.size : cs->ctx->width, 
+		 cs->ctx->height);
+
 
   cs->conv = sws_getCachedContext(cs->conv,
 				  cs->ctx->width,
 				  cs->ctx->height,
 				  cs->ctx->pix_fmt,
-				  vo->surface_info.width,
-				  vo->surface_info.height,
+				  cs->ctx->width,
+				  cs->ctx->height,
 				  pix_fmt,
 				  SWS_FAST_BILINEAR,
 				  NULL,
 				  NULL,
 				  NULL);
 
-  if(cs->ctx->width != vo->surface_info.width || 
-     cs->ctx->height != vo->surface_info.height) {
-    DEBUG("scaling %dx%d -> %dx%d", cs->ctx->width, cs->ctx->height, 
-	  vo->surface_info.width, vo->surface_info.height);
-  }
   sws_scale(cs->conv, 
 	    (const uint8_t * const*)cs->frame->data, 
 	    cs->frame->linesize,
@@ -182,7 +203,10 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts
 	    pict.data, 
 	    pict.linesize);
 
-  vo->unlockAndPost(vo->surface);
+  pthread_mutex_lock(&vo->mutex);
+  TAILQ_INSERT_TAIL(&vo->render_queue, vb, entry);
+  pthread_mutex_unlock(&vo->mutex);
+  pthread_cond_signal(&vo->cond);
 }
 
 void tvh_video_close(tvh_object_t *tvh) {
@@ -240,10 +264,11 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
     return -1;
   }
 
+  tvh->cur_pts = 0;
   return 0;
 }
 
-void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts, uint64_t dts, uint64_t dur) {
+void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur) {
   uint8_t *ptr;
   AVPacket packet;
   int length;
@@ -261,10 +286,15 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts
       break;
     }
 
+    if(packet.pts != AV_NOPTS_VALUE) {
+      pts = packet.pts;
+    }
+
     aout_buffer_t *ab = (aout_buffer_t *) malloc(sizeof(aout_buffer_t));
     ab->ptr = malloc(cs->len);
     ab->len = cs->len;
     ab->pts = pts;
+    ab->sts = tvh_system_clock();
     memcpy(ab->ptr, cs->buf, cs->len);
 
     opensles_enqueue(ao, ab);
@@ -275,12 +305,6 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, uint64_t pts
     packet.data = ptr;
     packet.size = len;    
   } while(len);
-}
-
-static void tvh_audio_callback(aout_buffer_t *ab, void *args) {
-  tvh_object_t *tvh = (tvh_object_t *)args;
-
-  tvh->cur_pts = ab->pts;
 }
 
 int tvh_audio_close(tvh_object_t *tvh) {
@@ -297,4 +321,65 @@ int tvh_audio_close(tvh_object_t *tvh) {
   cs->ctx = NULL;
   cs->codec = NULL;
   cs->buf = NULL;
+}
+
+static void tvh_video_render(tvh_object_t *tvh) {
+  vout_sys_t *vo = tvh->vo;
+  vout_buffer_t *vb = TAILQ_FIRST(&vo->render_queue);
+
+  if(!vb) {
+    return;
+  }
+
+  int64_t aclock = tvh->pre_pts + tvh->sys_delay;
+
+  if(vb->pts != AV_NOPTS_VALUE && vb->pts >= aclock) {
+    return;
+  }
+
+  surface_render(vo, vb);
+    
+  TAILQ_REMOVE(&vo->render_queue, vb, entry);
+  free(vb->ptr);
+  free(vb);
+}
+
+static void tvh_audio_callback(aout_buffer_t *ab, void *args) {
+  tvh_object_t *tvh = (tvh_object_t *)args;
+  vout_sys_t *vo = tvh->vo;
+
+  tvh->pre_pts = tvh->cur_pts;
+  tvh->cur_pts = ab->pts;
+
+  tvh->sys_delay = ab->sts - tvh->sys_time;
+  tvh->sys_time = ab->sts;
+
+  pthread_cond_signal(&vo->cond);
+}
+
+int tvh_cond_wait_timeout(pthread_cond_t *c, pthread_mutex_t *m, int delta) {
+  struct timespec ts;
+  
+  clock_gettime(CLOCK_REALTIME, &ts);
+  ts.tv_sec  +=  delta / 1000;
+  ts.tv_nsec += (delta % 1000) * 1000000;
+  
+  if(ts.tv_nsec > 1000000000) {
+    ts.tv_sec++;
+    ts.tv_nsec -= 1000000000;
+  }
+  return pthread_cond_timedwait(c, m, &ts) == ETIMEDOUT;
+}
+
+static void tvh_sync_thread(void *args) {
+  tvh_object_t *tvh = (tvh_object_t *)args;
+  vout_sys_t *vo = tvh->vo;
+  
+  while(tvh->running) {
+    tvh_cond_wait_timeout(&vo->cond, &vo->mutex, 100);
+    tvh_video_render(tvh);
+    pthread_mutex_unlock(&vo->mutex);
+  }
+  
+  pthread_exit(0);
 }
