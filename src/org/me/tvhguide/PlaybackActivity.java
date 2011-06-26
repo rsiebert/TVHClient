@@ -78,9 +78,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         subId = nextSubId++;
 
-        KeyguardManager mKeyGuardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-        KeyguardLock mLock = mKeyGuardManager.newKeyguardLock(getClass().getName());
-        mLock.disableKeyguard();
         layout.setKeepScreenOn(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
@@ -106,6 +103,11 @@ public class PlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onResume() {
         super.onResume();
+
+        KeyguardManager mKeyGuardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+        KeyguardLock mLock = mKeyGuardManager.newKeyguardLock(getClass().getName());
+        mLock.disableKeyguard();
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
         startPlayback();
@@ -114,6 +116,11 @@ public class PlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onPause() {
         super.onPause();
+
+        KeyguardManager mKeyGuardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+        KeyguardLock mLock = mKeyGuardManager.newKeyguardLock(getClass().getName());
+        mLock.reenableKeyguard();
+
         stopPlayback();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.removeListener(this);
