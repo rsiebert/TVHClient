@@ -1,8 +1,13 @@
 build
 dist
 nbproject/private
+libs
 *~
 *.o
 *.d
 *.so
 *.a
+/gen/
+/bin/
+/nbandroid/
+local.properties
