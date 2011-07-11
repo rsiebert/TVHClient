@@ -18,7 +18,6 @@
  */
 package org.me.tvhguide;
 
-import android.widget.LinearLayout;
 import org.me.tvhguide.htsp.HTSService;
 import android.content.Intent;
 import org.me.tvhguide.model.Subscription;
@@ -33,6 +32,7 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Packet;
 import org.me.tvhguide.model.Stream;
@@ -47,6 +47,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
     private long channelId;
     private static long nextSubId = 1;
     private SurfaceHolder surfaceHolder;
+    private TextView playerStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,24 +63,23 @@ public class PlaybackActivity extends Activity implements HTSListener {
         setTitle(channel.name);
         channelId = channel.id;
 
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        SurfaceView surface = new SurfaceView(this);
+        setContentView(R.layout.player_layout);
+
+        SurfaceView surface = (SurfaceView) findViewById(R.id.player_surface);
         surface.setMinimumHeight(100);
         surface.setMinimumWidth(100);
+        surface.setKeepScreenOn(true);
+
         surfaceHolder = surface.getHolder();
         surfaceHolder.setKeepScreenOn(true);
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
         surfaceHolder.addCallback(surfaceCallback);
 
-        layout.addView(surface);
-
-        setContentView(layout);
-
         subId = nextSubId++;
 
-        layout.setKeepScreenOn(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        playerStatus = (TextView) findViewById(R.id.player_status);
     }
     private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
 
@@ -152,13 +152,26 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
                 public void run() {
                     Subscription subscription = (Subscription) obj;
-                    //status.setText(subscription.status);
+                    playerStatus.setText(subscription.status);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
             if (!TVHPlayer.isPlaying()) {
-                Subscription subscription = (Subscription) obj;
+                final Subscription subscription = (Subscription) obj;
                 TVHPlayer.startPlayback(subscription);
+
+                runOnUiThread(new Runnable() {
+
+                    public void run() {
+                        playerStatus.setText(subscription.status);
+                        if (subscription.status == null || subscription.status.length() == 0) {
+                            playerStatus.setVisibility(TextView.INVISIBLE);
+                        } else {
+                            playerStatus.setVisibility(TextView.VISIBLE);
+                        }
+                    }
+                });
+
             }
             runOnUiThread(new Runnable() {
 
