@@ -30,8 +30,8 @@
 
 #define TAG "TVHPlayer"
 
-#define DEBUG(args...)					\
-  __android_log_print(ANDROID_LOG_DEBUG, TAG, args)
+#define DEBUG(fmt, args...)			\
+  __android_log_print(ANDROID_LOG_DEBUG, TAG, "%s:%d: " fmt, __FUNCTION__, __LINE__, ##args);
 #define INFO(args...)					\
   __android_log_print(ANDROID_LOG_INFO, TAG, args)
 #define ERROR(args...)					\
