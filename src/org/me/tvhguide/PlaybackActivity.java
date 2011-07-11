@@ -48,7 +48,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
     private static long nextSubId = 1;
     private SurfaceHolder surfaceHolder;
     private TextView playerStatus;
-
+    private boolean wantPlayback;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
