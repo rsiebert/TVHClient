@@ -49,7 +49,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
     private SurfaceHolder surfaceHolder;
     private TextView playerStatus;
     private boolean wantPlayback;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +109,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
         KeyguardLock mLock = mKeyGuardManager.newKeyguardLock(getClass().getName());
         mLock.disableKeyguard();
 
+        wantPlayback = true;
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
         startPlayback();
@@ -121,6 +123,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
         KeyguardManager mKeyGuardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
         KeyguardLock mLock = mKeyGuardManager.newKeyguardLock(getClass().getName());
         mLock.reenableKeyguard();
+
+        wantPlayback = false;
 
         stopPlayback();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
@@ -157,7 +161,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
-            if (!TVHPlayer.isPlaying()) {
+            if (!TVHPlayer.isPlaying() && wantPlayback) {
                 final Subscription subscription = (Subscription) obj;
                 TVHPlayer.startPlayback(subscription);
 
