@@ -229,11 +229,13 @@ void opensles_close(aout_sys_t *ao) {
   aout_buffer_t *ab;
   while(ab = TAILQ_FIRST(&ao->play_queue)) {
     TAILQ_REMOVE(&ao->play_queue, ab, entry);
+    av_free(ab->ptr);
     free(ab);
   }
   
   while(ab = TAILQ_FIRST(&ao->free_queue)) {
     TAILQ_REMOVE(&ao->free_queue, ab, entry);
+    av_free(ab->ptr);
     free(ab);
   }
   
@@ -283,7 +285,7 @@ static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pConte
   }
   
   ao->callback(ab, ao->callback_args);
-  free(ab->ptr);
+  av_free(ab->ptr);
   free(ab);
 
   // TODO: check for starvation and take actions against them somehow (back-off size of buffer??)

@@ -98,6 +98,7 @@ void surface_close(vout_sys_t *vo) {
   vout_buffer_t *vb;
   while(vb = TAILQ_FIRST(&vo->render_queue)) {
     TAILQ_REMOVE(&vo->render_queue, vb, entry);
+    av_free(vb->ptr);
     free(vb);
   }
   pthread_mutex_unlock(&vo->mutex);

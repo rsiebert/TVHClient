@@ -355,7 +355,7 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
     }
 
     aout_buffer_t *ab = (aout_buffer_t *) malloc(sizeof(aout_buffer_t));
-    ab->ptr = malloc(cs->len);
+    ab->ptr = av_malloc(cs->len);
     ab->len = cs->len;
     ab->pts = pts;
     ab->sts = tvh_system_clock();
@@ -437,7 +437,7 @@ static void tvh_sync_thread(void *args) {
     surface_render(vo, vb);
     
     TAILQ_REMOVE(&vo->render_queue, vb, entry);
-    free(vb->ptr);
+    av_free(vb->ptr);
     free(vb);
 
     pthread_mutex_unlock(&vo->mutex);
