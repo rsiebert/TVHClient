@@ -6,6 +6,6 @@ LOCAL_SRC_FILES  := tvhplayer.c surface.c opensles.c jni.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libffmpeg
 LOCAL_LDLIBS     := -llog
 
-LOCAL_WHOLE_STATIC_LIBRARIES := libavcodec libavutil libswscale
+LOCAL_WHOLE_STATIC_LIBRARIES := libavcode libavcodec libavutil libswscale
 
 include $(BUILD_SHARED_LIBRARY)
