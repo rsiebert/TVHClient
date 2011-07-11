@@ -84,8 +84,13 @@ public class PlaybackActivity extends Activity implements HTSListener {
     }
     private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
 
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            TVHPlayer.setSurface(holder.getSurface());
+        public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
+            new Thread(new Runnable() {
+
+                public void run() {
+                    TVHPlayer.setSurface(holder.getSurface());
+                }
+            }).start();
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
