@@ -83,10 +83,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         registerForContextMenu(getListView());
 
-        Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
-        intent.setAction(HTSService.ACTION_CONNECT);
-        startService(intent);
-
         getListView().setOnKeyListener(new OnKeyListener() {
 
             public boolean onKey(View view, int keyCode, KeyEvent event) {
@@ -170,6 +166,28 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         builder.show();
     }
 
+    void connect(boolean force) {
+        if (force) {
+            chAdapter.clear();
+        }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String hostname = prefs.getString("serverHostPref", "localhost");
+        int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
+        String username = prefs.getString("usernamePref", "");
+        String password = prefs.getString("passwordPref", "");
+
+        Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
+        intent.setAction(HTSService.ACTION_CONNECT);
+        intent.putExtra("hostname", hostname);
+        intent.putExtra("port", port);
+        intent.putExtra("username", username);
+        intent.putExtra("password", password);
+        intent.putExtra("force", force);
+
+        startService(intent);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -179,10 +197,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return true;
             }
             case R.id.mi_refresh: {
-                Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
-                intent.setAction(HTSService.ACTION_REFRESH);
-                startService(intent);
-                chAdapter.clear();
+                connect(true);
                 return true;
             }
             case R.id.mi_recordings: {
@@ -238,9 +253,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == R.id.mi_settings) {
-            Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
-            intent.setAction(HTSService.ACTION_CONNECT);
-            startService(intent);
+            connect(true);
         }
     }
 
@@ -256,6 +269,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
+        
+        connect(false);
     }
 
     @Override

@@ -18,6 +18,7 @@
  */
 package org.me.tvhguide.htsp;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -161,7 +162,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return new Date(getLong(name) * 1000);
     }
 
-    public boolean transmit(SocketChannel ch) throws Exception {
+    public boolean transmit(SocketChannel ch) throws IOException {
         if (buf == null) {
             byte[] data = serializeBinary(this);
             int len = data.length;
@@ -176,7 +177,7 @@ public class HTSMessage extends HashMap<String, Object> {
         }
 
         if (ch.write(buf) < 0) {
-            throw new Exception("Server went down");
+            throw new IOException("Server went down");
         }
 
         if (buf.hasRemaining()) {
@@ -190,8 +191,7 @@ public class HTSMessage extends HashMap<String, Object> {
     public static String getHexString(byte[] b) throws Exception {
         String result = "";
         for (int i = 0; i < b.length; i++) {
-            result +=
-                    Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
         }
         return result;
     }
@@ -230,7 +230,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return i;
     }
 
-    public static HTSMessage parse(ByteBuffer buf) throws Exception {
+    public static HTSMessage parse(ByteBuffer buf) throws IOException {
         long len;
 
         if (buf.position() < 4) {
@@ -241,7 +241,7 @@ public class HTSMessage extends HashMap<String, Object> {
 
         if (len + 4 > buf.capacity()) {
             buf.clear();
-            throw new Exception("Mesage is to long");
+            throw new IOException("Mesage is to long");
         }
 
         if (buf.limit() == 4) {
@@ -262,7 +262,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return msg;
     }
 
-    private static byte[] serializeBinary(String name, Object value) throws Exception {
+    private static byte[] serializeBinary(String name, Object value) throws IOException {
         byte[] bName = name.getBytes();
         byte[] bData = new byte[0];
         byte type;
@@ -289,9 +289,9 @@ public class HTSMessage extends HashMap<String, Object> {
             type = HTSMessage.HMF_LIST;
             bData = serializeBinary((Collection) value);
         } else if (value == null) {
-            throw new Exception("HTSP doesn't support null values");
+            throw new IOException("HTSP doesn't support null values");
         } else {
-            throw new Exception("Unhandled class for " + name + ": " + value
+            throw new IOException("Unhandled class for " + name + ": " + value
                     + " (" + value.getClass().getSimpleName() + ")");
         }
 
@@ -309,7 +309,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return buf;
     }
 
-    private static byte[] serializeBinary(Collection list) throws Exception {
+    private static byte[] serializeBinary(Collection list) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(Short.MAX_VALUE);
 
         for (Object value : list) {
@@ -324,7 +324,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return bBuf;
     }
 
-    private static byte[] serializeBinary(Map map) throws Exception {
+    private static byte[] serializeBinary(Map map) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(Short.MAX_VALUE);
 
         for (Object key : map.keySet()) {
@@ -340,7 +340,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return bBuf;
     }
 
-    private static HTSMessage deserializeBinary(ByteBuffer buf) throws Exception {
+    private static HTSMessage deserializeBinary(ByteBuffer buf) throws IOException {
         byte type, namelen;
         long datalen;
 
@@ -353,10 +353,10 @@ public class HTSMessage extends HashMap<String, Object> {
             datalen = uIntToLong(buf.get(), buf.get(), buf.get(), buf.get());
 
             if (datalen > Integer.MAX_VALUE) {
-                throw new Exception("Would get precision losses ;(");
+                throw new IOException("Would get precision losses ;(");
             }
             if (buf.limit() < namelen + datalen) {
-                throw new Exception("Buffer limit exceeded");
+                throw new IOException("Buffer limit exceeded");
             }
 
             //Get the key for the map (the name)
@@ -402,7 +402,7 @@ public class HTSMessage extends HashMap<String, Object> {
                     break;
                 }
                 default:
-                    throw new Exception("Unknown data type");
+                    throw new IOException("Unknown data type");
             }
             msg.putField(name, obj);
         }

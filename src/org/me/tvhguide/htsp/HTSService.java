@@ -20,28 +20,17 @@ package org.me.tvhguide.htsp;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.InetSocketAddress;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.SocketChannel;
-import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.me.tvhguide.R;
@@ -56,12 +45,12 @@ import org.me.tvhguide.model.Subscription;
 
 /**
  *
- * @author john
+ * @author john-tornblom
  */
-public class HTSService extends Service {
+public class HTSService extends Service implements HTSConnectionListener {
 
     public static final String ACTION_CONNECT = "org.me.tvhguide.htsp.CONNECT";
-    public static final String ACTION_REFRESH = "org.me.tvhguide.htsp.REFRESH";
+    public static final String ACTION_DISCONNECT = "org.me.tvhguide.htsp.DISCONNECT";
     public static final String ACTION_EPG_QUERY = "org.me.tvhguide.htsp.EPG_QUERY";
     public static final String ACTION_GET_EVENT = "org.me.tvhguide.htsp.GET_EVENT";
     public static final String ACTION_GET_EVENTS = "org.me.tvhguide.htsp.GET_EVENTS";
@@ -71,16 +60,9 @@ public class HTSService extends Service {
     public static final String ACTION_SUBSCRIBE = "org.me.tvhguide.htsp.SUBSCRIBE";
     public static final String ACTION_UNSUBSCRIBE = "org.me.tvhguide.htsp.UNSUBSCRIBE";
     private static final String TAG = "HTSService";
-    private SelectionThread t;
-    private ByteBuffer inBuf;
-    private LinkedList<HTSMessage> requestQue = new LinkedList<HTSMessage>();
-    private Map<Integer, HTSResponseListener> responseHandelers = new HashMap<Integer, HTSResponseListener>();
-    private String username;
-    private String password;
-    private InetSocketAddress addr;
-    private int seq = 0;
-    private SocketChannel socketChannel;
     private ExecutorService execService;
+    private HTSConnection connection;
+    PackageInfo packInfo;
 
     public class LocalBinder extends Binder {
 
@@ -91,38 +73,44 @@ public class HTSService extends Service {
 
     @Override
     public void onCreate() {
-        inBuf = ByteBuffer.allocateDirect(1024 * 1024);
-        inBuf.limit(4);
-
         execService = Executors.newFixedThreadPool(5);
-
-        t = new SelectionThread() {
-
-            @Override
-            public void onEvent(int selectionKey, SocketChannel ch) throws Exception {
-                onNetworkEvent(selectionKey, ch);
-            }
-        };
-        t.setPriority(Thread.MIN_PRIORITY);
-        t.start();
+        try {
+            packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (NameNotFoundException ex) {
+            Log.e(TAG, "Can't get package info", ex);
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (ACTION_CONNECT.equals(intent.getAction())) {
-            try {
-                connect(false);
-            } catch (Throwable ex) {
-                showError(R.string.err_connect);
-                Log.e(TAG, "Can't connect to server", ex);
+            boolean force = intent.getBooleanExtra("force", false);
+            final String hostname = intent.getStringExtra("hostname");
+            final int port = intent.getIntExtra("port", 9982);
+            final String username = intent.getStringExtra("username");
+            final String password = intent.getStringExtra("password");
+
+            if (connection != null && force) {
+                connection.close();
             }
-        } else if (ACTION_REFRESH.equals(intent.getAction())) {
-            try {
-                connect(true);
-            } catch (Throwable ex) {
-                showError(R.string.err_connect);
-                Log.e(TAG, "Can't connect to server", ex);
+
+            if (connection == null || !connection.isConnected()) {
+                final TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                app.clearAll();
+                app.setLoading(true);
+                connection = new HTSConnection(this, packInfo.packageName, packInfo.versionName);
+
+                //Since this is blocking, spawn to a new thread
+                execService.execute(new Runnable() {
+
+                    public void run() {
+                        connection.open(hostname, port);
+                        connection.authenticate(username, password);
+                    }
+                });
             }
+        } else if (ACTION_DISCONNECT.equals(intent.getAction())) {
+            connection.close();
         } else if (ACTION_GET_EVENT.equals(intent.getAction())) {
             getEvent(intent.getLongExtra("eventId", 0));
         } else if (ACTION_GET_EVENTS.equals(intent.getAction())) {
@@ -153,47 +141,15 @@ public class HTSService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void connect(boolean force) throws IOException {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String host = prefs.getString("serverHostPref", "localhost");
-        int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
-        InetSocketAddress ad = new InetSocketAddress(host, port);
-        String user = prefs.getString("usernamePref", "");
-        String pw = prefs.getString("passwordPref", "");
-
-        if (!ad.equals(addr)
-                || !user.equals(username)
-                || !pw.equals(password)
-                || (socketChannel != null && !socketChannel.isConnected())
-                || force) {
-
-            addr = ad;
-            username = user;
-            password = pw;
-
-            if (socketChannel != null) {
-                t.close(socketChannel);
-            }
-
-            TVHGuideApplication app = (TVHGuideApplication) getApplication();
-            app.clearAll();
-
-            socketChannel = SocketChannel.open();
-            socketChannel.configureBlocking(false);
-            socketChannel.connect(addr);
-            t.register(socketChannel, SelectionKey.OP_CONNECT, true);
+    @Override
+    public void onDestroy() {
+        execService.shutdown();
+        if (connection != null) {
+            connection.close();
         }
     }
 
-    @Override
-    public void onDestroy() {
-        t.setRunning(false);
-        execService.shutdown();
-    }
-
     private void showError(final String error) {
-        Log.e(TAG, error);
-
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.setLoading(false);
         app.broadcastError(error);
@@ -203,117 +159,35 @@ public class HTSService extends Service {
         showError(getString(recourceId));
     }
 
+    public void onError(int errorCode) {
+        switch (errorCode) {
+            case HTSConnection.CONNECTION_LOST_ERROR:
+                showError(R.string.err_con_lost);
+                break;
+            case HTSConnection.TIMEOUT_ERROR:
+                showError("Connection timeout");
+                break;
+            case HTSConnection.CONNECTION_REFUSED_ERROR:
+                showError(R.string.err_connect);
+                break;
+            case HTSConnection.HTS_AUTH_ERROR:
+                showError(R.string.err_auth);
+                break;
+        }
+    }
+
+    public void onError(Exception ex) {
+        showError(ex.getLocalizedMessage());
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
     private final IBinder mBinder = new LocalBinder();
 
-    private void onNetworkEvent(int selectionKey, SocketChannel ch) throws Exception {
-        switch (selectionKey) {
-            case SelectionKey.OP_CONNECT: {
-                t.register(ch, SelectionKey.OP_CONNECT, false);
-
-                HTSMessage request = new HTSMessage();
-                PackageInfo packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-
-                request.setMethod("hello");
-                request.putField("clientname", getString(R.string.app_name));
-                request.putField("clientversion", packInfo.versionName);
-                request.putField("htspversion", HTSMessage.HTSP_VERSION);
-                request.putField("username", username);
-                request.putField("seq", seq);
-                requestQue.add(request);
-
-                responseHandelers.put(seq, new HTSResponseListener() {
-
-                    public void handleResponse(HTSMessage response) throws Exception {
-                        MessageDigest md = MessageDigest.getInstance("SHA1");
-                        md.update(password.getBytes());
-                        md.update(response.getByteArray("challenge"));
-
-                        HTSMessage request = new HTSMessage();
-                        request.setMethod("enableAsyncMetadata");
-                        request.putField("username", username);
-                        request.putField("digest", md.digest());
-                        requestQue.add(request);
-                    }
-                });
-
-                seq++;
-
-                TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                app.setLoading(true);
-
-                t.register(ch, SelectionKey.OP_READ, true);
-                t.register(ch, SelectionKey.OP_WRITE, true);
-                break;
-            }
-            case SelectionKey.OP_READ: {
-                int len = ch.read(inBuf);
-                if (len < 0) {
-                    throw new IOException("Server went down");
-                }
-
-                HTSMessage response = HTSMessage.parse(inBuf);
-                if (response == null) {
-                    break;
-                }
-
-                handleResponse(response);
-                if (!requestQue.isEmpty()) {
-                    t.register(ch, SelectionKey.OP_WRITE, true);
-                }
-                break;
-            }
-            case SelectionKey.OP_WRITE: {
-                HTSMessage request = requestQue.peek();
-                if (request != null && request.transmit(ch)) {
-                    requestQue.removeFirst();
-                }
-                if (requestQue.isEmpty()) {
-                    t.register(ch, SelectionKey.OP_WRITE, false);
-                }
-                break;
-            }
-            case -1: {
-                showError(R.string.err_con_lost);
-                socketChannel = null;
-                break;
-            }
-            default:
-                return;
-        }
-    }
-
-    private void handleResponse(HTSMessage response) throws Exception {
+    public void onAsyncResponse(HTSMessage response) {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean loadIcons = prefs.getBoolean("loadIcons", false);
-
-        if (response.containsFiled("error")
-                && !response.getMethod().equals("dvrEntryUpdate")
-                && !response.getMethod().equals("dvrEntryAdd")) {
-            showError(response.getString("error"));
-            app.setLoading(false);
-        }
-
-
-        if (1 == response.getInt("noaccess", 0)) {
-            showError(R.string.err_auth);
-            app.setLoading(false);
-        }
-
-        if (!response.containsFiled("method") && !response.containsFiled("seq")) {
-            return;
-        }
-
-        if (response.containsFiled("seq")) {
-            int respSeq = response.getInt("seq");
-            responseHandelers.get(respSeq).handleResponse(response);
-            responseHandelers.remove(respSeq);
-            return;
-        }
 
         String method = response.getMethod();
         if (method.equals("tagAdd")) {
@@ -347,16 +221,12 @@ public class HTSService extends Service {
             }
 
             app.addChannel(ch);
-
-            if (loadIcons && ch.icon != null) {
-                getChannelIcon(ch);
-            }
+            getChannelIcon(ch);
 
             long eventId = response.getLong("eventId", 0);
             if (eventId > 0) {
                 getEvents(ch, eventId, 5);
             }
-
         } else if (method.equals("channelUpdate")) {
             Channel ch = app.getChannel(response.getLong("channelId"));
             if (ch != null) {
@@ -531,11 +401,9 @@ public class HTSService extends Service {
         request.setMethod("getEvents");
         request.putField("eventId", eventId);
         request.putField("numFollowing", cnt);
-        request.putField("seq", seq);
+        connection.sendMessage(request, new HTSResponseHandler() {
 
-        responseHandelers.put(seq, new HTSResponseListener() {
-
-            public void handleResponse(HTSMessage response) throws Exception {
+            public void handleResponse(HTSMessage response) {
 
                 if (!response.containsKey("events")) {
                     return;
@@ -562,20 +430,16 @@ public class HTSService extends Service {
                 app.updateChannel(ch);
             }
         });
-        requestQue.add(request);
-        seq++;
-        t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 
     private void getEvent(long eventId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getEvent");
         request.putField("eventId", eventId);
-        request.putField("seq", seq);
-        requestQue.add(request);
-        responseHandelers.put(seq, new HTSResponseListener() {
 
-            public void handleResponse(HTSMessage response) throws Exception {
+        connection.sendMessage(request, new HTSResponseHandler() {
+
+            public void handleResponse(HTSMessage response) {
                 TVHGuideApplication app = (TVHGuideApplication) getApplication();
                 Channel ch = app.getChannel(response.getLong("channelId"));
                 Programme p = new Programme();
@@ -595,8 +459,6 @@ public class HTSService extends Service {
                 }
             }
         });
-        seq++;
-        t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 
     private void epgQuery(final Channel ch, String query, long tagId) {
@@ -609,11 +471,9 @@ public class HTSService extends Service {
         if (tagId > 0) {
             request.putField("tagId", tagId);
         }
-        request.putField("seq", seq);
-        requestQue.add(request);
-        responseHandelers.put(seq, new HTSResponseListener() {
+        connection.sendMessage(request, new HTSResponseHandler() {
 
-            public void handleResponse(HTSMessage response) throws Exception {
+            public void handleResponse(HTSMessage response) {
 
                 if (!response.containsKey("eventIds")) {
                     return;
@@ -624,60 +484,46 @@ public class HTSService extends Service {
                 }
             }
         });
-        seq++;
-        t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 
     private void cancelDvrEntry(long id) {
         HTSMessage request = new HTSMessage();
         request.setMethod("cancelDvrEntry");
         request.putField("id", id);
-        request.putField("seq", seq);
-        requestQue.add(request);
-        responseHandelers.put(seq, new HTSResponseListener() {
+        connection.sendMessage(request, new HTSResponseHandler() {
 
-            public void handleResponse(HTSMessage response) throws Exception {
+            public void handleResponse(HTSMessage response) {
 
                 boolean success = response.getInt("success", 0) == 1;
             }
         });
-        seq++;
-        t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 
     private void deleteDvrEntry(long id) {
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteDvrEntry");
         request.putField("id", id);
-        request.putField("seq", seq);
-        requestQue.add(request);
-        responseHandelers.put(seq, new HTSResponseListener() {
+        connection.sendMessage(request, new HTSResponseHandler() {
 
-            public void handleResponse(HTSMessage response) throws Exception {
+            public void handleResponse(HTSMessage response) {
 
                 boolean success = response.getInt("success", 0) == 1;
             }
         });
-        seq++;
-        t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 
     private void addDvrEntry(long eventId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
         request.putField("eventId", eventId);
-        request.putField("seq", seq);
-        requestQue.add(request);
-        responseHandelers.put(seq, new HTSResponseListener() {
+        connection.sendMessage(request, new HTSResponseHandler() {
 
-            public void handleResponse(HTSMessage response) throws Exception {
+            public void handleResponse(HTSMessage response) {
 
                 boolean success = response.getInt("success", 0) == 1;
                 String error = response.getString("error", null);
             }
         });
-        seq++;
-        t.register(socketChannel, SelectionKey.OP_WRITE, true);
     }
 
     private void subscribe(long channelId, long subscriptionId) {
@@ -692,8 +538,12 @@ public class HTSService extends Service {
         request.setMethod("subscribe");
         request.putField("channelId", channelId);
         request.putField("subscriptionId", subscriptionId);
-        requestQue.add(request);
-        t.register(socketChannel, SelectionKey.OP_WRITE, true);
+        connection.sendMessage(request, new HTSResponseHandler() {
+
+            public void handleResponse(HTSMessage response) {
+                //NOP
+            }
+        });
     }
 
     private void unsubscribe(long subscriptionId) {
@@ -703,9 +553,11 @@ public class HTSService extends Service {
         HTSMessage request = new HTSMessage();
         request.setMethod("unsubscribe");
         request.putField("subscriptionId", subscriptionId);
-        requestQue.add(request);
-        t.register(socketChannel, SelectionKey.OP_WRITE, true);
+        connection.sendMessage(request, new HTSResponseHandler() {
 
-
+            public void handleResponse(HTSMessage response) {
+                //NOP
+            }
+        });
     }
 }

@@ -22,7 +22,7 @@ package org.me.tvhguide.htsp;
  *
  * @author john-tornblom
  */
-public interface HTSResponseListener {
+public interface HTSResponseHandler {
 
-    public void handleResponse(HTSMessage response) throws Exception;
+    public void handleResponse(HTSMessage response);
 }
