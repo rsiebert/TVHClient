@@ -29,12 +29,6 @@ static void tvh_audio_close(tvh_object_t *tvh);
 static void tvh_audio_callback(aout_buffer_t *ab, void *args);
 static void tvh_sync_thread(void *args);
 
-static int64_t tvh_system_clock() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return (int64_t)tv.tv_sec * 1000000LL + tv.tv_usec;
-}
-
 int tvh_init(tvh_object_t *tvh) {
   avcodec_init();
   avcodec_register_all();
@@ -92,8 +86,6 @@ void tvh_start(tvh_object_t *tvh) {
 
   tvh->running = 1;
   tvh->cur_pts = 0;
-  tvh->pre_pts = 0;
-  tvh->sys_delay = 0;
 
   pthread_create(&tvh->thread, NULL, (void*)&tvh_sync_thread, (void *)tvh);
 
@@ -215,7 +207,6 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
   vb->len = avpicture_get_size(pix_fmt, vo->surface_info.size ? vo->surface_info.size : cs->ctx->width, cs->ctx->height);
   vb->ptr = av_malloc(vb->len);
   vb->pts = cs->frame->pts;
-  vb->sts = tvh_system_clock();
   vb->width = cs->ctx->width;
   vb->height = cs->ctx->height;
 
@@ -358,7 +349,6 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
     ab->ptr = av_malloc(cs->len);
     ab->len = cs->len;
     ab->pts = pts;
-    ab->sts = tvh_system_clock();
     memcpy(ab->ptr, cs->buf, cs->len);
 
     opensles_enqueue(ao, ab);
@@ -398,11 +388,7 @@ static void tvh_audio_callback(aout_buffer_t *ab, void *args) {
     return;
   }
 
-  tvh->pre_pts = tvh->cur_pts;
   tvh->cur_pts = ab->pts;
-
-  tvh->sys_delay = ab->sts - tvh->sys_time;
-  tvh->sys_time = ab->sts;
 
   pthread_cond_signal(&vo->cond);
 }
@@ -427,10 +413,9 @@ static void tvh_sync_thread(void *args) {
   
   while(tvh->running) {
     tvh_cond_wait_timeout(&vo->cond, &vo->mutex, 100);
-    int64_t aclock = tvh->pre_pts + tvh->sys_delay;
     vout_buffer_t *vb = TAILQ_FIRST(&vo->render_queue);
 
-    if(!vb || (vb->pts != AV_NOPTS_VALUE && vb->pts >= aclock)) {
+    if(!vb || (vb->pts != AV_NOPTS_VALUE && vb->pts > tvh->cur_pts)) {
       continue;
     }
 

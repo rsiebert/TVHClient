@@ -58,9 +58,6 @@ typedef struct tvh_object {
   vcodec_sys_t   * vcs;
   int              running;
   int64_t          cur_pts;
-  int64_t          pre_pts;
-  int64_t          sys_time;
-  int64_t          sys_delay;
   pthread_t        thread;
   pthread_mutex_t  mutex;
 } tvh_object_t;

@@ -37,7 +37,6 @@ typedef struct vout_buffer {
   uint32_t width;   // picture width
   uint32_t height;  // picture height
   int64_t  pts;     // presentation time stamp
-  int64_t  sts;     // system time stamp
 } vout_buffer_t;
 
 typedef struct surface_info {

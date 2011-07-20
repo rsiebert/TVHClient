@@ -32,7 +32,6 @@ typedef struct aout_buffer {
   void   * ptr;  // pointer to buffer
   size_t   len;  // length of buffer
   int64_t  pts;  // presentation time stamp
-  int64_t  sts;  // system time stamp
 } aout_buffer_t;
 
 typedef void(aout_callback_t)(aout_buffer_t *ab, void *args);
