@@ -32,6 +32,8 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Packet;
@@ -64,6 +66,10 @@ public class PlaybackActivity extends Activity implements HTSListener {
         setTitle(channel.name);
         channelId = channel.id;
 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.player_layout);
 
         SurfaceView surface = (SurfaceView) findViewById(R.id.player_surface);
@@ -76,7 +82,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
         surfaceHolder.addCallback(surfaceCallback);
 
-        subId = nextSubId++;
+        subId = 1;
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
@@ -110,10 +116,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
     protected void onResume() {
         super.onResume();
 
-        KeyguardManager mKeyGuardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-        KeyguardLock mLock = mKeyGuardManager.newKeyguardLock(getClass().getName());
-        mLock.disableKeyguard();
-
         wantPlayback = true;
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
@@ -125,10 +127,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
     protected void onPause() {
         super.onPause();
 
-        KeyguardManager mKeyGuardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-        KeyguardLock mLock = mKeyGuardManager.newKeyguardLock(getClass().getName());
-        mLock.reenableKeyguard();
-
         wantPlayback = false;
 
         stopPlayback();
@@ -137,13 +135,11 @@ public class PlaybackActivity extends Activity implements HTSListener {
     }
 
     private void stopPlayback() {
-        long id = TVHPlayer.stopPlayback();
-        if (id > 0) {
-            Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
-            intent.setAction(HTSService.ACTION_UNSUBSCRIBE);
-            intent.putExtra("subscriptionId", id);
-            startService(intent);
-        }
+        TVHPlayer.stopPlayback();
+        Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
+        intent.setAction(HTSService.ACTION_UNSUBSCRIBE);
+        intent.putExtra("subscriptionId", subId);
+        startService(intent);
     }
 
     private void startPlayback() {
