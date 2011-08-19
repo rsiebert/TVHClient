@@ -245,7 +245,9 @@ void opensles_close(aout_sys_t *ao) {
   pthread_mutex_unlock(&ao->mutex);
 }
 
-void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) { 
+int opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) {
+  int buf_count = 0;
+
   pthread_mutex_lock(&ao->mutex);
   
   TAILQ_INSERT_TAIL(&ao->play_queue, ab, entry);
@@ -255,7 +257,11 @@ void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) {
     ao->play_size -= opensles_play(ao);
   }
   
+  buf_count = ao->free_size;
+
   pthread_mutex_unlock(&ao->mutex);
+
+  return buf_count;
 }
 
 void opensles_set_callback(aout_sys_t *ao, aout_callback_t *f, void *args) {

@@ -324,18 +324,19 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
   return -1;
 }
 
-void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur) {
+int tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur) {
   uint8_t *ptr;
   AVPacket packet;
   int length;
   acodec_sys_t *cs = tvh->acs;
   aout_sys_t *ao = tvh->ao;
+  int running = 0;
 
   pthread_mutex_lock(&tvh->mutex);
 
   if(!tvh->running) {
     pthread_mutex_unlock(&tvh->mutex);
-    return;
+    return -1;
   }
   
   av_init_packet(&packet);
@@ -359,7 +360,7 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
     ab->pts = pts;
     memcpy(ab->ptr, cs->buf, cs->len);
 
-    opensles_enqueue(ao, ab);
+    running = opensles_enqueue(ao, ab) > 0;
 
     ptr += length;
     len -= length;
@@ -369,6 +370,8 @@ void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
   } while(len);
 
   pthread_mutex_unlock(&tvh->mutex);
+
+  return running;
 }
 
 static void tvh_audio_close(tvh_object_t *tvh) {

@@ -72,6 +72,6 @@ int tvh_video_init(tvh_object_t *tvh, const char *codec);
 void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur);
 
 int tvh_audio_init(tvh_object_t *tvh, const char *codec);
-void tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur);
+int tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, int64_t dts, int64_t dur);
 
 #endif

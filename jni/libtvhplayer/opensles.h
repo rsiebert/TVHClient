@@ -62,6 +62,6 @@ void opensles_destroy(aout_sys_t *ao);
 int opensles_open(aout_sys_t *ao);
 void opensles_close(aout_sys_t *ao);
 void opensles_set_callback(aout_sys_t *ao, aout_callback_t *f, void *args);
-void opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab);
+int opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab);
 
 #endif
