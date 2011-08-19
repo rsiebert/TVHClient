@@ -30,6 +30,8 @@ static void tvh_audio_callback(aout_buffer_t *ab, void *args);
 static void tvh_sync_thread(void *args);
 
 int tvh_init(tvh_object_t *tvh) {
+  DEBUG("initilizing TVHPlayer");
+
   avcodec_init();
   avcodec_register_all();
 
@@ -62,6 +64,8 @@ int tvh_init(tvh_object_t *tvh) {
 }
 
 void tvh_destroy(tvh_object_t *tvh) {
+  DEBUG("Destroying TVHPlayer");
+
   opensles_destroy(tvh->ao);
   free(tvh->acs);
   free(tvh->ao);
@@ -75,6 +79,8 @@ void tvh_destroy(tvh_object_t *tvh) {
 }
 
 void tvh_start(tvh_object_t *tvh) {
+  DEBUG("Starting TVHPlayer");
+
   pthread_mutex_lock(&tvh->mutex);
 
   if(tvh->running) {
@@ -93,6 +99,8 @@ void tvh_start(tvh_object_t *tvh) {
 }
 
 void tvh_stop(tvh_object_t *tvh) {
+  DEBUG("Stopping TVHPlayer");
+
   pthread_mutex_lock(&tvh->mutex);
 
   if(!tvh->running) {
