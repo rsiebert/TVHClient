@@ -48,14 +48,14 @@ int tvh_init(tvh_object_t *tvh) {
   memset(tvh->vcs, 0, sizeof(vcodec_sys_t));
 
   if(opensles_init(tvh->ao) < 0) {
-    DEBUG("Unable to initilize OpenSL ES");
+    ERROR("Unable to initilize OpenSL ES");
     return -1;
   }
 
   opensles_set_callback(tvh->ao, &tvh_audio_callback, tvh);
 
   if(surface_init(tvh->vo) < 0) {
-    DEBUG("Unable to initilize the surface library");
+    ERROR("Unable to initilize the surface library");
     return -1;
   }
   return 0;
@@ -147,7 +147,7 @@ int tvh_video_init(tvh_object_t *tvh, const char *codec) {
   avcodec_get_frame_defaults(cs->frame);
 
   if(avcodec_open(cs->ctx, cs->codec) < 0) {
-    DEBUG("Unable to open video codec");
+    ERROR("Unable to open video codec");
     tvh_video_close(tvh);
     goto error;
   }
@@ -187,7 +187,7 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
 
   length = avcodec_decode_video2(cs->ctx, cs->frame, &got_picture, &packet);
   if(length <= 0) {
-    DEBUG("Unable to decode video stream");
+    ERROR("Unable to decode video stream");
   }
 
   if(!got_picture) {
@@ -282,18 +282,18 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
   }
 
   if(!codec_id) {
-    DEBUG("Unknown audio codec %s", codec);
+    ERROR("Unknown audio codec %s", codec);
     goto error;
   }
 
   cs->codec = avcodec_find_decoder(codec_id);
   if(!cs->codec) {
-    DEBUG("Unable to open audio codec %s", codec);
+    ERROR("Unable to open audio codec %s", codec);
     goto error;
   }
 
   if(cs->codec->type != CODEC_TYPE_AUDIO) {
-    DEBUG("Invalid codec type for audio decoding");
+    ERROR("Invalid codec type for audio decoding");
     goto error;
   }
   
@@ -301,7 +301,7 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
   cs->buf = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE*2);
 
   if(avcodec_open(cs->ctx, cs->codec) < 0) {
-    DEBUG("Unable to open audio codec");
+    ERROR("Unable to open audio codec");
     tvh_audio_close(tvh);
     goto error;
   }
