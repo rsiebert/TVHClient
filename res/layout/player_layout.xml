@@ -9,20 +9,57 @@
 		android:layout_gravity="center"
 		android:id="@+id/player_surface"/>
 	<LinearLayout
-		android:layout_height="fill_parent"
-		android:layout_width="fill_parent"
-		android:gravity="center_horizontal"
+                android:paddingTop="16sp"
+                android:paddingLeft="16sp"
+                android:paddingRight="16sp"
+                android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
 		android:orientation="vertical">
+	<LinearLayout
+                android:id="@+id/player_details"
+                android:background="@drawable/overlay_box"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+                android:gravity="center_horizontal"
+		android:orientation="vertical">
+		<TextView
+			android:id="@+id/player_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+                        android:textSize="24sp"
+			android:gravity="center"/>
+		<TextView
+			android:id="@+id/player_desc"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+                        android:textSize="18sp"
+			android:gravity="left"/>
+                <View
+			android:layout_width="wrap_content"
+			android:layout_height="24sp"/>
 		<TextView
 			android:id="@+id/player_status"
 			android:layout_width="wrap_content"
-			android:layout_height="0dip"
-			android:layout_weight="2"
+			android:layout_height="wrap_content"
 			android:textColor="#ffffff"
-			android:gravity="center"/>
-		<View
+                        android:textSize="18sp"
+			android:gravity="left"/>
+		<TextView
+			android:id="@+id/player_queue"
 			android:layout_width="wrap_content"
-			android:layout_height="0dip"
-			android:layout_weight="1"/>
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+                        android:textSize="18sp"
+			android:gravity="left"/>
+		<TextView
+			android:id="@+id/player_drops"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#ffffff"
+                        android:textSize="18sp"
+			android:gravity="left"/>
 	</LinearLayout>
+        </LinearLayout>
 </FrameLayout>

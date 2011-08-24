@@ -18,13 +18,12 @@
  */
 package org.me.tvhguide;
 
+import android.view.View;
 import org.me.tvhguide.htsp.HTSService;
 import android.content.Intent;
 import org.me.tvhguide.model.Subscription;
 import org.me.tvhguide.htsp.HTSListener;
 import android.app.Activity;
-import android.app.KeyguardManager;
-import android.app.KeyguardManager.KeyguardLock;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
@@ -32,11 +31,14 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Packet;
+import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Stream;
 
 /**
@@ -47,10 +49,11 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
     private long subId;
     private long channelId;
-    private static long nextSubId = 1;
     private SurfaceHolder surfaceHolder;
+    private View overlay;
     private TextView playerStatus;
-    private boolean wantPlayback;
+    private TextView playerQueue;
+    private TextView playerDrops;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         setTitle(channel.name);
         channelId = channel.id;
+        subId = 1;
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -76,17 +80,39 @@ public class PlaybackActivity extends Activity implements HTSListener {
         surface.setMinimumHeight(100);
         surface.setMinimumWidth(100);
         surface.setKeepScreenOn(true);
+        surface.setOnLongClickListener(new OnLongClickListener() {
+
+            public boolean onLongClick(View arg0) {
+                if (overlay.getVisibility() == LinearLayout.VISIBLE) {
+
+                    overlay.setVisibility(LinearLayout.INVISIBLE);
+                } else {
+                    overlay.setVisibility(LinearLayout.VISIBLE);
+                }
+
+                return true;
+            }
+        });
 
         surfaceHolder = surface.getHolder();
-        surfaceHolder.setKeepScreenOn(true);
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
         surfaceHolder.addCallback(surfaceCallback);
 
-        subId = 1;
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        Programme p = channel.epg.iterator().next();
+        if(p != null) {
+            TextView view = (TextView) findViewById(R.id.player_title);
+            view.setText(p.title);
+            view = (TextView) findViewById(R.id.player_desc);
+            view.setText(p.description);
+        }
+        
         playerStatus = (TextView) findViewById(R.id.player_status);
+        playerQueue = (TextView) findViewById(R.id.player_queue);
+        playerDrops = (TextView) findViewById(R.id.player_drops);
+        overlay =  findViewById(R.id.player_details);
+        overlay.getBackground().setAlpha(127);
     }
     private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
 
@@ -103,6 +129,12 @@ public class PlaybackActivity extends Activity implements HTSListener {
         }
 
         public void surfaceDestroyed(SurfaceHolder holder) {
+            new Thread(new Runnable() {
+
+                public void run() {
+                    TVHPlayer.setSurface(null);
+                }
+            }).start();
         }
     };
 
@@ -116,8 +148,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
     protected void onResume() {
         super.onResume();
 
-        wantPlayback = true;
-
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
         startPlayback();
@@ -126,8 +156,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onPause() {
         super.onPause();
-
-        wantPlayback = false;
 
         stopPlayback();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
@@ -145,71 +173,57 @@ public class PlaybackActivity extends Activity implements HTSListener {
     private void startPlayback() {
         stopPlayback();
 
+        int maxWidth = getWindowManager().getDefaultDisplay().getWidth();
+        int maxHeight = getWindowManager().getDefaultDisplay().getHeight();
+        if (maxHeight > maxWidth) {
+            maxWidth = maxHeight;
+            maxHeight = getWindowManager().getDefaultDisplay().getWidth();
+        }
+
+        TVHPlayer.startPlayback();
+
         Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_SUBSCRIBE);
         intent.putExtra("subscriptionId", subId);
         intent.putExtra("channelId", channelId);
+        intent.putExtra("channels", 2);
+        intent.putExtra("maxWidth", maxWidth);
+        intent.putExtra("maxHeight", maxHeight);
+
         startService(intent);
     }
 
     public void onMessage(String action, final Object obj) {
-        if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_ADD)) {
+        if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
             runOnUiThread(new Runnable() {
 
                 public void run() {
                     Subscription subscription = (Subscription) obj;
-                    playerStatus.setText(subscription.status);
-                }
-            });
-        } else if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
-            if (!TVHPlayer.isPlaying() && wantPlayback) {
-                final Subscription subscription = (Subscription) obj;
-                TVHPlayer.startPlayback(subscription);
-
-                runOnUiThread(new Runnable() {
-
-                    public void run() {
-                        playerStatus.setText(subscription.status);
-                        if (subscription.status == null || subscription.status.length() == 0) {
-                            playerStatus.setVisibility(TextView.INVISIBLE);
-                        } else {
-                            playerStatus.setVisibility(TextView.VISIBLE);
-                        }
+                    if (subscription.status != null && subscription.status.length() > 0) {
+                        playerStatus.setText("Status: " + subscription.status);
+                    } else if(TVHPlayer.isBuffering()){
+                        playerStatus.setText("Status: Buffering");
+                    } else {
+                        playerStatus.setText("Status: OK");
                     }
-                });
 
-            }
-            runOnUiThread(new Runnable() {
+                    playerQueue.setText("Server queue size: " + Long.toString(subscription.packetCount));
+                    long droppedFrames = subscription.droppedBFrames
+                            + subscription.droppedPFrames
+                            + subscription.droppedIFrames;
+                    playerDrops.setText("Dropped frames: " + Long.toString(droppedFrames));
 
-                public void run() {
-                    Subscription subscription = (Subscription) obj;
                     for (Stream st : subscription.streams) {
-                        if (st.index == TVHPlayer.getVideoStreamIndex()) {
-
+                        if (st.index == TVHPlayer.getVideoIndex()) {
                             surfaceHolder.setFixedSize(st.width, st.height);
                             break;
                         }
                     }
                 }
             });
-
-            runOnUiThread(new Runnable() {
-
-                public void run() {/*
-                    Subscription subscription = (Subscription) obj;
-                    bDrops.setText(Long.toString(subscription.droppedBFrames));
-                    iDrops.setText(Long.toString(subscription.droppedIFrames));
-                    pDrops.setText(Long.toString(subscription.droppedPFrames));
-                    delay.setText(Long.toString(seconds++));
-                    queSize.setText(Long.toString(subscription.queSize));
-                    packetCount.setText(Long.toString(subscription.packetCount));
-                    status.setText(subscription.status);*/
-
-                }
-            });
         } else if (action.equals(TVHGuideApplication.ACTION_PLAYBACK_PACKET)) {
             Packet p = (Packet) obj;
-            TVHPlayer.enqueuePacket(p);
+            TVHPlayer.enqueue(p);
         }
     }
 }
