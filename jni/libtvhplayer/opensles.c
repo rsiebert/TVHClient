@@ -33,7 +33,7 @@ typedef SLresult (*slCreateEngine_t)(SLObjectItf*,
 static void opensles_callback(SLAndroidSimpleBufferQueueItf caller,  void *pContext);
 static int opensles_play(aout_sys_t *ao);
 
-#define BUFF_QUEUE  64
+#define BUFF_QUEUE  16
 
 #define CHECK_OPENSL_ERROR(res, msg)		    \
   if(res != SL_RESULT_SUCCESS) {		    \
