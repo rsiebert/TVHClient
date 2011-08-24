@@ -21,6 +21,7 @@ package org.me.tvhguide;
 import android.util.Log;
 import android.view.Surface;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.me.tvhguide.model.Packet;
@@ -31,7 +32,8 @@ import org.me.tvhguide.model.Packet;
  */
 public class TVHPlayer {
 
-    private static final long BUFFER_TIME = 5 * 1000 * 1000;
+    private static final long BUFFER_TIME = 5 * 1000 * 1000; //us
+    private static final double MESSURE_TIME = 4 * 1000 * 1000; //us
     private static int videoIndex;
     private static int audioIndex;
     private static boolean buffering;
@@ -39,6 +41,9 @@ public class TVHPlayer {
     private static ArrayList<Packet> buffer;
     private static long duration;
     private static Lock lock;
+    private static double networkSpeed;
+    private static double relativeDuration;
+    private static Date messureStarted;
 
     static {
         System.loadLibrary("tvhplayer");
@@ -48,6 +53,8 @@ public class TVHPlayer {
         buffering = true;
         running = false;
         videoIndex = audioIndex = -1;
+        networkSpeed = 0;
+        messureStarted = null;
     }
 
     public static boolean isBuffering() {
@@ -72,6 +79,18 @@ public class TVHPlayer {
 
             if (!running) {
                 return false;
+            }
+
+            if (packet.stream.index == audioIndex) {
+                Date now = new Date();
+                if (messureStarted == null || messureStarted.getTime() + (MESSURE_TIME / 1000) < now.getTime()) {
+                    messureStarted = new Date();
+                    networkSpeed = relativeDuration / MESSURE_TIME;
+                    relativeDuration = 0;
+                    Log.d("TVHPlayer", "Estimated network speed: " + networkSpeed + "x");
+                }
+
+                relativeDuration += packet.duration;
             }
 
             if (!buffering) {
@@ -127,6 +146,8 @@ public class TVHPlayer {
             videoIndex = audioIndex = -1;
             buffering = true;
             running = false;
+            networkSpeed = 0;
+            messureStarted = null;
             stop();
         } finally {
             lock.unlock();
