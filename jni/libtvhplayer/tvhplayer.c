@@ -88,8 +88,6 @@ void tvh_start(tvh_object_t *tvh) {
     return;
   }
 
-  opensles_open(tvh->ao);
-
   tvh->running = 1;
   tvh->cur_pts = 0;
 
@@ -359,6 +357,10 @@ int tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, 
     ab->len = cs->len;
     ab->pts = pts;
     memcpy(ab->ptr, cs->buf, cs->len);
+
+    if(!opensles_is_open(tvh->ao)) {
+      opensles_open(tvh->ao, cs->ctx->channels , cs->ctx->sample_rate*1000);
+    }
 
     running = opensles_enqueue(ao, ab) > 0;
 

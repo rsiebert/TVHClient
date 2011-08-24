@@ -85,7 +85,8 @@ int opensles_init(aout_sys_t *ao) {
   ao->engineObject     = NULL;
   ao->outputMixObject  = NULL;
   ao->play_size        = -BUFF_QUEUE;
-  
+  ao->is_open          = 0;
+
   pthread_mutex_init(&ao->mutex, NULL);
   TAILQ_INIT(&ao->play_queue);
   TAILQ_INIT(&ao->free_queue);
@@ -131,6 +132,27 @@ int opensles_init(aout_sys_t *ao) {
   result = (*ao->outputMixObject)->Realize(ao->outputMixObject,
 					   SL_BOOLEAN_FALSE);
   CHECK_OPENSL_ERROR(result, "Failed to realize output mix");
+
+  pthread_mutex_unlock(&ao->mutex);
+  return 0;
+  
+ error:
+  opensles_destroy(ao);
+  return -1;
+}
+
+int opensles_open(aout_sys_t *ao, unsigned char channels, unsigned int sample_rate) {
+  SLresult result;
+
+  DEBUG("Opening OpenSL ES for playback, %d channel(s), %dHz", channels, sample_rate);
+  // set the player's state to playing
+
+  pthread_mutex_lock(&ao->mutex);
+  
+  if(ao->is_open) {
+    ERROR("OpenSL ES interface allready opened");
+    goto error;
+  }
   
   // configure audio source - this defines the number of samples you can enqueue.
   SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {
@@ -140,8 +162,8 @@ int opensles_init(aout_sys_t *ao) {
   
   SLDataFormat_PCM format_pcm;
   format_pcm.formatType       = SL_DATAFORMAT_PCM;
-  format_pcm.numChannels      = 2;
-  format_pcm.samplesPerSec    = SL_SAMPLINGRATE_48;
+  format_pcm.numChannels      = channels;
+  format_pcm.samplesPerSec    = sample_rate;
   format_pcm.bitsPerSample    = SL_PCMSAMPLEFORMAT_FIXED_16;
   format_pcm.containerSize    = SL_PCMSAMPLEFORMAT_FIXED_16;
   format_pcm.channelMask      = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
@@ -187,31 +209,28 @@ int opensles_init(aout_sys_t *ao) {
 						      (void*)ao);
   CHECK_OPENSL_ERROR(result, "Failed to register buff queue callback.");
   
-  return 0;
-  
- error:
-  opensles_destroy(ao);
-  return -1;
-}
-
-int opensles_open(aout_sys_t *ao) {
-  SLresult result;
-
-  DEBUG("Opening OpenSL ES for playback");
-  // set the player's state to playing
-
-  pthread_mutex_lock(&ao->mutex);
-
   result = (*ao->playerPlay)->SetPlayState(ao->playerPlay,
 					   SL_PLAYSTATE_PLAYING);
   CHECK_OPENSL_ERROR(result, "Failed to switch to playing state");
+
+  ao->is_open = 1;
+
   pthread_mutex_unlock(&ao->mutex);
-  
   return 0;
   
  error:
   pthread_mutex_unlock(&ao->mutex);
   return -1;
+}
+
+int opensles_is_open(aout_sys_t *ao) {
+  int ret = 0;
+  
+  pthread_mutex_lock(&ao->mutex);
+  ret = ao->is_open;
+  pthread_mutex_unlock(&ao->mutex);
+  
+  return ret;
 }
 
 void opensles_close(aout_sys_t *ao) {
@@ -241,6 +260,7 @@ void opensles_close(aout_sys_t *ao) {
   
   ao->play_size = 0;
   ao->free_size = 0;
+  ao->is_open = 0;
 
   pthread_mutex_unlock(&ao->mutex);
 }
