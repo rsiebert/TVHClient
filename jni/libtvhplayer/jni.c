@@ -49,6 +49,7 @@ jboolean Java_org_me_tvhguide_TVHPlayer_setVideoCodec(JNIEnv* env, jobject thiz,
 
 void Java_org_me_tvhguide_TVHPlayer_setSurface(JNIEnv* env, jobject thiz, jobject surface) {
   void *handle;
+  DEBUG("Setting surface");
   jclass clz = (*env)->GetObjectClass(env, surface);
   jfieldID fid = fid = (*env)->GetFieldID(env, clz, "mSurface", "I");
   if(!fid) {

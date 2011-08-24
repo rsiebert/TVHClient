@@ -90,8 +90,8 @@ void surface_render(vout_sys_t *vo, vout_buffer_t *vb) {
 }
 
 void surface_close(vout_sys_t *vo) {
-  pthread_mutex_lock(&vo->mutex);
   DEBUG("Closing surface");
+  pthread_mutex_lock(&vo->mutex);
 
   vo->surface = NULL;
 
@@ -106,7 +106,9 @@ void surface_close(vout_sys_t *vo) {
 
 void surface_destroy(vout_sys_t *vo) {
   surface_close(vo);
-
+  
+  DEBUG("Destroying Surface");
+  
   if(vo->so_handle != NULL) {
     dlclose(vo->so_handle);
     vo->so_handle = NULL;
