@@ -281,6 +281,10 @@ int opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) {
 
   pthread_mutex_unlock(&ao->mutex);
 
+  if(!buf_count) {
+	  ERROR("Buffer underrun");
+  }
+
   return buf_count;
 }
 
@@ -344,8 +348,6 @@ static int opensles_play(aout_sys_t *ao) {
     
     ERROR("write error (%lu)", result);
   }
-
-  DEBUG("Flushing %d frames", i);
   
   return i;
 }
