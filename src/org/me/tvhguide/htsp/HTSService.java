@@ -152,10 +152,10 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void showError(final String error) {
-        if(error == null || error.length() > 0) {
+        if (error == null || error.length() < 0) {
             return;
         }
-        
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.setLoading(false);
         app.broadcastError(error);
