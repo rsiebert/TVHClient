@@ -135,8 +135,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             subscribe(intent.getLongExtra("channelId", 0),
                     intent.getLongExtra("subscriptionId", 0),
                     intent.getIntExtra("maxWidth", 0),
-                    intent.getIntExtra("maxHeight", 0)
-                    );
+                    intent.getIntExtra("maxHeight", 0));
         } else if (ACTION_UNSUBSCRIBE.equals(intent.getAction())) {
             unsubscribe(intent.getLongExtra("subscriptionId", 0));
         }
