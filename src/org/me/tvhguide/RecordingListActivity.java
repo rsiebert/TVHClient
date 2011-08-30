@@ -100,34 +100,39 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuItem item = menu.add(ContextMenu.NONE, R.string.menu_remove, ContextMenu.NONE, R.string.menu_remove);
+
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = recAdapter.getItem(info.position);
 
         menu.setHeaderTitle(rec.title);
-        Intent intent = new Intent(RecordingListActivity.this, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_DELETE);
-        intent.putExtra("id", rec.id);
-        item.setIntent(intent);
 
-        item = menu.add(ContextMenu.NONE, R.string.menu_cancel, ContextMenu.NONE, R.string.menu_cancel);
-        intent = new Intent(RecordingListActivity.this, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_CANCEL);
+        MenuItem item = null;
+        Intent intent = new Intent(RecordingListActivity.this, HTSService.class);
         intent.putExtra("id", rec.id);
-        item.setIntent(intent);
+
+        if ("recording".equals(rec.state) || "scheduled".equals(rec.state)) {
+            intent.setAction(HTSService.ACTION_DVR_CANCEL);
+            item = menu.add(ContextMenu.NONE, R.string.menu_record_cancel, ContextMenu.NONE, R.string.menu_record_cancel);
+            item.setIntent(intent);
+        } else {
+            intent.setAction(HTSService.ACTION_DVR_DELETE);
+            item = menu.add(ContextMenu.NONE, R.string.menu_record_remove, ContextMenu.NONE, R.string.menu_record_remove);
+            item.setIntent(intent);
+        }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.string.menu_cancel:
-            case R.string.menu_remove: {
+            case R.string.menu_record:
+            case R.string.menu_record_cancel:
+            case R.string.menu_record_remove: {
                 startService(item.getIntent());
                 return true;
             }
             default: {
-                return false;
+                return super.onContextItemSelected(item);
             }
         }
     }

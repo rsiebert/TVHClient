@@ -19,14 +19,9 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.TextView;
-import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
 
@@ -76,28 +71,5 @@ public class ProgrammeActivity extends Activity {
 
         text = (TextView) findViewById(R.id.pr_desc);
         text.setText(programme.ext_desc);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.pr_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.mi_record: {
-                Intent intent = new Intent(ProgrammeActivity.this, HTSService.class);
-                intent.setAction(HTSService.ACTION_DVR_ADD);
-                intent.putExtra("eventId", programme.id);
-                startService(intent);
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
-        }
     }
 }

@@ -25,10 +25,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -43,6 +47,7 @@ import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
+import org.me.tvhguide.model.Recording;
 
 /**
  *
@@ -128,6 +133,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             return;
         }
 
+        registerForContextMenu(getListView());
         contentTypes = getResources().getStringArray(R.array.pr_type);
 
         prAdapter = new ProgrammeListAdapter(this, prList);
@@ -165,6 +171,52 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         startActivity(intent);
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.string.menu_record:
+            case R.string.menu_record_cancel:
+            case R.string.menu_record_remove: {
+                startService(item.getIntent());
+                return true;
+            }
+            default: {
+                return super.onContextItemSelected(item);
+            }
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        Programme p = prAdapter.getItem(info.position);
+
+        menu.setHeaderTitle(p.title);
+
+        Intent intent = new Intent(this, HTSService.class);
+
+        MenuItem item = null;
+
+        if (p.recording == null) {
+            intent.setAction(HTSService.ACTION_DVR_ADD);
+            intent.putExtra("eventId", p.id);
+            intent.putExtra("channelId", channel.id);
+            item = menu.add(ContextMenu.NONE, R.string.menu_record, ContextMenu.NONE, R.string.menu_record);
+        } else if ("recording".equals(p.recording.state) || "scheduled".equals(p.recording.state)) {
+            intent.setAction(HTSService.ACTION_DVR_CANCEL);
+            intent.putExtra("id", p.recording.id);
+            item = menu.add(ContextMenu.NONE, R.string.menu_record_cancel, ContextMenu.NONE, R.string.menu_record_cancel);
+        } else {
+            intent.setAction(HTSService.ACTION_DVR_DELETE);
+            intent.putExtra("id", p.recording.id);
+            item = menu.add(ContextMenu.NONE, R.string.menu_record_remove, ContextMenu.NONE, R.string.menu_record_remove);
+        }
+
+        item.setIntent(intent);
+    }
+
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_ADD)) {
             runOnUiThread(new Runnable() {
@@ -191,6 +243,27 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                     prAdapter.notifyDataSetChanged();
                 }
             });
+        } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
+            runOnUiThread(new Runnable() {
+
+                public void run() {
+                    Programme p = (Programme) obj;
+                    prAdapter.updateView(getListView(), p);
+                }
+            });
+        } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
+            runOnUiThread(new Runnable() {
+
+                public void run() {
+                    Recording rec = (Recording) obj;
+                    for (Programme p : prAdapter.list) {
+                        if (rec == p.recording) {
+                            prAdapter.updateView(getListView(), p);
+                            return;
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -202,6 +275,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         TextView date;
         TextView description;
         ImageView icon;
+        ImageView state;
 
         public ViewWarpper(View base) {
             title = (TextView) base.findViewById(R.id.pr_title);
@@ -212,6 +286,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             date = (TextView) base.findViewById(R.id.pr_date);
 
             icon = (ImageView) base.findViewById(R.id.pr_icon);
+            state = (ImageView) base.findViewById(R.id.pr_state);
         }
 
         public void repaint(Programme p) {
@@ -225,6 +300,25 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             }
 
             title.setText(p.title);
+
+            if (p.recording == null) {
+                state.setImageDrawable(null);
+            } else if (p.recording.error != null) {
+                state.setImageResource(R.drawable.ic_error_small);
+            } else if ("completed".equals(p.recording.state)) {
+                state.setImageResource(R.drawable.ic_success_small);
+            } else if ("invalid".equals(p.recording.state)) {
+                state.setImageResource(R.drawable.ic_error_small);
+            } else if ("missed".equals(p.recording.state)) {
+                state.setImageResource(R.drawable.ic_error_small);
+            } else if ("recording".equals(p.recording.state)) {
+                state.setImageResource(R.drawable.ic_rec_small);
+            } else if ("scheduled".equals(p.recording.state)) {
+                state.setImageResource(R.drawable.ic_schedule_small);
+            } else {
+                state.setImageDrawable(null);
+            }
+
             title.invalidate();
 
             date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));

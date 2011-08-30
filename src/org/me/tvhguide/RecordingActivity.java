@@ -19,15 +19,10 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.TextView;
 
-import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Recording;
 
 /**
@@ -64,30 +59,5 @@ public class RecordingActivity extends Activity {
                 + DateFormat.getTimeFormat(this).format(rec.start)
                 + " - "
                 + DateFormat.getTimeFormat(this).format(rec.stop));
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.rc_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.mi_remove: {
-                Intent intent = new Intent(getBaseContext(), HTSService.class);
-                intent.setAction(HTSService.ACTION_DVR_DELETE);
-                intent.putExtra("id", rec.id);
-                startService(intent);
-
-                finish();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
-        }
     }
 }

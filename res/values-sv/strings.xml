@@ -6,10 +6,11 @@
     <string name="menu_settings">Inställningar</string>
     <string name="menu_refresh">Uppdatera</string>
     <string name="menu_tags">Tagggar</string>
-    <string name="menu_record">Spela in</string>
-    <string name="menu_remove">Ta bort</string>
-    <string name="menu_cancel">Avbryt</string>
     <string name="menu_recordings">Inspelningar</string>
+
+    <string name="menu_record">Spela in</string>
+    <string name="menu_record_remove">Ta bort inspelning</string>
+    <string name="menu_record_cancel">Avbryt inspelning</string>
 
     <string name="pref_host">Värdnamn</string>
     <string name="pref_host_sum">Skriv in värdnamn</string>

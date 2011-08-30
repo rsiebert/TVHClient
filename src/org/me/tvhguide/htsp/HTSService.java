@@ -120,7 +120,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("eventId", 0),
                     intent.getIntExtra("count", 10));
         } else if (ACTION_DVR_ADD.equals(intent.getAction())) {
-            addDvrEntry(intent.getLongExtra("eventId", 0));
+            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+            Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
+            addDvrEntry(ch, intent.getLongExtra("eventId", 0));
         } else if (ACTION_DVR_DELETE.equals(intent.getAction())) {
             deleteDvrEntry(intent.getLongExtra("id", 0));
         } else if (ACTION_DVR_CANCEL.equals(intent.getAction())) {
@@ -299,6 +301,13 @@ public class HTSService extends Service implements HTSConnectionListener {
             Recording rec = app.getRecording(response.getLong("id"));
             if (rec != null && rec.channel != null) {
                 rec.channel.recordings.remove(rec);
+                for (Programme p : rec.channel.epg) {
+                    if (p.recording == rec) {
+                        p.recording = null;
+                        app.updateProgramme(p);
+                        break;
+                    }
+                }
                 app.removeRecording(rec);
             }
         } else if (method.equals("subscriptionStart")) {
@@ -424,6 +433,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     p.nextId = sub.getLong("nextEventId", 0);
                     p.description = sub.getString("description", null);
                     p.ext_desc = sub.getString("ext_text", p.description);
+                    p.recording = app.getRecording(response.getLong("dvrId", 0));
                     p.type = sub.getInt("contentType", 0);
                     p.title = sub.getString("title");
                     p.start = sub.getDate("start");
@@ -453,6 +463,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 p.nextId = response.getLong("nextEventId", 0);
                 p.description = response.getString("description", null);
                 p.ext_desc = response.getString("ext_text", p.description);
+                p.recording = app.getRecording(response.getLong("dvrId", 0));
                 p.type = response.getInt("contentType", 0);
                 p.title = response.getString("title");
                 p.start = response.getDate("start");
@@ -518,15 +529,23 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void addDvrEntry(long eventId) {
+    private void addDvrEntry(final Channel ch, final long eventId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
         request.putField("eventId", eventId);
         connection.sendMessage(request, new HTSResponseHandler() {
 
             public void handleResponse(HTSMessage response) {
-
-                boolean success = response.getInt("success", 0) == 1;
+                if (response.getInt("success", 0) == 1) {
+                    for (Programme p : ch.epg) {
+                        if (p.id == eventId) {
+                            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                            p.recording = app.getRecording(response.getLong("id", 0));
+                            app.updateProgramme(p);
+                            break;
+                        }
+                    }
+                }
                 String error = response.getString("error", null);
             }
         });
