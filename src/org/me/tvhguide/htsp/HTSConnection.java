@@ -215,6 +215,7 @@ public class HTSConnection extends Thread {
         lock.lock();
         try {
             responseHandelers.clear();
+            messageQueue.clear();
             auth = false;
             running = false;
             socketChannel.register(selector, 0);
