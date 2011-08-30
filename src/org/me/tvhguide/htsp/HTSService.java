@@ -293,14 +293,14 @@ public class HTSService extends Service implements HTSConnectionListener {
                 rec.state = response.getString("state", rec.state);
                 rec.stop = response.getDate("stop");
                 rec.title = response.getString("title", rec.title);
+                app.updateRecording(rec);
             }
-            app.updateRecording(rec);
         } else if (method.equals("dvrEntryDelete")) {
             Recording rec = app.getRecording(response.getLong("id"));
-            if (rec.channel != null) {
+            if (rec != null && rec.channel != null) {
                 rec.channel.recordings.remove(rec);
+                app.removeRecording(rec);
             }
-            app.removeRecording(rec);
         } else if (method.equals("subscriptionStart")) {
             Subscription subscription = app.getSubscription(response.getLong("subscriptionId"));
             if (subscription == null) {
