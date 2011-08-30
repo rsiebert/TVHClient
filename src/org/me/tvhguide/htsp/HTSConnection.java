@@ -122,9 +122,9 @@ public class HTSConnection extends Thread {
     }
 
     public boolean isConnected() {
-        return socketChannel != null && 
-                socketChannel.isOpen() && 
-                socketChannel.isConnected()
+        return socketChannel != null
+                && socketChannel.isOpen()
+                && socketChannel.isConnected()
                 && running;
     }
 
@@ -191,10 +191,10 @@ public class HTSConnection extends Thread {
     }
 
     public void sendMessage(HTSMessage message, HTSResponseHandler listener) {
-        if(!isConnected()) {
+        if (!isConnected()) {
             return;
         }
-            
+
         lock.lock();
         try {
             seq++;
@@ -261,7 +261,7 @@ public class HTSConnection extends Thread {
                 lock.unlock();
             }
         }
-        
+
         close();
     }
 

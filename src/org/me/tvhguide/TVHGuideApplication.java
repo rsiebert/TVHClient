@@ -84,7 +84,7 @@ public class TVHGuideApplication extends Application {
     public void broadcastError(final String error) {
         //Don't show error if no views are open
         synchronized (listeners) {
-            if(listeners.isEmpty()) {
+            if (listeners.isEmpty()) {
                 return;
             }
         }
@@ -196,7 +196,7 @@ public class TVHGuideApplication extends Application {
             broadcastMessage(ACTION_PROGRAMME_UPDATE, p);
         }
     }
-    
+
     public void addRecording(Recording rec) {
         recordings.add(rec);
 
