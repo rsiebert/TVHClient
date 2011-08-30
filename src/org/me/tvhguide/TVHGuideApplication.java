@@ -49,6 +49,7 @@ public class TVHGuideApplication extends Application {
     public static final String ACTION_DVR_UPDATE = "org.me.tvhguide.DVR_UPDATE";
     public static final String ACTION_PROGRAMME_ADD = "org.me.tvhguide.PROGRAMME_ADD";
     public static final String ACTION_PROGRAMME_DELETE = "org.me.tvhguide.PROGRAMME_DELETE";
+    public static final String ACTION_PROGRAMME_UPDATE = "org.me.tvhguide.PROGRAMME_UPDATE";
     public static final String ACTION_SUBSCRIPTION_ADD = "org.me.tvhguide.SUBSCRIPTION_ADD";
     public static final String ACTION_SUBSCRIPTION_DELETE = "org.me.tvhguide.SUBSCRIPTION_DELETE";
     public static final String ACTION_SUBSCRIPTION_UPDATE = "org.me.tvhguide.SUBSCRIPTION_UPDATE";
@@ -190,6 +191,12 @@ public class TVHGuideApplication extends Application {
         }
     }
 
+    public void updateProgramme(Programme p) {
+        if (!loading) {
+            broadcastMessage(ACTION_PROGRAMME_UPDATE, p);
+        }
+    }
+    
     public void addRecording(Recording rec) {
         recordings.add(rec);
 
