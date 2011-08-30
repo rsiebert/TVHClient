@@ -216,7 +216,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             date.invalidate();
 
             if (rec.error != null) {
-                message.setText(rec.error == null ? rec.state : rec.error);
+                message.setText(rec.error);
                 icon.setImageResource(R.drawable.ic_error_small);
             } else if ("completed".equals(rec.state)) {
                 message.setText(getString(R.string.pvr_completed));
