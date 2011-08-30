@@ -269,7 +269,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
-        
+
         connect(false);
     }
 
