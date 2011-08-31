@@ -10,9 +10,7 @@
         android:layout_gravity="center"
         android:id="@+id/player_surface"/>
     <LinearLayout
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:padding="10dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
