@@ -237,8 +237,12 @@ void opensles_close(aout_sys_t *ao) {
   DEBUG("Closing OpenSL ES");
 
   pthread_mutex_lock(&ao->mutex);
-  
-  (*ao->playerPlay)->SetPlayState(ao->playerPlay, SL_PLAYSTATE_STOPPED);
+
+  // Stop playback
+  if(ao->playerPlay != NULL) {
+    (*ao->playerPlay)->SetPlayState(ao->playerPlay, SL_PLAYSTATE_STOPPED);
+  }
+
   // Flush remaining buffers if any.
   if(ao->playerBufferQueue != NULL) {
     (*ao->playerBufferQueue)->Clear(ao->playerBufferQueue);
