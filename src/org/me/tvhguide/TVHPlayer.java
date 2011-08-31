@@ -179,4 +179,13 @@ public class TVHPlayer {
     private static native boolean enqueueAudioFrame(byte[] frame, long pts, long dts, long duration);
 
     private static native boolean enqueueVideoFrame(byte[] frame, long pts, long dts, long duration);
+    
+    public static native int getWidth();
+    
+    public static native int getHeight();
+    
+    public static native int getAspectDen();
+    
+    public static native int getAspectNum();
+    
 }

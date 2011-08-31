@@ -24,16 +24,16 @@ import android.content.Intent;
 import org.me.tvhguide.model.Subscription;
 import org.me.tvhguide.htsp.HTSListener;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.PixelFormat;
-
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.me.tvhguide.model.Channel;
@@ -49,7 +49,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
     private long subId;
     private long channelId;
-    private SurfaceHolder surfaceHolder;
+    private SurfaceView surfaceView;
+    FrameLayout frameLayout;
     private View overlay;
     private TextView playerStatus;
     private TextView playerQueue;
@@ -76,11 +77,31 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         setContentView(R.layout.player_layout);
 
-        SurfaceView surface = (SurfaceView) findViewById(R.id.player_surface);
-        surface.setMinimumHeight(100);
-        surface.setMinimumWidth(100);
-        surface.setKeepScreenOn(true);
-        surface.setOnLongClickListener(new OnLongClickListener() {
+        surfaceView = (SurfaceView) findViewById(R.id.player_surface);
+        surfaceView.setMinimumHeight(100);
+        surfaceView.setMinimumWidth(100);
+        surfaceView.setKeepScreenOn(true);
+
+        SurfaceHolder surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.setFormat(PixelFormat.RGBA_8888);
+        surfaceHolder.addCallback(surfaceCallback);
+
+        if (channel.epg.size() > 0) {
+            Programme p = channel.epg.iterator().next();
+            TextView view = (TextView) findViewById(R.id.player_title);
+            view.setText(p.title);
+            view = (TextView) findViewById(R.id.player_desc);
+            view.setText(p.description);
+        }
+
+        playerStatus = (TextView) findViewById(R.id.player_status);
+        playerQueue = (TextView) findViewById(R.id.player_queue);
+        playerDrops = (TextView) findViewById(R.id.player_drops);
+        overlay = findViewById(R.id.player_details);
+        overlay.getBackground().setAlpha(127);
+
+        frameLayout = (FrameLayout) findViewById(R.id.player_frame);
+        frameLayout.setOnLongClickListener(new OnLongClickListener() {
 
             public boolean onLongClick(View arg0) {
                 if (overlay.getVisibility() == LinearLayout.VISIBLE) {
@@ -93,26 +114,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
                 return true;
             }
         });
-
-        surfaceHolder = surface.getHolder();
-        surfaceHolder.setFormat(PixelFormat.RGBA_8888);
-        surfaceHolder.addCallback(surfaceCallback);
-
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        Programme p = channel.epg.iterator().next();
-        if(p != null) {
-            TextView view = (TextView) findViewById(R.id.player_title);
-            view.setText(p.title);
-            view = (TextView) findViewById(R.id.player_desc);
-            view.setText(p.description);
-        }
-        
-        playerStatus = (TextView) findViewById(R.id.player_status);
-        playerQueue = (TextView) findViewById(R.id.player_queue);
-        playerDrops = (TextView) findViewById(R.id.player_drops);
-        overlay =  findViewById(R.id.player_details);
-        overlay.getBackground().setAlpha(127);
     }
     private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
 
@@ -137,12 +138,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
             }).start();
         }
     };
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    }
 
     @Override
     protected void onResume() {
@@ -175,10 +170,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         int maxWidth = getWindowManager().getDefaultDisplay().getWidth();
         int maxHeight = getWindowManager().getDefaultDisplay().getHeight();
-        if (maxHeight > maxWidth) {
-            maxWidth = maxHeight;
-            maxHeight = getWindowManager().getDefaultDisplay().getWidth();
-        }
 
         TVHPlayer.startPlayback();
 
@@ -193,6 +184,35 @@ public class PlaybackActivity extends Activity implements HTSListener {
         startService(intent);
     }
 
+    private void setDimention(int width, int height) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
+        surfaceView.getHolder().setFixedSize(width, height);
+
+        double zoomW = (double) frameLayout.getWidth() / (double) width;
+        double zoomH = (double) frameLayout.getHeight() / (double) height;
+        double zoom = Math.min(zoomW, zoomH);
+
+        int _width = (int) (zoom * width);
+        int _height = (int) (zoom * height);
+
+        if (width > 0 && height > 0 && TVHPlayer.getAspectNum() > 0 && TVHPlayer.getAspectDen() > 0) {
+            ViewGroup.LayoutParams lp = surfaceView.getLayoutParams();
+            if (zoomW < zoomH) {
+                lp.width = _width;
+                lp.height = TVHPlayer.getAspectDen() * _width / TVHPlayer.getAspectNum();
+            } else {
+                lp.width = TVHPlayer.getAspectNum() * _height / TVHPlayer.getAspectDen();
+                lp.height = _height;
+            }
+
+            Log.d("PlayerbackActivity", width + "x" + height + " ==> " + lp.width + "x" + lp.height + ", zoom = " + zoom);
+            surfaceView.requestLayout();
+        }
+    }
+
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
             runOnUiThread(new Runnable() {
@@ -201,7 +221,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
                     Subscription subscription = (Subscription) obj;
                     if (subscription.status != null && subscription.status.length() > 0) {
                         playerStatus.setText("Status: " + subscription.status);
-                    } else if(TVHPlayer.isBuffering()){
+                    } else if (TVHPlayer.isBuffering()) {
                         playerStatus.setText("Status: Buffering");
                     } else {
                         playerStatus.setText("Status: OK");
@@ -215,7 +235,11 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
                     for (Stream st : subscription.streams) {
                         if (st.index == TVHPlayer.getVideoIndex()) {
-                            surfaceHolder.setFixedSize(st.width, st.height);
+                            if (TVHPlayer.getHeight() > 0 && TVHPlayer.getWidth() > 0) {
+                                st.height = TVHPlayer.getHeight();
+                                st.width = TVHPlayer.getWidth();
+                            }
+                            setDimention(st.width, st.height);
                             break;
                         }
                     }

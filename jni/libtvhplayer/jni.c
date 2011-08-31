@@ -25,6 +25,34 @@
 
 static tvh_object_t *instance;
 
+jint Java_org_me_tvhguide_TVHPlayer_getHeight(JNIEnv* env, jobject thiz) {
+  if(instance && instance->vcs && instance->vcs->ctx)
+    return instance->vcs->ctx->height;
+  else
+    return 0;
+}
+
+jint Java_org_me_tvhguide_TVHPlayer_getWidth(JNIEnv* env, jobject thiz) {
+  if(instance && instance->vcs && instance->vcs->ctx)
+    return instance->vcs->ctx->width;
+  else
+    return 0;
+}
+
+jint Java_org_me_tvhguide_TVHPlayer_getAspectNum(JNIEnv* env, jobject thiz) {
+  if(instance && instance->vcs && instance->vcs->ctx)
+    return instance->vcs->ctx->sample_aspect_ratio.num;
+  else
+    return 0;
+}
+
+jint Java_org_me_tvhguide_TVHPlayer_getAspectDen(JNIEnv* env, jobject thiz) {
+  if(instance && instance->vcs && instance->vcs->ctx)
+    return instance->vcs->ctx->sample_aspect_ratio.den;
+  else
+    return 0;
+}
+
 jboolean Java_org_me_tvhguide_TVHPlayer_setAudioCodec(JNIEnv* env, jobject thiz, jstring jCodec) {
   const char *cCodec = (*env)->GetStringUTFChars(env, jCodec, 0);
 
