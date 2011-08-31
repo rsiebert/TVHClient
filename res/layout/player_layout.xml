@@ -15,6 +15,7 @@
         android:paddingRight="10dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_gravity="center"
         android:orientation="vertical">
         <LinearLayout
             android:id="@+id/player_details"
