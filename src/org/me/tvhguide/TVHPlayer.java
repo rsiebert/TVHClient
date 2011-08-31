@@ -33,7 +33,7 @@ import org.me.tvhguide.model.Packet;
 public class TVHPlayer {
 
     private static final long BUFFER_TIME = 5 * 1000 * 1000; //us
-    private static final double MESSURE_TIME = 4 * 1000 * 1000; //us
+    private static final double MESSURE_TIME = 2 * 1000 * 1000; //us
     private static int videoIndex;
     private static int audioIndex;
     private static boolean buffering;
@@ -73,6 +73,10 @@ public class TVHPlayer {
         return running;
     }
 
+    public static double getNetworkSpeed() {
+        return networkSpeed;
+    }
+    
     public static boolean enqueue(Packet packet) {
         try {
             lock.lock();

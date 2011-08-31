@@ -55,6 +55,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
     private TextView playerStatus;
     private TextView playerQueue;
     private TextView playerDrops;
+    private TextView playerSpeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
         playerStatus = (TextView) findViewById(R.id.player_status);
         playerQueue = (TextView) findViewById(R.id.player_queue);
         playerDrops = (TextView) findViewById(R.id.player_drops);
+        playerSpeed = (TextView) findViewById(R.id.player_speed);
         overlay = findViewById(R.id.player_details);
         overlay.getBackground().setAlpha(127);
 
@@ -232,7 +234,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
                             + subscription.droppedPFrames
                             + subscription.droppedIFrames;
                     playerDrops.setText("Dropped frames: " + Long.toString(droppedFrames));
-
+                    playerSpeed.setText("Network speed: " + TVHPlayer.getNetworkSpeed() + "x");
                     for (Stream st : subscription.streams) {
                         if (st.index == TVHPlayer.getVideoIndex()) {
                             if (TVHPlayer.getHeight() > 0 && TVHPlayer.getWidth() > 0) {
@@ -243,8 +245,15 @@ public class PlaybackActivity extends Activity implements HTSListener {
                             break;
                         }
                     }
+
+                    Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
+                    intent.setAction(HTSService.ACTION_FEEDBACK);
+                    intent.putExtra("subscriptionId", subId);
+                    intent.putExtra("speed", (int) (TVHPlayer.getNetworkSpeed() * 100));
+                    startService(intent);
                 }
             });
+
         } else if (action.equals(TVHGuideApplication.ACTION_PLAYBACK_PACKET)) {
             Packet p = (Packet) obj;
             TVHPlayer.enqueue(p);

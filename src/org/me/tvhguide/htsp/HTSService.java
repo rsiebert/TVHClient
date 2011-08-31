@@ -59,6 +59,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     public static final String ACTION_DVR_CANCEL = "org.me.tvhguide.htsp.DVR_CANCEL";
     public static final String ACTION_SUBSCRIBE = "org.me.tvhguide.htsp.SUBSCRIBE";
     public static final String ACTION_UNSUBSCRIBE = "org.me.tvhguide.htsp.UNSUBSCRIBE";
+    public static final String ACTION_FEEDBACK = "org.me.tvhguide.htsp.FEEDBACK";
     private static final String TAG = "HTSService";
     private ExecutorService execService;
     private HTSConnection connection;
@@ -140,6 +141,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getIntExtra("maxHeight", 0));
         } else if (ACTION_UNSUBSCRIBE.equals(intent.getAction())) {
             unsubscribe(intent.getLongExtra("subscriptionId", 0));
+        } else if (ACTION_FEEDBACK.equals(intent.getAction())) {
+            feedback(intent.getLongExtra("subscriptionId", 0), 
+                        intent.getIntExtra("speed", 0));
         }
 
         return START_NOT_STICKY;
@@ -580,6 +584,19 @@ public class HTSService extends Service implements HTSConnectionListener {
         HTSMessage request = new HTSMessage();
         request.setMethod("unsubscribe");
         request.putField("subscriptionId", subscriptionId);
+        connection.sendMessage(request, new HTSResponseHandler() {
+
+            public void handleResponse(HTSMessage response) {
+                //NOP
+            }
+        });
+    }
+    
+    private void feedback(long subscriptionId, int speed) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("feedback");
+        request.putField("subscriptionId", subscriptionId);
+        request.putField("speed", speed);
         connection.sendMessage(request, new HTSResponseHandler() {
 
             public void handleResponse(HTSMessage response) {

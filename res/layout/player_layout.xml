@@ -60,6 +60,13 @@
                 android:textColor="#ffffff"
                 android:textSize="18sp"
                 android:gravity="left"/>
+            <TextView
+                android:id="@+id/player_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:textSize="18sp"
+                android:gravity="left"/>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
