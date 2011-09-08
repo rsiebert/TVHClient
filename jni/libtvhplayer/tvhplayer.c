@@ -143,12 +143,12 @@ int tvh_video_init(tvh_object_t *tvh, const char *codec) {
     goto error;
   }
 
-  if(cs->codec->type != CODEC_TYPE_VIDEO) {
+  if(cs->codec->type != AVMEDIA_TYPE_VIDEO) {
     DEBUG("Invalid codec type for video decoding");
     goto error;
   }
   
-  cs->ctx = avcodec_alloc_context2(CODEC_TYPE_VIDEO);
+  cs->ctx = avcodec_alloc_context2(AVMEDIA_TYPE_VIDEO);
   cs->frame = avcodec_alloc_frame();
   avcodec_get_frame_defaults(cs->frame);
 
@@ -298,12 +298,12 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
     goto error;
   }
 
-  if(cs->codec->type != CODEC_TYPE_AUDIO) {
+  if(cs->codec->type != AVMEDIA_TYPE_AUDIO) {
     ERROR("Invalid codec type for audio decoding");
     goto error;
   }
   
-  cs->ctx = avcodec_alloc_context2(CODEC_TYPE_AUDIO);
+  cs->ctx = avcodec_alloc_context2(AVMEDIA_TYPE_AUDIO);
   cs->buf = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE*2);
 
   if(avcodec_open(cs->ctx, cs->codec) < 0) {
