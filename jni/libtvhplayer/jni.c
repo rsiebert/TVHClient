@@ -20,6 +20,7 @@
 #include <jni.h>  
 #include <string.h>  
 #include <stdlib.h>
+#include <libavutil/avutil.h>
 
 #include "tvhplayer.h"
 
@@ -133,7 +134,44 @@ void Java_org_me_tvhguide_TVHPlayer_enqueueVideoFrame(JNIEnv* env, jobject obj, 
   (*env)->ReleaseByteArrayElements(env, byteArray, buf, JNI_ABORT);
 }
 
+void av_log_callback(void* avcl, int level, const char *fmt, va_list vl) {
+  int lvl = ANDROID_LOG_UNKNOWN;
+
+  switch(level) {
+  case AV_LOG_PANIC:
+  case AV_LOG_FATAL:
+    lvl = ANDROID_LOG_FATAL;
+    break;
+  case AV_LOG_ERROR:
+    lvl = ANDROID_LOG_ERROR;
+    break;
+  case AV_LOG_WARNING:
+    lvl = ANDROID_LOG_WARN;
+    break;
+  case AV_LOG_INFO:
+    lvl = ANDROID_LOG_INFO;
+    break;
+  case AV_LOG_VERBOSE:
+    lvl = ANDROID_LOG_VERBOSE;
+    break;
+  case AV_LOG_DEBUG:
+    lvl = ANDROID_LOG_DEBUG;
+    break;
+  case AV_LOG_QUIET:
+    lvl = ANDROID_LOG_SILENT;
+    break;
+  default:
+    lvl = ANDROID_LOG_UNKNOWN;
+    break;
+  }
+
+  __android_log_print(lvl, "libav", fmt, vl);
+}
+
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+
+  av_log_set_callback(av_log_callback);
+
   instance = (tvh_object_t*)malloc(sizeof(tvh_object_t));
   memset(instance, 0, sizeof(tvh_object_t));
 
