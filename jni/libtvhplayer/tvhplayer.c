@@ -345,35 +345,29 @@ int tvh_audio_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts, 
   packet.data = ptr = buf;
   packet.size = len;
   
-  do {
-    cs->len = AVCODEC_MAX_AUDIO_FRAME_SIZE*2;
-    int length = avcodec_decode_audio3(cs->ctx, cs->buf, &cs->len, &packet);
-    if(length <= 0) {
-      break;
-    }
+  cs->len = AVCODEC_MAX_AUDIO_FRAME_SIZE*2;
+  length = avcodec_decode_audio3(cs->ctx, cs->buf, &cs->len, &packet);
+  if(length <= 0) {
+    ERROR("Unable to decode audio stream (%d)", length);
+    pthread_mutex_unlock(&tvh->mutex);
+    return -1;
+  }
 
-    if(packet.pts != AV_NOPTS_VALUE) {
-      pts = packet.pts;
-    }
+  if(packet.pts != AV_NOPTS_VALUE) {
+    pts = packet.pts;
+  }
 
-    aout_buffer_t *ab = (aout_buffer_t *) malloc(sizeof(aout_buffer_t));
-    ab->ptr = av_malloc(cs->len);
-    ab->len = cs->len;
-    ab->pts = pts;
-    memcpy(ab->ptr, cs->buf, cs->len);
+  aout_buffer_t *ab = (aout_buffer_t *) malloc(sizeof(aout_buffer_t));
+  ab->ptr = av_malloc(cs->len);
+  ab->len = cs->len;
+  ab->pts = pts;
+  memcpy(ab->ptr, cs->buf, cs->len);
 
-    if(!opensles_is_open(tvh->ao)) {
-      opensles_open(tvh->ao, cs->ctx->channels , cs->ctx->sample_rate*1000);
-    }
+  if(!opensles_is_open(tvh->ao)) {
+    opensles_open(tvh->ao, cs->ctx->channels , cs->ctx->sample_rate*1000);
+  }
 
-    running = opensles_enqueue(ao, ab) > 0;
-
-    ptr += length;
-    len -= length;
-
-    packet.data = ptr;
-    packet.size = len;    
-  } while(len);
+  running = opensles_enqueue(ao, ab) > 0; 
 
   pthread_mutex_unlock(&tvh->mutex);
 
