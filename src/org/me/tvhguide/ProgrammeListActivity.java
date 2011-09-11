@@ -202,7 +202,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         if (p.recording == null) {
             intent.setAction(HTSService.ACTION_DVR_ADD);
             intent.putExtra("eventId", p.id);
-            intent.putExtra("channelId", channel.id);
+            intent.putExtra("channelId", p.channel.id);
             item = menu.add(ContextMenu.NONE, R.string.menu_record, ContextMenu.NONE, R.string.menu_record);
         } else if ("recording".equals(p.recording.state) || "scheduled".equals(p.recording.state)) {
             intent.setAction(HTSService.ACTION_DVR_CANCEL);
