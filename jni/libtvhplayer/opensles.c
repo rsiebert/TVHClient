@@ -166,7 +166,7 @@ int opensles_open(aout_sys_t *ao, unsigned char channels, unsigned int sample_ra
   format_pcm.samplesPerSec    = sample_rate;
   format_pcm.bitsPerSample    = SL_PCMSAMPLEFORMAT_FIXED_16;
   format_pcm.containerSize    = SL_PCMSAMPLEFORMAT_FIXED_16;
-  format_pcm.channelMask      = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
+  format_pcm.channelMask      = channels == 2 ? (SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT) : SL_SPEAKER_FRONT_CENTER;
   format_pcm.endianness       = SL_BYTEORDER_LITTLEENDIAN;
   
   SLDataSource audioSrc = {&loc_bufq, &format_pcm};
