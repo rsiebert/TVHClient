@@ -193,7 +193,9 @@ void tvh_video_enqueue(tvh_object_t *tvh, uint8_t *buf, size_t len, int64_t pts,
 
   length = avcodec_decode_video2(cs->ctx, cs->frame, &got_picture, &packet);
   if(length <= 0) {
-    ERROR("Unable to decode video stream");
+    ERROR("Unable to decode video stream (%d)", length);
+    pthread_mutex_unlock(&tvh->mutex);
+    return;
   }
 
   if(!got_picture) {
