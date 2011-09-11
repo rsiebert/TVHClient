@@ -287,6 +287,8 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
     codec_id = CODEC_ID_AAC;
   } else if(!strcmp(codec, "MPEG2AUDIO")) {
     codec_id = CODEC_ID_MP2;
+  } else if(!strcmp(codec, "MP3")) {
+    codec_id = CODEC_ID_MP3;
   }
 
   if(!codec_id) {
