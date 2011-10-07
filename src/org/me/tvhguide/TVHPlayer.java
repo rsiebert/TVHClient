@@ -152,6 +152,7 @@ public class TVHPlayer {
         try {
             videoIndex = audioIndex = -1;
             buffering = true;
+            buffer.clear();
             running = false;
             networkSpeed = 0;
             messureStarted = null;
