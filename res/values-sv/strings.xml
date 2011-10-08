@@ -29,6 +29,8 @@
     
     <string name="err_auth">Åtkomst nekad</string>
     <string name="err_inv">Felaktigt svar från server</string>
+    <string name="err_connect">Kan inte ansluta till servern</string>
+    <string name="err_con_lost">Tappade anslutningen till servern</string>
 
     <string name="inf_load">Laddar...</string>
     <string name="inf_load_ext">Var god vänta några sekunder...</string>
@@ -53,4 +55,8 @@
     <string name="pvr_completed">Avslutad</string>
     <string name="pvr_missed">Missad</string>
     <string name="pvr_invalid">Ogiltig</string>
+    
+    <string name="ch_play">Spela</string>
+    
+    <string name="search_hint">Sök i programtablån</string>
 </resources>
