@@ -82,18 +82,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         setListAdapter(chAdapter);
 
         registerForContextMenu(getListView());
-
-        getListView().setOnKeyListener(new OnKeyListener() {
-
-            public boolean onKey(View view, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_SEARCH
-                        && event.getAction() == KeyEvent.ACTION_UP) {
-                    showSearch();
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     @Override
@@ -128,42 +116,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         Intent intent = new Intent(this, PlaybackActivity.class);
         intent.putExtra("channelId", ch.id);
         item.setIntent(intent);
-    }
-
-    private void showSearch() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(android.R.string.search_go);
-
-        final EditText input = new EditText(this);
-        builder.setView(input);
-
-        builder.setPositiveButton(android.R.string.search_go, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String query = input.getText().toString();
-
-                Intent intent = new Intent(getBaseContext(), ProgrammeListActivity.class);
-                intent.setAction("search");
-                intent.putExtra("query", query);
-                startActivity(intent);
-
-                if (query.length() > 0) {
-                    intent = new Intent(ChannelListActivity.this, HTSService.class);
-                    intent.setAction(HTSService.ACTION_EPG_QUERY);
-                    intent.putExtra("query", query);
-                    startService(intent);
-                }
-            }
-        });
-
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-
-        builder.show();
     }
 
     void connect(boolean force) {
@@ -206,7 +158,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return true;
             }
             case R.id.mi_search: {
-                showSearch();
+                onSearchRequested();
                 return true;
             }
             case R.id.mi_tags: {

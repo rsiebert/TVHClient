@@ -20,6 +20,7 @@ package org.me.tvhguide;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -68,9 +69,13 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         List<Programme> prList = new ArrayList<Programme>();
         Intent intent = getIntent();
 
-        if ("search".equals(intent.getAction())) {
-            pattern = Pattern.compile(intent.getStringExtra("query"),
-                    Pattern.CASE_INSENSITIVE);
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
+            Intent sIntent = new Intent(ProgrammeListActivity.this, HTSService.class);
+            sIntent.setAction(HTSService.ACTION_EPG_QUERY);
+            sIntent.putExtra("query", query);
+            startService(sIntent);
         } else {
             TVHGuideApplication app = (TVHGuideApplication) getApplication();
             channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
