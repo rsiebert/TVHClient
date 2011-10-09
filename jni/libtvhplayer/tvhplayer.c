@@ -139,7 +139,7 @@ int tvh_video_init(tvh_object_t *tvh, const char *codec) {
 
   cs->codec = avcodec_find_decoder(codec_id);
   if(!cs->codec) {
-    DEBUG("Unable to open video codec %s", codec);
+    DEBUG("Unable to find video codec %s", codec);
     goto error;
   }
 
@@ -298,7 +298,7 @@ int tvh_audio_init(tvh_object_t *tvh, const char *codec) {
 
   cs->codec = avcodec_find_decoder(codec_id);
   if(!cs->codec) {
-    ERROR("Unable to open audio codec %s", codec);
+    ERROR("Unable to find audio codec %s", codec);
     goto error;
   }
 
