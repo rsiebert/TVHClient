@@ -89,7 +89,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         if (channel != null && !channel.epg.isEmpty()) {
             setTitle(channel.name);
             prList.addAll(channel.epg);
-
+            hideIcons = true;
             Button btn = new Button(this);
             btn.setText(R.string.pr_get_more);
             btn.setOnClickListener(new OnClickListener() {
@@ -125,7 +125,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             getListView().addFooterView(btn);
 
         } else if (pattern != null) {
-            hideIcons = true;
+            hideIcons = false;
             TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
             for (Channel ch : app.getChannels()) {
