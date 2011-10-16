@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -335,7 +336,12 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             }
             channel.invalidate();
 
-            date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
+            if (DateUtils.isToday(p.start.getTime())) {
+                date.setText(getString(R.string.today));
+            } else {
+                date.setText(DateUtils.getRelativeTimeSpanString(p.start.getTime(),
+                        System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
+            }
             date.invalidate();
 
             time.setText(

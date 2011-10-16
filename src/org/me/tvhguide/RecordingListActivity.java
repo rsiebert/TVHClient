@@ -23,6 +23,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -199,8 +200,13 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             
             channel.setText(ch.name);
             channel.invalidate();
-
-            date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(rec.start));
+            
+            if (DateUtils.isToday(rec.start.getTime())) {
+                date.setText(getString(R.string.today));
+            } else {
+                date.setText(DateUtils.getRelativeTimeSpanString(rec.start.getTime(),
+                        System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
+            }
             date.invalidate();
             
             if (rec.error != null) {

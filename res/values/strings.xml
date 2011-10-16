@@ -59,4 +59,5 @@
     <string name="ch_play">Play</string>
     
     <string name="search_hint">Search the EPG</string>
+    <string name="today">today</string>
 </resources>
