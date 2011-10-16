@@ -19,7 +19,6 @@
 package org.me.tvhguide;
 
 import android.content.DialogInterface;
-import android.view.KeyEvent;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Channel;
@@ -42,7 +41,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
