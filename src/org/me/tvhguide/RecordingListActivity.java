@@ -21,9 +21,7 @@ package org.me.tvhguide;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -51,7 +49,6 @@ import org.me.tvhguide.model.Recording;
 public class RecordingListActivity extends ListActivity implements HTSListener {
 
     private RecordingListAdapter recAdapter;
-    private boolean hideIcons;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -71,12 +68,6 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean b = !prefs.getBoolean("loadIcons", false);
-        if (b != hideIcons) {
-            recAdapter.notifyDataSetInvalidated();
-        }
-        hideIcons = b;
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
     }
@@ -204,11 +195,8 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             title.invalidate();
 
             icon.setBackgroundDrawable(ch.iconDrawable);
-            if (hideIcons) {
-                icon.setVisibility(ImageView.GONE);
-            } else {
-                icon.setVisibility(ImageView.VISIBLE);
-            }
+            icon.setVisibility(ImageView.VISIBLE);
+            
             channel.setText(ch.name);
             channel.invalidate();
 

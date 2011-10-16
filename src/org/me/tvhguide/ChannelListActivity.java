@@ -64,7 +64,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
     private ChannelListAdapter chAdapter;
     private ProgressDialog pd;
-    private boolean hideIcons;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -209,13 +208,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean b = !prefs.getBoolean("loadIcons", false);
-        if (b != hideIcons) {
-            chAdapter.notifyDataSetInvalidated();
-        }
-        hideIcons = b;
-
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
 
@@ -332,12 +324,9 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
             name.setText(channel.name);
             name.invalidate();
+
             icon.setBackgroundDrawable(channel.iconDrawable);
-            if (hideIcons) {
-                icon.setVisibility(ImageView.GONE);
-            } else {
-                icon.setVisibility(ImageView.VISIBLE);
-            }
+            icon.setVisibility(ImageView.VISIBLE);
             if (channel.isRecording()) {
                 icon.setImageResource(R.drawable.ic_rec_small);
             } else {

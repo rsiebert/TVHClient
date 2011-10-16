@@ -124,6 +124,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             getListView().addFooterView(btn);
 
         } else if (pattern != null) {
+            hideIcons = true;
             TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
             for (Channel ch : app.getChannels()) {
@@ -149,12 +150,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean b = !prefs.getBoolean("loadIcons", false);
-        if (b != hideIcons) {
-            prAdapter.notifyDataSetInvalidated();
-        }
-        hideIcons = b;
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
     }
@@ -297,7 +292,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         public void repaint(Programme p) {
             Channel ch = p.channel;
 
-            if (hideIcons || pattern == null) {
+            if (hideIcons) {
                 icon.setVisibility(ImageView.GONE);
             } else {
                 icon.setBackgroundDrawable(ch.iconDrawable);
