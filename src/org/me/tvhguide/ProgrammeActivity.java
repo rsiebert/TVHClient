@@ -63,7 +63,11 @@ public class ProgrammeActivity extends Activity {
         setContentView(R.layout.pr_layout);
 
         setTitle(channel.name);
-        setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
+        if(channel.iconBitmap == null) {
+            setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
+        } else {
+            setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
+        }
         
         TextView text = (TextView) findViewById(R.id.pr_title);
         text.setText(programme.title);

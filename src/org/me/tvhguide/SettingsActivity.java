@@ -20,6 +20,7 @@ package org.me.tvhguide;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.view.Window;
 
 /**
  *
@@ -30,7 +31,9 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_LEFT_ICON);
         addPreferencesFromResource(R.xml.preferences);
         setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_settings));
+        setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
     }
 }

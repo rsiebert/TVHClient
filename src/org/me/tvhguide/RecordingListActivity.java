@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -59,12 +60,15 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         
+        requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        
         List<Recording> recList = new ArrayList<Recording>();
         recList.addAll(app.getRecordings());
         recAdapter = new RecordingListAdapter(this, recList);
         recAdapter.sort();
         setListAdapter(recAdapter);
         registerForContextMenu(getListView());
+        setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
     }
     
     @Override

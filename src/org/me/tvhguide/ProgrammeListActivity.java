@@ -115,8 +115,11 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         });
         getListView().addFooterView(btn);
 
-        setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
-
+        if(channel.iconBitmap == null) {
+            setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
+        } else {
+            setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
+        }
         registerForContextMenu(getListView());
         contentTypes = getResources().getStringArray(R.array.pr_type);
     }

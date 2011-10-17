@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -87,12 +88,16 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             }
         }
 
+        requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        
         registerForContextMenu(getListView());
         contentTypes = getResources().getStringArray(R.array.pr_type);
 
         srAdapter = new SearchResultAdapter(this, srList);
         srAdapter.sort();
         setListAdapter(srAdapter);
+        
+        setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
     }
 
     @Override

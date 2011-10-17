@@ -43,6 +43,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -72,12 +73,15 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
+        requestWindowFeature(Window.FEATURE_LEFT_ICON);
+
         List<Channel> chList = new ArrayList<Channel>();
         chList.addAll(app.getChannels());
         chAdapter = new ChannelListAdapter(this, chList);
         chAdapter.sort();
         setListAdapter(chAdapter);
 
+        setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
         registerForContextMenu(getListView());
     }
 
