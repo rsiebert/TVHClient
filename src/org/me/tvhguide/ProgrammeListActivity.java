@@ -73,12 +73,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
 
-        List<Programme> prList = new ArrayList<Programme>();
-        prList.addAll(channel.epg);
-        prAdapter = new ProgrammeListAdapter(this, prList);
-        prAdapter.sort();
-        setListAdapter(prAdapter);
-
         setTitle(channel.name);
 
         Button btn = new Button(this);
@@ -113,8 +107,15 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                 startService(intent);
             }
         });
+        
         getListView().addFooterView(btn);
 
+        List<Programme> prList = new ArrayList<Programme>();
+        prList.addAll(channel.epg);
+        prAdapter = new ProgrammeListAdapter(this, prList);
+        prAdapter.sort();
+        setListAdapter(prAdapter);
+        
         if(channel.iconBitmap == null) {
             setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
         } else {
