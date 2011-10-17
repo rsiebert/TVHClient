@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_height="wrap_content"
     android:layout_width="fill_parent">
+    <ImageView
+        android:layout_width="64sp"
+        android:layout_height="64sp"
+        android:layout_margin="3dip"
+        android:scaleType="matrix"
+        android:id="@+id/sr_icon">
+    </ImageView>
+    <LinearLayout
+        android:layout_height="64sp"
+        android:orientation="vertical"
+        android:layout_width="fill_parent">
         <LinearLayout
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -13,14 +23,14 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:maxLines="1"
-                android:id="@+id/pr_title">
+                android:id="@+id/sr_title">
             </TextView>
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="18sp"
                 android:layout_margin="3dip"
                 android:scaleType="fitEnd"
-                android:id="@+id/pr_state">
+                android:id="@+id/sr_state">
             </ImageView>
         </LinearLayout>
         <TableLayout
@@ -35,14 +45,14 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:id="@+id/pr_channel">
+                    android:id="@+id/sr_channel">
                 </TextView>
                 <TextView
                     android:gravity="left"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="3dip"
-                    android:id="@+id/pr_date">
+                    android:id="@+id/sr_date">
                 </TextView>
             </TableRow>
             <TableRow
@@ -52,15 +62,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:id="@+id/pr_desc">
+                    android:id="@+id/sr_desc">
                 </TextView>
                 <TextView
                     android:gravity="left"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="3dip"
-                    android:id="@+id/pr_time">
+                    android:id="@+id/sr_time">
                 </TextView>
             </TableRow>
         </TableLayout>
+    </LinearLayout>
 </LinearLayout>

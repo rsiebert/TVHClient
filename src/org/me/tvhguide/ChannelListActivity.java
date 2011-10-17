@@ -29,6 +29,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ClipDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -325,7 +326,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             name.setText(channel.name);
             name.invalidate();
 
-            icon.setBackgroundDrawable(channel.iconDrawable);
+            icon.setBackgroundDrawable(new BitmapDrawable(channel.iconBitmap));
             icon.setVisibility(ImageView.VISIBLE);
             if (channel.isRecording()) {
                 icon.setImageResource(R.drawable.ic_rec_small);

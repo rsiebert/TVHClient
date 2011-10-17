@@ -20,6 +20,7 @@ package org.me.tvhguide;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -30,19 +31,16 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
@@ -53,72 +51,48 @@ import org.me.tvhguide.model.Recording;
  *
  * @author john-tornblom
  */
-public class ProgrammeListActivity extends ListActivity implements HTSListener {
+public class SearchResultActivity extends ListActivity implements HTSListener {
 
-    private ProgrammeListAdapter prAdapter;
-    private Channel channel;
+    private SearchResultAdapter srAdapter;
     private String[] contentTypes;
+    private Pattern pattern;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
+        Intent intent = getIntent();
 
-        if (channel == null) {
+        if (!Intent.ACTION_SEARCH.equals(intent.getAction())
+                || !intent.hasExtra(SearchManager.QUERY)) {
             finish();
             return;
         }
 
-        requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        String query = intent.getStringExtra(SearchManager.QUERY);
+        pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
+        intent = new Intent(SearchResultActivity.this, HTSService.class);
+        intent.setAction(HTSService.ACTION_EPG_QUERY);
+        intent.putExtra("query", query);
+        startService(intent);
 
-        List<Programme> prList = new ArrayList<Programme>();
-        prList.addAll(channel.epg);
-        prAdapter = new ProgrammeListAdapter(this, prList);
-        prAdapter.sort();
-        setListAdapter(prAdapter);
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        List<Programme> srList = new ArrayList<Programme>();
 
-        setTitle(channel.name);
-
-        Button btn = new Button(this);
-        btn.setText(R.string.pr_get_more);
-        btn.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View view) {
-                Programme p = null;
-
-                Iterator<Programme> it = channel.epg.iterator();
-                long nextId = 0;
-
-                while (it.hasNext()) {
-                    p = it.next();
-                    if (p.id != nextId && nextId != 0) {
-                        break;
-                    }
-                    nextId = p.nextId;
+        for (Channel ch : app.getChannels()) {
+            for (Programme p : ch.epg) {
+                if (pattern.matcher(p.title).find()) {
+                    srList.add(p);
                 }
-
-                if (nextId == 0) {
-                    nextId = p.nextId;
-                }
-                if (nextId == 0) {
-                    nextId = p.id;
-                }
-                Intent intent = new Intent(ProgrammeListActivity.this, HTSService.class);
-                intent.setAction(HTSService.ACTION_GET_EVENTS);
-                intent.putExtra("eventId", nextId);
-                intent.putExtra("channelId", channel.id);
-                intent.putExtra("count", 10);
-                startService(intent);
             }
-        });
-        getListView().addFooterView(btn);
-
-        setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
+        }
 
         registerForContextMenu(getListView());
         contentTypes = getResources().getStringArray(R.array.pr_type);
+
+        srAdapter = new SearchResultAdapter(this, srList);
+        srAdapter.sort();
+        setListAdapter(srAdapter);
     }
 
     @Override
@@ -137,7 +111,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Programme p = (Programme) prAdapter.getItem(position);
+        Programme p = (Programme) srAdapter.getItem(position);
 
         Intent intent = new Intent(this, ProgrammeActivity.class);
         intent.putExtra("eventId", p.id);
@@ -165,7 +139,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Programme p = prAdapter.getItem(info.position);
+        Programme p = srAdapter.getItem(info.position);
 
         menu.setHeaderTitle(p.title);
 
@@ -197,10 +171,10 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     Programme p = (Programme) obj;
-                    if (channel != null && p.channel.id == channel.id) {
-                        prAdapter.add(p);
-                        prAdapter.notifyDataSetChanged();
-                        prAdapter.sort();
+                    if (pattern != null && pattern.matcher(p.title).find()) {
+                        srAdapter.add(p);
+                        srAdapter.notifyDataSetChanged();
+                        srAdapter.sort();
                     }
                 }
             });
@@ -209,8 +183,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     Programme p = (Programme) obj;
-                    prAdapter.remove(p);
-                    prAdapter.notifyDataSetChanged();
+                    srAdapter.remove(p);
+                    srAdapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
@@ -218,7 +192,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     Programme p = (Programme) obj;
-                    prAdapter.updateView(getListView(), p);
+                    srAdapter.updateView(getListView(), p);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
@@ -226,9 +200,9 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Programme p : prAdapter.list) {
+                    for (Programme p : srAdapter.list) {
                         if (rec == p.recording) {
-                            prAdapter.updateView(getListView(), p);
+                            srAdapter.updateView(getListView(), p);
                             return;
                         }
                     }
@@ -244,21 +218,25 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         TextView time;
         TextView date;
         TextView description;
+        ImageView icon;
         ImageView state;
 
         public ViewWarpper(View base) {
-            title = (TextView) base.findViewById(R.id.pr_title);
-            channel = (TextView) base.findViewById(R.id.pr_channel);
-            description = (TextView) base.findViewById(R.id.pr_desc);
+            title = (TextView) base.findViewById(R.id.sr_title);
+            channel = (TextView) base.findViewById(R.id.sr_channel);
+            description = (TextView) base.findViewById(R.id.sr_desc);
 
-            time = (TextView) base.findViewById(R.id.pr_time);
-            date = (TextView) base.findViewById(R.id.pr_date);
+            time = (TextView) base.findViewById(R.id.sr_time);
+            date = (TextView) base.findViewById(R.id.sr_date);
 
-            state = (ImageView) base.findViewById(R.id.pr_state);
+            icon = (ImageView) base.findViewById(R.id.sr_icon);
+            state = (ImageView) base.findViewById(R.id.sr_state);
         }
 
         public void repaint(Programme p) {
             Channel ch = p.channel;
+
+            icon.setImageBitmap(ch.iconBitmap);
 
             title.setText(p.title);
 
@@ -312,13 +290,13 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         }
     }
 
-    class ProgrammeListAdapter extends ArrayAdapter<Programme> {
+    class SearchResultAdapter extends ArrayAdapter<Programme> {
 
         Activity context;
         List<Programme> list;
 
-        ProgrammeListAdapter(Activity context, List<Programme> list) {
-            super(context, R.layout.pr_widget, list);
+        SearchResultAdapter(Activity context, List<Programme> list) {
+            super(context, R.layout.sr_widget, list);
             this.context = context;
             this.list = list;
         }
@@ -358,7 +336,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
-                row = inflater.inflate(R.layout.pr_widget, null, false);
+                row = inflater.inflate(R.layout.sr_widget, null, false);
 
                 wrapper = new ViewWarpper(row);
                 row.setTag(wrapper);

@@ -19,8 +19,10 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.Window;
 import android.widget.TextView;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
@@ -56,8 +58,13 @@ public class ProgrammeActivity extends Activity {
             return;
         }
 
+        requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        
         setContentView(R.layout.pr_layout);
 
+        setTitle(channel.name);
+        setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
+        
         TextView text = (TextView) findViewById(R.id.pr_title);
         text.setText(programme.title);
 

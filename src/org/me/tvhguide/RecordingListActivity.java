@@ -21,6 +21,7 @@ package org.me.tvhguide;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -195,8 +196,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             title.setText(rec.title);
             title.invalidate();
             
-            icon.setBackgroundDrawable(ch.iconDrawable);
-            icon.setVisibility(ImageView.VISIBLE);
+            icon.setBackgroundDrawable(new BitmapDrawable(ch.iconBitmap));
             
             channel.setText(ch.name);
             channel.invalidate();

@@ -22,6 +22,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.IBinder;
@@ -402,7 +404,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
                 try {
                     InputStream inputStream = new URL(ch.icon).openStream();
-                    ch.iconDrawable = Drawable.createFromStream(inputStream, ch.icon);
+                    ch.iconBitmap = BitmapFactory.decodeStream(inputStream);
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     app.updateChannel(ch);
                 } catch (Throwable ex) {
