@@ -244,7 +244,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
     private class ViewWarpper {
 
         TextView title;
-        TextView channel;
         TextView time;
         TextView date;
         TextView description;
@@ -252,7 +251,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
         public ViewWarpper(View base) {
             title = (TextView) base.findViewById(R.id.pr_title);
-            channel = (TextView) base.findViewById(R.id.pr_channel);
             description = (TextView) base.findViewById(R.id.pr_desc);
 
             time = (TextView) base.findViewById(R.id.pr_time);
@@ -262,8 +260,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         }
 
         public void repaint(Programme p) {
-            Channel ch = p.channel;
-
             title.setText(p.title);
 
             if (p.recording == null) {
@@ -289,16 +285,14 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
             date.invalidate();
 
-            description.setText(p.description);
-            description.invalidate();
-
-            if (p.type > 0 && p.type < 11) {
-                String str = contentTypes[p.type - 1];
-                channel.setText(ch.name + " (" + str + ")");
+            if (p.description != null && p.description.length() > 0) {
+                description.setText(p.description);
+            } else if (p.type > 0 && p.type < 11) {
+                description.setText(contentTypes[p.type - 1]);
             } else {
-                channel.setText(ch.name);
+                description.setText("");
             }
-            channel.invalidate();
+            description.invalidate();
 
             if (DateUtils.isToday(p.start.getTime())) {
                 date.setText(getString(R.string.today));
