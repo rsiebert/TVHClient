@@ -107,7 +107,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                 startService(intent);
             }
         });
-        
+
         getListView().addFooterView(btn);
 
         List<Programme> prList = new ArrayList<Programme>();
@@ -115,8 +115,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         prAdapter = new ProgrammeListAdapter(this, prList);
         prAdapter.sort();
         setListAdapter(prAdapter);
-        
-        if(channel.iconBitmap == null) {
+
+        if (channel.iconBitmap == null) {
             setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
         } else {
             setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
