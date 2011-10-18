@@ -182,7 +182,9 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         TextView time;
         TextView date;
         TextView message;
+        TextView desc;
         ImageView icon;
+        ImageView state;
         
         public ViewWarpper(View base) {
             title = (TextView) base.findViewById(R.id.rec_title);
@@ -191,7 +193,9 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             time = (TextView) base.findViewById(R.id.rec_time);
             date = (TextView) base.findViewById(R.id.rec_date);
             message = (TextView) base.findViewById(R.id.rec_message);
+            desc = (TextView) base.findViewById(R.id.rec_desc);
             icon = (ImageView) base.findViewById(R.id.rec_icon);
+            state = (ImageView) base.findViewById(R.id.rec_state);
         }
         
         public void repaint(Recording rec) {
@@ -200,7 +204,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             title.setText(rec.title);
             title.invalidate();
             
-            icon.setBackgroundDrawable(new BitmapDrawable(ch.iconBitmap));
+            icon.setImageBitmap(ch.iconBitmap);
             
             channel.setText(ch.name);
             channel.invalidate();
@@ -213,29 +217,38 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             }
             date.invalidate();
             
+            String msg = "";
             if (rec.error != null) {
-                message.setText(rec.error);
-                icon.setImageResource(R.drawable.ic_error_small);
+                msg = rec.error;
+                state.setImageResource(R.drawable.ic_error_small);
             } else if ("completed".equals(rec.state)) {
-                message.setText(getString(R.string.pvr_completed));
-                icon.setImageResource(R.drawable.ic_success_small);
+                msg = getString(R.string.pvr_completed);
+                state.setImageResource(R.drawable.ic_success_small);
             } else if ("invalid".equals(rec.state)) {
-                message.setText(getString(R.string.pvr_invalid));
-                icon.setImageResource(R.drawable.ic_error_small);
+                msg = getString(R.string.pvr_invalid);
+                state.setImageResource(R.drawable.ic_error_small);
             } else if ("missed".equals(rec.state)) {
-                message.setText(getString(R.string.pvr_missed));
-                icon.setImageResource(R.drawable.ic_error_small);
+                msg = getString(R.string.pvr_missed);
+                state.setImageResource(R.drawable.ic_error_small);
             } else if ("recording".equals(rec.state)) {
-                message.setText(getString(R.string.pvr_recording));
-                icon.setImageResource(R.drawable.ic_rec_small);
+                msg = getString(R.string.pvr_recording);
+                state.setImageResource(R.drawable.ic_rec_small);
             } else if ("scheduled".equals(rec.state)) {
-                message.setText(getString(R.string.pvr_scheduled));
-                icon.setImageDrawable(null);
+                msg = getString(R.string.pvr_scheduled);
+                state.setImageResource(R.drawable.ic_schedule_small);
             } else {
-                message.setText("");
-                icon.setImageDrawable(null);
+                state.setImageDrawable(null);
+            }
+            if(msg.length() > 0) {
+                message.setText("(" + msg + ")");
+            } else {
+                message.setText(msg);
             }
             message.invalidate();
+            
+            desc.setText(rec.description);
+            desc.invalidate();
+            
             icon.invalidate();
             
             time.setText(
