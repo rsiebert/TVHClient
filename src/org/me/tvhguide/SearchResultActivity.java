@@ -22,7 +22,6 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -62,14 +61,40 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        Intent intent = getIntent();
+        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+        
+        registerForContextMenu(getListView());
+        contentTypes = getResources().getStringArray(R.array.pr_type);
 
+        List<Programme> srList = new ArrayList<Programme>();
+        srAdapter = new SearchResultAdapter(this, srList);
+        srAdapter.sort();
+        setListAdapter(srAdapter);
+        
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.sr_title);
+        
+        View v = findViewById(R.id.ct_btn);
+        v.setOnClickListener(new android.view.View.OnClickListener() {
+
+            public void onClick(View arg0) {
+                onSearchRequested();
+            }
+        });
+        
+        onNewIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        
         if (!Intent.ACTION_SEARCH.equals(intent.getAction())
                 || !intent.hasExtra(SearchManager.QUERY)) {
-            finish();
             return;
         }
 
+        srAdapter.clear();
+        
         String query = intent.getStringExtra(SearchManager.QUERY);
         pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
         intent = new Intent(SearchResultActivity.this, HTSService.class);
@@ -78,28 +103,19 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         startService(intent);
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        List<Programme> srList = new ArrayList<Programme>();
-
+        
+        
         for (Channel ch : app.getChannels()) {
             for (Programme p : ch.epg) {
                 if (pattern.matcher(p.title).find()) {
-                    srList.add(p);
+                    srAdapter.add(p);
                 }
             }
         }
-
-        requestWindowFeature(Window.FEATURE_LEFT_ICON);
         
-        registerForContextMenu(getListView());
-        contentTypes = getResources().getStringArray(R.array.pr_type);
-
-        srAdapter = new SearchResultAdapter(this, srList);
-        srAdapter.sort();
-        setListAdapter(srAdapter);
-        
-        setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
+        TextView t = (TextView) findViewById(R.id.ct_title);
+        t.setText(this.getString(android.R.string.search_go) + ": " + query);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
