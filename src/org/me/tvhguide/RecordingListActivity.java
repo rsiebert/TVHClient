@@ -21,7 +21,6 @@ package org.me.tvhguide;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -56,11 +55,10 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_recordings));
         
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         
-        requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         
         List<Recording> recList = new ArrayList<Recording>();
         recList.addAll(app.getRecordings());
@@ -68,7 +66,10 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         recAdapter.sort();
         setListAdapter(recAdapter);
         registerForContextMenu(getListView());
-        setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.rec_title);
+        TextView t = (TextView) findViewById(R.id.ct_title);
+        
+        t.setText(R.string.menu_recordings);
     }
     
     @Override

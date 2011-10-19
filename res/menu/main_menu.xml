@@ -4,10 +4,6 @@
           android:icon="@android:drawable/ic_menu_save"
           android:title="@string/menu_recordings" />
 
-    <item android:id="@+id/mi_tags"
-          android:icon="@drawable/ic_menu_tags"
-          android:title="@string/menu_tags" />
-
     <item android:id="@+id/mi_search"
           android:icon="@android:drawable/ic_menu_search"
           android:title="@android:string/search_go" />

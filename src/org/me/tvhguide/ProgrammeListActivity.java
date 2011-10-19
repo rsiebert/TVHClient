@@ -71,9 +71,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             return;
         }
 
-        requestWindowFeature(Window.FEATURE_LEFT_ICON);
-
-        setTitle(channel.name);
+        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
         Button btn = new Button(this);
         btn.setText(R.string.pr_get_more);
@@ -116,11 +114,25 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         prAdapter.sort();
         setListAdapter(prAdapter);
 
-        if (channel.iconBitmap == null) {
-            setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
-        } else {
-            setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.pr_title);
+        TextView t = (TextView) findViewById(R.id.ct_title);
+        t.setText(channel.name);
+
+        if (channel.iconBitmap != null) {
+            ImageView iv = (ImageView) findViewById(R.id.ct_logo);
+            iv.setImageBitmap(channel.iconBitmap);
         }
+
+        View v = findViewById(R.id.ct_btn);
+        v.setOnClickListener(new android.view.View.OnClickListener() {
+
+            public void onClick(View arg0) {
+                Intent intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
+                intent.putExtra("channelId", channel.id);
+                startActivity(intent);
+            }
+        });
+
         registerForContextMenu(getListView());
         contentTypes = getResources().getStringArray(R.array.pr_type);
     }
