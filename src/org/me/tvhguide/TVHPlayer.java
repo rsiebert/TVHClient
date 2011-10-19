@@ -121,7 +121,7 @@ public class TVHPlayer {
 
                 Log.d("TVHPlayer", "Buffering: " + progress + "%");
             }
-            
+
             if (!buffering) {
                 for (Packet p : buffer) {
                     play(p);

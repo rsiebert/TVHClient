@@ -59,16 +59,16 @@ public class ProgrammeActivity extends Activity {
         }
 
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
-        
+
         setContentView(R.layout.pr_layout);
 
         setTitle(channel.name);
-        if(channel.iconBitmap == null) {
+        if (channel.iconBitmap == null) {
             setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
         } else {
             setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(channel.iconBitmap));
         }
-        
+
         TextView text = (TextView) findViewById(R.id.pr_title);
         text.setText(programme.title);
 

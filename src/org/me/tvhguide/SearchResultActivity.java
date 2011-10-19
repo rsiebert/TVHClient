@@ -62,7 +62,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         super.onCreate(icicle);
 
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        
+
         registerForContextMenu(getListView());
         contentTypes = getResources().getStringArray(R.array.pr_type);
 
@@ -70,9 +70,9 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         srAdapter = new SearchResultAdapter(this, srList);
         srAdapter.sort();
         setListAdapter(srAdapter);
-        
+
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.sr_title);
-        
+
         View v = findViewById(R.id.ct_btn);
         v.setOnClickListener(new android.view.View.OnClickListener() {
 
@@ -80,21 +80,21 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
                 onSearchRequested();
             }
         });
-        
+
         onNewIntent(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        
+
         if (!Intent.ACTION_SEARCH.equals(intent.getAction())
                 || !intent.hasExtra(SearchManager.QUERY)) {
             return;
         }
 
         srAdapter.clear();
-        
+
         String query = intent.getStringExtra(SearchManager.QUERY);
         pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
         intent = new Intent(SearchResultActivity.this, HTSService.class);
@@ -103,8 +103,8 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         startService(intent);
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        
-        
+
+
         for (Channel ch : app.getChannels()) {
             for (Programme p : ch.epg) {
                 if (pattern.matcher(p.title).find()) {
@@ -112,10 +112,11 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
                 }
             }
         }
-        
+
         TextView t = (TextView) findViewById(R.id.ct_title);
         t.setText(this.getString(android.R.string.search_go) + ": " + query);
     }
+
     @Override
     protected void onResume() {
         super.onResume();

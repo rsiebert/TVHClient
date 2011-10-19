@@ -49,17 +49,17 @@ import org.me.tvhguide.model.Recording;
  * @author john-tornblom
  */
 public class RecordingListActivity extends ListActivity implements HTSListener {
-    
+
     private RecordingListAdapter recAdapter;
-    
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        
+
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        
+
         List<Recording> recList = new ArrayList<Recording>();
         recList.addAll(app.getRecordings());
         recAdapter = new RecordingListAdapter(this, recList);
@@ -68,47 +68,47 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         registerForContextMenu(getListView());
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.rec_title);
         TextView t = (TextView) findViewById(R.id.ct_title);
-        
+
         t.setText(R.string.menu_recordings);
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
     }
-    
+
     @Override
     protected void onPause() {
         super.onPause();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.removeListener(this);
     }
-    
+
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Recording rec = (Recording) recAdapter.getItem(position);
-        
+
         Intent intent = new Intent(this, RecordingActivity.class);
         intent.putExtra("id", rec.id);
         startActivity(intent);
     }
-    
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        
-        
+
+
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = recAdapter.getItem(info.position);
-        
+
         menu.setHeaderTitle(rec.title);
-        
+
         MenuItem item = null;
         Intent intent = new Intent(RecordingListActivity.this, HTSService.class);
         intent.putExtra("id", rec.id);
-        
+
         if ("recording".equals(rec.state) || "scheduled".equals(rec.state)) {
             intent.setAction(HTSService.ACTION_DVR_CANCEL);
             item = menu.add(ContextMenu.NONE, R.string.menu_record_cancel, ContextMenu.NONE, R.string.menu_record_cancel);
@@ -119,7 +119,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             item.setIntent(intent);
         }
     }
-    
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -134,12 +134,12 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             }
         }
     }
-    
+
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING) && !(Boolean) obj) {
-            
+
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     recAdapter.list.clear();
@@ -150,7 +150,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_ADD)) {
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     recAdapter.add((Recording) obj);
                     recAdapter.notifyDataSetChanged();
@@ -159,7 +159,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_DELETE)) {
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     recAdapter.remove((Recording) obj);
                     recAdapter.notifyDataSetChanged();
@@ -167,7 +167,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     Recording rec = (Recording) obj;
                     recAdapter.updateView(getListView(), rec);
@@ -175,9 +175,9 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             });
         }
     }
-    
+
     private class ViewWarpper {
-        
+
         TextView title;
         TextView channel;
         TextView time;
@@ -186,11 +186,11 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         TextView desc;
         ImageView icon;
         ImageView state;
-        
+
         public ViewWarpper(View base) {
             title = (TextView) base.findViewById(R.id.rec_title);
             channel = (TextView) base.findViewById(R.id.rec_channel);
-            
+
             time = (TextView) base.findViewById(R.id.rec_time);
             date = (TextView) base.findViewById(R.id.rec_date);
             message = (TextView) base.findViewById(R.id.rec_message);
@@ -198,18 +198,18 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             icon = (ImageView) base.findViewById(R.id.rec_icon);
             state = (ImageView) base.findViewById(R.id.rec_state);
         }
-        
+
         public void repaint(Recording rec) {
             Channel ch = rec.channel;
-            
+
             title.setText(rec.title);
             title.invalidate();
-            
+
             icon.setImageBitmap(ch.iconBitmap);
-            
+
             channel.setText(ch.name);
             channel.invalidate();
-            
+
             if (DateUtils.isToday(rec.start.getTime())) {
                 date.setText(getString(R.string.today));
             } else {
@@ -217,7 +217,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
                         System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
             }
             date.invalidate();
-            
+
             String msg = "";
             if (rec.error != null) {
                 msg = rec.error;
@@ -240,18 +240,18 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             } else {
                 state.setImageDrawable(null);
             }
-            if(msg.length() > 0) {
+            if (msg.length() > 0) {
                 message.setText("(" + msg + ")");
             } else {
                 message.setText(msg);
             }
             message.invalidate();
-            
+
             desc.setText(rec.description);
             desc.invalidate();
-            
+
             icon.invalidate();
-            
+
             time.setText(
                     DateFormat.getTimeFormat(time.getContext()).format(rec.start)
                     + " - "
@@ -259,64 +259,64 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             time.invalidate();
         }
     }
-    
+
     class RecordingListAdapter extends ArrayAdapter<Recording> {
-        
+
         Activity context;
         List<Recording> list;
-        
+
         RecordingListAdapter(Activity context, List<Recording> list) {
             super(context, R.layout.rec_widget, list);
             this.context = context;
             this.list = list;
         }
-        
+
         public void sort() {
             sort(new Comparator<Recording>() {
-                
+
                 public int compare(Recording x, Recording y) {
                     return x.compareTo(y);
                 }
             });
         }
-        
+
         public void updateView(ListView listView, Recording recording) {
             for (int i = 0; i < listView.getChildCount(); i++) {
                 View view = listView.getChildAt(i);
                 int pos = listView.getPositionForView(view);
                 Recording rec = (Recording) listView.getItemAtPosition(pos);
-                
+
                 if (view.getTag() == null || rec == null) {
                     continue;
                 }
-                
+
                 if (recording.id != rec.id) {
                     continue;
                 }
-                
+
                 ViewWarpper wrapper = (ViewWarpper) view.getTag();
                 wrapper.repaint(recording);
             }
         }
-        
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
             ViewWarpper wrapper = null;
-            
+
             Recording rec = list.get(position);
-            
+
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
                 row = inflater.inflate(R.layout.rec_widget, null, false);
-                
+
                 wrapper = new ViewWarpper(row);
                 row.setTag(wrapper);
-                
+
             } else {
                 wrapper = (ViewWarpper) row.getTag();
             }
-            
+
             wrapper.repaint(rec);
             return row;
         }

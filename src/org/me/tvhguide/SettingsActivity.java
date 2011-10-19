@@ -32,7 +32,7 @@ public class SettingsActivity extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
         super.onCreate(savedInstanceState);
-        
+
         addPreferencesFromResource(R.xml.preferences);
         setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_settings));
         setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);

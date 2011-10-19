@@ -47,7 +47,7 @@ public class RecordingActivity extends Activity {
         }
 
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
-        
+
         setContentView(R.layout.rec_layout);
 
         TextView text = (TextView) findViewById(R.id.rec_name);
@@ -63,13 +63,13 @@ public class RecordingActivity extends Activity {
                 + DateFormat.getTimeFormat(this).format(rec.start)
                 + " - "
                 + DateFormat.getTimeFormat(this).format(rec.stop));
-        
+
         setTitle(rec.channel.name);
-        if(rec.channel.iconBitmap == null) {
+        if (rec.channel.iconBitmap == null) {
             setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
         } else {
             setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(rec.channel.iconBitmap));
         }
-        
+
     }
 }
