@@ -64,6 +64,8 @@ import org.me.tvhguide.htsp.HTSListener;
 public class ChannelListActivity extends ListActivity implements HTSListener {
 
     private ChannelListAdapter chAdapter;
+    ArrayAdapter<ChannelTag> tagAdapter;
+    private AlertDialog tagDialog;
     private ProgressDialog pd;
     private TextView currentTagView;
 
@@ -83,11 +85,44 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.ch_title);
         currentTagView = (TextView) findViewById(R.id.ct_btn_text);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.menu_tags);
+
+        List<ChannelTag> list = new ArrayList<ChannelTag>();
+        list.addAll(app.getChannelTags());
+
+        tagAdapter = new ArrayAdapter<ChannelTag>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                list);
+
+        builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface arg0, int pos) {
+
+                chAdapter.clear();
+                ChannelTag tag = tagAdapter.getItem(pos);
+                TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                for (Channel ch : app.getChannels()) {
+                    if (ch.hasTag(tag.id)) {
+                        chAdapter.add(ch);
+                    }
+                }
+
+                currentTagView.setText(tag.name);
+                chAdapter.sort();
+                chAdapter.notifyDataSetChanged();
+            }
+        });
+
+        tagDialog = builder.create();
+
         View v = findViewById(R.id.ct_btn);
         v.setOnClickListener(new android.view.View.OnClickListener() {
 
             public void onClick(View arg0) {
-                showTagSelection();
+                tagDialog.show();
             }
         });
 
@@ -112,41 +147,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return false;
             }
         }
-    }
-
-    private void showTagSelection() {
-        final TVHGuideApplication app = (TVHGuideApplication) getApplication();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.menu_tags);
-
-        List<ChannelTag> list = new ArrayList<ChannelTag>();
-        list.addAll(app.getChannelTags());
-
-        final ArrayAdapter<ChannelTag> tagAdapter = new ArrayAdapter<ChannelTag>(
-                this,
-                android.R.layout.simple_dropdown_item_1line,
-                list);
-
-        builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface arg0, int pos) {
-
-                chAdapter.clear();
-                ChannelTag tag = tagAdapter.getItem(pos);
-                for (Channel ch : app.getChannels()) {
-                    if (ch.hasTag(tag.id)) {
-                        chAdapter.add(ch);
-                    }
-                }
-
-                currentTagView.setText(tag.name);
-                chAdapter.sort();
-                chAdapter.notifyDataSetChanged();
-            }
-        });
-
-        builder.show();
     }
 
     @Override
@@ -272,7 +272,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     }
                     chAdapter.sort();
                     chAdapter.notifyDataSetChanged();
-
+                    
+                    tagAdapter.clear();
+                    for (ChannelTag tag : app.getChannelTags()) {
+                        tagAdapter.add(tag);
+                    }
+                    chAdapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
@@ -298,6 +303,22 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 public void run() {
                     Channel channel = (Channel) obj;
                     chAdapter.updateView(getListView(), channel);
+                }
+            });
+        } else if (action.equals(TVHGuideApplication.ACTION_TAG_ADD)) {
+            runOnUiThread(new Runnable() {
+
+                public void run() {
+                    ChannelTag tag = (ChannelTag) obj;
+                    tagAdapter.add(tag);
+                }
+            });
+        } else if (action.equals(TVHGuideApplication.ACTION_TAG_UPDATE)) {
+            runOnUiThread(new Runnable() {
+
+                public void run() {
+                    ChannelTag tag = (ChannelTag) obj;
+                    tagAdapter.remove(tag);
                 }
             });
         }
