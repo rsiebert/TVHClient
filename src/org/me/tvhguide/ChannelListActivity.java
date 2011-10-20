@@ -320,7 +320,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     tagAdapter.add(tag);
                 }
             });
-        } else if (action.equals(TVHGuideApplication.ACTION_TAG_UPDATE)) {
+        } else if (action.equals(TVHGuideApplication.ACTION_TAG_DELETE)) {
             runOnUiThread(new Runnable() {
                 
                 public void run() {
@@ -328,6 +328,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     tagAdapter.remove(tag);
                 }
             });
+        } else if (action.equals(TVHGuideApplication.ACTION_TAG_UPDATE)) {
+            //NOP
         }
     }
     
