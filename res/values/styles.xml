@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="CustomTheme" parent="android:Theme">
-        <item name="android:windowTitleSize">32sp</item>
+        <item name="android:windowTitleSize">45sp</item>
     </style>
 </resources>
