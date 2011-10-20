@@ -23,8 +23,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -144,8 +142,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (ACTION_UNSUBSCRIBE.equals(intent.getAction())) {
             unsubscribe(intent.getLongExtra("subscriptionId", 0));
         } else if (ACTION_FEEDBACK.equals(intent.getAction())) {
-            feedback(intent.getLongExtra("subscriptionId", 0), 
-                        intent.getIntExtra("speed", 0));
+            feedback(intent.getLongExtra("subscriptionId", 0),
+                    intent.getIntExtra("speed", 0));
         }
 
         return START_NOT_STICKY;
@@ -238,8 +236,9 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
 
             app.addChannel(ch);
-            getChannelIcon(ch);
-
+            if (ch.icon != null) {
+                getChannelIcon(ch);
+            }
             long eventId = response.getLong("eventId", 0);
             if (eventId > 0) {
                 getEvents(ch, eventId, 5);
@@ -612,7 +611,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         });
     }
-    
+
     private void feedback(long subscriptionId, int speed) {
         HTSMessage request = new HTSMessage();
         request.setMethod("feedback");
