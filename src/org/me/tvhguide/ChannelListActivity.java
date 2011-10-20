@@ -67,7 +67,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
     private ProgressDialog pd;
-    private TextView currentTagView;
+    private TextView tagTextView;
+    private ImageView tagImageView;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -84,7 +85,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         setListAdapter(chAdapter);
         
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.ch_title);
-        currentTagView = (TextView) findViewById(R.id.ct_btn_text);
+        tagTextView = (TextView) findViewById(R.id.ct_title);
+        tagImageView = (ImageView) findViewById(R.id.ct_logo);
         
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.menu_tags);
@@ -110,7 +112,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     }
                 }
                 
-                currentTagView.setText(tag.name);
+                tagTextView.setText(tag.name);
+                if(tag.iconBitmap != null) {
+                    tagImageView.setImageBitmap(tag.iconBitmap);
+                } else {
+                    tagImageView.setImageResource(R.drawable.logo_72);
+                }
                 chAdapter.sort();
                 chAdapter.notifyDataSetChanged();
             }

@@ -27,7 +27,7 @@
             android:layout_height="fill_parent"
             android:textColor="#FFFFFFFF"
             android:textSize="16sp"
-            android:text="@string/pr_all_channels"
+            android:text="@string/menu_tags"
         />
     </LinearLayout>
     
@@ -40,7 +40,7 @@
         android:textStyle="bold"
         android:textColor="#FFFFFFFF"
         android:padding="1sp"
-        android:text="@string/app_name"
+        android:text="@string/pr_all_channels"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/ct_logo"
     />

@@ -211,6 +211,9 @@ public class HTSService extends Service implements HTSConnectionListener {
             tag.icon = response.getString("tagIcon", null);
             //tag.members = response.getIntList("members");
             app.addChannelTag(tag);
+            if (tag.icon != null) {
+                getChannelTagIcon(tag);
+            }
         } else if (method.equals("tagUpdate")) {
             for (ChannelTag tag : app.getChannelTags()) {
                 if (tag.id == response.getLong("tagId")) {
@@ -407,6 +410,22 @@ public class HTSService extends Service implements HTSConnectionListener {
                     ch.iconBitmap = BitmapFactory.decodeStream(inputStream);
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     app.updateChannel(ch);
+                } catch (Throwable ex) {
+                }
+            }
+        });
+    }
+
+    private void getChannelTagIcon(final ChannelTag tag) {
+        execService.execute(new Runnable() {
+
+            public void run() {
+
+                try {
+                    InputStream inputStream = new URL(tag.icon).openStream();
+                    tag.iconBitmap = BitmapFactory.decodeStream(inputStream);
+                    TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                    app.updateChannelTag(tag);
                 } catch (Throwable ex) {
                 }
             }

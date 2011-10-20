@@ -134,6 +134,12 @@ public class TVHGuideApplication extends Application {
             }
         }
     }
+    
+    public void updateChannelTag(ChannelTag tag) {
+        if (!loading) {
+            broadcastMessage(ACTION_TAG_UPDATE, tag);
+        }
+    }
 
     public void addChannel(Channel channel) {
         channels.add(channel);
