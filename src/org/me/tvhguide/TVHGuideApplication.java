@@ -135,6 +135,15 @@ public class TVHGuideApplication extends Application {
         }
     }
     
+    public ChannelTag getChannelTag(long id) {
+        for (ChannelTag tag : getChannelTags()) {
+            if (tag.id == id) {
+                return tag;
+            }
+        }
+        return null;
+    }
+    
     public void updateChannelTag(ChannelTag tag) {
         if (!loading) {
             broadcastMessage(ACTION_TAG_UPDATE, tag);

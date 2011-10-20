@@ -213,12 +213,16 @@ public class HTSService extends Service implements HTSConnectionListener {
                 getChannelTagIcon(tag);
             }
         } else if (method.equals("tagUpdate")) {
-            for (ChannelTag tag : app.getChannelTags()) {
-                if (tag.id == response.getLong("tagId")) {
-                    tag.name = response.getString("tagName", tag.name);
-                    tag.icon = response.getString("tagIcon", tag.icon);
-                    //tag.members = response.getIntList("members");
-                    break;
+            ChannelTag tag = app.getChannelTag(response.getLong("tagId"));
+            if (tag != null) {
+                tag.name = response.getString("tagName", tag.name);
+                String icon = response.getString("tagIcon", tag.icon);
+                if (icon == null) {
+                    tag.icon = null;
+                    tag.iconBitmap = null;
+                } else if (!icon.equals(tag.icon)) {
+                    tag.icon = icon;
+                    getChannelTagIcon(tag);
                 }
             }
         } else if (method.equals("tagDelete")) {
@@ -248,9 +252,16 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (ch != null) {
                 ch.name = response.getString("channelName", ch.name);
                 ch.number = response.getInt("channelNumber", ch.number);
-                ch.icon = response.getString("channelIcon", ch.icon);
+                String icon = response.getString("channelIcon", ch.icon);
                 ch.tags = response.getIntList("tags", ch.tags);
 
+                if (icon == null) {
+                    ch.icon = null;
+                    ch.iconBitmap = null;
+                } else if (!icon.equals(ch.icon)) {
+                    ch.icon = icon;
+                    getChannelIcon(ch);
+                }
                 //Remove programmes that have ended
                 long eventId = response.getLong("eventId", 0);
                 Iterator<Programme> it = ch.epg.iterator();
