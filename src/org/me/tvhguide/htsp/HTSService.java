@@ -110,6 +110,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                     }
                 });
             }
+        } else if (connection == null || !connection.isConnected()) {
+            Log.e(TAG, "No connection to perform " + intent.getAction());
         } else if (ACTION_DISCONNECT.equals(intent.getAction())) {
             connection.close();
         } else if (ACTION_GET_EVENT.equals(intent.getAction())) {
