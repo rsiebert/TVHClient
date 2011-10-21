@@ -47,7 +47,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TableRow;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -341,18 +340,16 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         private TextView nextTitle;
         private TextView nextTime;
         private ImageView icon;
+        private ImageView nowProgressImage;
         private ClipDrawable nowProgress;
         
         public ViewWarpper(View base, long channelId) {
             name = (TextView) base.findViewById(R.id.ch_name);
             nowTitle = (TextView) base.findViewById(R.id.ch_now_title);
             
-            TableRow tblRow = (TableRow) base.findViewById(R.id.ch_now_row);
-            tblRow.setBackgroundResource(android.R.drawable.progress_horizontal);
-            nowProgress = new ClipDrawable(tblRow.getBackground(), Gravity.LEFT, ClipDrawable.HORIZONTAL);
-            nowProgress.setAlpha(64);
-            
-            tblRow.setBackgroundDrawable(nowProgress);
+            nowProgressImage = (ImageView)base.findViewById(R.id.ch_elapsedtime);
+            nowProgress = new ClipDrawable(nowProgressImage.getDrawable(), Gravity.LEFT, ClipDrawable.HORIZONTAL);
+            nowProgressImage.setBackgroundDrawable(nowProgress);
             
             nowTime = (TextView) base.findViewById(R.id.ch_now_time);
             nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
@@ -391,9 +388,13 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 double elapsed = new Date().getTime() - p.start.getTime();
                 double percent = elapsed / duration;
                 
+                nowProgressImage.setVisibility(ImageView.VISIBLE);
                 nowProgress.setLevel((int) Math.floor(percent * 10000));
                 nowTitle.setText(p.title);
+            } else {
+                nowProgressImage.setVisibility(ImageView.GONE);
             }
+            nowProgressImage.invalidate();
             nowTime.invalidate();
             nowTitle.invalidate();
             
