@@ -11,7 +11,7 @@
         android:id="@+id/ch_icon">
     </ImageView>
     <LinearLayout
-        android:layout_height="68sp"
+        android:layout_height="65sp"
         android:orientation="vertical"
         android:layout_width="fill_parent">
         <TextView
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 >
                 <ImageView
-                    android:layout_height="4sp"
+                    android:layout_height="1sp"
                     android:layout_span="2"
                     android:layout_width="fill_parent"
                     android:src="@android:drawable/progress_horizontal"
