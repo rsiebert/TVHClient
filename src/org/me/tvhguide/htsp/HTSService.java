@@ -49,7 +49,7 @@ import org.me.tvhguide.model.Subscription;
  * @author john-tornblom
  */
 public class HTSService extends Service implements HTSConnectionListener {
-
+    
     public static final String ACTION_CONNECT = "org.me.tvhguide.htsp.CONNECT";
     public static final String ACTION_DISCONNECT = "org.me.tvhguide.htsp.DISCONNECT";
     public static final String ACTION_EPG_QUERY = "org.me.tvhguide.htsp.EPG_QUERY";
@@ -65,14 +65,14 @@ public class HTSService extends Service implements HTSConnectionListener {
     private ScheduledExecutorService execService;
     private HTSConnection connection;
     PackageInfo packInfo;
-
+    
     public class LocalBinder extends Binder {
-
+        
         HTSService getService() {
             return HTSService.this;
         }
     }
-
+    
     @Override
     public void onCreate() {
         execService = Executors.newScheduledThreadPool(5);
@@ -82,7 +82,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             Log.e(TAG, "Can't get package info", ex);
         }
     }
-
+    
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (ACTION_CONNECT.equals(intent.getAction())) {
@@ -91,11 +91,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             final int port = intent.getIntExtra("port", 9982);
             final String username = intent.getStringExtra("username");
             final String password = intent.getStringExtra("password");
-
+            
             if (connection != null && force) {
                 connection.close();
             }
-
+            
             if (connection == null || !connection.isConnected()) {
                 final TVHGuideApplication app = (TVHGuideApplication) getApplication();
                 app.clearAll();
@@ -104,7 +104,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
                 //Since this is blocking, spawn to a new thread
                 execService.execute(new Runnable() {
-
+                    
                     public void run() {
                         connection.open(hostname, port);
                         connection.authenticate(username, password);
@@ -148,10 +148,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             feedback(intent.getLongExtra("subscriptionId", 0),
                     intent.getIntExtra("speed", 0));
         }
-
+        
         return START_NOT_STICKY;
     }
-
+    
     @Override
     public void onDestroy() {
         execService.shutdown();
@@ -159,21 +159,21 @@ public class HTSService extends Service implements HTSConnectionListener {
             connection.close();
         }
     }
-
+    
     private void showError(final String error) {
         if (error == null || error.length() < 0) {
             return;
         }
-
+        
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.setLoading(false);
         app.broadcastError(error);
     }
-
+    
     private void showError(int recourceId) {
         showError(getString(recourceId));
     }
-
+    
     public void onError(int errorCode) {
         switch (errorCode) {
             case HTSConnection.CONNECTION_LOST_ERROR:
@@ -190,20 +190,20 @@ public class HTSService extends Service implements HTSConnectionListener {
                 break;
         }
     }
-
+    
     public void onError(Exception ex) {
         showError(ex.getLocalizedMessage());
     }
-
+    
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
     private final IBinder mBinder = new LocalBinder();
-
+    
     public void onAsyncResponse(HTSMessage response) {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-
+        
         String method = response.getMethod();
         if (method.equals("tagAdd")) {
             ChannelTag tag = new ChannelTag();
@@ -237,11 +237,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             ch.number = response.getInt("channelNumber", 0);
             ch.icon = response.getString("channelIcon", null);
             ch.tags = response.getIntList("tags", ch.tags);
-
+            
             if (ch.number == 0) {
                 ch.number = (int) (ch.id + 25000);
             }
-
+            
             app.addChannel(ch);
             if (ch.icon != null) {
                 getChannelIcon(ch);
@@ -257,7 +257,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 ch.number = response.getInt("channelNumber", ch.number);
                 String icon = response.getString("channelIcon", ch.icon);
                 ch.tags = response.getIntList("tags", ch.tags);
-
+                
                 if (icon == null) {
                     ch.icon = null;
                     ch.iconBitmap = null;
@@ -269,7 +269,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 final long eventId = response.getLong("eventId", 0);
                 Iterator<Programme> it = ch.epg.iterator();
                 ArrayList<Programme> tmp = new ArrayList<Programme>();
-
+                
                 while (it.hasNext()) {
                     Programme p = it.next();
                     if (p.id != eventId) {
@@ -279,11 +279,11 @@ public class HTSService extends Service implements HTSConnectionListener {
                     }
                 }
                 ch.epg.removeAll(tmp);
-
+                
                 for (Programme p : tmp) {
                     app.removeProgramme(p);
                 }
-
+                
                 if (eventId > 0 && ch.epg.size() < 2) {
                     execService.schedule(new Runnable() {
                         
@@ -342,17 +342,17 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (subscription == null) {
                 return;
             }
-
+            
             for (Object obj : response.getList("streams")) {
                 Stream s = new Stream();
                 HTSMessage sub = (HTSMessage) obj;
-
+                
                 s.index = sub.getInt("index");
                 s.type = sub.getString("type");
                 s.language = sub.getString("language", "");
                 s.width = sub.getInt("width", 0);
                 s.height = sub.getInt("height", 0);
-
+                
                 subscription.streams.add(s);
             }
         } else if (method.equals("subscriptionStatus")) {
@@ -381,14 +381,14 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (sub == null) {
                 return;
             }
-
+            
             Packet packet = new Packet();
             packet.dts = response.getLong("dts", 0);
             packet.pts = response.getLong("pts", 0);
             packet.duration = response.getLong("duration");
             packet.frametype = response.getInt("frametype");
             packet.payload = response.getByteArray("payload");
-
+            
             for (Stream st : sub.streams) {
                 if (st.index == response.getInt("stream")) {
                     packet.stream = st;
@@ -411,18 +411,18 @@ public class HTSService extends Service implements HTSConnectionListener {
             sub.droppedPFrames = response.getLong("Pdrops", sub.droppedPFrames);
             sub.packetCount = response.getLong("packets", sub.packetCount);
             sub.queSize = response.getLong("bytes", sub.queSize);
-
+            
             app.updateSubscription(sub);
         } else {
             Log.d(TAG, method.toString());
         }
     }
-
+    
     private void getChannelIcon(final Channel ch) {
         execService.execute(new Runnable() {
-
+            
             public void run() {
-
+                
                 try {
                     InputStream inputStream = new URL(ch.icon).openStream();
                     ch.iconBitmap = BitmapFactory.decodeStream(inputStream);
@@ -433,12 +433,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         });
     }
-
+    
     private void getChannelTagIcon(final ChannelTag tag) {
         execService.execute(new Runnable() {
-
+            
             public void run() {
-
+                
                 try {
                     InputStream inputStream = new URL(tag.icon).openStream();
                     tag.iconBitmap = BitmapFactory.decodeStream(inputStream);
@@ -449,26 +449,26 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         });
     }
-
+    
     private void getEvents(final Channel ch, final long eventId, int cnt) {
         if (ch == null) {
             return;
         }
-
+        
         HTSMessage request = new HTSMessage();
         request.setMethod("getEvents");
         request.putField("eventId", eventId);
         request.putField("numFollowing", cnt);
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
-
+                
                 if (!response.containsKey("events")) {
                     return;
                 }
-
+                
                 TVHGuideApplication app = (TVHGuideApplication) getApplication();
-
+                
                 for (Object obj : response.getList("events")) {
                     Programme p = new Programme();
                     HTSMessage sub = (HTSMessage) obj;
@@ -490,14 +490,14 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         });
     }
-
+    
     private void getEvent(long eventId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getEvent");
         request.putField("eventId", eventId);
-
+        
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
                 TVHGuideApplication app = (TVHGuideApplication) getApplication();
                 Channel ch = app.getChannel(response.getLong("channelId"));
@@ -512,7 +512,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 p.start = response.getDate("start");
                 p.stop = response.getDate("stop");
                 p.channel = ch;
-
+                
                 if (ch.epg.add(p)) {
                     app.addProgramme(p);
                     app.updateChannel(ch);
@@ -520,7 +520,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         });
     }
-
+    
     private void epgQuery(final Channel ch, String query, long tagId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("epgQuery");
@@ -532,52 +532,52 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("tagId", tagId);
         }
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
-
+                
                 if (!response.containsKey("eventIds")) {
                     return;
                 }
-
+                
                 for (Long id : response.getLongList("eventIds")) {
                     getEvent(id);
                 }
             }
         });
     }
-
+    
     private void cancelDvrEntry(long id) {
         HTSMessage request = new HTSMessage();
         request.setMethod("cancelDvrEntry");
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
-
+                
                 boolean success = response.getInt("success", 0) == 1;
             }
         });
     }
-
+    
     private void deleteDvrEntry(long id) {
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteDvrEntry");
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
-
+                
                 boolean success = response.getInt("success", 0) == 1;
             }
         });
     }
-
+    
     private void addDvrEntry(final Channel ch, final long eventId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
         request.putField("eventId", eventId);
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
                 if (response.getInt("success", 0) == 1) {
                     for (Programme p : ch.epg) {
@@ -593,15 +593,15 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         });
     }
-
+    
     private void subscribe(long channelId, long subscriptionId, int maxWidth, int maxHeight) {
         Subscription subscription = new Subscription();
         subscription.id = subscriptionId;
         subscription.status = "Subscribing";
-
+        
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addSubscription(subscription);
-
+        
         HTSMessage request = new HTSMessage();
         request.setMethod("subscribe");
         request.putField("channelId", channelId);
@@ -609,35 +609,35 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("maxHeight", maxHeight);
         request.putField("subscriptionId", subscriptionId);
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
         });
     }
-
+    
     private void unsubscribe(long subscriptionId) {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.removeSubscription(subscriptionId);
-
+        
         HTSMessage request = new HTSMessage();
         request.setMethod("unsubscribe");
         request.putField("subscriptionId", subscriptionId);
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
         });
     }
-
+    
     private void feedback(long subscriptionId, int speed) {
         HTSMessage request = new HTSMessage();
         request.setMethod("feedback");
         request.putField("subscriptionId", subscriptionId);
         request.putField("speed", speed);
         connection.sendMessage(request, new HTSResponseHandler() {
-
+            
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
