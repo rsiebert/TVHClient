@@ -31,8 +31,9 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.me.tvhguide.R;
 import org.me.tvhguide.TVHGuideApplication;
 import org.me.tvhguide.model.Channel;
@@ -61,7 +62,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     public static final String ACTION_UNSUBSCRIBE = "org.me.tvhguide.htsp.UNSUBSCRIBE";
     public static final String ACTION_FEEDBACK = "org.me.tvhguide.htsp.FEEDBACK";
     private static final String TAG = "HTSService";
-    private ExecutorService execService;
+    private ScheduledExecutorService execService;
     private HTSConnection connection;
     PackageInfo packInfo;
 
@@ -74,7 +75,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public void onCreate() {
-        execService = Executors.newFixedThreadPool(5);
+        execService = Executors.newScheduledThreadPool(5);
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (NameNotFoundException ex) {
@@ -250,7 +251,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 getEvents(ch, eventId, 5);
             }
         } else if (method.equals("channelUpdate")) {
-            Channel ch = app.getChannel(response.getLong("channelId"));
+            final Channel ch = app.getChannel(response.getLong("channelId"));
             if (ch != null) {
                 ch.name = response.getString("channelName", ch.name);
                 ch.number = response.getInt("channelNumber", ch.number);
@@ -265,7 +266,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     getChannelIcon(ch);
                 }
                 //Remove programmes that have ended
-                long eventId = response.getLong("eventId", 0);
+                final long eventId = response.getLong("eventId", 0);
                 Iterator<Programme> it = ch.epg.iterator();
                 ArrayList<Programme> tmp = new ArrayList<Programme>();
 
@@ -284,7 +285,12 @@ public class HTSService extends Service implements HTSConnectionListener {
                 }
 
                 if (eventId > 0 && ch.epg.size() < 2) {
-                    getEvents(ch, eventId, 5);
+                    execService.schedule(new Runnable() {
+                        
+                        public void run() {
+                            getEvents(ch, eventId, 5);
+                        }
+                    }, 30, TimeUnit.SECONDS);
                 } else {
                     app.updateChannel(ch);
                 }
