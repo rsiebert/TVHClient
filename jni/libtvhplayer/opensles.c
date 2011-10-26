@@ -286,7 +286,7 @@ int opensles_enqueue(aout_sys_t *ao, aout_buffer_t *ab) {
   pthread_mutex_unlock(&ao->mutex);
 
   if(!buf_count) {
-	  ERROR("Buffer underrun");
+    ERROR("Buffer underrun");
   }
 
   return buf_count;
