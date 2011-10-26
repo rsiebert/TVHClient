@@ -83,7 +83,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         chAdapter.sort();
         setListAdapter(chAdapter);
         
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.ch_title);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.channel_list_title);
         tagTextView = (TextView) findViewById(R.id.ct_title);
         tagImageView = (ImageView) findViewById(R.id.ct_logo);
         
@@ -415,7 +415,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     class ChannelListAdapter extends ArrayAdapter<Channel> {
         
         ChannelListAdapter(Activity context, List<Channel> list) {
-            super(context, R.layout.ch_widget, list);
+            super(context, R.layout.channel_list_widget, list);
         }
         
         public void sort() {
@@ -456,7 +456,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             
             if (row == null) {
                 LayoutInflater inflater = activity.getLayoutInflater();
-                row = inflater.inflate(R.layout.ch_widget, null, false);
+                row = inflater.inflate(R.layout.channel_list_widget, null, false);
                 row.requestLayout();
                 wrapper = new ViewWarpper(row, ch.id);
                 row.setTag(wrapper);

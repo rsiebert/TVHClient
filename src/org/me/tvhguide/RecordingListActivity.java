@@ -66,7 +66,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         recAdapter.sort();
         setListAdapter(recAdapter);
         registerForContextMenu(getListView());
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.rec_title);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.recording_list_title);
         TextView t = (TextView) findViewById(R.id.ct_title);
 
         t.setText(R.string.menu_recordings);
@@ -266,7 +266,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
         List<Recording> list;
 
         RecordingListAdapter(Activity context, List<Recording> list) {
-            super(context, R.layout.rec_widget, list);
+            super(context, R.layout.recording_list_widget, list);
             this.context = context;
             this.list = list;
         }
@@ -308,7 +308,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
-                row = inflater.inflate(R.layout.rec_widget, null, false);
+                row = inflater.inflate(R.layout.recording_list_widget, null, false);
 
                 wrapper = new ViewWarpper(row);
                 row.setTag(wrapper);

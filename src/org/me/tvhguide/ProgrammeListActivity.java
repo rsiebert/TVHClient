@@ -113,7 +113,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         prAdapter.sort();
         setListAdapter(prAdapter);
 
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.pr_title);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.programme_list_title);
         TextView t = (TextView) findViewById(R.id.ct_title);
         t.setText(channel.name);
 
@@ -327,7 +327,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         List<Programme> list;
 
         ProgrammeListAdapter(Activity context, List<Programme> list) {
-            super(context, R.layout.pr_widget, list);
+            super(context, R.layout.programme_list_widget, list);
             this.context = context;
             this.list = list;
         }
@@ -367,7 +367,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
-                row = inflater.inflate(R.layout.pr_widget, null, false);
+                row = inflater.inflate(R.layout.programme_list_widget, null, false);
 
                 wrapper = new ViewWarpper(row);
                 row.setTag(wrapper);

@@ -19,10 +19,10 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.me.tvhguide.model.Recording;
@@ -46,10 +46,19 @@ public class RecordingActivity extends Activity {
             return;
         }
 
-        requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
-        setContentView(R.layout.rec_layout);
+        setContentView(R.layout.recording_layout);
 
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.recording_title);
+        TextView t = (TextView) findViewById(R.id.ct_title);
+        t.setText(rec.channel.name);
+
+        if (rec.channel.iconBitmap != null) {
+            ImageView iv = (ImageView) findViewById(R.id.ct_logo);
+            iv.setImageBitmap(rec.channel.iconBitmap);
+        }
+        
         TextView text = (TextView) findViewById(R.id.rec_name);
         text.setText(rec.title);
 
@@ -63,13 +72,5 @@ public class RecordingActivity extends Activity {
                 + DateFormat.getTimeFormat(this).format(rec.start)
                 + " - "
                 + DateFormat.getTimeFormat(this).format(rec.stop));
-
-        setTitle(rec.channel.name);
-        if (rec.channel.iconBitmap == null) {
-            setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
-        } else {
-            setFeatureDrawable(Window.FEATURE_LEFT_ICON, new BitmapDrawable(rec.channel.iconBitmap));
-        }
-
     }
 }

@@ -71,7 +71,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         srAdapter.sort();
         setListAdapter(srAdapter);
 
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.sr_title);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.search_result_title);
 
         View v = findViewById(R.id.ct_btn);
         v.setOnClickListener(new android.view.View.OnClickListener() {
@@ -318,7 +318,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         List<Programme> list;
 
         SearchResultAdapter(Activity context, List<Programme> list) {
-            super(context, R.layout.sr_widget, list);
+            super(context, R.layout.search_result_widget, list);
             this.context = context;
             this.list = list;
         }
@@ -358,7 +358,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
-                row = inflater.inflate(R.layout.sr_widget, null, false);
+                row = inflater.inflate(R.layout.search_result_widget, null, false);
 
                 wrapper = new ViewWarpper(row);
                 row.setTag(wrapper);
