@@ -472,7 +472,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 for (Object obj : response.getList("events")) {
                     Programme p = new Programme();
                     HTSMessage sub = (HTSMessage) obj;
-                    p.id = sub.getLong("eventId");
+                    p.id = sub.getLong("eventId", 0);
                     p.nextId = sub.getLong("nextEventId", 0);
                     p.description = sub.getString("description", null);
                     p.ext_desc = sub.getString("ext_text", p.description);
