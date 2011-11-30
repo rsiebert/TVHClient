@@ -59,6 +59,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
     private TextView playerQueue;
     private TextView playerDrops;
     private TextView playerSpeed;
+    private boolean isPlaying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +161,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
     }
 
     private void stopPlayback() {
+        isPlaying = false;
         TVHPlayer.stopPlayback();
         Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_UNSUBSCRIBE);
@@ -273,7 +275,21 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         } else if (action.equals(TVHGuideApplication.ACTION_PLAYBACK_PACKET)) {
             Packet p = (Packet) obj;
-            TVHPlayer.enqueue(p);
+            final boolean b = TVHPlayer.enqueue(p);
+            if (b != isPlaying) {
+
+                runOnUiThread(new Runnable() {
+
+                    public void run() {
+                        if (b) {
+                            overlay.setVisibility(LinearLayout.INVISIBLE);
+                        } else {
+                            overlay.setVisibility(LinearLayout.VISIBLE);
+                        }
+                        isPlaying = b;
+                    }
+                });
+            }
         }
     }
 }
