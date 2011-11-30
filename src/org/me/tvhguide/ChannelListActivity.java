@@ -219,14 +219,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     }
     
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == R.id.mi_settings) {
-            connect(true);
-        }
-    }
-    
-    @Override
     protected void onResume() {
         super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();

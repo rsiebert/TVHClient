@@ -18,15 +18,25 @@
  */
 package org.me.tvhguide;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Window;
+import org.me.tvhguide.htsp.HTSService;
 
 /**
  *
  * @author john-tornblom
  */
 public class SettingsActivity extends PreferenceActivity {
+
+    private int oldPort;
+    private String oldHostname;
+    private String oldUser;
+    private String oldPw;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,5 +46,40 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
         setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_settings));
         setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.logo_72);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        oldHostname = prefs.getString("serverHostPref", "");
+        oldPort = Integer.parseInt(prefs.getString("serverPortPref", ""));
+        oldUser = prefs.getString("usernamePref", "");
+        oldPw = prefs.getString("passwordPref", "");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean reconnect = false;
+        reconnect |= !oldHostname.equals(prefs.getString("serverHostPref", ""));
+        reconnect |= oldPort != Integer.parseInt(prefs.getString("serverPortPref", ""));
+        reconnect |= !oldUser.equals(prefs.getString("usernamePref", ""));
+        reconnect |= !oldPw.equals(prefs.getString("passwordPref", ""));
+
+        if (reconnect) {
+            Log.d("SettingsActivity", "Connectivity settings chaned, forcing a reconnect");
+            Intent intent = new Intent(SettingsActivity.this, HTSService.class);
+            intent.setAction(HTSService.ACTION_CONNECT);
+            intent.putExtra("hostname", prefs.getString("serverHostPref", ""));
+            intent.putExtra("port", Integer.parseInt(prefs.getString("serverPortPref", "")));
+            intent.putExtra("username", prefs.getString("usernamePref", ""));
+            intent.putExtra("password", prefs.getString("passwordPref", ""));
+            intent.putExtra("force", true);
+            startService(intent);
+        }
     }
 }
