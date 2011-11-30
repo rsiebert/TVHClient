@@ -229,7 +229,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
                         playerStatus.setText("Status: OK");
                     }
 
-                    playerQueue.setText("Server queue size: " + Long.toString(subscription.packetCount));
+                    playerQueue.setText("Server queue size: " + Long.toString(subscription.queSize/1000) + " kb");
                     long droppedFrames = subscription.droppedBFrames
                             + subscription.droppedPFrames
                             + subscription.droppedIFrames;
