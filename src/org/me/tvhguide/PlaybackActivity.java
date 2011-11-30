@@ -174,24 +174,24 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         double confHeight = Integer.parseInt(prefs.getString("resolutionPref", "288"));
-        
+
         DisplayMetrics d = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(d);
 
         double maxWidth = d.widthPixels;
         double maxHeight = d.heightPixels;
 
-        if(maxHeight > maxWidth) {
+        if (maxHeight > maxWidth) {
             double tmp = maxHeight;
             maxHeight = maxWidth;
             maxWidth = tmp;
         }
 
-        if(confHeight < maxHeight) {
+        if (confHeight < maxHeight) {
             maxWidth *= (confHeight / maxHeight);
             maxHeight = confHeight;
         }
-        
+
         TVHPlayer.startPlayback();
 
         Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
@@ -199,8 +199,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
         intent.putExtra("subscriptionId", subId);
         intent.putExtra("channelId", channelId);
         intent.putExtra("channels", 2);
-        intent.putExtra("maxWidth", (int)maxWidth);
-        intent.putExtra("maxHeight", (int)maxHeight);
+        intent.putExtra("maxWidth", (int) maxWidth);
+        intent.putExtra("maxHeight", (int) maxHeight);
 
         startService(intent);
     }
@@ -248,7 +248,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
                         playerStatus.setText("Status: OK");
                     }
 
-                    playerQueue.setText("Server queue size: " + Long.toString(subscription.queSize/1000) + " kb");
+                    playerQueue.setText("Server queue size: " + Long.toString(subscription.queSize / 1000) + " kb");
                     long droppedFrames = subscription.droppedBFrames
                             + subscription.droppedPFrames
                             + subscription.droppedIFrames;
