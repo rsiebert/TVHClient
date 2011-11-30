@@ -32,7 +32,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View.OnLongClickListener;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -106,17 +106,14 @@ public class PlaybackActivity extends Activity implements HTSListener {
         overlay.getBackground().setAlpha(127);
 
         frameLayout = (FrameLayout) findViewById(R.id.player_frame);
-        frameLayout.setOnLongClickListener(new OnLongClickListener() {
+        frameLayout.setOnClickListener(new OnClickListener() {
 
-            public boolean onLongClick(View arg0) {
+            public void onClick(View arg0) {
                 if (overlay.getVisibility() == LinearLayout.VISIBLE) {
-
                     overlay.setVisibility(LinearLayout.INVISIBLE);
                 } else {
                     overlay.setVisibility(LinearLayout.VISIBLE);
                 }
-
-                return true;
             }
         });
     }
