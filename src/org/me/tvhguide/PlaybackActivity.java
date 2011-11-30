@@ -24,8 +24,11 @@ import android.content.Intent;
 import org.me.tvhguide.model.Subscription;
 import org.me.tvhguide.htsp.HTSListener;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -170,9 +173,26 @@ public class PlaybackActivity extends Activity implements HTSListener {
     private void startPlayback() {
         stopPlayback();
 
-        int maxWidth = getWindowManager().getDefaultDisplay().getWidth();
-        int maxHeight = getWindowManager().getDefaultDisplay().getHeight();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        double confHeight = Integer.parseInt(prefs.getString("resolutionPref", "288"));
+        
+        DisplayMetrics d = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(d);
 
+        double maxWidth = d.widthPixels;
+        double maxHeight = d.heightPixels;
+
+        if(maxHeight > maxWidth) {
+            double tmp = maxHeight;
+            maxHeight = maxWidth;
+            maxWidth = tmp;
+        }
+
+        if(confHeight < maxHeight) {
+            maxWidth *= (confHeight / maxHeight);
+            maxHeight = confHeight;
+        }
+        
         TVHPlayer.startPlayback();
 
         Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
@@ -180,8 +200,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
         intent.putExtra("subscriptionId", subId);
         intent.putExtra("channelId", channelId);
         intent.putExtra("channels", 2);
-        intent.putExtra("maxWidth", maxWidth);
-        intent.putExtra("maxHeight", maxHeight);
+        intent.putExtra("maxWidth", (int)maxWidth);
+        intent.putExtra("maxHeight", (int)maxHeight);
 
         startService(intent);
     }

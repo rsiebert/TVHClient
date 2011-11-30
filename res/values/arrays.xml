@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_res_list">
+        <item>576</item>
+        <item>384</item>
+        <item>288</item>
+        <item>192</item>
+    </string-array>
+    <string-array name="pref_res_list_display">
+        <item>576p</item>
+        <item>384p</item>
+        <item>288p</item>
+        <item>192p</item>
+    </string-array>
+</resources>

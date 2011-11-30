@@ -31,4 +31,15 @@
         android:title="@string/pref_pass"
         android:key="passwordPref"
         android:password="true" />
+        
+    <ListPreference
+    	android:name="@string/pref_res"
+        android:summary="@string/pref_res_sum"
+        android:defaultValue="360p"
+        android:title="@string/pref_res"
+        android:key="resolutionPref"
+        android:dialogTitle="@string/pref_res"
+        android:entries="@array/pref_res_list_display"
+        android:entryValues="@array/pref_res_list" />
+        
 </PreferenceScreen>
