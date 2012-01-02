@@ -44,6 +44,8 @@ import java.util.Iterator;
 import java.util.List;
 import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
+import org.me.tvhguide.intent.SearchEPGIntent;
+import org.me.tvhguide.intent.SearchIMDbIntent;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
@@ -193,7 +195,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             intent.putExtra("eventId", p.id);
             intent.putExtra("channelId", p.channel.id);
             item = menu.add(ContextMenu.NONE, R.string.menu_record, ContextMenu.NONE, R.string.menu_record);
-        } else if ("recording".equals(p.recording.state) || "scheduled".equals(p.recording.state)) {
+        } else if (p.isRecording() || p.isScheduled()) {
             intent.setAction(HTSService.ACTION_DVR_CANCEL);
             intent.putExtra("id", p.recording.id);
             item = menu.add(ContextMenu.NONE, R.string.menu_record_cancel, ContextMenu.NONE, R.string.menu_record_cancel);
@@ -204,6 +206,12 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         }
 
         item.setIntent(intent);
+        
+        item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
+        item.setIntent(new SearchEPGIntent(this, p.title));
+
+        item = menu.add(ContextMenu.NONE, ContextMenu.NONE, ContextMenu.NONE, "IMDb");
+        item.setIntent(new SearchIMDbIntent(this, p.title));
     }
 
     public void onMessage(String action, final Object obj) {

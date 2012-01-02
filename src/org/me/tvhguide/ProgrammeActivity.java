@@ -19,11 +19,21 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+import java.net.URLEncoder;
+import org.me.tvhguide.htsp.HTSService;
+import org.me.tvhguide.intent.SearchEPGIntent;
+import org.me.tvhguide.intent.SearchIMDbIntent;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
 
@@ -84,5 +94,76 @@ public class ProgrammeActivity extends Activity {
 
         text = (TextView) findViewById(R.id.pr_desc);
         text.setText(programme.ext_desc);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuItem item = null;
+        Intent intent = null;
+
+        item = menu.add(Menu.NONE, R.string.search_hint, Menu.NONE, R.string.search_hint);
+        item.setIntent(new SearchEPGIntent(this, programme.title));
+        item.setIcon(android.R.drawable.ic_menu_search);
+
+        item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "IMDb");
+        item.setIntent(new SearchIMDbIntent(this, programme.title));
+        item.setIcon(android.R.drawable.ic_menu_info_details);
+
+        intent = new Intent(this, HTSService.class);
+
+        if (programme.recording == null) {
+            intent.setAction(HTSService.ACTION_DVR_ADD);
+            intent.putExtra("eventId", programme.id);
+            intent.putExtra("channelId", programme.channel.id);
+            item = menu.add(Menu.NONE, R.string.menu_record, Menu.NONE, R.string.menu_record);
+            item.setIcon(android.R.drawable.ic_menu_save);
+        } else if (programme.isRecording() || programme.isScheduled()) {
+            intent.setAction(HTSService.ACTION_DVR_CANCEL);
+            intent.putExtra("id", programme.recording.id);
+            item = menu.add(Menu.NONE, R.string.menu_record_cancel, Menu.NONE, R.string.menu_record_cancel);
+            item.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+        } else {
+            intent.setAction(HTSService.ACTION_DVR_DELETE);
+            intent.putExtra("id", programme.recording.id);
+            item = menu.add(Menu.NONE, R.string.menu_record_remove, Menu.NONE, R.string.menu_record_remove);
+            item.setIcon(android.R.drawable.ic_menu_delete);
+        }
+
+        item.setIntent(intent);
+
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean rebuild = false;
+        if (programme.recording == null) {
+            rebuild = menu.findItem(R.string.menu_record) == null;
+        } else if (programme.isRecording() || programme.isScheduled()) {
+            rebuild = menu.findItem(R.string.menu_record_cancel) == null;
+        } else {
+            rebuild = menu.findItem(R.string.menu_record_remove) == null;
+        }
+
+        if (rebuild) {
+            menu.clear();
+            return onCreateOptionsMenu(menu);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.string.menu_record_remove:
+            case R.string.menu_record_cancel:
+            case R.string.menu_record:
+                startService(item.getIntent());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

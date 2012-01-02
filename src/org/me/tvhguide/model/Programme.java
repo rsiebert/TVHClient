@@ -41,6 +41,14 @@ public class Programme implements Comparable<Programme> {
         return (int) (this.start.getTime() - that.start.getTime());
     }
 
+    public boolean isRecording() {
+        return recording != null && "recording".equals(recording.state);
+    }
+
+    public boolean isScheduled() {
+        return recording != null && "scheduled".equals(recording.state);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof Programme) {
