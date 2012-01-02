@@ -102,7 +102,7 @@ public class ProgrammeActivity extends Activity {
         MenuItem item = null;
         Intent intent = null;
 
-        item = menu.add(Menu.NONE, R.string.search_hint, Menu.NONE, R.string.search_hint);
+        item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
         item.setIntent(new SearchEPGIntent(this, programme.title));
         item.setIcon(android.R.drawable.ic_menu_search);
 
