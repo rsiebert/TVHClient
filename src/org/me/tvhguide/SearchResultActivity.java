@@ -138,7 +138,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         } else {
             iv.setImageResource(R.drawable.logo_72);
         }
-        
+
         TextView t = (TextView) findViewById(R.id.ct_title);
         t.setText(this.getString(android.R.string.search_go) + ": " + query);
     }

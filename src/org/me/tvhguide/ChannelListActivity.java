@@ -61,47 +61,47 @@ import org.me.tvhguide.htsp.HTSListener;
  * @author john-tornblom
  */
 public class ChannelListActivity extends ListActivity implements HTSListener {
-    
+
     private ChannelListAdapter chAdapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
     private ProgressDialog pd;
     private TextView tagTextView;
     private ImageView tagImageView;
-    
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        
+
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        
+
         List<Channel> chList = new ArrayList<Channel>();
         chList.addAll(app.getChannels());
         chAdapter = new ChannelListAdapter(this, chList);
         chAdapter.sort();
         setListAdapter(chAdapter);
-        
+
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.channel_list_title);
         tagTextView = (TextView) findViewById(R.id.ct_title);
         tagImageView = (ImageView) findViewById(R.id.ct_logo);
-        
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.menu_tags);
-        
+
         List<ChannelTag> list = new ArrayList<ChannelTag>();
         list.addAll(app.getChannelTags());
-        
+
         tagAdapter = new ArrayAdapter<ChannelTag>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
                 list);
-        
+
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
-            
+
             public void onClick(DialogInterface arg0, int pos) {
-                
+
                 chAdapter.clear();
                 ChannelTag tag = tagAdapter.getItem(pos);
                 TVHGuideApplication app = (TVHGuideApplication) getApplication();
@@ -110,9 +110,9 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                         chAdapter.add(ch);
                     }
                 }
-                
+
                 tagTextView.setText(tag.name);
-                if(tag.iconBitmap != null) {
+                if (tag.iconBitmap != null) {
                     tagImageView.setImageBitmap(tag.iconBitmap);
                 } else {
                     tagImageView.setImageResource(R.drawable.logo_72);
@@ -121,27 +121,27 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 chAdapter.notifyDataSetChanged();
             }
         });
-        
+
         tagDialog = builder.create();
-        
+
         View v = findViewById(R.id.ct_btn);
         v.setOnClickListener(new android.view.View.OnClickListener() {
-            
+
             public void onClick(View arg0) {
                 tagDialog.show();
             }
         });
-        
+
         registerForContextMenu(getListView());
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
-    
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -154,32 +154,32 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             }
         }
     }
-    
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuItem item = menu.add(ContextMenu.NONE, R.string.ch_play, ContextMenu.NONE, R.string.ch_play);
-        
+
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Channel ch = chAdapter.getItem(info.position);
-        
+
         menu.setHeaderTitle(ch.name);
         Intent intent = new Intent(this, PlaybackActivity.class);
         intent.putExtra("channelId", ch.id);
         item.setIntent(intent);
     }
-    
+
     void connect(boolean force) {
         if (force) {
             chAdapter.clear();
         }
-        
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String hostname = prefs.getString("serverHostPref", "localhost");
         int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
         String username = prefs.getString("usernamePref", "");
         String password = prefs.getString("passwordPref", "");
-        
+
         Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_CONNECT);
         intent.putExtra("hostname", hostname);
@@ -187,10 +187,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         intent.putExtra("username", username);
         intent.putExtra("password", password);
         intent.putExtra("force", force);
-        
+
         startService(intent);
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -217,41 +217,41 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             }
         }
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
-        
+
         connect(false);
     }
-    
+
     @Override
     protected void onPause() {
         super.onPause();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.removeListener(this);
     }
-    
+
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Channel ch = (Channel) chAdapter.getItem(position);
-        
+
         if (ch.epg.isEmpty()) {
             return;
         }
-        
+
         Intent intent = new Intent(getBaseContext(), ProgrammeListActivity.class);
         intent.putExtra("channelId", ch.id);
         startActivity(intent);
     }
-    
+
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
-            
+
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     boolean loading = (Boolean) obj;
                     if (loading) {
@@ -262,7 +262,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     } else if (pd != null) {
                         pd.cancel();
                     }
-                    
+
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     chAdapter.clear();
                     for (Channel ch : app.getChannels()) {
@@ -270,7 +270,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     }
                     chAdapter.sort();
                     chAdapter.notifyDataSetChanged();
-                    
+
                     tagAdapter.clear();
                     for (ChannelTag tag : app.getChannelTags()) {
                         tagAdapter.add(tag);
@@ -280,7 +280,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     chAdapter.add((Channel) obj);
                     chAdapter.notifyDataSetChanged();
@@ -289,7 +289,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_DELETE)) {
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     chAdapter.remove((Channel) obj);
                     chAdapter.notifyDataSetChanged();
@@ -297,7 +297,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     Channel channel = (Channel) obj;
                     chAdapter.updateView(getListView(), channel);
@@ -305,7 +305,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_ADD)) {
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
                     tagAdapter.add(tag);
@@ -313,7 +313,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_DELETE)) {
             runOnUiThread(new Runnable() {
-                
+
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
                     tagAdapter.remove(tag);
@@ -323,9 +323,9 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             //NOP
         }
     }
-    
+
     private class ViewWarpper {
-        
+
         private TextView name;
         private TextView nowTitle;
         private TextView nowTime;
@@ -334,31 +334,31 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         private ImageView icon;
         private ImageView nowProgressImage;
         private ClipDrawable nowProgress;
-        
+
         public ViewWarpper(View base, long channelId) {
             name = (TextView) base.findViewById(R.id.ch_name);
             nowTitle = (TextView) base.findViewById(R.id.ch_now_title);
-            
-            nowProgressImage = (ImageView)base.findViewById(R.id.ch_elapsedtime);
+
+            nowProgressImage = (ImageView) base.findViewById(R.id.ch_elapsedtime);
             nowProgress = new ClipDrawable(nowProgressImage.getDrawable(), Gravity.LEFT, ClipDrawable.HORIZONTAL);
             nowProgressImage.setBackgroundDrawable(nowProgress);
-            
+
             nowTime = (TextView) base.findViewById(R.id.ch_now_time);
             nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
             nextTime = (TextView) base.findViewById(R.id.ch_next_time);
             icon = (ImageView) base.findViewById(R.id.ch_icon);
         }
-        
+
         public void repaint(Channel channel) {
             nowTime.setText("");
             nowTitle.setText("");
             nextTime.setText("");
             nextTitle.setText("");
             nowProgress.setLevel(0);
-            
+
             name.setText(channel.name);
             name.invalidate();
-            
+
             icon.setBackgroundDrawable(new BitmapDrawable(channel.iconBitmap));
             icon.setVisibility(ImageView.VISIBLE);
             if (channel.isRecording()) {
@@ -367,7 +367,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 icon.setImageDrawable(null);
             }
             icon.invalidate();
-            
+
             Iterator<Programme> it = channel.epg.iterator();
             if (it.hasNext()) {
                 Programme p = it.next();
@@ -375,11 +375,11 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                         DateFormat.getTimeFormat(nowTime.getContext()).format(p.start)
                         + " - "
                         + DateFormat.getTimeFormat(nowTime.getContext()).format(p.stop));
-                
+
                 double duration = (p.stop.getTime() - p.start.getTime());
                 double elapsed = new Date().getTime() - p.start.getTime();
                 double percent = elapsed / duration;
-                
+
                 nowProgressImage.setVisibility(ImageView.VISIBLE);
                 nowProgress.setLevel((int) Math.floor(percent * 10000));
                 nowTitle.setText(p.title);
@@ -389,74 +389,74 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             nowProgressImage.invalidate();
             nowTime.invalidate();
             nowTitle.invalidate();
-            
+
             if (it.hasNext()) {
                 Programme p = it.next();
                 nextTime.setText(
                         DateFormat.getTimeFormat(nextTime.getContext()).format(p.start)
                         + " - "
                         + DateFormat.getTimeFormat(nextTime.getContext()).format(p.stop));
-                
+
                 nextTitle.setText(p.title);
             }
             nextTime.invalidate();
             nextTitle.invalidate();
         }
     }
-    
+
     class ChannelListAdapter extends ArrayAdapter<Channel> {
-        
+
         ChannelListAdapter(Activity context, List<Channel> list) {
             super(context, R.layout.channel_list_widget, list);
         }
-        
+
         public void sort() {
             sort(new Comparator<Channel>() {
-                
+
                 public int compare(Channel x, Channel y) {
                     return x.compareTo(y);
                 }
             });
         }
-        
+
         public void updateView(ListView listView, Channel channel) {
             for (int i = 0; i < listView.getChildCount(); i++) {
                 View view = listView.getChildAt(i);
                 int pos = listView.getPositionForView(view);
                 Channel ch = (Channel) listView.getItemAtPosition(pos);
-                
+
                 if (view.getTag() == null || ch == null) {
                     continue;
                 }
-                
+
                 if (channel.id != ch.id) {
                     continue;
                 }
-                
+
                 ViewWarpper wrapper = (ViewWarpper) view.getTag();
                 wrapper.repaint(channel);
             }
         }
-        
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
             ViewWarpper wrapper = null;
-            
+
             Channel ch = getItem(position);
             Activity activity = (Activity) getContext();
-            
+
             if (row == null) {
                 LayoutInflater inflater = activity.getLayoutInflater();
                 row = inflater.inflate(R.layout.channel_list_widget, null, false);
                 row.requestLayout();
                 wrapper = new ViewWarpper(row, ch.id);
                 row.setTag(wrapper);
-                
+
             } else {
                 wrapper = (ViewWarpper) row.getTag();
             }
-            
+
             wrapper.repaint(ch);
             return row;
         }

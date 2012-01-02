@@ -134,7 +134,7 @@ public class TVHGuideApplication extends Application {
             }
         }
     }
-    
+
     public ChannelTag getChannelTag(long id) {
         for (ChannelTag tag : getChannelTags()) {
             if (tag.id == id) {
@@ -143,7 +143,7 @@ public class TVHGuideApplication extends Application {
         }
         return null;
     }
-    
+
     public void updateChannelTag(ChannelTag tag) {
         if (!loading) {
             broadcastMessage(ACTION_TAG_UPDATE, tag);

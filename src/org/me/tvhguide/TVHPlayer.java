@@ -78,9 +78,10 @@ public class TVHPlayer {
     }
 
     public static boolean enqueue(Packet packet) {
-        if(packet.stream == null || packet.subscription == null || packet.payload == null)
+        if (packet.stream == null || packet.subscription == null || packet.payload == null) {
             return false;
-        
+        }
+
         try {
             lock.lock();
 

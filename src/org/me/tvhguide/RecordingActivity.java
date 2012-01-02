@@ -58,7 +58,7 @@ public class RecordingActivity extends Activity {
             ImageView iv = (ImageView) findViewById(R.id.ct_logo);
             iv.setImageBitmap(rec.channel.iconBitmap);
         }
-        
+
         TextView text = (TextView) findViewById(R.id.rec_name);
         text.setText(rec.title);
 
