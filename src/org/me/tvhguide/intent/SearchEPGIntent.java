@@ -22,6 +22,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import org.me.tvhguide.SearchResultActivity;
+import org.me.tvhguide.model.Channel;
 
 /**
  *
@@ -33,5 +34,10 @@ public class SearchEPGIntent extends Intent {
         super(ctx, SearchResultActivity.class);
         setAction(Intent.ACTION_SEARCH);
         putExtra(SearchManager.QUERY, query);
+    }
+
+    public SearchEPGIntent(Context ctx, Channel ch, String query) {
+        this(ctx, query);
+        putExtra("channelId", ch.id);
     }
 }

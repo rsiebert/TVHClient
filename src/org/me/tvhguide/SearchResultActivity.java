@@ -56,6 +56,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
     private SearchResultAdapter srAdapter;
     private String[] contentTypes;
     private Pattern pattern;
+    private Channel channel;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -93,6 +94,15 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             return;
         }
 
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+
+        Bundle appData = intent.getBundleExtra(SearchManager.APP_DATA);
+        if (appData != null) {
+            channel = app.getChannel(appData.getLong("channelId"));
+        } else {
+            channel = null;
+        }
+
         srAdapter.clear();
 
         String query = intent.getStringExtra(SearchManager.QUERY);
@@ -100,19 +110,35 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         intent = new Intent(SearchResultActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_EPG_QUERY);
         intent.putExtra("query", query);
+        if (channel != null) {
+            intent.putExtra("channelId", channel.id);
+        }
+
         startService(intent);
 
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
-
-
-        for (Channel ch : app.getChannels()) {
-            for (Programme p : ch.epg) {
+        if (channel == null) {
+            for (Channel ch : app.getChannels()) {
+                for (Programme p : ch.epg) {
+                    if (pattern.matcher(p.title).find()) {
+                        srAdapter.add(p);
+                    }
+                }
+            }
+        } else {
+            for (Programme p : channel.epg) {
                 if (pattern.matcher(p.title).find()) {
                     srAdapter.add(p);
                 }
             }
         }
 
+        ImageView iv = (ImageView) findViewById(R.id.ct_logo);
+        if (channel != null && channel.iconBitmap != null) {
+            iv.setImageBitmap(channel.iconBitmap);
+        } else {
+            iv.setImageResource(R.drawable.logo_72);
+        }
+        
         TextView t = (TextView) findViewById(R.id.ct_title);
         t.setText(this.getString(android.R.string.search_go) + ": " + query);
     }
