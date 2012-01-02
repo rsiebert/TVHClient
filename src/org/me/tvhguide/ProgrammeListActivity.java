@@ -27,6 +27,7 @@ import android.text.format.DateUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -206,12 +207,51 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         }
 
         item.setIntent(intent);
-        
+
         item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
         item.setIntent(new SearchEPGIntent(this, p.title));
 
         item = menu.add(ContextMenu.NONE, ContextMenu.NONE, ContextMenu.NONE, "IMDb");
         item.setIntent(new SearchIMDbIntent(this, p.title));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem item = null;
+        Intent intent = null;
+
+        item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
+        item.setIcon(android.R.drawable.ic_menu_search);
+
+        intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
+        intent.putExtra("channelId", channel.id);
+
+        item = menu.add(Menu.NONE, R.string.ch_play, Menu.NONE, R.string.ch_play);
+        item.setIcon(android.R.drawable.ic_menu_view);
+        item.setIntent(intent);
+
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.string.search_go: {
+                onSearchRequested();
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        Bundle bundle = new Bundle();
+        bundle.putLong("channelId", channel.id);
+        startSearch(null, false, bundle, false);
+        return true;
     }
 
     public void onMessage(String action, final Object obj) {
