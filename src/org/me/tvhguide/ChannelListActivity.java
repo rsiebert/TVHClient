@@ -149,6 +149,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 startActivity(item.getIntent());
                 return true;
             }
+            case R.string.search_hint: {
+                startSearch(null, false, item.getIntent().getExtras(), false);
+                return true;
+            }
             default: {
                 return false;
             }
@@ -165,6 +169,11 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         menu.setHeaderTitle(ch.name);
         Intent intent = new Intent(this, PlaybackActivity.class);
+        intent.putExtra("channelId", ch.id);
+        item.setIntent(intent);
+
+        item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
+        intent = new Intent();
         intent.putExtra("channelId", ch.id);
         item.setIntent(intent);
     }
@@ -210,6 +219,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             }
             case R.id.mi_search: {
                 onSearchRequested();
+                return true;
+            }
+            case R.id.mi_tags: {
+                tagDialog.show();
                 return true;
             }
             default: {

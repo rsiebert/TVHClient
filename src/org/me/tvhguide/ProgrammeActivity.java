@@ -19,10 +19,7 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -30,7 +27,6 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import java.net.URLEncoder;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.intent.SearchEPGIntent;
 import org.me.tvhguide.intent.SearchIMDbIntent;

@@ -41,6 +41,16 @@ public class Recording extends Programme {
         return super.compareTo(that);
     }
 
+    @Override
+    public boolean isRecording() {
+        return state() == 0;
+    }
+
+    @Override
+    public boolean isScheduled() {
+        return state() == 1;
+    }
+
     private int state() {
         if ("recording".equals(state)) {
             return 0;

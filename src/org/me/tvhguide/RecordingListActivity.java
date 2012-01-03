@@ -41,6 +41,8 @@ import java.util.Comparator;
 import java.util.List;
 import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
+import org.me.tvhguide.intent.SearchEPGIntent;
+import org.me.tvhguide.intent.SearchIMDbIntent;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Recording;
 
@@ -99,17 +101,18 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-
+        MenuItem item = null;
+        Intent intent = null;
+        
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = recAdapter.getItem(info.position);
 
         menu.setHeaderTitle(rec.title);
 
-        MenuItem item = null;
-        Intent intent = new Intent(RecordingListActivity.this, HTSService.class);
+        intent = new Intent(RecordingListActivity.this, HTSService.class);
         intent.putExtra("id", rec.id);
 
-        if ("recording".equals(rec.state) || "scheduled".equals(rec.state)) {
+        if (rec.isRecording() || rec.isScheduled()) {
             intent.setAction(HTSService.ACTION_DVR_CANCEL);
             item = menu.add(ContextMenu.NONE, R.string.menu_record_cancel, ContextMenu.NONE, R.string.menu_record_cancel);
             item.setIntent(intent);
@@ -118,6 +121,14 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             item = menu.add(ContextMenu.NONE, R.string.menu_record_remove, ContextMenu.NONE, R.string.menu_record_remove);
             item.setIntent(intent);
         }
+        
+        item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
+        item.setIntent(new SearchEPGIntent(this, rec.title));
+        item.setIcon(android.R.drawable.ic_menu_search);
+
+        item = menu.add(ContextMenu.NONE, ContextMenu.NONE, ContextMenu.NONE, "IMDb");
+        item.setIntent(new SearchIMDbIntent(this, rec.title));
+        item.setIcon(android.R.drawable.ic_menu_info_details);
     }
 
     @Override

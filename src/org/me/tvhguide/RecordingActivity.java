@@ -19,12 +19,18 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.me.tvhguide.htsp.HTSService;
+import org.me.tvhguide.intent.SearchEPGIntent;
+import org.me.tvhguide.intent.SearchIMDbIntent;
 import org.me.tvhguide.model.Recording;
 
 /**
@@ -72,5 +78,67 @@ public class RecordingActivity extends Activity {
                 + DateFormat.getTimeFormat(this).format(rec.start)
                 + " - "
                 + DateFormat.getTimeFormat(this).format(rec.stop));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuItem item = null;
+        Intent intent = null;
+
+        item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
+        item.setIntent(new SearchEPGIntent(this, rec.title));
+        item.setIcon(android.R.drawable.ic_menu_search);
+
+        item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "IMDb");
+        item.setIntent(new SearchIMDbIntent(this, rec.title));
+        item.setIcon(android.R.drawable.ic_menu_info_details);
+
+        intent = new Intent(this, HTSService.class);
+
+        if (rec.isRecording() || rec.isScheduled()) {
+            intent.setAction(HTSService.ACTION_DVR_CANCEL);
+            item = menu.add(Menu.NONE, R.string.menu_record_cancel, Menu.NONE, R.string.menu_record_cancel);
+            item.setIntent(intent);
+            item.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+        } else {
+            intent.setAction(HTSService.ACTION_DVR_DELETE);
+            item = menu.add(Menu.NONE, R.string.menu_record_remove, Menu.NONE, R.string.menu_record_remove);
+            item.setIntent(intent);
+            item.setIcon(android.R.drawable.ic_menu_delete);
+        }
+
+        item.setIntent(intent);
+
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean rebuild = false;
+        if (rec.isRecording() || rec.isScheduled()) {
+            rebuild = menu.findItem(R.string.menu_record_cancel) == null;
+        } else {
+            rebuild = menu.findItem(R.string.menu_record_remove) == null;
+        }
+
+        if (rebuild) {
+            menu.clear();
+            return onCreateOptionsMenu(menu);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.string.menu_record_remove:
+            case R.string.menu_record_cancel:
+                startService(item.getIntent());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
