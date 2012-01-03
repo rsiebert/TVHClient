@@ -25,7 +25,6 @@ import org.me.tvhguide.model.Channel;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
@@ -47,6 +46,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -65,10 +65,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     private ChannelListAdapter chAdapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
-    private ProgressDialog pd;
     private TextView tagTextView;
     private ImageView tagImageView;
-
+    private View tagBtn;
+    private ProgressBar pb;
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -87,6 +87,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         tagTextView = (TextView) findViewById(R.id.ct_title);
         tagImageView = (ImageView) findViewById(R.id.ct_logo);
 
+        pb = (ProgressBar) findViewById(R.id.ct_loading);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.menu_tags);
 
@@ -124,8 +125,8 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         tagDialog = builder.create();
 
-        View v = findViewById(R.id.ct_btn);
-        v.setOnClickListener(new android.view.View.OnClickListener() {
+        tagBtn = findViewById(R.id.ct_btn);
+        tagBtn.setOnClickListener(new android.view.View.OnClickListener() {
 
             public void onClick(View arg0) {
                 tagDialog.show();
@@ -267,13 +268,16 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     boolean loading = (Boolean) obj;
+                    tagBtn.setEnabled(!loading);
                     if (loading) {
-                        pd = ProgressDialog.show(ChannelListActivity.this,
-                                getString(R.string.inf_load),
-                                getString(R.string.inf_load_ext), true);
+                        pb.setVisibility(ProgressBar.VISIBLE);
+                        tagTextView.setText(R.string.inf_load);
+                        tagImageView.setVisibility(ImageView.INVISIBLE);
                         return;
-                    } else if (pd != null) {
-                        pd.cancel();
+                    } else {
+                        pb.setVisibility(ProgressBar.GONE);
+                        tagTextView.setText(R.string.pr_all_channels);
+                        tagImageView.setVisibility(ImageView.VISIBLE);
                     }
 
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();

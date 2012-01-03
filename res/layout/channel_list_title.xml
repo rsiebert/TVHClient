@@ -55,4 +55,13 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
     />
+    <ProgressBar
+        android:id="@+id/ct_loading"
+        android:layout_width="44sp"
+        android:layout_height="44sp"
+        android:padding="3sp"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        style="@android:style/Widget.ProgressBar.Small" />
 </RelativeLayout>
