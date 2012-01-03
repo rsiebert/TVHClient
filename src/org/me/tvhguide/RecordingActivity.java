@@ -98,11 +98,13 @@ public class RecordingActivity extends Activity {
 
         if (rec.isRecording() || rec.isScheduled()) {
             intent.setAction(HTSService.ACTION_DVR_CANCEL);
+            intent.putExtra("id", rec.id);
             item = menu.add(Menu.NONE, R.string.menu_record_cancel, Menu.NONE, R.string.menu_record_cancel);
             item.setIntent(intent);
             item.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
         } else {
             intent.setAction(HTSService.ACTION_DVR_DELETE);
+            intent.putExtra("id", rec.id);
             item = menu.add(Menu.NONE, R.string.menu_record_remove, Menu.NONE, R.string.menu_record_remove);
             item.setIntent(intent);
             item.setIcon(android.R.drawable.ic_menu_delete);
