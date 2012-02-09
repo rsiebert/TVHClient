@@ -35,7 +35,7 @@
     <ListPreference
     	android:name="@string/pref_res"
         android:summary="@string/pref_res_sum"
-        android:defaultValue="360p"
+        android:defaultValue="384"
         android:title="@string/pref_res"
         android:key="resolutionPref"
         android:dialogTitle="@string/pref_res"
