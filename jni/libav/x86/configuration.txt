@@ -1,0 +1,91 @@
+install prefix            ../build/libav/x86
+source path               .
+C compiler                i686-android-linux-gcc
+ARCH                      x86 (i686)
+big-endian                no
+runtime cpu detection     no
+yasm                      no
+MMX enabled               no
+MMX2 enabled              no
+3DNow! enabled            no
+3DNow! extended enabled   no
+SSE enabled               no
+SSSE3 enabled             no
+AVX enabled               no
+CMOV enabled              yes
+CMOV is fast              yes
+EBX available             no
+EBP available             no
+debug symbols             no
+optimize for size         no
+optimizations             yes
+static                    yes
+shared                    no
+postprocessing support    no
+new filter support        yes
+network support           no
+threading support         pthreads
+SDL support               no
+Sun medialib support      no
+libdxva2 enabled          no
+libva enabled             no
+libvdpau enabled          no
+AVISynth enabled          no
+frei0r enabled            no
+libdc1394 support         no
+libdirac enabled          no
+libfaac enabled           no
+libgsm enabled            no
+libmp3lame enabled        no
+libnut enabled            no
+libopencore-amrnb support no
+libopencore-amrwb support no
+libopencv support         no
+libopenjpeg enabled       no
+librtmp enabled           no
+libschroedinger enabled   no
+libspeex enabled          no
+libstagefright-h264 enabled    no
+libtheora enabled         no
+libvo-aacenc support      no
+libvo-amrwbenc support    no
+libvorbis enabled         no
+libvpx enabled            no
+libx264 enabled           no
+libxavs enabled           no
+libxvid enabled           no
+zlib enabled              no
+bzlib enabled             no
+
+Enabled decoders:
+aac			h264			mp3
+ac3			mp2			mpeg2video
+eac3
+
+Enabled encoders:
+
+Enabled hwaccels:
+
+Enabled parsers:
+ac3
+
+Enabled demuxers:
+
+Enabled muxers:
+
+Enabled protocols:
+
+Enabled filters:
+buffer
+
+Enabled bsfs:
+
+Enabled indevs:
+
+Enabled outdevs:
+
+License: LGPL version 2.1 or later
+Creating config.mak and config.h...
+libavutil/avconfig.h is unchanged
+
+WARNING: i686-android-linux-pkg-config not found, library detection may fail.
