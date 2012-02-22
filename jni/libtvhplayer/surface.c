@@ -23,33 +23,69 @@
 #include "tvhplayer.h"
 #include "surface.h"
 
-#define SURFACE_DLSYM(dest, handle, name, err)		     \
+#define SURFACE_DLSYM(dest, handle, name)		     \
   dest = (typeof(dest))dlsym(handle, name);		     \
-  if(dest == NULL && err) {				     \
+  if(dest == NULL) {					     \
     ERROR("Failed to load symbol %s", name);		     \
     goto error;						     \
   }							     \
 
+static int init_api_14(vout_sys_t *vo) {
+  DEBUG("Trying API 14");
+  vo->so_handle = dlopen("libgui.so", RTLD_NOW);
+  if(vo->so_handle) {
+    SURFACE_DLSYM(vo->lockRegion, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEPNS_6RegionE");
+    SURFACE_DLSYM(vo->unlockAndPost, vo->so_handle, "_ZN7android7Surface13unlockAndPostEv");
+  }
+  return 0;
+
+ error:
+  return -1;
+}
+
+static int init_api_7(vout_sys_t *vo) {
+  DEBUG("Trying API 7");
+  vo->so_handle = dlopen("libsurfaceflinger_client.so", RTLD_NOW);
+  if(vo->so_handle) {
+    SURFACE_DLSYM(vo->lock, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEb");
+    SURFACE_DLSYM(vo->unlockAndPost, vo->so_handle, "_ZN7android7Surface13unlockAndPostEv");
+  }
+  
+  return 0;
+  
+ error:
+  return -1;
+}
+
+static int init_api_4(vout_sys_t *vo) {
+  DEBUG("Trying API 7");
+  vo->so_handle = dlopen("libui.so", RTLD_NOW);
+  if(vo->so_handle) {
+    SURFACE_DLSYM(vo->lock, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEb");
+    SURFACE_DLSYM(vo->unlockAndPost, vo->so_handle, "_ZN7android7Surface13unlockAndPostEv");
+  }
+
+  return 0;
+
+ error:
+  return -1;
+}
+
 int surface_init(vout_sys_t *vo) {
   DEBUG("Initializing Surface library");
 
-  vo->so_handle = dlopen("libgui.so", RTLD_NOW);
-  if(vo->so_handle == NULL) {
-    vo->so_handle = dlopen("libsurfaceflinger_client.so", RTLD_NOW);
+  int ret = init_api_14(vo);
+  if(ret < 0) {
+    ret = init_api_7(vo);
   }
-  if(vo->so_handle == NULL) {
-    vo->so_handle = dlopen("libui.so", RTLD_NOW);
+  if(ret < 0) {
+    ret = init_api_4(vo);
   }
-
-  if(vo->so_handle == NULL) {
+  if(ret < 0) {
     ERROR("Failed to load surface library");
     goto error;
   }
   
-  SURFACE_DLSYM(vo->lock, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEb", 0);
-  SURFACE_DLSYM(vo->lockRegion, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEPNS_6RegionE", 0);
-  SURFACE_DLSYM(vo->unlockAndPost, vo->so_handle, "_ZN7android7Surface13unlockAndPostEv", 1);
-
   pthread_mutex_init(&vo->mutex, NULL);
   pthread_cond_init(&vo->cond, NULL);
   TAILQ_INIT(&vo->render_queue);
