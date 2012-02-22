@@ -23,9 +23,9 @@
 #include "tvhplayer.h"
 #include "surface.h"
 
-#define SURFACE_DLSYM(dest, handle, name)		     \
+#define SURFACE_DLSYM(dest, handle, name, err)		     \
   dest = (typeof(dest))dlsym(handle, name);		     \
-  if(dest == NULL) {					     \
+  if(dest == NULL && err) {				     \
     ERROR("Failed to load symbol %s", name);		     \
     goto error;						     \
   }							     \
@@ -33,7 +33,10 @@
 int surface_init(vout_sys_t *vo) {
   DEBUG("Initializing Surface library");
 
-  vo->so_handle = dlopen("libsurfaceflinger_client.so", RTLD_NOW);
+  vo->so_handle = dlopen("libgui.so", RTLD_NOW);
+  if(vo->so_handle == NULL) {
+    vo->so_handle = dlopen("libsurfaceflinger_client.so", RTLD_NOW);
+  }
   if(vo->so_handle == NULL) {
     vo->so_handle = dlopen("libui.so", RTLD_NOW);
   }
@@ -43,8 +46,9 @@ int surface_init(vout_sys_t *vo) {
     goto error;
   }
   
-  SURFACE_DLSYM(vo->lock, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEb");
-  SURFACE_DLSYM(vo->unlockAndPost, vo->so_handle, "_ZN7android7Surface13unlockAndPostEv");
+  SURFACE_DLSYM(vo->lock, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEb", 0);
+  SURFACE_DLSYM(vo->lockRegion, vo->so_handle, "_ZN7android7Surface4lockEPNS0_11SurfaceInfoEPNS_6RegionE", 0);
+  SURFACE_DLSYM(vo->unlockAndPost, vo->so_handle, "_ZN7android7Surface13unlockAndPostEv", 1);
 
   pthread_mutex_init(&vo->mutex, NULL);
   pthread_cond_init(&vo->cond, NULL);
@@ -64,9 +68,17 @@ void surface_open(vout_sys_t *vo, void* handle) {
   vo->surface = handle;
 
   //Clear the buffer and get surface info
-  vo->lock(vo->surface, (void*)&vo->surface_info, 1);
+  if(vo->lock) {
+    vo->lock(vo->surface, (void*)&vo->surface_info, 1);
+  } else if(vo->lockRegion) {
+    vo->lockRegion(vo->surface, (void*)&vo->surface_info, NULL);
+  }
+
   memset(vo->surface_info.bits, 0, sizeof(uint32_t) * vo->surface_info.size);
-  vo->unlockAndPost(vo->surface);
+
+  if(vo->unlockAndPost) {
+    vo->unlockAndPost(vo->surface);
+  }
 
   pthread_mutex_unlock(&vo->mutex);
 }
@@ -77,7 +89,11 @@ void surface_render(vout_sys_t *vo, vout_buffer_t *vb) {
     return;
   }
 
-  vo->lock(vo->surface, (void*)&vo->surface_info, 1);
+  if(vo->lock) {
+    vo->lock(vo->surface, (void*)&vo->surface_info, 1);
+  } else if(vo->lockRegion) {
+    vo->lockRegion(vo->surface, (void*)&vo->surface_info, NULL);
+  }
 
   if(vb->width != vo->surface_info.width || 
      vb->height != vo->surface_info.height) {
@@ -86,7 +102,9 @@ void surface_render(vout_sys_t *vo, vout_buffer_t *vb) {
     memcpy(vo->surface_info.bits, vb->ptr, vb->len);
   }
 
-  vo->unlockAndPost(vo->surface);
+  if(vo->unlockAndPost) {
+    vo->unlockAndPost(vo->surface);
+  }
 }
 
 void surface_close(vout_sys_t *vo) {
@@ -112,6 +130,9 @@ void surface_destroy(vout_sys_t *vo) {
   if(vo->so_handle != NULL) {
     dlclose(vo->so_handle);
     vo->so_handle = NULL;
+    vo->lock = NULL;
+    vo->lockRegion = NULL;
+    vo->unlockAndPost = NULL;
   }
 
   pthread_mutex_destroy(&vo->mutex);

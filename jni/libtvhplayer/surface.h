@@ -25,6 +25,8 @@
 
 // _ZN7android7Surface4lockEPNS0_11SurfaceInfoEb
 typedef void (*Surface_lock)(void *, void *, int);
+// _ZN7android7Surface4lockEPNS0_11SurfaceInfoEPNS_6RegionE
+typedef void (*Surface_lockRegion)(void *, void *, void *);
 // _ZN7android7Surface13unlockAndPostEv
 typedef void (*Surface_unlockAndPost)(void *);
 
@@ -51,6 +53,7 @@ typedef struct surface_info {
 
 typedef struct vout_sys {
   Surface_lock                    lock;
+  Surface_lockRegion              lockRegion;
   Surface_unlockAndPost           unlockAndPost;
   void                          * so_handle;
   void                          * surface;
