@@ -56,6 +56,7 @@ public class ProgrammeActivity extends Activity {
         for (Programme p : channel.epg) {
             if (p.id == eventId) {
                 programme = p;
+                break;
             }
         }
 
