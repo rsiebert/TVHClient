@@ -18,35 +18,36 @@
  */
 package org.me.tvhguide.model;
 
+import java.util.Date;
+
 /**
  *
  * @author john-tornblom
  */
-public class Recording extends Programme {
+public class Recording implements Comparable<Recording> {
 
+    public long id;
+    public Date start;
+    public Date stop;
+    public String title;
+    public String description;
+    public Channel channel;
     public String state;
     public String error;
 
     @Override
-    public int compareTo(Programme that) {
-        //Order by state
-        if (that instanceof Recording) {
-            int diff = state() - ((Recording) that).state();
-            if (diff != 0) {
-                return diff;
-            } else if (state() != 1) {
-                return (int) (that.start.getTime() - this.start.getTime());
-            }
+    public int compareTo(Recording that) {
+        if (this.state() == 1 && that.state() == 1) {
+            return this.start.compareTo(that.start);
+        } else {
+            return that.start.compareTo(this.start);
         }
-        return super.compareTo(that);
     }
 
-    @Override
     public boolean isRecording() {
         return state() == 0;
     }
 
-    @Override
     public boolean isScheduled() {
         return state() == 1;
     }

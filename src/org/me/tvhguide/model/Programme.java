@@ -38,7 +38,7 @@ public class Programme implements Comparable<Programme> {
     public Recording recording;
 
     public int compareTo(Programme that) {
-        return (int) (this.start.getTime() - that.start.getTime());
+        return this.start.compareTo(that.start);
     }
 
     public boolean isRecording() {
