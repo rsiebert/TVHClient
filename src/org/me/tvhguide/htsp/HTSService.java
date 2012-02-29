@@ -247,8 +247,12 @@ public class HTSService extends Service implements HTSConnectionListener {
                 getChannelIcon(ch);
             }
             long eventId = response.getLong("eventId", 0);
+            long nextEventId = response.getLong("nextEventId", 0);
+            
             if (eventId > 0) {
                 getEvents(ch, eventId, 5);
+            } else if (nextEventId > 0) {
+                getEvents(ch, nextEventId, 5);
             }
         } else if (method.equals("channelUpdate")) {
             final Channel ch = app.getChannel(response.getLong("channelId"));
@@ -266,13 +270,15 @@ public class HTSService extends Service implements HTSConnectionListener {
                     getChannelIcon(ch);
                 }
                 //Remove programmes that have ended
-                final long eventId = response.getLong("eventId", 0);
+                long currEventId = response.getLong("eventId", 0);
+                long nextEventId = response.getLong("nextEventId", 0);
+                
                 Iterator<Programme> it = ch.epg.iterator();
                 ArrayList<Programme> tmp = new ArrayList<Programme>();
                 
-                while (it.hasNext()) {
+                while (it.hasNext() && currEventId > 0) {
                     Programme p = it.next();
-                    if (p.id != eventId) {
+                    if (p.id != currEventId) {
                         tmp.add(p);
                     } else {
                         break;
@@ -284,6 +290,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     app.removeProgramme(p);
                 }
                 
+                final long eventId = currEventId != 0 ? currEventId: nextEventId;
                 if (eventId > 0 && ch.epg.size() < 2) {
                     execService.schedule(new Runnable() {
                         
