@@ -38,7 +38,8 @@ public class Channel implements Comparable<Channel> {
     public Set<Recording> recordings = Collections.synchronizedSortedSet(new TreeSet<Recording>());
     public List<Integer> tags;
     public Bitmap iconBitmap;
-
+    public boolean isTransmitting;
+    
     public int compareTo(Channel that) {
         return this.number - that.number;
     }

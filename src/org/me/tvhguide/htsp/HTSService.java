@@ -246,11 +246,13 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (ch.icon != null) {
                 getChannelIcon(ch);
             }
-            long eventId = response.getLong("eventId", 0);
+            long currEventId = response.getLong("eventId", 0);
             long nextEventId = response.getLong("nextEventId", 0);
             
-            if (eventId > 0) {
-                getEvents(ch, eventId, 5);
+            ch.isTransmitting = currEventId != 0;
+            
+            if (currEventId > 0) {
+                getEvents(ch, currEventId, 5);
             } else if (nextEventId > 0) {
                 getEvents(ch, nextEventId, 5);
             }
@@ -272,6 +274,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                 //Remove programmes that have ended
                 long currEventId = response.getLong("eventId", 0);
                 long nextEventId = response.getLong("nextEventId", 0);
+                
+                ch.isTransmitting = currEventId != 0;
                 
                 Iterator<Programme> it = ch.epg.iterator();
                 ArrayList<Programme> tmp = new ArrayList<Programme>();
