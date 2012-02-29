@@ -63,8 +63,8 @@ public class Recording implements Comparable<Recording> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Programme) {
-            return ((Programme) o).id == id;
+        if (o instanceof Recording) {
+            return ((Recording) o).id == id;
         }
 
         return false;
