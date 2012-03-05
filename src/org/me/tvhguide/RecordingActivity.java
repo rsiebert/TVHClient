@@ -102,15 +102,21 @@ public class RecordingActivity extends Activity {
             item = menu.add(Menu.NONE, R.string.menu_record_cancel, Menu.NONE, R.string.menu_record_cancel);
             item.setIntent(intent);
             item.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+            item.setIntent(intent);
         } else {
             intent.setAction(HTSService.ACTION_DVR_DELETE);
             intent.putExtra("id", rec.id);
             item = menu.add(Menu.NONE, R.string.menu_record_remove, Menu.NONE, R.string.menu_record_remove);
             item.setIntent(intent);
             item.setIcon(android.R.drawable.ic_menu_delete);
-        }
+            item.setIntent(intent);
 
-        item.setIntent(intent);
+            intent = new Intent(this, ExternalPlaybackActivity.class);
+            intent.putExtra("dvrId", rec.id);
+            item = menu.add(Menu.NONE, R.string.ch_play, Menu.NONE, R.string.ch_play);
+            item.setIntent(intent);
+            item.setIcon(android.R.drawable.ic_menu_view);
+        }
 
         return true;
     }

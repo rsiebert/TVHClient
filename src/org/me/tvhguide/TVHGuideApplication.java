@@ -27,6 +27,7 @@ import java.util.List;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
 import org.me.tvhguide.htsp.HTSListener;
+import org.me.tvhguide.model.HttpTicket;
 import org.me.tvhguide.model.Packet;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
@@ -56,6 +57,7 @@ public class TVHGuideApplication extends Application {
     public static final String ACTION_SIGNAL_STATUS = "org.me.tvhguide.SIGNAL_STATUS";
     public static final String ACTION_PLAYBACK_PACKET = "org.me.tvhguide.PLAYBACK_PACKET";
     public static final String ACTION_LOADING = "org.me.tvhguide.LOADING";
+    public static final String ACTION_TICKET_ADD = "org.me.tvhguide.TICKET";
     public static final String ACTION_ERROR = "org.me.tvhguide.ERROR";
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
@@ -327,5 +329,10 @@ public class TVHGuideApplication extends Application {
         if (!loading) {
             broadcastMessage(ACTION_SUBSCRIPTION_UPDATE, s);
         }
+    }
+    
+   
+    public void addTicket(HttpTicket t) {
+        broadcastMessage(ACTION_TICKET_ADD, t);
     }
 }

@@ -103,7 +103,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
         MenuItem item = null;
         Intent intent = null;
-        
+
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = recAdapter.getItem(info.position);
 
@@ -120,8 +120,14 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             intent.setAction(HTSService.ACTION_DVR_DELETE);
             item = menu.add(ContextMenu.NONE, R.string.menu_record_remove, ContextMenu.NONE, R.string.menu_record_remove);
             item.setIntent(intent);
+
+            item = menu.add(ContextMenu.NONE, R.string.ch_play, ContextMenu.NONE, R.string.ch_play);
+            intent = new Intent(this, ExternalPlaybackActivity.class);
+            intent.putExtra("dvrId", rec.id);
+            item.setIntent(intent);
+            item.setIcon(android.R.drawable.ic_menu_view);
         }
-        
+
         item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
         item.setIntent(new SearchEPGIntent(this, rec.title));
         item.setIcon(android.R.drawable.ic_menu_search);

@@ -24,6 +24,7 @@
         <activity android:name=".ProgrammeActivity" android:theme="@style/CustomTheme"/>
         <activity android:name=".RecordingActivity" android:theme="@style/CustomTheme"/>
         <activity android:name=".SettingsActivity"/>
+        <activity android:name=".ExternalPlaybackActivity"/>
         <activity android:name=".PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name=".htsp.HTSService" android:enabled="true"/>
     </application>

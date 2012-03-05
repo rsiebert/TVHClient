@@ -76,6 +76,14 @@ public class PlaybackActivity extends Activity implements HTSListener {
         channelId = channel.id;
         subId = 1;
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("externalPref", false)) {
+            Intent intent = new Intent(this, ExternalPlaybackActivity.class);
+            intent.putExtra("channelId", channelId);
+            startActivity(intent);
+            finish();
+        }
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -169,9 +177,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
         startService(intent);
     }
 
-    private void startPlayback() {
-        stopPlayback();
-
+    private DisplayMetrics getMaxDisplayMetrics() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         double confHeight = Integer.parseInt(prefs.getString("resolutionPref", "288"));
 
@@ -192,6 +198,19 @@ public class PlaybackActivity extends Activity implements HTSListener {
             maxHeight = confHeight;
         }
 
+        d.widthPixels = (int) maxWidth;
+        d.heightPixels = (int) maxHeight;
+
+        return d;
+    }
+
+    private void startPlayback() {
+        stopPlayback();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean transcode = prefs.getBoolean("transcodePref", true);
+        DisplayMetrics d = getMaxDisplayMetrics();
+
         TVHPlayer.startPlayback();
 
         Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
@@ -199,9 +218,10 @@ public class PlaybackActivity extends Activity implements HTSListener {
         intent.putExtra("subscriptionId", subId);
         intent.putExtra("channelId", channelId);
         intent.putExtra("channels", 2);
-        intent.putExtra("maxWidth", (int) maxWidth);
-        intent.putExtra("maxHeight", (int) maxHeight);
-
+        if (transcode) {
+            intent.putExtra("maxWidth", d.widthPixels);
+            intent.putExtra("maxHeight", d.heightPixels);
+        }
         startService(intent);
     }
 

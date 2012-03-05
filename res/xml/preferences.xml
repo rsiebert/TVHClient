@@ -32,14 +32,40 @@
         android:key="passwordPref"
         android:password="true" />
         
-    <ListPreference
-    	android:name="@string/pref_res"
-        android:summary="@string/pref_res_sum"
-        android:defaultValue="384"
-        android:title="@string/pref_res"
-        android:key="resolutionPref"
-        android:dialogTitle="@string/pref_res"
-        android:entries="@array/pref_res_list_display"
-        android:entryValues="@array/pref_res_list" />
-        
+    <PreferenceCategory
+        android:title="@string/pref_playback">
+        <EditTextPreference
+            android:id="@+id/pref_http_port"
+            android:name="@string/pref_http_port"
+            android:summary="@string/pref_http_port_sum"
+            android:defaultValue="9981"
+            android:title="@string/pref_http_port"
+            android:key="httpPortPref"
+            android:numeric="integer" />
+        <CheckBoxPreference 
+            android:id="@+id/pref_external"
+            android:name="@string/pref_external"
+            android:summary="@string/pref_external_sum"
+            android:defaultValue="true"
+            android:title="@string/pref_external"
+            android:key="externalPref" 
+        />
+        <CheckBoxPreference 
+            android:id="@+id/pref_transcode"
+            android:name="@string/pref_transcode"
+            android:summary="@string/pref_transcode_sum"
+            android:defaultValue="true"
+            android:title="@string/pref_transcode"
+            android:key="transcodePref" />
+        <ListPreference
+            android:name="@string/pref_res"
+            android:summary="@string/pref_res_sum"
+            android:defaultValue="384"
+            android:title="@string/pref_res"
+            android:key="resolutionPref"
+            android:dialogTitle="@string/pref_res"
+            android:dependency="transcodePref"
+            android:entries="@array/pref_res_list_display"
+            android:entryValues="@array/pref_res_list" />
+    </PreferenceCategory>  
 </PreferenceScreen>

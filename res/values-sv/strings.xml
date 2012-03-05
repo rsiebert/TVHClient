@@ -28,7 +28,18 @@
     <string name="pref_icons_sum">Visa kanalers logotyper?</string>
     
     <string name="pref_res">Upplösning</string>
-    <string name="pref_res_sum">Maximal upplösning</string>
+    <string name="pref_res_sum">Maximal upplösning vid omkodning</string>
+    
+    <string name="pref_playback">Uppspelning</string>
+    
+    <string name="pref_http_port">HTTP port</string>
+    <string name="pref_http_port_sum">Skriv in HTTP portnummer</string>
+    
+    <string name="pref_transcode">Koda om ström</string>
+    <string name="pref_transcode_sum">Begär omkodning av direktsänd media</string>
+    
+    <string name="pref_external">Föredra extern spelare</string>
+    <string name="pref_external_sum">Använd en extern spelare för direktsänd media (MX Video player verkar OK)</string>
     
     <string name="err_auth">Åtkomst nekad</string>
     <string name="err_inv">Felaktigt svar från servern</string>

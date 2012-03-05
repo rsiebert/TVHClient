@@ -38,6 +38,7 @@ import org.me.tvhguide.R;
 import org.me.tvhguide.TVHGuideApplication;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
+import org.me.tvhguide.model.HttpTicket;
 import org.me.tvhguide.model.Packet;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
@@ -61,6 +62,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     public static final String ACTION_SUBSCRIBE = "org.me.tvhguide.htsp.SUBSCRIBE";
     public static final String ACTION_UNSUBSCRIBE = "org.me.tvhguide.htsp.UNSUBSCRIBE";
     public static final String ACTION_FEEDBACK = "org.me.tvhguide.htsp.FEEDBACK";
+    public static final String ACTION_GET_TICKET = "org.me.tvhguide.htsp.GET_TICKET";
     private static final String TAG = "HTSService";
     private ScheduledExecutorService execService;
     private HTSConnection connection;
@@ -147,6 +149,15 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (ACTION_FEEDBACK.equals(intent.getAction())) {
             feedback(intent.getLongExtra("subscriptionId", 0),
                     intent.getIntExtra("speed", 0));
+        } else if (ACTION_GET_TICKET.equals(intent.getAction())) {
+            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+            Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
+            Recording rec = app.getRecording(intent.getLongExtra("dvrId", 0));
+            if (ch != null) {
+                getTicket(ch);
+            } else if (rec != null) {
+                getTicket(rec);
+            }
         }
         
         return START_NOT_STICKY;
@@ -651,6 +662,41 @@ public class HTSService extends Service implements HTSConnectionListener {
             
             public void handleResponse(HTSMessage response) {
                 //NOP
+            }
+        });
+    }
+    private void getTicket(Channel ch) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getTicket");
+        request.putField("channelId", ch.id);
+        connection.sendMessage(request, new HTSResponseHandler() {
+
+            public void handleResponse(HTSMessage response) {
+                String path = response.getString("path", null);
+                String ticket = response.getString("ticket", null);
+
+                if (path != null && ticket != null) {
+                    TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                    app.addTicket(new HttpTicket(path, ticket));
+                }
+            }
+        });
+    }
+
+    private void getTicket(Recording rec) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getTicket");
+        request.putField("dvrId", rec.id);
+        connection.sendMessage(request, new HTSResponseHandler() {
+
+            public void handleResponse(HTSMessage response) {
+                String path = response.getString("path", null);
+                String ticket = response.getString("ticket", null);
+
+                if (path != null && ticket != null) {
+                    TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                    app.addTicket(new HttpTicket(path, ticket));
+                }
             }
         });
     }
