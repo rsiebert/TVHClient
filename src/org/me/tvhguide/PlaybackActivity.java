@@ -210,7 +210,9 @@ public class PlaybackActivity extends Activity implements HTSListener {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean transcode = prefs.getBoolean("transcodePref", true);
         DisplayMetrics d = getMaxDisplayMetrics();
-
+        String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
+        String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
+        
         TVHPlayer.startPlayback();
 
         Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
@@ -221,6 +223,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
         if (transcode) {
             intent.putExtra("maxWidth", d.widthPixels);
             intent.putExtra("maxHeight", d.heightPixels);
+            intent.putExtra("audioCodec", acodec);
+            intent.putExtra("videoCodec", vcodec);
         }
         startService(intent);
     }

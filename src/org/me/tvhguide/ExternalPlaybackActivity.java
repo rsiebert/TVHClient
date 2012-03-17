@@ -28,6 +28,7 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.HttpTicket;
+import org.me.tvhguide.model.Stream;
 
 /**
  *
@@ -94,13 +95,19 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         Boolean transcode = prefs.getBoolean("transcodePref", true);
         Integer maxHeight = Integer.parseInt(prefs.getString("resolutionPref", "288"));
         DisplayMetrics d = getMaxDisplayMetrics(maxHeight);
-
+        String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
+        String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
+        
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
-        url += "&t=" + (transcode ? 1 : 0);
-        url += "&w=" + d.widthPixels;
-        url += "&h=" + d.heightPixels;
-
+        if(transcode) {
+            url += "&transcode=1";
+            url += "&width=" + d.widthPixels;
+            url += "&height=" + d.heightPixels;
+            url += "&acodec=" + acodec;
+            url += "&vcodec=" + vcodec;
+        }
+        
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(url), "video/x-matroska");
 

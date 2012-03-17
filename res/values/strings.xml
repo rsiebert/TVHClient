@@ -30,6 +30,12 @@
     <string name="pref_res">Resolution</string>
     <string name="pref_res_sum">Maximum resolution for the transcoder</string>
 
+    <string name="pref_acodec">Audio codec</string>
+    <string name="pref_acodec_sum">Audio codec to use with the transcoder</string>
+    
+    <string name="pref_vcodec">Video codec</string>
+    <string name="pref_vcodec_sum">Video codec to use with the transcoder</string>
+    
     <string name="pref_playback">Playback</string>
     
     <string name="pref_http_port">HTTP port</string>

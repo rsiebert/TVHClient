@@ -143,7 +143,9 @@ public class HTSService extends Service implements HTSConnectionListener {
             subscribe(intent.getLongExtra("channelId", 0),
                     intent.getLongExtra("subscriptionId", 0),
                     intent.getIntExtra("maxWidth", 0),
-                    intent.getIntExtra("maxHeight", 0));
+                    intent.getIntExtra("maxHeight", 0),
+                    intent.getStringExtra("audioCodec"),
+                    intent.getStringExtra("videoCodec"));
         } else if (ACTION_UNSUBSCRIBE.equals(intent.getAction())) {
             unsubscribe(intent.getLongExtra("subscriptionId", 0));
         } else if (ACTION_FEEDBACK.equals(intent.getAction())) {
@@ -617,7 +619,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void subscribe(long channelId, long subscriptionId, int maxWidth, int maxHeight) {
+    private void subscribe(long channelId, long subscriptionId, int maxWidth, int maxHeight, String aCodec, String vCodec) {
         Subscription subscription = new Subscription();
         subscription.id = subscriptionId;
         subscription.status = "Subscribing";
@@ -630,6 +632,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("channelId", channelId);
         request.putField("maxWidth", maxWidth);
         request.putField("maxHeight", maxHeight);
+        request.putField("audioCodec", aCodec);
+        request.putField("videoCodec", vCodec);
         request.putField("subscriptionId", subscriptionId);
         connection.sendMessage(request, new HTSResponseHandler() {
 
