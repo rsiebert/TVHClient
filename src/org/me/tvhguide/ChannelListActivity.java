@@ -386,7 +386,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             icon.invalidate();
 
             Iterator<Programme> it = channel.epg.iterator();
-            if(!channel.isTransmitting && it.hasNext()) {
+            if (!channel.isTransmitting && it.hasNext()) {
                 nowTitle.setText(R.string.ch_no_transmission);
             } else if (it.hasNext()) {
                 Programme p = it.next();
