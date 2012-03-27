@@ -335,4 +335,8 @@ public class TVHGuideApplication extends Application {
     public void addTicket(HttpTicket t) {
         broadcastMessage(ACTION_TICKET_ADD, t);
     }
+    
+    public boolean isLoading() {
+        return loading;
+    }
 }

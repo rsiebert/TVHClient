@@ -69,6 +69,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     private ImageView tagImageView;
     private View tagBtn;
     private ProgressBar pb;
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -77,10 +78,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
-        List<Channel> chList = new ArrayList<Channel>();
-        chList.addAll(app.getChannels());
-        chAdapter = new ChannelListAdapter(this, chList);
-        chAdapter.sort();
+        chAdapter = new ChannelListAdapter(this, new ArrayList<Channel>());
         setListAdapter(chAdapter);
 
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.channel_list_title);
@@ -91,13 +89,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.menu_tags);
 
-        List<ChannelTag> list = new ArrayList<ChannelTag>();
-        list.addAll(app.getChannelTags());
-
         tagAdapter = new ArrayAdapter<ChannelTag>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
-                list);
+                new ArrayList<ChannelTag>());
 
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
 
@@ -239,6 +234,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         app.addListener(this);
 
         connect(false);
+        setLoading(app.isLoading());
     }
 
     @Override
@@ -261,6 +257,33 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         startActivity(intent);
     }
 
+    private void setLoading(boolean loading) {
+        tagBtn.setEnabled(!loading);
+        if (loading) {
+            pb.setVisibility(ProgressBar.VISIBLE);
+            tagTextView.setText(R.string.inf_load);
+            tagImageView.setVisibility(ImageView.INVISIBLE);
+        } else {
+            pb.setVisibility(ProgressBar.GONE);
+            tagTextView.setText(R.string.pr_all_channels);
+            tagImageView.setVisibility(ImageView.VISIBLE);
+
+            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+            chAdapter.clear();
+            for (Channel ch : app.getChannels()) {
+                chAdapter.add(ch);
+            }
+            chAdapter.sort();
+            chAdapter.notifyDataSetChanged();
+
+            tagAdapter.clear();
+            for (ChannelTag tag : app.getChannelTags()) {
+                tagAdapter.add(tag);
+            }
+            chAdapter.notifyDataSetChanged();
+        }
+    }
+
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
 
@@ -268,31 +291,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     boolean loading = (Boolean) obj;
-                    tagBtn.setEnabled(!loading);
-                    if (loading) {
-                        pb.setVisibility(ProgressBar.VISIBLE);
-                        tagTextView.setText(R.string.inf_load);
-                        tagImageView.setVisibility(ImageView.INVISIBLE);
-                        return;
-                    } else {
-                        pb.setVisibility(ProgressBar.GONE);
-                        tagTextView.setText(R.string.pr_all_channels);
-                        tagImageView.setVisibility(ImageView.VISIBLE);
-                    }
-
-                    TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                    chAdapter.clear();
-                    for (Channel ch : app.getChannels()) {
-                        chAdapter.add(ch);
-                    }
-                    chAdapter.sort();
-                    chAdapter.notifyDataSetChanged();
-
-                    tagAdapter.clear();
-                    for (ChannelTag tag : app.getChannelTags()) {
-                        tagAdapter.add(tag);
-                    }
-                    chAdapter.notifyDataSetChanged();
+                    setLoading(loading);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
