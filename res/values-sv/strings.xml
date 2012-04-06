@@ -45,7 +45,7 @@
     <string name="pref_transcode_sum">Begär omkodning av direktsänd media</string>
     
     <string name="pref_external">Föredra extern spelare</string>
-    <string name="pref_external_sum">Använd en extern spelare för direktsänd media (MX Video player verkar OK)</string>
+    <string name="pref_external_sum">Använd en extern spelare för direktsänd media (BSPlayer verkar OK)</string>
     
     <string name="err_auth">Åtkomst nekad</string>
     <string name="err_inv">Felaktigt svar från servern</string>
