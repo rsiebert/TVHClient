@@ -69,6 +69,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     private ImageView tagImageView;
     private View tagBtn;
     private ProgressBar pb;
+    private ChannelTag currentTag;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -97,29 +98,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface arg0, int pos) {
-
-                chAdapter.clear();
-                ChannelTag tag = tagAdapter.getItem(pos);
-                TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                for (Channel ch : app.getChannels()) {
-                    if (ch.hasTag(tag.id)) {
-                        chAdapter.add(ch);
-                    }
-                }
-
-                tagTextView.setText(tag.name);
-                if (tag.iconBitmap != null) {
-                    tagImageView.setImageBitmap(tag.iconBitmap);
-                } else {
-                    tagImageView.setImageResource(R.drawable.logo_72);
-                }
-                chAdapter.sort();
-                chAdapter.notifyDataSetChanged();
+                setCurrentTag(tagAdapter.getItem(pos));
+                populateList();
             }
         });
 
         tagDialog = builder.create();
-
         tagBtn = findViewById(R.id.ct_btn);
         tagBtn.setOnClickListener(new android.view.View.OnClickListener() {
 
@@ -196,6 +180,41 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         startService(intent);
     }
 
+    private void setCurrentTag(ChannelTag t) {
+        currentTag = t;
+
+        if (t == null) {
+            tagTextView.setText(R.string.pr_all_channels);
+            tagImageView.setImageResource(R.drawable.logo_72);
+        } else {
+            tagTextView.setText(currentTag.name);
+            if (currentTag.iconBitmap != null) {
+                tagImageView.setImageBitmap(currentTag.iconBitmap);
+            } else {
+                tagImageView.setImageResource(R.drawable.logo_72);
+            }
+        }
+    }
+
+    private void populateList() {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+
+        chAdapter.clear();
+        if (currentTag != null) {
+
+            for (Channel ch : app.getChannels()) {
+                if (ch.hasTag(currentTag.id)) {
+                    chAdapter.add(ch);
+                }
+            }
+        } else {
+            chAdapter.addAll(app.getChannels());
+        }
+
+        chAdapter.sort();
+        chAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -265,22 +284,16 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             tagImageView.setVisibility(ImageView.INVISIBLE);
         } else {
             pb.setVisibility(ProgressBar.GONE);
-            tagTextView.setText(R.string.pr_all_channels);
             tagImageView.setVisibility(ImageView.VISIBLE);
 
             TVHGuideApplication app = (TVHGuideApplication) getApplication();
-            chAdapter.clear();
-            for (Channel ch : app.getChannels()) {
-                chAdapter.add(ch);
-            }
-            chAdapter.sort();
-            chAdapter.notifyDataSetChanged();
-
             tagAdapter.clear();
-            for (ChannelTag tag : app.getChannelTags()) {
-                tagAdapter.add(tag);
+            for (ChannelTag t : app.getChannelTags()) {
+                tagAdapter.add(t);
             }
-            chAdapter.notifyDataSetChanged();
+
+            populateList();
+            setCurrentTag(currentTag);
         }
     }
 
