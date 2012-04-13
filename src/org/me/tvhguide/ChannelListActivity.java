@@ -200,15 +200,11 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
         chAdapter.clear();
-        if (currentTag != null) {
 
-            for (Channel ch : app.getChannels()) {
-                if (ch.hasTag(currentTag.id)) {
-                    chAdapter.add(ch);
-                }
+        for (Channel ch : app.getChannels()) {
+            if (currentTag == null || ch.hasTag(currentTag.id)) {
+                chAdapter.add(ch);
             }
-        } else {
-            chAdapter.addAll(app.getChannels());
         }
 
         chAdapter.sort();
