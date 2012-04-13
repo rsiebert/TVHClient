@@ -95,19 +95,19 @@ public class ProgrammeActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuItem item = null;
-        Intent intent = null;
 
-        item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
-        item.setIntent(new SearchEPGIntent(this, programme.title));
-        item.setIcon(android.R.drawable.ic_menu_search);
+        if (programme.title != null) {
+            item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
+            item.setIntent(new SearchEPGIntent(this, programme.title));
+            item.setIcon(android.R.drawable.ic_menu_search);
 
-        item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "IMDb");
-        item.setIntent(new SearchIMDbIntent(this, programme.title));
-        item.setIcon(android.R.drawable.ic_menu_info_details);
+            item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "IMDb");
+            item.setIntent(new SearchIMDbIntent(this, programme.title));
+            item.setIcon(android.R.drawable.ic_menu_info_details);
+        }
 
-        intent = new Intent(this, HTSService.class);
+        Intent intent = new Intent(this, HTSService.class);
 
         if (programme.recording == null) {
             intent.setAction(HTSService.ACTION_DVR_ADD);

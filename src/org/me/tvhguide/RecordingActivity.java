@@ -82,19 +82,19 @@ public class RecordingActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuItem item = null;
-        Intent intent = null;
 
-        item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
-        item.setIntent(new SearchEPGIntent(this, rec.title));
-        item.setIcon(android.R.drawable.ic_menu_search);
+        if (rec.title != null) {
+            item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
+            item.setIntent(new SearchEPGIntent(this, rec.title));
+            item.setIcon(android.R.drawable.ic_menu_search);
 
-        item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "IMDb");
-        item.setIntent(new SearchIMDbIntent(this, rec.title));
-        item.setIcon(android.R.drawable.ic_menu_info_details);
+            item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "IMDb");
+            item.setIntent(new SearchIMDbIntent(this, rec.title));
+            item.setIcon(android.R.drawable.ic_menu_info_details);
+        }
 
-        intent = new Intent(this, HTSService.class);
+        Intent intent = new Intent(this, HTSService.class);
 
         if (rec.isRecording() || rec.isScheduled()) {
             intent.setAction(HTSService.ACTION_DVR_CANCEL);
