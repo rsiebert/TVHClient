@@ -309,6 +309,6 @@ public class HTSConnection extends Thread {
             }
         }
 
-        listener.onAsyncResponse(msg);
+        listener.onMessage(msg);
     }
 }

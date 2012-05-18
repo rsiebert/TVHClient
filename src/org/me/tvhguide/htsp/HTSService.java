@@ -22,13 +22,22 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Executors;
@@ -215,232 +224,368 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
     private final IBinder mBinder = new LocalBinder();
 
-    public void onAsyncResponse(HTSMessage response) {
+    private void onTagAdd(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        ChannelTag tag = new ChannelTag();
+        tag.id = msg.getLong("tagId");
+        tag.name = msg.getString("tagName", null);
+        tag.icon = msg.getString("tagIcon", null);
+        //tag.members = response.getIntList("members");
+        app.addChannelTag(tag);
+        if (tag.icon != null) {
+            getChannelTagIcon(tag);
+        }
+    }
+
+    private void onTagUpdate(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        ChannelTag tag = app.getChannelTag(msg.getLong("tagId"));
+        if (tag == null) {
+            return;
+        }
+
+        tag.name = msg.getString("tagName", tag.name);
+        String icon = msg.getString("tagIcon", tag.icon);
+        if (icon == null) {
+            tag.icon = null;
+            tag.iconBitmap = null;
+        } else if (!icon.equals(tag.icon)) {
+            tag.icon = icon;
+            getChannelTagIcon(tag);
+        }
+    }
+
+    private void onTagDelete(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.removeChannelTag(msg.getLong("tagId"));
+    }
+
+    private void onChannelAdd(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        final Channel ch = new Channel();
+        ch.id = msg.getLong("channelId");
+        ch.name = msg.getString("channelName", null);
+        ch.number = msg.getInt("channelNumber", 0);
+        ch.icon = msg.getString("channelIcon", null);
+        ch.tags = msg.getIntList("tags", ch.tags);
+
+        if (ch.number == 0) {
+            ch.number = (int) (ch.id + 25000);
+        }
+
+        app.addChannel(ch);
+        if (ch.icon != null) {
+            getChannelIcon(ch);
+        }
+        long currEventId = msg.getLong("eventId", 0);
+        long nextEventId = msg.getLong("nextEventId", 0);
+
+        ch.isTransmitting = currEventId != 0;
+
+        if (currEventId > 0) {
+            getEvents(ch, currEventId, 5);
+        } else if (nextEventId > 0) {
+            getEvents(ch, nextEventId, 5);
+        }
+    }
+
+    private void onChannelUpdate(HTSMessage msg) {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
-        String method = response.getMethod();
+        final Channel ch = app.getChannel(msg.getLong("channelId"));
+        if (ch == null) {
+            return;
+        }
+
+        ch.name = msg.getString("channelName", ch.name);
+        ch.number = msg.getInt("channelNumber", ch.number);
+        String icon = msg.getString("channelIcon", ch.icon);
+        ch.tags = msg.getIntList("tags", ch.tags);
+
+        if (icon == null) {
+            ch.icon = null;
+            ch.iconBitmap = null;
+        } else if (!icon.equals(ch.icon)) {
+            ch.icon = icon;
+            getChannelIcon(ch);
+        }
+        //Remove programmes that have ended
+        long currEventId = msg.getLong("eventId", 0);
+        long nextEventId = msg.getLong("nextEventId", 0);
+
+        ch.isTransmitting = currEventId != 0;
+
+        Iterator<Programme> it = ch.epg.iterator();
+        ArrayList<Programme> tmp = new ArrayList<Programme>();
+
+        while (it.hasNext() && currEventId > 0) {
+            Programme p = it.next();
+            if (p.id != currEventId) {
+                tmp.add(p);
+            } else {
+                break;
+            }
+        }
+        ch.epg.removeAll(tmp);
+
+        for (Programme p : tmp) {
+            app.removeProgramme(p);
+        }
+
+        final long eventId = currEventId != 0 ? currEventId : nextEventId;
+        if (eventId > 0 && ch.epg.size() < 2) {
+            execService.schedule(new Runnable() {
+
+                public void run() {
+                    getEvents(ch, eventId, 5);
+                }
+            }, 30, TimeUnit.SECONDS);
+        } else {
+            app.updateChannel(ch);
+        }
+    }
+
+    private void onChannelDelete(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.removeChannel(msg.getLong("channelId"));
+    }
+
+    private void onDvrEntryAdd(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        Recording rec = new Recording();
+        rec.id = msg.getLong("id");
+        rec.description = msg.getString("description", null);
+        rec.error = msg.getString("error", null);
+        rec.start = msg.getDate("start");
+        rec.state = msg.getString("state", null);
+        rec.stop = msg.getDate("stop");
+        rec.title = msg.getString("title", null);
+        rec.channel = app.getChannel(msg.getLong("channel"));
+        if (rec.channel != null) {
+            rec.channel.recordings.add(rec);
+        }
+        app.addRecording(rec);
+    }
+
+    private void onDvrEntryUpdate(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        Recording rec = app.getRecording(msg.getLong("id"));
+        if (rec == null) {
+            return;
+        }
+
+        rec.description = msg.getString("description", rec.description);
+        rec.error = msg.getString("error", rec.error);
+        rec.start = msg.getDate("start");
+        rec.state = msg.getString("state", rec.state);
+        rec.stop = msg.getDate("stop");
+        rec.title = msg.getString("title", rec.title);
+        app.updateRecording(rec);
+    }
+
+    private void onDvrEntryDelete(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        Recording rec = app.getRecording(msg.getLong("id"));
+
+        if (rec == null || rec.channel == null) {
+            return;
+        }
+
+        rec.channel.recordings.remove(rec);
+        for (Programme p : rec.channel.epg) {
+            if (p.recording == rec) {
+                p.recording = null;
+                app.updateProgramme(p);
+                break;
+            }
+        }
+        app.removeRecording(rec);
+    }
+
+    private void onInitialSyncCompleted(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.setLoading(false);
+    }
+
+    private void onStartSubscription(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        Subscription subscription = app.getSubscription(msg.getLong("subscriptionId"));
+        if (subscription == null) {
+            return;
+        }
+
+        for (Object obj : msg.getList("streams")) {
+            Stream s = new Stream();
+            HTSMessage sub = (HTSMessage) obj;
+
+            s.index = sub.getInt("index");
+            s.type = sub.getString("type");
+            s.language = sub.getString("language", "");
+            s.width = sub.getInt("width", 0);
+            s.height = sub.getInt("height", 0);
+
+            subscription.streams.add(s);
+        }
+    }
+
+    private void onSubscriptionStatus(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        Subscription s = app.getSubscription(msg.getLong("subscriptionId"));
+        if (s == null) {
+            return;
+        }
+
+        String status = msg.getString("status", null);
+        if (s.status == null ? status != null : !s.status.equals(status)) {
+            s.status = status;
+            app.updateSubscription(s);
+        }
+    }
+
+    private void onSubscriptionStop(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        Subscription s = app.getSubscription(msg.getLong("subscriptionId"));
+        if (s == null) {
+            return;
+        }
+        
+        String status = msg.getString("status", null);
+        if (s.status == null ? status != null : !s.status.equals(status)) {
+            s.status = status;
+            app.updateSubscription(s);
+        }
+        app.removeSubscription(s);
+    }
+
+    private void onMuxPacket(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        Subscription sub = app.getSubscription(msg.getLong("subscriptionId"));
+        if (sub == null) {
+            return;
+        }
+
+        Packet packet = new Packet();
+        packet.dts = msg.getLong("dts", 0);
+        packet.pts = msg.getLong("pts", 0);
+        packet.duration = msg.getLong("duration");
+        packet.frametype = msg.getInt("frametype");
+        packet.payload = msg.getByteArray("payload");
+
+        for (Stream st : sub.streams) {
+            if (st.index == msg.getInt("stream")) {
+                packet.stream = st;
+            }
+        }
+        packet.subscription = sub;
+        app.broadcastPacket(packet);
+    }
+
+    private void onQueueStatus(HTSMessage msg) {
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        Subscription sub = app.getSubscription(msg.getLong("subscriptionId"));
+        if (sub == null) {
+            return;
+        }
+        if (msg.containsFiled("delay")) {
+            BigInteger delay = msg.getBigInteger("delay");
+            delay = delay.divide(BigInteger.valueOf((1000)));
+            sub.delay = delay.longValue();
+        }
+        sub.droppedBFrames = msg.getLong("Bdrops", sub.droppedBFrames);
+        sub.droppedIFrames = msg.getLong("Idrops", sub.droppedIFrames);
+        sub.droppedPFrames = msg.getLong("Pdrops", sub.droppedPFrames);
+        sub.packetCount = msg.getLong("packets", sub.packetCount);
+        sub.queSize = msg.getLong("bytes", sub.queSize);
+
+        app.updateSubscription(sub);
+    }
+
+    public void onMessage(HTSMessage msg) {
+        String method = msg.getMethod();
         if (method.equals("tagAdd")) {
-            ChannelTag tag = new ChannelTag();
-            tag.id = response.getLong("tagId");
-            tag.name = response.getString("tagName", null);
-            tag.icon = response.getString("tagIcon", null);
-            //tag.members = response.getIntList("members");
-            app.addChannelTag(tag);
-            if (tag.icon != null) {
-                getChannelTagIcon(tag);
-            }
+            onTagAdd(msg);
         } else if (method.equals("tagUpdate")) {
-            ChannelTag tag = app.getChannelTag(response.getLong("tagId"));
-            if (tag != null) {
-                tag.name = response.getString("tagName", tag.name);
-                String icon = response.getString("tagIcon", tag.icon);
-                if (icon == null) {
-                    tag.icon = null;
-                    tag.iconBitmap = null;
-                } else if (!icon.equals(tag.icon)) {
-                    tag.icon = icon;
-                    getChannelTagIcon(tag);
-                }
-            }
+            onTagUpdate(msg);
         } else if (method.equals("tagDelete")) {
-            app.removeChannelTag(response.getLong("tagId"));
+            onTagDelete(msg);
         } else if (method.equals("channelAdd")) {
-            final Channel ch = new Channel();
-            ch.id = response.getLong("channelId");
-            ch.name = response.getString("channelName", null);
-            ch.number = response.getInt("channelNumber", 0);
-            ch.icon = response.getString("channelIcon", null);
-            ch.tags = response.getIntList("tags", ch.tags);
-
-            if (ch.number == 0) {
-                ch.number = (int) (ch.id + 25000);
-            }
-
-            app.addChannel(ch);
-            if (ch.icon != null) {
-                getChannelIcon(ch);
-            }
-            long currEventId = response.getLong("eventId", 0);
-            long nextEventId = response.getLong("nextEventId", 0);
-
-            ch.isTransmitting = currEventId != 0;
-
-            if (currEventId > 0) {
-                getEvents(ch, currEventId, 5);
-            } else if (nextEventId > 0) {
-                getEvents(ch, nextEventId, 5);
-            }
+            onChannelAdd(msg);
         } else if (method.equals("channelUpdate")) {
-            final Channel ch = app.getChannel(response.getLong("channelId"));
-            if (ch != null) {
-                ch.name = response.getString("channelName", ch.name);
-                ch.number = response.getInt("channelNumber", ch.number);
-                String icon = response.getString("channelIcon", ch.icon);
-                ch.tags = response.getIntList("tags", ch.tags);
-
-                if (icon == null) {
-                    ch.icon = null;
-                    ch.iconBitmap = null;
-                } else if (!icon.equals(ch.icon)) {
-                    ch.icon = icon;
-                    getChannelIcon(ch);
-                }
-                //Remove programmes that have ended
-                long currEventId = response.getLong("eventId", 0);
-                long nextEventId = response.getLong("nextEventId", 0);
-
-                ch.isTransmitting = currEventId != 0;
-
-                Iterator<Programme> it = ch.epg.iterator();
-                ArrayList<Programme> tmp = new ArrayList<Programme>();
-
-                while (it.hasNext() && currEventId > 0) {
-                    Programme p = it.next();
-                    if (p.id != currEventId) {
-                        tmp.add(p);
-                    } else {
-                        break;
-                    }
-                }
-                ch.epg.removeAll(tmp);
-
-                for (Programme p : tmp) {
-                    app.removeProgramme(p);
-                }
-
-                final long eventId = currEventId != 0 ? currEventId : nextEventId;
-                if (eventId > 0 && ch.epg.size() < 2) {
-                    execService.schedule(new Runnable() {
-
-                        public void run() {
-                            getEvents(ch, eventId, 5);
-                        }
-                    }, 30, TimeUnit.SECONDS);
-                } else {
-                    app.updateChannel(ch);
-                }
-            }
+            onChannelUpdate(msg);
         } else if (method.equals("channelDelete")) {
-            app.removeChannel(response.getLong("channelId"));
+            onChannelDelete(msg);
         } else if (method.equals("initialSyncCompleted")) {
-            app.setLoading(false);
+            onInitialSyncCompleted(msg);
         } else if (method.equals("dvrEntryAdd")) {
-            Recording rec = new Recording();
-            rec.id = response.getLong("id");
-            rec.description = response.getString("description", null);
-            rec.error = response.getString("error", null);
-            rec.start = response.getDate("start");
-            rec.state = response.getString("state", null);
-            rec.stop = response.getDate("stop");
-            rec.title = response.getString("title", null);
-            rec.channel = app.getChannel(response.getLong("channel"));
-            if (rec.channel != null) {
-                rec.channel.recordings.add(rec);
-            }
-            app.addRecording(rec);
+            onDvrEntryAdd(msg);
         } else if (method.equals("dvrEntryUpdate")) {
-            Recording rec = app.getRecording(response.getLong("id"));
-            if (rec != null) {
-                rec.description = response.getString("description", rec.description);
-                rec.error = response.getString("error", rec.error);
-                rec.start = response.getDate("start");
-                rec.state = response.getString("state", rec.state);
-                rec.stop = response.getDate("stop");
-                rec.title = response.getString("title", rec.title);
-                app.updateRecording(rec);
-            }
+            onDvrEntryUpdate(msg);
         } else if (method.equals("dvrEntryDelete")) {
-            Recording rec = app.getRecording(response.getLong("id"));
-            if (rec != null && rec.channel != null) {
-                rec.channel.recordings.remove(rec);
-                for (Programme p : rec.channel.epg) {
-                    if (p.recording == rec) {
-                        p.recording = null;
-                        app.updateProgramme(p);
-                        break;
-                    }
-                }
-                app.removeRecording(rec);
-            }
+            onDvrEntryDelete(msg);
         } else if (method.equals("subscriptionStart")) {
-            Subscription subscription = app.getSubscription(response.getLong("subscriptionId"));
-            if (subscription == null) {
-                return;
-            }
-
-            for (Object obj : response.getList("streams")) {
-                Stream s = new Stream();
-                HTSMessage sub = (HTSMessage) obj;
-
-                s.index = sub.getInt("index");
-                s.type = sub.getString("type");
-                s.language = sub.getString("language", "");
-                s.width = sub.getInt("width", 0);
-                s.height = sub.getInt("height", 0);
-
-                subscription.streams.add(s);
-            }
+            onStartSubscription(msg);
         } else if (method.equals("subscriptionStatus")) {
-            Subscription s = app.getSubscription(response.getLong("subscriptionId"));
-            if (s == null) {
-                return;
-            }
-            String status = response.getString("status", null);
-            if (s.status == null ? status != null : !s.status.equals(status)) {
-                s.status = status;
-                app.updateSubscription(s);
-            }
+            onSubscriptionStatus(msg);
         } else if (method.equals("subscriptionStop")) {
-            Subscription s = app.getSubscription(response.getLong("subscriptionId"));
-            if (s == null) {
-                return;
-            }
-            String status = response.getString("status", null);
-            if (s.status == null ? status != null : !s.status.equals(status)) {
-                s.status = status;
-                app.updateSubscription(s);
-            }
-            app.removeSubscription(s);
+            onSubscriptionStop(msg);
         } else if (method.equals("muxpkt")) {
-            Subscription sub = app.getSubscription(response.getLong("subscriptionId"));
-            if (sub == null) {
-                return;
-            }
-
-            Packet packet = new Packet();
-            packet.dts = response.getLong("dts", 0);
-            packet.pts = response.getLong("pts", 0);
-            packet.duration = response.getLong("duration");
-            packet.frametype = response.getInt("frametype");
-            packet.payload = response.getByteArray("payload");
-
-            for (Stream st : sub.streams) {
-                if (st.index == response.getInt("stream")) {
-                    packet.stream = st;
-                }
-            }
-            packet.subscription = sub;
-            app.broadcastPacket(packet);
+            onMuxPacket(msg);
         } else if (method.equals("queueStatus")) {
-            Subscription sub = app.getSubscription(response.getLong("subscriptionId"));
-            if (sub == null) {
-                return;
-            }
-            if (response.containsFiled("delay")) {
-                BigInteger delay = response.getBigInteger("delay");
-                delay = delay.divide(BigInteger.valueOf((1000)));
-                sub.delay = delay.longValue();
-            }
-            sub.droppedBFrames = response.getLong("Bdrops", sub.droppedBFrames);
-            sub.droppedIFrames = response.getLong("Idrops", sub.droppedIFrames);
-            sub.droppedPFrames = response.getLong("Pdrops", sub.droppedPFrames);
-            sub.packetCount = response.getLong("packets", sub.packetCount);
-            sub.queSize = response.getLong("bytes", sub.queSize);
-
-            app.updateSubscription(sub);
+            onQueueStatus(msg);
         } else {
             Log.d(TAG, method.toString());
         }
+    }
+
+    public String hashString(String s) {
+        try {
+            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            StringBuilder hexString = new StringBuilder();
+            for (int i = 0; i < messageDigest.length; i++) {
+                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "Can't create hash string", e);
+        }
+
+        return "";
+    }
+
+    public void cacheImage(String url, File f) throws MalformedURLException, IOException {
+        Log.d(TAG, "Caching " + url + " as " + f.toString());
+        BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
+
+        OutputStream os = new FileOutputStream(f);
+        os = new BufferedOutputStream(os, 1024);
+
+        byte[] data = new byte[1024];
+        int x = 0;
+        while ((x = in.read(data, 0, 1024)) >= 0) {
+            os.write(data, 0, x);
+        }
+        os.close();
+        in.close();
+
+    }
+
+    private Bitmap getIcon(final String url) throws MalformedURLException, IOException {
+        if (url == null || url.length() == 0) {
+            return null;
+        }
+
+        File dir = getCacheDir();
+        File f = new File(dir, hashString(url));
+
+        if (!f.exists()) {
+            cacheImage(url, f);
+        }
+
+        return BitmapFactory.decodeFile(f.toString());
     }
 
     private void getChannelIcon(final Channel ch) {
@@ -449,11 +594,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void run() {
 
                 try {
-                    InputStream inputStream = new URL(ch.icon).openStream();
-                    ch.iconBitmap = BitmapFactory.decodeStream(inputStream);
+                    ch.iconBitmap = getIcon(ch.icon);
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     app.updateChannel(ch);
                 } catch (Throwable ex) {
+                    Log.e(TAG, "Can't load channel icon", ex);
                 }
             }
         });
@@ -465,11 +610,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void run() {
 
                 try {
-                    InputStream inputStream = new URL(tag.icon).openStream();
-                    tag.iconBitmap = BitmapFactory.decodeStream(inputStream);
+                    tag.iconBitmap = getIcon(tag.icon);
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     app.updateChannelTag(tag);
                 } catch (Throwable ex) {
+                    Log.e(TAG, "Can't load tag icon", ex);
                 }
             }
         });

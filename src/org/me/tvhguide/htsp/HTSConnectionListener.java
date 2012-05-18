@@ -24,7 +24,7 @@ package org.me.tvhguide.htsp;
  */
 public interface HTSConnectionListener {
 
-    public void onAsyncResponse(HTSMessage response);
+    public void onMessage(HTSMessage response);
     public void onError(int errorCode);
     public void onError(Exception ex);
 }
