@@ -4,6 +4,8 @@
     android:versionCode="1"
     android:versionName="1.0"
     >
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="15" />
     <application android:name=".TVHGuideApplication" android:label="TVHGuide" android:icon="@drawable/logo_72">
         <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity" />
         <activity android:name=".ChannelListActivity" android:theme="@style/CustomTheme">
@@ -28,6 +30,4 @@
         <activity android:name=".PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name=".htsp.HTSService" android:enabled="true"/>
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
 </manifest>
