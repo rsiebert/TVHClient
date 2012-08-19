@@ -4,69 +4,18 @@
     android:id="@+id/player_frame"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <SurfaceView 
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content" 
-        android:layout_gravity="center"
-        android:id="@+id/player_surface"/>
+    <org.me.tvhguide.TVHVideoView 
+         android:layout_height="fill_parent"
+         android:layout_width="fill_parent" 
+         android:id="@+id/player_video_view"
+         android:layout_gravity="center"/>
+         
     <LinearLayout
-        android:padding="10dp"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
-        <LinearLayout
-            android:id="@+id/player_details"
-            android:background="@drawable/overlay_box"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/player_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ffffff"
-                android:textSize="24sp"
-                android:gravity="center"/>
-            <TextView
-                android:id="@+id/player_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:gravity="left"/>
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="24sp"/>
-            <TextView
-                android:id="@+id/player_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:gravity="left"/>
-            <TextView
-                android:id="@+id/player_queue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:gravity="left"/>
-            <TextView
-                android:id="@+id/player_drops"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:gravity="left"/>
-            <TextView
-                android:id="@+id/player_speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:gravity="left"/>
-        </LinearLayout>
+        android:layout_width="fill_parent"
+        android:id="@+id/player_overlay"
+        android:layout_gravity="bottom"
+        android:background="@drawable/overlay_box"
+        android:orientation="vertical" >
     </LinearLayout>
 </FrameLayout>

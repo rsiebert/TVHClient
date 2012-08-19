@@ -18,30 +18,23 @@
  */
 package org.me.tvhguide;
 
-import android.view.View;
-import org.me.tvhguide.htsp.HTSService;
-import android.content.Intent;
-import org.me.tvhguide.model.Subscription;
-import org.me.tvhguide.htsp.HTSListener;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnErrorListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import org.me.tvhguide.htsp.HTSListener;
+import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
-import org.me.tvhguide.model.Packet;
-import org.me.tvhguide.model.Programme;
+import org.me.tvhguide.model.HttpTicket;
 import org.me.tvhguide.model.Stream;
 
 /**
@@ -50,39 +43,29 @@ import org.me.tvhguide.model.Stream;
  */
 public class PlaybackActivity extends Activity implements HTSListener {
 
-    private long subId;
-    private long channelId;
-    private SurfaceView surfaceView;
-    FrameLayout frameLayout;
-    private View overlay;
-    private TextView playerStatus;
-    private TextView playerQueue;
-    private TextView playerDrops;
-    private TextView playerSpeed;
-    private boolean isPlaying;
+    private TVHVideoView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("externalPref", false)) {
+            Intent intent = new Intent(this, ExternalPlaybackActivity.class);
+            intent.putExtras(this.getIntent().getExtras());
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        Channel channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
+        final Channel channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
         if (channel == null) {
             finish();
             return;
         }
 
         setTitle(channel.name);
-        channelId = channel.id;
-        subId = 1;
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("externalPref", false)) {
-            Intent intent = new Intent(this, ExternalPlaybackActivity.class);
-            intent.putExtra("channelId", channelId);
-            startActivity(intent);
-            finish();
-        }
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -90,31 +73,28 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         setContentView(R.layout.player_layout);
 
-        surfaceView = (SurfaceView) findViewById(R.id.player_surface);
-        surfaceView.setMinimumHeight(100);
-        surfaceView.setMinimumWidth(100);
-        surfaceView.setKeepScreenOn(true);
+        getWindow().setFormat(PixelFormat.TRANSLUCENT);
+        videoView = (TVHVideoView) findViewById(R.id.player_video_view);
+        videoView.setOnErrorListener(new OnErrorListener() {
 
-        SurfaceHolder surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.setFormat(PixelFormat.RGBA_8888);
-        surfaceHolder.addCallback(surfaceCallback);
+            public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
+                finish();
+                return false;
+            }
+        });
 
-        if (channel.epg.size() > 0) {
-            Programme p = channel.epg.iterator().next();
-            TextView view = (TextView) findViewById(R.id.player_title);
-            view.setText(p.title);
-            view = (TextView) findViewById(R.id.player_desc);
-            view.setText(p.description);
-        }
+        Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
+        intent.setAction(HTSService.ACTION_GET_TICKET);
 
-        playerStatus = (TextView) findViewById(R.id.player_status);
-        playerQueue = (TextView) findViewById(R.id.player_queue);
-        playerDrops = (TextView) findViewById(R.id.player_drops);
-        playerSpeed = (TextView) findViewById(R.id.player_speed);
-        overlay = findViewById(R.id.player_details);
-        overlay.getBackground().setAlpha(127);
+        LayoutInflater inflater = getLayoutInflater();
+        View v = inflater.inflate(R.layout.channel_list_widget, null, false);
+        final ChannelListViewWrapper w = new ChannelListViewWrapper(v);
 
-        frameLayout = (FrameLayout) findViewById(R.id.player_frame);
+        final LinearLayout overlay = (LinearLayout) findViewById(R.id.player_overlay);
+        overlay.setVisibility(LinearLayout.INVISIBLE);
+        overlay.addView(v);
+
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.player_frame);
         frameLayout.setOnClickListener(new OnClickListener() {
 
             public void onClick(View arg0) {
@@ -122,33 +102,14 @@ public class PlaybackActivity extends Activity implements HTSListener {
                     overlay.setVisibility(LinearLayout.INVISIBLE);
                 } else {
                     overlay.setVisibility(LinearLayout.VISIBLE);
+                    w.repaint(channel);
                 }
             }
         });
+
+        intent.putExtras(getIntent().getExtras());
+        this.startService(intent);
     }
-    private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
-
-        public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
-            new Thread(new Runnable() {
-
-                public void run() {
-                    TVHPlayer.setSurface(holder.getSurface());
-                }
-            }).start();
-        }
-
-        public void surfaceCreated(SurfaceHolder holder) {
-        }
-
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            new Thread(new Runnable() {
-
-                public void run() {
-                    TVHPlayer.setSurface(null);
-                }
-            }).start();
-        }
-    };
 
     @Override
     protected void onResume() {
@@ -156,164 +117,53 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
-        startPlayback();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        stopPlayback();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.removeListener(this);
     }
 
-    private void stopPlayback() {
-        isPlaying = false;
-        TVHPlayer.stopPlayback();
-        Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
-        intent.setAction(HTSService.ACTION_UNSUBSCRIBE);
-        intent.putExtra("subscriptionId", subId);
-        startService(intent);
-    }
-
-    private DisplayMetrics getMaxDisplayMetrics() {
+    private void startPlayback(String path, String ticket) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        double confHeight = Integer.parseInt(prefs.getString("resolutionPref", "288"));
 
-        DisplayMetrics d = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(d);
-
-        double maxWidth = d.widthPixels;
-        double maxHeight = d.heightPixels;
-
-        if (maxHeight > maxWidth) {
-            double tmp = maxHeight;
-            maxHeight = maxWidth;
-            maxWidth = tmp;
-        }
-
-        if (confHeight < maxHeight) {
-            maxWidth *= (confHeight / maxHeight);
-            maxHeight = confHeight;
-        }
-
-        d.widthPixels = (int) maxWidth;
-        d.heightPixels = (int) maxHeight;
-
-        return d;
-    }
-
-    private void startPlayback() {
-        stopPlayback();
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String host = prefs.getString("serverHostPref", "localhost");
+        Integer port = Integer.parseInt(prefs.getString("httpPortPref", "9981"));
+        Integer resolution = Integer.parseInt(prefs.getString("resolutionPref", "288"));
         Boolean transcode = prefs.getBoolean("transcodePref", true);
-        DisplayMetrics d = getMaxDisplayMetrics();
         String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
         String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
-        
-        TVHPlayer.startPlayback();
 
-        Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
-        intent.setAction(HTSService.ACTION_SUBSCRIBE);
-        intent.putExtra("subscriptionId", subId);
-        intent.putExtra("channelId", channelId);
-        intent.putExtra("channels", 2);
+        String url = "http://" + host + ":" + port + path;
+        url += "?ticket=" + ticket;
+        url += "&mux=mpegts";
         if (transcode) {
-            intent.putExtra("maxWidth", d.widthPixels);
-            intent.putExtra("maxHeight", d.heightPixels);
-            intent.putExtra("audioCodec", acodec);
-            intent.putExtra("videoCodec", vcodec);
-        }
-        startService(intent);
-    }
-
-    private void setDimention(int width, int height) {
-        if (width <= 0 || height <= 0) {
-            return;
+            url += "&transcode=1";
+            url += "&resolution=" + resolution;
+            url += "&acodec=" + acodec;
+            url += "&vcodec=" + vcodec;
         }
 
-        surfaceView.getHolder().setFixedSize(width, height);
-
-        double zoomW = (double) frameLayout.getWidth() / (double) width;
-        double zoomH = (double) frameLayout.getHeight() / (double) height;
-        double zoom = Math.min(zoomW, zoomH);
-
-        int _width = (int) (zoom * width);
-        int _height = (int) (zoom * height);
-
-        if (width > 0 && height > 0 && TVHPlayer.getAspectNum() > 0 && TVHPlayer.getAspectDen() > 0) {
-            ViewGroup.LayoutParams lp = surfaceView.getLayoutParams();
-            if (zoomW < zoomH) {
-                lp.width = _width;
-                lp.height = TVHPlayer.getAspectDen() * _width / TVHPlayer.getAspectNum();
-            } else {
-                lp.width = TVHPlayer.getAspectNum() * _height / TVHPlayer.getAspectDen();
-                lp.height = _height;
-            }
-
-            Log.d("PlayerbackActivity", width + "x" + height + " ==> " + lp.width + "x" + lp.height + ", zoom = " + zoom);
-            surfaceView.requestLayout();
-        }
+        videoView.setVideoURI(Uri.parse(url));
+        videoView.requestFocus();
+        videoView.start();
+        videoView.setAspectRatio(16, 9);
     }
 
     public void onMessage(String action, final Object obj) {
-        if (action.equals(TVHGuideApplication.ACTION_SUBSCRIPTION_UPDATE)) {
-            runOnUiThread(new Runnable() {
+        if (action.equals(TVHGuideApplication.ACTION_TICKET_ADD)) {
+
+            this.runOnUiThread(new Runnable() {
 
                 public void run() {
-                    Subscription subscription = (Subscription) obj;
-                    if (subscription.status != null && subscription.status.length() > 0) {
-                        playerStatus.setText("Status: " + subscription.status);
-                    } else if (TVHPlayer.isBuffering()) {
-                        playerStatus.setText("Status: Buffering");
-                    } else {
-                        playerStatus.setText("Status: OK");
-                    }
-
-                    playerQueue.setText("Server queue size: " + Long.toString(subscription.queSize / 1000) + " kb");
-                    long droppedFrames = subscription.droppedBFrames
-                            + subscription.droppedPFrames
-                            + subscription.droppedIFrames;
-                    playerDrops.setText("Dropped frames: " + Long.toString(droppedFrames));
-                    playerSpeed.setText("Network speed: " + TVHPlayer.getNetworkSpeed() + "x");
-                    for (Stream st : subscription.streams) {
-                        if (st.index == TVHPlayer.getVideoIndex()) {
-                            if (TVHPlayer.getHeight() > 0 && TVHPlayer.getWidth() > 0) {
-                                st.height = TVHPlayer.getHeight();
-                                st.width = TVHPlayer.getWidth();
-                            }
-                            setDimention(st.width, st.height);
-                            break;
-                        }
-                    }
-
-                    Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
-                    intent.setAction(HTSService.ACTION_FEEDBACK);
-                    intent.putExtra("subscriptionId", subId);
-                    intent.putExtra("speed", (int) (TVHPlayer.getNetworkSpeed() * 100));
-                    startService(intent);
+                    HttpTicket t = (HttpTicket) obj;
+                    startPlayback(t.path, t.ticket);
                 }
             });
 
-        } else if (action.equals(TVHGuideApplication.ACTION_PLAYBACK_PACKET)) {
-            Packet p = (Packet) obj;
-            final boolean b = TVHPlayer.enqueue(p);
-            if (b != isPlaying) {
-
-                runOnUiThread(new Runnable() {
-
-                    public void run() {
-                        if (b) {
-                            overlay.setVisibility(LinearLayout.INVISIBLE);
-                        } else {
-                            overlay.setVisibility(LinearLayout.VISIBLE);
-                        }
-                        isPlaying = b;
-                    }
-                });
-            }
         }
     }
 }

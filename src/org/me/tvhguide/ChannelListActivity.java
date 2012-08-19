@@ -18,13 +18,10 @@
  */
 package org.me.tvhguide;
 
-import android.content.DialogInterface;
-import org.me.tvhguide.htsp.HTSService;
-import org.me.tvhguide.model.Programme;
-import org.me.tvhguide.model.Channel;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
@@ -32,29 +29,15 @@ import android.graphics.drawable.ClipDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
-import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import org.me.tvhguide.model.ChannelTag;
+import android.view.*;
+import android.widget.*;
+import java.util.*;
 import org.me.tvhguide.htsp.HTSListener;
+import org.me.tvhguide.htsp.HTSService;
+import org.me.tvhguide.model.Channel;
+import org.me.tvhguide.model.ChannelTag;
+import org.me.tvhguide.model.Programme;
 
 /**
  *
@@ -349,88 +332,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         }
     }
 
-    private class ViewWarpper {
-
-        private TextView name;
-        private TextView nowTitle;
-        private TextView nowTime;
-        private TextView nextTitle;
-        private TextView nextTime;
-        private ImageView icon;
-        private ImageView nowProgressImage;
-        private ClipDrawable nowProgress;
-
-        public ViewWarpper(View base, long channelId) {
-            name = (TextView) base.findViewById(R.id.ch_name);
-            nowTitle = (TextView) base.findViewById(R.id.ch_now_title);
-
-            nowProgressImage = (ImageView) base.findViewById(R.id.ch_elapsedtime);
-            nowProgress = new ClipDrawable(nowProgressImage.getDrawable(), Gravity.LEFT, ClipDrawable.HORIZONTAL);
-            nowProgressImage.setBackgroundDrawable(nowProgress);
-
-            nowTime = (TextView) base.findViewById(R.id.ch_now_time);
-            nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
-            nextTime = (TextView) base.findViewById(R.id.ch_next_time);
-            icon = (ImageView) base.findViewById(R.id.ch_icon);
-        }
-
-        public void repaint(Channel channel) {
-            nowTime.setText("");
-            nowTitle.setText("");
-            nextTime.setText("");
-            nextTitle.setText("");
-            nowProgress.setLevel(0);
-
-            name.setText(channel.name);
-            name.invalidate();
-
-            icon.setBackgroundDrawable(new BitmapDrawable(channel.iconBitmap));
-            icon.setVisibility(ImageView.VISIBLE);
-            if (channel.isRecording()) {
-                icon.setImageResource(R.drawable.ic_rec_small);
-            } else {
-                icon.setImageDrawable(null);
-            }
-            icon.invalidate();
-
-            Iterator<Programme> it = channel.epg.iterator();
-            if (!channel.isTransmitting && it.hasNext()) {
-                nowTitle.setText(R.string.ch_no_transmission);
-            } else if (it.hasNext()) {
-                Programme p = it.next();
-                nowTime.setText(
-                        DateFormat.getTimeFormat(nowTime.getContext()).format(p.start)
-                        + " - "
-                        + DateFormat.getTimeFormat(nowTime.getContext()).format(p.stop));
-
-                double duration = (p.stop.getTime() - p.start.getTime());
-                double elapsed = new Date().getTime() - p.start.getTime();
-                double percent = elapsed / duration;
-
-                nowProgressImage.setVisibility(ImageView.VISIBLE);
-                nowProgress.setLevel((int) Math.floor(percent * 10000));
-                nowTitle.setText(p.title);
-            } else {
-                nowProgressImage.setVisibility(ImageView.GONE);
-            }
-            nowProgressImage.invalidate();
-            nowTime.invalidate();
-            nowTitle.invalidate();
-
-            if (it.hasNext()) {
-                Programme p = it.next();
-                nextTime.setText(
-                        DateFormat.getTimeFormat(nextTime.getContext()).format(p.start)
-                        + " - "
-                        + DateFormat.getTimeFormat(nextTime.getContext()).format(p.stop));
-
-                nextTitle.setText(p.title);
-            }
-            nextTime.invalidate();
-            nextTitle.invalidate();
-        }
-    }
-
     class ChannelListAdapter extends ArrayAdapter<Channel> {
 
         ChannelListAdapter(Activity context, List<Channel> list) {
@@ -460,7 +361,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                     continue;
                 }
 
-                ViewWarpper wrapper = (ViewWarpper) view.getTag();
+                ChannelListViewWrapper wrapper = (ChannelListViewWrapper) view.getTag();
                 wrapper.repaint(channel);
             }
         }
@@ -468,7 +369,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            ViewWarpper wrapper = null;
+            ChannelListViewWrapper wrapper;
 
             Channel ch = getItem(position);
             Activity activity = (Activity) getContext();
@@ -477,11 +378,11 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 LayoutInflater inflater = activity.getLayoutInflater();
                 row = inflater.inflate(R.layout.channel_list_widget, null, false);
                 row.requestLayout();
-                wrapper = new ViewWarpper(row, ch.id);
+                wrapper = new ChannelListViewWrapper(row);
                 row.setTag(wrapper);
 
             } else {
-                wrapper = (ViewWarpper) row.getTag();
+                wrapper = (ChannelListViewWrapper) row.getTag();
             }
 
             wrapper.repaint(ch);

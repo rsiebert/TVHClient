@@ -18,14 +18,13 @@
  */
 package org.me.tvhguide;
 
-import android.content.Intent;
-import org.me.tvhguide.htsp.HTSListener;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
+import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.HttpTicket;
 import org.me.tvhguide.model.Stream;
@@ -63,53 +62,41 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         app.removeListener(this);
     }
 
-    private DisplayMetrics getMaxDisplayMetrics(double confHeight) {
-        DisplayMetrics d = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(d);
-
-        double maxWidth = d.widthPixels;
-        double maxHeight = d.heightPixels;
-
-        if (maxHeight > maxWidth) {
-            double tmp = maxHeight;
-            maxHeight = maxWidth;
-            maxWidth = tmp;
-        }
-
-        if (confHeight < maxHeight) {
-            maxWidth *= (confHeight / maxHeight);
-            maxHeight = confHeight;
-        }
-
-        d.widthPixels = (int) maxWidth;
-        d.heightPixels = (int) maxHeight;
-
-        return d;
-    }
-
     private void startPlayback(String path, String ticket) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         String host = prefs.getString("serverHostPref", "localhost");
         Integer port = Integer.parseInt(prefs.getString("httpPortPref", "9981"));
+
+        Integer resolution = Integer.parseInt(prefs.getString("resolutionPref", "288"));
         Boolean transcode = prefs.getBoolean("transcodePref", true);
-        Integer maxHeight = Integer.parseInt(prefs.getString("resolutionPref", "288"));
-        DisplayMetrics d = getMaxDisplayMetrics(maxHeight);
         String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
-        String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
-        
+        String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_MPEG4VIDEO);
+        String container = prefs.getString("containerPref", "matroska");
+        String mime = "application/octet-stream";
+
+        if ("mpegps".equals(container)) {
+            mime = "video/mp2p";
+        } else if ("mpegts".equals(container)) {
+            mime = "video/mp4";
+        } else if ("matroska".equals(container)) {
+            mime = "video/x-matroska";
+        } else if ("pass".equals(container)) {
+            mime = "video/mp2t"; //assume mpegts
+        }
+
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
-        if(transcode) {
+        url += "&mux=" + container;
+        if (transcode) {
             url += "&transcode=1";
-            url += "&width=" + d.widthPixels;
-            url += "&height=" + d.heightPixels;
+            url += "&resolution=" + resolution;
             url += "&acodec=" + acodec;
             url += "&vcodec=" + vcodec;
         }
-        
+
         final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(url), "video/x-matroska");
+        intent.setDataAndType(Uri.parse(url), mime);
 
 
         this.runOnUiThread(new Runnable() {

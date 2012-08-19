@@ -43,6 +43,13 @@
             android:key="httpPortPref"
             android:numeric="integer" />
         <CheckBoxPreference 
+            android:id="@+id/pref_transcode"
+            android:name="@string/pref_transcode"
+            android:summary="@string/pref_transcode_sum"
+            android:defaultValue="true"
+            android:title="@string/pref_transcode"
+            android:key="transcodePref" />
+        <CheckBoxPreference 
             android:id="@+id/pref_external"
             android:name="@string/pref_external"
             android:summary="@string/pref_external_sum"
@@ -50,13 +57,16 @@
             android:title="@string/pref_external"
             android:key="externalPref" 
         />
-        <CheckBoxPreference 
-            android:id="@+id/pref_transcode"
-            android:name="@string/pref_transcode"
-            android:summary="@string/pref_transcode_sum"
-            android:defaultValue="true"
-            android:title="@string/pref_transcode"
-            android:key="transcodePref" />
+        <ListPreference
+            android:name="@string/pref_container"
+            android:summary="@string/pref_container_sum"
+            android:defaultValue="matroska"
+            android:title="@string/pref_container"
+            android:key="containerPref"
+            android:dialogTitle="@string/pref_container"
+            android:dependency="externalPref"
+            android:entries="@array/pref_container_list_display"
+            android:entryValues="@array/pref_container_list" />
         <ListPreference
             android:name="@string/pref_res"
             android:summary="@string/pref_res_sum"

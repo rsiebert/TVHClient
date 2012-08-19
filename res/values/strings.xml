@@ -36,6 +36,9 @@
     <string name="pref_vcodec">Video codec</string>
     <string name="pref_vcodec_sum">Video codec to use with the transcoder</string>
     
+    <string name="pref_container">Media container</string>
+    <string name="pref_container_sum">Prefered media container</string>
+    
     <string name="pref_playback">Playback</string>
     
     <string name="pref_http_port">HTTP port</string>
@@ -43,10 +46,10 @@
     
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Request a transcoded stream during live playback</string>
-    
+
     <string name="pref_external">Prefer external player</string>
     <string name="pref_external_sum">Use an external player for live streams (BSPlayer seems OK)</string>
-    
+
     <string name="err_auth">Access denied</string>
     <string name="err_inv">Invalid response from server</string>
     <string name="err_connect">Can\'t connect to server</string>

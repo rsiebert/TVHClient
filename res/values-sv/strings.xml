@@ -36,6 +36,9 @@
     <string name="pref_vcodec">Video kodek</string>
     <string name="pref_vcodec_sum">Videokodek att använda vid omkodning</string>
     
+    <string name="pref_container">Media container</string>
+    <string name="pref_container_sum">Media container att föredra</string>
+    
     <string name="pref_playback">Uppspelning</string>
     
     <string name="pref_http_port">HTTP port</string>
@@ -43,10 +46,10 @@
     
     <string name="pref_transcode">Koda om ström</string>
     <string name="pref_transcode_sum">Begär omkodning av direktsänd media</string>
-    
+
     <string name="pref_external">Föredra extern spelare</string>
     <string name="pref_external_sum">Använd en extern spelare för direktsänd media (BSPlayer verkar OK)</string>
-    
+
     <string name="err_auth">Åtkomst nekad</string>
     <string name="err_inv">Felaktigt svar från servern</string>
     <string name="err_connect">Kan inte ansluta till servern</string>
