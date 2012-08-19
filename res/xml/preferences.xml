@@ -64,7 +64,7 @@
             android:id="@+id/pref_external"
             android:name="@string/pref_external"
             android:summary="@string/pref_external_sum"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:title="@string/pref_external"
             android:key="externalPref" 
         />
