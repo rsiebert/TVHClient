@@ -27,8 +27,11 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import org.me.tvhguide.htsp.HTSListener;
@@ -134,8 +137,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
         Integer port = Integer.parseInt(prefs.getString("httpPortPref", "9981"));
         Integer resolution = Integer.parseInt(prefs.getString("resolutionPref", "288"));
         Boolean transcode = prefs.getBoolean("transcodePref", true);
-        String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
-        String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
 
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
@@ -143,8 +144,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
         if (transcode) {
             url += "&transcode=1";
             url += "&resolution=" + resolution;
-            url += "&acodec=" + acodec;
-            url += "&vcodec=" + vcodec;
+            url += "&acodec=" + Stream.STREAM_TYPE_AAC;
+            url += "&vcodec=" + Stream.STREAM_TYPE_H264;
         }
 
         videoView.setVideoURI(Uri.parse(url));

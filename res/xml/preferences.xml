@@ -49,6 +49,17 @@
             android:defaultValue="true"
             android:title="@string/pref_transcode"
             android:key="transcodePref" />
+        <ListPreference
+            android:name="@string/pref_res"
+            android:summary="@string/pref_res_sum"
+            android:defaultValue="384"
+            android:title="@string/pref_res"
+            android:key="resolutionPref"
+            android:dialogTitle="@string/pref_res"
+            android:dependency="transcodePref"
+            android:entries="@array/pref_res_list_display"
+            android:entryValues="@array/pref_res_list" />
+            
         <CheckBoxPreference 
             android:id="@+id/pref_external"
             android:name="@string/pref_external"
@@ -67,16 +78,6 @@
             android:dependency="externalPref"
             android:entries="@array/pref_container_list_display"
             android:entryValues="@array/pref_container_list" />
-        <ListPreference
-            android:name="@string/pref_res"
-            android:summary="@string/pref_res_sum"
-            android:defaultValue="384"
-            android:title="@string/pref_res"
-            android:key="resolutionPref"
-            android:dialogTitle="@string/pref_res"
-            android:dependency="transcodePref"
-            android:entries="@array/pref_res_list_display"
-            android:entryValues="@array/pref_res_list" />
         <ListPreference
             android:name="@string/pref_acodec"
             android:summary="@string/pref_acodec_sum"
