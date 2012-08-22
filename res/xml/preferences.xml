@@ -42,6 +42,15 @@
             android:title="@string/pref_http_port"
             android:key="httpPortPref"
             android:numeric="integer" />
+        <ListPreference
+            android:name="@string/pref_container"
+            android:summary="@string/pref_container_sum"
+            android:defaultValue="matroska"
+            android:title="@string/pref_container"
+            android:key="containerPref"
+            android:dialogTitle="@string/pref_container"
+            android:entries="@array/pref_container_list_display"
+            android:entryValues="@array/pref_container_list" />
         <CheckBoxPreference 
             android:id="@+id/pref_transcode"
             android:name="@string/pref_transcode"
@@ -59,25 +68,6 @@
             android:dependency="transcodePref"
             android:entries="@array/pref_res_list_display"
             android:entryValues="@array/pref_res_list" />
-            
-        <CheckBoxPreference 
-            android:id="@+id/pref_external"
-            android:name="@string/pref_external"
-            android:summary="@string/pref_external_sum"
-            android:defaultValue="false"
-            android:title="@string/pref_external"
-            android:key="externalPref" 
-        />
-        <ListPreference
-            android:name="@string/pref_container"
-            android:summary="@string/pref_container_sum"
-            android:defaultValue="matroska"
-            android:title="@string/pref_container"
-            android:key="containerPref"
-            android:dialogTitle="@string/pref_container"
-            android:dependency="externalPref"
-            android:entries="@array/pref_container_list_display"
-            android:entryValues="@array/pref_container_list" />
         <ListPreference
             android:name="@string/pref_acodec"
             android:summary="@string/pref_acodec_sum"
@@ -98,5 +88,13 @@
             android:dependency="transcodePref"
             android:entries="@array/pref_vcodec_list_display"
             android:entryValues="@array/pref_vcodec_list" />
+        <CheckBoxPreference 
+            android:id="@+id/pref_external"
+            android:name="@string/pref_external"
+            android:summary="@string/pref_external_sum"
+            android:defaultValue="false"
+            android:title="@string/pref_external"
+            android:key="externalPref" 
+        />
     </PreferenceCategory>  
 </PreferenceScreen>

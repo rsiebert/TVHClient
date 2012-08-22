@@ -32,8 +32,7 @@ import org.me.tvhguide.htsp.HTSService;
  *
  * @author john-tornblom
  */
-public class SettingsActivity extends PreferenceActivity implements
-        OnSharedPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity {
 
     private int oldPort;
     private String oldHostname;
@@ -59,9 +58,6 @@ public class SettingsActivity extends PreferenceActivity implements
         oldPort = Integer.parseInt(prefs.getString("serverPortPref", ""));
         oldUser = prefs.getString("usernamePref", "");
         oldPw = prefs.getString("passwordPref", "");
-
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        onSharedPreferenceChanged(prefs, "externalPref");
     }
 
     @Override
@@ -85,16 +81,6 @@ public class SettingsActivity extends PreferenceActivity implements
             intent.putExtra("password", prefs.getString("passwordPref", ""));
             intent.putExtra("force", true);
             startService(intent);
-        }
-
-        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("externalPref")) {
-            boolean b = sharedPreferences.getBoolean("externalPref", false);
-            findPreference("vcodecPref").setEnabled(b);
-            findPreference("acodecPref").setEnabled(b);
         }
     }
 }

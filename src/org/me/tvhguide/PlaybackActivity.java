@@ -137,15 +137,18 @@ public class PlaybackActivity extends Activity implements HTSListener {
         Integer port = Integer.parseInt(prefs.getString("httpPortPref", "9981"));
         Integer resolution = Integer.parseInt(prefs.getString("resolutionPref", "288"));
         Boolean transcode = prefs.getBoolean("transcodePref", true);
-
+        String container = prefs.getString("containerPref", "matroska");
+        String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
+        String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
+        
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
-        url += "&mux=mpegts";
+        url += "&mux=" + container;
         if (transcode) {
             url += "&transcode=1";
             url += "&resolution=" + resolution;
-            url += "&acodec=" + Stream.STREAM_TYPE_AAC;
-            url += "&vcodec=" + Stream.STREAM_TYPE_H264;
+            url += "&acodec=" + acodec;
+            url += "&vcodec=" + vcodec;
         }
 
         videoView.setVideoURI(Uri.parse(url));
