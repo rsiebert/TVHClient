@@ -24,16 +24,17 @@ import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.text.format.DateFormat;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import java.util.Date;
 import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
@@ -77,41 +78,54 @@ public class PlaybackActivity extends Activity implements HTSListener {
         setContentView(R.layout.player_layout);
 
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
-        videoView = (TVHVideoView) findViewById(R.id.player_video_view);
+
+        final TextView clock = (TextView) findViewById(R.id.pl_clock);
+        final LinearLayout headerOverlay = (LinearLayout) findViewById(R.id.pl_header);
+        final LinearLayout middleOverlay = (LinearLayout) findViewById(R.id.pl_middle);
+        final LinearLayout footerOverlay = (LinearLayout) findViewById(R.id.pl_footer);
+
+        videoView = (TVHVideoView) findViewById(R.id.pl_video);
+        videoView.setOnPreparedListener(new OnPreparedListener() {
+
+            public void onPrepared(MediaPlayer arg0) {
+                middleOverlay.setVisibility(LinearLayout.GONE);
+            }
+        });
+
         videoView.setOnErrorListener(new OnErrorListener() {
 
             public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
                 finish();
-                return false;
+                return true;
+            }
+        });
+
+        LayoutInflater inflater = getLayoutInflater();
+        View v = inflater.inflate(R.layout.channel_list_widget, null, false);
+        final ChannelListViewWrapper w = new ChannelListViewWrapper(v);
+        footerOverlay.addView(v);
+
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.pl_frame);
+        frameLayout.setOnClickListener(new OnClickListener() {
+
+            public void onClick(View arg0) {
+                if (headerOverlay.getVisibility() == LinearLayout.VISIBLE) {
+                    headerOverlay.setVisibility(LinearLayout.INVISIBLE);
+                    footerOverlay.setVisibility(LinearLayout.INVISIBLE);
+                } else {
+                    w.repaint(channel);
+                    clock.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
+                    clock.setText(DateFormat.getTimeFormat(clock.getContext()).format(new Date()));
+                    headerOverlay.setVisibility(LinearLayout.VISIBLE);
+                    footerOverlay.setVisibility(LinearLayout.VISIBLE);
+                }
             }
         });
 
         Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_GET_TICKET);
-
-        LayoutInflater inflater = getLayoutInflater();
-        View v = inflater.inflate(R.layout.channel_list_widget, null, false);
-        final ChannelListViewWrapper w = new ChannelListViewWrapper(v);
-
-        final LinearLayout overlay = (LinearLayout) findViewById(R.id.player_overlay);
-        overlay.setVisibility(LinearLayout.INVISIBLE);
-        overlay.addView(v);
-
-        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.player_frame);
-        frameLayout.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View arg0) {
-                if (overlay.getVisibility() == LinearLayout.VISIBLE) {
-                    overlay.setVisibility(LinearLayout.INVISIBLE);
-                } else {
-                    overlay.setVisibility(LinearLayout.VISIBLE);
-                    w.repaint(channel);
-                }
-            }
-        });
-
         intent.putExtras(getIntent().getExtras());
-        this.startService(intent);
+        startService(intent);
     }
 
     @Override
@@ -140,7 +154,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
         String container = prefs.getString("containerPref", "matroska");
         String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
         String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
-        
+
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
         url += "&mux=" + container;
@@ -155,6 +169,35 @@ public class PlaybackActivity extends Activity implements HTSListener {
         videoView.requestFocus();
         videoView.start();
         videoView.setAspectRatio(16, 9);
+
+        TextView codecInfo = (TextView) findViewById(R.id.pl_codec);
+
+        container = valueToName(R.array.pref_container_list,
+                R.array.pref_container_list_display, container);
+
+        String c = container;
+        if (transcode) {
+            c += " (";
+            c += acodec + ", ";
+            c += vcodec + "@" + resolution;
+            c += ")";
+        }
+
+        codecInfo.setGravity(Gravity.CENTER_HORIZONTAL);
+        codecInfo.setText(c);
+    }
+
+    private String valueToName(int valueRresouce, int nameResource, String val) {
+
+        String[] names = getResources().getStringArray(nameResource);
+        String[] values = getResources().getStringArray(valueRresouce);
+
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(val)) {
+                return names[i];
+            }
+        }
+        return "";
     }
 
     public void onMessage(String action, final Object obj) {

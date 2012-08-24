@@ -1,19 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:id="@+id/player_frame"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+             android:orientation="vertical"
+             android:id="@+id/pl_frame"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent">
+
     <org.me.tvhguide.TVHVideoView 
-         android:layout_height="fill_parent"
-         android:layout_width="fill_parent" 
-         android:id="@+id/player_video_view"
-         android:layout_gravity="center"/>
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent" 
+        android:layout_gravity="center"
+        android:id="@+id/pl_video"/>
          
+    <LinearLayout
+        android:visibility="invisible"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:id="@+id/pl_header"
+        android:layout_gravity="top"
+        android:background="#C0000000"
+        android:orientation="horizontal" >
+            
+        <TextView
+            android:id="@+id/pl_codec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5sp"
+        />
+        
+        <TextView
+            android:id="@+id/pl_clock"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingRight="5sp"
+        />
+    </LinearLayout>
+    
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:id="@+id/player_overlay"
+        android:layout_gravity="center"
+        android:id="@+id/pl_middle"
+        android:orientation="vertical" >
+        <ProgressBar
+            android:id="@+id/pl_loading"
+            android:layout_width="fill_parent"
+            android:layout_height="42sp"
+            style="@android:style/Widget.ProgressBar.Small" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:visibility="invisible"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:id="@+id/pl_footer"
         android:layout_gravity="bottom"
         android:background="@drawable/overlay_box"
         android:orientation="vertical" >
