@@ -30,11 +30,14 @@
     <string name="pref_res">Upplösning</string>
     <string name="pref_res_sum">Maximal upplösning vid omkodning</string>
     
-    <string name="pref_acodec">Ljud kodek</string>
-    <string name="pref_acodec_sum">Ljudkodek att använda vid omkodning</string>
+    <string name="pref_acodec">Ljud</string>
+    <string name="pref_acodec_sum">Kodek att använda vid omkodning av ljud</string>
     
-    <string name="pref_vcodec">Video kodek</string>
-    <string name="pref_vcodec_sum">Videokodek att använda vid omkodning</string>
+    <string name="pref_vcodec">Video</string>
+    <string name="pref_vcodec_sum">Kodek att använda vid omkodning av video</string>
+    
+    <string name="pref_scodec">Undertexter</string>
+    <string name="pref_scodec_sum">Kodek att använda vid omkodning av undertexter</string>
     
     <string name="pref_container">Media container</string>
     <string name="pref_container_sum">Media container att föredra</string>
