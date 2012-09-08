@@ -88,6 +88,16 @@
             android:dependency="transcodePref"
             android:entries="@array/pref_vcodec_list_display"
             android:entryValues="@array/pref_vcodec_list" />
+        <ListPreference
+            android:name="@string/pref_scodec"
+            android:summary="@string/pref_scodec_sum"
+            android:defaultValue="NONE"
+            android:title="@string/pref_scodec"
+            android:key="scodecPref"
+            android:dialogTitle="@string/pref_scodec"
+            android:dependency="transcodePref"
+            android:entries="@array/pref_scodec_list_display"
+            android:entryValues="@array/pref_scodec_list" />
         <CheckBoxPreference 
             android:id="@+id/pref_external"
             android:name="@string/pref_external"

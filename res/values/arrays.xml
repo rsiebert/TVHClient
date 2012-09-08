@@ -35,6 +35,15 @@
         <item>VP8</item>
     </string-array>
     
+    <string-array name="pref_scodec_list">
+        <item>PASS</item>
+        <item>NONE</item>
+    </string-array>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>None</item>
+    </string-array>
+    
     <string-array name="pref_container_list">
         <item>matroska</item>
         <item>mpegts</item>

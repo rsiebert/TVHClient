@@ -72,6 +72,7 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         Boolean transcode = prefs.getBoolean("transcodePref", true);
         String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
         String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_MPEG4VIDEO);
+        String scodec = prefs.getString("scodecPref", "PASS");
         String container = prefs.getString("containerPref", "matroska");
         String mime = "application/octet-stream";
 
@@ -93,6 +94,7 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
             url += "&resolution=" + resolution;
             url += "&acodec=" + acodec;
             url += "&vcodec=" + vcodec;
+            url += "&scodec=" + scodec;
         }
 
         final Intent intent = new Intent(Intent.ACTION_VIEW);

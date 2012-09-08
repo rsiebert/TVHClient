@@ -36,6 +36,9 @@
     <string name="pref_vcodec">Video codec</string>
     <string name="pref_vcodec_sum">Video codec to use with the transcoder</string>
     
+    <string name="pref_scodec">Subtitle codec</string>
+    <string name="pref_scodec_sum">Subtitle codec to use with the transcoder</string>
+    
     <string name="pref_container">Media container</string>
     <string name="pref_container_sum">Prefered media container</string>
     

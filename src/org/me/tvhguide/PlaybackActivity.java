@@ -154,7 +154,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
         String container = prefs.getString("containerPref", "matroska");
         String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
         String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
-
+        String scodec = prefs.getString("scodecPref", "NONE");
+        
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
         url += "&mux=" + container;
@@ -163,6 +164,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
             url += "&resolution=" + resolution;
             url += "&acodec=" + acodec;
             url += "&vcodec=" + vcodec;
+            url += "&scodec=" + scodec;
         }
 
         videoView.setVideoURI(Uri.parse(url));
