@@ -104,8 +104,12 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         this.runOnUiThread(new Runnable() {
 
             public void run() {
-                startActivity(intent);
-                finish();
+                try {
+                    startActivity(intent);
+                } catch (Throwable t) {
+                } finally {
+                    finish();
+                }
             }
         });
     }
