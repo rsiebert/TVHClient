@@ -19,7 +19,9 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -138,12 +140,29 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.string.menu_record:
-            case R.string.menu_record_cancel:
-            case R.string.menu_record_remove: {
+            case R.string.menu_record_cancel: {
                 startService(item.getIntent());
+                return true;
+            }
+            case R.string.menu_record_remove: {
+                
+                new AlertDialog.Builder(this)
+                    .setTitle(R.string.menu_record_remove)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) { 
+                            startService(item.getIntent());
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) { 
+                            //NOP
+                        }
+                    })
+                    .show();
+
                 return true;
             }
             default: {

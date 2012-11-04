@@ -19,6 +19,8 @@
 package org.me.tvhguide;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -139,9 +141,23 @@ public class RecordingActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
-            case R.string.menu_record_remove:
+            case R.string.menu_record_remove: {
+                new AlertDialog.Builder(this)
+                .setTitle(R.string.menu_record_remove)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        startService(item.getIntent());
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        //NOP
+                    }
+                }).show();
+            }
             case R.string.menu_record_cancel:
                 startService(item.getIntent());
                 return true;
