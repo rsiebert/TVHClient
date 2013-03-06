@@ -705,7 +705,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 		
         info.episodeCount = msg.getInt("episodeCount", 0);
         info.episodeNumber = msg.getInt("episodeNumber", 0);
-        info.onScreen = msg.getString("onScreen", null);
+        info.onScreen = msg.getString("onScreen", "");
         info.partCount = msg.getInt("partCount", 0);
         info.partNumber = msg.getInt("partNumber", 0);
         info.seasonCount = msg.getInt("seasonCount", 0);
