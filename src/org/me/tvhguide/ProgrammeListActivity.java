@@ -345,11 +345,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             String s = p.seriesInfo.toString();
             seriesInfo.setText(s);
-            if (s.length() > 0) {
-                seriesInfo.setVisibility(TextView.VISIBLE);
-            } else {
-                seriesInfo.setVisibility(TextView.GONE);
-            }
             seriesInfo.invalidate();
             
             date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
