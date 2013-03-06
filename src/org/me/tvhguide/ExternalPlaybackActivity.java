@@ -97,16 +97,24 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
             url += "&scodec=" + scodec;
         }
 
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(url), mime);
+        final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
+        playbackIntent.setDataAndType(Uri.parse(url), mime);
 
 
         this.runOnUiThread(new Runnable() {
 
             public void run() {
                 try {
-                    startActivity(intent);
+                    startActivity(playbackIntent);
                 } catch (Throwable t) {
+                    Log.e("TVHGuide", "Can't execute external media player", t);
+                    try {
+                        Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                        installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
+                        startActivity(installIntent);
+                    } catch (Throwable t2) {
+                        Log.e("TVHGuide", "Can't query market", t2);
+                    }
                 } finally {
                     finish();
                 }
