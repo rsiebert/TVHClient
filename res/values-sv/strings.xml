@@ -63,6 +63,10 @@
 
     <string name="pr_all_channels">Alla kanaler</string>
     <string name="pr_get_more">Hämta flera</string>
+    <string name="pr_season">Säsong</string>
+    <string name="pr_episode">Episod</string>
+    <string name="pr_part">Del</string>
+    
     <string-array name="pr_type">
         <item>Film / Drama</item>
         <item>Nyheter / Aktuellt</item>

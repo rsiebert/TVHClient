@@ -41,11 +41,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import org.me.tvhguide.R.string;
 import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
+import org.me.tvhguide.model.SeriesInfo;
 
 /**
  *
@@ -259,6 +262,42 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         }
     }
 
+	public String buildSeriesInfoString(SeriesInfo info) {
+		if (info.onScreen != null && info.onScreen.length() > 0)
+			return info.onScreen;
+
+		String s = "";
+		String season = this.getResources().getString(string.pr_season);
+		String episode = this.getResources().getString(string.pr_episode);
+		String part = this.getResources().getString(string.pr_part);
+		
+		if(info.onScreen.length() > 0) {
+			return info.onScreen;
+		}
+		
+		if (info.seasonNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %02d", season.toLowerCase(), info.seasonNumber);
+		}
+		if (info.episodeNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %02d", episode.toLowerCase(), info.episodeNumber);
+		}
+		if (info.partNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %d", part.toLowerCase(), info.partNumber);
+		}
+
+		if(s.length() > 0) {
+			s = s.substring(0,1).toUpperCase() + s.substring(1);
+		}
+		
+		return s;
+	}
+	
     private class ViewWarpper {
 
         TextView title;
@@ -311,7 +350,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
             date.invalidate();
 
-            String s = p.seriesInfo.toString();
+            String s = buildSeriesInfoString(p.seriesInfo);
             if(s.length() == 0) {
             	s = p.description;
             }

@@ -63,6 +63,10 @@
 
     <string name="pr_all_channels">All channels</string>
     <string name="pr_get_more">Get more</string>
+    <string name="pr_season">Season</string>
+    <string name="pr_episode">Episode</string>
+    <string name="pr_part">Part</string>
+    
     <string-array name="pr_type">
         <item>Movie / Drama</item>
         <item>News / Current affairs</item>

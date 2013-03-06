@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import org.me.tvhguide.R.string;
 import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.intent.SearchEPGIntent;
@@ -50,6 +52,7 @@ import org.me.tvhguide.intent.SearchIMDbIntent;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
+import org.me.tvhguide.model.SeriesInfo;
 
 /**
  *
@@ -300,6 +303,42 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         }
     }
 
+	public String buildSeriesInfoString(SeriesInfo info) {
+		if (info.onScreen != null && info.onScreen.length() > 0)
+			return info.onScreen;
+
+		String s = "";
+		String season = this.getResources().getString(string.pr_season);
+		String episode = this.getResources().getString(string.pr_episode);
+		String part = this.getResources().getString(string.pr_part);
+		
+		if(info.onScreen.length() > 0) {
+			return info.onScreen;
+		}
+		
+		if (info.seasonNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %02d", season.toLowerCase(), info.seasonNumber);
+		}
+		if (info.episodeNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %02d", episode.toLowerCase(), info.episodeNumber);
+		}
+		if (info.partNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %d", part.toLowerCase(), info.partNumber);
+		}
+
+		if(s.length() > 0) {
+			s = s.substring(0,1).toUpperCase() + s.substring(1);
+		}
+		
+		return s;
+	}
+	
     private class ViewWarpper {
 
         TextView title;
@@ -343,7 +382,11 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             title.invalidate();
 
-            String s = p.seriesInfo.toString();
+            String s = buildSeriesInfoString(p.seriesInfo);
+            if(s.length() == 0 && p.contentType > 0 && p.contentType < 11) {
+            	s = contentTypes[p.contentType - 1];
+            }
+            
             seriesInfo.setText(s);
             seriesInfo.invalidate();
             
@@ -352,10 +395,10 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             if (p.description != null && p.description.length() > 0) {
                 description.setText(p.description);
-            } else if (p.contentType > 0 && p.contentType < 11) {
-                description.setText(contentTypes[p.contentType - 1]);
+                description.setVisibility(TextView.VISIBLE);
             } else {
                 description.setText("");
+                description.setVisibility(TextView.GONE);
             }
             description.invalidate();
 
@@ -375,6 +418,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         }
     }
 
+ 
     class ProgrammeListAdapter extends ArrayAdapter<Programme> {
 
         Activity context;
