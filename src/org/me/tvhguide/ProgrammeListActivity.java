@@ -304,6 +304,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
         TextView title;
         TextView time;
+        TextView seriesInfo;
         TextView date;
         TextView description;
         ImageView state;
@@ -311,7 +312,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         public ViewWarpper(View base) {
             title = (TextView) base.findViewById(R.id.pr_title);
             description = (TextView) base.findViewById(R.id.pr_desc);
-
+            seriesInfo = (TextView) base.findViewById(R.id.pr_series_info);
+            
             time = (TextView) base.findViewById(R.id.pr_time);
             date = (TextView) base.findViewById(R.id.pr_date);
 
@@ -341,6 +343,15 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             title.invalidate();
 
+            String s = p.seriesInfo.toString();
+            seriesInfo.setText(s);
+            if (s.length() > 0) {
+                seriesInfo.setVisibility(TextView.VISIBLE);
+            } else {
+                seriesInfo.setVisibility(TextView.GONE);
+            }
+            seriesInfo.invalidate();
+            
             date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
             date.invalidate();
 

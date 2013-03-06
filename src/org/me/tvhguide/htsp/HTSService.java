@@ -51,6 +51,7 @@ import org.me.tvhguide.model.HttpTicket;
 import org.me.tvhguide.model.Packet;
 import org.me.tvhguide.model.Programme;
 import org.me.tvhguide.model.Recording;
+import org.me.tvhguide.model.SeriesInfo;
 import org.me.tvhguide.model.Stream;
 import org.me.tvhguide.model.Subscription;
 
@@ -651,6 +652,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     p.title = sub.getString("title");
                     p.start = sub.getDate("start");
                     p.stop = sub.getDate("stop");
+                    p.seriesInfo = buildSeriesInfo(sub);
+                    p.starRating = sub.getInt("starRating", -1);
+                    
                     p.channel = ch;
                     if (ch.epg.add(p)) {
                         app.addProgramme(p);
@@ -681,6 +685,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                 p.title = response.getString("title");
                 p.start = response.getDate("start");
                 p.stop = response.getDate("stop");
+                p.seriesInfo = buildSeriesInfo(response);
+                
                 p.channel = ch;
 
                 if (ch.epg.add(p)) {
@@ -691,6 +697,20 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
+    private SeriesInfo buildSeriesInfo(HTSMessage msg) {
+        SeriesInfo info = new SeriesInfo();
+		
+        info.episodeCount = msg.getInt("episodeCount", 0);
+        info.episodeNumber = msg.getInt("episodeNumber", 0);
+        info.onScreen = msg.getString("onScreen", null);
+        info.partCount = msg.getInt("partCount", 0);
+        info.partNumber = msg.getInt("partNumber", 0);
+        info.seasonCount = msg.getInt("seasonCount", 0);
+        info.seasonNumber = msg.getInt("seasonNumber", 0);
+
+        return info;
+    }
+	
     private void epgQuery(final Channel ch, String query, long tagId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("epgQuery");

@@ -311,7 +311,12 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
             date.invalidate();
 
-            description.setText(p.description);
+            String s = p.seriesInfo.toString();
+            if(s.length() == 0) {
+            	s = p.description;
+            }
+            
+            description.setText(s);
             description.invalidate();
 
             if (p.type > 0 && p.type < 11) {

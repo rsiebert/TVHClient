@@ -34,6 +34,7 @@ public class Programme implements Comparable<Programme> {
     public String title;
     public String description;
     public String ext_desc;
+    public SeriesInfo seriesInfo;
     public Channel channel;
     public Recording recording;
 
