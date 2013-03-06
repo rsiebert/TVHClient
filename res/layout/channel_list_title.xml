@@ -63,5 +63,5 @@
         android:visibility="gone"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        style="@android:style/Widget.ProgressBar.Small" />
+        style="@android:style/Widget.ProgressBar.Large" />
 </RelativeLayout>

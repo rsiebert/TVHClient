@@ -45,7 +45,7 @@
             android:id="@+id/pl_loading"
             android:layout_width="fill_parent"
             android:layout_height="42sp"
-            style="@android:style/Widget.ProgressBar.Small" />
+            style="@android:style/Widget.ProgressBar.Large" />
     </LinearLayout>
     
     <LinearLayout
