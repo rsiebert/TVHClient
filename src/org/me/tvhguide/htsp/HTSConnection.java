@@ -298,7 +298,7 @@ public class HTSConnection extends Thread {
     }
 
     private void handleMessage(HTSMessage msg) {
-        if (msg.containsFiled("seq")) {
+        if (msg.containsField("seq")) {
             int respSeq = msg.getInt("seq");
             HTSResponseHandler handler = responseHandelers.get(respSeq);
             responseHandelers.remove(respSeq);

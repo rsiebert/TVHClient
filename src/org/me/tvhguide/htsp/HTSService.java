@@ -486,7 +486,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (sub == null) {
             return;
         }
-        if (msg.containsFiled("delay")) {
+        if (msg.containsField("delay")) {
             BigInteger delay = msg.getBigInteger("delay");
             delay = delay.divide(BigInteger.valueOf((1000)));
             sub.delay = delay.longValue();

@@ -57,7 +57,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return getString("method", "");
     }
 
-    public boolean containsFiled(String name) {
+    public boolean containsField(String name) {
         return containsKey(name);
     }
 
@@ -70,7 +70,7 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     public long getLong(String name, long std) {
-        if (!containsFiled(name)) {
+        if (!containsField(name)) {
             return std;
         }
         return getLong(name);
@@ -81,14 +81,14 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     public int getInt(String name, int std) {
-        if (!containsFiled(name)) {
+        if (!containsField(name)) {
             return std;
         }
         return getInt(name);
     }
 
     public String getString(String name, String std) {
-        if (!containsFiled(name)) {
+        if (!containsField(name)) {
             return std;
         }
         return getString(name);
@@ -105,7 +105,7 @@ public class HTSMessage extends HashMap<String, Object> {
     public List<Long> getLongList(String name) {
         ArrayList<Long> list = new ArrayList<Long>();
 
-        if (!containsFiled(name)) {
+        if (!containsField(name)) {
             return list;
         }
 
@@ -119,7 +119,7 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     List<Long> getLongList(String name, List<Long> std) {
-        if (!containsFiled(name)) {
+        if (!containsField(name)) {
             return std;
         }
 
@@ -129,7 +129,7 @@ public class HTSMessage extends HashMap<String, Object> {
     public List<Integer> getIntList(String name) {
         ArrayList<Integer> list = new ArrayList<Integer>();
 
-        if (!containsFiled(name)) {
+        if (!containsField(name)) {
             return list;
         }
 
@@ -143,7 +143,7 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     List<Integer> getIntList(String name, List<Integer> std) {
-        if (!containsFiled(name)) {
+        if (!containsField(name)) {
             return std;
         }
 
