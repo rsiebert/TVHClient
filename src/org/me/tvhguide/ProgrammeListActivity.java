@@ -357,8 +357,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             if (p.description != null && p.description.length() > 0) {
                 description.setText(p.description);
-            } else if (p.type > 0 && p.type < 11) {
-                description.setText(contentTypes[p.type - 1]);
+            } else if (p.contentType > 0 && p.contentType < 11) {
+                description.setText(contentTypes[p.contentType - 1]);
             } else {
                 description.setText("");
             }

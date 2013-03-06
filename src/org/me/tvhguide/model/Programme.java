@@ -28,7 +28,7 @@ public class Programme implements Comparable<Programme> {
 
     public long id;
     public long nextId;
-    public int type;
+    public int contentType;
     public Date start;
     public Date stop;
     public String title;

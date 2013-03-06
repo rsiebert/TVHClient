@@ -319,8 +319,8 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             description.setText(s);
             description.invalidate();
 
-            if (p.type > 0 && p.type < 11) {
-                String str = contentTypes[p.type - 1];
+            if (p.contentType > 0 && p.contentType < 11) {
+                String str = contentTypes[p.contentType - 1];
                 channel.setText(ch.name + " (" + str + ")");
             } else {
                 channel.setText(ch.name);
