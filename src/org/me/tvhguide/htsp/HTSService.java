@@ -688,6 +688,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 p.start = response.getDate("start");
                 p.stop = response.getDate("stop");
                 p.seriesInfo = buildSeriesInfo(response);
+                p.starRating = response.getInt("starRating", -1);
                 
                 p.channel = ch;
 
