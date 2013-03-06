@@ -356,6 +356,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         Recording rec = new Recording();
         rec.id = msg.getLong("id");
         rec.description = msg.getString("description", null);
+        rec.summary = msg.getString("summary", null);
         rec.error = msg.getString("error", null);
         rec.start = msg.getDate("start");
         rec.state = msg.getString("state", null);
@@ -376,6 +377,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
 
         rec.description = msg.getString("description", rec.description);
+        rec.summary = msg.getString("summary", rec.summary);
         rec.error = msg.getString("error", rec.error);
         rec.start = msg.getDate("start");
         rec.state = msg.getString("state", rec.state);
