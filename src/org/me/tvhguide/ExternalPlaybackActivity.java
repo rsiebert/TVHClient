@@ -24,6 +24,8 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
 import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.HttpTicket;
