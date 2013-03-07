@@ -68,6 +68,8 @@
     <string name="pr_part">Part</string>
     <string name="pr_airing">Airing</string>
     <string name="pr_star_rating">Rating</string>
+    <string name="pr_content_type">Type</string>
+    <string name="pr_series_info">Part</string>
     
     <string-array name="pr_content_type0">
         <item>Movie/Drama</item>

@@ -68,6 +68,8 @@
     <string name="pr_part">Del</string>
     <string name="pr_airing">Sänds</string>
     <string name="pr_star_rating">Omdömme</string>
+    <string name="pr_content_type">Typ</string>
+    <string name="pr_series_info">Del</string>
     
     <string name="pvr_scheduled">Schemalagd</string>
     <string name="pvr_recording">Spelar in</string>

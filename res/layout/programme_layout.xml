@@ -39,27 +39,9 @@
                 style="?android:attr/listSeparatorTextViewStyle"
                 android:layout_width="fill_parent"
                 android:layout_height="1sp"
+                android:layout_marginBottom="3sp"
+                android:layout_marginTop="3sp"
                 android:gravity="center_horizontal" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/pr_series_info_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/pr_series_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10sp"
-                android:layout_marginRight="10sp" />
-
-            <TextView
-                style="?android:attr/listSeparatorTextViewStyle"
-                android:layout_width="fill_parent"
-                android:layout_height="1sp"
-                android:layout_span="2" />
         </LinearLayout>
 
         <TableLayout
@@ -69,9 +51,9 @@
             android:stretchColumns="1" >
 
             <TableRow
-                android:id="@+id/tableRow3"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/pr_airing_row"
                 android:layout_marginLeft="10sp"
                 android:layout_marginRight="10sp" >
 
@@ -91,16 +73,16 @@
                         android:id="@+id/pr_channel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-                    
+
                     <TextView
-                        android:id="@+id/pr_time"
+                        android:id="@+id/pr_airing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
-
             </TableRow>
 
             <TableRow
+                android:id="@+id/pr_airing_sep"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
 
@@ -108,6 +90,76 @@
                     style="?android:attr/listSeparatorTextViewStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="1sp"
+                    android:layout_marginBottom="3sp"
+                    android:layout_marginTop="3sp"
+                    android:layout_span="2" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pr_content_type_row"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5sp"
+                    android:text="@string/pr_content_type"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <TextView
+                    android:id="@+id/pr_content_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/pr_content_type_sep"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    style="?android:attr/listSeparatorTextViewStyle"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1sp"
+                    android:layout_marginBottom="3sp"
+                    android:layout_marginTop="3sp"
+                    android:layout_span="2" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/pr_series_info_row"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5sp"
+                    android:text="@string/pr_series_info"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/pr_series_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/pr_series_info_sep"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    style="?android:attr/listSeparatorTextViewStyle"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1sp"
+                    android:layout_marginBottom="3sp"
+                    android:layout_marginTop="3sp"
                     android:layout_span="2" />
             </TableRow>
 

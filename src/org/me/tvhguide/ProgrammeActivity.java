@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,7 +87,7 @@ public class ProgrammeActivity extends Activity {
         TextView text = (TextView) findViewById(R.id.pr_channel);
         text.setText(channel.name);
         
-        text = (TextView) findViewById(R.id.pr_time);
+        text = (TextView) findViewById(R.id.pr_airing);
         text.setText(
                 DateFormat.getLongDateFormat(text.getContext()).format(programme.start)
                 + "   "
@@ -94,6 +95,7 @@ public class ProgrammeActivity extends Activity {
                 + " - "
                 + DateFormat.getTimeFormat(text.getContext()).format(programme.stop));
 
+        
         if(programme.summary.length() < 0 && programme.description.length() < 0) {
         	View v = findViewById(R.id.pr_summay_and_desc_layout);
         	v.setVisibility(View.GONE);
@@ -108,6 +110,29 @@ public class ProgrammeActivity extends Activity {
 	        if(programme.description.length() == 0)
 	        	text.setVisibility(View.GONE);
         }
+
+        String s = buildSeriesInfoString(programme.seriesInfo);
+        if(s.length() > 0) {
+            text = (TextView) findViewById(R.id.pr_series_info);
+        	text.setText(s);
+        } else {
+        	View v = findViewById(R.id.pr_series_info_row);
+        	v.setVisibility(View.GONE);
+        	v = findViewById(R.id.pr_series_info_sep);
+        	v.setVisibility(View.GONE);
+        }
+        
+        SparseArray<String> contentTypes = TVHGuideApplication.getContentTypes(this);
+        s = contentTypes.get(programme.contentType, "");
+        if(s.length() > 0) {
+        	text = (TextView) findViewById(R.id.pr_content_type);
+        	text.setText(s);
+        } else {
+        	View v = findViewById(R.id.pr_content_type_row);
+        	v.setVisibility(View.GONE);
+        	v = findViewById(R.id.pr_content_type_sep);
+        	v.setVisibility(View.GONE);
+        }
         
         if(programme.starRating > 0) {
             RatingBar starRating = (RatingBar)findViewById(R.id.pr_star_rating);
@@ -121,15 +146,6 @@ public class ProgrammeActivity extends Activity {
                 + ")");
         } else {
         	View v = findViewById(R.id.pr_star_rating_row);
-        	v.setVisibility(View.GONE);
-        }
-
-        String s = buildSeriesInfoString(programme.seriesInfo);
-        if(s.length() > 0) {
-            text = (TextView) findViewById(R.id.pr_series_info);
-        	text.setText(s);
-        } else {
-        	View v = findViewById(R.id.pr_series_info_layout);
         	v.setVisibility(View.GONE);
         }
     }

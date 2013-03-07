@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_width="fill_parent">
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -13,18 +12,19 @@
         android:orientation="horizontal" >
 
         <TextView
+            android:id="@+id/pr_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
             android:maxLines="1"
-            android:id="@+id/pr_title">
+            android:textSize="18sp" >
         </TextView>
+
         <ImageView
+            android:id="@+id/pr_state"
             android:layout_width="fill_parent"
             android:layout_height="18sp"
             android:layout_margin="3dip"
-            android:scaleType="fitEnd"
-            android:id="@+id/pr_state">
+            android:scaleType="fitEnd" >
         </ImageView>
     </LinearLayout>
 
@@ -36,21 +36,26 @@
         android:orientation="horizontal" >
 
         <TextView
+            android:id="@+id/pr_series_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/pr_series_info">
+            android:maxLines="1" >
         </TextView>
+
         <TextView
+            android:id="@+id/pr_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/pr_date">
+            android:maxLines="1" >
         </TextView>
+
         <TextView
+            android:id="@+id/pr_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="3dip"
-            android:id="@+id/pr_time">
+            android:maxLines="1"
+            android:paddingLeft="3dip" >
         </TextView>
     </LinearLayout>
 
@@ -61,6 +66,6 @@
         android:layout_marginLeft="10sp"
         android:layout_marginRight="10sp"
         android:maxLines="2" >
-
     </TextView>
+
 </LinearLayout>
