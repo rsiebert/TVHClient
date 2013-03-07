@@ -111,10 +111,14 @@ public class ProgrammeActivity extends Activity {
         
         if(programme.starRating > 0) {
             RatingBar starRating = (RatingBar)findViewById(R.id.pr_star_rating);
-            starRating.setRating(programme.starRating);
+            starRating.setRating((float)programme.starRating / 10.0f);
             
-        	text = (TextView) findViewById(R.id.pr_star_rating_txt);
-        	text.setText("("+ Integer.toString(programme.starRating) + "/10)");
+            text = (TextView) findViewById(R.id.pr_star_rating_txt);
+            text.setText("("
+                + programme.starRating
+                + "/" 
+                + 100
+                + ")");
         } else {
         	View v = findViewById(R.id.pr_star_rating_row);
         	v.setVisibility(View.GONE);
