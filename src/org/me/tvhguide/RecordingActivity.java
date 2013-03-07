@@ -70,6 +70,11 @@ public class RecordingActivity extends Activity {
         TextView text = (TextView) findViewById(R.id.rec_name);
         text.setText(rec.title);
 
+        text = (TextView) findViewById(R.id.rec_summary);
+        text.setText(rec.summary);
+        if(rec.summary.length() == 0)
+        	text.setVisibility(TextView.GONE);
+        
         text = (TextView) findViewById(R.id.rec_desc);
         text.setText(rec.description);
 
