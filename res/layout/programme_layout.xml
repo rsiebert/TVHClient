@@ -5,7 +5,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <LinearLayout
@@ -19,8 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10sp"
-                android:layout_marginRight="10sp"
-                android:text="Summary" />
+                android:layout_marginRight="10sp" />
 
             <LinearLayout
                 android:id="@+id/pr_desc_layout"
@@ -33,14 +32,13 @@
                 <TextView
                     android:id="@+id/pr_desc"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in neque vitae massa rhoncus consequat at vitae diam. Fusce non dolor quis metus lobortis facilisis nec gravida lorem." />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <TextView
                 style="?android:attr/listSeparatorTextViewStyle"
                 android:layout_width="fill_parent"
-                android:layout_height="2sp"
+                android:layout_height="1sp"
                 android:gravity="center_horizontal" />
         </LinearLayout>
 
@@ -55,13 +53,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10sp"
-                android:layout_marginTop="4sp"
-                android:text="Episode info" />
+                android:layout_marginRight="10sp" />
 
             <TextView
                 style="?android:attr/listSeparatorTextViewStyle"
                 android:layout_width="fill_parent"
-                android:layout_height="2sp"
+                android:layout_height="1sp"
                 android:layout_span="2" />
         </LinearLayout>
 
@@ -79,11 +76,10 @@
                 android:layout_marginRight="10sp" >
 
                 <TextView
-                    android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5sp"
-                    android:text="Airing"
+                    android:text="@string/pr_airing"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <LinearLayout
@@ -94,14 +90,12 @@
                     <TextView
                         android:id="@+id/pr_channel"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Channel" />
+                        android:layout_height="wrap_content" />
                     
                     <TextView
                         android:id="@+id/pr_time"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Air date and time" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
             </TableRow>
@@ -113,7 +107,7 @@
                 <TextView
                     style="?android:attr/listSeparatorTextViewStyle"
                     android:layout_width="fill_parent"
-                    android:layout_height="2sp"
+                    android:layout_height="1sp"
                     android:layout_span="2" />
             </TableRow>
 
@@ -125,16 +119,15 @@
                 android:layout_marginRight="10sp" >
 
                 <TextView
-                    android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5sp"
-                    android:text="Rating"
+                    android:text="@string/pr_star_rating"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical" >
 
                     <RatingBar
@@ -146,7 +139,6 @@
                         android:isIndicator="true"
                         android:max="10"
                         android:numStars="10"
-                        android:rating="4"
                         android:stepSize="1" />
 
                     <TextView
@@ -154,8 +146,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5sp"
-                        android:text="5/10" />
+                        android:layout_marginLeft="5sp" />
                 </LinearLayout>
             </TableRow>
         </TableLayout>

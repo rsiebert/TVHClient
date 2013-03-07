@@ -58,14 +58,16 @@
     <string name="err_connect">Kan inte ansluta till servern</string>
     <string name="err_con_lost">Tappade anslutningen till servern</string>
 
-    <string name="inf_load">Laddar...</string>
-    <string name="inf_load_ext">Var god vänta några sekunder...</string>
+    <string name="inf_load">Laddar&#8230;</string>
+    <string name="inf_load_ext">Var god vänta några sekunder&#8230;</string>
 
     <string name="pr_all_channels">Alla kanaler</string>
     <string name="pr_get_more">Hämta flera</string>
     <string name="pr_season">Säsong</string>
     <string name="pr_episode">Episod</string>
     <string name="pr_part">Del</string>
+    <string name="pr_airing">Sänds</string>
+    <string name="pr_star_rating">Omdömme</string>
     
     <string-array name="pr_type">
         <item>Film / Drama</item>
