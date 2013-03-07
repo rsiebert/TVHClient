@@ -24,14 +24,19 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+
+import org.me.tvhguide.R.string;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.intent.SearchEPGIntent;
 import org.me.tvhguide.intent.SearchIMDbIntent;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.Programme;
+import org.me.tvhguide.model.SeriesInfo;
 
 /**
  *
@@ -71,17 +76,14 @@ public class ProgrammeActivity extends Activity {
 
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.programme_title);
         TextView t = (TextView) findViewById(R.id.ct_title);
-        t.setText(channel.name);
+        t.setText(programme.title);
 
         if (channel.iconBitmap != null) {
             ImageView iv = (ImageView) findViewById(R.id.ct_logo);
             iv.setImageBitmap(channel.iconBitmap);
         }
 
-        TextView text = (TextView) findViewById(R.id.pr_title);
-        text.setText(programme.title);
-
-        text = (TextView) findViewById(R.id.pr_time);
+        TextView text = (TextView) findViewById(R.id.pr_time);
         text.setText(
                 DateFormat.getLongDateFormat(text.getContext()).format(programme.start)
                 + "   "
@@ -89,10 +91,79 @@ public class ProgrammeActivity extends Activity {
                 + " - "
                 + DateFormat.getTimeFormat(text.getContext()).format(programme.stop));
 
-        text = (TextView) findViewById(R.id.pr_desc);
-        text.setText(programme.ext_desc);
+        if(programme.summary.length() < 0 && programme.description.length() < 0) {
+        	View v = findViewById(R.id.pr_summay_and_desc_layout);
+        	v.setVisibility(View.GONE);
+        } else {
+	        text = (TextView) findViewById(R.id.pr_summary);
+	        text.setText(programme.summary);
+	        if(programme.summary.length() == 0)
+	        	text.setVisibility(View.GONE);
+	        
+	        text = (TextView) findViewById(R.id.pr_desc);
+	        text.setText(programme.description);
+	        if(programme.description.length() == 0)
+	        	text.setVisibility(View.GONE);
+        }
+        
+        if(programme.starRating > 0) {
+            RatingBar starRating = (RatingBar)findViewById(R.id.pr_star_rating);
+            starRating.setRating(programme.starRating);
+            
+        	text = (TextView) findViewById(R.id.pr_star_rating_txt);
+        	text.setText("("+ Integer.toString(programme.starRating) + "/10)");
+        } else {
+        	View v = findViewById(R.id.pr_star_rating_row);
+        	v.setVisibility(View.GONE);
+        }
+
+        String s = buildSeriesInfoString(programme.seriesInfo);
+        if(s.length() > 0) {
+            text = (TextView) findViewById(R.id.pr_series_info);
+        	text.setText(s);
+        } else {
+        	View v = findViewById(R.id.pr_series_info_layout);
+        	v.setVisibility(View.GONE);
+        }
     }
 
+    
+	public String buildSeriesInfoString(SeriesInfo info) {
+		if (info.onScreen != null && info.onScreen.length() > 0)
+			return info.onScreen;
+
+		String s = "";
+		String season = this.getResources().getString(string.pr_season);
+		String episode = this.getResources().getString(string.pr_episode);
+		String part = this.getResources().getString(string.pr_part);
+		
+		if(info.onScreen.length() > 0) {
+			return info.onScreen;
+		}
+		
+		if (info.seasonNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %02d", season.toLowerCase(), info.seasonNumber);
+		}
+		if (info.episodeNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %02d", episode.toLowerCase(), info.episodeNumber);
+		}
+		if (info.partNumber > 0) {
+			if (s.length() > 0)
+				s += ", ";
+			s += String.format("%s %d", part.toLowerCase(), info.partNumber);
+		}
+
+		if(s.length() > 0) {
+			s = s.substring(0,1).toUpperCase() + s.substring(1);
+		}
+		
+		return s;
+	}
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem item = null;

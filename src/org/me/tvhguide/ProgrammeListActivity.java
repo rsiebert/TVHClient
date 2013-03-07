@@ -393,7 +393,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
             date.invalidate();
 
-            if (p.description != null && p.description.length() > 0) {
+            if (p.description.length() > 0) {
                 description.setText(p.description);
                 description.setVisibility(TextView.VISIBLE);
             } else {

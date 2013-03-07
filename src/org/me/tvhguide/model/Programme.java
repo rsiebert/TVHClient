@@ -33,7 +33,7 @@ public class Programme implements Comparable<Programme> {
     public Date stop;
     public String title;
     public String description;
-    public String ext_desc;
+    public String summary;
     public SeriesInfo seriesInfo;
     public int starRating;
     public Channel channel;

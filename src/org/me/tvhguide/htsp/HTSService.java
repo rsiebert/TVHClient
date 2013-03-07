@@ -355,8 +355,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         Recording rec = new Recording();
         rec.id = msg.getLong("id");
-        rec.description = msg.getString("description", null);
-        rec.summary = msg.getString("summary", null);
+        rec.description = msg.getString("description", "");
+        rec.summary = msg.getString("summary", "");
         rec.error = msg.getString("error", null);
         rec.start = msg.getDate("start");
         rec.state = msg.getString("state", null);
@@ -647,8 +647,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                     HTSMessage sub = (HTSMessage) obj;
                     p.id = sub.getLong("eventId", 0);
                     p.nextId = sub.getLong("nextEventId", 0);
-                    p.description = sub.getString("description", null);
-                    p.ext_desc = sub.getString("ext_text", p.description);
+                    p.description = sub.getString("description", "");
+                    p.summary = sub.getString("summary", "");
                     p.recording = app.getRecording(sub.getLong("dvrId", 0));
                     p.contentType = sub.getInt("contentType", 0);
                     if(connection.getProtocolVersion() >= 6)
@@ -683,8 +683,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                 Programme p = new Programme();
                 p.id = response.getLong("eventId");
                 p.nextId = response.getLong("nextEventId", 0);
-                p.description = response.getString("description", null);
-                p.ext_desc = response.getString("ext_text", p.description);
+                p.description = response.getString("description", "");
+                p.summary = response.getString("summary", "");
                 p.recording = app.getRecording(response.getLong("dvrId", 0));
                 p.contentType = response.getInt("contentType", 0);
                 if(connection.getProtocolVersion() >= 6)
