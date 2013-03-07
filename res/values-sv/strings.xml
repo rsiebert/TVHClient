@@ -69,19 +69,6 @@
     <string name="pr_airing">Sänds</string>
     <string name="pr_star_rating">Omdömme</string>
     
-    <string-array name="pr_type">
-        <item>Film / Drama</item>
-        <item>Nyheter / Aktuellt</item>
-        <item>Show / Spel</item>
-        <item>Sport</item>
-        <item>Barnprogram</item>
-        <item>Musik</item>
-        <item>Konst / Kultur</item>
-        <item>Samhälle / Politik / Ekonomi</item>
-        <item>Utbildning / Vetenskap / Fakta</item>
-        <item>Fritid</item>
-    </string-array>
-
     <string name="pvr_scheduled">Schemalagd</string>
     <string name="pvr_recording">Spelar in</string>
     <string name="pvr_completed">Avslutad</string>

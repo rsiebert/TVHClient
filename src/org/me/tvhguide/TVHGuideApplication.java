@@ -19,11 +19,14 @@
 package org.me.tvhguide;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
+import android.util.SparseArray;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
 import org.me.tvhguide.htsp.HTSListener;
@@ -339,4 +342,71 @@ public class TVHGuideApplication extends Application {
     public boolean isLoading() {
         return loading;
     }
+    
+
+	public static SparseArray<String> getContentTypes(Context ctx) {
+		SparseArray<String> ret = new SparseArray<String>();
+		
+		String[] s = ctx.getResources().getStringArray(R.array.pr_content_type0);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x00 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type1);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x10 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type2);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x20 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type3);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x30 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type4);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x40 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type5);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x50 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type6);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x60 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type7);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x70 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type8);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x80 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type9);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0x90 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type10);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0xa0 + i, s[i]);
+        }
+        
+        s = ctx.getResources().getStringArray(R.array.pr_content_type11);
+        for(int i=0; i<s.length; i++) {
+        	ret.append(0xb0 + i, s[i]);
+        }
+        
+		return ret;
+	}
 }

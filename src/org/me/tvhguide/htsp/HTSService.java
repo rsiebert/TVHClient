@@ -651,9 +651,6 @@ public class HTSService extends Service implements HTSConnectionListener {
                     p.summary = sub.getString("summary", "");
                     p.recording = app.getRecording(sub.getLong("dvrId", 0));
                     p.contentType = sub.getInt("contentType", 0);
-                    if(connection.getProtocolVersion() >= 6)
-                    	p.contentType = (p.contentType >> 4);
-                    
                     p.title = sub.getString("title");
                     p.start = sub.getDate("start");
                     p.stop = sub.getDate("stop");
@@ -687,9 +684,6 @@ public class HTSService extends Service implements HTSConnectionListener {
                 p.summary = response.getString("summary", "");
                 p.recording = app.getRecording(response.getLong("dvrId", 0));
                 p.contentType = response.getInt("contentType", 0);
-                if(connection.getProtocolVersion() >= 6)
-                	p.contentType = (p.contentType >> 4);
-                
                 p.title = response.getString("title");
                 p.start = response.getDate("start");
                 p.stop = response.getDate("stop");

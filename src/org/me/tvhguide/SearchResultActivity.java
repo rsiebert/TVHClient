@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -57,7 +58,7 @@ import org.me.tvhguide.model.SeriesInfo;
 public class SearchResultActivity extends ListActivity implements HTSListener {
 
     private SearchResultAdapter srAdapter;
-    private String[] contentTypes;
+    private SparseArray<String> contentTypes;
     private Pattern pattern;
     private Channel channel;
 
@@ -68,7 +69,8 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
         registerForContextMenu(getListView());
-        contentTypes = getResources().getStringArray(R.array.pr_type);
+        
+        contentTypes = TVHGuideApplication.getContentTypes(this);
 
         List<Programme> srList = new ArrayList<Programme>();
         srAdapter = new SearchResultAdapter(this, srList);
@@ -357,10 +359,10 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             
             description.setText(s);
             description.invalidate();
-
-            if (p.contentType > 0 && p.contentType < 11) {
-                String str = contentTypes[p.contentType - 1];
-                channel.setText(ch.name + " (" + str + ")");
+            
+            String contentType = contentTypes.get(p.contentType, "");
+            if (contentType.length() > 0) {
+                channel.setText(ch.name + " (" + contentType + ")");
             } else {
                 channel.setText(ch.name);
             }

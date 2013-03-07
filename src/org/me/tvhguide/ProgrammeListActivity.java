@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -62,7 +63,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     private ProgrammeListAdapter prAdapter;
     private Channel channel;
-    private String[] contentTypes;
+    private SparseArray<String> contentTypes;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -139,7 +140,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         });
 
         registerForContextMenu(getListView());
-        contentTypes = getResources().getStringArray(R.array.pr_type);
+        contentTypes = TVHGuideApplication.getContentTypes(this);
     }
 
     @Override
@@ -383,8 +384,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             title.invalidate();
 
             String s = buildSeriesInfoString(p.seriesInfo);
-            if(s.length() == 0 && p.contentType > 0 && p.contentType < 11) {
-            	s = contentTypes[p.contentType - 1];
+            if(s.length() == 0) {
+            	s = contentTypes.get(p.contentType);
             }
             
             seriesInfo.setText(s);
