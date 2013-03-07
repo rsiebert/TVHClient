@@ -9,27 +9,6 @@
         android:orientation="vertical" >
 
         <LinearLayout
-            android:id="@+id/pr_series_info_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/pr_series_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10sp"
-                android:layout_marginTop="4sp"
-                android:text="Episode info" />
-
-            <TextView
-                style="?android:attr/listSeparatorTextViewStyle"
-                android:layout_width="fill_parent"
-                android:layout_height="2sp"
-                android:layout_span="2" />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/pr_summay_and_desc_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -65,6 +44,27 @@
                 android:gravity="center_horizontal" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/pr_series_info_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/pr_series_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10sp"
+                android:layout_marginTop="4sp"
+                android:text="Episode info" />
+
+            <TextView
+                style="?android:attr/listSeparatorTextViewStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="2sp"
+                android:layout_span="2" />
+        </LinearLayout>
+
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -86,11 +86,24 @@
                     android:text="Airing"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <TextView
-                    android:id="@+id/pr_time"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Air date and time" />
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/pr_channel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Channel" />
+                    
+                    <TextView
+                        android:id="@+id/pr_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Air date and time" />
+                </LinearLayout>
+
             </TableRow>
 
             <TableRow

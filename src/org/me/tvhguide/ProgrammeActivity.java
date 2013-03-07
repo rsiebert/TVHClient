@@ -83,7 +83,10 @@ public class ProgrammeActivity extends Activity {
             iv.setImageBitmap(channel.iconBitmap);
         }
 
-        TextView text = (TextView) findViewById(R.id.pr_time);
+        TextView text = (TextView) findViewById(R.id.pr_channel);
+        text.setText(channel.name);
+        
+        text = (TextView) findViewById(R.id.pr_time);
         text.setText(
                 DateFormat.getLongDateFormat(text.getContext()).format(programme.start)
                 + "   "
