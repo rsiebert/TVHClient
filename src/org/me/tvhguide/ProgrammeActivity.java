@@ -96,7 +96,7 @@ public class ProgrammeActivity extends Activity {
                 + DateFormat.getTimeFormat(text.getContext()).format(programme.stop));
 
         
-        if(programme.summary.length() < 0 && programme.description.length() < 0) {
+        if(programme.summary.length() == 0 && programme.description.length() == 0) {
         	View v = findViewById(R.id.pr_summay_and_desc_layout);
         	v.setVisibility(View.GONE);
         } else {
