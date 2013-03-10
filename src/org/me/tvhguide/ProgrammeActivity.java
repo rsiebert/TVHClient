@@ -172,16 +172,22 @@ public class ProgrammeActivity extends Activity {
 			if (s.length() > 0)
 				s += ", ";
 			s += String.format("%s %02d", season.toLowerCase(), info.seasonNumber);
+			if(info.seasonCount > 0)
+				s += String.format("/%02d", info.seasonCount);
 		}
 		if (info.episodeNumber > 0) {
 			if (s.length() > 0)
 				s += ", ";
 			s += String.format("%s %02d", episode.toLowerCase(), info.episodeNumber);
+			if(info.episodeCount > 0)
+				s += String.format("/%02d", info.episodeCount);
 		}
 		if (info.partNumber > 0) {
 			if (s.length() > 0)
 				s += ", ";
 			s += String.format("%s %d", part.toLowerCase(), info.partNumber);
+			if(info.partCount > 0)
+				s += String.format("/%02d", info.partCount);
 		}
 
 		if(s.length() > 0) {
