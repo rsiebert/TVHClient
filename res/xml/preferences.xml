@@ -117,16 +117,17 @@
 	    android:key="lightThemePref"
 	    android:title="@string/pref_theme" 
         android:summary="@string/pref_theme_sum"
-	    android:defaultValue="true"
+	    android:defaultValue="false"
 	/>
 
 	<CheckBoxPreference 
 	    android:key="showIconPref"
 	    android:title="@string/pref_icons" 
         android:summary="@string/pref_icons_sum"
-        android:defaultValue="false"
+        android:defaultValue="true"
 	/>
 	
     </PreferenceCategory>  
     
 </PreferenceScreen>
+
