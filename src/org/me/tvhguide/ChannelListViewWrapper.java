@@ -18,8 +18,10 @@
  */
 package org.me.tvhguide;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ClipDrawable;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.View;
@@ -69,8 +71,11 @@ public class ChannelListViewWrapper {
         name.setText(channel.name);
         name.invalidate();
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
+        Boolean showIcons = prefs.getBoolean("showIconPref", false);
+        icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
         icon.setBackgroundDrawable(new BitmapDrawable(channel.iconBitmap));
-        icon.setVisibility(ImageView.VISIBLE);
+
         if (channel.isRecording()) {
             icon.setImageResource(R.drawable.ic_rec_small);
         } else {

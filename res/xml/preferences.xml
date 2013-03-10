@@ -107,4 +107,26 @@
             android:key="externalPref" 
         />
     </PreferenceCategory>  
+    
+    
+     
+    <PreferenceCategory
+        android:title="@string/pref_ui">
+        
+	<CheckBoxPreference 
+	    android:key="lightThemePref"
+	    android:title="@string/pref_theme" 
+        android:summary="@string/pref_theme_sum"
+	    android:defaultValue="true"
+	/>
+
+	<CheckBoxPreference 
+	    android:key="showIconPref"
+	    android:title="@string/pref_icons" 
+        android:summary="@string/pref_icons_sum"
+        android:defaultValue="false"
+	/>
+	
+    </PreferenceCategory>  
+    
 </PreferenceScreen>

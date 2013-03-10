@@ -41,6 +41,10 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        setTheme(theme ? android.R.style.Theme_Light : android.R.style.Theme);
+
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
         super.onCreate(savedInstanceState);
 

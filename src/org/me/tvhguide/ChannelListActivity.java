@@ -52,6 +52,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
     @Override
     public void onCreate(Bundle icicle) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+        
         super.onCreate(icicle);
 
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);

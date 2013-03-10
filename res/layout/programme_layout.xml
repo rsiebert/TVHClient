@@ -26,15 +26,15 @@
                 android:id="@+id/pr_summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10sp"
-                android:layout_marginRight="10sp" />
+                android:layout_marginLeft="5sp"
+                android:layout_marginRight="5sp" />
 
             <LinearLayout
                 android:id="@+id/pr_desc_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10sp"
-                android:layout_marginRight="10sp"
+                android:layout_marginLeft="5sp"
+                android:layout_marginRight="5sp"
                 android:orientation="vertical" >
 
                 <TextView
@@ -62,8 +62,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/pr_airing_row"
-                android:layout_marginLeft="10sp"
-                android:layout_marginRight="10sp" >
+                android:layout_marginLeft="5sp"
+                android:layout_marginRight="5sp" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -107,8 +107,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/pr_content_type_row"
-                android:layout_marginLeft="10sp"
-                android:layout_marginRight="10sp" >
+                android:layout_marginLeft="5sp"
+                android:layout_marginRight="5sp" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -140,8 +140,8 @@
                 android:id="@+id/pr_series_info_row"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10sp"
-                android:layout_marginRight="10sp" >
+                android:layout_marginLeft="5sp"
+                android:layout_marginRight="5sp" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -175,8 +175,8 @@
                 android:id="@+id/pr_star_rating_row"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10sp"
-                android:layout_marginRight="10sp" >
+                android:layout_marginLeft="5sp"
+                android:layout_marginRight="5sp" >
 
                 <TextView
                     android:layout_width="wrap_content"

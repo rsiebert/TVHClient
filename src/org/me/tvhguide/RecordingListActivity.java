@@ -23,7 +23,9 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.ContextMenu;
@@ -58,6 +60,10 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
     @Override
     public void onCreate(Bundle icicle) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+
         super.onCreate(icicle);
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
@@ -241,6 +247,9 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
             title.setText(rec.title);
             title.invalidate();
 
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
+            Boolean showIcons = prefs.getBoolean("showIconPref", false);
+            icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
             icon.setImageBitmap(ch.iconBitmap);
 
             channel.setText(ch.name);

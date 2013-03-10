@@ -22,7 +22,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +47,10 @@ public class RecordingActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+
         super.onCreate(savedInstanceState);
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
