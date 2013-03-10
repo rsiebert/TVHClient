@@ -24,11 +24,8 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ClipDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.*;
 import android.widget.*;
@@ -37,7 +34,6 @@ import org.me.tvhguide.htsp.HTSListener;
 import org.me.tvhguide.htsp.HTSService;
 import org.me.tvhguide.model.Channel;
 import org.me.tvhguide.model.ChannelTag;
-import org.me.tvhguide.model.Programme;
 
 /**
  *
@@ -57,8 +53,6 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
 
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
