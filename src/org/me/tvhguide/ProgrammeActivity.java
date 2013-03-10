@@ -77,14 +77,18 @@ public class ProgrammeActivity extends Activity {
 
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.programme_title);
         TextView t = (TextView) findViewById(R.id.ct_title);
-        t.setText(programme.title);
+        t.setText(channel.name);
 
         if (channel.iconBitmap != null) {
             ImageView iv = (ImageView) findViewById(R.id.ct_logo);
             iv.setImageBitmap(channel.iconBitmap);
         }
 
-        TextView text = (TextView) findViewById(R.id.pr_channel);
+    
+        TextView text = (TextView) findViewById(R.id.pr_title);
+        text.setText(programme.title);
+        
+        text = (TextView) findViewById(R.id.pr_channel);
         text.setText(channel.name);
         
         text = (TextView) findViewById(R.id.pr_airing);
