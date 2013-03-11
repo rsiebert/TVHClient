@@ -40,6 +40,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -358,9 +360,6 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
             title.invalidate();
 
-            date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
-            date.invalidate();
-
             String s = buildSeriesInfoString(p.seriesInfo);
             if(s.length() == 0) {
             	s = p.description;
@@ -379,12 +378,20 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
             if (DateUtils.isToday(p.start.getTime())) {
                 date.setText(getString(R.string.today));
-            } else {
+            } else if(p.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*2 &&
+                      p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
                 date.setText(DateUtils.getRelativeTimeSpanString(p.start.getTime(),
                         System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
+            } else if(p.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*6 &&
+            		  p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
+            	date.setText(new SimpleDateFormat("EEEE").format(p.start.getTime()));
+            } else {
+                date.setText(DateFormat.getDateFormat(date.getContext()).format(p.start));
             }
+            
             date.invalidate();
 
+            
             time.setText(
                     DateFormat.getTimeFormat(time.getContext()).format(p.start)
                     + " - "

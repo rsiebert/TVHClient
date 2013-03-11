@@ -40,6 +40,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -257,10 +259,18 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
             if (DateUtils.isToday(rec.start.getTime())) {
                 date.setText(getString(R.string.today));
-            } else {
+            } else if(rec.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*2 &&
+                      rec.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
                 date.setText(DateUtils.getRelativeTimeSpanString(rec.start.getTime(),
                         System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
+            } else if(rec.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*6 &&
+            		  rec.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2
+            		) {
+            	date.setText(new SimpleDateFormat("EEEE").format(rec.start.getTime()));
+            } else {
+                date.setText(DateFormat.getDateFormat(date.getContext()).format(rec.start));
             }
+
             date.invalidate();
 
             String msg = "";

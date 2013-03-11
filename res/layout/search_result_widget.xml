@@ -54,7 +54,7 @@
 	                    android:id="@+id/sr_channel">
 	                </TextView>
 	                <TextView
-	                    android:gravity="left"
+	                    android:gravity="right"
 	                    android:layout_width="wrap_content"
 	                    android:layout_height="wrap_content"
 	                    android:paddingRight="3dip"
@@ -71,7 +71,7 @@
 	                    android:id="@+id/sr_desc">
 	                </TextView>
 	                <TextView
-	                    android:gravity="left"
+	                    android:gravity="right"
 	                    android:layout_width="wrap_content"
 	                    android:layout_height="wrap_content"
 	                    android:paddingRight="3dip"

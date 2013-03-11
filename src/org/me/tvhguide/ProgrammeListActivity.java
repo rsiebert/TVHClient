@@ -42,6 +42,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -396,9 +398,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             
             seriesInfo.setText(s);
             seriesInfo.invalidate();
-            
-            date.setText(DateFormat.getMediumDateFormat(date.getContext()).format(p.start));
-            date.invalidate();
 
             if (p.description.length() > 0) {
                 description.setText(p.description);
@@ -411,10 +410,17 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             if (DateUtils.isToday(p.start.getTime())) {
                 date.setText(getString(R.string.today));
-            } else {
+            } else if(p.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*2 &&
+                      p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
                 date.setText(DateUtils.getRelativeTimeSpanString(p.start.getTime(),
                         System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
+            } else if(p.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*6 &&
+            		  p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
+            	date.setText(new SimpleDateFormat("EEEE").format(p.start.getTime()));
+            } else {
+                date.setText(DateFormat.getDateFormat(date.getContext()).format(p.start));
             }
+            
             date.invalidate();
 
             time.setText(
@@ -424,7 +430,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             time.invalidate();
         }
     }
-
  
     class ProgrammeListAdapter extends ArrayAdapter<Programme> {
 
