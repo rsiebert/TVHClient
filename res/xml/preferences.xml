@@ -70,6 +70,9 @@
             android:dialogTitle="@string/pref_container"
             android:entries="@array/pref_container_list_display"
             android:entryValues="@array/pref_container_list" />
+        
+        <!--
+        
         <CheckBoxPreference 
             android:id="@+id/pref_transcode"
             android:name="@string/pref_transcode"
@@ -117,6 +120,10 @@
             android:dependency="transcodePref"
             android:entries="@array/pref_scodec_list_display"
             android:entryValues="@array/pref_scodec_list" />
+
+        -->
+        
+        
         <CheckBoxPreference 
             android:id="@+id/pref_external"
             android:name="@string/pref_external"
