@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.me.tvhguide"
+    package="org.tvheadend.tvhguide"
     android:versionCode="17"
     android:versionName="1.6.3"
     >
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="9" />
-    <application android:name=".TVHGuideApplication" android:label="TVHGuide" android:icon="@drawable/logo_72">
+    <application android:name="org.tvheadend.tvhguide.TVHGuideApplication" android:label="TVHGuide" android:icon="@drawable/logo_72">
         <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity" />
-        <activity android:name=".ChannelListActivity" android:theme="@style/CustomTheme">
+        <activity android:name="org.tvheadend.tvhguide.ChannelListActivity" android:theme="@style/CustomTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".RecordingListActivity" android:theme="@style/CustomTheme"/>
-        <activity android:name=".SearchResultActivity" android:theme="@style/CustomTheme" android:launchMode="singleTop">
+        <activity android:name="org.tvheadend.tvhguide.RecordingListActivity" android:theme="@style/CustomTheme"/>
+        <activity android:name="org.tvheadend.tvhguide.SearchResultActivity" android:theme="@style/CustomTheme" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".ProgrammeListActivity" android:theme="@style/CustomTheme"/>
-        <activity android:name=".ProgrammeActivity" android:theme="@style/CustomTheme"/>
-        <activity android:name=".RecordingActivity" android:theme="@style/CustomTheme"/>
-        <activity android:name=".SettingsActivity"/>
-        <activity android:name=".ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
-        <activity android:name=".PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>
-        <service android:name=".htsp.HTSService" android:enabled="true"/>
+        <activity android:name="org.tvheadend.tvhguide.ProgrammeListActivity" android:theme="@style/CustomTheme"/>
+        <activity android:name="org.tvheadend.tvhguide.ProgrammeActivity" android:theme="@style/CustomTheme"/>
+        <activity android:name="org.tvheadend.tvhguide.RecordingActivity" android:theme="@style/CustomTheme"/>
+        <activity android:name="org.tvheadend.tvhguide.SettingsActivity"/>
+        <activity android:name="org.tvheadend.tvhguide.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="org.tvheadend.tvhguide.PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>
+        <service android:name="org.tvheadend.tvhguide.htsp.HTSService" android:enabled="true"/>
     </application>
 </manifest>
