@@ -128,7 +128,7 @@
             android:id="@+id/pref_external"
             android:name="@string/pref_external"
             android:summary="@string/pref_external_sum"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:title="@string/pref_external"
             android:key="externalPref" 
         />
