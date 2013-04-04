@@ -105,6 +105,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                     }
                     nextId = p.nextId;
                 }
+                if(p == null)
+                    return;
 
                 if (nextId == 0) {
                     nextId = p.nextId;
