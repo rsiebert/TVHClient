@@ -28,7 +28,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -561,19 +560,28 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     public void cacheImage(String url, File f) throws MalformedURLException, IOException {
         Log.d(TAG, "Caching " + url + " as " + f.toString());
-        BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
 
+        BufferedInputStream is = new BufferedInputStream(new URL(url).openStream());
         OutputStream os = new FileOutputStream(f);
-        os = new BufferedOutputStream(os, 1024);
+        
+        float scale = getResources().getDisplayMetrics().scaledDensity;
+        int width = (int) (64 * scale);
+        int height = (int) (64 * scale);
+        
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.outWidth  = width;
+        o.outHeight = height;
 
-        byte[] data = new byte[1024];
-        int x = 0;
-        while ((x = in.read(data, 0, 1024)) >= 0) {
-            os.write(data, 0, x);
-        }
+        Bitmap bitmap = BitmapFactory.decodeStream(is, null, o);
+        
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+        bitmap.recycle();
+        
+        resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+        resizedBitmap.recycle();
+        
         os.close();
-        in.close();
-
+        is.close();
     }
 
     private Bitmap getIcon(final String url) throws MalformedURLException, IOException {
@@ -582,7 +590,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
 
         File dir = getCacheDir();
-        File f = new File(dir, hashString(url));
+        File f = new File(dir, hashString(url) + ".png");
 
         if (!f.exists()) {
             cacheImage(url, f);
