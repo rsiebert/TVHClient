@@ -857,10 +857,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
                 String ticket = response.getString("ticket", null);
-
+                String webroot = connection.getWebRoot();
+                
                 if (path != null && ticket != null) {
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
-                    app.addTicket(new HttpTicket(path, ticket));
+                    app.addTicket(new HttpTicket(webroot + path, ticket));
                 }
             }
         });

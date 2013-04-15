@@ -54,6 +54,7 @@ public class HTSConnection extends Thread {
     private String clientName;
     private String clientVersion;
     private int protocolVersion;
+    private String webRoot;
     
     private HTSConnectionListener listener;
     private Map<Integer, HTSResponseHandler> responseHandelers;
@@ -164,6 +165,8 @@ public class HTSConnection extends Thread {
             public void handleResponse(HTSMessage response) {
             	
             	protocolVersion = response.getInt("htspversion");
+            	webRoot = response.getString("webroot", "");
+            	
                 MessageDigest md;
                 try {
                     md = MessageDigest.getInstance("SHA1");
@@ -318,5 +321,9 @@ public class HTSConnection extends Thread {
     
     public int getProtocolVersion() {
     	return this.protocolVersion;
+    }
+    
+    public String getWebRoot() {
+    	return this.webRoot;
     }
 }
