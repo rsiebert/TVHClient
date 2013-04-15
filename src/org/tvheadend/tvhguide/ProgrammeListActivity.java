@@ -470,6 +470,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
                 ViewWarpper wrapper = (ViewWarpper) view.getTag();
                 wrapper.repaint(programme);
+                break;
             }
         }
 

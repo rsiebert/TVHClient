@@ -362,6 +362,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
                 ChannelListViewWrapper wrapper = (ChannelListViewWrapper) view.getTag();
                 wrapper.repaint(channel);
+                break;
             }
         }
 

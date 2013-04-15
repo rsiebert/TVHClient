@@ -437,6 +437,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
                 ViewWarpper wrapper = (ViewWarpper) view.getTag();
                 wrapper.repaint(programme);
+                break;
             }
         }
 

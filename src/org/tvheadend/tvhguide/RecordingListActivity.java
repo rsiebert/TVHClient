@@ -352,6 +352,7 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
                 ViewWarpper wrapper = (ViewWarpper) view.getTag();
                 wrapper.repaint(recording);
+                break;
             }
         }
 
