@@ -311,7 +311,9 @@ public class HTSConnection extends Thread {
             responseHandelers.remove(respSeq);
 
             if (handler != null) {
-                handler.handleResponse(msg);
+            	synchronized (handler) {
+                    handler.handleResponse(msg);
+            	}
                 return;
             }
         }
