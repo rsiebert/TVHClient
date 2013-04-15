@@ -31,6 +31,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -561,7 +562,17 @@ public class HTSService extends Service implements HTSConnectionListener {
     public void cacheImage(String url, File f) throws MalformedURLException, IOException {
         Log.d(TAG, "Caching " + url + " as " + f.toString());
 
-        BufferedInputStream is = new BufferedInputStream(new URL(url).openStream());
+        InputStream is;
+        
+        if(url.startsWith("http")) {
+        	is = new BufferedInputStream(new URL(url).openStream());
+        } else if (connection.getProtocolVersion() > 9){
+        	is = new HTSFileInputStream(connection, url);
+        } else {
+        	Log.d(TAG, "Unhandled url: " + url);
+        	return;
+        }
+        
         OutputStream os = new FileOutputStream(f);
         
         float scale = getResources().getDisplayMetrics().scaledDensity;
