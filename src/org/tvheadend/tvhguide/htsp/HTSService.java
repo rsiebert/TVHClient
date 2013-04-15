@@ -361,7 +361,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.state = msg.getString("state", null);
         rec.stop = msg.getDate("stop");
         rec.title = msg.getString("title", null);
-        rec.channel = app.getChannel(msg.getLong("channel"));
+        rec.channel = app.getChannel(msg.getLong("channel", 0));
         if (rec.channel != null) {
             rec.channel.recordings.add(rec);
         }
