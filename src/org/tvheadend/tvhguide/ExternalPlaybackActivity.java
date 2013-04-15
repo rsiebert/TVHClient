@@ -71,7 +71,7 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         Integer port = Integer.parseInt(prefs.getString("httpPortPref", "9981"));
 
         Integer resolution = Integer.parseInt(prefs.getString("resolutionPref", "288"));
-        Boolean transcode = prefs.getBoolean("transcodePref", true);
+        Boolean transcode = false; //prefs.getBoolean("transcodePref", true);
         String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
         String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_MPEG4VIDEO);
         String scodec = prefs.getString("scodecPref", "PASS");
