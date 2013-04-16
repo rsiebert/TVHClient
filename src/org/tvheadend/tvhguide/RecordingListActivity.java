@@ -252,10 +252,15 @@ public class RecordingListActivity extends ListActivity implements HTSListener {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
             Boolean showIcons = prefs.getBoolean("showIconPref", false);
+            
             icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-            icon.setImageBitmap(ch.iconBitmap);
-
-            channel.setText(ch.name);
+            if(ch != null) {
+            	icon.setImageBitmap(ch.iconBitmap);
+            	channel.setText(ch.name);
+            } else {
+            	icon.setImageBitmap(null);
+            	channel.setText("");
+            }
             channel.invalidate();
 
             if (DateUtils.isToday(rec.start.getTime())) {
