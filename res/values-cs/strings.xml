@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">TVHGuide</string>
+
+    <string name="menu_help">Nápověda</string>
+    <string name="menu_settings">Nastavení</string>
+    <string name="menu_refresh">Obnovit</string>
+    <string name="menu_tags">Štítky</string>
+    <string name="menu_recordings">Nahrávání</string>
+
+    <string name="menu_record">Nahrávky</string>
+    <string name="menu_record_cancel">Zrušit nahrávání</string>
+    <string name="menu_record_remove">Vymazat nahrávání</string>
+
+    <string name="pref_host">Hostname</string>
+    <string name="pref_host_sum">Nazev serveru (Hostname)</string>
+
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Port serveru</string>
+
+    <string name="pref_user">Uživatelské jméno</string>
+    <string name="pref_user_sum">Vložte jméno</string>
+
+    <string name="pref_pass">Heslo</string>
+    <string name="pref_pass_sum">Vložte heslo</string>
+    
+    <string name="pref_icons">Ikony kanálů</string>
+    <string name="pref_icons_sum">Zobrazit ikony kanálů?</string>
+
+    <string name="pref_res">Rozlišení</string>
+    <string name="pref_res_sum">Preferované maximální rozlišení videa</string>
+
+    <string name="pref_acodec">Audio kodek</string>
+    <string name="pref_acodec_sum">Preferovaný audio kodek</string>
+    
+    <string name="pref_vcodec">Video kodek</string>
+    <string name="pref_vcodec_sum">Preferovaný video kodek</string>
+    
+    <string name="pref_scodec">Kodek pro titulky</string>
+    <string name="pref_scodec_sum">Preferovaný kodek pro titulky</string>
+    
+    <string name="pref_container">Media kontejner</string>
+    <string name="pref_container_sum">Preferovaný proudový kontejner</string>
+    
+    <string name="pref_playback">Přehrávání</string>
+    
+    <string name="pref_http_port">HTTP port</string>
+    <string name="pref_http_port_sum">Vložte HTTP port Serveru</string>
+    
+    <string name="pref_transcode">Překódovat proud</string>
+    <string name="pref_transcode_sum">Požadovat překódování pro živý přenos</string>
+
+    <string name="pref_external">Preferovaný externí přehrávač</string>
+    <string name="pref_external_sum">Použije se pro živé streamy (BSPlayer seems OK)</string>
+
+    <string name="err_auth">Přístup odmítnut</string>
+    <string name="err_inv">Neplatná odpověď serveru</string>
+    <string name="err_connect">Nelze se připojit na server</string>
+    <string name="err_con_lost">Spojení se serverem ztraceno</string>
+
+    <string name="inf_load">Načítám…</string>
+    <string name="inf_load_ext">Prosím čekejte…</string>
+
+    <string name="pr_all_channels">Všechny kanály</string>
+    <string name="pr_get_more">Více</string>
+    <string-array name="pr_type">
+        <item>Filmy / Divadlo</item>
+        <item>Zprávy / Aktuality</item>
+        <item>Seriály / Hry</item>
+        <item>Sport</item>
+        <item>Dětské / Pro mladistvé</item>
+        <item>Hudba</item>
+        <item>Umění / Kultura</item>
+        <item>Společnost / Politika / Ekonomie</item>
+        <item>Vzdělání / Věda / Naučné</item>
+        <item>Hobby</item>
+    </string-array>
+
+    <string name="pvr_scheduled">Plánované</string>
+    <string name="pvr_recording">Nahrávání</string>
+    <string name="pvr_completed">Kompletní</string>
+    <string name="pvr_missed">Ztracené</string>
+    <string name="pvr_invalid">Neplatné</string>
+
+    <string name="ch_play">Přehrát</string>
+    <string name="ch_no_transmission">Žádný přenos</string>
+    
+    <string name="search_hint">Hledat v EPG</string>
+    <string name="today">dnes</string>
+</resources>
