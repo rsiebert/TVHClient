@@ -8,21 +8,34 @@
     <string name="menu_tags">Tags</string>
     <string name="menu_recordings">Aufnahmen</string>
 
+    <string name="menu_record">"Aufnahme"</string>
+    <string name="menu_record_cancel">"Aufnahme abbrechen"</string>
+    <string name="menu_record_remove">"Aufnahme entfernen"</string>
+
+    <string name="pref_connections">Verbindungen</string>
     <string name="pref_host">Hostname</string>
-    <string name="pref_host_sum">Hostnamen des Servers eingeben</string>
-
+    <string name="pref_host_sum">Hostname des Servers eingeben</string>
     <string name="pref_port">Port</string>
-    <string name="pref_port_sum">Port der Servers eingeben</string>
-
+    <string name="pref_port_sum">Server-Port eingeben</string>
     <string name="pref_user">Benutzername</string>
     <string name="pref_user_sum">Benutzernamen eingeben</string>
-
     <string name="pref_pass">Passwort</string>
     <string name="pref_pass_sum">Passwort eingeben</string>
-    
-    <string name="pref_icons">Kanal-Logos</string>
-    <string name="pref_icons_sum">Kanal-Logos anzeigen?</string>
 
+    <string name="pref_ui">Aussehen</string>
+    <string name="pref_theme">"Helle Darstellung"</string>
+    <string name="pref_theme_sum">"Verwendet die helleren Android Farben (Holo-Light Theme)"</string>
+    <string name="pref_icons">Zeige Senderlogos</string>
+    <string name="pref_icons_sum">Zu jeder Aufnahme wird das dazugehörige Senderlogo angezeigt (falls verfügbar).</string>
+
+    <string name="pref_playback">"Wiedergabe"</string>
+    <string name="pref_http_port">"HTTP-Port"</string>
+    <string name="pref_http_port_sum">"HTTP-Port des Servers"</string>
+    <string name="pref_transcode">"Stream transkodieren"</string>
+    <string name="pref_transcode_sum">"Transkodiere Stream während der Live-Wiedergabe"</string>
+    <string name="pref_external">"Bevorzuge externen Videoplayer"</string>
+    <string name="pref_external_sum">"Soll ein externer Video-Player benutzt werden? (z.B. BSPlayer)"</string>
+    
     <string name="err_auth">Zugriff verweigert</string>
     <string name="err_inv">Ungültige Antwort des Servers</string>
     <string name="err_connect">Konnte nicht mit dem Server verbinden</string>
