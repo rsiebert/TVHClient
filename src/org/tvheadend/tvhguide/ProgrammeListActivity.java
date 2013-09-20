@@ -18,6 +18,22 @@
  */
 package org.tvheadend.tvhguide;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
+import org.tvheadend.tvhguide.R.string;
+import org.tvheadend.tvhguide.htsp.HTSListener;
+import org.tvheadend.tvhguide.htsp.HTSService;
+import org.tvheadend.tvhguide.intent.SearchEPGIntent;
+import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
+import org.tvheadend.tvhguide.model.Channel;
+import org.tvheadend.tvhguide.model.Programme;
+import org.tvheadend.tvhguide.model.Recording;
+import org.tvheadend.tvhguide.model.SeriesInfo;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -33,32 +49,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
-import org.tvheadend.tvhguide.R;
-import org.tvheadend.tvhguide.R.string;
-import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
-import org.tvheadend.tvhguide.intent.SearchEPGIntent;
-import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
-import org.tvheadend.tvhguide.model.Channel;
-import org.tvheadend.tvhguide.model.Programme;
-import org.tvheadend.tvhguide.model.Recording;
-import org.tvheadend.tvhguide.model.SeriesInfo;
 
 /**
  *
@@ -88,42 +87,21 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
-        Button btn = new Button(this);
-        btn.setText(R.string.pr_get_more);
-        btn.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View view) {
-                Programme p = null;
-
-                Iterator<Programme> it = channel.epg.iterator();
-                long nextId = 0;
-
-                while (it.hasNext()) {
-                    p = it.next();
-                    if (p.id != nextId && nextId != 0) {
-                        break;
-                    }
-                    nextId = p.nextId;
+        // Add a listener to check if the program list has been scrolled.
+        // If the last list item is visible, load more data and show it.
+        getListView().setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
+                    loadMorePrograms();
                 }
-                if(p == null)
-                    return;
+            }
 
-                if (nextId == 0) {
-                    nextId = p.nextId;
-                }
-                if (nextId == 0) {
-                    nextId = p.id;
-                }
-                Intent intent = new Intent(ProgrammeListActivity.this, HTSService.class);
-                intent.setAction(HTSService.ACTION_GET_EVENTS);
-                intent.putExtra("eventId", nextId);
-                intent.putExtra("channelId", channel.id);
-                intent.putExtra("count", 10);
-                startService(intent);
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // TODO Auto-generated method stub
             }
         });
-
-        getListView().addFooterView(btn);
 
         List<Programme> prList = new ArrayList<Programme>();
         prList.addAll(channel.epg);
@@ -351,6 +329,42 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 		return s;
 	}
 	
+    /**
+     * 
+     */
+    protected void loadMorePrograms() {
+
+        Iterator<Programme> it = channel.epg.iterator();
+        Programme p = null;
+        long nextId = 0;
+
+        while (it.hasNext()) {
+            p = it.next();
+            if (p.id != nextId && nextId != 0) {
+                break;
+            }
+            nextId = p.nextId;
+        }
+
+        if (p == null) {
+            return;
+        }
+        if (nextId == 0) {
+            nextId = p.nextId;
+        }
+        if (nextId == 0) {
+            nextId = p.id;
+        }
+
+        // Set the required information and start the service command.
+        Intent intent = new Intent(this, HTSService.class);
+        intent.setAction(HTSService.ACTION_GET_EVENTS);
+        intent.putExtra("eventId", nextId);
+        intent.putExtra("channelId", channel.id);
+        intent.putExtra("count", 10);
+        startService(intent);
+    }
+    
     private class ViewWarpper {
 
         TextView title;
