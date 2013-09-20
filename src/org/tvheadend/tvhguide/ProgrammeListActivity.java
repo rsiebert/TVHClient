@@ -69,11 +69,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-        // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setTitle("Programs");
         
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
@@ -83,6 +78,11 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             return;
         }
 
+        // Setup the action bar and show the title
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setTitle(channel.name);
+        
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
         getListView().setOnScrollListener(new OnScrollListener() {
@@ -105,6 +105,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         prAdapter.sort();
         setListAdapter(prAdapter);
 
+        getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+        
         registerForContextMenu(getListView());
         contentTypes = TVHGuideApplication.getContentTypes(this);
     }
@@ -225,6 +227,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                         prAdapter.add(p);
                         prAdapter.notifyDataSetChanged();
                         prAdapter.sort();
+                        getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                     }
                 }
             });
@@ -235,6 +238,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                     Programme p = (Programme) obj;
                     prAdapter.remove(p);
                     prAdapter.notifyDataSetChanged();
+                    getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {

@@ -216,4 +216,6 @@
     
     <string name="search_hint">Search the EPG</string>
     <string name="today">today</string>
+    
+    <string name="programs">Programs</string>
 </resources>
