@@ -5,7 +5,7 @@
     android:versionName="1.6.7"
     >
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="9" />
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="18" />
     <application android:name="org.tvheadend.tvhguide.TVHGuideApplication" android:label="TVHGuide" android:icon="@drawable/logo_72">
         <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity" />
         <activity android:name="org.tvheadend.tvhguide.ChannelListActivity" android:theme="@style/CustomTheme">
@@ -22,7 +22,7 @@
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhguide.ProgrammeListActivity" android:theme="@style/CustomTheme"/>
+        <activity android:name="org.tvheadend.tvhguide.ProgrammeListActivity" />
         <activity android:name="org.tvheadend.tvhguide.ProgrammeActivity" android:theme="@style/CustomTheme"/>
         <activity android:name="org.tvheadend.tvhguide.RecordingActivity" android:theme="@style/CustomTheme"/>
         <activity android:name="org.tvheadend.tvhguide.SettingsActivity"/>

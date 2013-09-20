@@ -8,6 +8,8 @@
     <string name="menu_tags">Tags</string>
     <string name="menu_recordings">Recordings</string>
 
+    <string name="menu_play">Play</string>
+    <string name="menu_search">Search</string>
     <string name="menu_record">Record</string>
     <string name="menu_record_cancel">Cancel recording</string>
     <string name="menu_record_remove">Remove recording</string>

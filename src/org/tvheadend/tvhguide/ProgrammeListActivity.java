@@ -37,9 +37,7 @@ import org.tvheadend.tvhguide.model.SeriesInfo;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
@@ -50,7 +48,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -71,12 +68,13 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     @Override
     public void onCreate(Bundle icicle) {
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    	Boolean theme = prefs.getBoolean("lightThemePref", false);
-    	setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
-
         super.onCreate(icicle);
 
+        // Setup the action bar and show the title
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setTitle("Programs");
+        
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
 
@@ -84,8 +82,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             finish();
             return;
         }
-
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
@@ -108,25 +104,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         prAdapter = new ProgrammeListAdapter(this, prList);
         prAdapter.sort();
         setListAdapter(prAdapter);
-
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.programme_list_title);
-        TextView t = (TextView) findViewById(R.id.ct_title);
-        t.setText(channel.name);
-
-        if (channel.iconBitmap != null) {
-            ImageView iv = (ImageView) findViewById(R.id.ct_logo);
-            iv.setImageBitmap(channel.iconBitmap);
-        }
-
-        View v = findViewById(R.id.ct_btn);
-        v.setOnClickListener(new android.view.View.OnClickListener() {
-
-            public void onClick(View arg0) {
-                Intent intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
-                intent.putExtra("channelId", channel.id);
-                startActivity(intent);
-            }
-        });
 
         registerForContextMenu(getListView());
         contentTypes = TVHGuideApplication.getContentTypes(this);
@@ -210,32 +187,23 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = null;
-        Intent intent = null;
-
-        item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
-        item.setIcon(android.R.drawable.ic_menu_search);
-
-        intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
-        intent.putExtra("channelId", channel.id);
-
-        item = menu.add(Menu.NONE, R.string.ch_play, Menu.NONE, R.string.ch_play);
-        item.setIcon(android.R.drawable.ic_menu_view);
-        item.setIntent(intent);
-
+        getMenuInflater().inflate(R.menu.program_list_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.string.search_go: {
-                onSearchRequested();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        case R.id.menu_search:
+            onSearchRequested();
+            return true;
+        case R.id.menu_play:
+            Intent intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
+            intent.putExtra("channelId", channel.id);
+            startActivity(intent);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 
