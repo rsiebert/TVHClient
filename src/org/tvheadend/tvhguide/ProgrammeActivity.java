@@ -248,6 +248,9 @@ public class ProgrammeActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.string.menu_record_remove:
             case R.string.menu_record_cancel:
             case R.string.menu_record:

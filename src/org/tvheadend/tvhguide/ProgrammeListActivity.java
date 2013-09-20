@@ -198,6 +198,9 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
         case R.id.menu_search:
             // Show the search text input in the action bar
             onSearchRequested();
