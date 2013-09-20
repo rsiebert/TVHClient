@@ -158,11 +158,11 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         Programme p = prAdapter.getItem(info.position);
 
         menu.setHeaderTitle(p.title);
-
         Intent intent = new Intent(this, HTSService.class);
-
         MenuItem item = null;
 
+        // Check which state the current program is and show either 
+        // the record, cancel recording or delete recording menu option
         if (p.recording == null) {
             intent.setAction(HTSService.ACTION_DVR_ADD);
             intent.putExtra("eventId", p.id);
@@ -180,9 +180,11 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
         item.setIntent(intent);
 
+        // Show the menu option to search for this program in the program guide
         item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
         item.setIntent(new SearchEPGIntent(this, p.title));
 
+        // Show the menu option to search for this program on the IMDB website
         item = menu.add(ContextMenu.NONE, ContextMenu.NONE, ContextMenu.NONE, "IMDb");
         item.setIntent(new SearchIMDbIntent(this, p.title));
     }
@@ -197,9 +199,11 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_search:
+            // Show the search text input in the action bar
             onSearchRequested();
             return true;
         case R.id.menu_play:
+            // Open a new activity to stream the current program to this device
             Intent intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
             intent.putExtra("channelId", channel.id);
             startActivity(intent);
@@ -219,8 +223,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_ADD)) {
+            // A new program has been added
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Programme p = (Programme) obj;
                     if (channel != null && p.channel.id == channel.id) {
@@ -232,8 +236,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_DELETE)) {
+            // An existing program has been deleted
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Programme p = (Programme) obj;
                     prAdapter.remove(p);
@@ -242,16 +246,16 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
+            // An existing program has been updated
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Programme p = (Programme) obj;
                     prAdapter.updateView(getListView(), p);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
+            // An existing recording has been updated
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Recording rec = (Recording) obj;
                     for (Programme p : prAdapter.list) {
@@ -337,7 +341,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         startService(intent);
     }
     
-    private class ViewWarpper {
+    private class ViewWrapper {
 
         TextView title;
         TextView time;
@@ -346,7 +350,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         TextView description;
         ImageView state;
 
-        public ViewWarpper(View base) {
+        public ViewWrapper(View base) {
             title = (TextView) base.findViewById(R.id.pr_title);
             description = (TextView) base.findViewById(R.id.pr_desc);
             seriesInfo = (TextView) base.findViewById(R.id.pr_series_info);
@@ -454,7 +458,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                     continue;
                 }
 
-                ViewWarpper wrapper = (ViewWarpper) view.getTag();
+                ViewWrapper wrapper = (ViewWrapper) view.getTag();
                 wrapper.repaint(programme);
                 break;
             }
@@ -463,17 +467,17 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            ViewWarpper wrapper = null;
+            ViewWrapper wrapper = null;
 
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
                 row = inflater.inflate(R.layout.programme_list_widget, null, false);
 
-                wrapper = new ViewWarpper(row);
+                wrapper = new ViewWrapper(row);
                 row.setTag(wrapper);
 
             } else {
-                wrapper = (ViewWarpper) row.getTag();
+                wrapper = (ViewWrapper) row.getTag();
             }
 
             Programme p = getItem(position);
