@@ -18,38 +18,12 @@
  */
 package org.tvheadend.tvhguide;
 
-import android.app.Activity;
-import android.app.ListActivity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
-import android.util.SparseArray;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.tvheadend.tvhguide.R;
 import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
@@ -59,6 +33,28 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Programme;
 import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.SeriesInfo;
+
+import android.app.Activity;
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
+import android.util.SparseArray;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  *
@@ -72,12 +68,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     @Override
     public void onCreate(Bundle icicle) {
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    	Boolean theme = prefs.getBoolean("lightThemePref", false);
-    	setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
-
         super.onCreate(icicle);
-
+        
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
 
@@ -86,44 +78,26 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             return;
         }
 
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-
-        Button btn = new Button(this);
-        btn.setText(R.string.pr_get_more);
-        btn.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View view) {
-                Programme p = null;
-
-                Iterator<Programme> it = channel.epg.iterator();
-                long nextId = 0;
-
-                while (it.hasNext()) {
-                    p = it.next();
-                    if (p.id != nextId && nextId != 0) {
-                        break;
-                    }
-                    nextId = p.nextId;
+        // Setup the action bar and show the title
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setTitle(channel.name);
+        
+        // Add a listener to check if the program list has been scrolled.
+        // If the last list item is visible, load more data and show it.
+        getListView().setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
+                    loadMorePrograms();
                 }
-                if(p == null)
-                    return;
+            }
 
-                if (nextId == 0) {
-                    nextId = p.nextId;
-                }
-                if (nextId == 0) {
-                    nextId = p.id;
-                }
-                Intent intent = new Intent(ProgrammeListActivity.this, HTSService.class);
-                intent.setAction(HTSService.ACTION_GET_EVENTS);
-                intent.putExtra("eventId", nextId);
-                intent.putExtra("channelId", channel.id);
-                intent.putExtra("count", 10);
-                startService(intent);
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // TODO Auto-generated method stub
             }
         });
-
-        getListView().addFooterView(btn);
 
         List<Programme> prList = new ArrayList<Programme>();
         prList.addAll(channel.epg);
@@ -131,25 +105,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         prAdapter.sort();
         setListAdapter(prAdapter);
 
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.programme_list_title);
-        TextView t = (TextView) findViewById(R.id.ct_title);
-        t.setText(channel.name);
-
-        if (channel.iconBitmap != null) {
-            ImageView iv = (ImageView) findViewById(R.id.ct_logo);
-            iv.setImageBitmap(channel.iconBitmap);
-        }
-
-        View v = findViewById(R.id.ct_btn);
-        v.setOnClickListener(new android.view.View.OnClickListener() {
-
-            public void onClick(View arg0) {
-                Intent intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
-                intent.putExtra("channelId", channel.id);
-                startActivity(intent);
-            }
-        });
-
+        getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+        
         registerForContextMenu(getListView());
         contentTypes = TVHGuideApplication.getContentTypes(this);
     }
@@ -201,11 +158,11 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         Programme p = prAdapter.getItem(info.position);
 
         menu.setHeaderTitle(p.title);
-
         Intent intent = new Intent(this, HTSService.class);
-
         MenuItem item = null;
 
+        // Check which state the current program is and show either 
+        // the record, cancel recording or delete recording menu option
         if (p.recording == null) {
             intent.setAction(HTSService.ACTION_DVR_ADD);
             intent.putExtra("eventId", p.id);
@@ -223,41 +180,39 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
         item.setIntent(intent);
 
+        // Show the menu option to search for this program in the program guide
         item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
         item.setIntent(new SearchEPGIntent(this, p.title));
 
+        // Show the menu option to search for this program on the IMDB website
         item = menu.add(ContextMenu.NONE, ContextMenu.NONE, ContextMenu.NONE, "IMDb");
         item.setIntent(new SearchIMDbIntent(this, p.title));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = null;
-        Intent intent = null;
-
-        item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
-        item.setIcon(android.R.drawable.ic_menu_search);
-
-        intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
-        intent.putExtra("channelId", channel.id);
-
-        item = menu.add(Menu.NONE, R.string.ch_play, Menu.NONE, R.string.ch_play);
-        item.setIcon(android.R.drawable.ic_menu_view);
-        item.setIntent(intent);
-
+        getMenuInflater().inflate(R.menu.program_list_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.string.search_go: {
-                onSearchRequested();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+        case R.id.menu_search:
+            // Show the search text input in the action bar
+            onSearchRequested();
+            return true;
+        case R.id.menu_play:
+            // Open a new activity to stream the current program to this device
+            Intent intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
+            intent.putExtra("channelId", channel.id);
+            startActivity(intent);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -271,37 +226,39 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_ADD)) {
+            // A new program has been added
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Programme p = (Programme) obj;
                     if (channel != null && p.channel.id == channel.id) {
                         prAdapter.add(p);
                         prAdapter.notifyDataSetChanged();
                         prAdapter.sort();
+                        getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                     }
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_DELETE)) {
+            // An existing program has been deleted
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Programme p = (Programme) obj;
                     prAdapter.remove(p);
                     prAdapter.notifyDataSetChanged();
+                    getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
+            // An existing program has been updated
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Programme p = (Programme) obj;
                     prAdapter.updateView(getListView(), p);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
+            // An existing recording has been updated
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Recording rec = (Recording) obj;
                     for (Programme p : prAdapter.list) {
@@ -351,7 +308,43 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 		return s;
 	}
 	
-    private class ViewWarpper {
+    /**
+     * 
+     */
+    protected void loadMorePrograms() {
+
+        Iterator<Programme> it = channel.epg.iterator();
+        Programme p = null;
+        long nextId = 0;
+
+        while (it.hasNext()) {
+            p = it.next();
+            if (p.id != nextId && nextId != 0) {
+                break;
+            }
+            nextId = p.nextId;
+        }
+
+        if (p == null) {
+            return;
+        }
+        if (nextId == 0) {
+            nextId = p.nextId;
+        }
+        if (nextId == 0) {
+            nextId = p.id;
+        }
+
+        // Set the required information and start the service command.
+        Intent intent = new Intent(this, HTSService.class);
+        intent.setAction(HTSService.ACTION_GET_EVENTS);
+        intent.putExtra("eventId", nextId);
+        intent.putExtra("channelId", channel.id);
+        intent.putExtra("count", 10);
+        startService(intent);
+    }
+    
+    private class ViewWrapper {
 
         TextView title;
         TextView time;
@@ -360,7 +353,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         TextView description;
         ImageView state;
 
-        public ViewWarpper(View base) {
+        public ViewWrapper(View base) {
             title = (TextView) base.findViewById(R.id.pr_title);
             description = (TextView) base.findViewById(R.id.pr_desc);
             seriesInfo = (TextView) base.findViewById(R.id.pr_series_info);
@@ -468,7 +461,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                     continue;
                 }
 
-                ViewWarpper wrapper = (ViewWarpper) view.getTag();
+                ViewWrapper wrapper = (ViewWrapper) view.getTag();
                 wrapper.repaint(programme);
                 break;
             }
@@ -477,17 +470,17 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            ViewWarpper wrapper = null;
+            ViewWrapper wrapper = null;
 
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
                 row = inflater.inflate(R.layout.programme_list_widget, null, false);
 
-                wrapper = new ViewWarpper(row);
+                wrapper = new ViewWrapper(row);
                 row.setTag(wrapper);
 
             } else {
-                wrapper = (ViewWarpper) row.getTag();
+                wrapper = (ViewWrapper) row.getTag();
             }
 
             Programme p = getItem(position);

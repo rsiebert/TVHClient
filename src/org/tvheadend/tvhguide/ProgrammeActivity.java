@@ -18,22 +18,6 @@
  */
 package org.tvheadend.tvhguide;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
-import android.util.SparseArray;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
-
-import org.tvheadend.tvhguide.R;
 import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
@@ -41,6 +25,18 @@ import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Programme;
 import org.tvheadend.tvhguide.model.SeriesInfo;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.format.DateFormat;
+import android.util.SparseArray;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 /**
  *
@@ -52,18 +48,20 @@ public class ProgrammeActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    	Boolean theme = prefs.getBoolean("lightThemePref", false);
-    	setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
-
-        super.onCreate(savedInstanceState);
-
+    	super.onCreate(savedInstanceState);
+    	setContentView(R.layout.programme_layout);
+    	
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         Channel channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
         if (channel == null) {
             finish();
             return;
         }
+
+        // Setup the action bar and show the title
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setTitle(channel.name);
 
         long eventId = getIntent().getLongExtra("eventId", 0);
         for (Programme p : channel.epg) {
@@ -78,86 +76,71 @@ public class ProgrammeActivity extends Activity {
             return;
         }
 
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-
-        setContentView(R.layout.programme_layout);
-
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.programme_title);
-        TextView t = (TextView) findViewById(R.id.ct_title);
-        t.setText(channel.name);
-
-        if (channel.iconBitmap != null) {
-            ImageView iv = (ImageView) findViewById(R.id.ct_logo);
-            iv.setImageBitmap(channel.iconBitmap);
-        }
-
-    
-        TextView text = (TextView) findViewById(R.id.pr_title);
-        text.setText(programme.title);
+        // Initialize all the widgets from the layout
+        TextView titleLabel = (TextView) findViewById(R.id.title_label);
+        TextView title = (TextView) findViewById(R.id.title);
+        TextView summaryLabel = (TextView) findViewById(R.id.summary_label);
+        TextView summary = (TextView) findViewById(R.id.summary);
+        TextView descLabel = (TextView) findViewById(R.id.desc_label);
+        TextView desc = (TextView) findViewById(R.id.desc);
+        TextView airingLabel = (TextView) findViewById(R.id.airing_label);
+        TextView airingChannel = (TextView) findViewById(R.id.channel);
+        TextView airing = (TextView) findViewById(R.id.airing);
+        TextView contentTypeLabel = (TextView) findViewById(R.id.content_type_label);
+        TextView contentType = (TextView) findViewById(R.id.content_type);
+        TextView seriesInfoLabel = (TextView) findViewById(R.id.series_info_label);
+        TextView seriesInfo = (TextView) findViewById(R.id.series_info);
+        TextView ratingBarLabel = (TextView) findViewById(R.id.star_rating_label);
+        TextView ratingBarText = (TextView) findViewById(R.id.star_rating_text);
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.star_rating);
         
-        text = (TextView) findViewById(R.id.pr_channel);
-        text.setText(channel.name);
+        // Set the values
+        title.setText(programme.title);
         
-        text = (TextView) findViewById(R.id.pr_airing);
-        text.setText(
-                DateFormat.getLongDateFormat(text.getContext()).format(programme.start)
-                + "   "
-                + DateFormat.getTimeFormat(text.getContext()).format(programme.start)
-                + " - "
-                + DateFormat.getTimeFormat(text.getContext()).format(programme.stop));
+        airingChannel.setText(channel.name);
+        airing.setText(
+                DateFormat.getLongDateFormat(airing.getContext()).format(programme.start) + "   "
+                + DateFormat.getTimeFormat(airing.getContext()).format(programme.start) + " - "
+                + DateFormat.getTimeFormat(airing.getContext()).format(programme.stop));
 
-        
-        if(programme.summary.length() == 0 && programme.description.length() == 0) {
-        	View v = findViewById(R.id.pr_summay_and_desc_layout);
-        	v.setVisibility(View.GONE);
+        if (programme.summary.length() == 0) { 
+        	summaryLabel.setVisibility(View.GONE);
+        	summary.setVisibility(View.GONE);
         } else {
-	        text = (TextView) findViewById(R.id.pr_summary);
-	        text.setText(programme.summary);
-	        if(programme.summary.length() == 0)
-	        	text.setVisibility(View.GONE);
-	        
-	        text = (TextView) findViewById(R.id.pr_desc);
-	        text.setText(programme.description);
-	        if(programme.description.length() == 0)
-	        	text.setVisibility(View.GONE);
+            summary.setText(programme.summary);
+        }
+        
+        if (programme.description.length() == 0) {
+            descLabel.setVisibility(View.GONE);
+            desc.setVisibility(View.GONE);
+        } else {
+            desc.setText(programme.description);
         }
 
         String s = buildSeriesInfoString(programme.seriesInfo);
-        if(s.length() > 0) {
-            text = (TextView) findViewById(R.id.pr_series_info);
-        	text.setText(s);
+        if (s.length() == 0) {
+            seriesInfoLabel.setVisibility(View.GONE);
+            seriesInfo.setVisibility(View.GONE);
         } else {
-        	View v = findViewById(R.id.pr_series_info_row);
-        	v.setVisibility(View.GONE);
-        	v = findViewById(R.id.pr_series_info_sep);
-        	v.setVisibility(View.GONE);
+            seriesInfo.setText(s);
         }
         
         SparseArray<String> contentTypes = TVHGuideApplication.getContentTypes(this);
         s = contentTypes.get(programme.contentType, "");
-        if(s.length() > 0) {
-        	text = (TextView) findViewById(R.id.pr_content_type);
-        	text.setText(s);
+        if(s.length() == 0) {
+            contentTypeLabel.setVisibility(View.GONE);
+            contentType.setVisibility(View.GONE);
         } else {
-        	View v = findViewById(R.id.pr_content_type_row);
-        	v.setVisibility(View.GONE);
-        	v = findViewById(R.id.pr_content_type_sep);
-        	v.setVisibility(View.GONE);
+            contentType.setText(s);
         }
         
-        if(programme.starRating > 0) {
-            RatingBar starRating = (RatingBar)findViewById(R.id.pr_star_rating);
-            starRating.setRating((float)programme.starRating / 10.0f);
-            
-            text = (TextView) findViewById(R.id.pr_star_rating_txt);
-            text.setText("("
-                + programme.starRating
-                + "/" 
-                + 100
-                + ")");
+        if (programme.starRating < 0) {
+            ratingBarLabel.setVisibility(View.GONE);
+            ratingBarText.setVisibility(View.GONE);
+            ratingBar.setVisibility(View.GONE);
         } else {
-        	View v = findViewById(R.id.pr_star_rating_row);
-        	v.setVisibility(View.GONE);
+            ratingBar.setRating((float)programme.starRating / 10.0f);
+            ratingBarText.setText("(" + programme.starRating + "/" + 100 + ")");
         }
     }
 
@@ -265,6 +248,9 @@ public class ProgrammeActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.string.menu_record_remove:
             case R.string.menu_record_cancel:
             case R.string.menu_record:

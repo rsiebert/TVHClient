@@ -7,65 +7,78 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5sp"
-        android:layout_marginRight="5sp"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/pr_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textSize="18sp" >
+            android:layout_weight="0.9"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:paddingTop="3dp"
+            android:scrollHorizontally="true"
+            android:text="Title"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
 
         <ImageView
             android:id="@+id/pr_state"
-            android:layout_width="fill_parent"
-            android:layout_height="18sp"
-            android:layout_margin="3dip"
-            android:scaleType="fitEnd" >
-        </ImageView>
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="3dp"
+            android:scaleType="fitCenter" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5sp"
-        android:layout_marginRight="5sp"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/pr_series_info"
-            android:layout_width="wrap_content"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:maxLines="1" >
-        </TextView>
+            android:layout_weight="0.7"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:scrollHorizontally="true"
+            android:text="Series Info" />
 
         <TextView
             android:id="@+id/pr_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1" >
-        </TextView>
+            android:maxLines="1"
+            android:paddingBottom="3dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:text="Date" />
 
         <TextView
             android:id="@+id/pr_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:paddingLeft="3dip" >
-        </TextView>
+            android:paddingBottom="3dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:text="Time" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/pr_desc"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5sp"
-        android:layout_marginRight="5sp"
-        android:maxLines="2" >
-    </TextView>
+        android:maxLines="3"
+        android:paddingBottom="12dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="Description" />
 
 </LinearLayout>
