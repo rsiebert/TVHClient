@@ -91,7 +91,11 @@ public class ChannelListViewWrapper {
 
             progress.setProgress((int) Math.floor(percent * 100));
             title.setText(p.title);
-            duration.setText(String.valueOf(durationTime / 1000 / 60) + " min");
+            
+            String durationText = "0 min";
+            if (durationTime > 0)
+                durationText = String.valueOf((int)durationTime / 1000 / 60) + " min";
+            duration.setText(durationText);
         }
 
         progress.invalidate();
