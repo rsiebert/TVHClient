@@ -18,20 +18,20 @@
  */
 package org.tvheadend.tvhguide;
 
-import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ClipDrawable;
-import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import java.util.Date;
 import java.util.Iterator;
-import org.tvheadend.tvhguide.R;
+
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Programme;
+
+import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
+import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 /**
  *
@@ -40,35 +40,26 @@ import org.tvheadend.tvhguide.model.Programme;
 public class ChannelListViewWrapper {
 
     private TextView name;
-    private TextView nowTitle;
-    private TextView nowTime;
-    private TextView nextTitle;
-    private TextView nextTime;
+    private TextView title;
+    private TextView time;
+    private TextView duration;
     private ImageView icon;
-    private ImageView nowProgressImage;
-    private ClipDrawable nowProgress;
+    private ProgressBar progress;
 
     public ChannelListViewWrapper(View base) {
-        name = (TextView) base.findViewById(R.id.ch_name);
-        nowTitle = (TextView) base.findViewById(R.id.ch_now_title);
-
-        nowProgressImage = (ImageView) base.findViewById(R.id.ch_elapsedtime);
-        nowProgress = new ClipDrawable(nowProgressImage.getDrawable(), Gravity.LEFT, ClipDrawable.HORIZONTAL);
-        nowProgressImage.setBackgroundDrawable(nowProgress);
-
-        nowTime = (TextView) base.findViewById(R.id.ch_now_time);
-        nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
-        nextTime = (TextView) base.findViewById(R.id.ch_next_time);
-        icon = (ImageView) base.findViewById(R.id.ch_icon);
+        name = (TextView) base.findViewById(R.id.name);
+        title = (TextView) base.findViewById(R.id.title);
+        progress = (ProgressBar) base.findViewById(R.id.progress);
+        duration = (TextView) base.findViewById(R.id.duration);
+        time = (TextView) base.findViewById(R.id.time);
+        icon = (ImageView) base.findViewById(R.id.icon);
     }
 
     public void repaint(Channel channel) {
-        nowTime.setText("");
-        nowTitle.setText("");
-        nextTime.setText("");
-        nextTitle.setText("");
-        nowProgress.setLevel(0);
-
+        time.setText("");
+        title.setText("");
+        progress.setProgress(0);
+        duration.setText("");
         name.setText(channel.name);
         name.invalidate();
 
@@ -86,38 +77,30 @@ public class ChannelListViewWrapper {
 
         Iterator<Programme> it = channel.epg.iterator();
         if (!channel.isTransmitting && it.hasNext()) {
-            nowTitle.setText(R.string.ch_no_transmission);
+            title.setText(R.string.ch_no_transmission);
         } else if (it.hasNext()) {
             Programme p = it.next();
-            nowTime.setText(
-                    DateFormat.getTimeFormat(nowTime.getContext()).format(p.start)
+            time.setText(
+                    DateFormat.getTimeFormat(time.getContext()).format(p.start)
                     + " - "
-                    + DateFormat.getTimeFormat(nowTime.getContext()).format(p.stop));
+                    + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
 
-            double duration = (p.stop.getTime() - p.start.getTime());
-            double elapsed = new Date().getTime() - p.start.getTime();
-            double percent = elapsed / duration;
+            double durationTime = (p.stop.getTime() - p.start.getTime());
+            double elapsedTime = new Date().getTime() - p.start.getTime();
+            double percent = elapsedTime / durationTime;
 
-            nowProgressImage.setVisibility(ImageView.VISIBLE);
-            nowProgress.setLevel((int) Math.floor(percent * 10000));
-            nowTitle.setText(p.title);
-        } else {
-            nowProgressImage.setVisibility(ImageView.GONE);
+            progress.setProgress((int) Math.floor(percent * 100));
+            title.setText(p.title);
+            
+            String durationText = "0 min";
+            if (durationTime > 0)
+                durationText = String.valueOf((int)durationTime / 1000 / 60) + " min";
+            duration.setText(durationText);
         }
-        nowProgressImage.invalidate();
-        nowTime.invalidate();
-        nowTitle.invalidate();
 
-        if (it.hasNext()) {
-            Programme p = it.next();
-            nextTime.setText(
-                    DateFormat.getTimeFormat(nextTime.getContext()).format(p.start)
-                    + " - "
-                    + DateFormat.getTimeFormat(nextTime.getContext()).format(p.stop));
-
-            nextTitle.setText(p.title);
-        }
-        nextTime.invalidate();
-        nextTitle.invalidate();
+        progress.invalidate();
+        time.invalidate();
+        title.invalidate();
+        duration.invalidate();
     }
 }
