@@ -5,10 +5,10 @@
     android:versionName="1.6.7"
     >
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="9" />
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="17" />
     <application android:name="org.tvheadend.tvhguide.TVHGuideApplication" android:label="TVHGuide" android:icon="@drawable/logo_72">
         <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity" />
-        <activity android:name="org.tvheadend.tvhguide.ChannelListActivity" android:theme="@style/CustomTheme">
+        <activity android:name="org.tvheadend.tvhguide.ChannelListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
