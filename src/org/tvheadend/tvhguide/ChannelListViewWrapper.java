@@ -66,7 +66,7 @@ public class ChannelListViewWrapper {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
         Boolean showIcons = prefs.getBoolean("showIconPref", false);
         icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-        icon.setBackgroundDrawable(new BitmapDrawable(channel.iconBitmap));
+        icon.setBackground(new BitmapDrawable(channel.iconBitmap));
 
         if (channel.isRecording()) {
             icon.setImageResource(R.drawable.ic_rec_small);
