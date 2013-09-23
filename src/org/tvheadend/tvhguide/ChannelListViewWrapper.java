@@ -56,46 +56,56 @@ public class ChannelListViewWrapper {
     }
 
     public void repaint(Channel channel) {
+        
+        // Set some default values
         time.setText("");
         title.setText("");
         progress.setProgress(0);
         duration.setText("");
         name.setText(channel.name);
-        name.invalidate();
-
+        
+        // Show the icons if the user has activated this in the settings
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
         Boolean showIcons = prefs.getBoolean("showIconPref", false);
         icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
         icon.setBackground(new BitmapDrawable(channel.iconBitmap));
 
+        // Add a small recording icon above the channel icon, if we are
+        // recording the current program.
         if (channel.isRecording()) {
             icon.setImageResource(R.drawable.ic_rec_small);
         } else {
             icon.setImageDrawable(null);
         }
-        icon.invalidate();
-
-        progress.setVisibility(View.VISIBLE);
         
+        // Get the iterator so we can check the channel status 
         Iterator<Programme> it = channel.epg.iterator();
+        
+        // Check if the channel is actually transmitting 
+        // data and contains program data which can be shown.
         if (!channel.isTransmitting && it.hasNext()) {
             title.setText(R.string.ch_no_transmission);
         } else if (it.hasNext()) {
             Programme p = it.next();
+            title.setText(p.title);
             time.setText(
                     DateFormat.getTimeFormat(time.getContext()).format(p.start)
                     + " - "
                     + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
 
+            // Get the start and end times so we can show them 
+            // and calculate the duration and current shown progress.
             double durationTime = (p.stop.getTime() - p.start.getTime());
             double elapsedTime = new Date().getTime() - p.start.getTime();
+            
+            // Show the progress as a percentage
             double percent = 0;
             if (durationTime > 0)
                 percent = elapsedTime / durationTime;
-
             progress.setProgress((int) Math.floor(percent * 100));
-            title.setText(p.title);
+            progress.setVisibility(View.VISIBLE);
             
+            // Show the duration in minutes
             durationTime = (durationTime / 1000 / 60);
             duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
             
@@ -104,11 +114,11 @@ public class ChannelListViewWrapper {
             // and clear the time and duration texts. These two items provide 
             // some space so that the next list item is not too close.
             title.setText(R.string.ch_no_data);
-            time.setText("");
             progress.setVisibility(View.GONE);
-            duration.setText("");
         }
 
+        icon.invalidate();
+        name.invalidate();
         progress.invalidate();
         time.invalidate();
         title.invalidate();
