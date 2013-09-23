@@ -75,6 +75,8 @@ public class ChannelListViewWrapper {
         }
         icon.invalidate();
 
+        progress.setVisibility(View.VISIBLE);
+        
         Iterator<Programme> it = channel.epg.iterator();
         if (!channel.isTransmitting && it.hasNext()) {
             title.setText(R.string.ch_no_transmission);
@@ -96,6 +98,12 @@ public class ChannelListViewWrapper {
             if (durationTime > 0)
                 durationText = String.valueOf((int)durationTime / 1000 / 60) + " min";
             duration.setText(durationText);
+            
+        } else {
+            title.setText("No program data available");
+            time.setText("");
+            progress.setVisibility(View.GONE);
+            duration.setText("");
         }
 
         progress.invalidate();
