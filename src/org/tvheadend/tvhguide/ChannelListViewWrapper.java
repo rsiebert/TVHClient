@@ -89,18 +89,21 @@ public class ChannelListViewWrapper {
 
             double durationTime = (p.stop.getTime() - p.start.getTime());
             double elapsedTime = new Date().getTime() - p.start.getTime();
-            double percent = elapsedTime / durationTime;
+            double percent = 0;
+            if (durationTime > 0)
+                percent = elapsedTime / durationTime;
 
             progress.setProgress((int) Math.floor(percent * 100));
             title.setText(p.title);
             
-            String durationText = "0 min";
-            if (durationTime > 0)
-                durationText = String.valueOf((int)durationTime / 1000 / 60) + " min";
-            duration.setText(durationText);
+            durationTime = (durationTime / 1000 / 60);
+            duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
             
         } else {
-            title.setText("No program data available");
+            // The channel does not provide program data. Hide the progress bar
+            // and clear the time and duration texts. These two items provide 
+            // some space so that the next list item is not too close.
+            title.setText(R.string.ch_no_data);
             time.setText("");
             progress.setVisibility(View.GONE);
             duration.setText("");

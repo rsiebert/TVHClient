@@ -211,6 +211,8 @@
 
     <string name="ch_play">Play</string>
     <string name="ch_no_transmission">No transmission</string>
+    <string name="ch_no_data">No program data available</string>
+    <string name="ch_minutes">%d min</string>
     
     <string name="search_hint">Search the EPG</string>
     <string name="today">today</string>
