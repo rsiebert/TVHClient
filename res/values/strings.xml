@@ -214,4 +214,9 @@
     
     <string name="search_hint">Search the EPG</string>
     <string name="today">today</string>
+    
+    <string name="completed">Completed</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="autorec">AutoRec</string>
+    <string name="failed">Failed</string>
 </resources>
