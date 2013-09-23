@@ -206,7 +206,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return true;
             }
             case R.id.mi_recordings: {
-                Intent intent = new Intent(getBaseContext(), RecordingListActivity.class);
+                Intent intent = new Intent(getBaseContext(), RecordingListTabsActivity.class);
                 startActivity(intent);
                 return true;
             }
