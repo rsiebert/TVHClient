@@ -1,96 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_width="fill_parent">
-    
+    android:orientation="vertical" >
+
     <LinearLayout
-        android:layout_height="wrap_content" 
         android:layout_width="fill_parent"
-        android:layout_marginLeft="5sp"
-        android:layout_marginRight="5sp"
-        >
-	    <ImageView
-	        android:layout_width="64sp"
-	        android:layout_height="64sp"
-	        android:layout_margin="3dip"
-	        android:id="@+id/rec_icon">
-	    </ImageView>
-	    
-	    <LinearLayout
-	        android:layout_height="64sp"
-	        android:orientation="vertical"
-	        android:layout_width="fill_parent">
-	        <LinearLayout
-	            android:layout_height="wrap_content"
-	            android:orientation="horizontal"
-	            android:layout_width="fill_parent">
-	            <TextView
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:textSize="18sp"
-	                android:maxLines="1"
-	                android:id="@+id/rec_title">
-	            </TextView>
-	            <ImageView
-	                android:layout_width="fill_parent"
-	                android:layout_height="18sp"
-	                android:layout_margin="3dip"
-	                android:scaleType="fitEnd"
-	                android:id="@+id/rec_state">
-	            </ImageView>
-	        </LinearLayout>
-	        <TableLayout
-	            android:layout_height="fill_parent"
-	            android:layout_width="fill_parent"
-	            android:shrinkColumns="0"
-	            android:stretchColumns="0">
-	            <TableRow
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content">
-	                <LinearLayout
-	                    android:layout_height="wrap_content"
-	                    android:layout_width="wrap_content">
-	                    <TextView
-	                        android:layout_width="wrap_content"
-	                        android:layout_height="wrap_content"
-	                        android:maxLines="1"
-	                        android:id="@+id/rec_channel">
-	                    </TextView>
-	                    <TextView
-	                        android:layout_width="wrap_content"
-	                        android:layout_height="wrap_content"
-	                        android:paddingLeft="3sp"
-	                        android:maxLines="1"
-	                        android:id="@+id/rec_message">
-	                    </TextView>
-	                </LinearLayout>
-	                <TextView
-	                    android:gravity="right"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:paddingRight="3dip"
-	                    android:id="@+id/rec_date">
-	                </TextView>
-	            </TableRow>
-	            <TableRow
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content">
-	                <TextView
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:maxLines="1"
-	                    android:id="@+id/rec_desc">
-	                </TextView>
-	                <TextView
-	                    android:gravity="right"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:paddingRight="3dip"
-	                    android:id="@+id/rec_time">
-	                </TextView>
-	            </TableRow>
-	        </TableLayout>
-         </LinearLayout>
-  </LinearLayout>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/rec_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="3dp"
+            android:scaleType="fitCenter" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/rec_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:maxLines="1"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:paddingTop="3dp"
+                android:text="Title"
+                android:textAppearance="?android:attr/textAppearanceMedium" >
+            </TextView>
+
+            <ImageView
+                android:id="@+id/rec_state"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:padding="3dp"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/rec_channel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rec_title"
+                android:maxLines="1"
+                android:paddingBottom="3dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="Channel" />
+
+            <TextView
+                android:id="@+id/rec_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rec_title"
+                android:layout_toRightOf="@+id/rec_channel"
+                android:maxLines="1"
+                android:paddingBottom="3dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="Message" />
+
+            <TextView
+                android:id="@+id/rec_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/rec_title"
+                android:maxLines="1"
+                android:paddingBottom="3dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="Time" />
+
+            <TextView
+                android:id="@+id/rec_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rec_title"
+                android:layout_toLeftOf="@+id/rec_time"
+                android:maxLines="1"
+                android:paddingBottom="3dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="Date" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/rec_desc"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="3"
+        android:paddingBottom="12dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="Description" />
+
 </LinearLayout>
