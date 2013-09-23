@@ -107,8 +107,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 recList.add(rec);
             }
         }
-        
-//        recList.addAll(app.getRecordings());
+
         recAdapter = new RecordingListAdapter(getActivity(), recList);
         recAdapter.sort();
         recListView.setAdapter(recAdapter);
@@ -188,7 +187,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 return true;
             }
             case R.string.menu_record_remove: {
-                
                 new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.menu_record_remove)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -213,9 +211,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING) && !(Boolean) obj) {
-
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
                     recAdapter.list.clear();
@@ -226,7 +222,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_ADD)) {
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     recAdapter.add((Recording) obj);
                     recAdapter.notifyDataSetChanged();
@@ -235,7 +230,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_DELETE)) {
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     recAdapter.remove((Recording) obj);
                     recAdapter.notifyDataSetChanged();
@@ -243,7 +237,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     Recording rec = (Recording) obj;
                     recAdapter.updateView(recListView, rec);
@@ -252,7 +245,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
     }
 
-    private class ViewWarpper {
+    private class ViewWrapper {
 
         TextView title;
         TextView channel;
@@ -263,7 +256,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         ImageView icon;
         ImageView state;
 
-        public ViewWarpper(View base) {
+        public ViewWrapper(View base) {
             title = (TextView) base.findViewById(R.id.rec_title);
             channel = (TextView) base.findViewById(R.id.rec_channel);
 
@@ -386,7 +379,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                     continue;
                 }
 
-                ViewWarpper wrapper = (ViewWarpper) view.getTag();
+                ViewWrapper wrapper = (ViewWrapper) view.getTag();
                 wrapper.repaint(recording);
                 break;
             }
@@ -395,7 +388,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            ViewWarpper wrapper = null;
+            ViewWrapper wrapper = null;
 
             Recording rec = list.get(position);
 
@@ -403,11 +396,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 LayoutInflater inflater = context.getLayoutInflater();
                 row = inflater.inflate(R.layout.recording_list_widget, null, false);
 
-                wrapper = new ViewWarpper(row);
+                wrapper = new ViewWrapper(row);
                 row.setTag(wrapper);
 
             } else {
-                wrapper = (ViewWarpper) row.getTag();
+                wrapper = (ViewWrapper) row.getTag();
             }
 
             wrapper.repaint(rec);
