@@ -113,6 +113,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         recListView.setAdapter(recAdapter);
         registerForContextMenu(recListView);
         
+        getActivity().getActionBar().setSubtitle(recList.size() + " " + getString(R.string.menu_recordings));
+
         recListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
