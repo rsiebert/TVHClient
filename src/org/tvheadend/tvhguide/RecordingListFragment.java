@@ -21,6 +21,7 @@ package org.tvheadend.tvhguide;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
@@ -253,6 +254,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         TextView channel;
         TextView time;
         TextView date;
+        TextView duration;
         TextView message;
         TextView desc;
         ImageView icon;
@@ -264,6 +266,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
             time = (TextView) base.findViewById(R.id.rec_time);
             date = (TextView) base.findViewById(R.id.rec_date);
+            duration = (TextView) base.findViewById(R.id.rec_duration);
             message = (TextView) base.findViewById(R.id.rec_message);
             desc = (TextView) base.findViewById(R.id.rec_desc);
             icon = (ImageView) base.findViewById(R.id.rec_icon);
@@ -344,6 +347,15 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                     + " - "
                     + DateFormat.getTimeFormat(time.getContext()).format(rec.stop));
             time.invalidate();
+            
+            // Get the start and end times so we can show them 
+            // and calculate the duration.
+            double durationTime = (rec.stop.getTime() - rec.start.getTime());
+            
+            // Show the duration in minutes
+            durationTime = (durationTime / 1000 / 60);
+            duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
+            duration.invalidate();
         }
     }
 
