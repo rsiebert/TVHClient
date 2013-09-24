@@ -299,7 +299,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         TextView duration;
         TextView desc;
         ImageView icon;
-        ImageView state;
 
         public ViewWrapper(View base) {
             title = (TextView) base.findViewById(R.id.rec_title);
@@ -309,7 +308,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             duration = (TextView) base.findViewById(R.id.rec_duration);
             desc = (TextView) base.findViewById(R.id.rec_desc);
             icon = (ImageView) base.findViewById(R.id.rec_icon);
-            state = (ImageView) base.findViewById(R.id.rec_state);
         }
 
         public void repaint(Recording rec) {
@@ -351,29 +349,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             }
 
             date.invalidate();
-
-            String msg = "";
-            if (rec.error != null) {
-                msg = rec.error;
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("completed".equals(rec.state)) {
-                msg = getString(R.string.pvr_completed);
-                state.setImageResource(R.drawable.ic_success_small);
-            } else if ("invalid".equals(rec.state)) {
-                msg = getString(R.string.pvr_invalid);
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("missed".equals(rec.state)) {
-                msg = getString(R.string.pvr_missed);
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("recording".equals(rec.state)) {
-                msg = getString(R.string.pvr_recording);
-                state.setImageResource(R.drawable.ic_rec_small);
-            } else if ("scheduled".equals(rec.state)) {
-                msg = getString(R.string.pvr_scheduled);
-                state.setImageResource(R.drawable.ic_schedule_small);
-            } else {
-                state.setImageDrawable(null);
-            }
 
             desc.setText(rec.description);
             desc.invalidate();
