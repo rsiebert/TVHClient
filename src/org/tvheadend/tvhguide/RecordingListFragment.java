@@ -148,16 +148,24 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         // Show only the recordings that belong to the tab
         for (Recording rec : app.getRecordings()) {
-            if (tabIndex == 0 && rec.state.equals("completed")) {
+            if (tabIndex == 0 &&
+                    rec.error == null &&
+                    rec.state.equals("completed")) {
                 recList.add(rec);
             }
-            else if (tabIndex == 1 && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+            else if (tabIndex == 1 &&
+                    rec.error == null &&
+                    (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
                 recList.add(rec);
             }
-            else if (tabIndex == 2 && (rec.state.equals("missed") || rec.state.equals("invalid"))) {
+            else if (tabIndex == 2 &&
+                    (rec.error != null ||
+                    (rec.state.equals("missed") || rec.state.equals("invalid")))) {
                 recList.add(rec);
             }
-            else if (tabIndex == 3 && rec.state.equals("autorec")) {
+            else if (tabIndex == 3 &&
+                    rec.error == null &&
+                    rec.state.equals("autorec")) {
                 recList.add(rec);
             }
         }
