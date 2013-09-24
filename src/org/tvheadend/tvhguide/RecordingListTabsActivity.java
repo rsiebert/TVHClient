@@ -22,7 +22,8 @@ public class RecordingListTabsActivity extends FragmentActivity {
     private ActionBar actionBar = null;
     private RecordingListPagerAdapter adapter = null;
     private static ViewPager viewPager = null;
-
+    private int selectedTabIndex = 0;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,14 +90,22 @@ public class RecordingListTabsActivity extends FragmentActivity {
             @Override
             public void onPageSelected(int position) {
                 getActionBar().setSelectedNavigationItem(position);
+                
+                // Get the fragment of the current tabs. The default tag given by the 
+                // FragmentPagerAdapater is "android:switcher:" + viewId + ":" + position;
+                RecordingListFragment fragment = (RecordingListFragment) getFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
+                
+                // Update the action bar subtitle
+                if (fragment != null)
+                    fragment.updateTitle();
             }
         });
 
         // Restore the previously selected tab. This is usually required when
         // the user has rotated the screen.
         if (savedInstanceState != null) {
-            int index = savedInstanceState.getInt("selected_tab_index", 0);
-            getActionBar().setSelectedNavigationItem(index);
+            selectedTabIndex = savedInstanceState.getInt("selected_tab_index", 0);
+            getActionBar().setSelectedNavigationItem(selectedTabIndex);
         }
     }
 
@@ -104,8 +113,8 @@ public class RecordingListTabsActivity extends FragmentActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save the currently selected tab
-        int index = getActionBar().getSelectedNavigationIndex();
-        outState.putInt("selected_tab_index", index);
+        selectedTabIndex = getActionBar().getSelectedNavigationIndex();
+        outState.putInt("selected_tab_index", selectedTabIndex);
     }
 
     @Override
@@ -131,6 +140,7 @@ public class RecordingListTabsActivity extends FragmentActivity {
             Fragment fragment = new RecordingListFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("tabIndex", position);
+            bundle.putInt("selectedTabIndex", selectedTabIndex);
             fragment.setArguments(bundle);
             return fragment;
         }

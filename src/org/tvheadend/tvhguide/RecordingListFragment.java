@@ -21,7 +21,6 @@ package org.tvheadend.tvhguide;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,6 +31,7 @@ import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Recording;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -64,7 +64,9 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     private RecordingListAdapter recAdapter;
     private ListView recListView;
+    private List<Recording> recList;
     private int tabIndex = 0;
+    private int selectedTabIndex = 0;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,8 +82,10 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
-        if (bundle != null)
+        if (bundle != null) {
             tabIndex = bundle.getInt("tabIndex", 0);
+            selectedTabIndex = bundle.getInt("selectedTabIndex", 0);
+        }
         
         return v;
     }
@@ -90,12 +94,60 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        List<Recording> recList = new ArrayList<Recording>();
+        recList = new ArrayList<Recording>();
+        recAdapter = new RecordingListAdapter(getActivity(), recList);
+        recAdapter.sort();
+        recListView.setAdapter(recAdapter);
+        registerForContextMenu(recListView);
+
+        recListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Recording rec = (Recording) recAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), RecordingActivity.class);
+                intent.putExtra("id", rec.id);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * 
+     */
+    public void updateTitle() {
+        
+        if (recList == null)
+            return;
+        
+        ActionBar ab = getActivity().getActionBar();
+        final int count = recList.size();
+        
+        switch (tabIndex) {
+        case 0:
+            ab.setSubtitle(count + " " + getString(R.string.completed));
+            break;
+        case 1:
+            ab.setSubtitle(count + " " + getString(R.string.upcoming));
+            break;
+        case 2:
+            ab.setSubtitle(count + " " + getString(R.string.failed));
+            break;
+        case 3:
+            ab.setSubtitle(count + " " + getString(R.string.autorec));
+            break;
+        }
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
+        app.addListener(this);
+        
+        recList.clear();
         
         // Show only the recordings that belong to the tab
         for (Recording rec : app.getRecordings()) {
-            Log.i("Recordings", "Tab: " + tabIndex + ", title: " + rec.title + ", state: " + rec.state);
             if (tabIndex == 0 && rec.state.equals("completed")) {
                 recList.add(rec);
             }
@@ -109,30 +161,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 recList.add(rec);
             }
         }
+        recAdapter.notifyDataSetChanged();
 
-        recAdapter = new RecordingListAdapter(getActivity(), recList);
-        recAdapter.sort();
-        recListView.setAdapter(recAdapter);
-        registerForContextMenu(recListView);
-        
-        getActivity().getActionBar().setSubtitle(recList.size() + " " + getString(R.string.menu_recordings));
-
-        recListView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Recording rec = (Recording) recAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), RecordingActivity.class);
-                intent.putExtra("id", rec.id);
-                startActivity(intent);
-            }
-        });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
-        app.addListener(this);
+        Log.i("Fragment", "Current tab: " + tabIndex + " Selected tab: " + selectedTabIndex);
+        if (tabIndex == selectedTabIndex)
+            updateTitle();
     }
 
     @Override
