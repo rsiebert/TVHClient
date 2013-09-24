@@ -37,6 +37,7 @@ import org.tvheadend.tvhguide.model.SeriesInfo;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -82,6 +83,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setTitle(channel.name);
+        getActionBar().setIcon(new BitmapDrawable(channel.iconBitmap));
         
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
