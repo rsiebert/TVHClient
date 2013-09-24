@@ -11,10 +11,9 @@
 
         <ImageView
             android:id="@+id/rec_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="4dp"
-            android:padding="3dp"
+            android:layout_width="54dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
             android:scaleType="fitCenter" />
 
         <LinearLayout
@@ -44,11 +43,15 @@
 
                 <ImageView
                     android:id="@+id/rec_state"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:padding="3dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp"
+                    android:layout_marginTop="6dp"
                     android:scaleType="fitCenter" />
             </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -60,7 +63,6 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:singleLine="true"
@@ -72,22 +74,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="right"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:singleLine="true"
                     android:text="Duration" />
-                
-                <TextView
-                    android:id="@+id/rec_message"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:paddingBottom="3dp"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:singleLine="true"
-                    android:text="Message" />
             </LinearLayout>
 
             <LinearLayout
@@ -100,7 +90,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:singleLine="true"
@@ -112,23 +101,23 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="right"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:singleLine="true"
                     android:text="Time" />
             </LinearLayout>
+            
+                        <TextView
+                android:id="@+id/rec_desc"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:paddingBottom="12dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="Description" />
+                        
         </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/rec_desc"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="3"
-        android:paddingBottom="12dp"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:text="Description" />
 
 </LinearLayout>
