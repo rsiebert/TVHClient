@@ -256,7 +256,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         TextView time;
         TextView date;
         TextView duration;
-        TextView message;
         TextView desc;
         ImageView icon;
         ImageView state;
@@ -264,11 +263,9 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         public ViewWrapper(View base) {
             title = (TextView) base.findViewById(R.id.rec_title);
             channel = (TextView) base.findViewById(R.id.rec_channel);
-
             time = (TextView) base.findViewById(R.id.rec_time);
             date = (TextView) base.findViewById(R.id.rec_date);
             duration = (TextView) base.findViewById(R.id.rec_duration);
-            message = (TextView) base.findViewById(R.id.rec_message);
             desc = (TextView) base.findViewById(R.id.rec_desc);
             icon = (ImageView) base.findViewById(R.id.rec_icon);
             state = (ImageView) base.findViewById(R.id.rec_state);
@@ -336,12 +333,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             } else {
                 state.setImageDrawable(null);
             }
-            if (msg.length() > 0) {
-                message.setText("(" + msg + ")");
-            } else {
-                message.setText(msg);
-            }
-            message.invalidate();
 
             desc.setText(rec.description);
             desc.invalidate();
