@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
@@ -293,17 +294,22 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             channel.invalidate();
 
             if (DateUtils.isToday(rec.start.getTime())) {
+                // Show the string today
                 date.setText(getString(R.string.today));
             } else if(rec.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*2 &&
                       rec.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
+                // Show a string like "42 minutes ago"
                 date.setText(DateUtils.getRelativeTimeSpanString(rec.start.getTime(),
                         System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
-            } else if(rec.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*6 &&
-            		  rec.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2
-            		) {
-            	date.setText(new SimpleDateFormat("EEEE").format(rec.start.getTime()));
+            } else if (rec.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*6 &&
+            		   rec.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
+                // Show the day of the week, like Monday or Tuesday
+                SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
+            	date.setText(sdf.format(rec.start.getTime()));
             } else {
-                date.setText(DateFormat.getDateFormat(date.getContext()).format(rec.start));
+                // Show the regular date format like 31.07.2013
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+                date.setText(sdf.format(rec.start.getTime()));
             }
 
             date.invalidate();
