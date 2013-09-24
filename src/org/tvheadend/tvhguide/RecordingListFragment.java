@@ -31,7 +31,6 @@ import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -42,7 +41,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -66,7 +64,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     private ListView recListView;
     private List<Recording> recList;
     private int tabIndex = 0;
-    private int selectedTabIndex = 0;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,10 +79,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
-        if (bundle != null) {
+        if (bundle != null)
             tabIndex = bundle.getInt("tabIndex", 0);
-            selectedTabIndex = bundle.getInt("selectedTabIndex", 0);
-        }
         
         return v;
     }
@@ -109,33 +104,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 startActivity(intent);
             }
         });
-    }
-
-    /**
-     * 
-     */
-    public void updateTitle() {
-        
-        if (recList == null)
-            return;
-        
-        ActionBar ab = getActivity().getActionBar();
-        final int count = recList.size();
-        
-        switch (tabIndex) {
-        case 0:
-            ab.setSubtitle(count + " " + getString(R.string.completed));
-            break;
-        case 1:
-            ab.setSubtitle(count + " " + getString(R.string.upcoming));
-            break;
-        case 2:
-            ab.setSubtitle(count + " " + getString(R.string.failed));
-            break;
-        case 3:
-            ab.setSubtitle(count + " " + getString(R.string.autorec));
-            break;
-        }
     }
     
     @Override
@@ -171,9 +139,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
         recAdapter.notifyDataSetChanged();
 
-        Log.i("Fragment", "Current tab: " + tabIndex + " Selected tab: " + selectedTabIndex);
-        if (tabIndex == selectedTabIndex)
-            updateTitle();
+        ((RecordingListTabsActivity)getActivity()).updateTitle(tabIndex, recList.size());
     }
 
     @Override
@@ -433,5 +399,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             wrapper.repaint(rec);
             return row;
         }
+    }
+
+    public int getRecordingCount() {
+        if (recList != null)
+            return recList.size();
+        
+        return 0;
     }
 }
