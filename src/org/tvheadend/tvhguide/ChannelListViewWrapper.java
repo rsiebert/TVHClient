@@ -18,20 +18,20 @@
  */
 package org.tvheadend.tvhguide;
 
-import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ClipDrawable;
-import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import java.util.Date;
 import java.util.Iterator;
-import org.tvheadend.tvhguide.R;
+
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Programme;
+
+import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
+import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 /**
  *
@@ -40,84 +40,88 @@ import org.tvheadend.tvhguide.model.Programme;
 public class ChannelListViewWrapper {
 
     private TextView name;
-    private TextView nowTitle;
-    private TextView nowTime;
-    private TextView nextTitle;
-    private TextView nextTime;
+    private TextView title;
+    private TextView time;
+    private TextView duration;
     private ImageView icon;
-    private ImageView nowProgressImage;
-    private ClipDrawable nowProgress;
+    private ProgressBar progress;
 
     public ChannelListViewWrapper(View base) {
-        name = (TextView) base.findViewById(R.id.ch_name);
-        nowTitle = (TextView) base.findViewById(R.id.ch_now_title);
-
-        nowProgressImage = (ImageView) base.findViewById(R.id.ch_elapsedtime);
-        nowProgress = new ClipDrawable(nowProgressImage.getDrawable(), Gravity.LEFT, ClipDrawable.HORIZONTAL);
-        nowProgressImage.setBackgroundDrawable(nowProgress);
-
-        nowTime = (TextView) base.findViewById(R.id.ch_now_time);
-        nextTitle = (TextView) base.findViewById(R.id.ch_next_title);
-        nextTime = (TextView) base.findViewById(R.id.ch_next_time);
-        icon = (ImageView) base.findViewById(R.id.ch_icon);
+        name = (TextView) base.findViewById(R.id.name);
+        title = (TextView) base.findViewById(R.id.title);
+        progress = (ProgressBar) base.findViewById(R.id.progress);
+        duration = (TextView) base.findViewById(R.id.duration);
+        time = (TextView) base.findViewById(R.id.time);
+        icon = (ImageView) base.findViewById(R.id.icon);
     }
 
     public void repaint(Channel channel) {
-        nowTime.setText("");
-        nowTitle.setText("");
-        nextTime.setText("");
-        nextTitle.setText("");
-        nowProgress.setLevel(0);
-
+        
+        // Set some default values
+        time.setText("");
+        title.setText("");
+        progress.setProgress(0);
+        duration.setText("");
         name.setText(channel.name);
-        name.invalidate();
-
+        
+        // Show the icons if the user has activated this in the settings
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
         Boolean showIcons = prefs.getBoolean("showIconPref", false);
         icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-        icon.setBackgroundDrawable(new BitmapDrawable(channel.iconBitmap));
+        icon.setBackground(new BitmapDrawable(channel.iconBitmap));
 
+        // Add a small recording icon above the channel icon, if we are
+        // recording the current program.
         if (channel.isRecording()) {
             icon.setImageResource(R.drawable.ic_rec_small);
         } else {
             icon.setImageDrawable(null);
         }
-        icon.invalidate();
-
+        
+        // Get the iterator so we can check the channel status 
         Iterator<Programme> it = channel.epg.iterator();
+        
+        // Check if the channel is actually transmitting 
+        // data and contains program data which can be shown.
         if (!channel.isTransmitting && it.hasNext()) {
-            nowTitle.setText(R.string.ch_no_transmission);
+            title.setText(R.string.ch_no_transmission);
         } else if (it.hasNext()) {
             Programme p = it.next();
-            nowTime.setText(
-                    DateFormat.getTimeFormat(nowTime.getContext()).format(p.start)
+            title.setText(p.title);
+            time.setText(
+                    DateFormat.getTimeFormat(time.getContext()).format(p.start)
                     + " - "
-                    + DateFormat.getTimeFormat(nowTime.getContext()).format(p.stop));
+                    + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
 
-            double duration = (p.stop.getTime() - p.start.getTime());
-            double elapsed = new Date().getTime() - p.start.getTime();
-            double percent = elapsed / duration;
-
-            nowProgressImage.setVisibility(ImageView.VISIBLE);
-            nowProgress.setLevel((int) Math.floor(percent * 10000));
-            nowTitle.setText(p.title);
+            // Get the start and end times so we can show them 
+            // and calculate the duration and current shown progress.
+            double durationTime = (p.stop.getTime() - p.start.getTime());
+            double elapsedTime = new Date().getTime() - p.start.getTime();
+            
+            // Show the progress as a percentage
+            double percent = 0;
+            if (durationTime > 0)
+                percent = elapsedTime / durationTime;
+            progress.setProgress((int) Math.floor(percent * 100));
+            progress.setVisibility(View.VISIBLE);
+            
+            // Show the duration in minutes
+            durationTime = (durationTime / 1000 / 60);
+            duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
+            
         } else {
-            nowProgressImage.setVisibility(ImageView.GONE);
+            // The channel does not provide program data. Hide the progress bar
+            // and clear the time and duration texts. These two items provide 
+            // some space so that the next list item is not too close.
+            title.setText(R.string.ch_no_data);
+            progress.setVisibility(View.GONE);
         }
-        nowProgressImage.invalidate();
-        nowTime.invalidate();
-        nowTitle.invalidate();
 
-        if (it.hasNext()) {
-            Programme p = it.next();
-            nextTime.setText(
-                    DateFormat.getTimeFormat(nextTime.getContext()).format(p.start)
-                    + " - "
-                    + DateFormat.getTimeFormat(nextTime.getContext()).format(p.stop));
-
-            nextTitle.setText(p.title);
-        }
-        nextTime.invalidate();
-        nextTitle.invalidate();
+        icon.invalidate();
+        name.invalidate();
+        progress.invalidate();
+        time.invalidate();
+        title.invalidate();
+        duration.invalidate();
     }
 }

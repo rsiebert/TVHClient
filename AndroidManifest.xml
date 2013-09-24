@@ -5,10 +5,10 @@
     android:versionName="1.6.7"
     >
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="18" />
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="17" />
     <application android:name="org.tvheadend.tvhguide.TVHGuideApplication" android:label="TVHGuide" android:icon="@drawable/logo_72">
         <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity" />
-        <activity android:name="org.tvheadend.tvhguide.ChannelListActivity" android:theme="@style/CustomTheme">
+        <activity android:name="org.tvheadend.tvhguide.ChannelListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -22,8 +22,8 @@
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhguide.ProgrammeListActivity" android:theme="@style/CustomTheme"/>
-        <activity android:name="org.tvheadend.tvhguide.ProgrammeActivity" android:theme="@style/CustomTheme"/>
+        <activity android:name="org.tvheadend.tvhguide.ProgrammeListActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ProgrammeActivity" />
         <activity android:name="org.tvheadend.tvhguide.RecordingActivity" android:theme="@style/CustomTheme"/>
         <activity android:name="org.tvheadend.tvhguide.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhguide.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>

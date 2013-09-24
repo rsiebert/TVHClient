@@ -18,6 +18,15 @@
  */
 package org.tvheadend.tvhguide;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import org.tvheadend.tvhguide.htsp.HTSListener;
+import org.tvheadend.tvhguide.htsp.HTSService;
+import org.tvheadend.tvhguide.model.Channel;
+import org.tvheadend.tvhguide.model.ChannelTag;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -26,15 +35,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.*;
-import android.widget.*;
-import java.util.*;
-import org.tvheadend.tvhguide.R;
-import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
-import org.tvheadend.tvhguide.model.Channel;
-import org.tvheadend.tvhguide.model.ChannelTag;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 /**
  *
@@ -45,30 +56,20 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     private ChannelListAdapter chAdapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
-    private TextView tagTextView;
-    private ImageView tagImageView;
-    private View tagBtn;
-    private ProgressBar pb;
     private ChannelTag currentTag;
 
     @Override
     public void onCreate(Bundle icicle) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean theme = prefs.getBoolean("lightThemePref", false);
-        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
-        
         super.onCreate(icicle);
 
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+        // Setup the action bar and show the title
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(false);
+        getActionBar().setTitle(R.string.pr_all_channels);
 
         chAdapter = new ChannelListAdapter(this, new ArrayList<Channel>());
         setListAdapter(chAdapter);
 
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.channel_list_title);
-        tagTextView = (TextView) findViewById(R.id.ct_title);
-        tagImageView = (ImageView) findViewById(R.id.ct_logo);
-
-        pb = (ProgressBar) findViewById(R.id.ct_loading);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.menu_tags);
 
@@ -78,21 +79,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 new ArrayList<ChannelTag>());
 
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
-
             public void onClick(DialogInterface arg0, int pos) {
                 setCurrentTag(tagAdapter.getItem(pos));
                 populateList();
             }
         });
-
         tagDialog = builder.create();
-        tagBtn = findViewById(R.id.ct_btn);
-        tagBtn.setOnClickListener(new android.view.View.OnClickListener() {
-
-            public void onClick(View arg0) {
-                tagDialog.show();
-            }
-        });
 
         registerForContextMenu(getListView());
     }
@@ -166,15 +158,9 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         currentTag = t;
 
         if (t == null) {
-            tagTextView.setText(R.string.pr_all_channels);
-            tagImageView.setImageResource(R.drawable.logo_72);
+            getActionBar().setTitle(R.string.pr_all_channels);
         } else {
-            tagTextView.setText(currentTag.name);
-            if (currentTag.iconBitmap != null) {
-                tagImageView.setImageBitmap(currentTag.iconBitmap);
-            } else {
-                tagImageView.setImageResource(R.drawable.logo_72);
-            }
+            getActionBar().setTitle(currentTag.name);
         }
     }
 
@@ -255,15 +241,10 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     }
 
     private void setLoading(boolean loading) {
-        tagBtn.setEnabled(!loading);
-        if (loading) {
-            pb.setVisibility(ProgressBar.VISIBLE);
-            tagTextView.setText(R.string.inf_load);
-            tagImageView.setVisibility(ImageView.INVISIBLE);
-        } else {
-            pb.setVisibility(ProgressBar.GONE);
-            tagImageView.setVisibility(ImageView.VISIBLE);
 
+        if (loading) {
+            getActionBar().setTitle(R.string.inf_load);
+        } else {
             TVHGuideApplication app = (TVHGuideApplication) getApplication();
             tagAdapter.clear();
             for (ChannelTag t : app.getChannelTags()) {

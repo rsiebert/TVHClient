@@ -8,53 +8,43 @@
     <string name="menu_tags">Tags</string>
     <string name="menu_recordings">Recordings</string>
 
+    <string name="menu_play">Play</string>
+    <string name="menu_search">Search</string>
     <string name="menu_record">Record</string>
     <string name="menu_record_cancel">Cancel recording</string>
     <string name="menu_record_remove">Remove recording</string>
 
+    <string name="pref_connections">Connections</string>
     <string name="pref_host">Hostname</string>
     <string name="pref_host_sum">Enter Server Hostname</string>
-
     <string name="pref_port">Port</string>
     <string name="pref_port_sum">Enter Server Port</string>
-
     <string name="pref_user">Username</string>
     <string name="pref_user_sum">Enter Username</string>
-
     <string name="pref_pass">Password</string>
     <string name="pref_pass_sum">Enter Password</string>
     
     <string name="pref_ui">User interface</string>
-        
     <string name="pref_icons">Channel icons</string>
     <string name="pref_icons_sum">Show channel icons?</string>
-
     <string name="pref_theme">Light theme</string>
     <string name="pref_theme_sum">Use a light theme</string>
-    
     <string name="pref_res">Resolution</string>
     <string name="pref_res_sum">Maximum resolution for the transcoder</string>
-
     <string name="pref_acodec">Audio codec</string>
     <string name="pref_acodec_sum">Audio codec to use with the transcoder</string>
-    
     <string name="pref_vcodec">Video codec</string>
     <string name="pref_vcodec_sum">Video codec to use with the transcoder</string>
-    
     <string name="pref_scodec">Subtitle codec</string>
     <string name="pref_scodec_sum">Subtitle codec to use with the transcoder</string>
-    
     <string name="pref_container">Media container</string>
-    <string name="pref_container_sum">Prefered media container</string>
+    <string name="pref_container_sum">Preferred media container</string>
     
     <string name="pref_playback">Playback</string>
-    
     <string name="pref_http_port">HTTP port</string>
     <string name="pref_http_port_sum">Enter Server HTTP Port</string>
-    
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Request a transcoded stream during live playback</string>
-
     <string name="pref_external">Prefer external player</string>
     <string name="pref_external_sum">Use an external player for live streams (BSPlayer seems OK)</string>
 
@@ -211,12 +201,13 @@
 
     <string name="ch_play">Play</string>
     <string name="ch_no_transmission">No transmission</string>
-    
+    <string name="ch_no_data">No program data available</string>
     <string name="ch_minutes">%d min</string>
     
     <string name="search_hint">Search the EPG</string>
     <string name="today">today</string>
     
+    <string name="programs">Programs</string>
     <string name="completed">Completed</string>
     <string name="upcoming">Upcoming</string>
     <string name="autorec">AutoRec</string>
