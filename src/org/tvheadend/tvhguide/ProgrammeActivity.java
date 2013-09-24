@@ -28,6 +28,7 @@ import org.tvheadend.tvhguide.model.SeriesInfo;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.SparseArray;
@@ -62,6 +63,7 @@ public class ProgrammeActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setTitle(channel.name);
+        getActionBar().setIcon(new BitmapDrawable(channel.iconBitmap));
 
         long eventId = getIntent().getLongExtra("eventId", 0);
         for (Programme p : channel.epg) {
