@@ -8,7 +8,9 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -25,6 +27,12 @@ public class RecordingListTabsActivity extends FragmentActivity {
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        
+        // Apply the specified theme
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        setTheme(theme ? android.R.style.Theme_Holo_Light : android.R.style.Theme_Holo);
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pager_layout);
 
