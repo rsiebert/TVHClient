@@ -29,7 +29,7 @@ import org.tvheadend.tvhguide.model.ChannelTag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,6 +44,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -51,30 +52,57 @@ import android.widget.ListView;
  *
  * @author john-tornblom
  */
-public class ChannelListActivity extends ListActivity implements HTSListener {
+public class ChannelListFragment extends Fragment implements HTSListener {
 
     private ChannelListAdapter chAdapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
     private ChannelTag currentTag;
 
+    private ListView channelListView;
+
     @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(false);
-        getActionBar().setTitle(R.string.pr_all_channels);
+        // Return if frame for this fragment doesn't
+        // exist because the fragment will not be shown.
+        if (container == null)
+            return null;
 
-        chAdapter = new ChannelListAdapter(this, new ArrayList<Channel>());
-        setListAdapter(chAdapter);
+        View v = inflater.inflate(R.layout.channel_list, container, false);
+        channelListView = (ListView) v.findViewById(R.id.channel_list);
+        return v;
+    }
+    
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+        
+        chAdapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>());
+        channelListView.setAdapter(chAdapter);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        channelListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Channel ch = (Channel) chAdapter.getItem(position);
+
+                if (ch.epg.isEmpty()) {
+                    return;
+                }
+
+                Intent intent = new Intent(getActivity().getBaseContext(), ProgrammeListActivity.class);
+                intent.putExtra("channelId", ch.id);
+                startActivity(intent);
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.menu_tags);
 
         tagAdapter = new ArrayAdapter<ChannelTag>(
-                this,
+                getActivity(),
                 android.R.layout.simple_dropdown_item_1line,
                 new ArrayList<ChannelTag>());
 
@@ -86,14 +114,13 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         });
         tagDialog = builder.create();
 
-        registerForContextMenu(getListView());
+        registerForContextMenu(channelListView);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main_menu, menu);
-        return true;
     }
 
     @Override
@@ -104,7 +131,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return true;
             }
             case R.string.search_hint: {
-                startSearch(null, false, item.getIntent().getExtras(), false);
+                getActivity().startSearch(null, false, item.getIntent().getExtras(), false);
                 return true;
             }
             default: {
@@ -122,7 +149,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         Channel ch = chAdapter.getItem(info.position);
 
         menu.setHeaderTitle(ch.name);
-        Intent intent = new Intent(this, PlaybackActivity.class);
+        Intent intent = new Intent(getActivity(), PlaybackActivity.class);
         intent.putExtra("channelId", ch.id);
         item.setIntent(intent);
 
@@ -137,13 +164,13 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
             chAdapter.clear();
         }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String hostname = prefs.getString("serverHostPref", "localhost");
         int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
         String username = prefs.getString("usernamePref", "");
         String password = prefs.getString("passwordPref", "");
 
-        Intent intent = new Intent(ChannelListActivity.this, HTSService.class);
+        Intent intent = new Intent(getActivity(), HTSService.class);
         intent.setAction(HTSService.ACTION_CONNECT);
         intent.putExtra("hostname", hostname);
         intent.putExtra("port", port);
@@ -151,21 +178,21 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
         intent.putExtra("password", password);
         intent.putExtra("force", force);
 
-        startService(intent);
+        getActivity().startService(intent);
     }
 
     private void setCurrentTag(ChannelTag t) {
         currentTag = t;
 
         if (t == null) {
-            getActionBar().setTitle(R.string.pr_all_channels);
+            getActivity().getActionBar().setTitle(R.string.pr_all_channels);
         } else {
-            getActionBar().setTitle(currentTag.name);
+            getActivity().getActionBar().setTitle(currentTag.name);
         }
     }
 
     private void populateList() {
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
 
         chAdapter.clear();
 
@@ -177,13 +204,14 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
 
         chAdapter.sort();
         chAdapter.notifyDataSetChanged();
+        getActivity().getActionBar().setSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mi_settings: {
-                Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
+                Intent intent = new Intent(getActivity().getBaseContext(), SettingsActivity.class);
                 startActivityForResult(intent, R.id.mi_settings);
                 return true;
             }
@@ -192,12 +220,12 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 return true;
             }
             case R.id.mi_recordings: {
-                Intent intent = new Intent(getBaseContext(), RecordingListActivity.class);
+                Intent intent = new Intent(getActivity().getBaseContext(), RecordingListActivity.class);
                 startActivity(intent);
                 return true;
             }
             case R.id.mi_search: {
-                onSearchRequested();
+                getActivity().onSearchRequested();
                 return true;
             }
             case R.id.mi_tags: {
@@ -211,9 +239,9 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         app.addListener(this);
 
         connect(false);
@@ -221,31 +249,18 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         app.removeListener(this);
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Channel ch = (Channel) chAdapter.getItem(position);
-
-        if (ch.epg.isEmpty()) {
-            return;
-        }
-
-        Intent intent = new Intent(getBaseContext(), ProgrammeListActivity.class);
-        intent.putExtra("channelId", ch.id);
-        startActivity(intent);
     }
 
     private void setLoading(boolean loading) {
 
         if (loading) {
-            getActionBar().setTitle(R.string.inf_load);
+            getActivity().getActionBar().setTitle(R.string.inf_load);
         } else {
-            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+            TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
             tagAdapter.clear();
             for (ChannelTag t : app.getChannelTags()) {
                 tagAdapter.add(t);
@@ -259,7 +274,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
 
-            runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
                     boolean loading = (Boolean) obj;
@@ -267,7 +282,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
-            runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
                     chAdapter.add((Channel) obj);
@@ -276,7 +291,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_DELETE)) {
-            runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
                     chAdapter.remove((Channel) obj);
@@ -284,15 +299,15 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
-            runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
                     Channel channel = (Channel) obj;
-                    chAdapter.updateView(getListView(), channel);
+                    chAdapter.updateView(channelListView, channel);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_ADD)) {
-            runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
@@ -300,7 +315,7 @@ public class ChannelListActivity extends ListActivity implements HTSListener {
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_DELETE)) {
-            runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;

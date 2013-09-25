@@ -216,4 +216,10 @@
     
     <string name="search_hint">Search the EPG</string>
     <string name="today">today</string>
+    
+    <string name="channels">Channels</string>
+    <string name="recordings">Recordings</string>
+    <string name="program_guide">Program Guide</string>
+    <string name="status">Status</string>
+    <string name="items">Items</string>
 </resources>
