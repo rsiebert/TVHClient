@@ -11,6 +11,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
 
@@ -140,5 +143,23 @@ public class ChannelListTabsActivity extends Activity {
         // Save the currently selected tab
         int index = getActionBar().getSelectedNavigationIndex();
         outState.putInt("selected_tab_index", index);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mi_settings: {
+                // Save the current tab position so we show the previous tab
+                // again when we return from the settings menu.
+                prevTabPosition = getActionBar().getSelectedNavigationIndex();
+                // Now start the settings activity 
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivityForResult(intent, R.id.mi_settings);
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 }

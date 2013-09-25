@@ -210,11 +210,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.mi_settings: {
-                Intent intent = new Intent(getActivity().getBaseContext(), SettingsActivity.class);
-                startActivityForResult(intent, R.id.mi_settings);
-                return true;
-            }
             case R.id.mi_refresh: {
                 connect(true);
                 return true;
