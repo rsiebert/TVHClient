@@ -219,11 +219,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 connect(true);
                 return true;
             }
-            case R.id.mi_recordings: {
-                Intent intent = new Intent(getActivity().getBaseContext(), RecordingListActivity.class);
-                startActivity(intent);
-                return true;
-            }
             case R.id.mi_search: {
                 getActivity().onSearchRequested();
                 return true;
