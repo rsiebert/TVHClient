@@ -37,8 +37,10 @@ import org.tvheadend.tvhguide.model.SeriesInfo;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
@@ -69,6 +71,12 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     @Override
     public void onCreate(Bundle icicle) {
+        
+        // Apply the specified theme
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        setTheme(theme ? android.R.style.Theme_Holo_Light : android.R.style.Theme_Holo);
+        
         super.onCreate(icicle);
         
         TVHGuideApplication app = (TVHGuideApplication) getApplication();

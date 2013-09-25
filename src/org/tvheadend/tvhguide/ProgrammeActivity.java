@@ -28,14 +28,15 @@ import org.tvheadend.tvhguide.model.SeriesInfo;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -49,6 +50,12 @@ public class ProgrammeActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        
+        // Apply the specified theme
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        setTheme(theme ? android.R.style.Theme_Holo_Light : android.R.style.Theme_Holo);
+        
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.programme_layout);
     	
