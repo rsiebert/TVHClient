@@ -212,4 +212,10 @@
     <string name="upcoming">Upcoming</string>
     <string name="autorec">AutoRec</string>
     <string name="failed">Failed</string>
+    
+    <string name="channels">Channels</string>
+    <string name="recordings">Recordings</string>
+    <string name="program_guide">Program Guide</string>
+    <string name="status">Status</string>
+    <string name="items">Items</string>
 </resources>
