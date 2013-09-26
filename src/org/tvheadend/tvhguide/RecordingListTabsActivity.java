@@ -111,7 +111,7 @@ public class RecordingListTabsActivity extends FragmentActivity {
         // Restore the previously selected tab. This is usually required when
         // the user has rotated the screen.
         if (savedInstanceState != null) {
-            int index = savedInstanceState.getInt("selected_tab_index", 0);
+            int index = savedInstanceState.getInt("selected_recording_tab_index", 0);
             getActionBar().setSelectedNavigationItem(index);
         }
     }
@@ -121,7 +121,7 @@ public class RecordingListTabsActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
         // Save the currently selected tab
         int index = getActionBar().getSelectedNavigationIndex();
-        outState.putInt("selected_tab_index", index);
+        outState.putInt("selected_recording_tab_index", index);
     }
 
     @Override

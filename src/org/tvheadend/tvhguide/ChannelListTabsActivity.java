@@ -85,7 +85,7 @@ public class ChannelListTabsActivity extends Activity {
         
         // Restore the previously selected tab
         if (savedInstanceState != null) {
-            int index = savedInstanceState.getInt("selected_tab_index", 0);
+            int index = savedInstanceState.getInt("selected_channel_tab_index", 0);
             getActionBar().setSelectedNavigationItem(index);
         }
     }
@@ -128,10 +128,12 @@ public class ChannelListTabsActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+
         // If the user has pressed the back button, the currently selected tab
         // would be active (like the recordings tab) which would show nothing
         // here. So we set the previously selected tab.
-        if (prevTabPosition >= 0) {
+        if (prevTabPosition >= 0 &&
+                getActionBar().getSelectedNavigationIndex() == 1) {
             getActionBar().setSelectedNavigationItem(prevTabPosition);
             prevTabPosition = -1;
         }
@@ -142,7 +144,7 @@ public class ChannelListTabsActivity extends Activity {
         super.onSaveInstanceState(outState);
         // Save the currently selected tab
         int index = getActionBar().getSelectedNavigationIndex();
-        outState.putInt("selected_tab_index", index);
+        outState.putInt("selected_channel_tab_index", index);
     }
     
     @Override
