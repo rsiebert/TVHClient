@@ -68,7 +68,7 @@ public class ChannelListViewWrapper {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
         Boolean showIcons = prefs.getBoolean("showIconPref", false);
         icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-        icon.setBackground(new BitmapDrawable(channel.iconBitmap));
+        icon.setBackground(new BitmapDrawable(icon.getResources(), channel.iconBitmap));
 
         // Add a small recording icon above the channel icon, if we are
         // recording the current program.
