@@ -18,7 +18,6 @@
  */
 package org.tvheadend.tvhguide;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -42,7 +41,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -414,19 +412,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             }
             description.invalidate();
 
-            if (DateUtils.isToday(p.start.getTime())) {
-                date.setText(getString(R.string.today));
-            } else if(p.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*2 &&
-                      p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
-                date.setText(DateUtils.getRelativeTimeSpanString(p.start.getTime(),
-                        System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
-            } else if(p.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*6 &&
-            		  p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
-            	date.setText(new SimpleDateFormat("EEEE").format(p.start.getTime()));
-            } else {
-                date.setText(DateFormat.getDateFormat(date.getContext()).format(p.start));
-            }
-            
+            date.setText(Utils.getStartDate(date.getContext(), p.start));
             date.invalidate();
 
             time.setText(

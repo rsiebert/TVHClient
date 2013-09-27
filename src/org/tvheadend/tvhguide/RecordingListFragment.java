@@ -18,11 +18,9 @@
  */
 package org.tvheadend.tvhguide;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
@@ -40,7 +38,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -319,25 +316,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             }
             channel.invalidate();
 
-            if (DateUtils.isToday(rec.start.getTime())) {
-                // Show the string today
-                date.setText(getString(R.string.today));
-            } else if(rec.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*2 &&
-                      rec.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
-                // Show a string like "42 minutes ago"
-                date.setText(DateUtils.getRelativeTimeSpanString(rec.start.getTime(),
-                        System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
-            } else if (rec.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*6 &&
-            		   rec.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
-                // Show the day of the week, like Monday or Tuesday
-                SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
-            	date.setText(sdf.format(rec.start.getTime()));
-            } else {
-                // Show the regular date format like 31.07.2013
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-                date.setText(sdf.format(rec.start.getTime()));
-            }
-
+            date.setText(Utils.getStartDate(date.getContext(), rec.start));
             date.invalidate();
 
             desc.setText(rec.description);
