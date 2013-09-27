@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
@@ -148,6 +147,13 @@ public class ChannelListTabsActivity extends Activity {
     }
     
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mi_settings: {
@@ -159,6 +165,8 @@ public class ChannelListTabsActivity extends Activity {
                 startActivityForResult(intent, R.id.mi_settings);
                 return true;
             }
+            case R.id.mi_refresh:
+                return true;
             default: {
                 return super.onOptionsItemSelected(item);
             }

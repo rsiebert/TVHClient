@@ -120,7 +120,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.channel_menu, menu);
     }
 
     @Override
