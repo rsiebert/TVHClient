@@ -19,25 +19,20 @@
 package org.tvheadend.tvhguide;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
+import org.tvheadend.tvhguide.adapter.RecordingListAdapter;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
-import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -48,10 +43,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  *
@@ -208,7 +200,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     private void setLoading(boolean loading) {
         if (loading) {
-            recAdapter.list.clear();
+            recAdapter.clear();
             recAdapter.notifyDataSetChanged();
             getActivity().getActionBar().setSubtitle(R.string.inf_load);
         } else {
@@ -274,133 +266,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                     recAdapter.updateView(recListView, rec);
                 }
             });
-        }
-    }
-
-    private class ViewWrapper {
-
-        TextView title;
-        TextView channel;
-        TextView time;
-        TextView date;
-        TextView duration;
-        TextView desc;
-        ImageView icon;
-
-        public ViewWrapper(View base) {
-            title = (TextView) base.findViewById(R.id.rec_title);
-            channel = (TextView) base.findViewById(R.id.rec_channel);
-            time = (TextView) base.findViewById(R.id.rec_time);
-            date = (TextView) base.findViewById(R.id.rec_date);
-            duration = (TextView) base.findViewById(R.id.rec_duration);
-            desc = (TextView) base.findViewById(R.id.rec_desc);
-            icon = (ImageView) base.findViewById(R.id.rec_icon);
-        }
-
-        public void repaint(Recording rec) {
-            Channel ch = rec.channel;
-
-            title.setText(rec.title);
-            title.invalidate();
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
-            Boolean showIcons = prefs.getBoolean("showIconPref", false);
-            
-            icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-            if(ch != null) {
-            	icon.setImageBitmap(ch.iconBitmap);
-            	channel.setText(ch.name);
-            } else {
-            	icon.setImageBitmap(null);
-            	channel.setText("");
-            }
-            channel.invalidate();
-
-            date.setText(Utils.getStartDate(date.getContext(), rec.start));
-            date.invalidate();
-
-            desc.setText(rec.description);
-            desc.invalidate();
-
-            icon.invalidate();
-
-            time.setText(
-                    DateFormat.getTimeFormat(time.getContext()).format(rec.start)
-                    + " - "
-                    + DateFormat.getTimeFormat(time.getContext()).format(rec.stop));
-            time.invalidate();
-            
-            // Get the start and end times so we can show them 
-            // and calculate the duration.
-            double durationTime = (rec.stop.getTime() - rec.start.getTime());
-            
-            // Show the duration in minutes
-            durationTime = (durationTime / 1000 / 60);
-            duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
-            duration.invalidate();
-        }
-    }
-
-    class RecordingListAdapter extends ArrayAdapter<Recording> {
-
-        Activity context;
-        List<Recording> list;
-
-        RecordingListAdapter(Activity context, List<Recording> list) {
-            super(context, R.layout.recording_list_widget, list);
-            this.context = context;
-            this.list = list;
-        }
-
-        public void sort() {
-            sort(new Comparator<Recording>() {
-
-                public int compare(Recording x, Recording y) {
-                    return x.compareTo(y);
-                }
-            });
-        }
-
-        public void updateView(ListView listView, Recording recording) {
-            for (int i = 0; i < listView.getChildCount(); i++) {
-                View view = listView.getChildAt(i);
-                int pos = listView.getPositionForView(view);
-                Recording rec = (Recording) listView.getItemAtPosition(pos);
-
-                if (view.getTag() == null || rec == null) {
-                    continue;
-                }
-
-                if (recording.id != rec.id) {
-                    continue;
-                }
-
-                ViewWrapper wrapper = (ViewWrapper) view.getTag();
-                wrapper.repaint(recording);
-                break;
-            }
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            ViewWrapper wrapper = null;
-
-            Recording rec = list.get(position);
-
-            if (row == null) {
-                LayoutInflater inflater = context.getLayoutInflater();
-                row = inflater.inflate(R.layout.recording_list_widget, null, false);
-
-                wrapper = new ViewWrapper(row);
-                row.setTag(wrapper);
-
-            } else {
-                wrapper = (ViewWrapper) row.getTag();
-            }
-
-            wrapper.repaint(rec);
-            return row;
         }
     }
 
