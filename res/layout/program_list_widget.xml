@@ -20,7 +20,7 @@
             android:paddingRight="3dp"
             android:paddingTop="3dp"
             android:scrollHorizontally="true"
-            android:text="Title"
+            android:text="@string/title"
             android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
 
@@ -29,6 +29,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:padding="3dp"
+            android:contentDescription="@string/status_icon"
             android:scaleType="fitCenter" />
     </LinearLayout>
 
@@ -48,7 +49,7 @@
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
             android:scrollHorizontally="true"
-            android:text="Series Info" />
+            android:text="@string/series_information" />
 
         <TextView
             android:id="@+id/pr_date"
@@ -58,7 +59,7 @@
             android:paddingBottom="3dp"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
-            android:text="Date" />
+            android:text="@string/date" />
 
         <TextView
             android:id="@+id/pr_time"
@@ -68,7 +69,7 @@
             android:paddingBottom="3dp"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
-            android:text="Time" />
+            android:text="@string/time" />
     </LinearLayout>
 
     <TextView
@@ -79,6 +80,6 @@
         android:paddingBottom="12dp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
-        android:text="Description" />
+        android:text="@string/description" />
 
 </LinearLayout>

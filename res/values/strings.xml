@@ -218,4 +218,22 @@
     <string name="program_guide">Program Guide</string>
     <string name="status">Status</string>
     <string name="items">Items</string>
+    
+    <string name="channel_icon">Channel Icon</string>
+    <string name="status_icon">Status Icon</string>
+    <string name="title">Title</string>
+    <string name="channel">Channel</string>
+    <string name="time">Time</string>
+    <string name="date">Date</string>
+    <string name="shown_on_channel">on</string>
+    <string name="summary">Summary</string>
+    <string name="description">Description</string>
+    <string name="duration">Duration</string>
+    <string name="airing">Airing</string>
+    <string name="rating">Rating</string>
+    <string name="type">Type</string>
+    <string name="content_type">Content Type</string>
+    <string name="series_information">Series Information</string>
+    
+    
 </resources>

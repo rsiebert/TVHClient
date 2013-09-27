@@ -10,6 +10,7 @@
         android:layout_height="54dp"
         android:layout_margin="4dp"
         android:padding="3dp"
+		android:contentDescription="@string/channel_icon"
         android:scaleType="fitCenter" />
 
     <LinearLayout
@@ -27,7 +28,7 @@
             android:paddingTop="3dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="channel"
+            android:text="@string/channel"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -39,7 +40,7 @@
             android:paddingRight="3dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="title"
+            android:text="@string/title"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <LinearLayout
@@ -57,7 +58,7 @@
                 android:paddingRight="3dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="time"
+                android:text="@string/time"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
@@ -71,7 +72,7 @@
                 android:paddingRight="3dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="duration"
+                android:text="@string/duration"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
         

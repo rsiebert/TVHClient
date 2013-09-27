@@ -2,103 +2,98 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/rec_icon"
+        android:layout_width="54dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:contentDescription="@string/channel_icon"
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
 
-        <ImageView
-            android:id="@+id/rec_icon"
-            android:layout_width="54dp"
+        <TextView
+            android:id="@+id/rec_title"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:scaleType="fitCenter" />
+            android:ellipsize="end"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:paddingTop="3dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="@string/title"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/rec_title"
-                android:layout_width="fill_parent"
+                android:id="@+id/rec_channel"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
+                android:layout_weight="0.5"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
-                android:paddingTop="3dp"
-                android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Title"
-                android:textAppearance="?android:attr/textAppearanceMedium" >
-            </TextView>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/rec_channel"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:singleLine="true"
-                    android:text="Channel" />
-
-                <TextView
-                    android:id="@+id/rec_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:gravity="right"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:singleLine="true"
-                    android:text="Duration" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/rec_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:singleLine="true"
-                    android:text="Date" />
-
-                <TextView
-                    android:id="@+id/rec_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:gravity="right"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:singleLine="true"
-                    android:text="Time" />
-            </LinearLayout>
+                android:text="@string/channel" />
 
             <TextView
-                android:id="@+id/rec_desc"
-                android:layout_width="fill_parent"
+                android:id="@+id/rec_duration"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:paddingBottom="12dp"
+                android:layout_weight="0.5"
+                android:gravity="right"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
-                android:text="Description" />
+                android:singleLine="true"
+                android:text="@string/duration" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/rec_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:singleLine="true"
+                android:text="@string/date" />
+
+            <TextView
+                android:id="@+id/rec_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="right"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:singleLine="true"
+                android:text="@string/time" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/rec_desc"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:paddingBottom="12dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:text="@string/description" />
     </LinearLayout>
 
 </LinearLayout>
