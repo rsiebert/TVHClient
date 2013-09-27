@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Date;
 import org.tvheadend.tvhguide.R;
+import org.tvheadend.tvhguide.adapter.ChannelListViewWrapper;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Channel;

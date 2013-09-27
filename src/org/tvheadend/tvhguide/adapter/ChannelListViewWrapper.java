@@ -16,11 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhguide;
+package org.tvheadend.tvhguide.adapter;
 
 import java.util.Date;
 import java.util.Iterator;
 
+import org.tvheadend.tvhguide.R;
+import org.tvheadend.tvhguide.R.drawable;
+import org.tvheadend.tvhguide.R.id;
+import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
