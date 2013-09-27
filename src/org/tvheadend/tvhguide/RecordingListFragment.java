@@ -44,6 +44,8 @@ import android.text.format.DateUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,6 +149,21 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         super.onPause();
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         app.removeListener(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.recording_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 
     @Override

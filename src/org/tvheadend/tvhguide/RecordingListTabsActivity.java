@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -12,12 +13,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
 
-public class RecordingListTabsActivity extends FragmentActivity {
+public class RecordingListTabsActivity extends Activity {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingListTabsActivity.class.getSimpleName();
@@ -125,12 +126,28 @@ public class RecordingListTabsActivity extends FragmentActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
         switch (item.getItemId()) {
         case android.R.id.home:
-            Intent intent = new Intent(this, ChannelListTabsActivity.class);
+            intent = new Intent(this, ChannelListTabsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            return true;
+        case R.id.mi_settings: {
+            // Start the settings activity 
+            intent = new Intent(this, SettingsActivity.class);
+            startActivityForResult(intent, R.id.mi_settings);
+            return true;
+        }
+        case R.id.mi_refresh:
             return true;
         default:
             return super.onOptionsItemSelected(item);
