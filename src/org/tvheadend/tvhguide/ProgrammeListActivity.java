@@ -198,7 +198,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.program_list_menu, menu);
+        getMenuInflater().inflate(R.menu.program_menu, menu);
         return true;
     }
 
