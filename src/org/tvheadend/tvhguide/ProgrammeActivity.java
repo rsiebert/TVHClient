@@ -21,13 +21,11 @@ package org.tvheadend.tvhguide;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Programme;
-import org.tvheadend.tvhguide.model.SeriesInfo;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -146,7 +144,7 @@ public class ProgrammeActivity extends Activity {
         }
 
         // Show the series information
-        String s = buildSeriesInfoString(programme.seriesInfo);
+        String s = Utils.buildSeriesInfoString(this, programme.seriesInfo);
         if (s.length() == 0) {
             seriesInfoLabel.setVisibility(View.GONE);
             seriesInfo.setVisibility(View.GONE);
@@ -175,49 +173,6 @@ public class ProgrammeActivity extends Activity {
         }
     }
 
-    
-	public String buildSeriesInfoString(SeriesInfo info) {
-		if (info.onScreen != null && info.onScreen.length() > 0)
-			return info.onScreen;
-
-		String s = "";
-		String season = this.getResources().getString(string.pr_season);
-		String episode = this.getResources().getString(string.pr_episode);
-		String part = this.getResources().getString(string.pr_part);
-		
-		if(info.onScreen.length() > 0) {
-			return info.onScreen;
-		}
-		
-		if (info.seasonNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %02d", season.toLowerCase(), info.seasonNumber);
-			if(info.seasonCount > 0)
-				s += String.format("/%02d", info.seasonCount);
-		}
-		if (info.episodeNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %02d", episode.toLowerCase(), info.episodeNumber);
-			if(info.episodeCount > 0)
-				s += String.format("/%02d", info.episodeCount);
-		}
-		if (info.partNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %d", part.toLowerCase(), info.partNumber);
-			if(info.partCount > 0)
-				s += String.format("/%02d", info.partCount);
-		}
-
-		if(s.length() > 0) {
-			s = s.substring(0,1).toUpperCase() + s.substring(1);
-		}
-		
-		return s;
-	}
-	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem item = null;

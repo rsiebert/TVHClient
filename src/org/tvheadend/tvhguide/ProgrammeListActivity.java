@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
@@ -31,10 +30,10 @@ import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Programme;
 import org.tvheadend.tvhguide.model.Recording;
-import org.tvheadend.tvhguide.model.SeriesInfo;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
@@ -279,42 +278,6 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             });
         }
     }
-
-	public String buildSeriesInfoString(SeriesInfo info) {
-		if (info.onScreen != null && info.onScreen.length() > 0)
-			return info.onScreen;
-
-		String s = "";
-		String season = this.getResources().getString(string.pr_season);
-		String episode = this.getResources().getString(string.pr_episode);
-		String part = this.getResources().getString(string.pr_part);
-		
-		if(info.onScreen.length() > 0) {
-			return info.onScreen;
-		}
-		
-		if (info.seasonNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %02d", season.toLowerCase(), info.seasonNumber);
-		}
-		if (info.episodeNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %02d", episode.toLowerCase(), info.episodeNumber);
-		}
-		if (info.partNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %d", part.toLowerCase(), info.partNumber);
-		}
-
-		if(s.length() > 0) {
-			s = s.substring(0,1).toUpperCase() + s.substring(1);
-		}
-		
-		return s;
-	}
 	
     /**
      * 
@@ -354,6 +317,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
     
     private class ViewWrapper {
 
+        Context ctx;
         TextView title;
         TextView time;
         TextView seriesInfo;
@@ -361,7 +325,9 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         TextView description;
         ImageView state;
 
-        public ViewWrapper(View base) {
+        public ViewWrapper(Activity context, View base) {
+            
+            ctx = context;
             title = (TextView) base.findViewById(R.id.pr_title);
             description = (TextView) base.findViewById(R.id.pr_desc);
             seriesInfo = (TextView) base.findViewById(R.id.pr_series_info);
@@ -395,7 +361,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             title.invalidate();
 
-            String s = buildSeriesInfoString(p.seriesInfo);
+            String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);
             if(s.length() == 0) {
             	s = contentTypes.get(p.contentType);
             }
@@ -472,7 +438,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                 LayoutInflater inflater = context.getLayoutInflater();
                 row = inflater.inflate(R.layout.programme_list_widget, null, false);
 
-                wrapper = new ViewWrapper(row);
+                wrapper = new ViewWrapper(context, row);
                 row.setTag(wrapper);
 
             } else {

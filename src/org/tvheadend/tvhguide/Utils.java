@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.tvheadend.tvhguide.R.string;
+import org.tvheadend.tvhguide.model.SeriesInfo;
+
 import android.content.Context;
 import android.text.format.DateUtils;
 
@@ -40,5 +43,47 @@ public class Utils {
             dateText = sdf.format(start.getTime());
         }
         return dateText;
+    }
+    
+    /**
+     * 
+     * @param info
+     * @return
+     */
+    public static String buildSeriesInfoString(Context context, SeriesInfo info) {
+        
+        if (info.onScreen != null && info.onScreen.length() > 0)
+            return info.onScreen;
+
+        String s = "";
+        String season = context.getResources().getString(string.pr_season);
+        String episode = context.getResources().getString(string.pr_episode);
+        String part = context.getResources().getString(string.pr_part);
+        
+        if(info.onScreen.length() > 0) {
+            return info.onScreen;
+        }
+        
+        if (info.seasonNumber > 0) {
+            if (s.length() > 0)
+                s += ", ";
+            s += String.format("%s %02d", season.toLowerCase(), info.seasonNumber);
+        }
+        if (info.episodeNumber > 0) {
+            if (s.length() > 0)
+                s += ", ";
+            s += String.format("%s %02d", episode.toLowerCase(), info.episodeNumber);
+        }
+        if (info.partNumber > 0) {
+            if (s.length() > 0)
+                s += ", ";
+            s += String.format("%s %d", part.toLowerCase(), info.partNumber);
+        }
+
+        if(s.length() > 0) {
+            s = s.substring(0,1).toUpperCase() + s.substring(1);
+        }
+        
+        return s;
     }
 }
