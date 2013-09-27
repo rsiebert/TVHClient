@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.ChannelTag;
 
@@ -32,9 +31,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -159,28 +156,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         item.setIntent(intent);
     }
 
-    void connect(boolean force) {
-        if (force) {
-            chAdapter.clear();
-        }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String hostname = prefs.getString("serverHostPref", "localhost");
-        int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
-        String username = prefs.getString("usernamePref", "");
-        String password = prefs.getString("passwordPref", "");
-
-        Intent intent = new Intent(getActivity(), HTSService.class);
-        intent.setAction(HTSService.ACTION_CONNECT);
-        intent.putExtra("hostname", hostname);
-        intent.putExtra("port", port);
-        intent.putExtra("username", username);
-        intent.putExtra("password", password);
-        intent.putExtra("force", force);
-
-        getActivity().startService(intent);
-    }
-
     private void setCurrentTag(ChannelTag t) {
         currentTag = t;
 
@@ -210,10 +185,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.mi_refresh: {
-                connect(true);
-                return true;
-            }
             case R.id.mi_search: {
                 getActivity().onSearchRequested();
                 return true;
@@ -233,8 +204,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         app.addListener(this);
-
-        connect(false);
         setLoading(app.isLoading());
     }
 
@@ -248,7 +217,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private void setLoading(boolean loading) {
 
         if (loading) {
-            getActivity().getActionBar().setTitle(R.string.inf_load);
+            chAdapter.clear();
+            chAdapter.notifyDataSetChanged();
+            getActivity().getActionBar().setSubtitle(R.string.inf_load);
         } else {
             TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
             tagAdapter.clear();
