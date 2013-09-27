@@ -137,9 +137,7 @@ public class RecordingListTabsActivity extends Activity {
         Intent intent = null;
         switch (item.getItemId()) {
         case android.R.id.home:
-            intent = new Intent(this, ChannelListTabsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            onBackPressed();
             return true;
         case R.id.mi_settings: {
             // Start the settings activity 
