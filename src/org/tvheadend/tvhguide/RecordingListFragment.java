@@ -113,35 +113,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         app.addListener(this);
-        
-        recList.clear();
-        
-        // Show only the recordings that belong to the tab
-        for (Recording rec : app.getRecordings()) {
-            if (tabIndex == 0 &&
-                    rec.error == null &&
-                    rec.state.equals("completed")) {
-                recList.add(rec);
-            }
-            else if (tabIndex == 1 &&
-                    rec.error == null &&
-                    (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
-                recList.add(rec);
-            }
-            else if (tabIndex == 2 &&
-                    (rec.error != null ||
-                    (rec.state.equals("missed") || rec.state.equals("invalid")))) {
-                recList.add(rec);
-            }
-            else if (tabIndex == 3 &&
-                    rec.error == null &&
-                    rec.state.equals("autorec")) {
-                recList.add(rec);
-            }
-        }
-        recAdapter.notifyDataSetChanged();
-
-        ((RecordingListTabsActivity)getActivity()).updateTitle(tabIndex, recList.size());
+        populateList();
     }
 
     @Override
@@ -237,15 +209,53 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
     }
 
+    private void setLoading(boolean loading) {
+        if (loading) {
+            recAdapter.list.clear();
+            recAdapter.notifyDataSetChanged();
+            getActivity().getActionBar().setSubtitle(R.string.inf_load);
+        } else {
+            populateList();
+        }
+    }
+
+    private void populateList() {
+        TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
+        recList.clear();
+        
+        // Show only the recordings that belong to the tab
+        for (Recording rec : app.getRecordings()) {
+            if (tabIndex == 0 &&
+                    rec.error == null &&
+                    rec.state.equals("completed")) {
+                recList.add(rec);
+            }
+            else if (tabIndex == 1 &&
+                    rec.error == null &&
+                    (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                recList.add(rec);
+            }
+            else if (tabIndex == 2 &&
+                    (rec.error != null ||
+                    (rec.state.equals("missed") || rec.state.equals("invalid")))) {
+                recList.add(rec);
+            }
+            else if (tabIndex == 3 &&
+                    rec.error == null &&
+                    rec.state.equals("autorec")) {
+                recList.add(rec);
+            }
+        }
+        recAdapter.notifyDataSetChanged();
+        ((RecordingListTabsActivity)getActivity()).updateTitle(tabIndex, recList.size());
+    }
+    
     public void onMessage(String action, final Object obj) {
-        if (action.equals(TVHGuideApplication.ACTION_LOADING) && !(Boolean) obj) {
+        if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
-                    recAdapter.list.clear();
-                    recAdapter.list.addAll(app.getRecordings());
-                    recAdapter.notifyDataSetChanged();
-                    recAdapter.sort();
+                    boolean loading = (Boolean) obj;
+                    setLoading(loading);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_ADD)) {
