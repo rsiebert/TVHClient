@@ -18,6 +18,9 @@
  */
 package org.tvheadend.tvhguide;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
@@ -59,6 +62,7 @@ public class ProgrammeActivity extends Activity {
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.programme_layout);
     	
+    	// Get the channel which holds the program
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         Channel channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
         if (channel == null) {
@@ -66,12 +70,7 @@ public class ProgrammeActivity extends Activity {
             return;
         }
 
-        // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setTitle(channel.name);
-        getActionBar().setIcon(new BitmapDrawable(channel.iconBitmap));
-
+        // Get the selected program from the current channel
         long eventId = getIntent().getLongExtra("eventId", 0);
         for (Programme p : channel.epg) {
             if (p.id == eventId) {
@@ -85,16 +84,22 @@ public class ProgrammeActivity extends Activity {
             return;
         }
 
+        // Setup the action bar and show the title
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setTitle(channel.name);
+        getActionBar().setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+
         // Initialize all the widgets from the layout
-        TextView titleLabel = (TextView) findViewById(R.id.title_label);
         TextView title = (TextView) findViewById(R.id.title);
         TextView summaryLabel = (TextView) findViewById(R.id.summary_label);
         TextView summary = (TextView) findViewById(R.id.summary);
         TextView descLabel = (TextView) findViewById(R.id.desc_label);
         TextView desc = (TextView) findViewById(R.id.desc);
-        TextView airingLabel = (TextView) findViewById(R.id.airing_label);
-        TextView airingChannel = (TextView) findViewById(R.id.channel);
-        TextView airing = (TextView) findViewById(R.id.airing);
+        TextView channelName = (TextView) findViewById(R.id.channel);
+        TextView date = (TextView) findViewById(R.id.date);
+        TextView time = (TextView) findViewById(R.id.time);
+        TextView duration = (TextView) findViewById(R.id.duration);
         TextView contentTypeLabel = (TextView) findViewById(R.id.content_type_label);
         TextView contentType = (TextView) findViewById(R.id.content_type);
         TextView seriesInfoLabel = (TextView) findViewById(R.id.series_info_label);
@@ -105,20 +110,34 @@ public class ProgrammeActivity extends Activity {
         
         // Set the values
         title.setText(programme.title);
-        
-        airingChannel.setText(channel.name);
-        airing.setText(
-                DateFormat.getLongDateFormat(airing.getContext()).format(programme.start) + "   "
-                + DateFormat.getTimeFormat(airing.getContext()).format(programme.start) + " - "
-                + DateFormat.getTimeFormat(airing.getContext()).format(programme.stop));
 
-        if (programme.summary.length() == 0) { 
+        // Set the date, the channel name, the time and duration
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+        date.setText(sdf.format(programme.start.getTime()));
+        channelName.setText(channel.name);
+
+        time.setText(DateFormat.getTimeFormat(time.getContext()).format(programme.start) + " - "
+                + DateFormat.getTimeFormat(time.getContext()).format(programme.stop));
+        
+        // Get the start and end times so we can show them 
+        // and calculate the duration. Then show the duration in minutes
+        double durationTime = (programme.stop.getTime() - programme.start.getTime());
+        durationTime = (durationTime / 1000 / 60);
+        if (durationTime > 0) {
+            duration.setText("(" + duration.getContext().getString(R.string.ch_minutes, (int)durationTime) + ")");
+        } else {
+            duration.setVisibility(View.GONE);
+        }
+
+        // Show the program summary if it exists and only of no description is available 
+        if (programme.summary.length() == 0 && programme.description.length() > 0) { 
         	summaryLabel.setVisibility(View.GONE);
         	summary.setVisibility(View.GONE);
         } else {
             summary.setText(programme.summary);
         }
         
+        // Show the description to the program
         if (programme.description.length() == 0) {
             descLabel.setVisibility(View.GONE);
             desc.setVisibility(View.GONE);
@@ -126,6 +145,7 @@ public class ProgrammeActivity extends Activity {
             desc.setText(programme.description);
         }
 
+        // Show the series information
         String s = buildSeriesInfoString(programme.seriesInfo);
         if (s.length() == 0) {
             seriesInfoLabel.setVisibility(View.GONE);
@@ -134,6 +154,7 @@ public class ProgrammeActivity extends Activity {
             seriesInfo.setText(s);
         }
         
+        // Show the content type or category of the program
         SparseArray<String> contentTypes = TVHGuideApplication.getContentTypes(this);
         s = contentTypes.get(programme.contentType, "");
         if(s.length() == 0) {
@@ -143,6 +164,7 @@ public class ProgrammeActivity extends Activity {
             contentType.setText(s);
         }
         
+        // Show the rating information as starts
         if (programme.starRating < 0) {
             ratingBarLabel.setVisibility(View.GONE);
             ratingBarText.setVisibility(View.GONE);
