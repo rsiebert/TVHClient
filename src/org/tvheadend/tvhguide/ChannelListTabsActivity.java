@@ -2,8 +2,6 @@ package org.tvheadend.tvhguide;
 
 import java.lang.reflect.Field;
 
-import org.tvheadend.tvhguide.htsp.HTSService;
-
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -139,7 +137,7 @@ public class ChannelListTabsActivity extends Activity {
             prevTabPosition = -1;
         }
         
-        connect(false);
+        Utils.connect(this, false);
     }
     
     @Override
@@ -170,30 +168,11 @@ public class ChannelListTabsActivity extends Activity {
                 return true;
             }
             case R.id.mi_refresh:
-                connect(true);
+                Utils.connect(this, true);
                 return true;
             default: {
                 return super.onOptionsItemSelected(item);
             }
         }
-    }
-    
-    public void connect(boolean force) {
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String hostname = prefs.getString("serverHostPref", "localhost");
-        int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
-        String username = prefs.getString("usernamePref", "");
-        String password = prefs.getString("passwordPref", "");
-
-        Intent intent = new Intent(this, HTSService.class);
-        intent.setAction(HTSService.ACTION_CONNECT);
-        intent.putExtra("hostname", hostname);
-        intent.putExtra("port", port);
-        intent.putExtra("username", username);
-        intent.putExtra("password", password);
-        intent.putExtra("force", force);
-
-        startService(intent);
     }
 }

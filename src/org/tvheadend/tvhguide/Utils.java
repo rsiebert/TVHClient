@@ -5,9 +5,13 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.tvheadend.tvhguide.R.string;
+import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.SeriesInfo;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
 public class Utils {
@@ -85,5 +89,32 @@ public class Utils {
         }
         
         return s;
+    }
+    
+    /**
+     * 
+     * @param context
+     * @param force
+     */
+    public static void connect(Context context, boolean force) {
+
+        // Get the preferences object and retrieve the login credentials
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String hostname = prefs.getString("serverHostPref", "localhost");
+        int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
+        String username = prefs.getString("usernamePref", "");
+        String password = prefs.getString("passwordPref", "");
+
+        // Create an intent and pass on the data
+        Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(HTSService.ACTION_CONNECT);
+        intent.putExtra("hostname", hostname);
+        intent.putExtra("port", port);
+        intent.putExtra("username", username);
+        intent.putExtra("password", password);
+        intent.putExtra("force", force);
+
+        // Start the service with given action and data
+        context.startService(intent);
     }
 }
