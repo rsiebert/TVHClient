@@ -18,28 +18,30 @@
  */
 package org.tvheadend.tvhguide;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.TextView;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
-import org.tvheadend.tvhguide.R;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Recording;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 /**
- *
+ * 
  * @author john-tornblom
  */
 public class RecordingActivity extends Activity {
@@ -48,11 +50,14 @@ public class RecordingActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        // Apply the specified theme
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean theme = prefs.getBoolean("lightThemePref", false);
-        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+        setTheme(theme ? android.R.style.Theme_Holo_Light : android.R.style.Theme_Holo);
 
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.recording_layout);
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         rec = app.getRecording(getIntent().getLongExtra("id", 0));
@@ -61,37 +66,64 @@ public class RecordingActivity extends Activity {
             return;
         }
 
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+        // Setup the action bar and show the title
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
 
-        setContentView(R.layout.recording_layout);
-
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.recording_title);
-        TextView t = (TextView) findViewById(R.id.ct_title);
-        t.setText(rec.channel.name);
-
-        if (rec.channel.iconBitmap != null) {
-            ImageView iv = (ImageView) findViewById(R.id.ct_logo);
-            iv.setImageBitmap(rec.channel.iconBitmap);
+        if (rec.channel != null) {
+            getActionBar().setTitle(rec.channel.name);
+            if (rec.channel.iconBitmap != null) {
+                getActionBar().setIcon(new BitmapDrawable(getResources(), rec.channel.iconBitmap));
+            }
         }
 
-        TextView text = (TextView) findViewById(R.id.rec_name);
-        text.setText(rec.title);
+        // Initialize all the widgets from the layout
+        TextView title = (TextView) findViewById(R.id.title);
+        TextView summaryLabel = (TextView) findViewById(R.id.summary_label);
+        TextView summary = (TextView) findViewById(R.id.summary);
+        TextView descLabel = (TextView) findViewById(R.id.desc_label);
+        TextView desc = (TextView) findViewById(R.id.desc);
+        TextView channelName = (TextView) findViewById(R.id.channel);
+        TextView date = (TextView) findViewById(R.id.date);
+        TextView time = (TextView) findViewById(R.id.time);
+        TextView duration = (TextView) findViewById(R.id.duration);
 
-        text = (TextView) findViewById(R.id.rec_summary);
-        text.setText(rec.summary);
-        if(rec.summary.length() == 0)
-        	text.setVisibility(TextView.GONE);
+        // Set the values
+        title.setText(rec.title);
+
+        // Set the date, the channel name, the time and duration
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+        date.setText(sdf.format(rec.start.getTime()));
+        channelName.setText(rec.channel.name);
+
+        time.setText(DateFormat.getTimeFormat(time.getContext()).format(rec.start) + " - "
+                + DateFormat.getTimeFormat(time.getContext()).format(rec.stop));
         
-        text = (TextView) findViewById(R.id.rec_desc);
-        text.setText(rec.description);
+        // Get the start and end times so we can show them 
+        // and calculate the duration. Then show the duration in minutes
+        double durationTime = (rec.stop.getTime() - rec.start.getTime());
+        durationTime = (durationTime / 1000 / 60);
+        if (durationTime > 0) {
+            duration.setText("(" + duration.getContext().getString(R.string.ch_minutes, (int)durationTime) + ")");
+        } else {
+            duration.setVisibility(View.GONE);
+        }
 
-        text = (TextView) findViewById(R.id.rec_time);
-        text.setText(
-                DateFormat.getLongDateFormat(this).format(rec.start)
-                + "   "
-                + DateFormat.getTimeFormat(this).format(rec.start)
-                + " - "
-                + DateFormat.getTimeFormat(this).format(rec.stop));
+        // Show the program summary if it exists and only of no description is available 
+        if (rec.summary.length() == 0 && rec.description.length() > 0) { 
+            summaryLabel.setVisibility(View.GONE);
+            summary.setVisibility(View.GONE);
+        } else {
+            summary.setText(rec.summary);
+        }
+        
+        // Show the description to the program
+        if (rec.description.length() == 0) {
+            descLabel.setVisibility(View.GONE);
+            desc.setVisibility(View.GONE);
+        } else {
+            desc.setText(rec.description);
+        }
     }
 
     @Override
@@ -117,7 +149,8 @@ public class RecordingActivity extends Activity {
             item.setIntent(intent);
             item.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
             item.setIntent(intent);
-        } else {
+        }
+        else {
             intent.setAction(HTSService.ACTION_DVR_DELETE);
             intent.putExtra("id", rec.id);
             item = menu.add(Menu.NONE, R.string.menu_record_remove, Menu.NONE, R.string.menu_record_remove);
@@ -140,7 +173,8 @@ public class RecordingActivity extends Activity {
         boolean rebuild = false;
         if (rec.isRecording() || rec.isScheduled()) {
             rebuild = menu.findItem(R.string.menu_record_cancel) == null;
-        } else {
+        }
+        else {
             rebuild = menu.findItem(R.string.menu_record_remove) == null;
         }
 
@@ -155,26 +189,28 @@ public class RecordingActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
-            case R.string.menu_record_remove: {
-                new AlertDialog.Builder(this)
-                .setTitle(R.string.menu_record_remove)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+        case R.string.menu_record_remove: {
+            new AlertDialog.Builder(this).setTitle(R.string.menu_record_remove)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface dialog, int which) {
-                        startService(item.getIntent());
-                    }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            startService(item.getIntent());
+                        }
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface dialog, int which) {
-                        //NOP
-                    }
-                }).show();
-            }
-            case R.string.menu_record_cancel:
-                startService(item.getIntent());
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                        public void onClick(DialogInterface dialog, int which) {
+                            // NOP
+                        }
+                    }).show();
+        }
+        case R.string.menu_record_cancel:
+            startService(item.getIntent());
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 }
