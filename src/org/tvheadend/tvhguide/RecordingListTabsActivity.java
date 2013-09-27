@@ -89,8 +89,6 @@ public class RecordingListTabsActivity extends Activity {
         actionBar.addTab(tab);
         tab = actionBar.newTab().setText(R.string.failed).setTabListener(tabListener);
         actionBar.addTab(tab);
-        tab = actionBar.newTab().setText(R.string.autorec).setTabListener(tabListener);
-        actionBar.addTab(tab);
 
         adapter.notifyDataSetChanged();
 

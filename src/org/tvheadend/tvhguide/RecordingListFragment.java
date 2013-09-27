@@ -232,17 +232,14 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             }
             else if (tabIndex == 1 &&
                     rec.error == null &&
-                    (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                    (rec.state.equals("scheduled") || 
+                     rec.state.equals("recording") ||
+                     rec.state.equals("autorec"))) {
                 recList.add(rec);
             }
             else if (tabIndex == 2 &&
                     (rec.error != null ||
                     (rec.state.equals("missed") || rec.state.equals("invalid")))) {
-                recList.add(rec);
-            }
-            else if (tabIndex == 3 &&
-                    rec.error == null &&
-                    rec.state.equals("autorec")) {
                 recList.add(rec);
             }
         }
