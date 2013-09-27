@@ -52,7 +52,7 @@ import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Channel;
-import org.tvheadend.tvhguide.model.Programme;
+import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.SeriesInfo;
 
@@ -81,7 +81,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         
         contentTypes = TVHGuideApplication.getContentTypes(this);
 
-        List<Programme> srList = new ArrayList<Programme>();
+        List<Program> srList = new ArrayList<Program>();
         srAdapter = new SearchResultAdapter(this, srList);
         srAdapter.sort();
         setListAdapter(srAdapter);
@@ -132,14 +132,14 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
         if (channel == null) {
             for (Channel ch : app.getChannels()) {
-                for (Programme p : ch.epg) {
+                for (Program p : ch.epg) {
                     if (pattern.matcher(p.title).find()) {
                         srAdapter.add(p);
                     }
                 }
             }
         } else {
-            for (Programme p : channel.epg) {
+            for (Program p : channel.epg) {
                 if (pattern.matcher(p.title).find()) {
                     srAdapter.add(p);
                 }
@@ -173,9 +173,9 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Programme p = (Programme) srAdapter.getItem(position);
+        Program p = (Program) srAdapter.getItem(position);
 
-        Intent intent = new Intent(this, ProgrammeActivity.class);
+        Intent intent = new Intent(this, ProgramActivity.class);
         intent.putExtra("eventId", p.id);
         intent.putExtra("channelId", p.channel.id);
         startActivity(intent);
@@ -201,7 +201,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Programme p = srAdapter.getItem(info.position);
+        Program p = srAdapter.getItem(info.position);
 
         menu.setHeaderTitle(p.title);
 
@@ -232,7 +232,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             runOnUiThread(new Runnable() {
 
                 public void run() {
-                    Programme p = (Programme) obj;
+                    Program p = (Program) obj;
                     if (pattern != null && pattern.matcher(p.title).find()) {
                         srAdapter.add(p);
                         srAdapter.notifyDataSetChanged();
@@ -244,7 +244,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             runOnUiThread(new Runnable() {
 
                 public void run() {
-                    Programme p = (Programme) obj;
+                    Program p = (Program) obj;
                     srAdapter.remove(p);
                     srAdapter.notifyDataSetChanged();
                 }
@@ -253,7 +253,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             runOnUiThread(new Runnable() {
 
                 public void run() {
-                    Programme p = (Programme) obj;
+                    Program p = (Program) obj;
                     srAdapter.updateView(getListView(), p);
                 }
             });
@@ -262,7 +262,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Programme p : srAdapter.list) {
+                    for (Program p : srAdapter.list) {
                         if (rec == p.recording) {
                             srAdapter.updateView(getListView(), p);
                             return;
@@ -331,7 +331,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             state = (ImageView) base.findViewById(R.id.sr_state);
         }
 
-        public void repaint(Programme p) {
+        public void repaint(Program p) {
             Channel ch = p.channel;
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
@@ -401,31 +401,31 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         }
     }
 
-    class SearchResultAdapter extends ArrayAdapter<Programme> {
+    class SearchResultAdapter extends ArrayAdapter<Program> {
 
         Activity context;
-        List<Programme> list;
+        List<Program> list;
 
-        SearchResultAdapter(Activity context, List<Programme> list) {
+        SearchResultAdapter(Activity context, List<Program> list) {
             super(context, R.layout.search_result_widget, list);
             this.context = context;
             this.list = list;
         }
 
         public void sort() {
-            sort(new Comparator<Programme>() {
+            sort(new Comparator<Program>() {
 
-                public int compare(Programme x, Programme y) {
+                public int compare(Program x, Program y) {
                     return x.compareTo(y);
                 }
             });
         }
 
-        public void updateView(ListView listView, Programme programme) {
+        public void updateView(ListView listView, Program programme) {
             for (int i = 0; i < listView.getChildCount(); i++) {
                 View view = listView.getChildAt(i);
                 int pos = listView.getPositionForView(view);
-                Programme pr = (Programme) listView.getItemAtPosition(pos);
+                Program pr = (Program) listView.getItemAtPosition(pos);
 
                 if (view.getTag() == null || pr == null) {
                     continue;
@@ -457,7 +457,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
                 wrapper = (ViewWarpper) row.getTag();
             }
 
-            Programme p = getItem(position);
+            Program p = getItem(position);
             wrapper.repaint(p);
             return row;
         }

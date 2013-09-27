@@ -24,7 +24,7 @@ import java.util.Date;
  *
  * @author john-tornblom
  */
-public class Programme implements Comparable<Programme> {
+public class Program implements Comparable<Program> {
 
     public long id;
     public long nextId;
@@ -39,7 +39,7 @@ public class Programme implements Comparable<Programme> {
     public Channel channel;
     public Recording recording;
 
-    public int compareTo(Programme that) {
+    public int compareTo(Program that) {
         return this.start.compareTo(that.start);
     }
 
@@ -53,8 +53,8 @@ public class Programme implements Comparable<Programme> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Programme) {
-            return ((Programme) o).id == id;
+        if (o instanceof Program) {
+            return ((Program) o).id == id;
         }
 
         return false;

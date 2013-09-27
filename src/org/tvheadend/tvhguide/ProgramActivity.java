@@ -25,7 +25,7 @@ import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
-import org.tvheadend.tvhguide.model.Programme;
+import org.tvheadend.tvhguide.model.Program;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -45,9 +45,9 @@ import android.widget.TextView;
  *
  * @author john-tornblom
  */
-public class ProgrammeActivity extends Activity {
+public class ProgramActivity extends Activity {
 
-    private Programme programme;
+    private Program programme;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class ProgrammeActivity extends Activity {
         setTheme(theme ? android.R.style.Theme_Holo_Light : android.R.style.Theme_Holo);
         
     	super.onCreate(savedInstanceState);
-    	setContentView(R.layout.programme_layout);
+    	setContentView(R.layout.program_layout);
     	
     	// Get the channel which holds the program
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
@@ -70,7 +70,7 @@ public class ProgrammeActivity extends Activity {
 
         // Get the selected program from the current channel
         long eventId = getIntent().getLongExtra("eventId", 0);
-        for (Programme p : channel.epg) {
+        for (Program p : channel.epg) {
             if (p.id == eventId) {
                 programme = p;
                 break;

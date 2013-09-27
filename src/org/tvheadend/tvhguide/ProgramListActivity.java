@@ -28,7 +28,7 @@ import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
-import org.tvheadend.tvhguide.model.Programme;
+import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 
 import android.app.Activity;
@@ -60,7 +60,7 @@ import android.widget.TextView;
  *
  * @author john-tornblom
  */
-public class ProgrammeListActivity extends ListActivity implements HTSListener {
+public class ProgramListActivity extends ListActivity implements HTSListener {
 
     private ProgrammeListAdapter prAdapter;
     private Channel channel;
@@ -106,7 +106,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             }
         });
 
-        List<Programme> prList = new ArrayList<Programme>();
+        List<Program> prList = new ArrayList<Program>();
         prList.addAll(channel.epg);
         prAdapter = new ProgrammeListAdapter(this, prList);
         prAdapter.sort();
@@ -134,9 +134,9 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Programme p = (Programme) prAdapter.getItem(position);
+        Program p = (Program) prAdapter.getItem(position);
 
-        Intent intent = new Intent(this, ProgrammeActivity.class);
+        Intent intent = new Intent(this, ProgramActivity.class);
         intent.putExtra("eventId", p.id);
         intent.putExtra("channelId", p.channel.id);
         startActivity(intent);
@@ -162,7 +162,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Programme p = prAdapter.getItem(info.position);
+        Program p = prAdapter.getItem(info.position);
 
         menu.setHeaderTitle(p.title);
         Intent intent = new Intent(this, HTSService.class);
@@ -214,7 +214,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             return true;
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(ProgrammeListActivity.this, PlaybackActivity.class);
+            Intent intent = new Intent(ProgramListActivity.this, PlaybackActivity.class);
             intent.putExtra("channelId", channel.id);
             startActivity(intent);
             return true;
@@ -236,7 +236,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             // A new program has been added
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Programme p = (Programme) obj;
+                    Program p = (Program) obj;
                     if (channel != null && p.channel.id == channel.id) {
                         prAdapter.add(p);
                         prAdapter.notifyDataSetChanged();
@@ -249,7 +249,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             // An existing program has been deleted
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Programme p = (Programme) obj;
+                    Program p = (Program) obj;
                     prAdapter.remove(p);
                     prAdapter.notifyDataSetChanged();
                     getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
@@ -259,7 +259,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             // An existing program has been updated
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Programme p = (Programme) obj;
+                    Program p = (Program) obj;
                     prAdapter.updateView(getListView(), p);
                 }
             });
@@ -268,7 +268,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Programme p : prAdapter.list) {
+                    for (Program p : prAdapter.list) {
                         if (rec == p.recording) {
                             prAdapter.updateView(getListView(), p);
                             return;
@@ -284,8 +284,8 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
      */
     protected void loadMorePrograms() {
 
-        Iterator<Programme> it = channel.epg.iterator();
-        Programme p = null;
+        Iterator<Program> it = channel.epg.iterator();
+        Program p = null;
         long nextId = 0;
 
         while (it.hasNext()) {
@@ -338,7 +338,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
             state = (ImageView) base.findViewById(R.id.pr_state);
         }
 
-        public void repaint(Programme p) {
+        public void repaint(Program p) {
             title.setText(p.title);
 
             if (p.recording == null) {
@@ -389,31 +389,31 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
         }
     }
  
-    class ProgrammeListAdapter extends ArrayAdapter<Programme> {
+    class ProgrammeListAdapter extends ArrayAdapter<Program> {
 
         Activity context;
-        List<Programme> list;
+        List<Program> list;
 
-        ProgrammeListAdapter(Activity context, List<Programme> list) {
-            super(context, R.layout.programme_list_widget, list);
+        ProgrammeListAdapter(Activity context, List<Program> list) {
+            super(context, R.layout.program_list_widget, list);
             this.context = context;
             this.list = list;
         }
 
         public void sort() {
-            sort(new Comparator<Programme>() {
+            sort(new Comparator<Program>() {
 
-                public int compare(Programme x, Programme y) {
+                public int compare(Program x, Program y) {
                     return x.compareTo(y);
                 }
             });
         }
 
-        public void updateView(ListView listView, Programme programme) {
+        public void updateView(ListView listView, Program programme) {
             for (int i = 0; i < listView.getChildCount(); i++) {
                 View view = listView.getChildAt(i);
                 int pos = listView.getPositionForView(view);
-                Programme pr = (Programme) listView.getItemAtPosition(pos);
+                Program pr = (Program) listView.getItemAtPosition(pos);
 
                 if (view.getTag() == null || pr == null) {
                     continue;
@@ -436,7 +436,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
 
             if (row == null) {
                 LayoutInflater inflater = context.getLayoutInflater();
-                row = inflater.inflate(R.layout.programme_list_widget, null, false);
+                row = inflater.inflate(R.layout.program_list_widget, null, false);
 
                 wrapper = new ViewWrapper(context, row);
                 row.setTag(wrapper);
@@ -445,7 +445,7 @@ public class ProgrammeListActivity extends ListActivity implements HTSListener {
                 wrapper = (ViewWrapper) row.getTag();
             }
 
-            Programme p = getItem(position);
+            Program p = getItem(position);
             wrapper.repaint(p);
             return row;
         }

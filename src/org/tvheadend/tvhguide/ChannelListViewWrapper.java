@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.tvheadend.tvhguide.model.Channel;
-import org.tvheadend.tvhguide.model.Programme;
+import org.tvheadend.tvhguide.model.Program;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
@@ -79,14 +79,14 @@ public class ChannelListViewWrapper {
         }
         
         // Get the iterator so we can check the channel status 
-        Iterator<Programme> it = channel.epg.iterator();
+        Iterator<Program> it = channel.epg.iterator();
         
         // Check if the channel is actually transmitting 
         // data and contains program data which can be shown.
         if (!channel.isTransmitting && it.hasNext()) {
             title.setText(R.string.ch_no_transmission);
         } else if (it.hasNext()) {
-            Programme p = it.next();
+            Program p = it.next();
             title.setText(p.title);
             time.setText(
                     DateFormat.getTimeFormat(time.getContext()).format(p.start)

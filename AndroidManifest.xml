@@ -22,8 +22,8 @@
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhguide.ProgrammeListActivity" />
-        <activity android:name="org.tvheadend.tvhguide.ProgrammeActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ProgramListActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ProgramActivity" />
         <activity android:name="org.tvheadend.tvhguide.RecordingActivity" android:theme="@style/CustomTheme"/>
         <activity android:name="org.tvheadend.tvhguide.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhguide.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>

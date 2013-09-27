@@ -89,7 +89,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                     return;
                 }
 
-                Intent intent = new Intent(getActivity().getBaseContext(), ProgrammeListActivity.class);
+                Intent intent = new Intent(getActivity().getBaseContext(), ProgramListActivity.class);
                 intent.putExtra("channelId", ch.id);
                 startActivity(intent);
             }

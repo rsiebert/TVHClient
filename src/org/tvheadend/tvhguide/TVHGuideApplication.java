@@ -33,7 +33,7 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.ChannelTag;
 import org.tvheadend.tvhguide.model.HttpTicket;
 import org.tvheadend.tvhguide.model.Packet;
-import org.tvheadend.tvhguide.model.Programme;
+import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.Subscription;
 
@@ -200,19 +200,19 @@ public class TVHGuideApplication extends Application {
         }
     }
 
-    public void addProgramme(Programme p) {
+    public void addProgramme(Program p) {
         if (!loading) {
             broadcastMessage(ACTION_PROGRAMME_ADD, p);
         }
     }
 
-    public void removeProgramme(Programme p) {
+    public void removeProgramme(Program p) {
         if (!loading) {
             broadcastMessage(ACTION_PROGRAMME_DELETE, p);
         }
     }
 
-    public void updateProgramme(Programme p) {
+    public void updateProgramme(Program p) {
         if (!loading) {
             broadcastMessage(ACTION_PROGRAMME_UPDATE, p);
         }
