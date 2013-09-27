@@ -19,10 +19,10 @@
 package org.tvheadend.tvhguide;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.tvheadend.tvhguide.adapter.ProgrammeListAdapter;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
@@ -31,30 +31,21 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
-import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  *
@@ -64,7 +55,6 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
 
     private ProgrammeListAdapter prAdapter;
     private Channel channel;
-    private SparseArray<String> contentTypes;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -115,7 +105,6 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
         getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
         
         registerForContextMenu(getListView());
-        contentTypes = TVHGuideApplication.getContentTypes(this);
     }
 
     @Override
@@ -268,7 +257,7 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Program p : prAdapter.list) {
+                    for (Program p : prAdapter.getList()) {
                         if (rec == p.recording) {
                             prAdapter.updateView(getListView(), p);
                             return;
@@ -313,141 +302,5 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
         intent.putExtra("channelId", channel.id);
         intent.putExtra("count", 10);
         startService(intent);
-    }
-    
-    private class ViewWrapper {
-
-        Context ctx;
-        TextView title;
-        TextView time;
-        TextView seriesInfo;
-        TextView date;
-        TextView description;
-        ImageView state;
-
-        public ViewWrapper(Activity context, View base) {
-            
-            ctx = context;
-            title = (TextView) base.findViewById(R.id.pr_title);
-            description = (TextView) base.findViewById(R.id.pr_desc);
-            seriesInfo = (TextView) base.findViewById(R.id.pr_series_info);
-            
-            time = (TextView) base.findViewById(R.id.pr_time);
-            date = (TextView) base.findViewById(R.id.pr_date);
-
-            state = (ImageView) base.findViewById(R.id.pr_state);
-        }
-
-        public void repaint(Program p) {
-            title.setText(p.title);
-
-            if (p.recording == null) {
-                state.setImageDrawable(null);
-            } else if (p.recording.error != null) {
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("completed".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_success_small);
-            } else if ("invalid".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("missed".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("recording".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_rec_small);
-            } else if ("scheduled".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_schedule_small);
-            } else {
-                state.setImageDrawable(null);
-            }
-
-            title.invalidate();
-
-            String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);
-            if(s.length() == 0) {
-            	s = contentTypes.get(p.contentType);
-            }
-            
-            seriesInfo.setText(s);
-            seriesInfo.invalidate();
-
-            if (p.description.length() > 0) {
-                description.setText(p.description);
-                description.setVisibility(TextView.VISIBLE);
-            } else {
-                description.setText("");
-                description.setVisibility(TextView.GONE);
-            }
-            description.invalidate();
-
-            date.setText(Utils.getStartDate(date.getContext(), p.start));
-            date.invalidate();
-
-            time.setText(
-                    DateFormat.getTimeFormat(time.getContext()).format(p.start)
-                    + " - "
-                    + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
-            time.invalidate();
-        }
-    }
- 
-    class ProgrammeListAdapter extends ArrayAdapter<Program> {
-
-        Activity context;
-        List<Program> list;
-
-        ProgrammeListAdapter(Activity context, List<Program> list) {
-            super(context, R.layout.program_list_widget, list);
-            this.context = context;
-            this.list = list;
-        }
-
-        public void sort() {
-            sort(new Comparator<Program>() {
-
-                public int compare(Program x, Program y) {
-                    return x.compareTo(y);
-                }
-            });
-        }
-
-        public void updateView(ListView listView, Program programme) {
-            for (int i = 0; i < listView.getChildCount(); i++) {
-                View view = listView.getChildAt(i);
-                int pos = listView.getPositionForView(view);
-                Program pr = (Program) listView.getItemAtPosition(pos);
-
-                if (view.getTag() == null || pr == null) {
-                    continue;
-                }
-
-                if (programme.id != pr.id) {
-                    continue;
-                }
-
-                ViewWrapper wrapper = (ViewWrapper) view.getTag();
-                wrapper.repaint(programme);
-                break;
-            }
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            ViewWrapper wrapper = null;
-
-            if (row == null) {
-                LayoutInflater inflater = context.getLayoutInflater();
-                row = inflater.inflate(R.layout.program_list_widget, null, false);
-
-                wrapper = new ViewWrapper(context, row);
-                row.setTag(wrapper);
-
-            } else {
-                wrapper = (ViewWrapper) row.getTag();
-            }
-
-            Program p = getItem(position);
-            wrapper.repaint(p);
-            return row;
-        }
     }
 }
