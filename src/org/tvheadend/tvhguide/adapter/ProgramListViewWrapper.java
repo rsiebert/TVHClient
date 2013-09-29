@@ -20,6 +20,7 @@ public class ProgramListViewWrapper {
     TextView time;
     TextView seriesInfo;
     TextView date;
+    TextView duration;
     TextView description;
     ImageView state;
     SparseArray<String> contentTypes;
@@ -33,6 +34,7 @@ public class ProgramListViewWrapper {
         
         time = (TextView) base.findViewById(R.id.pr_time);
         date = (TextView) base.findViewById(R.id.pr_date);
+        duration = (TextView) base.findViewById(R.id.pr_duration);
 
         state = (ImageView) base.findViewById(R.id.pr_state);
         contentTypes = TVHGuideApplication.getContentTypes(context);
@@ -86,5 +88,10 @@ public class ProgramListViewWrapper {
                 + " - "
                 + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
         time.invalidate();
+        
+        // Show the duration in minutes
+        double durationTime = (p.stop.getTime() - p.start.getTime());
+        durationTime = (durationTime / 1000 / 60);
+        duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
     }
 }
