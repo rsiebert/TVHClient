@@ -23,11 +23,12 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:paddingLeft="3dp"
-            android:paddingRight="3dp"
+            android:paddingRight="6dp"
             android:paddingTop="3dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="@string/title"
+            android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
 
@@ -52,8 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:gravity="right"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:singleLine="true"
                 android:text="@string/duration" />
         </LinearLayout>
@@ -79,8 +80,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:gravity="right"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:singleLine="true"
                 android:text="@string/time" />
         </LinearLayout>
@@ -92,7 +93,7 @@
             android:maxLines="3"
             android:paddingBottom="12dp"
             android:paddingLeft="3dp"
-            android:paddingRight="3dp"
+            android:paddingRight="6dp"
             android:text="@string/description" />
     </LinearLayout>
 
