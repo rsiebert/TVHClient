@@ -21,6 +21,7 @@ package org.tvheadend.tvhguide;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
@@ -45,7 +46,7 @@ import android.widget.TextView;
  *
  * @author john-tornblom
  */
-public class ProgramActivity extends Activity {
+public class ProgramActivity extends Activity implements HTSListener {
 
     private Program programme;
 
@@ -174,76 +175,109 @@ public class ProgramActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.addListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.removeListener(this);
+    }
+    
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = null;
-
-        if (programme.title != null) {
-            item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
-            item.setIntent(new SearchEPGIntent(this, programme.title));
-            item.setIcon(android.R.drawable.ic_menu_search);
-
-            item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "IMDb");
-            item.setIntent(new SearchIMDbIntent(this, programme.title));
-            item.setIcon(android.R.drawable.ic_menu_info_details);
-        }
-
-        Intent intent = new Intent(this, HTSService.class);
-
-        if (programme.recording == null) {
-            intent.setAction(HTSService.ACTION_DVR_ADD);
-            intent.putExtra("eventId", programme.id);
-            intent.putExtra("channelId", programme.channel.id);
-            item = menu.add(Menu.NONE, R.string.menu_record, Menu.NONE, R.string.menu_record);
-            item.setIcon(android.R.drawable.ic_menu_save);
-        } else if (programme.isRecording() || programme.isScheduled()) {
-            intent.setAction(HTSService.ACTION_DVR_CANCEL);
-            intent.putExtra("id", programme.recording.id);
-            item = menu.add(Menu.NONE, R.string.menu_record_cancel, Menu.NONE, R.string.menu_record_cancel);
-            item.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-        } else {
-            intent.setAction(HTSService.ACTION_DVR_DELETE);
-            intent.putExtra("id", programme.recording.id);
-            item = menu.add(Menu.NONE, R.string.menu_record_remove, Menu.NONE, R.string.menu_record_remove);
-            item.setIcon(android.R.drawable.ic_menu_delete);
-        }
-
-        item.setIntent(intent);
-
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.details_menu, menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean rebuild = false;
+        
+        MenuItem imdbMenuItem = menu.findItem(R.id.menu_search_imdb);
+        MenuItem epgMenuItem = menu.findItem(R.id.menu_search_epg);
+        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        
+        // Hide the search menu items if the title is missing
+        if (programme.title == null) {
+            imdbMenuItem.setVisible(false);
+            epgMenuItem.setVisible(false);
+        }
+
         if (programme.recording == null) {
-            rebuild = menu.findItem(R.string.menu_record) == null;
-        } else if (programme.isRecording() || programme.isScheduled()) {
-            rebuild = menu.findItem(R.string.menu_record_cancel) == null;
-        } else {
-            rebuild = menu.findItem(R.string.menu_record_remove) == null;
+            recordCancelMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
         }
-
-        if (rebuild) {
-            menu.clear();
-            return onCreateOptionsMenu(menu);
+        else if (programme.isRecording() || programme.isScheduled()) {
+            recordMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
         }
-
+        else {
+            recordMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(false);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.string.menu_record_remove:
-            case R.string.menu_record_cancel:
-            case R.string.menu_record:
-                startService(item.getIntent());
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+
+        case R.id.menu_search:
+            // Show the search text input in the action bar
+            onSearchRequested();
+            return true;
+
+        case R.id.menu_search_imdb:
+            startActivity(new SearchIMDbIntent(this, programme.title));
+            return true;
+
+        case R.id.menu_search_epg:
+            startActivity(new SearchEPGIntent(this, programme.title));
+            return true;
+
+        case R.id.menu_record_remove:
+            Intent rri = new Intent(this, HTSService.class);
+            rri.setAction(HTSService.ACTION_DVR_DELETE);
+            rri.putExtra("id", programme.recording.id);
+            startService(rri);
+            return true;
+
+        case R.id.menu_record_cancel:
+            Intent rci = new Intent(this, HTSService.class);
+            rci.setAction(HTSService.ACTION_DVR_CANCEL);
+            rci.putExtra("id", programme.recording.id);
+            startService(rci);
+            return true;
+
+        case R.id.menu_record:
+            Intent ri = new Intent(this, HTSService.class);
+            ri.setAction(HTSService.ACTION_DVR_ADD);
+            ri.putExtra("eventId", programme.id);
+            ri.putExtra("channelId", programme.channel.id);
+            startService(ri);
+            return true;
+
+        default:
+            return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onMessage(String action, Object obj) {
+        // An existing program has been updated, this is valid for all menu options. 
+        if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
+            invalidateOptionsMenu();
+        } 
     }
 }

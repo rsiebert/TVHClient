@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_search"
+        android:icon="?attr/ic_menu_search"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menu_search"/>
+    <item
+        android:id="@+id/menu_search_imdb"
+        android:title="@string/menu_search_imdb"/>
+    <item
+        android:id="@+id/menu_search_epg"
+        android:title="@string/menu_search_epg"/>
+    <item
+        android:id="@+id/menu_record"
+        android:title="@string/menu_record"/>
+    <item
+        android:id="@+id/menu_record_cancel"
+        android:title="@string/menu_record_cancel"/>
+    <item
+        android:id="@+id/menu_record_remove"
+        android:title="@string/menu_record_remove"/>
+    <item
+        android:id="@+id/menu_play"
+        android:title="@string/menu_play"/>
+
+</menu>
