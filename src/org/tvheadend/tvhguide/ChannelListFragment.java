@@ -183,11 +183,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.mi_search: {
+            case R.id.menu_search: {
                 getActivity().onSearchRequested();
                 return true;
             }
-            case R.id.mi_tags: {
+            case R.id.menu_tags: {
                 tagDialog.show();
                 return true;
             }

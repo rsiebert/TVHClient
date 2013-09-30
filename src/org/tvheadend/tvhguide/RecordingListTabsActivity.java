@@ -137,13 +137,13 @@ public class RecordingListTabsActivity extends Activity {
         case android.R.id.home:
             onBackPressed();
             return true;
-        case R.id.mi_settings: {
+        case R.id.menu_settings: {
             // Start the settings activity 
             intent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(intent, R.id.mi_settings);
+            startActivityForResult(intent, R.id.menu_settings);
             return true;
         }
-        case R.id.mi_refresh:
+        case R.id.menu_refresh:
             Utils.connect(this, true);
             return true;
         default:

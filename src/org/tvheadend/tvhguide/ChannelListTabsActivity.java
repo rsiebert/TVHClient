@@ -158,16 +158,16 @@ public class ChannelListTabsActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.mi_settings: {
+            case R.id.menu_settings: {
                 // Save the current tab position so we show the previous tab
                 // again when we return from the settings menu.
                 prevTabPosition = getActionBar().getSelectedNavigationIndex();
                 // Now start the settings activity 
                 Intent intent = new Intent(this, SettingsActivity.class);
-                startActivityForResult(intent, R.id.mi_settings);
+                startActivityForResult(intent, R.id.menu_settings);
                 return true;
             }
-            case R.id.mi_refresh:
+            case R.id.menu_refresh:
                 Utils.connect(this, true);
                 return true;
             default: {
