@@ -203,13 +203,17 @@ public class ProgramActivity extends Activity implements HTSListener {
         MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+
         // Hide the search menu items if the title is missing
         if (programme.title == null) {
             imdbMenuItem.setVisible(false);
             epgMenuItem.setVisible(false);
         }
 
+        // Disable the play menu as a default
+        playMenuItem.setVisible(false);
+        
         if (programme.recording == null) {
             recordCancelMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
