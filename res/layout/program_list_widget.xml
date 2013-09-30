@@ -22,6 +22,7 @@
             android:singleLine="true"
             android:text="@string/title"
             android:textAllCaps="true"
+            android:textColor="#AAAAAA"
             android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
 

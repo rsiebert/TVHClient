@@ -18,7 +18,8 @@
             android:singleLine="true"
             android:text="@string/title"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textColor="#AAAAAA" />
 
         <TextView
             android:id="@+id/summary_label"

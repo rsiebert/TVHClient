@@ -24,19 +24,20 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:paddingLeft="3dp"
-            android:paddingRight="3dp"
+            android:paddingRight="6dp"
             android:paddingTop="3dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="@string/channel"
+            android:textColor="#AAAAAA"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:paddingLeft="6dp"
+            android:paddingLeft="3dp"
             android:paddingRight="6dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
@@ -50,7 +51,7 @@
 
             <TextView
                 android:id="@+id/time"
-                android:layout_width="wrap_content"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.7"
                 android:ellipsize="end"
@@ -63,7 +64,7 @@
 
             <TextView
                 android:id="@+id/duration"
-                android:layout_width="wrap_content"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.3"
                 android:ellipsize="end"
