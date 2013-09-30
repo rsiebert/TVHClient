@@ -79,6 +79,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
 
         recList = new ArrayList<Recording>();
         recAdapter = new RecordingListAdapter(getActivity(), recList);
@@ -121,9 +122,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        case R.id.menu_search:
+            getActivity().onSearchRequested();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 
