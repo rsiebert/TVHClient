@@ -22,9 +22,6 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.tvheadend.tvhguide.R;
-import org.tvheadend.tvhguide.R.drawable;
-import org.tvheadend.tvhguide.R.id;
-import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
