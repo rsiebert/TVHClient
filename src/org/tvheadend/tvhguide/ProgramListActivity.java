@@ -54,6 +54,7 @@ import android.widget.ListView;
 public class ProgramListActivity extends ListActivity implements HTSListener {
 
     private ProgrammeListAdapter prAdapter;
+    private List<Program> prList;
     private Channel channel;
 
     @Override
@@ -96,13 +97,9 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
             }
         });
 
-        List<Program> prList = new ArrayList<Program>();
-        prList.addAll(channel.epg);
+        prList = new ArrayList<Program>();
         prAdapter = new ProgrammeListAdapter(this, prList);
-        prAdapter.sort();
         setListAdapter(prAdapter);
-
-        getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
         
         registerForContextMenu(getListView());
     }
@@ -112,6 +109,16 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
         super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
+        
+        // In case we return from the program details screen and the user added
+        // a program to the schedule or has deleted one from it we need to
+        // update the list to reflect these changes.
+        prList.clear();
+        prList.addAll(channel.epg);
+        prAdapter.sort();
+        prAdapter.notifyDataSetChanged();
+
+        getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
     }
 
     @Override
