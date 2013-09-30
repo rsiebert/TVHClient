@@ -18,13 +18,11 @@
 
         <TextView
             android:id="@+id/summary_label"
+            style="?attr/HeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:text="@string/summary"
-            android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#AAAAAA" />
+            android:text="@string/summary" />
 
         <TextView
             android:id="@+id/summary"
@@ -38,13 +36,11 @@
 
         <TextView
             android:id="@+id/desc_label"
+            style="?attr/HeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:text="@string/description"
-            android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#AAAAAA" />
+            android:text="@string/description" />
 
         <TextView
             android:id="@+id/desc"
@@ -55,13 +51,11 @@
 
         <TextView
             android:id="@+id/time_date_label"
+            style="?attr/HeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:text="@string/airing"
-            android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#AAAAAA" />
+            android:text="@string/airing" />
 
         <LinearLayout
             android:layout_width="fill_parent"

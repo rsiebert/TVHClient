@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Font for the program/channel/recording title texts in the details screens -->
     <style name="TitleFont.Light" parent="@android:style/TextAppearance.Medium">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:ellipsize">end</item>
         <item name="android:scrollHorizontally">true</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">#AAAAAA</item>
         <item name="android:textAllCaps">true</item>
     </style>
-    
+
     <style name="TitleFont.Dark" parent="TitleFont.Light">
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <!-- Font for the header texts in the details screens -->
+    <style name="HeaderFont.Light" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#AAAAAA</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="HeaderFont.Dark" parent="HeaderFont.Light">
+        <item name="android:textColor">#DDDDDD</item>
+    </style>
+
+    <!-- Styles that will be used for the dark holo theme -->
     <style name="CustomTheme" parent="android:Theme.Holo">
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
         <item name="TitleFont">@style/TitleFont.Dark</item>
+        <item name="HeaderFont">@style/HeaderFont.Dark</item>
     </style>
 
+    <!-- Styles that will be used for the light holo theme -->
     <style name="CustomTheme.Light" parent="android:Theme.Holo.Light">
         <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
         <item name="TitleFont">@style/TitleFont.Light</item>
+        <item name="HeaderFont">@style/HeaderFont.Dark</item>
     </style>
 
 </resources>

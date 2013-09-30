@@ -3,5 +3,6 @@
 
     <attr name="ic_menu_search" format="reference" />
     <attr name="TitleFont" format="reference" />
-
+	<attr name="HeaderFont" format="reference" />
+	
 </resources>
