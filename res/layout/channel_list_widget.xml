@@ -22,15 +22,11 @@
             android:id="@+id/name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
             android:paddingLeft="3dp"
             android:paddingRight="6dp"
             android:paddingTop="3dp"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
             android:text="@string/channel"
-            android:textColor="#AAAAAA"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            style="@style/TitleFont" />
 
         <TextView
             android:id="@+id/title"

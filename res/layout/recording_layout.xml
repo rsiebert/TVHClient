@@ -11,23 +11,18 @@
 
         <TextView
             android:id="@+id/title"
+            style="@style/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@string/title"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textAllCaps="true"
-            android:textColor="#AAAAAA" />
+            android:text="@string/title" />
 
         <TextView
             android:id="@+id/summary_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:textAllCaps="true"
             android:text="@string/summary"
+            android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#AAAAAA" />
 
@@ -46,8 +41,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:textAllCaps="true"
             android:text="@string/description"
+            android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#AAAAAA" />
 
@@ -63,8 +58,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="12dp"
-            android:textAllCaps="true"
             android:text="@string/airing"
+            android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#AAAAAA" />
 
