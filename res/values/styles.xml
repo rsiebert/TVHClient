@@ -11,4 +11,12 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="CustomTheme" parent="android:Theme.Holo">
+        <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
+    </style>
+
+    <style name="CustomTheme.Light" parent="android:Theme.Holo.Light">
+        <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
+    </style>
+
 </resources>
