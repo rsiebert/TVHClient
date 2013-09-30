@@ -23,6 +23,7 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
@@ -31,6 +32,7 @@ import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +47,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.tvheadend.tvhguide.R;
@@ -69,32 +72,26 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
     @Override
     public void onCreate(Bundle icicle) {
+
+        // Apply the specified theme
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean theme = prefs.getBoolean("lightThemePref", false);
-        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+        setTheme(theme ? android.R.style.Theme_Holo_Light : android.R.style.Theme_Holo);
 
         super.onCreate(icicle);
 
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-
-        registerForContextMenu(getListView());
+        // Setup the action bar and show the title
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setTitle("Searching");
         
+        registerForContextMenu(getListView());
         contentTypes = TVHGuideApplication.getContentTypes(this);
 
         List<Program> srList = new ArrayList<Program>();
         srAdapter = new SearchResultAdapter(this, srList);
         srAdapter.sort();
         setListAdapter(srAdapter);
-
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.search_result_title);
-
-        View v = findViewById(R.id.ct_btn);
-        v.setOnClickListener(new android.view.View.OnClickListener() {
-
-            public void onClick(View arg0) {
-                onSearchRequested();
-            }
-        });
 
         onNewIntent(getIntent());
     }
@@ -103,13 +100,11 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (!Intent.ACTION_SEARCH.equals(intent.getAction())
-                || !intent.hasExtra(SearchManager.QUERY)) {
+        if (!Intent.ACTION_SEARCH.equals(intent.getAction()) || !intent.hasExtra(SearchManager.QUERY)) {
             return;
         }
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
-
         Bundle appData = intent.getBundleExtra(SearchManager.APP_DATA);
         if (appData != null) {
             channel = app.getChannel(appData.getLong("channelId"));
@@ -146,15 +141,8 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             }
         }
 
-        ImageView iv = (ImageView) findViewById(R.id.ct_logo);
-        if (channel != null && channel.iconBitmap != null) {
-            iv.setImageBitmap(channel.iconBitmap);
-        } else {
-            iv.setImageResource(R.drawable.logo_72);
-        }
-
-        TextView t = (TextView) findViewById(R.id.ct_title);
-        t.setText(this.getString(android.R.string.search_go) + ": " + query);
+        getActionBar().setTitle(android.R.string.search_go);
+        getActionBar().setSubtitle(query);
     }
 
     @Override
@@ -182,8 +170,30 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+        case R.id.menu_search:
+            // Show the search text input in the action bar
+            onSearchRequested();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        
             case R.string.menu_record:
             case R.string.menu_record_cancel:
             case R.string.menu_record_remove: {
@@ -315,6 +325,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         TextView channel;
         TextView time;
         TextView date;
+        TextView duration;
         TextView description;
         ImageView icon;
         ImageView state;
@@ -326,7 +337,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
             time = (TextView) base.findViewById(R.id.sr_time);
             date = (TextView) base.findViewById(R.id.sr_date);
-
+            duration = (TextView) base.findViewById(R.id.sr_duration);
             icon = (ImageView) base.findViewById(R.id.sr_icon);
             state = (ImageView) base.findViewById(R.id.sr_state);
         }
@@ -366,6 +377,17 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             	s = p.description;
             }
             
+            // Get the start and end times so we can show them 
+            // and calculate the duration. Then show the duration in minutes
+            double durationTime = (p.stop.getTime() - p.start.getTime());
+            durationTime = (durationTime / 1000 / 60);
+            if (durationTime > 0) {
+                duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
+            } else {
+                duration.setVisibility(View.GONE);
+            }
+            duration.invalidate();
+            
             description.setText(s);
             description.invalidate();
             
@@ -387,7 +409,8 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             		  p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
             	date.setText(new SimpleDateFormat("EEEE").format(p.start.getTime()));
             } else {
-                date.setText(DateFormat.getDateFormat(date.getContext()).format(p.start));
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+                date.setText(sdf.format(p.start.getTime()));
             }
             
             date.invalidate();
