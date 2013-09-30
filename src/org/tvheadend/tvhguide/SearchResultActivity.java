@@ -18,16 +18,26 @@
  */
 package org.tvheadend.tvhguide;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.tvheadend.tvhguide.htsp.HTSListener;
+import org.tvheadend.tvhguide.htsp.HTSService;
+import org.tvheadend.tvhguide.model.Channel;
+import org.tvheadend.tvhguide.model.Program;
+import org.tvheadend.tvhguide.model.Recording;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -36,28 +46,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Pattern;
-
-import org.tvheadend.tvhguide.R;
-import org.tvheadend.tvhguide.R.string;
-import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
-import org.tvheadend.tvhguide.model.Channel;
-import org.tvheadend.tvhguide.model.Program;
-import org.tvheadend.tvhguide.model.Recording;
-import org.tvheadend.tvhguide.model.SeriesInfo;
 
 /**
  *
@@ -282,45 +275,9 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             });
         }
     }
-
-	public String buildSeriesInfoString(SeriesInfo info) {
-		if (info.onScreen != null && info.onScreen.length() > 0)
-			return info.onScreen;
-
-		String s = "";
-		String season = this.getResources().getString(string.pr_season);
-		String episode = this.getResources().getString(string.pr_episode);
-		String part = this.getResources().getString(string.pr_part);
-		
-		if(info.onScreen.length() > 0) {
-			return info.onScreen;
-		}
-		
-		if (info.seasonNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %02d", season.toLowerCase(), info.seasonNumber);
-		}
-		if (info.episodeNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %02d", episode.toLowerCase(), info.episodeNumber);
-		}
-		if (info.partNumber > 0) {
-			if (s.length() > 0)
-				s += ", ";
-			s += String.format("%s %d", part.toLowerCase(), info.partNumber);
-		}
-
-		if(s.length() > 0) {
-			s = s.substring(0,1).toUpperCase() + s.substring(1);
-		}
-		
-		return s;
-	}
 	
     private class ViewWarpper {
-
+        Context ctx;
         TextView title;
         TextView channel;
         TextView time;
@@ -330,7 +287,8 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         ImageView icon;
         ImageView state;
 
-        public ViewWarpper(View base) {
+        public ViewWarpper(Context context, View base) {
+            ctx = context;
             title = (TextView) base.findViewById(R.id.sr_title);
             channel = (TextView) base.findViewById(R.id.sr_channel);
             description = (TextView) base.findViewById(R.id.sr_desc);
@@ -372,7 +330,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
             title.invalidate();
 
-            String s = buildSeriesInfoString(p.seriesInfo);
+            String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);
             if(s.length() == 0) {
             	s = p.description;
             }
@@ -399,20 +357,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
             }
             channel.invalidate();
 
-            if (DateUtils.isToday(p.start.getTime())) {
-                date.setText(getString(R.string.today));
-            } else if(p.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*2 &&
-                      p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
-                date.setText(DateUtils.getRelativeTimeSpanString(p.start.getTime(),
-                        System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS));
-            } else if(p.start.getTime() < System.currentTimeMillis() + 1000*60*60*24*6 &&
-            		  p.start.getTime() > System.currentTimeMillis() - 1000*60*60*24*2) {
-            	date.setText(new SimpleDateFormat("EEEE").format(p.start.getTime()));
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-                date.setText(sdf.format(p.start.getTime()));
-            }
-            
+            date.setText(Utils.getStartDate(ctx, p.start));
             date.invalidate();
 
             
@@ -473,7 +418,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
                 LayoutInflater inflater = context.getLayoutInflater();
                 row = inflater.inflate(R.layout.search_result_widget, null, false);
 
-                wrapper = new ViewWarpper(row);
+                wrapper = new ViewWarpper(this.getContext(), row);
                 row.setTag(wrapper);
 
             } else {
