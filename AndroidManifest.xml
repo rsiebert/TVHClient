@@ -15,7 +15,7 @@
             </intent-filter>
         </activity>
         <activity android:name="org.tvheadend.tvhguide.RecordingListTabsActivity" />
-        <activity android:name="org.tvheadend.tvhguide.SearchResultActivity" android:theme="@style/CustomTheme" android:launchMode="singleTop">
+        <activity android:name="org.tvheadend.tvhguide.SearchResultActivity" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -24,7 +24,7 @@
         </activity>
         <activity android:name="org.tvheadend.tvhguide.ProgramListActivity" />
         <activity android:name="org.tvheadend.tvhguide.ProgramActivity" />
-        <activity android:name="org.tvheadend.tvhguide.RecordingActivity" android:theme="@style/CustomTheme"/>
+        <activity android:name="org.tvheadend.tvhguide.RecordingActivity" />
         <activity android:name="org.tvheadend.tvhguide.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhguide.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <activity android:name="org.tvheadend.tvhguide.PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>
