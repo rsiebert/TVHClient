@@ -19,38 +19,29 @@
 package org.tvheadend.tvhguide;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.tvheadend.tvhguide.adapter.SearchResultAdapter;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
-import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  *
@@ -59,7 +50,6 @@ import android.widget.TextView;
 public class SearchResultActivity extends ListActivity implements HTSListener {
 
     private SearchResultAdapter srAdapter;
-    private SparseArray<String> contentTypes;
     private Pattern pattern;
     private Channel channel;
 
@@ -79,8 +69,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         getActionBar().setTitle("Searching");
         
         registerForContextMenu(getListView());
-        contentTypes = TVHGuideApplication.getContentTypes(this);
-
+        
         List<Program> srList = new ArrayList<Program>();
         srAdapter = new SearchResultAdapter(this, srList);
         srAdapter.sort();
@@ -265,7 +254,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Program p : srAdapter.list) {
+                    for (Program p : srAdapter.getList()) {
                         if (rec == p.recording) {
                             srAdapter.updateView(getListView(), p);
                             return;
@@ -273,161 +262,6 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
                     }
                 }
             });
-        }
-    }
-	
-    private class ViewWarpper {
-        Context ctx;
-        TextView title;
-        TextView channel;
-        TextView time;
-        TextView date;
-        TextView duration;
-        TextView description;
-        ImageView icon;
-        ImageView state;
-
-        public ViewWarpper(Context context, View base) {
-            ctx = context;
-            title = (TextView) base.findViewById(R.id.sr_title);
-            channel = (TextView) base.findViewById(R.id.sr_channel);
-            description = (TextView) base.findViewById(R.id.sr_desc);
-
-            time = (TextView) base.findViewById(R.id.sr_time);
-            date = (TextView) base.findViewById(R.id.sr_date);
-            duration = (TextView) base.findViewById(R.id.sr_duration);
-            icon = (ImageView) base.findViewById(R.id.sr_icon);
-            state = (ImageView) base.findViewById(R.id.sr_state);
-        }
-
-        public void repaint(Program p) {
-            Channel ch = p.channel;
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
-            Boolean showIcons = prefs.getBoolean("showIconPref", false);
-            icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-            icon.setImageBitmap(ch.iconBitmap);
-
-            title.setText(p.title);
-
-            if (p.recording == null) {
-                state.setImageDrawable(null);
-            } else if (p.recording.error != null) {
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("completed".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_success_small);
-            } else if ("invalid".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("missed".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("recording".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_rec_small);
-            } else if ("scheduled".equals(p.recording.state)) {
-                state.setImageResource(R.drawable.ic_schedule_small);
-            } else {
-                state.setImageDrawable(null);
-            }
-
-            title.invalidate();
-
-            String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);
-            if(s.length() == 0) {
-            	s = p.description;
-            }
-            
-            // Get the start and end times so we can show them 
-            // and calculate the duration. Then show the duration in minutes
-            double durationTime = (p.stop.getTime() - p.start.getTime());
-            durationTime = (durationTime / 1000 / 60);
-            if (durationTime > 0) {
-                duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
-            } else {
-                duration.setVisibility(View.GONE);
-            }
-            duration.invalidate();
-            
-            description.setText(s);
-            description.invalidate();
-            
-            String contentType = contentTypes.get(p.contentType, "");
-            if (contentType.length() > 0) {
-                channel.setText(ch.name + " (" + contentType + ")");
-            } else {
-                channel.setText(ch.name);
-            }
-            channel.invalidate();
-
-            date.setText(Utils.getStartDate(ctx, p.start));
-            date.invalidate();
-
-            
-            time.setText(
-                    DateFormat.getTimeFormat(time.getContext()).format(p.start)
-                    + " - "
-                    + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
-            time.invalidate();
-        }
-    }
-
-    class SearchResultAdapter extends ArrayAdapter<Program> {
-
-        Activity context;
-        List<Program> list;
-
-        SearchResultAdapter(Activity context, List<Program> list) {
-            super(context, R.layout.search_result_widget, list);
-            this.context = context;
-            this.list = list;
-        }
-
-        public void sort() {
-            sort(new Comparator<Program>() {
-
-                public int compare(Program x, Program y) {
-                    return x.compareTo(y);
-                }
-            });
-        }
-
-        public void updateView(ListView listView, Program programme) {
-            for (int i = 0; i < listView.getChildCount(); i++) {
-                View view = listView.getChildAt(i);
-                int pos = listView.getPositionForView(view);
-                Program pr = (Program) listView.getItemAtPosition(pos);
-
-                if (view.getTag() == null || pr == null) {
-                    continue;
-                }
-
-                if (programme.id != pr.id) {
-                    continue;
-                }
-
-                ViewWarpper wrapper = (ViewWarpper) view.getTag();
-                wrapper.repaint(programme);
-                break;
-            }
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            ViewWarpper wrapper = null;
-
-            if (row == null) {
-                LayoutInflater inflater = context.getLayoutInflater();
-                row = inflater.inflate(R.layout.search_result_widget, null, false);
-
-                wrapper = new ViewWarpper(this.getContext(), row);
-                row.setTag(wrapper);
-
-            } else {
-                wrapper = (ViewWarpper) row.getTag();
-            }
-
-            Program p = getItem(position);
-            wrapper.repaint(p);
-            return row;
         }
     }
 }
