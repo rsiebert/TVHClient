@@ -21,6 +21,7 @@ package org.tvheadend.tvhguide;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
@@ -44,7 +45,7 @@ import android.widget.TextView;
  * 
  * @author john-tornblom
  */
-public class RecordingActivity extends Activity {
+public class RecordingActivity extends Activity implements HTSListener {
 
     Recording rec;
 
@@ -127,90 +128,118 @@ public class RecordingActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.addListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        app.removeListener(this);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = null;
-
-        if (rec.title != null) {
-            item = menu.add(Menu.NONE, android.R.string.search_go, Menu.NONE, android.R.string.search_go);
-            item.setIntent(new SearchEPGIntent(this, rec.title));
-            item.setIcon(android.R.drawable.ic_menu_search);
-
-            item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "IMDb");
-            item.setIntent(new SearchIMDbIntent(this, rec.title));
-            item.setIcon(android.R.drawable.ic_menu_info_details);
-        }
-
-        Intent intent = new Intent(this, HTSService.class);
-
-        if (rec.isRecording() || rec.isScheduled()) {
-            intent.setAction(HTSService.ACTION_DVR_CANCEL);
-            intent.putExtra("id", rec.id);
-            item = menu.add(Menu.NONE, R.string.menu_record_cancel, Menu.NONE, R.string.menu_record_cancel);
-            item.setIntent(intent);
-            item.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-            item.setIntent(intent);
-        }
-        else {
-            intent.setAction(HTSService.ACTION_DVR_DELETE);
-            intent.putExtra("id", rec.id);
-            item = menu.add(Menu.NONE, R.string.menu_record_remove, Menu.NONE, R.string.menu_record_remove);
-            item.setIntent(intent);
-            item.setIcon(android.R.drawable.ic_menu_delete);
-            item.setIntent(intent);
-
-            intent = new Intent(this, ExternalPlaybackActivity.class);
-            intent.putExtra("dvrId", rec.id);
-            item = menu.add(Menu.NONE, R.string.ch_play, Menu.NONE, R.string.ch_play);
-            item.setIntent(intent);
-            item.setIcon(android.R.drawable.ic_menu_view);
-        }
-
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.details_menu, menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean rebuild = false;
+        
+        MenuItem imdbMenuItem = menu.findItem(R.id.menu_search_imdb);
+        MenuItem epgMenuItem = menu.findItem(R.id.menu_search_epg);
+        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        
+        // Hide the search menu items if the title is missing
+        if (rec.title == null) {
+            imdbMenuItem.setVisible(false);
+            epgMenuItem.setVisible(false);
+        }
+        
+        // Disable record as a default
+        recordMenuItem.setVisible(false);
+        
         if (rec.isRecording() || rec.isScheduled()) {
-            rebuild = menu.findItem(R.string.menu_record_cancel) == null;
+            recordRemoveMenuItem.setVisible(false);
+            playMenuItem.setVisible(false);
         }
         else {
-            rebuild = menu.findItem(R.string.menu_record_remove) == null;
+            recordCancelMenuItem.setVisible(false);
         }
-
-        if (rebuild) {
-            menu.clear();
-            return onCreateOptionsMenu(menu);
-        }
-
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
         case android.R.id.home:
             onBackPressed();
             return true;
-        case R.string.menu_record_remove: {
-            new AlertDialog.Builder(this).setTitle(R.string.menu_record_remove)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                        public void onClick(DialogInterface dialog, int which) {
-                            startService(item.getIntent());
-                        }
-                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int which) {
-                            // NOP
-                        }
-                    }).show();
-        }
-        case R.string.menu_record_cancel:
-            startService(item.getIntent());
+        case R.id.menu_search:
+            // Show the search text input in the action bar
+            onSearchRequested();
             return true;
+
+        case R.id.menu_search_imdb:
+            startActivity(new SearchIMDbIntent(this, rec.title));
+            return true;
+
+        case R.id.menu_search_epg:
+            startActivity(new SearchEPGIntent(this, rec.title));
+            return true;
+
+        case R.id.menu_record_remove:
+            
+            final Intent rri = new Intent(this, HTSService.class);
+            rri.setAction(HTSService.ACTION_DVR_DELETE);
+            rri.putExtra("id", rec.id);
+            
+            // Show a confirmation dialog before deleting the recording
+            new AlertDialog.Builder(this).setTitle(R.string.menu_record_remove)
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    startService(rri);
+                }
+            }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // NOP
+                }
+            }).show();
+            return true;
+
+        case R.id.menu_record_cancel:
+            Intent rci = new Intent(this, HTSService.class);
+            rci.setAction(HTSService.ACTION_DVR_CANCEL);
+            rci.putExtra("id", rec.id);
+            startService(rci);
+            return true;
+
+        case R.id.menu_play:
+            Intent pi = new Intent(this, ExternalPlaybackActivity.class);
+            pi.putExtra("dvrId", rec.id);
+            startActivity(pi);
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onMessage(String action, Object obj) {
+        // An existing program has been updated, this is valid for all menu options. 
+        if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
+            invalidateOptionsMenu();
+        } 
     }
 }
