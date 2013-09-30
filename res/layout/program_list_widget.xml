@@ -11,7 +11,7 @@
 
         <TextView
             android:id="@+id/pr_title"
-            style="@style/TitleFont"
+            style="?attr/TitleFont"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="0.9"

@@ -19,7 +19,7 @@
 
         <TextView
             android:id="@+id/rec_title"
-            style="@style/TitleFont"
+            style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="3dp"

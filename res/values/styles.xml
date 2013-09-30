@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TitleFont" parent="@android:style/TextAppearance.Medium">
+    <style name="TitleFont.Light" parent="@android:style/TextAppearance.Medium">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:ellipsize">end</item>
@@ -10,13 +10,19 @@
         <item name="android:textColor">#AAAAAA</item>
         <item name="android:textAllCaps">true</item>
     </style>
+    
+    <style name="TitleFont.Dark" parent="TitleFont.Light">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
 
     <style name="CustomTheme" parent="android:Theme.Holo">
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
+        <item name="TitleFont">@style/TitleFont.Dark</item>
     </style>
 
     <style name="CustomTheme.Light" parent="android:Theme.Holo.Light">
         <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
+        <item name="TitleFont">@style/TitleFont.Light</item>
     </style>
 
 </resources>
