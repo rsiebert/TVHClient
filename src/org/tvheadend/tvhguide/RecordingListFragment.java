@@ -52,7 +52,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     private ListView recListView;
     private List<Recording> recList;
     private int tabIndex = 0;
-    private Recording recording;
+    // The currently selected recording
+    private Recording rec;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -135,12 +136,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Recording rec = recAdapter.getItem(info.position);
-        recording = rec;
+        rec = recAdapter.getItem(info.position);
         
+        // Set the title of the context menu and show or hide 
+        // the menu items depending on the recording state
         menu.setHeaderTitle(rec.title);
-        
-        // Show or hide the menu items depending on the recording state
         Utils.setRecordingMenu(menu, rec);
     }
 
@@ -150,24 +150,24 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         switch (item.getItemId()) {
         case R.id.menu_play:
             Intent pi = new Intent(getActivity(), ExternalPlaybackActivity.class);
-            pi.putExtra("dvrId", recording.id);
+            pi.putExtra("dvrId", rec.id);
             startActivity(pi);
             return true;
 
         case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(getActivity(), recording.title));
+            startActivity(new SearchIMDbIntent(getActivity(), rec.title));
             return true;
 
         case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(getActivity(), recording.title));
+            startActivity(new SearchEPGIntent(getActivity(), rec.title));
             return true;
             
         case R.id.menu_record_remove:
-            Utils.removeProgram(getActivity(), recording.id);
+            Utils.removeProgram(getActivity(), rec.id);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.cancelProgram(getActivity(), recording.id);
+            Utils.cancelProgram(getActivity(), rec.id);
             return true;
 
         default:

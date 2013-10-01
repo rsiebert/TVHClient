@@ -44,6 +44,7 @@ import android.widget.TextView;
  */
 public class RecordingActivity extends Activity implements HTSListener {
 
+ // The currently selected recording
     Recording rec;
 
     @Override

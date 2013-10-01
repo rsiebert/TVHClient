@@ -61,6 +61,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
     private boolean isLoading = false;
     private static int newProgramsLoadedCounter = 0;
     private static final int newProgramsToLoad = 10;
+    // The currently selected program
     private Program program;
     
     @Override
@@ -193,14 +194,12 @@ public class ProgramListActivity extends Activity implements HTSListener {
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Program p = prAdapter.getItem(info.position);
-        program = p;
+        program = prAdapter.getItem(info.position);
         
-        // Set the title of the context menu
-        menu.setHeaderTitle(p.title);
-        
-        // Show or hide the menu items depending on the program state
-        Utils.setProgramMenu(menu, p);
+        // Set the title of the context menu and show or hide 
+        // the menu items depending on the program state
+        menu.setHeaderTitle(program.title);
+        Utils.setProgramMenu(menu, program);
     }
     
     @Override

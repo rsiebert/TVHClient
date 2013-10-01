@@ -46,7 +46,8 @@ import android.widget.TextView;
  */
 public class ProgramActivity extends Activity implements HTSListener {
 
-    private Program programme;
+    // The currently selected program
+    private Program program;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,12 +72,12 @@ public class ProgramActivity extends Activity implements HTSListener {
         long eventId = getIntent().getLongExtra("eventId", 0);
         for (Program p : channel.epg) {
             if (p.id == eventId) {
-                programme = p;
+                program = p;
                 break;
             }
         }
 
-        if (programme == null) {
+        if (program == null) {
             finish();
             return;
         }
@@ -106,19 +107,19 @@ public class ProgramActivity extends Activity implements HTSListener {
         RatingBar ratingBar = (RatingBar) findViewById(R.id.star_rating);
         
         // Set the values
-        title.setText(programme.title);
+        title.setText(program.title);
 
         // Set the date, the channel name, the time and duration
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-        date.setText(sdf.format(programme.start.getTime()));
+        date.setText(sdf.format(program.start.getTime()));
         channelName.setText(channel.name);
 
-        time.setText(DateFormat.getTimeFormat(time.getContext()).format(programme.start) + " - "
-                + DateFormat.getTimeFormat(time.getContext()).format(programme.stop));
+        time.setText(DateFormat.getTimeFormat(time.getContext()).format(program.start) + " - "
+                + DateFormat.getTimeFormat(time.getContext()).format(program.stop));
         
         // Get the start and end times so we can show them 
         // and calculate the duration. Then show the duration in minutes
-        double durationTime = (programme.stop.getTime() - programme.start.getTime());
+        double durationTime = (program.stop.getTime() - program.start.getTime());
         durationTime = (durationTime / 1000 / 60);
         if (durationTime > 0) {
             duration.setText("(" + duration.getContext().getString(R.string.ch_minutes, (int)durationTime) + ")");
@@ -127,23 +128,23 @@ public class ProgramActivity extends Activity implements HTSListener {
         }
 
         // Show the program summary if it exists and only of no description is available 
-        if (programme.summary.length() == 0 && programme.description.length() > 0) { 
+        if (program.summary.length() == 0 && program.description.length() > 0) { 
         	summaryLabel.setVisibility(View.GONE);
         	summary.setVisibility(View.GONE);
         } else {
-            summary.setText(programme.summary);
+            summary.setText(program.summary);
         }
         
         // Show the description to the program
-        if (programme.description.length() == 0) {
+        if (program.description.length() == 0) {
             descLabel.setVisibility(View.GONE);
             desc.setVisibility(View.GONE);
         } else {
-            desc.setText(programme.description);
+            desc.setText(program.description);
         }
 
         // Show the series information
-        String s = Utils.buildSeriesInfoString(this, programme.seriesInfo);
+        String s = Utils.buildSeriesInfoString(this, program.seriesInfo);
         if (s.length() == 0) {
             seriesInfoLabel.setVisibility(View.GONE);
             seriesInfo.setVisibility(View.GONE);
@@ -153,7 +154,7 @@ public class ProgramActivity extends Activity implements HTSListener {
         
         // Show the content type or category of the program
         SparseArray<String> contentTypes = TVHGuideApplication.getContentTypes(this);
-        s = contentTypes.get(programme.contentType, "");
+        s = contentTypes.get(program.contentType, "");
         if(s.length() == 0) {
             contentTypeLabel.setVisibility(View.GONE);
             contentType.setVisibility(View.GONE);
@@ -162,13 +163,13 @@ public class ProgramActivity extends Activity implements HTSListener {
         }
         
         // Show the rating information as starts
-        if (programme.starRating < 0) {
+        if (program.starRating < 0) {
             ratingBarLabel.setVisibility(View.GONE);
             ratingBarText.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
         } else {
-            ratingBar.setRating((float)programme.starRating / 10.0f);
-            ratingBarText.setText("(" + programme.starRating + "/" + 100 + ")");
+            ratingBar.setRating((float)program.starRating / 10.0f);
+            ratingBarText.setText("(" + program.starRating + "/" + 100 + ")");
         }
     }
 
@@ -196,7 +197,7 @@ public class ProgramActivity extends Activity implements HTSListener {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Show or hide the menu items depending on the program state
-        Utils.setProgramMenu(menu, programme);
+        Utils.setProgramMenu(menu, program);
         return true;
     }
 
@@ -214,23 +215,23 @@ public class ProgramActivity extends Activity implements HTSListener {
             return true;
 
         case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(this, programme.title));
+            startActivity(new SearchIMDbIntent(this, program.title));
             return true;
 
         case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(this, programme.title));
+            startActivity(new SearchEPGIntent(this, program.title));
             return true;
 
         case R.id.menu_record_remove:
-            Utils.removeProgram(this, programme.recording.id);
+            Utils.removeProgram(this, program.recording.id);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.cancelProgram(this, programme.recording.id);
+            Utils.cancelProgram(this, program.recording.id);
             return true;
 
         case R.id.menu_record:
-            Utils.recordProgram(this, programme.id, programme.channel.id);
+            Utils.recordProgram(this, program.id, program.channel.id);
             return true;
 
         default:
