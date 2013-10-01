@@ -111,11 +111,11 @@ public class ChannelListTabsActivity extends Activity {
             break;
         case 2:
             // Show the program guide
-            Toast.makeText(this, "No implmeneted yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No implemented yet", Toast.LENGTH_SHORT).show();
             break;
         case 3:
             // Show the activity with the status information
-            Toast.makeText(this, "No implmeneted yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No implemented yet", Toast.LENGTH_SHORT).show();
             break;
         }
     }
