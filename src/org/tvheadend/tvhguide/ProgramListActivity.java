@@ -31,7 +31,7 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
@@ -45,20 +45,23 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 /**
  *
  * @author john-tornblom
  */
-public class ProgramListActivity extends ListActivity implements HTSListener {
+public class ProgramListActivity extends Activity implements HTSListener {
 
     private ProgrammeListAdapter prAdapter;
     private List<Program> prList;
+    private ListView prListView;
     private Channel channel;
     private boolean isLoading = false;
     private static int newProgramsLoadedCounter = 0;
     private static final int newProgramsToLoad = 10;
+    private Program program;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -69,6 +72,7 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
         setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
         
         super.onCreate(icicle);
+        setContentView(R.layout.channel_list);
         
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
@@ -86,7 +90,8 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
         
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
-        getListView().setOnScrollListener(new OnScrollListener() {
+        prListView = (ListView) findViewById(R.id.channel_list);
+        prListView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
@@ -101,11 +106,19 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
             }
         });
 
+        prListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showProgramDetails(position);
+            }
+            
+        });
+        
         prList = new ArrayList<Program>();
         prAdapter = new ProgrammeListAdapter(this, prList);
-        setListAdapter(prAdapter);
-        
-        registerForContextMenu(getListView());
+        prListView.setAdapter(prAdapter);
+
+        registerForContextMenu(prListView);
     }
 
     @Override
@@ -132,10 +145,8 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
         app.removeListener(this);
     }
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Program p = (Program) prAdapter.getItem(position);
-
+    protected void showProgramDetails(int position) {
+        Program p = prAdapter.getItem(position);
         Intent intent = new Intent(this, ProgramActivity.class);
         intent.putExtra("eventId", p.id);
         intent.putExtra("channelId", p.channel.id);
@@ -145,57 +156,91 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.string.menu_record:
-            case R.string.menu_record_cancel:
-            case R.string.menu_record_remove: {
-                startService(item.getIntent());
-                return true;
-            }
-            default: {
-                return super.onContextItemSelected(item);
-            }
+        case R.id.menu_search:
+            // Show the search text input in the action bar
+            onSearchRequested();
+            return true;
+
+        case R.id.menu_search_imdb:
+            startActivity(new SearchIMDbIntent(this, program.title));
+            return true;
+
+        case R.id.menu_search_epg:
+            startActivity(new SearchEPGIntent(this, program.title));
+            return true;
+            
+        case R.id.menu_record_remove:
+            Intent rri = new Intent(this, HTSService.class);
+            rri.setAction(HTSService.ACTION_DVR_DELETE);
+            rri.putExtra("id", program.recording.id);
+            startService(rri);
+            return true;
+
+        case R.id.menu_record_cancel:
+            Intent rci = new Intent(this, HTSService.class);
+            rci.setAction(HTSService.ACTION_DVR_CANCEL);
+            rci.putExtra("id", program.recording.id);
+            startService(rci);
+            return true;
+
+        case R.id.menu_record:
+            Intent ri = new Intent(this, HTSService.class);
+            ri.setAction(HTSService.ACTION_DVR_ADD);
+            ri.putExtra("eventId", program.id);
+            ri.putExtra("channelId", program.channel.id);
+            startService(ri);
+            return true;
+
+        default:
+            return super.onContextItemSelected(item);
         }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-
+        getMenuInflater().inflate(R.menu.details_menu, menu);
+        
+        // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Program p = prAdapter.getItem(info.position);
-
+        program = p;
+        
+        // Set the title of the context menu
         menu.setHeaderTitle(p.title);
-        Intent intent = new Intent(this, HTSService.class);
-        MenuItem item = null;
-
-        // Check which state the current program is and show either 
-        // the record, cancel recording or delete recording menu option
-        if (p.recording == null) {
-            intent.setAction(HTSService.ACTION_DVR_ADD);
-            intent.putExtra("eventId", p.id);
-            intent.putExtra("channelId", p.channel.id);
-            item = menu.add(ContextMenu.NONE, R.string.menu_record, ContextMenu.NONE, R.string.menu_record);
-        } else if (p.isRecording() || p.isScheduled()) {
-            intent.setAction(HTSService.ACTION_DVR_CANCEL);
-            intent.putExtra("id", p.recording.id);
-            item = menu.add(ContextMenu.NONE, R.string.menu_record_cancel, ContextMenu.NONE, R.string.menu_record_cancel);
-        } else {
-            intent.setAction(HTSService.ACTION_DVR_DELETE);
-            intent.putExtra("id", p.recording.id);
-            item = menu.add(ContextMenu.NONE, R.string.menu_record_remove, ContextMenu.NONE, R.string.menu_record_remove);
+        
+        MenuItem imdbMenuItem = menu.findItem(R.id.menu_search_imdb);
+        MenuItem epgMenuItem = menu.findItem(R.id.menu_search_epg);
+        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        
+        // Hide the search menu items if the title is missing
+        if (p.title == null) {
+            imdbMenuItem.setVisible(false);
+            epgMenuItem.setVisible(false);
         }
 
-        item.setIntent(intent);
-
-        // Show the menu option to search for this program in the program guide
-        item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
-        item.setIntent(new SearchEPGIntent(this, p.title));
-
-        // Show the menu option to search for this program on the IMDB website
-        item = menu.add(ContextMenu.NONE, ContextMenu.NONE, ContextMenu.NONE, "IMDb");
-        item.setIntent(new SearchIMDbIntent(this, p.title));
+        // Disable these menus as a default
+        playMenuItem.setVisible(false);
+        searchMenuItem.setVisible(false);
+        
+        if (p.recording == null) {
+            recordCancelMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
+        }
+        else if (p.isRecording() || p.isScheduled()) {
+            recordMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
+        }
+        else {
+            recordMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(false);
+        }
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.program_menu, menu);
@@ -265,7 +310,7 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
-                    prAdapter.updateView(getListView(), p);
+                    prAdapter.updateView(prListView, p);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
@@ -275,7 +320,7 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
                     Recording rec = (Recording) obj;
                     for (Program p : prAdapter.getList()) {
                         if (rec == p.recording) {
-                            prAdapter.updateView(getListView(), p);
+                            prAdapter.updateView(prListView, p);
                             return;
                         }
                     }
