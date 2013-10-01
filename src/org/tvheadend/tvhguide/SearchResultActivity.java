@@ -29,7 +29,7 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,15 +39,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 /**
  *
  * @author john-tornblom
  */
-public class SearchResultActivity extends ListActivity implements HTSListener {
+public class SearchResultActivity extends Activity implements HTSListener {
 
     private SearchResultAdapter srAdapter;
+    private ListView searchListView;
     private Pattern pattern;
     private Channel channel;
 
@@ -64,13 +66,22 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setTitle("Searching");
         
-        registerForContextMenu(getListView());
+        searchListView = (ListView) findViewById(R.id.channel_list);
+        registerForContextMenu(searchListView);
         
         List<Program> srList = new ArrayList<Program>();
         srAdapter = new SearchResultAdapter(this, srList);
         srAdapter.sort();
-        setListAdapter(srAdapter);
+        searchListView.setAdapter(srAdapter);
 
+        searchListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showProgramDetails(position);
+            }
+            
+        });
+        
         onNewIntent(getIntent());
     }
 
@@ -137,10 +148,8 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
         app.removeListener(this);
     }
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
+    protected void showProgramDetails(int position) {
         Program p = (Program) srAdapter.getItem(position);
-
         Intent intent = new Intent(this, ProgramDetailsActivity.class);
         intent.putExtra("eventId", p.id);
         intent.putExtra("channelId", p.channel.id);
@@ -242,7 +251,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
 
                 public void run() {
                     Program p = (Program) obj;
-                    srAdapter.updateView(getListView(), p);
+                    srAdapter.updateView(searchListView, p);
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
@@ -252,7 +261,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
                     Recording rec = (Recording) obj;
                     for (Program p : srAdapter.getList()) {
                         if (rec == p.recording) {
-                            srAdapter.updateView(getListView(), p);
+                            srAdapter.updateView(searchListView, p);
                             return;
                         }
                     }
