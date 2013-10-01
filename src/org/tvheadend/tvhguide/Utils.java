@@ -28,6 +28,12 @@ public class Utils {
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
     }
 
+    public static boolean showChannelIcons(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean showIcons = prefs.getBoolean("showIconPref", false);
+        return showIcons;
+    }
+
     /**
      * 
      * @param context

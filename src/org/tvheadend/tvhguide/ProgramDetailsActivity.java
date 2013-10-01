@@ -82,8 +82,13 @@ public class ProgramDetailsActivity extends Activity implements HTSListener {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setTitle(channel.name);
-        getActionBar().setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
 
+        // Show or hide the channel icon if required
+        boolean showIcon = Utils.showChannelIcons(this);
+        getActionBar().setDisplayUseLogoEnabled(showIcon);
+        if (showIcon)
+            getActionBar().setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+        
         // Initialize all the widgets from the layout
         TextView title = (TextView) findViewById(R.id.title);
         TextView summaryLabel = (TextView) findViewById(R.id.summary_label);

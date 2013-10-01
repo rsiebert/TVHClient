@@ -67,7 +67,11 @@ public class RecordingDetailsActivity extends Activity implements HTSListener {
 
         if (rec.channel != null) {
             getActionBar().setTitle(rec.channel.name);
-            if (rec.channel.iconBitmap != null) {
+
+            // Show or hide the channel icon if required 
+            boolean showIcon = Utils.showChannelIcons(this);
+            getActionBar().setDisplayUseLogoEnabled(showIcon);
+            if (showIcon && rec.channel.iconBitmap != null) {
                 getActionBar().setIcon(new BitmapDrawable(getResources(), rec.channel.iconBitmap));
             }
         }

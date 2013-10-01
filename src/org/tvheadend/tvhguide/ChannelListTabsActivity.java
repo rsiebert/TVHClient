@@ -29,6 +29,8 @@ public class ChannelListTabsActivity extends Activity {
         // setup action bar for tabs
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         getActionBar().setDisplayHomeAsUpEnabled(false);
+        getActionBar().setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
+        
 
         // Make the action bar collapse even when the hardware keys are present.
         // This overrides the default behavior of the action bar.

@@ -83,7 +83,12 @@ public class ProgramListActivity extends Activity implements HTSListener {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setTitle(channel.name);
-        getActionBar().setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+        
+        // Show or hide the channel icon if required
+        boolean showIcon = Utils.showChannelIcons(this);
+        getActionBar().setDisplayUseLogoEnabled(showIcon);
+        if (showIcon)
+            getActionBar().setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
         
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
