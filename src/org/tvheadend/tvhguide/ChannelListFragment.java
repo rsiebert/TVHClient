@@ -53,7 +53,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
     private ChannelTag currentTag;
-
     private ListView channelListView;
 
     @Override
@@ -82,11 +81,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Channel ch = (Channel) chAdapter.getItem(position);
-
                 if (ch.epg.isEmpty()) {
                     return;
                 }
-
                 Intent intent = new Intent(getActivity().getBaseContext(), ProgramListActivity.class);
                 intent.putExtra("channelId", ch.id);
                 startActivity(intent);
@@ -121,17 +118,16 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.string.ch_play: {
-                startActivity(item.getIntent());
-                return true;
-            }
-            case R.string.search_hint: {
-                getActivity().startSearch(null, false, item.getIntent().getExtras(), false);
-                return true;
-            }
-            default: {
-                return false;
-            }
+        case R.string.ch_play:
+            startActivity(item.getIntent());
+            return true;
+
+        case R.string.search_hint:
+            getActivity().startSearch(null, false, item.getIntent().getExtras(), false);
+            return true;
+
+        default:
+            return false;
         }
     }
 
@@ -154,10 +150,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         item.setIntent(intent);
     }
 
-    private void setCurrentTag(ChannelTag t) {
-        currentTag = t;
-
-        if (t == null) {
+    private void setCurrentTag(ChannelTag tag) {
+        currentTag = tag;
+        if (tag == null) {
             getActivity().getActionBar().setTitle(R.string.pr_all_channels);
         } else {
             getActivity().getActionBar().setTitle(currentTag.name);
@@ -166,15 +161,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
     private void populateList() {
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
-
         chAdapter.clear();
-
         for (Channel ch : app.getChannels()) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
                 chAdapter.add(ch);
             }
         }
-
         chAdapter.sort();
         chAdapter.notifyDataSetChanged();
         getActivity().getActionBar().setSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
@@ -183,17 +175,16 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_search: {
-                getActivity().onSearchRequested();
-                return true;
-            }
-            case R.id.menu_tags: {
-                tagDialog.show();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
+        case R.id.menu_search:
+            getActivity().onSearchRequested();
+            return true;
+
+        case R.id.menu_tags:
+            tagDialog.show();
+            return true;
+
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -218,13 +209,13 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             chAdapter.clear();
             chAdapter.notifyDataSetChanged();
             getActivity().getActionBar().setSubtitle(R.string.inf_load);
-        } else {
+        } 
+        else {
             TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
             tagAdapter.clear();
             for (ChannelTag t : app.getChannelTags()) {
                 tagAdapter.add(t);
             }
-
             populateList();
             setCurrentTag(currentTag);
         }
@@ -232,9 +223,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
-
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     boolean loading = (Boolean) obj;
                     setLoading(loading);
@@ -242,7 +231,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     chAdapter.add((Channel) obj);
                     chAdapter.notifyDataSetChanged();
@@ -251,7 +239,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_DELETE)) {
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     chAdapter.remove((Channel) obj);
                     chAdapter.notifyDataSetChanged();
@@ -259,7 +246,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     Channel channel = (Channel) obj;
                     chAdapter.updateView(channelListView, channel);
@@ -267,7 +253,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_ADD)) {
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
                     tagAdapter.add(tag);
@@ -275,7 +260,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_DELETE)) {
             getActivity().runOnUiThread(new Runnable() {
-
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
                     tagAdapter.remove(tag);

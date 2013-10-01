@@ -226,7 +226,6 @@ public class SearchResultActivity extends Activity implements HTSListener {
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_ADD)) {
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Program p = (Program) obj;
                     if (pattern != null && pattern.matcher(p.title).find()) {
@@ -238,7 +237,6 @@ public class SearchResultActivity extends Activity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_DELETE)) {
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Program p = (Program) obj;
                     srAdapter.remove(p);
@@ -247,7 +245,6 @@ public class SearchResultActivity extends Activity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Program p = (Program) obj;
                     srAdapter.updateView(searchListView, p);
@@ -255,7 +252,6 @@ public class SearchResultActivity extends Activity implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
             runOnUiThread(new Runnable() {
-
                 public void run() {
                     Recording rec = (Recording) obj;
                     for (Program p : srAdapter.getList()) {
