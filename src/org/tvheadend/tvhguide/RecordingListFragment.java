@@ -90,7 +90,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recording rec = (Recording) recAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), RecordingActivity.class);
+                Intent intent = new Intent(getActivity(), RecordingDetailsActivity.class);
                 intent.putExtra("id", rec.id);
                 startActivity(intent);
             }

@@ -24,7 +24,7 @@
         </activity>
         <activity android:name="org.tvheadend.tvhguide.ProgramListActivity" />
         <activity android:name="org.tvheadend.tvhguide.ProgramDetailsActivity" />
-        <activity android:name="org.tvheadend.tvhguide.RecordingActivity" />
+        <activity android:name="org.tvheadend.tvhguide.RecordingDetailsActivity" />
         <activity android:name="org.tvheadend.tvhguide.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhguide.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <activity android:name="org.tvheadend.tvhguide.PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>

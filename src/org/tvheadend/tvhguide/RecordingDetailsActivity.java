@@ -40,7 +40,7 @@ import android.widget.TextView;
  * 
  * @author john-tornblom
  */
-public class RecordingActivity extends Activity implements HTSListener {
+public class RecordingDetailsActivity extends Activity implements HTSListener {
 
  // The currently selected recording
     Recording rec;
