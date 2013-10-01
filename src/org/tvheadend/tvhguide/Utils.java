@@ -8,7 +8,9 @@ import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.SeriesInfo;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -115,6 +117,46 @@ public class Utils {
         intent.putExtra("force", force);
 
         // Start the service with given action and data
+        context.startService(intent);
+    }
+
+    /**
+     * 
+     * @param context
+     * @param id
+     */
+    public static void removeProgram(final Context context, long id) {
+        final Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(HTSService.ACTION_DVR_DELETE);
+        intent.putExtra("id", id);
+        
+        // Show a confirmation dialog before deleting the recording
+        new AlertDialog.Builder(context).setTitle(R.string.menu_record_remove)
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                context.startService(intent);
+            }
+        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // NOP
+            }
+        }).show();
+        
+        context.startService(intent);
+    }
+
+    public static void cancelProgram(final Context context, long id) {
+        Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(HTSService.ACTION_DVR_CANCEL);
+        intent.putExtra("id", id);
+        context.startService(intent);
+    }
+
+    public static void recordProgram(final Context context, long id, long channelId) {
+        Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(HTSService.ACTION_DVR_ADD);
+        intent.putExtra("eventId", id);
+        intent.putExtra("channelId", channelId);
         context.startService(intent);
     }
 }
