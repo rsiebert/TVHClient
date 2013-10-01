@@ -132,7 +132,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.details_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.context_menu, menu);
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;

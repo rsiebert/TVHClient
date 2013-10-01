@@ -138,7 +138,7 @@ public class RecordingDetailsActivity extends Activity implements HTSListener {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.details_menu, menu);
+        getMenuInflater().inflate(R.menu.context_menu, menu);
         return true;
     }
 
