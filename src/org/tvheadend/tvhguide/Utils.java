@@ -6,6 +6,8 @@ import java.util.Locale;
 
 import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSService;
+import org.tvheadend.tvhguide.model.Program;
+import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.SeriesInfo;
 
 import android.app.AlertDialog;
@@ -15,6 +17,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class Utils {
 
@@ -158,5 +162,60 @@ public class Utils {
         intent.putExtra("eventId", id);
         intent.putExtra("channelId", channelId);
         context.startService(intent);
+    }
+
+    public static void setProgramMenu(final Menu menu, final Program program) {
+        
+        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        
+        // Disable these menus as a default
+        searchMenuItem.setVisible(false);
+        
+        if (program.recording == null) {
+            // Show the record menu
+            playMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
+        }
+        else if (program.isRecording() || program.isScheduled()) {
+            // Show the cancel menu
+            recordMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
+        }
+        else {
+            // Show the delete menu
+            recordMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(false);
+        }
+    }
+
+    public static void setRecordingMenu(final Menu menu, final Recording rec) {
+
+        // Get the menu items so they can be shown 
+        // or hidden depending on the recording state
+        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+
+        // Disable these menus as a default
+        searchMenuItem.setVisible(false);
+        
+        if (rec.isRecording() || rec.isScheduled()) {
+            // Show the cancel menu
+            recordMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
+            playMenuItem.setVisible(false);
+        }
+        else {
+            // Show the delete and play menu
+            recordMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(false);
+        }
     }
 }

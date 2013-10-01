@@ -199,39 +199,8 @@ public class ProgramListActivity extends Activity implements HTSListener {
         // Set the title of the context menu
         menu.setHeaderTitle(p.title);
         
-        MenuItem imdbMenuItem = menu.findItem(R.id.menu_search_imdb);
-        MenuItem epgMenuItem = menu.findItem(R.id.menu_search_epg);
-        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        
-        // Hide the search menu items if the title is missing
-        if (p.title == null) {
-            imdbMenuItem.setVisible(false);
-            epgMenuItem.setVisible(false);
-        }
-
-        // Disable these menus as a default
-        playMenuItem.setVisible(false);
-        searchMenuItem.setVisible(false);
-        
-        if (p.recording == null) {
-            // Show the record menu
-            recordCancelMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
-        }
-        else if (p.isRecording() || p.isScheduled()) {
-            // Show the cancel menu
-            recordMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
-        }
-        else {
-            // Show the delete menu
-            recordMenuItem.setVisible(false);
-            recordCancelMenuItem.setVisible(false);
-        }
+        // Show or hide the menu items depending on the program state
+        Utils.setProgramMenu(menu, p);
     }
     
     @Override

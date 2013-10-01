@@ -140,34 +140,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         menu.setHeaderTitle(rec.title);
         
-        MenuItem imdbMenuItem = menu.findItem(R.id.menu_search_imdb);
-        MenuItem epgMenuItem = menu.findItem(R.id.menu_search_epg);
-        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        
-        // Hide the search menu items if the title is missing
-        if (rec.title == null) {
-            imdbMenuItem.setVisible(false);
-            epgMenuItem.setVisible(false);
-        }
-
-        // Disable these menus as a default
-        searchMenuItem.setVisible(false);
-        
-        if (rec.isRecording() || rec.isScheduled()) {
-            // Show the cancel menu
-            recordMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
-            playMenuItem.setVisible(false);
-        }
-        else {
-            // Show the delete and play menu
-            recordMenuItem.setVisible(false);
-            recordCancelMenuItem.setVisible(false);
-        }
+        // Show or hide the menu items depending on the recording state
+        Utils.setRecordingMenu(menu, rec);
     }
 
     @Override

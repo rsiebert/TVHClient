@@ -147,32 +147,8 @@ public class RecordingActivity extends Activity implements HTSListener {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        
-        MenuItem imdbMenuItem = menu.findItem(R.id.menu_search_imdb);
-        MenuItem epgMenuItem = menu.findItem(R.id.menu_search_epg);
-        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        
-        // Hide the search menu items if the title is missing
-        if (rec.title == null) {
-            imdbMenuItem.setVisible(false);
-            epgMenuItem.setVisible(false);
-        }
-        
-        // Disable record as a default
-        recordMenuItem.setVisible(false);
-        
-        if (rec.isRecording() || rec.isScheduled()) {
-            // Show the cancel menu
-            recordRemoveMenuItem.setVisible(false);
-            playMenuItem.setVisible(false);
-        }
-        else {
-            // Show the delete and play menu
-            recordCancelMenuItem.setVisible(false);
-        }
+        // Show or hide the menu items depending on the recording state
+        Utils.setRecordingMenu(menu, rec);
         return true;
     }
 
