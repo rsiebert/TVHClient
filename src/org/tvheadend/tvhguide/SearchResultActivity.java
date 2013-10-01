@@ -141,7 +141,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Program p = (Program) srAdapter.getItem(position);
 
-        Intent intent = new Intent(this, ProgramActivity.class);
+        Intent intent = new Intent(this, ProgramDetailsActivity.class);
         intent.putExtra("eventId", p.id);
         intent.putExtra("channelId", p.channel.id);
         startActivity(intent);

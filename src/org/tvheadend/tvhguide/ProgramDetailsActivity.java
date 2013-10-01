@@ -42,7 +42,7 @@ import android.widget.TextView;
  *
  * @author john-tornblom
  */
-public class ProgramActivity extends Activity implements HTSListener {
+public class ProgramDetailsActivity extends Activity implements HTSListener {
 
     // The currently selected program
     private Program program;

@@ -144,7 +144,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
 
     protected void showProgramDetails(int position) {
         Program p = prAdapter.getItem(position);
-        Intent intent = new Intent(this, ProgramActivity.class);
+        Intent intent = new Intent(this, ProgramDetailsActivity.class);
         intent.putExtra("eventId", p.id);
         intent.putExtra("channelId", p.channel.id);
         startActivity(intent);
