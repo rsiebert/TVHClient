@@ -8,9 +8,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
@@ -25,9 +23,7 @@ public class ChannelListTabsActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 
         // Apply the specified theme
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean theme = prefs.getBoolean("lightThemePref", false);
-        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+        setTheme(Utils.getThemeId(this));
         
         super.onCreate(savedInstanceState);
         

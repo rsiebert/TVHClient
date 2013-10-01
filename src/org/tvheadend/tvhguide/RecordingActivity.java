@@ -28,10 +28,8 @@ import org.tvheadend.tvhguide.model.Recording;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,9 +49,7 @@ public class RecordingActivity extends Activity implements HTSListener {
     public void onCreate(Bundle savedInstanceState) {
 
         // Apply the specified theme
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean theme = prefs.getBoolean("lightThemePref", false);
-        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+        setTheme(Utils.getThemeId(this));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recording_layout);

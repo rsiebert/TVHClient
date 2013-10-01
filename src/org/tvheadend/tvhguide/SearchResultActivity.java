@@ -32,9 +32,7 @@ import org.tvheadend.tvhguide.model.Recording;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -57,9 +55,7 @@ public class SearchResultActivity extends ListActivity implements HTSListener {
     public void onCreate(Bundle icicle) {
 
         // Apply the specified theme
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean theme = prefs.getBoolean("lightThemePref", false);
-        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+        setTheme(Utils.getThemeId(this));
 
         super.onCreate(icicle);
 

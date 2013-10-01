@@ -22,6 +22,12 @@ import android.view.MenuItem;
 
 public class Utils {
 
+    public static int getThemeId(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+    }
+
     /**
      * 
      * @param context

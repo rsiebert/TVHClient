@@ -33,10 +33,8 @@ import org.tvheadend.tvhguide.model.Recording;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -68,9 +66,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
     public void onCreate(Bundle icicle) {
         
         // Apply the specified theme
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean theme = prefs.getBoolean("lightThemePref", false);
-        setTheme(theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+        setTheme(Utils.getThemeId(this));
         
         super.onCreate(icicle);
         setContentView(R.layout.channel_list);
