@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 public class ChannelListTabsActivity extends Activity {
 
-    private ChannelListFragment clf;
     private int prevTabPosition = -1;
     
     @Override
@@ -62,8 +61,9 @@ public class ChannelListTabsActivity extends Activity {
                 prevTabPosition = tab.getPosition();
                 
                 // Detach the channel list fragment, because another will be attached
-                if (tab.getPosition() == 0 && clf != null) {
-                    ft.detach(clf);
+                Fragment prevFragment = getFragmentManager().findFragmentByTag(tab.getText().toString());
+                if (prevFragment != null) {
+                    ft.detach(prevFragment);
                 }
             }
         };
@@ -96,12 +96,13 @@ public class ChannelListTabsActivity extends Activity {
             // Checks if the fragment is already initialized.
             // If not, it will be instantiated and added to the
             // activity. If it exists, it will simply attached to show it.
-            if (clf == null) {
-                clf = (ChannelListFragment) Fragment.instantiate(this, ChannelListFragment.class.getName());
-                ft.replace(android.R.id.content, clf);
+            Fragment currentFrag = getFragmentManager().findFragmentByTag(tab.getText().toString());
+            if (currentFrag == null) {
+                Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
+                ft.add(android.R.id.content, fragment, tab.getText().toString());
             }
             else {
-                ft.attach(clf);
+                ft.attach(currentFrag);
             }
             break;
         case 1:

@@ -56,6 +56,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private ListView channelListView;
     // The currently selected channel
     private Channel channel;
+    private int channelTagId;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -103,12 +104,24 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
                 setCurrentTag(tagAdapter.getItem(pos));
+                channelTagId = pos;
                 populateList();
             }
         });
         tagDialog = builder.create();
 
         registerForContextMenu(channelListView);
+        
+        // Restore the previously selected tag
+        if (savedInstanceState != null) {
+            channelTagId = savedInstanceState.getInt("selected_channel_tag_id", 0);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("selected_channel_tag_id", channelTagId);
     }
 
     @Override
@@ -128,6 +141,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_search:
+            // TODO show "Search this Channel" in the input line
             intent = new Intent();
             intent.putExtra("channelId", channel.id);
             getActivity().startSearch(null, false, intent.getExtras(), false);
@@ -201,21 +215,37 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         app.removeListener(this);
     }
 
+    /**
+     * Shows either that the channel data is still being loaded or fills the
+     * list with the available channel data. Additionally only the channels with
+     * the previously selected tag will be shown. This happens usually after an
+     * orientation change (screen rotation).
+     * 
+     * @param loading
+     */
     private void setLoading(boolean loading) {
-
         if (loading) {
+            // Clear any channels in the list and 
+            // show that we are still loading data.
             chAdapter.clear();
             chAdapter.notifyDataSetChanged();
             getActivity().getActionBar().setSubtitle(R.string.inf_load);
         } 
         else {
+            // Fill the tag adapter with the available channel tags
             TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
             tagAdapter.clear();
             for (ChannelTag t : app.getChannelTags()) {
                 tagAdapter.add(t);
             }
-            populateList();
+
+            // Check if tags exist and set the previously used one
+            if (tagAdapter.getCount() > channelTagId)
+                currentTag = tagAdapter.getItem(channelTagId);
+
+            // Update the action bar text and fill the channel list
             setCurrentTag(currentTag);
+            populateList();
         }
     }
 
