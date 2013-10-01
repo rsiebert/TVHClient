@@ -56,7 +56,10 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
     private ProgrammeListAdapter prAdapter;
     private List<Program> prList;
     private Channel channel;
-
+    private boolean isLoading = false;
+    private static int newProgramsLoadedCounter = 0;
+    private static final int newProgramsToLoad = 10;
+    
     @Override
     public void onCreate(Bundle icicle) {
         
@@ -87,6 +90,7 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
+                    getActionBar().setSubtitle(R.string.inf_load);
                     loadMorePrograms();
                 }
             }
@@ -229,6 +233,11 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
 
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_ADD)) {
+            
+            // Increase the counter that will allow loading more programs.
+            if (++newProgramsLoadedCounter >= newProgramsToLoad)
+                isLoading  = false;
+            
             // A new program has been added
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -280,6 +289,13 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
      */
     protected void loadMorePrograms() {
 
+        // Do not load more programs if we are already doing it. This avoids
+        // calling the service for nothing and reduces the used bandwidth.
+        if (isLoading)
+            return;
+        
+        isLoading = true;
+        
         Iterator<Program> it = channel.epg.iterator();
         Program p = null;
         long nextId = 0;
@@ -307,7 +323,7 @@ public class ProgramListActivity extends ListActivity implements HTSListener {
         intent.setAction(HTSService.ACTION_GET_EVENTS);
         intent.putExtra("eventId", nextId);
         intent.putExtra("channelId", channel.id);
-        intent.putExtra("count", 10);
+        intent.putExtra("count", newProgramsToLoad);
         startService(intent);
     }
 }
