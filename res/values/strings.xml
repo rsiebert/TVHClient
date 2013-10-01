@@ -15,6 +15,7 @@
     <string name="menu_record_remove">Remove recording</string>
     <string name="menu_search_imdb">Search on IMDB</string>
     <string name="menu_search_epg">Search the Program Guide</string>
+    <string name="menu_search_channel">Search this Channel</string>
 
     <string name="pref_connections">Connections</string>
     <string name="pref_host">Hostname</string>

@@ -54,7 +54,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private AlertDialog tagDialog;
     private ChannelTag currentTag;
     private ListView channelListView;
-
+    // The currently selected channel
+    private Channel channel;
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -117,13 +119,18 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        Intent intent = null;
         switch (item.getItemId()) {
-        case R.string.ch_play:
-            startActivity(item.getIntent());
+        case R.id.menu_play:
+            intent = new Intent(getActivity(), PlaybackActivity.class);
+            intent.putExtra("channelId", channel.id);
+            startActivity(intent);
             return true;
 
-        case R.string.search_hint:
-            getActivity().startSearch(null, false, item.getIntent().getExtras(), false);
+        case R.id.menu_search:
+            intent = new Intent();
+            intent.putExtra("channelId", channel.id);
+            getActivity().startSearch(null, false, intent.getExtras(), false);
             return true;
 
         default:
@@ -134,20 +141,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuItem item = menu.add(ContextMenu.NONE, R.string.ch_play, ContextMenu.NONE, R.string.ch_play);
-
+        getActivity().getMenuInflater().inflate(R.menu.channel_context_menu, menu);
+        
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Channel ch = chAdapter.getItem(info.position);
-
-        menu.setHeaderTitle(ch.name);
-        Intent intent = new Intent(getActivity(), PlaybackActivity.class);
-        intent.putExtra("channelId", ch.id);
-        item.setIntent(intent);
-
-        item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
-        intent = new Intent();
-        intent.putExtra("channelId", ch.id);
-        item.setIntent(intent);
+        channel = chAdapter.getItem(info.position);
+        menu.setHeaderTitle(channel.name);
     }
 
     private void setCurrentTag(ChannelTag tag) {
