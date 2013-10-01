@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 import org.tvheadend.tvhguide.adapter.SearchResultAdapter;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
+import org.tvheadend.tvhguide.intent.SearchEPGIntent;
+import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
@@ -52,6 +54,8 @@ public class SearchResultActivity extends Activity implements HTSListener {
     private ListView searchListView;
     private Pattern pattern;
     private Channel channel;
+    // The currently selected program
+    private Program program;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -80,7 +84,6 @@ public class SearchResultActivity extends Activity implements HTSListener {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showProgramDetails(position);
             }
-            
         });
         
         onNewIntent(getIntent());
@@ -177,52 +180,47 @@ public class SearchResultActivity extends Activity implements HTSListener {
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        
-            case R.string.menu_record:
-            case R.string.menu_record_cancel:
-            case R.string.menu_record_remove: {
-                startService(item.getIntent());
-                return true;
-            }
-            default: {
-                return super.onContextItemSelected(item);
-            }
+        case R.id.menu_search_imdb:
+            startActivity(new SearchIMDbIntent(this, program.title));
+            return true;
+
+        case R.id.menu_search_epg:
+            startActivity(new SearchEPGIntent(this, program.title));
+            return true;
+            
+        case R.id.menu_record_remove:
+            Utils.removeProgram(this, program.recording.id);
+            return true;
+
+        case R.id.menu_record_cancel:
+            Utils.cancelProgram(this, program.recording.id);
+            return true;
+
+        case R.id.menu_record:
+            Utils.recordProgram(this, program.id, program.channel.id);
+            return true;
+
+        default:
+            return super.onContextItemSelected(item);
         }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.details_menu, menu);
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Program p = srAdapter.getItem(info.position);
+        program = srAdapter.getItem(info.position);
 
-        menu.setHeaderTitle(p.title);
-
-        Intent intent = new Intent(this, HTSService.class);
-
-        MenuItem item = null;
-
-        if (p.recording == null) {
-            intent.setAction(HTSService.ACTION_DVR_ADD);
-            intent.putExtra("eventId", p.id);
-            intent.putExtra("channelId", p.channel.id);
-            item = menu.add(ContextMenu.NONE, R.string.menu_record, ContextMenu.NONE, R.string.menu_record);
-        } else if ("recording".equals(p.recording.state) || "scheduled".equals(p.recording.state)) {
-            intent.setAction(HTSService.ACTION_DVR_CANCEL);
-            intent.putExtra("id", p.recording.id);
-            item = menu.add(ContextMenu.NONE, R.string.menu_record_cancel, ContextMenu.NONE, R.string.menu_record_cancel);
-        } else {
-            intent.setAction(HTSService.ACTION_DVR_DELETE);
-            intent.putExtra("id", p.recording.id);
-            item = menu.add(ContextMenu.NONE, R.string.menu_record_remove, ContextMenu.NONE, R.string.menu_record_remove);
-        }
-
-        item.setIntent(intent);
+        // Set the title of the context menu and show or hide 
+        // the menu items depending on the program state
+        menu.setHeaderTitle(program.title);
+        Utils.setProgramMenu(menu, program);
     }
 
     public void onMessage(String action, final Object obj) {
