@@ -23,14 +23,11 @@ import java.util.List;
 
 import org.tvheadend.tvhguide.adapter.RecordingListAdapter;
 import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -55,6 +52,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     private ListView recListView;
     private List<Recording> recList;
     private int tabIndex = 0;
+    private Recording recording;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -133,71 +131,73 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-
-        MenuItem item = null;
-        Intent intent = null;
-
+        getActivity().getMenuInflater().inflate(R.menu.details_menu, menu);
+        
+        // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = recAdapter.getItem(info.position);
-
+        recording = rec;
+        
         menu.setHeaderTitle(rec.title);
-
-        intent = new Intent(getActivity(), HTSService.class);
-        intent.putExtra("id", rec.id);
-
-        if (rec.isRecording() || rec.isScheduled()) {
-            intent.setAction(HTSService.ACTION_DVR_CANCEL);
-            item = menu.add(ContextMenu.NONE, R.string.menu_record_cancel, ContextMenu.NONE, R.string.menu_record_cancel);
-            item.setIntent(intent);
-        } else {
-            intent.setAction(HTSService.ACTION_DVR_DELETE);
-            item = menu.add(ContextMenu.NONE, R.string.menu_record_remove, ContextMenu.NONE, R.string.menu_record_remove);
-            item.setIntent(intent);
-
-            item = menu.add(ContextMenu.NONE, R.string.ch_play, ContextMenu.NONE, R.string.ch_play);
-            intent = new Intent(getActivity(), ExternalPlaybackActivity.class);
-            intent.putExtra("dvrId", rec.id);
-            item.setIntent(intent);
-            item.setIcon(android.R.drawable.ic_menu_view);
+        
+        MenuItem imdbMenuItem = menu.findItem(R.id.menu_search_imdb);
+        MenuItem epgMenuItem = menu.findItem(R.id.menu_search_epg);
+        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        
+        // Hide the search menu items if the title is missing
+        if (rec.title == null) {
+            imdbMenuItem.setVisible(false);
+            epgMenuItem.setVisible(false);
         }
 
-        item = menu.add(ContextMenu.NONE, R.string.search_hint, ContextMenu.NONE, R.string.search_hint);
-        item.setIntent(new SearchEPGIntent(getActivity(), rec.title));
-        item.setIcon(android.R.drawable.ic_menu_search);
-
-        item = menu.add(ContextMenu.NONE, ContextMenu.NONE, ContextMenu.NONE, "IMDb");
-        item.setIntent(new SearchIMDbIntent(getActivity(), rec.title));
-        item.setIcon(android.R.drawable.ic_menu_info_details);
+        // Disable these menus as a default
+        searchMenuItem.setVisible(false);
+        
+        if (rec.isRecording() || rec.isScheduled()) {
+            // Show the cancel menu
+            recordMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
+            playMenuItem.setVisible(false);
+        }
+        else {
+            // Show the delete and play menu
+            recordMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(false);
+        }
     }
 
     @Override
-    public boolean onContextItemSelected(final MenuItem item) {
+    public boolean onContextItemSelected(MenuItem item) {
+        
         switch (item.getItemId()) {
-            case R.string.menu_record:
-            case R.string.menu_record_cancel: {
-                getActivity().startService(item.getIntent());
-                return true;
-            }
-            case R.string.menu_record_remove: {
-                new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.menu_record_remove)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) { 
-                            getActivity().startService(item.getIntent());
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) { 
-                            //NOP
-                        }
-                    })
-                    .show();
+        case R.id.menu_play:
+            Intent pi = new Intent(getActivity(), ExternalPlaybackActivity.class);
+            pi.putExtra("dvrId", recording.id);
+            startActivity(pi);
+            return true;
 
-                return true;
-            }
-            default: {
-                return super.onContextItemSelected(item);
-            }
+        case R.id.menu_search_imdb:
+            startActivity(new SearchIMDbIntent(getActivity(), recording.title));
+            return true;
+
+        case R.id.menu_search_epg:
+            startActivity(new SearchEPGIntent(getActivity(), recording.title));
+            return true;
+            
+        case R.id.menu_record_remove:
+            Utils.removeProgram(getActivity(), recording.id);
+            return true;
+
+        case R.id.menu_record_cancel:
+            Utils.cancelProgram(getActivity(), recording.id);
+            return true;
+
+        default:
+            return super.onContextItemSelected(item);
         }
     }
 
