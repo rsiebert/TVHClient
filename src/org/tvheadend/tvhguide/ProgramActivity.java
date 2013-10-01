@@ -22,14 +22,12 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -215,14 +213,17 @@ public class ProgramActivity extends Activity implements HTSListener {
         playMenuItem.setVisible(false);
         
         if (programme.recording == null) {
+            // Show the record menu
             recordCancelMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
         }
         else if (programme.isRecording() || programme.isScheduled()) {
+            // Show the cancel menu
             recordMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
         }
         else {
+            // Show the delete menu
             recordMenuItem.setVisible(false);
             recordCancelMenuItem.setVisible(false);
         }
@@ -251,25 +252,15 @@ public class ProgramActivity extends Activity implements HTSListener {
             return true;
 
         case R.id.menu_record_remove:
-            Intent rri = new Intent(this, HTSService.class);
-            rri.setAction(HTSService.ACTION_DVR_DELETE);
-            rri.putExtra("id", programme.recording.id);
-            startService(rri);
+            Utils.removeProgram(this, programme.recording.id);
             return true;
 
         case R.id.menu_record_cancel:
-            Intent rci = new Intent(this, HTSService.class);
-            rci.setAction(HTSService.ACTION_DVR_CANCEL);
-            rci.putExtra("id", programme.recording.id);
-            startService(rci);
+            Utils.cancelProgram(this, programme.recording.id);
             return true;
 
         case R.id.menu_record:
-            Intent ri = new Intent(this, HTSService.class);
-            ri.setAction(HTSService.ACTION_DVR_ADD);
-            ri.putExtra("eventId", programme.id);
-            ri.putExtra("channelId", programme.channel.id);
-            startService(ri);
+            Utils.recordProgram(this, programme.id, programme.channel.id);
             return true;
 
         default:

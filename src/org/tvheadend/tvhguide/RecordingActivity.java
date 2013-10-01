@@ -22,14 +22,11 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Recording;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
@@ -168,10 +165,12 @@ public class RecordingActivity extends Activity implements HTSListener {
         recordMenuItem.setVisible(false);
         
         if (rec.isRecording() || rec.isScheduled()) {
+            // Show the cancel menu
             recordRemoveMenuItem.setVisible(false);
             playMenuItem.setVisible(false);
         }
         else {
+            // Show the delete and play menu
             recordCancelMenuItem.setVisible(false);
         }
         return true;
@@ -199,29 +198,11 @@ public class RecordingActivity extends Activity implements HTSListener {
             return true;
 
         case R.id.menu_record_remove:
-            
-            final Intent rri = new Intent(this, HTSService.class);
-            rri.setAction(HTSService.ACTION_DVR_DELETE);
-            rri.putExtra("id", rec.id);
-            
-            // Show a confirmation dialog before deleting the recording
-            new AlertDialog.Builder(this).setTitle(R.string.menu_record_remove)
-            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    startService(rri);
-                }
-            }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // NOP
-                }
-            }).show();
+            Utils.removeProgram(this, rec.id);
             return true;
 
         case R.id.menu_record_cancel:
-            Intent rci = new Intent(this, HTSService.class);
-            rci.setAction(HTSService.ACTION_DVR_CANCEL);
-            rci.putExtra("id", rec.id);
-            startService(rci);
+            Utils.cancelProgram(this, rec.id);
             return true;
 
         case R.id.menu_play:

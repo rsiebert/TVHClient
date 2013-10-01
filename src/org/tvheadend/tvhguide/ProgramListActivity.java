@@ -170,25 +170,15 @@ public class ProgramListActivity extends Activity implements HTSListener {
             return true;
             
         case R.id.menu_record_remove:
-            Intent rri = new Intent(this, HTSService.class);
-            rri.setAction(HTSService.ACTION_DVR_DELETE);
-            rri.putExtra("id", program.recording.id);
-            startService(rri);
+            Utils.removeProgram(this, program.recording.id);
             return true;
 
         case R.id.menu_record_cancel:
-            Intent rci = new Intent(this, HTSService.class);
-            rci.setAction(HTSService.ACTION_DVR_CANCEL);
-            rci.putExtra("id", program.recording.id);
-            startService(rci);
+            Utils.cancelProgram(this, program.recording.id);
             return true;
 
         case R.id.menu_record:
-            Intent ri = new Intent(this, HTSService.class);
-            ri.setAction(HTSService.ACTION_DVR_ADD);
-            ri.putExtra("eventId", program.id);
-            ri.putExtra("channelId", program.channel.id);
-            startService(ri);
+            Utils.recordProgram(this, program.id, program.channel.id);
             return true;
 
         default:
@@ -228,14 +218,17 @@ public class ProgramListActivity extends Activity implements HTSListener {
         searchMenuItem.setVisible(false);
         
         if (p.recording == null) {
+            // Show the record menu
             recordCancelMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
         }
         else if (p.isRecording() || p.isScheduled()) {
+            // Show the cancel menu
             recordMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
         }
         else {
+            // Show the delete menu
             recordMenuItem.setVisible(false);
             recordCancelMenuItem.setVisible(false);
         }
