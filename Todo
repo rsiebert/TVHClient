@@ -1,0 +1,14 @@
+- Change listview scrollbar 
+	- color to blue
+	- thicker
+	- fixed size (independent of items in list)
+- icons in the light themes are too light (requires border)
+- sorting of recordings by date
+- show the current host values (except password) in the settings screen
+
+- Apply theme when leaving the settings screen
+- Remove unused strings
+- Add new German strings
+- Add method header comments
+- When clicking on search this channel context menu, show this text in the search bar
+- Show the amount of results in the search view
