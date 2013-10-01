@@ -65,8 +65,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         if (container == null)
             return null;
 
-        View v = inflater.inflate(R.layout.channel_list, container, false);
-        channelListView = (ListView) v.findViewById(R.id.channel_list);
+        View v = inflater.inflate(R.layout.list_layout, container, false);
+        channelListView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
     

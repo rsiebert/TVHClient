@@ -60,13 +60,14 @@ public class SearchResultActivity extends Activity implements HTSListener {
         setTheme(Utils.getThemeId(this));
 
         super.onCreate(icicle);
-
+        setContentView(R.layout.list_layout);
+        
         // Setup the action bar and show the title
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setTitle("Searching");
         
-        searchListView = (ListView) findViewById(R.id.channel_list);
+        searchListView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(searchListView);
         
         List<Program> srList = new ArrayList<Program>();

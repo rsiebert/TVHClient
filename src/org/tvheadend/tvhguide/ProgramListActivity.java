@@ -69,7 +69,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
         setTheme(Utils.getThemeId(this));
         
         super.onCreate(icicle);
-        setContentView(R.layout.channel_list);
+        setContentView(R.layout.list_layout);
         
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
@@ -87,7 +87,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
         
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
-        prListView = (ListView) findViewById(R.id.channel_list);
+        prListView = (ListView) findViewById(R.id.item_list);
         prListView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
