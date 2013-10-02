@@ -89,7 +89,7 @@
         <item>Abenteuer / Western / Krieg</item>
         <item>Science Fiction / Fantasy / Horror</item>
         <item>Komödie</item>
-        <item>Seife Oper / Melodrama / Folklore</item>
+        <item>Seifenoper / Melodrama / Folklore</item>
         <item>Romanze</item>
         <item>Historisches</item>
         <item>Erwachsenen Film / Drama</item>
@@ -103,7 +103,7 @@
     </string-array>
     <string-array name="pr_content_type3">
         <item>Show / Spielshow</item>
-        <item>Spiel Show / Quiz / Contest</item>
+        <item>Spielshow / Quiz / Contest</item>
         <item>Varietee</item>
         <item>Unterhaltung</item>
     </string-array>
@@ -123,11 +123,11 @@
     </string-array>
     <string-array name="pr_content_type5">
         <item>Kinder / Jugend</item>
-        <item>Vorschul</item>
-        <item>Unterhaltung (6 bis 14-Jährigen)</item>
-        <item>Unterhaltung (10 bis 16-Jährigen)</item>
-        <item>Informativ / Bildung / Schulen</item>
-        <item>Cartoons / Puppets</item>
+        <item>Vorschule</item>
+        <item>Unterhaltung (6 bis 14-Jährige)</item>
+        <item>Unterhaltung (10 bis 16-Jährige)</item>
+        <item>Informatives / Bildung / Schule</item>
+        <item>Cartoons / Zeichentrick</item>
     </string-array>
     <string-array name="pr_content_type6">
         <item>Musik / Ballett / Tanz</item>
@@ -140,10 +140,10 @@
     </string-array>
     <string-array name="pr_content_type7">
         <item>Kunst / Kultur</item>
-        <item>Darstellenden Kunst</item>
+        <item>Darstellende Kunst</item>
         <item>Ästhetisches</item>
         <item>Religion</item>
-        <item>Pop Kultur / Traditionelle Kunst</item>
+        <item>Pop-Kultur / Traditionelle Kunst</item>
         <item>Literatur</item>
         <item>Film / Kino</item>
         <item>Experimenteller Film / Video</item>
