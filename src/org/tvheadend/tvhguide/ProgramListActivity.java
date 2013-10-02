@@ -59,8 +59,6 @@ public class ProgramListActivity extends Activity implements HTSListener {
     private boolean isLoading = false;
     private static int newProgramsLoadedCounter = 0;
     private static final int newProgramsToLoad = 10;
-    // The currently selected program
-    private Program program;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -157,6 +155,11 @@ public class ProgramListActivity extends Activity implements HTSListener {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        
+        // Get the currently selected program from the list
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Program program = prAdapter.getItem(info.position);
+        
         switch (item.getItemId()) {
         case R.id.menu_search:
             // Show the search text input in the action bar
@@ -195,7 +198,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        program = prAdapter.getItem(info.position);
+        Program program = prAdapter.getItem(info.position);
         
         // Set the title of the context menu and show or hide 
         // the menu items depending on the program state
