@@ -54,8 +54,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private AlertDialog tagDialog;
     private ChannelTag currentTag;
     private ListView channelListView;
-    // The currently selected channel
-    private Channel channel;
     private int channelTagId;
     
     @Override
@@ -132,6 +130,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        
+        // Get the currently selected channel from the list
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Channel channel = chAdapter.getItem(info.position);
+        
         Intent intent = null;
         switch (item.getItemId()) {
         case R.id.menu_play:
@@ -158,7 +161,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         getActivity().getMenuInflater().inflate(R.menu.channel_context_menu, menu);
         
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        channel = chAdapter.getItem(info.position);
+        Channel channel = chAdapter.getItem(info.position);
         menu.setHeaderTitle(channel.name);
     }
 
