@@ -204,6 +204,12 @@ public class ProgramListActivity extends Activity implements HTSListener {
         // the menu items depending on the program state
         menu.setHeaderTitle(program.title);
         Utils.setProgramMenu(menu, program);
+        
+        // Allow playing the first item, its currently being shown
+        if (info.position == 0) {
+            MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+            playMenuItem.setVisible(true);
+        }
     }
     
     @Override
