@@ -22,6 +22,10 @@ import android.view.MenuItem;
 
 public class Utils {
 
+    // Constants required for the date calculation
+    private static final int twoDays = 1000 * 3600 * 24 * 2;
+    private static final int sixDays = 1000 * 3600 * 24 * 6;
+    
     public static int getThemeId(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean theme = prefs.getBoolean("lightThemePref", false);
@@ -47,14 +51,14 @@ public class Utils {
             // Show the string today
             dateText = context.getString(R.string.today);
         }
-        else if (start.getTime() < System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 2
-                && start.getTime() > System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 2) {
+        else if (start.getTime() < System.currentTimeMillis() + twoDays
+                && start.getTime() > System.currentTimeMillis() - twoDays) {
             // Show a string like "42 minutes ago"
             dateText = DateUtils.getRelativeTimeSpanString(start.getTime(), System.currentTimeMillis(),
                     DateUtils.DAY_IN_MILLIS).toString();
         }
-        else if (start.getTime() < System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 6
-                && start.getTime() > System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 2) {
+        else if (start.getTime() < System.currentTimeMillis() + sixDays
+                && start.getTime() > System.currentTimeMillis() - twoDays) {
             // Show the day of the week, like Monday or Tuesday
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
             dateText = sdf.format(start.getTime());
