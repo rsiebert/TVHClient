@@ -30,6 +30,7 @@ import org.tvheadend.tvhguide.model.Recording;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -52,8 +53,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     private ListView recListView;
     private List<Recording> recList;
     private int tabIndex = 0;
-    // The currently selected recording
-    private Recording rec;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,7 +101,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         app.addListener(this);
-        populateList();
+        setLoading(app.isLoading());
     }
 
     @Override
@@ -136,7 +135,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        rec = recAdapter.getItem(info.position);
+        Recording rec = recAdapter.getItem(info.position);
         
         // Set the title of the context menu and show or hide 
         // the menu items depending on the recording state
@@ -146,6 +145,15 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+     
+        // The context menu is triggered for all fragments in a fragment pager.
+        // Do nothing if this fragment is not visible.
+        if (!getUserVisibleHint())
+            return super.onContextItemSelected(item);
+
+        // Get the currently selected program from the list
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Recording rec = recAdapter.getItem(info.position);
         
         switch (item.getItemId()) {
         case R.id.menu_play:
