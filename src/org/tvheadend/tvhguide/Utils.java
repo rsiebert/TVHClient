@@ -193,8 +193,14 @@ public class Utils {
             recordCancelMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
         }
-        else if (program.isRecording() || program.isScheduled()) {
+        else if (program.isRecording()) {
             // Show the cancel menu
+            recordMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
+        }
+        else if (program.isScheduled()) {
+            // Show the cancel and play menu
+            playMenuItem.setVisible(false);
             recordMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
         }
