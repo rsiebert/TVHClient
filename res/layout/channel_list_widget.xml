@@ -8,11 +8,10 @@
         android:id="@+id/icon"
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:layout_margin="4dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:paddingLeft="3dp"
-        android:paddingRight="0dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="3dp"
 		android:contentDescription="@string/channel_icon"
         android:scaleType="fitCenter" />
 
