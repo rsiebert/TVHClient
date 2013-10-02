@@ -35,6 +35,7 @@ import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -91,6 +92,7 @@ public class ProgramDetailsActivity extends Activity implements HTSListener {
         
         // Initialize all the widgets from the layout
         TextView title = (TextView) findViewById(R.id.title);
+        ImageView state = (ImageView) findViewById(R.id.state);
         TextView summaryLabel = (TextView) findViewById(R.id.summary_label);
         TextView summary = (TextView) findViewById(R.id.summary);
         TextView descLabel = (TextView) findViewById(R.id.desc_label);
@@ -110,6 +112,25 @@ public class ProgramDetailsActivity extends Activity implements HTSListener {
         // Set the values
         title.setText(program.title);
 
+        // Show if the program is being recorded or scheduled
+        if (program.recording == null) {
+            state.setImageDrawable(null);
+        } else if (program.recording.error != null) {
+            state.setImageResource(R.drawable.ic_error_small);
+        } else if ("completed".equals(program.recording.state)) {
+            state.setImageResource(R.drawable.ic_success_small);
+        } else if ("invalid".equals(program.recording.state)) {
+            state.setImageResource(R.drawable.ic_error_small);
+        } else if ("missed".equals(program.recording.state)) {
+            state.setImageResource(R.drawable.ic_error_small);
+        } else if ("recording".equals(program.recording.state)) {
+            state.setImageResource(R.drawable.ic_rec_small);
+        } else if ("scheduled".equals(program.recording.state)) {
+            state.setImageResource(R.drawable.ic_schedule_small);
+        } else {
+            state.setImageDrawable(null);
+        }
+        
         // Set the date, the channel name, the time and duration
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
         date.setText(sdf.format(program.start.getTime()));
