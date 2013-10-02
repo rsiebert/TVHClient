@@ -214,7 +214,6 @@
     <string name="programs">Programs</string>
     <string name="completed">Completed</string>
     <string name="upcoming">Upcoming</string>
-    <string name="autorec">AutoRec</string>
     <string name="failed">Failed</string>
     
     <string name="channels">Channels</string>
@@ -238,6 +237,5 @@
     <string name="type">Type</string>
     <string name="content_type">Content Type</string>
     <string name="series_information">Series Information</string>
-    
-    
+
 </resources>

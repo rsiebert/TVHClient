@@ -8,10 +8,15 @@
     <string name="menu_tags">Tags</string>
     <string name="menu_recordings">Aufnahmen</string>
 
-    <string name="menu_record">"Aufnahme"</string>
-    <string name="menu_record_cancel">"Aufnahme abbrechen"</string>
-    <string name="menu_record_remove">"Aufnahme entfernen"</string>
-
+    <string name="menu_play">Abspielen</string>
+    <string name="menu_search">Suchen</string>
+    <string name="menu_record">Aufnehmen</string>
+    <string name="menu_record_cancel">Aufnahme abbrechen</string>
+    <string name="menu_record_remove">Aufnahme entfernen</string>
+	<string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
+    <string name="menu_search_epg">Suche im TV-Programm</string>
+    <string name="menu_search_channel">Suche auf diesem Sender</string>
+    
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_host">Hostname</string>
     <string name="pref_host_sum">Hostname des Servers eingeben</string>
@@ -21,34 +26,203 @@
     <string name="pref_user_sum">Benutzernamen eingeben</string>
     <string name="pref_pass">Passwort</string>
     <string name="pref_pass_sum">Passwort eingeben</string>
+	<string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
 
     <string name="pref_ui">Aussehen</string>
-    <string name="pref_theme">"Helle Darstellung"</string>
-    <string name="pref_theme_sum">"Verwendet die helleren Android Farben (Holo-Light Theme)"</string>
     <string name="pref_icons">Zeige Senderlogos</string>
     <string name="pref_icons_sum">Zu jeder Aufnahme wird das dazugehörige Senderlogo angezeigt (falls verfügbar).</string>
+    <string name="pref_theme">Helle Darstellung</string>
+    <string name="pref_theme_sum">Verwendet die helleren Android Farben (Holo-Light Theme)</string>
+    <string name="pref_res">Auflösung</string>
+    <string name="pref_res_sum">Maximale Auflösung für den Transcoder</string>
+    <string name="pref_acodec">Audio-Codec</string>
+    <string name="pref_acodec_sum">Audio-Codec des Transcoders verwenden</string>
+    <string name="pref_vcodec">Video-Codec</string>
+    <string name="pref_vcodec_sum">Video-Codec des Transcoder verwenden</string>
+    <string name="pref_scodec">Untertitel Codec</string>
+    <string name="pref_scodec_sum">Untertitel Codec des Transcoder verwenden</string>
+    <string name="pref_container">Medien-Container</string>
+    <string name="pref_container_sum">Bevorzugter Medien-Container</string>
 
-    <string name="pref_playback">"Wiedergabe"</string>
-    <string name="pref_http_port">"HTTP-Port"</string>
-    <string name="pref_http_port_sum">"HTTP-Port des Servers"</string>
-    <string name="pref_transcode">"Stream transkodieren"</string>
-    <string name="pref_transcode_sum">"Transkodiere Stream während der Live-Wiedergabe"</string>
-    <string name="pref_external">"Bevorzuge externen Videoplayer"</string>
-    <string name="pref_external_sum">"Soll ein externer Video-Player benutzt werden? (z.B. BSPlayer)"</string>
+    <string name="pref_playback">Wiedergabe</string>
+    <string name="pref_http_port">HTTP-Port</string>
+    <string name="pref_http_port_sum">HTTP-Port des Servers</string>
+    <string name="pref_transcode">Stream transkodieren</string>
+    <string name="pref_transcode_sum">Transkodiere Stream während der Live-Wiedergabe</string>
+    <string name="pref_external">Bevorzuge externen Videoplayer</string>
+    <string name="pref_external_sum">Soll ein externer Video-Player benutzt werden? (z.B. BSPlayer)</string>
     
     <string name="err_auth">Zugriff verweigert</string>
     <string name="err_inv">Ungültige Antwort des Servers</string>
     <string name="err_connect">Konnte nicht mit dem Server verbinden</string>
     <string name="err_con_lost">Verbindung zum Server verloren</string>
 
-    <string name="inf_load">Lade...</string>
-    <string name="inf_load_ext">Bitte warten Sie einen Moment...</string>
+    <string name="inf_load">Lade&#8230;</string>
+    <string name="inf_load_ext">Bitte warten Sie einen Moment&#8230;</string>
 
-    <string name="pr_all_channels">Alle Kanäle</string>
-
+    <string name="pr_all_channels">Alle Sender</string>
+    <string name="pr_get_more">Mehr</string>
+    <string name="pr_season">Staffel</string>
+    <string name="pr_episode">Folge</string>
+    <string name="pr_part">Teil</string>
+    <string name="pr_airing">Ausstrahlung</string>
+    <string name="pr_star_rating">Bewertung</string>
+    <string name="pr_content_type">Genre</string>
+    <string name="pr_series_info">Teil</string>
+    
+     <string-array name="pr_content_type0">
+        <item>Film / Drama</item>
+        <item>Nachrichten / Aktuelles</item>
+        <item>Show / Spielshow</item>
+        <item>Sport</item>
+        <item>Kinder / Jugend</item>
+        <item>Musik / Ballett / Tanz</item>
+        <item>Kunst / Kultur</item>
+        <item>Gesellschaft / Politik / Wirtschaft</item>
+        <item>Bildung / Wissenschaft</item>
+        <item>Freizeit / Hobbys</item>
+        <item>Verschiedenes</item>
+    </string-array>
+    <string-array name="pr_content_type1">
+        <item>Film / Drama</item>
+        <item>Krimi / Thriller</item>
+        <item>Abenteuer / Western / Krieg</item>
+        <item>Science Fiction / Fantasy / Horror</item>
+        <item>Komödie</item>
+        <item>Seife Oper / Melodrama / Folklore</item>
+        <item>Romanze</item>
+        <item>Historisches</item>
+        <item>Erwachsenen Film / Drama</item>
+    </string-array>
+    <string-array name="pr_content_type2">
+        <item>Nachrichten / Aktuelles</item>
+        <item>Nachrichten / Wetterbericht</item>
+        <item>Magazin</item>
+        <item>Dokumentation</item>
+        <item>Diskussion / Interview / Debatte</item>
+    </string-array>
+    <string-array name="pr_content_type3">
+        <item>Show / Spielshow</item>
+        <item>Spiel Show / Quiz / Contest</item>
+        <item>Varietee</item>
+        <item>Unterhaltung</item>
+    </string-array>
+    <string-array name="pr_content_type4">
+        <item>Sport</item>
+        <item>Sondersendung</item>
+        <item>Magazin</item>
+        <item>Fußball</item>
+        <item>Tennis / Squash</item>
+        <item>Mannschaftssport</item>
+        <item>Leichtathletik</item>
+        <item>Motorsport</item>
+        <item>Wassersport</item>
+        <item>Wintersport</item>
+        <item>Reitsport</item>
+        <item>Kampfsport</item>
+    </string-array>
+    <string-array name="pr_content_type5">
+        <item>Kinder / Jugend</item>
+        <item>Vorschul</item>
+        <item>Unterhaltung (6 bis 14-Jährigen)</item>
+        <item>Unterhaltung (10 bis 16-Jährigen)</item>
+        <item>Informativ / Bildung / Schulen</item>
+        <item>Cartoons / Puppets</item>
+    </string-array>
+    <string-array name="pr_content_type6">
+        <item>Musik / Ballett / Tanz</item>
+        <item>Rock und Pop</item>
+        <item>Klassik</item>
+        <item>Folk / Traditionelle Musik</item>
+        <item>Jazz</item>
+        <item>Musical / Oper</item>
+        <item>Ballet</item>
+    </string-array>
+    <string-array name="pr_content_type7">
+        <item>Kunst / Kultur</item>
+        <item>Darstellenden Kunst</item>
+        <item>Ästhetisches</item>
+        <item>Religion</item>
+        <item>Pop Kultur / Traditionelle Kunst</item>
+        <item>Literatur</item>
+        <item>Film / Kino</item>
+        <item>Experimenteller Film / Video</item>
+        <item>Rundfunk / Presse</item>
+        <item>Neue Medien</item>
+        <item>Magazin</item>
+        <item>Mode</item>
+    </string-array>
+    <string-array name="pr_content_type8">
+        <item>Gesellschaft / Politik / Wirtschaft</item>
+        <item>Magazin / Report / Dokumentation</item>
+        <item>Wirtschaft / Soziales Engagement</item>
+        <item>Bemerkenswerte Menschen</item>
+    </string-array>
+    <string-array name="pr_content_type9">
+        <item>Bildung / Wissenschaft</item>
+        <item>Natur / Tiere / Umwelt</item>
+        <item>Technik / Naturwissenschaften</item>
+        <item>Medizin / Physiologie / Psychologie</item>
+        <item>Ausland / Expeditionen</item>
+        <item>Soziales / Spirituelles</item>
+        <item>Weiterbildung</item>
+        <item>Sprachen</item>
+    </string-array>
+    <string-array name="pr_content_type10">
+        <item>Freizeit / Hobbys</item>
+        <item>Tourismus / Reisen</item>
+        <item>Handwerk</item>
+        <item>Motorsport</item>
+        <item>Fitness und Gesundheit</item>
+        <item>Kochen</item>
+        <item>Werbung / Shopping</item>
+        <item>Garten</item>
+    </string-array>
+    <string-array name="pr_content_type11">
+        <item>Verschiedenes</item>
+        <item>Schwarz / Weiß</item>
+        <item>Unveröffentlicht</item>
+        <item>Live-Sendung</item>
+    </string-array>
+    
     <string name="pvr_scheduled">Geplant</string>
     <string name="pvr_recording">Aufnahme</string>
     <string name="pvr_completed">Fertig</string>
     <string name="pvr_missed">Verpasst</string>
     <string name="pvr_invalid">Ungültig</string>
+    
+    <string name="ch_play">Abspielen</string>
+    <string name="ch_no_transmission">Keine Übertragung</string>
+    <string name="ch_no_data">Keine Programme verfügbar</string>
+    <string name="ch_minutes">%d Min</string>
+    
+    <string name="search_hint">Suche im TV-Programm</string>
+    <string name="today">Heute</string>
+    
+    <string name="programs">Programme</string>
+    <string name="completed">Aufgenommen</string>
+    <string name="upcoming">Geplant</string>
+    <string name="failed">Fehlerhaft</string>
+    
+    <string name="channels">Sender</string>
+    <string name="recordings">Aufnahmen</string>
+    <string name="program_guide">TV-Programm</string>
+    <string name="status">Status</string>
+    <string name="items">Elemente</string>
+    
+    <string name="channel_icon">Senderlogo</string>
+    <string name="status_icon">Statuslogo</string>
+    <string name="title">Titel</string>
+    <string name="channel">Sender</string>
+    <string name="time">Zeit</string>
+    <string name="date">Datum</string>
+    <string name="shown_on_channel">auf</string>
+    <string name="summary">Zusammenfassung</string>
+    <string name="description">Beschreibung</string>
+    <string name="duration">Dauer</string>
+    <string name="airing">Ausstrahlung</string>
+    <string name="rating">Bewertung</string>
+    <string name="type">Kategorie</string>
+    <string name="content_type">Genre</string>
+    <string name="series_information">Serien Information</string>
 </resources>
