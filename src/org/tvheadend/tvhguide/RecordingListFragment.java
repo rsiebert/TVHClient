@@ -80,7 +80,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
         recList = new ArrayList<Recording>();
         recAdapter = new RecordingListAdapter(getActivity(), recList);
-        recAdapter.sort();
         recListView.setAdapter(recAdapter);
         registerForContextMenu(recListView);
 
@@ -216,6 +215,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 recList.add(rec);
             }
         }
+        recAdapter.sort();
         recAdapter.notifyDataSetChanged();
         ((RecordingListTabsActivity)getActivity()).updateTitle(tabIndex, recList.size());
     }
