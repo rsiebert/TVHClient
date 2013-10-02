@@ -23,10 +23,13 @@
 
         <ImageView
             android:id="@+id/pr_state"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:contentDescription="@string/status_icon"
-            android:padding="6dp"
+            android:paddingBottom="2dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="6dp"
             android:scaleType="fitCenter" />
     </LinearLayout>
 
