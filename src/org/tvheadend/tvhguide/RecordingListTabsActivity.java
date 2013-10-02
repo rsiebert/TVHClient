@@ -159,9 +159,6 @@ public class RecordingListTabsActivity extends Activity {
             case 2:
                 getActionBar().setSubtitle(count + " " + getString(R.string.failed));
                 break;
-            case 3:
-                getActionBar().setSubtitle(count + " " + getString(R.string.autorec));
-                break;
             }
         }
     }
