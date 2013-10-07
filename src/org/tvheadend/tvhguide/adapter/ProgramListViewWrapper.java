@@ -7,7 +7,6 @@ import org.tvheadend.tvhguide.model.Program;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.format.DateFormat;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
@@ -66,11 +65,7 @@ public class ProgramListViewWrapper {
         date.setText(Utils.getStartDate(date.getContext(), p.start));
         date.invalidate();
 
-        time.setText(
-                DateFormat.getTimeFormat(time.getContext()).format(p.start)
-                + " - "
-                + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
-        time.invalidate();
+        Utils.setTime(time, p.start, p.stop);
         
         // Show the duration in minutes
         Utils.setDuration(duration, p.start, p.stop);

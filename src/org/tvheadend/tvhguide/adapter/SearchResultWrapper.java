@@ -9,7 +9,6 @@ import org.tvheadend.tvhguide.model.Program;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
@@ -97,8 +96,6 @@ public class SearchResultWrapper {
         date.setText(Utils.getStartDate(ctx, p.start));
         date.invalidate();
 
-        time.setText(DateFormat.getTimeFormat(time.getContext()).format(p.start) + " - "
-                + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
-        time.invalidate();
+        Utils.setTime(time, p.start, p.stop);
     }
 }

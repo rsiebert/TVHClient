@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -294,5 +295,12 @@ public class Utils {
             duration.setVisibility(View.GONE);
         }
         duration.invalidate();
+    }
+
+    public static void setTime(TextView time, Date start, Date stop) {
+        final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
+        final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
+        time.setText(startTime + " - " + endTime);
+        time.invalidate();
     }
 }

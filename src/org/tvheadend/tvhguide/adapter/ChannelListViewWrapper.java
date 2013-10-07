@@ -29,7 +29,6 @@ import org.tvheadend.tvhguide.model.Program;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -90,10 +89,9 @@ public class ChannelListViewWrapper {
         } else if (it.hasNext()) {
             Program p = it.next();
             title.setText(p.title);
-            time.setText(
-                    DateFormat.getTimeFormat(time.getContext()).format(p.start)
-                    + " - "
-                    + DateFormat.getTimeFormat(time.getContext()).format(p.stop));
+            
+            Utils.setTime(time, p.start, p.stop);
+            
 
             // Get the start and end times so we can show them 
             // and calculate the duration and current shown progress.
