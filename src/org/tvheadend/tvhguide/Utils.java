@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -309,6 +310,20 @@ public class Utils {
             seriesInfo.setText(s);
             seriesInfo.setVisibility(View.VISIBLE);
             seriesInfo.invalidate();
+        }
+    }
+
+    public static void setContentType(TextView contentType, int ct) {
+        
+        final SparseArray<String> ctl = TVHGuideApplication.getContentTypes(contentType.getContext());
+        String type = ctl.get(ct, "");
+        if (contentType.length() > 0) {
+            contentType.setText(type);
+            contentType.setVisibility(TextView.VISIBLE);
+            contentType.invalidate();
+        }
+        else {
+            contentType.setVisibility(TextView.GONE);
         }
     }
 }

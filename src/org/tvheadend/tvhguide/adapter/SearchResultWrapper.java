@@ -1,7 +1,6 @@
 package org.tvheadend.tvhguide.adapter;
 
 import org.tvheadend.tvhguide.R;
-import org.tvheadend.tvhguide.TVHGuideApplication;
 import org.tvheadend.tvhguide.Utils;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
@@ -9,14 +8,12 @@ import org.tvheadend.tvhguide.model.Program;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SearchResultWrapper {
 
-    private SparseArray<String> contentTypeList;
     Context ctx;
     TextView title;
     TextView channel;
@@ -42,8 +39,6 @@ public class SearchResultWrapper {
         duration = (TextView) base.findViewById(R.id.sr_duration);
         icon = (ImageView) base.findViewById(R.id.sr_icon);
         state = (ImageView) base.findViewById(R.id.sr_state);
-        
-        contentTypeList = TVHGuideApplication.getContentTypes(ctx);
     }
 
     public void repaint(Program p) {
@@ -74,17 +69,8 @@ public class SearchResultWrapper {
 
         description.setText(p.description);
         description.invalidate();
-
-        String ct = contentTypeList.get(p.contentType, "");
-        if (contentType.length() > 0) {
-            contentType.setText(ct);
-            contentType.setVisibility(TextView.VISIBLE);
-        }
-        else {
-            contentType.setVisibility(TextView.GONE);
-        }
-        contentType.invalidate();
-
+        
+        Utils.setContentType(contentType, p.contentType);
         Utils.setDate(date, p.start);
         Utils.setTime(time, p.start, p.stop);
     }
