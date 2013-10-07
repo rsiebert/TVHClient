@@ -19,7 +19,9 @@ import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class Utils {
 
@@ -277,5 +279,20 @@ public class Utils {
             }
             state.invalidate();
         }
+    }
+
+    public static void setDuration(TextView duration, Date start, Date stop) {
+        
+        // Get the start and end times so we can show them
+        // and calculate the duration. Then show the duration in minutes
+        double durationTime = (stop.getTime() - start.getTime());
+        durationTime = (durationTime / 1000 / 60);
+        if (durationTime > 0) {
+            duration.setText(duration.getContext().getString(R.string.ch_minutes, (int) durationTime));
+        }
+        else {
+            duration.setVisibility(View.GONE);
+        }
+        duration.invalidate();
     }
 }

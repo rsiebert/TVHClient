@@ -78,17 +78,8 @@ public class SearchResultWrapper {
         }
         seriesInfo.invalidate();
 
-        // Get the start and end times so we can show them
-        // and calculate the duration. Then show the duration in minutes
-        double durationTime = (p.stop.getTime() - p.start.getTime());
-        durationTime = (durationTime / 1000 / 60);
-        if (durationTime > 0) {
-            duration.setText(duration.getContext().getString(R.string.ch_minutes, (int) durationTime));
-        }
-        else {
-            duration.setVisibility(View.GONE);
-        }
-        duration.invalidate();
+        // Show the duration in minutes
+        Utils.setDuration(duration, p.start, p.stop);
 
         description.setText(p.description);
         description.invalidate();

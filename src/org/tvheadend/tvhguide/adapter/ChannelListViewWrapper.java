@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.tvheadend.tvhguide.R;
+import org.tvheadend.tvhguide.Utils;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
@@ -107,8 +108,7 @@ public class ChannelListViewWrapper {
             progress.setVisibility(View.VISIBLE);
             
             // Show the duration in minutes
-            durationTime = (durationTime / 1000 / 60);
-            duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
+            Utils.setDuration(duration, p.start, p.stop);
             
         } else {
             // The channel does not provide program data. Hide the progress bar
