@@ -67,7 +67,7 @@
     <string name="pr_part">Part</string>
     <string name="pr_airing">Airing</string>
     <string name="pr_star_rating">Rating</string>
-    <string name="pr_content_type">Type</string>
+    <string name="pr_content_type">Content Type</string>
     <string name="pr_series_info">Part</string>
     
     <string-array name="pr_content_type0">
@@ -234,7 +234,6 @@
     <string name="duration">Duration</string>
     <string name="airing">Airing</string>
     <string name="rating">Rating</string>
-    <string name="type">Type</string>
     <string name="content_type">Content Type</string>
     <string name="series_information">Series Information</string>
 

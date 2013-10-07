@@ -222,7 +222,6 @@
     <string name="duration">Dauer</string>
     <string name="airing">Ausstrahlung</string>
     <string name="rating">Bewertung</string>
-    <string name="type">Kategorie</string>
     <string name="content_type">Genre</string>
     <string name="series_information">Serien Information</string>
 </resources>
