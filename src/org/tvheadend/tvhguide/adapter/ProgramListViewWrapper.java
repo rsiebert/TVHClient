@@ -27,15 +27,15 @@ public class ProgramListViewWrapper {
     public ProgramListViewWrapper(Activity context, View base) {
         
         ctx = context;
-        title = (TextView) base.findViewById(R.id.pr_title);
-        description = (TextView) base.findViewById(R.id.pr_desc);
-        seriesInfo = (TextView) base.findViewById(R.id.pr_series_info);
+        title = (TextView) base.findViewById(R.id.title);
+        description = (TextView) base.findViewById(R.id.desc);
+        seriesInfo = (TextView) base.findViewById(R.id.series_info);
         
-        time = (TextView) base.findViewById(R.id.pr_time);
-        date = (TextView) base.findViewById(R.id.pr_date);
-        duration = (TextView) base.findViewById(R.id.pr_duration);
+        time = (TextView) base.findViewById(R.id.time);
+        date = (TextView) base.findViewById(R.id.date);
+        duration = (TextView) base.findViewById(R.id.duration);
 
-        state = (ImageView) base.findViewById(R.id.pr_state);
+        state = (ImageView) base.findViewById(R.id.state);
         contentTypes = TVHGuideApplication.getContentTypes(context);
     }
 

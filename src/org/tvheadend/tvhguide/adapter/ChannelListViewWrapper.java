@@ -46,7 +46,7 @@ public class ChannelListViewWrapper {
     private ProgressBar progress;
 
     public ChannelListViewWrapper(View base) {
-        name = (TextView) base.findViewById(R.id.name);
+        name = (TextView) base.findViewById(R.id.channel);
         title = (TextView) base.findViewById(R.id.title);
         progress = (ProgressBar) base.findViewById(R.id.progress);
         duration = (TextView) base.findViewById(R.id.duration);

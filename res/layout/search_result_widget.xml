@@ -5,7 +5,7 @@
     android:orientation="horizontal" >
 
     <ImageView
-        android:id="@+id/sr_icon"
+        android:id="@+id/icon"
         android:layout_width="54dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
@@ -26,7 +26,7 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/sr_title"
+                android:id="@+id/title"
                 style="?attr/TitleFont"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             </TextView>
 
             <ImageView
-                android:id="@+id/sr_state"
+                android:id="@+id/state"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:contentDescription="@string/status_icon"
@@ -50,7 +50,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/sr_content_type"
+            android:id="@+id/content_type"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -66,7 +66,7 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/sr_channel"
+                android:id="@+id/channel"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -76,7 +76,7 @@
                 android:text="@string/channel" />
 
             <TextView
-                android:id="@+id/sr_duration"
+                android:id="@+id/duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -93,7 +93,7 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/sr_date"
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -103,7 +103,7 @@
                 android:text="@string/date" />
 
             <TextView
-                android:id="@+id/sr_time"
+                android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -115,7 +115,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/sr_series_info"
+            android:id="@+id/series_info"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -126,7 +126,7 @@
             android:text="@string/series_information" />
 
         <TextView
-            android:id="@+id/sr_desc"
+            android:id="@+id/description"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:maxLines="3"

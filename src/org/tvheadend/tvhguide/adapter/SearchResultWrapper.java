@@ -26,16 +26,16 @@ public class SearchResultWrapper {
     public SearchResultWrapper(Context context, View base) {
         ctx = context;
 
-        title = (TextView) base.findViewById(R.id.sr_title);
-        channel = (TextView) base.findViewById(R.id.sr_channel);
-        description = (TextView) base.findViewById(R.id.sr_desc);
-        contentType = (TextView) base.findViewById(R.id.sr_content_type);
-        seriesInfo = (TextView) base.findViewById(R.id.sr_series_info);
-        time = (TextView) base.findViewById(R.id.sr_time);
-        date = (TextView) base.findViewById(R.id.sr_date);
-        duration = (TextView) base.findViewById(R.id.sr_duration);
-        icon = (ImageView) base.findViewById(R.id.sr_icon);
-        state = (ImageView) base.findViewById(R.id.sr_state);
+        title = (TextView) base.findViewById(R.id.title);
+        channel = (TextView) base.findViewById(R.id.channel);
+        description = (TextView) base.findViewById(R.id.desc);
+        contentType = (TextView) base.findViewById(R.id.content_type);
+        seriesInfo = (TextView) base.findViewById(R.id.series_info);
+        time = (TextView) base.findViewById(R.id.time);
+        date = (TextView) base.findViewById(R.id.date);
+        duration = (TextView) base.findViewById(R.id.duration);
+        icon = (ImageView) base.findViewById(R.id.icon);
+        state = (ImageView) base.findViewById(R.id.state);
     }
 
     public void repaint(Program p) {

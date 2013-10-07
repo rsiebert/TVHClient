@@ -10,7 +10,7 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/pr_title"
+            android:id="@+id/title"
             style="?attr/TitleFont"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
         </TextView>
 
         <ImageView
-            android:id="@+id/pr_state"
+            android:id="@+id/state"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:contentDescription="@string/status_icon"
@@ -34,7 +34,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/pr_series_info"
+        android:id="@+id/series_info"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -50,7 +50,7 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/pr_date"
+            android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
@@ -60,7 +60,7 @@
             android:text="@string/date" />
 
         <TextView
-            android:id="@+id/pr_time"
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
@@ -70,7 +70,7 @@
             android:text="@string/time" />
 
         <TextView
-            android:id="@+id/pr_duration"
+            android:id="@+id/duration"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
@@ -83,7 +83,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/pr_desc"
+        android:id="@+id/description"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:maxLines="3"

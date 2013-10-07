@@ -15,17 +15,17 @@ public class RecordingListViewWrapper {
     TextView time;
     TextView date;
     TextView duration;
-    TextView desc;
+    TextView description;
     ImageView icon;
 
     public RecordingListViewWrapper(View base) {
-        title = (TextView) base.findViewById(R.id.rec_title);
-        channel = (TextView) base.findViewById(R.id.rec_channel);
-        time = (TextView) base.findViewById(R.id.rec_time);
-        date = (TextView) base.findViewById(R.id.rec_date);
-        duration = (TextView) base.findViewById(R.id.rec_duration);
-        desc = (TextView) base.findViewById(R.id.rec_desc);
-        icon = (ImageView) base.findViewById(R.id.rec_icon);
+        title = (TextView) base.findViewById(R.id.title);
+        channel = (TextView) base.findViewById(R.id.channel);
+        time = (TextView) base.findViewById(R.id.time);
+        date = (TextView) base.findViewById(R.id.date);
+        duration = (TextView) base.findViewById(R.id.duration);
+        description = (TextView) base.findViewById(R.id.description);
+        icon = (ImageView) base.findViewById(R.id.icon);
     }
 
     public void repaint(Recording rec) {
@@ -39,6 +39,6 @@ public class RecordingListViewWrapper {
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
         
-        Utils.setDescription(null, desc, rec.description);
+        Utils.setDescription(null, description, rec.description);
     }
 }
