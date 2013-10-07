@@ -42,26 +42,9 @@ public class ProgramListViewWrapper {
 
     public void repaint(Program p) {
         title.setText(p.title);
-
-        if (p.recording == null) {
-            state.setImageDrawable(null);
-        } else if (p.recording.error != null) {
-            state.setImageResource(R.drawable.ic_error_small);
-        } else if ("completed".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_success_small);
-        } else if ("invalid".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_error_small);
-        } else if ("missed".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_error_small);
-        } else if ("recording".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_rec_small);
-        } else if ("scheduled".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_schedule_small);
-        } else {
-            state.setImageDrawable(null);
-        }
-
         title.invalidate();
+        
+        Utils.setState(state, p.recording);
 
         String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);
         if(s.length() == 0) {

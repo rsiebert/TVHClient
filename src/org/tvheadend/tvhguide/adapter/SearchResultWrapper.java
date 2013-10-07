@@ -66,30 +66,7 @@ public class SearchResultWrapper {
         title.setText(p.title);
         title.invalidate();
 
-        if (p.recording == null) {
-            state.setImageDrawable(null);
-        }
-        else if (p.recording.error != null) {
-            state.setImageResource(R.drawable.ic_error_small);
-        }
-        else if ("completed".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_success_small);
-        }
-        else if ("invalid".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_error_small);
-        }
-        else if ("missed".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_error_small);
-        }
-        else if ("recording".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_rec_small);
-        }
-        else if ("scheduled".equals(p.recording.state)) {
-            state.setImageResource(R.drawable.ic_schedule_small);
-        }
-        else {
-            state.setImageDrawable(null);
-        }
+        Utils.setState(state, p.recording);
 
         // Set the series information if available
         String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);

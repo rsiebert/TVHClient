@@ -19,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 public class Utils {
 
@@ -238,6 +239,43 @@ public class Utils {
             // Show the delete and play menu
             recordMenuItem.setVisible(false);
             recordCancelMenuItem.setVisible(false);
+        }
+    }
+
+    public static void setState(ImageView state, Recording recording) {
+
+        // If no recording was given hide the state icon
+        if (recording == null) {
+            state.setImageDrawable(null);
+            state.setVisibility(ImageView.GONE);
+        }
+        else {
+            // Show the state icon and set the correct image
+            state.setVisibility(ImageView.VISIBLE);
+
+            if (recording.error != null) {
+                state.setImageResource(R.drawable.ic_error_small);
+            }
+            else if ("completed".equals(recording.state)) {
+                state.setImageResource(R.drawable.ic_success_small);
+            }
+            else if ("invalid".equals(recording.state)) {
+                state.setImageResource(R.drawable.ic_error_small);
+            }
+            else if ("missed".equals(recording.state)) {
+                state.setImageResource(R.drawable.ic_error_small);
+            }
+            else if ("recording".equals(recording.state)) {
+                state.setImageResource(R.drawable.ic_rec_small);
+            }
+            else if ("scheduled".equals(recording.state)) {
+                state.setImageResource(R.drawable.ic_schedule_small);
+            }
+            else {
+                state.setImageDrawable(null);
+                state.setVisibility(ImageView.GONE);
+            }
+            state.invalidate();
         }
     }
 }
