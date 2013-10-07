@@ -365,8 +365,8 @@ public class Utils {
 
     /**
      * 
+     * @param seriesInfoLabel
      * @param seriesInfo
-     * @param seriesInfo2 
      * @param si
      */
     public static void setSeriesInfo(TextView seriesInfoLabel, TextView seriesInfo, final SeriesInfo si) {
@@ -386,6 +386,7 @@ public class Utils {
 
     /**
      * 
+     * @param contentTypeLabel
      * @param contentType
      * @param ct
      */
@@ -432,6 +433,7 @@ public class Utils {
 
     /**
      * 
+     * @param descriptionLabel
      * @param description
      * @param desc
      */
