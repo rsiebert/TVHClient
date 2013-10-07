@@ -40,23 +40,18 @@ public class SearchResultWrapper {
 
     public void repaint(Program p) {
 
-        Utils.setChannelIcon(icon, channel, p.channel);
-
         title.setText(p.title);
         title.invalidate();
 
+        Utils.setChannelIcon(icon, channel, p.channel);
         Utils.setState(state, p.recording);
 
-        Utils.setSeriesInfo(seriesInfo, p.seriesInfo);
-        
-        // Show the duration in minutes
-        Utils.setDuration(duration, p.start, p.stop);
-
-        description.setText(p.description);
-        description.invalidate();
-        
-        Utils.setContentType(contentType, p.contentType);
         Utils.setDate(date, p.start);
         Utils.setTime(time, p.start, p.stop);
+        Utils.setDuration(duration, p.start, p.stop);
+
+        Utils.setDescription(description, p.description);        
+        Utils.setContentType(contentType, p.contentType);
+        Utils.setSeriesInfo(seriesInfo, p.seriesInfo);
     }
 }
