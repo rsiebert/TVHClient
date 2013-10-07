@@ -37,11 +37,8 @@ public class RecordingListViewWrapper {
         
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
-        
-        desc.setText(rec.description);
-        desc.invalidate();
-        
-        // Show the duration in minutes
         Utils.setDuration(duration, rec.start, rec.stop);
+        
+        Utils.setDescription(desc, rec.description);
     }
 }

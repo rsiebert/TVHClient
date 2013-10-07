@@ -40,26 +40,17 @@ public class ProgramListViewWrapper {
     }
 
     public void repaint(Program p) {
+
         title.setText(p.title);
         title.invalidate();
         
         Utils.setState(state, p.recording);
 
-        Utils.setSeriesInfo(seriesInfo, p.seriesInfo);
-        
-        if (p.description.length() > 0) {
-            description.setText(p.description);
-            description.setVisibility(TextView.VISIBLE);
-        } else {
-            description.setText("");
-            description.setVisibility(TextView.GONE);
-        }
-        description.invalidate();
-
         Utils.setDate(date, p.start);
         Utils.setTime(time, p.start, p.stop);
-        
-        // Show the duration in minutes
         Utils.setDuration(duration, p.start, p.stop);
+        
+        Utils.setDescription(description, p.description);
+        Utils.setSeriesInfo(seriesInfo, p.seriesInfo);
     }
 }

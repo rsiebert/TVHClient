@@ -415,4 +415,21 @@ public class Utils {
         icon.invalidate();
         channel.invalidate();
     }
+
+    /**
+     * 
+     * @param description
+     * @param desc
+     */
+    public static void setDescription(TextView description, final String desc) {
+        
+        if (desc.length() > 0) {
+            description.setText(desc);
+            description.setVisibility(TextView.VISIBLE);
+        } else {
+            description.setText("");
+            description.setVisibility(TextView.GONE);
+        }
+        description.invalidate();
+    }
 }
