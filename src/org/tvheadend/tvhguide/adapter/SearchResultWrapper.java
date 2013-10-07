@@ -28,7 +28,7 @@ public class SearchResultWrapper {
 
         title = (TextView) base.findViewById(R.id.title);
         channel = (TextView) base.findViewById(R.id.channel);
-        description = (TextView) base.findViewById(R.id.desc);
+        description = (TextView) base.findViewById(R.id.description);
         contentType = (TextView) base.findViewById(R.id.content_type);
         seriesInfo = (TextView) base.findViewById(R.id.series_info);
         time = (TextView) base.findViewById(R.id.time);

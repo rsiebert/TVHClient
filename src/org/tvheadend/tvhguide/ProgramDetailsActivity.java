@@ -90,8 +90,8 @@ public class ProgramDetailsActivity extends Activity implements HTSListener {
         ImageView state = (ImageView) findViewById(R.id.state);
         TextView summaryLabel = (TextView) findViewById(R.id.summary_label);
         TextView summary = (TextView) findViewById(R.id.summary);
-        TextView descLabel = (TextView) findViewById(R.id.desc_label);
-        TextView desc = (TextView) findViewById(R.id.desc);
+        TextView descLabel = (TextView) findViewById(R.id.description_label);
+        TextView desc = (TextView) findViewById(R.id.description);
         TextView channelName = (TextView) findViewById(R.id.channel);
         TextView date = (TextView) findViewById(R.id.date);
         TextView time = (TextView) findViewById(R.id.time);

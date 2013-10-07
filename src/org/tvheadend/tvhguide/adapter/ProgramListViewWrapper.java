@@ -28,7 +28,7 @@ public class ProgramListViewWrapper {
         
         ctx = context;
         title = (TextView) base.findViewById(R.id.title);
-        description = (TextView) base.findViewById(R.id.desc);
+        description = (TextView) base.findViewById(R.id.description);
         seriesInfo = (TextView) base.findViewById(R.id.series_info);
         
         time = (TextView) base.findViewById(R.id.time);
