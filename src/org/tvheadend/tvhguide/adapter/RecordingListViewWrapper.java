@@ -51,8 +51,7 @@ public class RecordingListViewWrapper {
         }
         channel.invalidate();
 
-        date.setText(Utils.getStartDate(date.getContext(), rec.start));
-        date.invalidate();
+        Utils.setDate(date, rec.start);
 
         desc.setText(rec.description);
         desc.invalidate();

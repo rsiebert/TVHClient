@@ -93,9 +93,7 @@ public class SearchResultWrapper {
         }
         contentType.invalidate();
 
-        date.setText(Utils.getStartDate(ctx, p.start));
-        date.invalidate();
-
+        Utils.setDate(date, p.start);
         Utils.setTime(time, p.start, p.stop);
     }
 }

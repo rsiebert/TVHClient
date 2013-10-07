@@ -62,9 +62,7 @@ public class ProgramListViewWrapper {
         }
         description.invalidate();
 
-        date.setText(Utils.getStartDate(date.getContext(), p.start));
-        date.invalidate();
-
+        Utils.setDate(date, p.start);
         Utils.setTime(time, p.start, p.stop);
         
         // Show the duration in minutes
