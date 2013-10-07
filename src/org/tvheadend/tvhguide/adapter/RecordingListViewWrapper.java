@@ -7,7 +7,6 @@ import org.tvheadend.tvhguide.model.Recording;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,27 +49,15 @@ public class RecordingListViewWrapper {
             channel.setText("");
         }
         channel.invalidate();
-
+        icon.invalidate();
+        
         Utils.setDate(date, rec.start);
-
+        Utils.setTime(time, rec.start, rec.stop);
+        
         desc.setText(rec.description);
         desc.invalidate();
-
-        icon.invalidate();
-
-        time.setText(
-                DateFormat.getTimeFormat(time.getContext()).format(rec.start)
-                + " - "
-                + DateFormat.getTimeFormat(time.getContext()).format(rec.stop));
-        time.invalidate();
-        
-        // Get the start and end times so we can show them 
-        // and calculate the duration.
-        double durationTime = (rec.stop.getTime() - rec.start.getTime());
         
         // Show the duration in minutes
-        durationTime = (durationTime / 1000 / 60);
-        duration.setText(duration.getContext().getString(R.string.ch_minutes, (int)durationTime));
-        duration.invalidate();
+        Utils.setDuration(duration, rec.start, rec.stop);
     }
 }
