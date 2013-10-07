@@ -119,8 +119,6 @@ public class ChannelListViewWrapper {
         icon.invalidate();
         name.invalidate();
         progress.invalidate();
-        time.invalidate();
         title.invalidate();
-        duration.invalidate();
     }
 }
