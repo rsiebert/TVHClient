@@ -371,8 +371,9 @@ public class Utils {
      */
     public static void setSeriesInfo(TextView seriesInfoLabel, TextView seriesInfo, final SeriesInfo si) {
 
-        final String s = Utils.buildSeriesInfoString(seriesInfo.getContext(), si);
         if (seriesInfo != null) {
+            final String s = Utils.buildSeriesInfoString(seriesInfo.getContext(), si);
+            
             seriesInfo.setText(s);
             seriesInfo.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
             seriesInfo.invalidate();
@@ -390,10 +391,11 @@ public class Utils {
      */
     public static void setContentType(TextView contentTypeLabel, TextView contentType, final int ct) {
         
-        final SparseArray<String> ctl = TVHGuideApplication.getContentTypes(contentType.getContext());
-        final String type = ctl.get(ct, "");
-        
         if (contentType != null) {
+            
+            final SparseArray<String> ctl = TVHGuideApplication.getContentTypes(contentType.getContext());
+            final String type = ctl.get(ct, "");
+            
             contentType.setText(type);
             contentType.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
             contentType.invalidate();
