@@ -13,12 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class ProgrammeListAdapter extends ArrayAdapter<Program> {
+public class ProgramListAdapter extends ArrayAdapter<Program> {
 
     Activity context;
     List<Program> list;
 
-    public ProgrammeListAdapter(Activity context, List<Program> list) {
+    public ProgramListAdapter(Activity context, List<Program> list) {
         super(context, R.layout.program_list_widget, list);
         this.context = context;
         this.list = list;

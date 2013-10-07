@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.tvheadend.tvhguide.adapter.ProgrammeListAdapter;
+import org.tvheadend.tvhguide.adapter.ProgramListAdapter;
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
@@ -52,7 +52,7 @@ import android.widget.ListView;
  */
 public class ProgramListActivity extends Activity implements HTSListener {
 
-    private ProgrammeListAdapter prAdapter;
+    private ProgramListAdapter prAdapter;
     private List<Program> prList;
     private ListView prListView;
     private Channel channel;
@@ -115,7 +115,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
         });
         
         prList = new ArrayList<Program>();
-        prAdapter = new ProgrammeListAdapter(this, prList);
+        prAdapter = new ProgramListAdapter(this, prList);
         prListView.setAdapter(prAdapter);
 
         registerForContextMenu(prListView);
