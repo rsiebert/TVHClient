@@ -412,11 +412,11 @@ public class Utils {
      */
     public static void setChannelIcon(ImageView icon, final TextView channel, final Channel ch) {
 
-        // Get the setting if the channel icon shall be shown or not
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
-        final boolean showIcons = prefs.getBoolean("showIconPref", false);
-
         if (icon != null) {
+            // Get the setting if the channel icon shall be shown or not
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
+            final boolean showIcons = prefs.getBoolean("showIconPref", false);
+    
             icon.setImageBitmap((ch != null) ? ch.iconBitmap : null);
             icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
             icon.invalidate();
