@@ -45,14 +45,8 @@ public class ProgramListViewWrapper {
         
         Utils.setState(state, p.recording);
 
-        String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);
-        if(s.length() == 0) {
-            s = contentTypes.get(p.contentType);
-        }
+        Utils.setSeriesInfo(seriesInfo, p.seriesInfo);
         
-        seriesInfo.setText(s);
-        seriesInfo.invalidate();
-
         if (p.description.length() > 0) {
             description.setText(p.description);
             description.setVisibility(TextView.VISIBLE);

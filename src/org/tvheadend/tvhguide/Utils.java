@@ -298,4 +298,17 @@ public class Utils {
         date.setText(dateText);
         date.invalidate();
     }
+
+    public static void setSeriesInfo(TextView seriesInfo, SeriesInfo si) {
+
+        String s = Utils.buildSeriesInfoString(seriesInfo.getContext(), si);
+        if (s.length() == 0) {
+            seriesInfo.setVisibility(View.GONE);
+        }
+        else {
+            seriesInfo.setText(s);
+            seriesInfo.setVisibility(View.VISIBLE);
+            seriesInfo.invalidate();
+        }
+    }
 }

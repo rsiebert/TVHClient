@@ -67,16 +67,8 @@ public class SearchResultWrapper {
 
         Utils.setState(state, p.recording);
 
-        // Set the series information if available
-        String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);
-        if (s.length() == 0) {
-            seriesInfo.setVisibility(View.GONE);
-        }
-        else {
-            seriesInfo.setText(s);
-        }
-        seriesInfo.invalidate();
-
+        Utils.setSeriesInfo(seriesInfo, p.seriesInfo);
+        
         // Show the duration in minutes
         Utils.setDuration(duration, p.start, p.stop);
 
