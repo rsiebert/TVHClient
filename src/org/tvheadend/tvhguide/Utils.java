@@ -32,13 +32,23 @@ public class Utils {
     private static final int twoDays = 1000 * 3600 * 24 * 2;
     private static final int sixDays = 1000 * 3600 * 24 * 6;
     
-    public static int getThemeId(Context context) {
+    /**
+     * 
+     * @param context
+     * @return
+     */
+    public static int getThemeId(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean theme = prefs.getBoolean("lightThemePref", false);
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
     }
 
-    public static boolean showChannelIcons(Context context) {
+    /**
+     * 
+     * @param context
+     * @return
+     */
+    public static boolean showChannelIcons(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean showIcons = prefs.getBoolean("showIconPref", false);
         return showIcons;
@@ -49,15 +59,15 @@ public class Utils {
      * @param info
      * @return
      */
-    public static String buildSeriesInfoString(Context context, SeriesInfo info) {
+    public static String buildSeriesInfoString(final Context context, final SeriesInfo info) {
         
         if (info.onScreen != null && info.onScreen.length() > 0)
             return info.onScreen;
 
         String s = "";
-        String season = context.getResources().getString(string.pr_season);
-        String episode = context.getResources().getString(string.pr_episode);
-        String part = context.getResources().getString(string.pr_part);
+        final String season = context.getResources().getString(string.pr_season);
+        final String episode = context.getResources().getString(string.pr_episode);
+        final String part = context.getResources().getString(string.pr_part);
         
         if(info.onScreen.length() > 0) {
             return info.onScreen;
@@ -91,7 +101,7 @@ public class Utils {
      * @param context
      * @param force
      */
-    public static void connect(Context context, boolean force) {
+    public static void connect(final Context context, final boolean force) {
 
         // Get the preferences object and retrieve the login credentials
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -118,7 +128,7 @@ public class Utils {
      * @param context
      * @param id
      */
-    public static void removeProgram(final Context context, long id) {
+    public static void removeProgram(final Context context, final long id) {
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_DELETE);
         intent.putExtra("id", id);
@@ -138,14 +148,25 @@ public class Utils {
         context.startService(intent);
     }
 
-    public static void cancelProgram(final Context context, long id) {
+    /**
+     * 
+     * @param context
+     * @param id
+     */
+    public static void cancelProgram(final Context context, final long id) {
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_CANCEL);
         intent.putExtra("id", id);
         context.startService(intent);
     }
 
-    public static void recordProgram(final Context context, long id, long channelId) {
+    /**
+     * 
+     * @param context
+     * @param id
+     * @param channelId
+     */
+    public static void recordProgram(final Context context, final long id, final long channelId) {
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_ADD);
         intent.putExtra("eventId", id);
@@ -153,6 +174,11 @@ public class Utils {
         context.startService(intent);
     }
 
+    /**
+     * 
+     * @param menu
+     * @param program
+     */
     public static void setProgramMenu(final Menu menu, final Program program) {
         
         MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
@@ -188,6 +214,11 @@ public class Utils {
         }
     }
 
+    /**
+     * 
+     * @param menu
+     * @param rec
+     */
     public static void setRecordingMenu(final Menu menu, final Recording rec) {
 
         // Get the menu items so they can be shown 
@@ -214,7 +245,12 @@ public class Utils {
         }
     }
 
-    public static void setState(ImageView state, Recording recording) {
+    /**
+     * 
+     * @param state
+     * @param recording
+     */
+    public static void setState(ImageView state, final Recording recording) {
 
         // If no recording was given hide the state icon
         if (recording == null) {
@@ -251,7 +287,13 @@ public class Utils {
         }
     }
 
-    public static void setDuration(TextView duration, Date start, Date stop) {
+    /**
+     * 
+     * @param duration
+     * @param start
+     * @param stop
+     */
+    public static void setDuration(TextView duration, final Date start, final Date stop) {
         
         // Get the start and end times so we can show them
         // and calculate the duration. Then show the duration in minutes
@@ -266,14 +308,25 @@ public class Utils {
         duration.invalidate();
     }
 
-    public static void setTime(TextView time, Date start, Date stop) {
+    /**
+     * 
+     * @param time
+     * @param start
+     * @param stop
+     */
+    public static void setTime(TextView time, final Date start, final Date stop) {
         final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
         final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
         time.setText(startTime + " - " + endTime);
         time.invalidate();
     }
 
-    public static void setDate(TextView date, Date start) {
+    /**
+     * 
+     * @param date
+     * @param start
+     */
+    public static void setDate(TextView date, final Date start) {
         String dateText = "";
 
         if (DateUtils.isToday(start.getTime())) {
@@ -301,42 +354,58 @@ public class Utils {
         date.invalidate();
     }
 
-    public static void setSeriesInfo(TextView seriesInfo, SeriesInfo si) {
+    /**
+     * 
+     * @param seriesInfo
+     * @param si
+     */
+    public static void setSeriesInfo(TextView seriesInfo, final SeriesInfo si) {
 
-        String s = Utils.buildSeriesInfoString(seriesInfo.getContext(), si);
+        final String s = Utils.buildSeriesInfoString(seriesInfo.getContext(), si);
         if (s.length() == 0) {
             seriesInfo.setVisibility(View.GONE);
         }
         else {
             seriesInfo.setText(s);
             seriesInfo.setVisibility(View.VISIBLE);
-            seriesInfo.invalidate();
         }
+        seriesInfo.invalidate();
     }
 
-    public static void setContentType(TextView contentType, int ct) {
+    /**
+     * 
+     * @param contentType
+     * @param ct
+     */
+    public static void setContentType(TextView contentType, final int ct) {
         
         final SparseArray<String> ctl = TVHGuideApplication.getContentTypes(contentType.getContext());
-        String type = ctl.get(ct, "");
+        final String type = ctl.get(ct, "");
         if (contentType.length() > 0) {
             contentType.setText(type);
             contentType.setVisibility(TextView.VISIBLE);
-            contentType.invalidate();
         }
         else {
             contentType.setVisibility(TextView.GONE);
         }
+        contentType.invalidate();
     }
 
-    public static void setChannelIcon(ImageView icon, TextView channel, Channel ch) {
+    /**
+     * 
+     * @param icon
+     * @param channel
+     * @param ch
+     */
+    public static void setChannelIcon(ImageView icon, final TextView channel, final Channel ch) {
+
         // Get the setting if the channel icon shall be shown or not
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
-        Boolean showIcons = prefs.getBoolean("showIconPref", false);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
+        final boolean showIcons = prefs.getBoolean("showIconPref", false);
 
         if (ch != null) {
             icon.setImageBitmap(ch.iconBitmap);
             channel.setText(ch.name);
-            channel.invalidate();
         } else {
             icon.setImageBitmap(null);
             channel.setText("");
@@ -344,5 +413,6 @@ public class Utils {
 
         icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
         icon.invalidate();
+        channel.invalidate();
     }
 }
