@@ -39,6 +39,6 @@ public class RecordingListViewWrapper {
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
         
-        Utils.setDescription(desc, rec.description);
+        Utils.setDescription(null, desc, rec.description);
     }
 }

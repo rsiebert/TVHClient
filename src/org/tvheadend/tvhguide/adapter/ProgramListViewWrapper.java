@@ -50,7 +50,7 @@ public class ProgramListViewWrapper {
         Utils.setTime(time, p.start, p.stop);
         Utils.setDuration(duration, p.start, p.stop);
         
-        Utils.setDescription(description, p.description);
-        Utils.setSeriesInfo(seriesInfo, p.seriesInfo);
+        Utils.setDescription(null, description, p.description);
+        Utils.setSeriesInfo(null, seriesInfo, p.seriesInfo);
     }
 }

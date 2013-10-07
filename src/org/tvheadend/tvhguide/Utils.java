@@ -69,7 +69,7 @@ public class Utils {
         final String episode = context.getResources().getString(string.pr_episode);
         final String part = context.getResources().getString(string.pr_part);
         
-        if(info.onScreen.length() > 0) {
+        if (info.onScreen.length() > 0) {
             return info.onScreen;
         }
         
@@ -89,7 +89,7 @@ public class Utils {
             s += String.format("%s %d", part.toLowerCase(Locale.getDefault()), info.partNumber);
         }
 
-        if(s.length() > 0) {
+        if (s.length() > 0) {
             s = s.substring(0,1).toUpperCase(Locale.getDefault()) + s.substring(1);
         }
         
@@ -129,6 +129,7 @@ public class Utils {
      * @param id
      */
     public static void removeProgram(final Context context, final long id) {
+
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_DELETE);
         intent.putExtra("id", id);
@@ -252,6 +253,9 @@ public class Utils {
      */
     public static void setState(ImageView state, final Recording recording) {
 
+        if (state == null)
+            return;
+
         // If no recording was given hide the state icon
         if (recording == null) {
             state.setImageDrawable(null);
@@ -295,17 +299,16 @@ public class Utils {
      */
     public static void setDuration(TextView duration, final Date start, final Date stop) {
         
-        // Get the start and end times so we can show them
-        // and calculate the duration. Then show the duration in minutes
-        double durationTime = (stop.getTime() - start.getTime());
-        durationTime = (durationTime / 1000 / 60);
-        if (durationTime > 0) {
+        if (duration != null) {
+            // Get the start and end times so we can show them
+            // and calculate the duration. Then show the duration in minutes
+            final double durationTime = ((stop.getTime() - start.getTime()) / 1000 / 60);
+            final String s = duration.getContext().getString(R.string.ch_minutes, (int) durationTime);
+
             duration.setText(duration.getContext().getString(R.string.ch_minutes, (int) durationTime));
+            duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
+            duration.invalidate();
         }
-        else {
-            duration.setVisibility(View.GONE);
-        }
-        duration.invalidate();
     }
 
     /**
@@ -315,10 +318,13 @@ public class Utils {
      * @param stop
      */
     public static void setTime(TextView time, final Date start, final Date stop) {
-        final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
-        final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
-        time.setText(startTime + " - " + endTime);
-        time.invalidate();
+        
+        if (time != null) {
+            final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
+            final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
+            time.setText(startTime + " - " + endTime);
+            time.invalidate();
+        }
     }
 
     /**
@@ -327,8 +333,11 @@ public class Utils {
      * @param start
      */
     public static void setDate(TextView date, final Date start) {
-        String dateText = "";
 
+        if (date == null)
+            return;
+
+        String dateText = "";
         if (DateUtils.isToday(start.getTime())) {
             // Show the string today
             dateText = date.getContext().getString(R.string.today);
@@ -357,19 +366,21 @@ public class Utils {
     /**
      * 
      * @param seriesInfo
+     * @param seriesInfo2 
      * @param si
      */
-    public static void setSeriesInfo(TextView seriesInfo, final SeriesInfo si) {
+    public static void setSeriesInfo(TextView seriesInfoLabel, TextView seriesInfo, final SeriesInfo si) {
 
         final String s = Utils.buildSeriesInfoString(seriesInfo.getContext(), si);
-        if (s.length() == 0) {
-            seriesInfo.setVisibility(View.GONE);
-        }
-        else {
+        if (seriesInfo != null) {
             seriesInfo.setText(s);
-            seriesInfo.setVisibility(View.VISIBLE);
+            seriesInfo.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
+            seriesInfo.invalidate();
+            
+            if (seriesInfoLabel != null) {
+                seriesInfoLabel.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
+            }
         }
-        seriesInfo.invalidate();
     }
 
     /**
@@ -377,18 +388,20 @@ public class Utils {
      * @param contentType
      * @param ct
      */
-    public static void setContentType(TextView contentType, final int ct) {
+    public static void setContentType(TextView contentTypeLabel, TextView contentType, final int ct) {
         
         final SparseArray<String> ctl = TVHGuideApplication.getContentTypes(contentType.getContext());
         final String type = ctl.get(ct, "");
-        if (contentType.length() > 0) {
+        
+        if (contentType != null) {
             contentType.setText(type);
-            contentType.setVisibility(TextView.VISIBLE);
+            contentType.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
+            contentType.invalidate();
+            
+            if (contentTypeLabel != null) {
+                contentTypeLabel.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
+            }
         }
-        else {
-            contentType.setVisibility(TextView.GONE);
-        }
-        contentType.invalidate();
     }
 
     /**
@@ -403,17 +416,16 @@ public class Utils {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
         final boolean showIcons = prefs.getBoolean("showIconPref", false);
 
-        if (ch != null) {
-            icon.setImageBitmap(ch.iconBitmap);
-            channel.setText(ch.name);
-        } else {
-            icon.setImageBitmap(null);
-            channel.setText("");
+        if (icon != null) {
+            icon.setImageBitmap((ch != null) ? ch.iconBitmap : null);
+            icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
+            icon.invalidate();
         }
 
-        icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-        icon.invalidate();
-        channel.invalidate();
+        if (channel != null) {
+            channel.setText((ch != null) ? ch.name : "");
+            channel.invalidate();
+        }
     }
 
     /**
@@ -421,15 +433,16 @@ public class Utils {
      * @param description
      * @param desc
      */
-    public static void setDescription(TextView description, final String desc) {
+    public static void setDescription(TextView descriptionLabel, TextView description, final String desc) {
         
-        if (desc.length() > 0) {
+        if (description != null) {
             description.setText(desc);
-            description.setVisibility(TextView.VISIBLE);
-        } else {
-            description.setText("");
-            description.setVisibility(TextView.GONE);
+            description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
+            description.invalidate();
+            
+            if (descriptionLabel != null) {
+                descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
+            }
         }
-        description.invalidate();
     }
 }
