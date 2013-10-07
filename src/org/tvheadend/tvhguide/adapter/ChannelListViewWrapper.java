@@ -26,9 +26,6 @@ import org.tvheadend.tvhguide.Utils;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
-import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -45,6 +42,7 @@ public class ChannelListViewWrapper {
     private TextView time;
     private TextView duration;
     private ImageView icon;
+    private ImageView state;
     private ProgressBar progress;
 
     public ChannelListViewWrapper(View base) {
@@ -54,29 +52,24 @@ public class ChannelListViewWrapper {
         duration = (TextView) base.findViewById(R.id.duration);
         time = (TextView) base.findViewById(R.id.time);
         icon = (ImageView) base.findViewById(R.id.icon);
+        state = (ImageView) base.findViewById(R.id.state);
     }
 
     public void repaint(Channel channel) {
         
-        // Set some default values
-        time.setText("");
-        title.setText("");
+        // Set the initial values
         progress.setProgress(0);
-        duration.setText("");
         name.setText(channel.name);
-        
-        // Show the icons if the user has activated this in the settings
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
-        Boolean showIcons = prefs.getBoolean("showIconPref", false);
-        icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-        icon.setBackground(new BitmapDrawable(icon.getResources(), channel.iconBitmap));
+        Utils.setChannelIcon(icon, null, channel);
 
         // Add a small recording icon above the channel icon, if we are
         // recording the current program.
         if (channel.isRecording()) {
-            icon.setImageResource(R.drawable.ic_rec_small);
+            state.setImageResource(R.drawable.ic_rec_small);
+            state.setVisibility(View.VISIBLE);
         } else {
-            icon.setImageDrawable(null);
+            state.setImageDrawable(null);
+            state.setVisibility(View.GONE);
         }
         
         // Get the iterator so we can check the channel status 
@@ -87,14 +80,15 @@ public class ChannelListViewWrapper {
         if (!channel.isTransmitting && it.hasNext()) {
             title.setText(R.string.ch_no_transmission);
         } else if (it.hasNext()) {
+            
+            // Get the program that is currently running
+            // and set all the available values
             Program p = it.next();
             title.setText(p.title);
-            
             Utils.setTime(time, p.start, p.stop);
-            
+            Utils.setDuration(duration, p.start, p.stop);
 
-            // Get the start and end times so we can show them 
-            // and calculate the duration and current shown progress.
+            // Get the start and end times to calculate the progress.
             double durationTime = (p.stop.getTime() - p.start.getTime());
             double elapsedTime = new Date().getTime() - p.start.getTime();
             
@@ -104,10 +98,7 @@ public class ChannelListViewWrapper {
                 percent = elapsedTime / durationTime;
             progress.setProgress((int) Math.floor(percent * 100));
             progress.setVisibility(View.VISIBLE);
-            
-            // Show the duration in minutes
-            Utils.setDuration(duration, p.start, p.stop);
-            
+
         } else {
             // The channel does not provide program data. Hide the progress bar
             // and clear the time and duration texts. These two items provide 
@@ -116,6 +107,7 @@ public class ChannelListViewWrapper {
             progress.setVisibility(View.GONE);
         }
 
+        // Invalidate the views that have been set above
         icon.invalidate();
         name.invalidate();
         progress.invalidate();

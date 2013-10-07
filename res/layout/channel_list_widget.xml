@@ -8,11 +8,11 @@
         android:id="@+id/icon"
         android:layout_width="54dp"
         android:layout_height="54dp"
+        android:layout_marginBottom="3dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="6dp"
-        android:layout_marginBottom="3dp"
-		android:contentDescription="@string/channel_icon"
+        android:contentDescription="@string/channel_icon"
         android:scaleType="fitCenter" />
 
     <LinearLayout
@@ -20,15 +20,34 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/name"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="3dp"
-            android:text="@string/channel"
-            style="?attr/TitleFont" />
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/name"
+                style="?attr/TitleFont"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="3dp"
+                android:text="@string/channel" >
+            </TextView>
+
+            <ImageView
+                android:id="@+id/state"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/status_icon"
+                android:paddingBottom="2dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="6dp"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/title"
@@ -74,17 +93,16 @@
                 android:text="@string/duration"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
-        
+
         <ProgressBar
             android:id="@+id/progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="8dip"
+            android:layout_marginBottom="12dp"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="12dp" />
-
+            android:layout_marginTop="3dp" />
     </LinearLayout>
 
 </LinearLayout>
