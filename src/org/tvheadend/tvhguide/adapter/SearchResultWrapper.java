@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class SearchResultWrapper {
 
-    private SparseArray<String> contentTypes;
+    private SparseArray<String> contentTypeList;
     Context ctx;
     TextView title;
     TextView channel;
@@ -25,33 +25,46 @@ public class SearchResultWrapper {
     TextView date;
     TextView duration;
     TextView description;
+    TextView contentType;
+    TextView seriesInfo;
     ImageView icon;
     ImageView state;
 
     public SearchResultWrapper(Context context, View base) {
         ctx = context;
+
         title = (TextView) base.findViewById(R.id.sr_title);
         channel = (TextView) base.findViewById(R.id.sr_channel);
         description = (TextView) base.findViewById(R.id.sr_desc);
-
+        contentType = (TextView) base.findViewById(R.id.sr_content_type);
+        seriesInfo = (TextView) base.findViewById(R.id.sr_series_info);
         time = (TextView) base.findViewById(R.id.sr_time);
         date = (TextView) base.findViewById(R.id.sr_date);
         duration = (TextView) base.findViewById(R.id.sr_duration);
         icon = (ImageView) base.findViewById(R.id.sr_icon);
         state = (ImageView) base.findViewById(R.id.sr_state);
         
-        contentTypes = TVHGuideApplication.getContentTypes(ctx);
+        contentTypeList = TVHGuideApplication.getContentTypes(ctx);
     }
 
     public void repaint(Program p) {
-        Channel ch = p.channel;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
         Boolean showIcons = prefs.getBoolean("showIconPref", false);
         icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-        icon.setImageBitmap(ch.iconBitmap);
 
+        Channel ch = p.channel;
+        if(ch != null) {
+            icon.setImageBitmap(ch.iconBitmap);
+            channel.setText(ch.name);
+        } else {
+            icon.setImageBitmap(null);
+            channel.setText("");
+        }
+        channel.invalidate();
+        
         title.setText(p.title);
+        title.invalidate();
 
         if (p.recording == null) {
             state.setImageDrawable(null);
@@ -78,12 +91,15 @@ public class SearchResultWrapper {
             state.setImageDrawable(null);
         }
 
-        title.invalidate();
-
+        // Set the series information if available
         String s = Utils.buildSeriesInfoString(ctx, p.seriesInfo);
         if (s.length() == 0) {
-            s = p.description;
+            seriesInfo.setVisibility(View.GONE);
         }
+        else {
+            seriesInfo.setText(s);
+        }
+        seriesInfo.invalidate();
 
         // Get the start and end times so we can show them
         // and calculate the duration. Then show the duration in minutes
@@ -97,17 +113,18 @@ public class SearchResultWrapper {
         }
         duration.invalidate();
 
-        description.setText(s);
+        description.setText(p.description);
         description.invalidate();
 
-        String contentType = contentTypes.get(p.contentType, "");
+        String ct = contentTypeList.get(p.contentType, "");
         if (contentType.length() > 0) {
-            channel.setText(ch.name + " (" + contentType + ")");
+            contentType.setText(ct);
+            contentType.setVisibility(TextView.VISIBLE);
         }
         else {
-            channel.setText(ch.name);
+            contentType.setVisibility(TextView.GONE);
         }
-        channel.invalidate();
+        contentType.invalidate();
 
         date.setText(Utils.getStartDate(ctx, p.start));
         date.invalidate();
