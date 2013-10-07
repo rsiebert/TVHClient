@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSService;
+import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.SeriesInfo;
@@ -325,5 +326,23 @@ public class Utils {
         else {
             contentType.setVisibility(TextView.GONE);
         }
+    }
+
+    public static void setChannelIcon(ImageView icon, TextView channel, Channel ch) {
+        // Get the setting if the channel icon shall be shown or not
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
+        Boolean showIcons = prefs.getBoolean("showIconPref", false);
+
+        if (ch != null) {
+            icon.setImageBitmap(ch.iconBitmap);
+            channel.setText(ch.name);
+            channel.invalidate();
+        } else {
+            icon.setImageBitmap(null);
+            channel.setText("");
+        }
+
+        icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
+        icon.invalidate();
     }
 }

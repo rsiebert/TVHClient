@@ -2,12 +2,9 @@ package org.tvheadend.tvhguide.adapter;
 
 import org.tvheadend.tvhguide.R;
 import org.tvheadend.tvhguide.Utils;
-import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,20 +40,8 @@ public class SearchResultWrapper {
 
     public void repaint(Program p) {
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
-        Boolean showIcons = prefs.getBoolean("showIconPref", false);
-        icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
+        Utils.setChannelIcon(icon, channel, p.channel);
 
-        Channel ch = p.channel;
-        if(ch != null) {
-            icon.setImageBitmap(ch.iconBitmap);
-            channel.setText(ch.name);
-        } else {
-            icon.setImageBitmap(null);
-            channel.setText("");
-        }
-        channel.invalidate();
-        
         title.setText(p.title);
         title.invalidate();
 
