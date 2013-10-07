@@ -18,9 +18,6 @@
  */
 package org.tvheadend.tvhguide;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
@@ -30,8 +27,6 @@ import org.tvheadend.tvhguide.model.Program;
 import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.text.format.DateFormat;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -111,78 +106,18 @@ public class ProgramDetailsActivity extends Activity implements HTSListener {
         
         // Set the values
         title.setText(program.title);
-
-        // Show if the program is being recorded or scheduled
-        if (program.recording == null) {
-            state.setImageDrawable(null);
-        } else if (program.recording.error != null) {
-            state.setImageResource(R.drawable.ic_error_small);
-        } else if ("completed".equals(program.recording.state)) {
-            state.setImageResource(R.drawable.ic_success_small);
-        } else if ("invalid".equals(program.recording.state)) {
-            state.setImageResource(R.drawable.ic_error_small);
-        } else if ("missed".equals(program.recording.state)) {
-            state.setImageResource(R.drawable.ic_error_small);
-        } else if ("recording".equals(program.recording.state)) {
-            state.setImageResource(R.drawable.ic_rec_small);
-        } else if ("scheduled".equals(program.recording.state)) {
-            state.setImageResource(R.drawable.ic_schedule_small);
-        } else {
-            state.setImageDrawable(null);
-        }
-        
-        // Set the date, the channel name, the time and duration
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-        date.setText(sdf.format(program.start.getTime()));
         channelName.setText(channel.name);
-
-        time.setText(DateFormat.getTimeFormat(time.getContext()).format(program.start) + " - "
-                + DateFormat.getTimeFormat(time.getContext()).format(program.stop));
         
-        // Get the start and end times so we can show them 
-        // and calculate the duration. Then show the duration in minutes
-        double durationTime = (program.stop.getTime() - program.start.getTime());
-        durationTime = (durationTime / 1000 / 60);
-        if (durationTime > 0) {
-            duration.setText("(" + duration.getContext().getString(R.string.ch_minutes, (int)durationTime) + ")");
-        } else {
-            duration.setVisibility(View.GONE);
-        }
+        Utils.setState(state, program.recording);
+        Utils.setDate(date, program.start);
+        Utils.setTime(time, program.start, program.stop);
+        Utils.setDuration(duration, program.start, program.stop);
 
-        // Show the program summary if it exists and only of no description is available 
-        if (program.summary.length() == 0 && program.description.length() > 0) { 
-        	summaryLabel.setVisibility(View.GONE);
-        	summary.setVisibility(View.GONE);
-        } else {
-            summary.setText(program.summary);
-        }
-        
-        // Show the description to the program
-        if (program.description.length() == 0) {
-            descLabel.setVisibility(View.GONE);
-            desc.setVisibility(View.GONE);
-        } else {
-            desc.setText(program.description);
-        }
+        Utils.setDescription(summaryLabel, summary, program.summary);
+        Utils.setDescription(descLabel, desc, program.description);
 
-        // Show the series information
-        String s = Utils.buildSeriesInfoString(this, program.seriesInfo);
-        if (s.length() == 0) {
-            seriesInfoLabel.setVisibility(View.GONE);
-            seriesInfo.setVisibility(View.GONE);
-        } else {
-            seriesInfo.setText(s);
-        }
-        
-        // Show the content type or category of the program
-        SparseArray<String> contentTypes = TVHGuideApplication.getContentTypes(this);
-        s = contentTypes.get(program.contentType, "");
-        if(s.length() == 0) {
-            contentTypeLabel.setVisibility(View.GONE);
-            contentType.setVisibility(View.GONE);
-        } else {
-            contentType.setText(s);
-        }
+        Utils.setSeriesInfo(seriesInfoLabel, seriesInfo, program.seriesInfo);
+        Utils.setContentType(contentTypeLabel, contentType, program.contentType);
         
         // Show the rating information as starts
         if (program.starRating < 0) {

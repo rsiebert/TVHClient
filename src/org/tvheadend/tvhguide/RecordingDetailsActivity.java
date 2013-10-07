@@ -18,9 +18,6 @@
  */
 package org.tvheadend.tvhguide;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
@@ -30,10 +27,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 /**
@@ -89,40 +84,14 @@ public class RecordingDetailsActivity extends Activity implements HTSListener {
 
         // Set the values
         title.setText(rec.title);
-
-        // Set the date, the channel name, the time and duration
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-        date.setText(sdf.format(rec.start.getTime()));
         channelName.setText(rec.channel.name);
-
-        time.setText(DateFormat.getTimeFormat(time.getContext()).format(rec.start) + " - "
-                + DateFormat.getTimeFormat(time.getContext()).format(rec.stop));
         
-        // Get the start and end times so we can show them 
-        // and calculate the duration. Then show the duration in minutes
-        double durationTime = (rec.stop.getTime() - rec.start.getTime());
-        durationTime = (durationTime / 1000 / 60);
-        if (durationTime > 0) {
-            duration.setText("(" + duration.getContext().getString(R.string.ch_minutes, (int)durationTime) + ")");
-        } else {
-            duration.setVisibility(View.GONE);
-        }
+        Utils.setDate(date, rec.start);
+        Utils.setTime(time, rec.start, rec.stop);
+        Utils.setDuration(duration, rec.start, rec.stop);
 
-        // Show the program summary if it exists and only of no description is available 
-        if (rec.summary.length() == 0 && rec.description.length() > 0) { 
-            summaryLabel.setVisibility(View.GONE);
-            summary.setVisibility(View.GONE);
-        } else {
-            summary.setText(rec.summary);
-        }
-        
-        // Show the description to the program
-        if (rec.description.length() == 0) {
-            descLabel.setVisibility(View.GONE);
-            desc.setVisibility(View.GONE);
-        } else {
-            desc.setText(rec.description);
-        }
+        Utils.setDescription(summaryLabel, summary, rec.summary);
+        Utils.setDescription(descLabel, desc, rec.description);
     }
 
     @Override
