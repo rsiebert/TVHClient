@@ -8,9 +8,4 @@
 - Add method header comments
 - When clicking on search this channel context menu, show this text in the search bar
 - Show the amount of results in the search view
-
-- Use bottom padding in the search view when no description is available
-- Use bottom padding in the recording list view when no description is available
-- Use bottom padding in the program list view when no description is available
-- Honor confirmation dialog when deleting a recording
 - Use custom settings for channel and recordings
