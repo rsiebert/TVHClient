@@ -4,14 +4,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.tvheadend.tvhguide.R;
+import org.tvheadend.tvhguide.Utils;
 import org.tvheadend.tvhguide.model.Program;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class ProgramListAdapter extends ArrayAdapter<Program> {
 
@@ -26,52 +27,72 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
 
     public void sort() {
         sort(new Comparator<Program>() {
-
             public int compare(Program x, Program y) {
                 return x.compareTo(y);
             }
         });
     }
 
-    public void updateView(ListView listView, Program programme) {
-        for (int i = 0; i < listView.getChildCount(); i++) {
-            View view = listView.getChildAt(i);
-            int pos = listView.getPositionForView(view);
-            Program pr = (Program) listView.getItemAtPosition(pos);
-
-            if (view.getTag() == null || pr == null) {
-                continue;
-            }
-
-            if (programme.id != pr.id) {
-                continue;
-            }
-
-            ProgramListViewWrapper wrapper = (ProgramListViewWrapper) view.getTag();
-            wrapper.repaint(programme);
-            break;
-        }
+    static class ViewHolder {
+        public TextView title;
+        public TextView time;
+        public TextView date;
+        public TextView duration;
+        public TextView description;
+        public TextView seriesInfo;
+        public TextView contentType;
+        public ImageView state;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        ProgramListViewWrapper wrapper = null;
+        View view = convertView;
+        ViewHolder holder = null;
 
-        if (row == null) {
-            LayoutInflater inflater = context.getLayoutInflater();
-            row = inflater.inflate(R.layout.program_list_widget, null, false);
+        if (view == null) {
+            view = context.getLayoutInflater().inflate(R.layout.program_list_widget, null);
 
-            wrapper = new ProgramListViewWrapper(context, row);
-            row.setTag(wrapper);
-
-        } else {
-            wrapper = (ProgramListViewWrapper) row.getTag();
+            holder = new ViewHolder();
+            holder.title = (TextView) view.findViewById(R.id.title);
+            holder.state = (ImageView) view.findViewById(R.id.state);
+            holder.time = (TextView) view.findViewById(R.id.time);
+            holder.date = (TextView) view.findViewById(R.id.date);
+            holder.duration = (TextView) view.findViewById(R.id.duration);
+            holder.seriesInfo = (TextView) view.findViewById(R.id.series_info);
+            holder.contentType = (TextView) view.findViewById(R.id.content_type);
+            holder.description = (TextView) view.findViewById(R.id.description);
+            view.setTag(holder);
+        }
+        else {
+            holder = (ViewHolder) view.getTag();
         }
 
+        // Get the program and assign all the values
         Program p = getItem(position);
-        wrapper.repaint(p);
-        return row;
+        if (p != null) {
+            holder.title.setText(p.title);
+            Utils.setState(holder.state, p.recording);
+            Utils.setDate(holder.date, p.start);
+            Utils.setTime(holder.time, p.start, p.stop);
+            Utils.setDuration(holder.duration, p.start, p.stop);
+            Utils.setDescription(null, holder.description, p.description);
+            Utils.setContentType(null, holder.contentType, p.contentType);
+            Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);
+        }
+        return view;
+    }
+
+    public void update(Program p) {
+        int length = list.size();
+
+        // Go through the list of programs and find the
+        // one with the same id. If its been found, replace it.
+        for (int i = 0; i < length; ++i) {
+            if (list.get(i).id == p.id) {
+                list.set(i, p);
+                break;
+            }
+        }
     }
 
     public List<Program> getList() {

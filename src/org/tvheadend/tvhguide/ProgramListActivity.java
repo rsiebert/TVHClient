@@ -270,8 +270,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
             // An existing program has been deleted
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Program p = (Program) obj;
-                    prAdapter.remove(p);
+                    prAdapter.remove((Program) obj);
                     prAdapter.notifyDataSetChanged();
                     getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                 }
@@ -280,8 +279,8 @@ public class ProgramListActivity extends Activity implements HTSListener {
             // An existing program has been updated
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Program p = (Program) obj;
-                    prAdapter.updateView(prListView, p);
+                    prAdapter.update((Program) obj);
+                    prAdapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
@@ -291,7 +290,8 @@ public class ProgramListActivity extends Activity implements HTSListener {
                     Recording rec = (Recording) obj;
                     for (Program p : prAdapter.getList()) {
                         if (rec == p.recording) {
-                            prAdapter.updateView(prListView, p);
+                            prAdapter.update(p);
+                            prAdapter.notifyDataSetChanged();
                             return;
                         }
                     }
