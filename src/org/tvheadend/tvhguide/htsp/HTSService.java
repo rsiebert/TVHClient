@@ -39,7 +39,9 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -73,6 +75,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     public static final String ACTION_UNSUBSCRIBE = "org.me.tvhguide.htsp.UNSUBSCRIBE";
     public static final String ACTION_FEEDBACK = "org.me.tvhguide.htsp.FEEDBACK";
     public static final String ACTION_GET_TICKET = "org.me.tvhguide.htsp.GET_TICKET";
+    public static final String ACTION_GET_DISC_STATUS = "org.me.tvhguide.htsp.GET_DISC_STATUS";
     private static final String TAG = "HTSService";
     private ScheduledExecutorService execService;
     private HTSConnection connection;
@@ -170,8 +173,9 @@ public class HTSService extends Service implements HTSConnectionListener {
             } else if (rec != null) {
                 getTicket(rec);
             }
+        } else if (ACTION_GET_DISC_STATUS.equals(intent.getAction())) {
+        	getDiscSpace();
         }
-
 
         return START_NOT_STICKY;
     }
@@ -892,6 +896,22 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
                     app.addTicket(new HttpTicket(path, ticket));
                 }
+            }
+        });
+    }
+    
+    private void getDiscSpace() {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getDiskSpace");
+        connection.sendMessage(request, new HTSResponseHandler() {
+
+            public void handleResponse(HTSMessage response) {
+            	Map<String, String> list = new HashMap<String, String>();
+            	list.put("freediskspace", response.getString("freediskspace", null));
+                list.put("totaldiskspace", response.getString("totaldiskspace", null));
+                
+                TVHGuideApplication app = (TVHGuideApplication) getApplication();
+                app.updateStatus(list);
             }
         });
     }
