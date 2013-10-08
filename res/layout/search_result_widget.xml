@@ -125,15 +125,22 @@
             android:singleLine="true"
             android:text="@string/series_information" />
 
-        <TextView
-            android:id="@+id/description"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:maxLines="3"
-            android:paddingBottom="12dp"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:text="@string/description" />
+            android:orientation="vertical"
+            android:paddingBottom="12dp" >
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:paddingBottom="0dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/description" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

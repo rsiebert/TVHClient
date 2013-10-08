@@ -8,10 +8,10 @@
         android:id="@+id/icon"
         android:layout_width="54dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="6dp"
-        android:layout_marginBottom="3dp"
         android:contentDescription="@string/channel_icon"
         android:scaleType="fitCenter" />
 
@@ -85,15 +85,22 @@
                 android:text="@string/time" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/description"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:maxLines="3"
-            android:paddingBottom="12dp"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:text="@string/description" />
+            android:orientation="vertical"
+            android:paddingBottom="12dp" >
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:paddingBottom="0dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/description" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
