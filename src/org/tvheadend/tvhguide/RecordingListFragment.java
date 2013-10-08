@@ -246,8 +246,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    Recording rec = (Recording) obj;
-                    recAdapter.updateView(recListView, rec);
+                    recAdapter.update((Recording) obj);
+                    recAdapter.notifyDataSetChanged();
                 }
             });
         }

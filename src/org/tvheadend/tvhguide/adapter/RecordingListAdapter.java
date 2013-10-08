@@ -4,14 +4,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.tvheadend.tvhguide.R;
+import org.tvheadend.tvhguide.Utils;
 import org.tvheadend.tvhguide.model.Recording;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
@@ -26,52 +27,67 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
     public void sort() {
         sort(new Comparator<Recording>() {
-
             public int compare(Recording x, Recording y) {
                 return x.compareTo(y);
             }
         });
     }
 
-    public void updateView(ListView listView, Recording recording) {
-        for (int i = 0; i < listView.getChildCount(); i++) {
-            View view = listView.getChildAt(i);
-            int pos = listView.getPositionForView(view);
-            Recording rec = (Recording) listView.getItemAtPosition(pos);
-
-            if (view.getTag() == null || rec == null) {
-                continue;
-            }
-
-            if (recording.id != rec.id) {
-                continue;
-            }
-
-            RecordingListViewWrapper wrapper = (RecordingListViewWrapper) view.getTag();
-            wrapper.repaint(recording);
-            break;
-        }
+    static class ViewHolder {
+        public ImageView icon;
+        public TextView title;
+        public TextView channel;
+        public TextView time;
+        public TextView date;
+        public TextView duration;
+        public TextView description;
     }
-
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        RecordingListViewWrapper wrapper = null;
+        View view = convertView;
+        ViewHolder holder = null;
 
-        Recording rec = list.get(position);
+        if (view == null) {
+            view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, null);
 
-        if (row == null) {
-            LayoutInflater inflater = context.getLayoutInflater();
-            row = inflater.inflate(R.layout.recording_list_widget, null, false);
-
-            wrapper = new RecordingListViewWrapper(row);
-            row.setTag(wrapper);
-
-        } else {
-            wrapper = (RecordingListViewWrapper) row.getTag();
+            holder = new ViewHolder();
+            holder.icon = (ImageView) view.findViewById(R.id.icon);
+            holder.title = (TextView) view.findViewById(R.id.title);
+            holder.channel = (TextView) view.findViewById(R.id.channel);
+            holder.time = (TextView) view.findViewById(R.id.time);
+            holder.date = (TextView) view.findViewById(R.id.date);
+            holder.duration = (TextView) view.findViewById(R.id.duration);
+            holder.description = (TextView) view.findViewById(R.id.description);
+            view.setTag(holder);
+        }
+        else {
+            holder = (ViewHolder) view.getTag();
         }
 
-        wrapper.repaint(rec);
-        return row;
+        // Get the program and assign all the values
+        Recording rec = getItem(position);
+        if (rec != null) {
+            holder.title.setText(rec.title);
+            Utils.setChannelIcon(holder.icon, holder.channel, rec.channel);
+            Utils.setDate(holder.date, rec.start);
+            Utils.setTime(holder.time, rec.start, rec.stop);
+            Utils.setDuration(holder.duration, rec.start, rec.stop);
+            Utils.setDescription(null, holder.description, rec.description);
+        }
+        return view;
+    }
+
+    public void update(Recording rec) {
+        int length = list.size();
+
+        // Go through the list of programs and find the
+        // one with the same id. If its been found, replace it.
+        for (int i = 0; i < length; ++i) {
+            if (list.get(i).id == rec.id) {
+                list.set(i, rec);
+                break;
+            }
+        }
     }
 }
