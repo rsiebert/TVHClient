@@ -145,8 +145,6 @@ public class Utils {
                 // NOP
             }
         }).show();
-        
-        context.startService(intent);
     }
 
     /**
