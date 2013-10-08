@@ -18,6 +18,14 @@
  */
 package org.tvheadend.tvhguide;
 
+import java.util.Date;
+
+import org.tvheadend.tvhguide.htsp.HTSListener;
+import org.tvheadend.tvhguide.htsp.HTSService;
+import org.tvheadend.tvhguide.model.Channel;
+import org.tvheadend.tvhguide.model.HttpTicket;
+import org.tvheadend.tvhguide.model.Stream;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,19 +37,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.*;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import java.util.Date;
-import org.tvheadend.tvhguide.R;
-import org.tvheadend.tvhguide.adapter.ChannelListViewWrapper;
-import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
-import org.tvheadend.tvhguide.model.Channel;
-import org.tvheadend.tvhguide.model.HttpTicket;
-import org.tvheadend.tvhguide.model.Stream;
 
 /**
  *
@@ -104,7 +108,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
         LayoutInflater inflater = getLayoutInflater();
         View v = inflater.inflate(R.layout.channel_list_widget, null, false);
-        final ChannelListViewWrapper w = new ChannelListViewWrapper(v);
+//        final ChannelListViewWrapper w = new ChannelListViewWrapper(v);
         footerOverlay.addView(v);
 
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.pl_frame);
@@ -115,7 +119,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
                     headerOverlay.setVisibility(LinearLayout.INVISIBLE);
                     footerOverlay.setVisibility(LinearLayout.INVISIBLE);
                 } else {
-                    w.repaint(channel);
+//                    w.repaint(channel);
                     clock.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
                     clock.setText(DateFormat.getTimeFormat(clock.getContext()).format(new Date()));
                     headerOverlay.setVisibility(LinearLayout.VISIBLE);
