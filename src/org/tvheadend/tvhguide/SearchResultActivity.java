@@ -246,8 +246,8 @@ public class SearchResultActivity extends Activity implements HTSListener {
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Program p = (Program) obj;
-                    srAdapter.updateView(searchListView, p);
+                    srAdapter.update((Program) obj);
+                    srAdapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_DVR_UPDATE)) {
@@ -256,7 +256,8 @@ public class SearchResultActivity extends Activity implements HTSListener {
                     Recording rec = (Recording) obj;
                     for (Program p : srAdapter.getList()) {
                         if (rec == p.recording) {
-                            srAdapter.updateView(searchListView, p);
+                            srAdapter.update((Program) obj);
+                            srAdapter.notifyDataSetChanged();
                             return;
                         }
                     }
