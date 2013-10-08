@@ -1,7 +1,6 @@
 package org.tvheadend.tvhguide;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
@@ -62,17 +61,28 @@ public class StatusFragment extends Fragment implements HTSListener {
 
 	@Override
 	public void onMessage(final String action, final Object obj) {
-		
-		if (action.equals(TVHGuideApplication.ACTION_STATUS)) {
+        if (action.equals(TVHGuideApplication.ACTION_STATUS)) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
                 	
                 	@SuppressWarnings("unchecked")
-					HashMap<String, String> list = (HashMap<String, String>) obj;
-                	
-                	// Set the values
-                	freediscspace.setText(list.get("freediscspace"));
-                	totaldiscspace.setText(list.get("totaldiscspace"));
+                    Map<String, String> list = (Map<String, String>) obj;
+
+                    try {
+                        // Get the disc space values and convert them to megabytes
+                        long free = Long.parseLong(list.get("freediskspace"));
+                        long total = Long.parseLong(list.get("totaldiskspace"));
+
+                        freediscspace.setText((free / 1000000000) + " MB free");
+                        totaldiscspace.setText((total / 1000000000) + " MB total");
+                    }
+                    catch (Exception e) {
+                        Log.i("StatusFragment", e.toString());
+
+                        // Set the default values
+                        freediscspace.setText("unknown");
+                        totaldiscspace.setText("unknown");
+                    }
                 }
             });
         }
