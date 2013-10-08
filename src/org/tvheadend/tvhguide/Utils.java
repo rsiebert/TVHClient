@@ -287,7 +287,6 @@ public class Utils {
                 state.setImageDrawable(null);
                 state.setVisibility(ImageView.GONE);
             }
-            state.invalidate();
         }
     }
 
@@ -307,7 +306,6 @@ public class Utils {
 
             duration.setText(duration.getContext().getString(R.string.ch_minutes, (int) durationTime));
             duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
-            duration.invalidate();
         }
     }
 
@@ -323,7 +321,6 @@ public class Utils {
             final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
             final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
             time.setText(startTime + " - " + endTime);
-            time.invalidate();
         }
     }
 
@@ -360,7 +357,6 @@ public class Utils {
             dateText = sdf.format(start.getTime());
         }
         date.setText(dateText);
-        date.invalidate();
     }
 
     /**
@@ -376,7 +372,6 @@ public class Utils {
             
             seriesInfo.setText(s);
             seriesInfo.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
-            seriesInfo.invalidate();
             
             if (seriesInfoLabel != null) {
                 seriesInfoLabel.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
@@ -399,7 +394,6 @@ public class Utils {
             
             contentType.setText(type);
             contentType.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
-            contentType.invalidate();
             
             if (contentTypeLabel != null) {
                 contentTypeLabel.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
@@ -422,12 +416,10 @@ public class Utils {
     
             icon.setImageBitmap((ch != null) ? ch.iconBitmap : null);
             icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
-            icon.invalidate();
         }
 
         if (channel != null) {
             channel.setText((ch != null) ? ch.name : "");
-            channel.invalidate();
         }
     }
 
@@ -442,7 +434,6 @@ public class Utils {
         if (description != null) {
             description.setText(desc);
             description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
-            description.invalidate();
             
             if (descriptionLabel != null) {
                 descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
