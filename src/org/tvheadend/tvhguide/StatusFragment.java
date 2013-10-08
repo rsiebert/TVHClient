@@ -1,6 +1,5 @@
 package org.tvheadend.tvhguide;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
@@ -73,15 +72,15 @@ public class StatusFragment extends Fragment implements HTSListener {
                         long free = Long.parseLong(list.get("freediskspace"));
                         long total = Long.parseLong(list.get("totaldiskspace"));
 
-                        freediscspace.setText((free / 1000000000) + " MB free");
-                        totaldiscspace.setText((total / 1000000000) + " MB total");
+                        freediscspace.setText((free / 1000000000) + " MB " + getString(R.string.available));
+                        totaldiscspace.setText((total / 1000000000) + " MB " + getString(R.string.total));
                     }
                     catch (Exception e) {
                         Log.i("StatusFragment", e.toString());
 
                         // Set the default values
-                        freediscspace.setText("unknown");
-                        totaldiscspace.setText("unknown");
+                        freediscspace.setText(getString(R.string.unknown));
+                        totaldiscspace.setText(getString(R.string.unknown));
                     }
                 }
             });
