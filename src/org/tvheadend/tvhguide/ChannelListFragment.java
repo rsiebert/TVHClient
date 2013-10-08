@@ -278,8 +278,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    Channel channel = (Channel) obj;
-                    chAdapter.updateView(channelListView, channel);
+                    chAdapter.update((Channel) obj);
+                    chAdapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_ADD)) {
