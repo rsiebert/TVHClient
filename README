@@ -1,6 +1,13 @@
 TVHGuide is an Android application that enables you to interact with a
-TVHeadend server. It allows you to browse programme listings, schedual
+TVHeadend server. It allows you to browse program listings, schedule
 recordings and search the EPG. Depending on your hardware, it can also
 do some actual playback of either live TV or a recorded stream. 
 
 It is licensed under the GPLv3 (see COPYING).
+
+Here are some screenshots of the application:
+
+![Channels](/screenshot_channels.png "Channels")
+![Programs](/screenshot_programs.png "Programs")
+![Recordings](/screenshot_recordings.png "Recordings")
+![Program Details](/screenshot_program_details.png "Program Details")
