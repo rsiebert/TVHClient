@@ -46,6 +46,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         app.addListener(this);
 
+        // Get the information about the disc space
         Intent intent = new Intent(getActivity(), HTSService.class);
         intent.setAction(HTSService.ACTION_GET_DISC_STATUS);
         getActivity().startService(intent);
@@ -62,29 +63,31 @@ public class StatusFragment extends Fragment implements HTSListener {
 	public void onMessage(final String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_STATUS)) {
             getActivity().runOnUiThread(new Runnable() {
+                @SuppressWarnings("unchecked")
                 public void run() {
-                	
-                	@SuppressWarnings("unchecked")
-                    Map<String, String> list = (Map<String, String>) obj;
-
-                    try {
-                        // Get the disc space values and convert them to megabytes
-                        long free = Long.parseLong(list.get("freediskspace"));
-                        long total = Long.parseLong(list.get("totaldiskspace"));
-
-                        freediscspace.setText((free / 1000000000) + " MB " + getString(R.string.available));
-                        totaldiscspace.setText((total / 1000000000) + " MB " + getString(R.string.total));
-                    }
-                    catch (Exception e) {
-                        Log.i("StatusFragment", e.toString());
-
-                        // Set the default values
-                        freediscspace.setText(getString(R.string.unknown));
-                        totaldiscspace.setText(getString(R.string.unknown));
-                    }
+                	showDiscSpace((Map<String, String>) obj);
                 }
             });
         }
 	}
+
+    protected void showDiscSpace(Map<String, String> obj) {
+        Map<String, String> list = obj;
+        try {
+            // Get the disc space values and convert them to megabytes
+            long free = Long.parseLong(list.get("freediskspace"));
+            long total = Long.parseLong(list.get("totaldiskspace"));
+
+            freediscspace.setText((free / 1000000000) + " MB " + getString(R.string.available));
+            totaldiscspace.setText((total / 1000000000) + " MB " + getString(R.string.total));
+        }
+        catch (Exception e) {
+            Log.i("StatusFragment", e.toString());
+
+            // Set the default values
+            freediscspace.setText(getString(R.string.unknown));
+            totaldiscspace.setText(getString(R.string.unknown));
+        }
+    }
 
 }
