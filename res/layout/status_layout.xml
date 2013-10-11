@@ -5,6 +5,64 @@
     android:orientation="vertical" >
 
     <TextView
+        android:id="@+id/channel_label"
+        style="?attr/TitleFont"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:text="@string/channels" />
+
+    <TextView
+        android:id="@+id/channels"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:singleLine="true"
+        android:text="@string/channels" />
+
+    <TextView
+        android:id="@+id/recording_label"
+        style="?attr/TitleFont"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp"
+        android:text="@string/recordings" />
+
+    <TextView
+        android:id="@+id/completed_recordings"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:singleLine="true"
+        android:text="@string/completed" />
+
+    <TextView
+        android:id="@+id/upcoming_recordings"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:singleLine="true"
+        android:text="@string/upcoming" />
+
+    <TextView
+        android:id="@+id/failed_recordings"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:singleLine="true"
+        android:text="@string/failed" />
+
+    <TextView
         android:id="@+id/discspace_label"
         style="?attr/TitleFont"
         android:layout_width="fill_parent"
@@ -12,8 +70,7 @@
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
         android:paddingTop="3dp"
-        android:text="@string/disc_space" >
-    </TextView>
+        android:text="@string/disc_space" />
 
     <TextView
         android:id="@+id/total_discspace"
@@ -21,14 +78,17 @@
         android:layout_height="wrap_content"
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:text="@string/disc_space" />
 
     <TextView
         android:id="@+id/free_discspace"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:text="@string/disc_space" />
 
 </LinearLayout>
