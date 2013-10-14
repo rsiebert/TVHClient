@@ -201,6 +201,10 @@ public class ProgramDetailsActivity extends Activity implements HTSListener {
         // An existing program has been updated, this is valid for all menu options. 
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
             invalidateOptionsMenu();
+            
+            // Update the status icon
+            ImageView state = (ImageView) findViewById(R.id.state);
+            Utils.setState(state, program.recording);
         } 
     }
 }
