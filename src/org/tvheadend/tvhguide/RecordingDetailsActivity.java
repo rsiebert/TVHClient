@@ -29,6 +29,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -73,6 +74,7 @@ public class RecordingDetailsActivity extends Activity implements HTSListener {
 
         // Initialize all the widgets from the layout
         TextView title = (TextView) findViewById(R.id.title);
+        ImageView state = (ImageView) findViewById(R.id.state);
         TextView summaryLabel = (TextView) findViewById(R.id.summary_label);
         TextView summary = (TextView) findViewById(R.id.summary);
         TextView descLabel = (TextView) findViewById(R.id.description_label);
@@ -86,6 +88,7 @@ public class RecordingDetailsActivity extends Activity implements HTSListener {
         title.setText(rec.title);
         channelName.setText(rec.channel.name);
         
+        Utils.setState(state, rec);
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
@@ -167,6 +170,10 @@ public class RecordingDetailsActivity extends Activity implements HTSListener {
         // An existing program has been updated, this is valid for all menu options. 
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
             invalidateOptionsMenu();
+            
+            // Update the status icon
+            ImageView state = (ImageView) findViewById(R.id.state);
+            Utils.setState(state, rec);
         } 
     }
 }
