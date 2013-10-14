@@ -221,6 +221,7 @@
     <string name="program_guide">Program Guide</string>
     <string name="status">Status</string>
     <string name="items">Items</string>
+    <string name="results">Results</string>
     
     <string name="channel_icon">Channel Icon</string>
     <string name="status_icon">Status Icon</string>

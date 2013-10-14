@@ -135,7 +135,6 @@ public class SearchResultActivity extends Activity implements HTSListener {
         }
 
         getActionBar().setTitle(android.R.string.search_go);
-        getActionBar().setSubtitle(query);
     }
 
     @Override
@@ -232,6 +231,8 @@ public class SearchResultActivity extends Activity implements HTSListener {
                         srAdapter.add(p);
                         srAdapter.notifyDataSetChanged();
                         srAdapter.sort();
+                        
+                        getActionBar().setSubtitle(srAdapter.getCount() + " " + getString(R.string.results));
                     }
                 }
             });
