@@ -20,6 +20,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView freediscspace;
 	private TextView totaldiscspace;
 	private TextView channels;
+	private TextView currentlyRec;
 	private TextView completedRec;
 	private TextView upcomingRec;
 	private TextView failedRec;
@@ -38,6 +39,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
         
         channels = (TextView) v.findViewById(R.id.channels);
+        currentlyRec = (TextView) v.findViewById(R.id.currently_recording);
         completedRec = (TextView) v.findViewById(R.id.completed_recordings);
         upcomingRec = (TextView) v.findViewById(R.id.upcoming_recordings);
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
@@ -117,6 +119,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         int upcomingRecCount = 0;
         int failedRecCount = 0;
         
+        String currentRecText = "";
+        
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         
         for (Recording rec : app.getRecordings()) {
@@ -133,8 +137,16 @@ public class StatusFragment extends Fragment implements HTSListener {
                     (rec.state.equals("missed") || rec.state.equals("invalid")))) {
                 ++failedRecCount;
             }
+            
+            // Add the information what is currently being recorded.
+            if (rec.isRecording() == true) {
+                currentRecText += getString(R.string.currently_recording, rec.title);
+                if (rec.channel != null)
+                    currentRecText += " (" + getString(R.string.channel) + " " + rec.channel.name + ")\n";
+            }
         }
-        
+
+        currentlyRec.setText(currentRecText);
         completedRec.setText(completedRecCount + " " + getString(R.string.completed));
         upcomingRec.setText(upcomingRecCount + " " + getString(R.string.upcoming));
         failedRec.setText(failedRecCount + " " + getString(R.string.failed));
