@@ -7,5 +7,4 @@
 - Remove unused strings
 - Add method header comments
 - When clicking on search this channel context menu, show this text in the search bar
-- Show the amount of results in the search view
 - Use custom settings for channel and recordings
