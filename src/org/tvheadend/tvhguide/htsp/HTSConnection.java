@@ -19,6 +19,8 @@
 package org.tvheadend.tvhguide.htsp;
 
 import android.util.Log;
+import android.util.SparseArray;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -27,17 +29,11 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- *
- * @author john-tornblom
- */
 public class HTSConnection extends Thread {
 
     public static final int TIMEOUT_ERROR = 1;
@@ -57,7 +53,7 @@ public class HTSConnection extends Thread {
     private String webRoot;
     
     private HTSConnectionListener listener;
-    private Map<Integer, HTSResponseHandler> responseHandelers;
+    private SparseArray<HTSResponseHandler> responseHandelers;
     private LinkedList<HTSMessage> messageQueue;
     private boolean auth;
     private Selector selector;
@@ -67,7 +63,7 @@ public class HTSConnection extends Thread {
         lock = new ReentrantLock();
         inBuf = ByteBuffer.allocateDirect(1024 * 1024);
         inBuf.limit(4);
-        responseHandelers = new HashMap<Integer, HTSResponseHandler>();
+        responseHandelers = new SparseArray<HTSResponseHandler>();
         messageQueue = new LinkedList<HTSMessage>();
 
         this.listener = listener;
@@ -248,7 +244,7 @@ public class HTSConnection extends Thread {
             lock.lock();
 
             try {
-                Iterator it = selector.selectedKeys().iterator();
+                Iterator<SelectionKey> it = selector.selectedKeys().iterator();
                 while (it.hasNext()) {
                     SelectionKey selKey = (SelectionKey) it.next();
                     it.remove();

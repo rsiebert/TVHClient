@@ -770,7 +770,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         connection.sendMessage(request, new HTSResponseHandler() {
 
             public void handleResponse(HTSMessage response) {
-
+                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
             }
         });
@@ -783,7 +783,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         connection.sendMessage(request, new HTSResponseHandler() {
 
             public void handleResponse(HTSMessage response) {
-
+                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
             }
         });
@@ -806,6 +806,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                         }
                     }
                 }
+                @SuppressWarnings("unused")
                 String error = response.getString("error", null);
             }
         });

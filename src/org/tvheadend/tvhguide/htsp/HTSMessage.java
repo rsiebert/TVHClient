@@ -35,6 +35,8 @@ import java.util.Map;
  */
 public class HTSMessage extends HashMap<String, Object> {
 
+    private static final long serialVersionUID = 1L;
+
     public static final long HTSP_VERSION = 8;
     private static final byte HMF_MAP = 1;
     private static final byte HMF_S64 = 2;
@@ -109,7 +111,7 @@ public class HTSMessage extends HashMap<String, Object> {
             return list;
         }
 
-        for (Object obj : (List) get(name)) {
+        for (Object obj : (List<?>) get(name)) {
             if (obj instanceof BigInteger) {
                 list.add(((BigInteger) obj).longValue());
             }
@@ -133,7 +135,7 @@ public class HTSMessage extends HashMap<String, Object> {
             return list;
         }
 
-        for (Object obj : (List) get(name)) {
+        for (Object obj : (List<?>) get(name)) {
             if (obj instanceof BigInteger) {
                 list.add(((BigInteger) obj).intValue());
             }
@@ -150,8 +152,8 @@ public class HTSMessage extends HashMap<String, Object> {
         return getIntList(name);
     }
 
-    public List getList(String name) {
-        return (List) get(name);
+    public List<?> getList(String name) {
+        return (List<?>) get(name);
     }
 
     public byte[] getByteArray(String name) {
@@ -262,6 +264,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return msg;
     }
 
+    @SuppressWarnings("unchecked")
     private static byte[] serializeBinary(String name, Object value) throws IOException {
         byte[] bName = name.getBytes();
         byte[] bData = new byte[0];
@@ -284,10 +287,11 @@ public class HTSMessage extends HashMap<String, Object> {
             bData = (byte[]) value;
         } else if (value instanceof Map) {
             type = HTSMessage.HMF_MAP;
-            bData = serializeBinary((Map) value);
+            
+            bData = serializeBinary((Map<String, Object>) value);
         } else if (value instanceof Collection) {
             type = HTSMessage.HMF_LIST;
-            bData = serializeBinary((Collection) value);
+            bData = serializeBinary((Collection<?>) value);
         } else if (value == null) {
             throw new IOException("HTSP doesn't support null values");
         } else {
@@ -309,7 +313,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return buf;
     }
 
-    private static byte[] serializeBinary(Collection list) throws IOException {
+    private static byte[] serializeBinary(Collection<?> list) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(Short.MAX_VALUE);
 
         for (Object value : list) {
@@ -324,7 +328,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return bBuf;
     }
 
-    private static byte[] serializeBinary(Map map) throws IOException {
+    private static byte[] serializeBinary(Map<String, Object> map) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(Short.MAX_VALUE);
 
         for (Object key : map.keySet()) {

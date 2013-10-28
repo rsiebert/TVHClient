@@ -136,7 +136,7 @@ public abstract class SelectionThread extends Thread {
             return;
         }
 
-        Iterator it = selector.selectedKeys().iterator();
+        Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 
         //Process the selected keys
         while (it.hasNext()) {
