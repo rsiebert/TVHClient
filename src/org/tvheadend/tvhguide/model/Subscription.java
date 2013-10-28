@@ -21,10 +21,6 @@ package org.tvheadend.tvhguide.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author john-tornblom
- */
 public class Subscription {
 
     public long id;

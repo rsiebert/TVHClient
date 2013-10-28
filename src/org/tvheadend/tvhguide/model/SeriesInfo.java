@@ -1,15 +1,13 @@
 package org.tvheadend.tvhguide.model;
 
 public class SeriesInfo {
+
 	public int seasonNumber;
 	public int seasonCount;
-
 	public int episodeNumber;
 	public int episodeCount;
-
 	public int partNumber;
 	public int partCount;
-
 	public String onScreen;
 
 	public String toString() {

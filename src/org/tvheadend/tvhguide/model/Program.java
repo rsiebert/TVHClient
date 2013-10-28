@@ -20,10 +20,6 @@ package org.tvheadend.tvhguide.model;
 
 import java.util.Date;
 
-/**
- *
- * @author john-tornblom
- */
 public class Program implements Comparable<Program> {
 
     public long id;

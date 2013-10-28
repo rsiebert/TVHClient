@@ -20,10 +20,6 @@ package org.tvheadend.tvhguide.model;
 
 import android.graphics.Bitmap;
 
-/**
- *
- * @author john-tornblom
- */
 public class ChannelTag {
 
     public long id;

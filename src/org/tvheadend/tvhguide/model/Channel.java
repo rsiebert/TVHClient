@@ -24,10 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- *
- * @author john-tornblom
- */
 public class Channel implements Comparable<Channel> {
 
     public long id;

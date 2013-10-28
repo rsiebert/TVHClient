@@ -20,10 +20,6 @@ package org.tvheadend.tvhguide.model;
 
 import java.util.Date;
 
-/**
- *
- * @author john-tornblom
- */
 public class Recording implements Comparable<Recording> {
 
     public long id;

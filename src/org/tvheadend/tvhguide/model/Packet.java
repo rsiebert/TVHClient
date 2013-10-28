@@ -18,10 +18,6 @@
  */
 package org.tvheadend.tvhguide.model;
 
-/**
- *
- * @author john-tornblom
- */
 public class Packet {
 
     public Subscription subscription;

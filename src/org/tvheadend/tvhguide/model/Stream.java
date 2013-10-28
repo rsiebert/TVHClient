@@ -18,10 +18,6 @@
  */
 package org.tvheadend.tvhguide.model;
 
-/**
- *
- * @author john-tornblom
- */
 public class Stream {
 
     public static final String STREAM_TYPE_AC3 = "AC3";
