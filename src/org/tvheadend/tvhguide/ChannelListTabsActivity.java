@@ -117,8 +117,14 @@ public class ChannelListTabsActivity extends Activity {
             Toast.makeText(this, "No implemented yet", Toast.LENGTH_SHORT).show();
             break;
         case 3:
-            // Show the activity with the status information
-            Toast.makeText(this, "No implemented yet", Toast.LENGTH_SHORT).show();
+        	Fragment statusFrag = getFragmentManager().findFragmentByTag(tab.getText().toString());
+            if (statusFrag == null) {
+                Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
+                ft.add(android.R.id.content, fragment, tab.getText().toString());
+            }
+            else {
+                ft.attach(statusFrag);
+            }
             break;
         }
     }

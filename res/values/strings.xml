@@ -238,4 +238,12 @@
     <string name="content_type">Content Type</string>
     <string name="series_information">Series Information</string>
 
+    <string name="disc_space">Disc Space</string>
+    <string name="free_disc_space">Free disc space</string>
+    <string name="total_disc_space">Total disc space</string>
+    <string name="total">Total</string>
+    <string name="available">Available</string>
+    <string name="unknown">Unknown</string>
+    
+    <string name="currently_recording">Program %s is being recorded</string>
 </resources>
