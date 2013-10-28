@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2013 Robert Siebert
  *  Copyright (C) 2011 John Törnblom
  *
  * This file is part of TVHGuide.
@@ -47,10 +48,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- *
- * @author john-tornblom
- */
 public class PlaybackActivity extends Activity implements HTSListener {
 
     private TVHVideoView videoView;

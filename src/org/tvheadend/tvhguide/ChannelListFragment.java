@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2013 Robert Siebert
  *  Copyright (C) 2011 John Törnblom
  *
  * This file is part of TVHGuide.
@@ -43,10 +44,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-/**
- *
- * @author john-tornblom
- */
 public class ChannelListFragment extends Fragment implements HTSListener {
 
     private ChannelListAdapter chAdapter;

@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2013 Robert Siebert
  *  Copyright (C) 2011 John Törnblom
  *
  * This file is part of TVHGuide.
@@ -31,10 +32,6 @@ import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.HttpTicket;
 import org.tvheadend.tvhguide.model.Stream;
 
-/**
- *
- * @author john-tornblom
- */
 public class ExternalPlaybackActivity extends Activity implements HTSListener {
 
     @Override

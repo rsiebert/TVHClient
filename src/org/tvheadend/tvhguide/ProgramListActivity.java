@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2013 Robert Siebert
  *  Copyright (C) 2011 John Törnblom
  *
  * This file is part of TVHGuide.
@@ -46,10 +47,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-/**
- *
- * @author john-tornblom
- */
 public class ProgramListActivity extends Activity implements HTSListener {
 
     private ProgramListAdapter prAdapter;

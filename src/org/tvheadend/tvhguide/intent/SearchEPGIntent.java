@@ -25,10 +25,6 @@ import android.content.Intent;
 import org.tvheadend.tvhguide.SearchResultActivity;
 import org.tvheadend.tvhguide.model.Channel;
 
-/**
- *
- * @author john-tornblom
- */
 public class SearchEPGIntent extends Intent {
 
     public SearchEPGIntent(Context ctx, String query) {

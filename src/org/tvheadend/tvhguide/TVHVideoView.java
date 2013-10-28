@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2013 Robert Siebert
  *  Copyright (C) 2011 John Törnblom
  *
  * This file is part of TVHGuide.
@@ -22,10 +23,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.VideoView;
 
-/**
- *
- * @author john-tornblom
- */
 public class TVHVideoView extends VideoView {
 
     private int videoWidth;

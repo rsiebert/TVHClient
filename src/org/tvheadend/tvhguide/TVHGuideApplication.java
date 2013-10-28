@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2013 Robert Siebert
  *  Copyright (C) 2011 John Törnblom
  *
  * This file is part of TVHGuide.
@@ -39,10 +40,6 @@ import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.Subscription;
 
-/**
- *
- * @author john-tornblom
- */
 public class TVHGuideApplication extends Application {
 
     public static final String ACTION_CHANNEL_ADD = "org.me.tvhguide.CHANNEL_ADD";
