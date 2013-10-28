@@ -292,7 +292,7 @@ public class TVHGuideApplication extends Application {
 
         ChannelTag tag = new ChannelTag();
         tag.id = 0;
-        tag.name = getString(R.string.pr_all_channels);
+        tag.name = getString(R.string.all_channels);
         tags.add(tag);
     }
 

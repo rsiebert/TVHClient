@@ -94,7 +94,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Check if the channel is actually transmitting 
             // data and contains program data which can be shown.
             if (!c.isTransmitting && it.hasNext()) {
-                holder.title.setText(R.string.ch_no_transmission);
+                holder.title.setText(R.string.no_transmission);
             } else if (it.hasNext()) {
                 
                 // Get the program that is currently running
@@ -119,7 +119,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 // The channel does not provide program data. Hide the progress bar
                 // and clear the time and duration texts. These two items provide 
                 // some space so that the next list item is not too close.
-                holder.title.setText(R.string.ch_no_data);
+                holder.title.setText(R.string.no_data);
                 holder.progress.setVisibility(View.GONE);
             }
         }

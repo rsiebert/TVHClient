@@ -70,7 +70,8 @@ public class SearchResultActivity extends Activity implements HTSListener {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setTitle("Searching");
-        
+        getActionBar().setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
+
         searchListView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(searchListView);
         

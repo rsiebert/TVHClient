@@ -95,7 +95,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
-                    getActionBar().setSubtitle(R.string.inf_load);
+                    getActionBar().setSubtitle(R.string.loading);
                     loadMorePrograms();
                 }
             }

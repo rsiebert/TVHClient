@@ -168,7 +168,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private void setCurrentTag(ChannelTag tag) {
         currentTag = tag;
         if (tag == null) {
-            getActivity().getActionBar().setTitle(R.string.pr_all_channels);
+            getActivity().getActionBar().setTitle(R.string.all_channels);
         } else {
             getActivity().getActionBar().setTitle(currentTag.name);
         }
@@ -232,7 +232,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             // show that we are still loading data.
             chAdapter.clear();
             chAdapter.notifyDataSetChanged();
-            getActivity().getActionBar().setSubtitle(R.string.inf_load);
+            getActivity().getActionBar().setSubtitle(R.string.loading);
         } 
         else {
             // Fill the tag adapter with the available channel tags

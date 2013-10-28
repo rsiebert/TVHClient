@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">TVHGuide</string>
 
-    <string name="menu_help">Help</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_refresh">Refresh</string>
     <string name="menu_tags">Tags</string>
@@ -56,19 +55,6 @@
     <string name="err_inv">Invalid response from server</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
-
-    <string name="inf_load">Loading&#8230;</string>
-    <string name="inf_load_ext">Please wait a few seconds&#8230;</string>
-
-    <string name="pr_all_channels">All channels</string>
-    <string name="pr_get_more">Get more</string>
-    <string name="pr_season">Season</string>
-    <string name="pr_episode">Episode</string>
-    <string name="pr_part">Part</string>
-    <string name="pr_airing">Airing</string>
-    <string name="pr_star_rating">Rating</string>
-    <string name="pr_content_type">Content Type</string>
-    <string name="pr_series_info">Part</string>
     
     <string-array name="pr_content_type0">
         <item>Movie/Drama</item>
@@ -197,16 +183,9 @@
         <item>Live Broadcast</item>
     </string-array>
 
-    <string name="pvr_scheduled">Scheduled</string>
-    <string name="pvr_recording">Recording</string>
-    <string name="pvr_completed">Completed</string>
-    <string name="pvr_missed">Missed</string>
-    <string name="pvr_invalid">Invalid</string>
-
-    <string name="ch_play">Play</string>
-    <string name="ch_no_transmission">No transmission</string>
-    <string name="ch_no_data">No program data available</string>
-    <string name="ch_minutes">%d min</string>
+    <string name="no_transmission">No transmission</string>
+    <string name="no_data">No program data available</string>
+    <string name="minutes">%d min</string>
     
     <string name="search_hint">Search the EPG</string>
     <string name="today">today</string>
@@ -238,6 +217,12 @@
     <string name="content_type">Content Type</string>
     <string name="series_information">Series Information</string>
 
+    <string name="loading">Loading&#8230;</string>
+    <string name="all_channels">All channels</string>    
+    <string name="season">Season</string>
+    <string name="episode">Episode</string>
+    <string name="part">Part</string>
+    
     <string name="disc_space">Disc Space</string>
     <string name="free_disc_space">Free disc space</string>
     <string name="total_disc_space">Total disc space</string>

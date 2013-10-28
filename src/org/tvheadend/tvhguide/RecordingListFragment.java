@@ -185,7 +185,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         if (loading) {
             recAdapter.clear();
             recAdapter.notifyDataSetChanged();
-            getActivity().getActionBar().setSubtitle(R.string.inf_load);
+            getActivity().getActionBar().setSubtitle(R.string.loading);
         } else {
             populateList();
         }

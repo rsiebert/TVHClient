@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">TVHGuide</string>
 
-    <string name="menu_help">Hilfe</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_refresh">Aktualisieren</string>
     <string name="menu_tags">Tags</string>
@@ -56,19 +55,6 @@
     <string name="err_inv">Ungültige Antwort des Servers</string>
     <string name="err_connect">Konnte nicht mit dem Server verbinden</string>
     <string name="err_con_lost">Verbindung zum Server verloren</string>
-
-    <string name="inf_load">Lade&#8230;</string>
-    <string name="inf_load_ext">Bitte warten Sie einen Moment&#8230;</string>
-
-    <string name="pr_all_channels">Alle Sender</string>
-    <string name="pr_get_more">Mehr</string>
-    <string name="pr_season">Staffel</string>
-    <string name="pr_episode">Folge</string>
-    <string name="pr_part">Teil</string>
-    <string name="pr_airing">Ausstrahlung</string>
-    <string name="pr_star_rating">Bewertung</string>
-    <string name="pr_content_type">Genre</string>
-    <string name="pr_series_info">Teil</string>
     
      <string-array name="pr_content_type0">
         <item>Film / Drama</item>
@@ -185,16 +171,9 @@
         <item>Live-Sendung</item>
     </string-array>
     
-    <string name="pvr_scheduled">Geplant</string>
-    <string name="pvr_recording">Aufnahme</string>
-    <string name="pvr_completed">Fertig</string>
-    <string name="pvr_missed">Verpasst</string>
-    <string name="pvr_invalid">Ungültig</string>
-    
-    <string name="ch_play">Abspielen</string>
-    <string name="ch_no_transmission">Keine Übertragung</string>
-    <string name="ch_no_data">Keine Programme verfügbar</string>
-    <string name="ch_minutes">%d Min</string>
+    <string name="no_transmission">Keine Übertragung</string>
+    <string name="no_data">Keine Programme verfügbar</string>
+    <string name="minutes">%d Min</string>
     
     <string name="search_hint">Suche im TV-Programm</string>
     <string name="today">Heute</string>
@@ -209,6 +188,7 @@
     <string name="program_guide">TV-Programm</string>
     <string name="status">Status</string>
     <string name="items">Elemente</string>
+    <string name="results">Ergebnisse</string>
     
     <string name="channel_icon">Senderlogo</string>
     <string name="status_icon">Statuslogo</string>
@@ -224,4 +204,19 @@
     <string name="rating">Bewertung</string>
     <string name="content_type">Genre</string>
     <string name="series_information">Serien Information</string>
+        
+    <string name="loading">Lade&#8230;</string>
+    <string name="all_channels">Alle Sender</string>
+    <string name="season">Staffel</string>
+    <string name="episode">Folge</string>
+    <string name="part">Teil</string>
+
+    <string name="disc_space">Speicherplatz</string>
+    <string name="free_disc_space">Freier Speicherplatz</string>
+    <string name="total_disc_space">Gesamter Speicherplatz</string>
+    <string name="total">Total</string>
+    <string name="available">Verfügbar</string>
+    <string name="unknown">Unbekannt</string>
+    
+    <string name="currently_recording">Programm %s wird gerade aufgenommen</string>
 </resources>

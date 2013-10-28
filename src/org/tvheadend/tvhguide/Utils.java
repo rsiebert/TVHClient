@@ -65,9 +65,9 @@ public class Utils {
             return info.onScreen;
 
         String s = "";
-        final String season = context.getResources().getString(string.pr_season);
-        final String episode = context.getResources().getString(string.pr_episode);
-        final String part = context.getResources().getString(string.pr_part);
+        final String season = context.getResources().getString(string.season);
+        final String episode = context.getResources().getString(string.episode);
+        final String part = context.getResources().getString(string.part);
         
         if (info.onScreen.length() > 0) {
             return info.onScreen;
@@ -300,9 +300,9 @@ public class Utils {
             // Get the start and end times so we can show them
             // and calculate the duration. Then show the duration in minutes
             final double durationTime = ((stop.getTime() - start.getTime()) / 1000 / 60);
-            final String s = duration.getContext().getString(R.string.ch_minutes, (int) durationTime);
+            final String s = duration.getContext().getString(R.string.minutes, (int) durationTime);
 
-            duration.setText(duration.getContext().getString(R.string.ch_minutes, (int) durationTime));
+            duration.setText(duration.getContext().getString(R.string.minutes, (int) durationTime));
             duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
         }
     }
