@@ -231,4 +231,5 @@
     <string name="unknown">Unknown</string>
     
     <string name="currently_recording">Program %s is being recorded</string>
+    <string name="restart_application">Please restart the application to activate the new theme.</string>
 </resources>

@@ -219,4 +219,5 @@
     <string name="unknown">Unbekannt</string>
     
     <string name="currently_recording">Programm %s wird gerade aufgenommen</string>
+    <string name="restart_application">Um das neue Theme zu verwenden muss die Anwendung neu gestartet werden.</string>
 </resources>

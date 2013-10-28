@@ -28,6 +28,7 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
@@ -132,5 +133,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
         // Update the summary fields in the settings 
         updateConnectionPreferenceSummary();
+        
+        if (key.equals("lightThemePref")) {
+            Toast.makeText(getActivity(), getString(R.string.restart_application), Toast.LENGTH_SHORT).show();
+        }
     }
 }
