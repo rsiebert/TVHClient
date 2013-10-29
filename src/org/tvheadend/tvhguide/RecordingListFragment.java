@@ -59,8 +59,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         if (container == null)
             return null;
         
-        View v = inflater.inflate(R.layout.recording_list, container, false);
-        recListView = (ListView) v.findViewById(R.id.recording_list);
+        View v = inflater.inflate(R.layout.list_layout, container, false);
+        recListView = (ListView) v.findViewById(R.id.item_list);
         
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
