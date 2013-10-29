@@ -9,9 +9,9 @@
         style="?attr/TitleFont"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="6dp"
         android:text="@string/channels" />
 
     <TextView
@@ -19,8 +19,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:singleLine="true"
         android:text="@string/channels" />
 
@@ -29,17 +29,17 @@
         style="?attr/TitleFont"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="6dp"
         android:text="@string/recordings" />
 
     <TextView
         android:id="@+id/currently_recording"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:singleLine="true"
         android:text="@string/menu_record" />
 
@@ -47,8 +47,8 @@
         android:id="@+id/completed_recordings"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:singleLine="true"
         android:text="@string/completed" />
 
@@ -56,8 +56,8 @@
         android:id="@+id/upcoming_recordings"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:singleLine="true"
         android:text="@string/upcoming" />
 
@@ -66,8 +66,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:singleLine="true"
         android:text="@string/failed" />
 
@@ -76,17 +76,17 @@
         style="?attr/TitleFont"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="6dp"
         android:text="@string/disc_space" />
 
     <TextView
         android:id="@+id/total_discspace"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:singleLine="true"
         android:text="@string/disc_space" />
 
@@ -95,8 +95,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:singleLine="true"
         android:text="@string/disc_space" />
 
