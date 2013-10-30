@@ -25,19 +25,17 @@ import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.HttpTicket;
-import org.tvheadend.tvhguide.model.Stream;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,15 +53,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("externalPref", false)) {
-            Intent intent = new Intent(this, ExternalPlaybackActivity.class);
-            intent.putExtras(this.getIntent().getExtras());
-            startActivity(intent);
-            finish();
-            return;
-        }
 
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         final Channel channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
@@ -148,16 +137,15 @@ public class PlaybackActivity extends Activity implements HTSListener {
     }
 
     private void startPlayback(String path, String ticket) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String host = prefs.getString("serverHostPref", "localhost");
-        Integer port = Integer.parseInt(prefs.getString("httpPortPref", "9981"));
-        Integer resolution = Integer.parseInt(prefs.getString("resolutionPref", "288"));
-        Boolean transcode = prefs.getBoolean("transcodePref", true);
-        String container = prefs.getString("containerPref", "matroska");
-        String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
-        String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_H264);
-        String scodec = prefs.getString("scodecPref", "NONE");
+        
+        String host = getIntent().getStringExtra("serverHostPref");
+        Integer port = getIntent().getIntExtra("httpPortPref", 9981);
+        Integer resolution = getIntent().getIntExtra("resolutionPref", 288);
+        Boolean transcode = getIntent().getBooleanExtra("transcodePref", false);
+        String container = getIntent().getStringExtra("containerPref");
+        String acodec = getIntent().getStringExtra("acodecPref");
+        String vcodec = getIntent().getStringExtra("vcodecPref");
+        String scodec = getIntent().getStringExtra("scodecPref");
         
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
@@ -169,6 +157,7 @@ public class PlaybackActivity extends Activity implements HTSListener {
             url += "&vcodec=" + vcodec;
             url += "&scodec=" + scodec;
         }
+        Log.i("PlaybackActivity", "Playing URL " + url);
 
         videoView.setVideoURI(Uri.parse(url));
         videoView.requestFocus();
