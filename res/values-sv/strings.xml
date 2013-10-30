@@ -61,7 +61,7 @@
     <string name="content_type">Typ</string>
     <string name="series_information">Del</string>
     
-    <string name="scheduled">Schemalagd</string>
+    <string name="upcoming">Schemalagd</string>
     <string name="completed">Avslutad</string>
     <string name="failed">Missad / Ogiltig</string>
 

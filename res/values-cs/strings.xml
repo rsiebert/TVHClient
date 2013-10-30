@@ -67,9 +67,9 @@
     <string name="no_transmission">Žádný přenos</string>
     <string name="search_hint">Hledat v EPG</string>
     <string name="today">dnes</string>
-    <string name="scheduled">Plánované</string>
+    <string name="upcoming">Plánované</string>
     <string name="completed">Kompletní</string>
-    <string name="missed">Ztracené / Neplatné</string>
+    <string name="failed">Ztracené / Neplatné</string>
     <string name="loading">Načítám…</string>
     <string name="all_channels">Všechny kanály</string>    
 </resources>
