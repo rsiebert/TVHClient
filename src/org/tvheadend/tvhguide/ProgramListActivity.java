@@ -227,7 +227,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
             return true;
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(ProgramListActivity.this, PlaybackActivity.class);
+            Intent intent = new Intent(ProgramListActivity.this, PlaybackSelectionActivity.class);
             intent.putExtra("channelId", channel.id);
             startActivity(intent);
             return true;
