@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">TVHGuide</string>
+
+    <string name="menu_settings">Ustawienia</string>
+    <string name="menu_refresh">Odśwież</string>
+    <string name="menu_tags">Tagi</string>
+    <string name="menu_recordings">Nagrania</string>
+
+    <string name="menu_play">Play</string>
+    <string name="menu_record">Nagraj</string>
+    <string name="menu_record_cancel">Anuluj nagrywanie</string>
+    <string name="menu_record_remove">Usuń nagrywanie</string>
+
+    <string name="pref_host">Nazwa hosta</string>
+    <string name="pref_host_sum">Wpisz serwer hosta</string>
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Wpisz port serwera</string>
+    <string name="pref_user">Nazwa użytkownika</string>
+    <string name="pref_user_sum">Wpisz nazwę użytkownika</string>
+    <string name="pref_pass">Hasło</string>
+    <string name="pref_pass_sum">Wpisz hasło</string>
+
+    <string name="pref_ui">Interfejs użytkownika</string>
+    <string name="pref_icons">Ikony kanałów</string>
+    <string name="pref_icons_sum">Pokazać ikony kanałów?</string>
+    <string name="pref_theme">Lekki motyw</string>
+    <string name="pref_theme_sum">Użyj lekkiego motywu</string>
+    <string name="pref_res">Rozdzielczość</string>
+    <string name="pref_res_sum">Maksymalna rozdzielczość przy transkodowaniu</string>
+    <string name="pref_acodec">Kodek audio</string>
+    <string name="pref_acodec_sum">Kodek audio użyty przy transkodowaniu</string>
+    <string name="pref_vcodec">Kodek video</string>
+    <string name="pref_vcodec_sum">Kodek video użyty przy transkodowaniu</string>
+    <string name="pref_scodec">Kodek napisów</string>
+    <string name="pref_scodec_sum">Kodek napisów użyty przy transkodowaniu</string>
+    <string name="pref_container">Kontener mediów</string>
+    <string name="pref_container_sum">Preferowany kontener mediów</string>
+
+    <string name="pref_playback">Odtwarzanie</string>
+    <string name="pref_http_port">Port HTTP</string>
+    <string name="pref_http_port_sum">Wpisz port serwera HTTP</string>
+    <string name="pref_transcode">Transkodowanie strumienia</string>
+    <string name="pref_transcode_sum">Wysył transkodowanego strumienia podczas odtwarzania na żywo</string>
+    <string name="pref_external">Preferowany zewnętrzny odtwarzacz</string>
+    <string name="pref_external_sum">Użyj zewnętrznego odtwarzacza strumieni na żywo (BSPlayer wydaje się OK)</string>
+
+    <string name="err_auth">Odmowa dostępu</string>
+    <string name="err_inv">Nieprawidłowa odpowiedź z serwera</string>
+    <string name="err_connect">Nie można połączyć z serweram</string>
+    <string name="err_con_lost">Utracono połączenie z serwerem</string>
+
+    <string-array name="pr_content_type0">
+        <item>Film/Dramat</item>
+        <item>Aktualności/Sprawy bieżące</item>
+        <item>Widowisko/Teleturniej</item>
+        <item>Sport</item>
+        <item>Dzieci/Młodzież</item>
+        <item>Muzyka/Balet/Taniec</item>
+        <item>Sztuka/Kultura</item>
+        <item>Społeczeństwo/Polityka/Gospodarka</item>
+        <item>Edukacja/Nauka/Natura</item>
+        <item>Czas wolny/Hobby</item>
+        <item>Inne</item>
+    </string-array>
+
+    <string name="loading">Wczytywanie&#8230;</string>
+
+    <string name="all_channels">Wszystkie kanały</string>
+    <string name="season">Season</string>
+    <string name="episode">Odcinek</string>
+    <string name="part">Część</string>
+    <string name="airing">Airing</string>
+    <string name="star_rating">Ocena</string>
+    <string name="content_type">Kategoria</string>
+    <string name="series_information">Część</string>
+
+    <string name="upcoming">Planowanie</string>
+    <string name="recorded">Nagranie</string>
+    <string name="completed">Zaończone</string>
+    <string name="failed">Utracone / Nieprawidłowe</string>
+    
+    <string name="no_transmission">Brak transmisji</string>
+    <string name="search_hint">Szukaj w EPG</string>
+    <string name="today">Dzisiaj</string>
+
+</resources>
