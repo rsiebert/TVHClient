@@ -102,7 +102,7 @@
 	            android:title="@string/pref_res"
 	            android:key="progResolutionPref"
 	            android:dialogTitle="@string/pref_res"
-	            android:dependency="transcodePref"
+	            android:dependency="progTranscodePref"
 	            android:entries="@array/pref_res_list_display"
 	            android:entryValues="@array/pref_res_list" />
 	        <ListPreference
@@ -112,7 +112,7 @@
 	            android:title="@string/pref_acodec"
 	            android:key="progAcodecPref"
 	            android:dialogTitle="@string/pref_acodec"
-	            android:dependency="transcodePref"
+	            android:dependency="progTranscodePref"
 	            android:entries="@array/pref_acodec_list_display"
 	            android:entryValues="@array/pref_acodec_list" />
 	        <ListPreference
@@ -122,7 +122,7 @@
 	            android:title="@string/pref_vcodec"
 	            android:key="progVcodecPref"
 	            android:dialogTitle="@string/pref_vcodec"
-	            android:dependency="transcodePref"
+	            android:dependency="progTranscodePref"
 	            android:entries="@array/pref_vcodec_list_display"
 	            android:entryValues="@array/pref_vcodec_list" />
 	        <ListPreference
@@ -132,7 +132,7 @@
 	            android:title="@string/pref_scodec"
 	            android:key="progScodecPref"
 	            android:dialogTitle="@string/pref_scodec"
-	            android:dependency="transcodePref"
+	            android:dependency="progTranscodePref"
 	            android:entries="@array/pref_scodec_list_display"
 	            android:entryValues="@array/pref_scodec_list" />
 
@@ -183,7 +183,7 @@
 	            android:title="@string/pref_res"
 	            android:key="recResolutionPref"
 	            android:dialogTitle="@string/pref_res"
-	            android:dependency="transcodePref"
+	            android:dependency="recTranscodePref"
 	            android:entries="@array/pref_res_list_display"
 	            android:entryValues="@array/pref_res_list" />
 	        <ListPreference
@@ -193,7 +193,7 @@
 	            android:title="@string/pref_acodec"
 	            android:key="recAcodecPref"
 	            android:dialogTitle="@string/pref_acodec"
-	            android:dependency="transcodePref"
+	            android:dependency="recTranscodePref"
 	            android:entries="@array/pref_acodec_list_display"
 	            android:entryValues="@array/pref_acodec_list" />
 	        <ListPreference
@@ -203,7 +203,7 @@
 	            android:title="@string/pref_vcodec"
 	            android:key="recVcodecPref"
 	            android:dialogTitle="@string/pref_vcodec"
-	            android:dependency="transcodePref"
+	            android:dependency="recTranscodePref"
 	            android:entries="@array/pref_vcodec_list_display"
 	            android:entryValues="@array/pref_vcodec_list" />
 	        <ListPreference
@@ -213,7 +213,7 @@
 	            android:title="@string/pref_scodec"
 	            android:key="recScodecPref"
 	            android:dialogTitle="@string/pref_scodec"
-	            android:dependency="transcodePref"
+	            android:dependency="recTranscodePref"
 	            android:entries="@array/pref_scodec_list_display"
 	            android:entryValues="@array/pref_scodec_list" />
 
