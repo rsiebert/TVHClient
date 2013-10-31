@@ -37,6 +37,7 @@ public class PlaybackSelectionActivity extends Activity {
                 intent = new Intent(this, ExternalPlaybackActivity.class);
             } else {
                 intent = new Intent(this, PlaybackActivity.class);
+                intent.putExtra("title", ch.name);
             }
 
             // Pass on the channel id and the other settings
@@ -58,6 +59,7 @@ public class PlaybackSelectionActivity extends Activity {
                 intent = new Intent(this, ExternalPlaybackActivity.class);
             } else {
                 intent = new Intent(this, PlaybackActivity.class);
+                intent.putExtra("title", rec.title);
             }
 
             // Pass on the recording id and the other settings
