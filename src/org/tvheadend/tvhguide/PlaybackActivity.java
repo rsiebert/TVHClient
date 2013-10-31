@@ -23,7 +23,6 @@ import java.util.Date;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
-import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.HttpTicket;
 
 import android.app.Activity;
@@ -54,14 +53,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TVHGuideApplication app = (TVHGuideApplication) getApplication();
-        final Channel channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
-        if (channel == null) {
-            finish();
-            return;
-        }
-
-        setTitle(channel.name);
+        String title = getIntent().getStringExtra("title");
+        setTitle(title);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
