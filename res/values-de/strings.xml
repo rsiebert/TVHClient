@@ -220,4 +220,7 @@
     
     <string name="currently_recording">Programm %s wird gerade aufgenommen</string>
     <string name="restart_application">Um das neue Theme zu verwenden muss die Anwendung neu gestartet werden.</string>
+    
+    <string name="no_media_player">Kein Media Player gefunden</string>
+    <string name="show_play_store">Möchten Sie im Google Play Store nach einem geeigneten Videoplayer suchen?</string>
 </resources>

@@ -24,6 +24,9 @@ import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.HttpTicket;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,10 +34,13 @@ import android.util.Log;
 
 public class ExternalPlaybackActivity extends Activity implements HTSListener {
 
+    private Context context;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.context = this;
+        
         Intent intent = new Intent(ExternalPlaybackActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_GET_TICKET);
 
@@ -95,23 +101,39 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
         playbackIntent.setDataAndType(Uri.parse(url), mime);
 
-
         this.runOnUiThread(new Runnable() {
-
             public void run() {
                 try {
                     startActivity(playbackIntent);
+
                 } catch (Throwable t) {
                     Log.e("TVHGuide", "Can't execute external media player", t);
-                    try {
-                        Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                        installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
-                        startActivity(installIntent);
-                    } catch (Throwable t2) {
-                        Log.e("TVHGuide", "Can't query market", t2);
-                    }
-                } finally {
-                    finish();
+
+                    // Show a confirmation dialog before deleting the recording
+                    new AlertDialog.Builder(context)
+                    .setTitle(R.string.no_media_player)
+                    .setMessage(R.string.show_play_store)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                
+                            try {
+                                Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                                installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
+                                startActivity(installIntent);
+
+                            } catch (Throwable t2) {
+                                Log.e("TVHGuide", "Can't query market", t2);
+
+                            } finally {
+                                finish();
+                            }
+                        }
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
+
                 }
             }
         });

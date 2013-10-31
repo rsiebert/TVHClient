@@ -235,5 +235,6 @@
     <string name="currently_recording">Program %s is being recorded</string>
     <string name="restart_application">Please restart the application to activate the new theme.</string>
     
+    <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
 </resources>
