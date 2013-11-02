@@ -232,6 +232,11 @@ public class ProgramListActivity extends Activity implements HTSListener {
             // Show the search text input in the action bar
             onSearchRequested();
             return true;
+        case R.id.menu_settings:
+            // Now start the settings activity 
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivityForResult(i, R.id.menu_settings);
+            return true;
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
             Intent intent = new Intent(ProgramListActivity.this, PlaybackSelectionActivity.class);

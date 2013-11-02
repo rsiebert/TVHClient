@@ -7,6 +7,10 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_search"/>
     <item
+        android:id="@+id/menu_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/menu_settings"/>
+    <item
         android:id="@+id/menu_play"
         android:title="@string/menu_play"/>
 
