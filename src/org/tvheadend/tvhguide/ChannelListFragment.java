@@ -135,7 +135,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         Intent intent = null;
         switch (item.getItemId()) {
         case R.id.menu_play:
-            intent = new Intent(getActivity(), PlaybackActivity.class);
+            intent = new Intent(getActivity(), PlaybackSelectionActivity.class);
             intent.putExtra("channelId", channel.id);
             startActivity(intent);
             return true;

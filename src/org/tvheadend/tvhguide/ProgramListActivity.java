@@ -183,6 +183,13 @@ public class ProgramListActivity extends Activity implements HTSListener {
             Utils.recordProgram(this, program.id, program.channel.id);
             return true;
 
+        case R.id.menu_play:
+            // Open a new activity to stream the current program to this device
+            Intent intent = new Intent(ProgramListActivity.this, PlaybackSelectionActivity.class);
+            intent.putExtra("channelId", program.channel.id);
+            startActivity(intent);
+            return true;
+
         default:
             return super.onContextItemSelected(item);
         }
@@ -225,9 +232,14 @@ public class ProgramListActivity extends Activity implements HTSListener {
             // Show the search text input in the action bar
             onSearchRequested();
             return true;
+        case R.id.menu_settings:
+            // Now start the settings activity 
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivityForResult(i, R.id.menu_settings);
+            return true;
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(ProgramListActivity.this, PlaybackActivity.class);
+            Intent intent = new Intent(ProgramListActivity.this, PlaybackSelectionActivity.class);
             intent.putExtra("channelId", channel.id);
             startActivity(intent);
             return true;

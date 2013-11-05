@@ -44,6 +44,8 @@
     <string name="pref_container_sum">Preferred media container</string>
     
     <string name="pref_playback">Playback</string>
+    <string name="pref_playback_programs_sum">Configure streaming and playback options for the Live-TV programs.</string>
+    <string name="pref_playback_recordings_sum">Configure streaming and playback options for your recorded programs.</string>
     <string name="pref_http_port">HTTP port</string>
     <string name="pref_http_port_sum">Enter Server HTTP Port</string>
     <string name="pref_transcode">Transcode stream</string>
@@ -232,4 +234,7 @@
     
     <string name="currently_recording">Program %s is being recorded</string>
     <string name="restart_application">Please restart the application to activate the new theme.</string>
+    
+    <string name="no_media_player">No media player found</string>
+    <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
 </resources>

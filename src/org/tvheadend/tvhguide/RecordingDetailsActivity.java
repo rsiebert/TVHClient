@@ -152,7 +152,7 @@ public class RecordingDetailsActivity extends Activity implements HTSListener {
             return true;
 
         case R.id.menu_play:
-            Intent pi = new Intent(this, ExternalPlaybackActivity.class);
+            Intent pi = new Intent(this, PlaybackSelectionActivity.class);
             pi.putExtra("dvrId", rec.id);
             startActivity(pi);
             return true;

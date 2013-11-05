@@ -152,7 +152,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         switch (item.getItemId()) {
         case R.id.menu_play:
-            Intent pi = new Intent(getActivity(), ExternalPlaybackActivity.class);
+            Intent pi = new Intent(getActivity(), PlaybackSelectionActivity.class);
             pi.putExtra("dvrId", rec.id);
             startActivity(pi);
             return true;

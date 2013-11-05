@@ -19,25 +19,28 @@
  */
 package org.tvheadend.tvhguide;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.HttpTicket;
-import org.tvheadend.tvhguide.model.Stream;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
 
 public class ExternalPlaybackActivity extends Activity implements HTSListener {
 
+    private Context context;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.context = this;
+        
         Intent intent = new Intent(ExternalPlaybackActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_GET_TICKET);
 
@@ -62,17 +65,15 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
     }
 
     private void startPlayback(String path, String ticket) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String host = prefs.getString("serverHostPref", "localhost");
-        Integer port = Integer.parseInt(prefs.getString("httpPortPref", "9981"));
-
-        Integer resolution = Integer.parseInt(prefs.getString("resolutionPref", "288"));
-        Boolean transcode = false; //prefs.getBoolean("transcodePref", true);
-        String acodec = prefs.getString("acodecPref", Stream.STREAM_TYPE_AAC);
-        String vcodec = prefs.getString("vcodecPref", Stream.STREAM_TYPE_MPEG4VIDEO);
-        String scodec = prefs.getString("scodecPref", "PASS");
-        String container = prefs.getString("containerPref", "matroska");
+        String host = getIntent().getStringExtra("serverHostPref");
+        Integer port = getIntent().getIntExtra("httpPortPref", 9981);
+        Integer resolution = getIntent().getIntExtra("resolutionPref", 288);
+        Boolean transcode = getIntent().getBooleanExtra("transcodePref", false);
+        String container = getIntent().getStringExtra("containerPref");
+        String acodec = getIntent().getStringExtra("acodecPref");
+        String vcodec = getIntent().getStringExtra("vcodecPref");
+        String scodec = getIntent().getStringExtra("scodecPref");
         String mime = "application/octet-stream";
 
         if ("mpegps".equals(container)) {
@@ -95,27 +96,44 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
             url += "&vcodec=" + vcodec;
             url += "&scodec=" + scodec;
         }
+        Log.i("ExternalPlaybackActivity", "Playing URL " + url);
 
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
         playbackIntent.setDataAndType(Uri.parse(url), mime);
 
-
         this.runOnUiThread(new Runnable() {
-
             public void run() {
                 try {
                     startActivity(playbackIntent);
+
                 } catch (Throwable t) {
                     Log.e("TVHGuide", "Can't execute external media player", t);
-                    try {
-                        Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                        installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
-                        startActivity(installIntent);
-                    } catch (Throwable t2) {
-                        Log.e("TVHGuide", "Can't query market", t2);
-                    }
-                } finally {
-                    finish();
+
+                    // Show a confirmation dialog before deleting the recording
+                    new AlertDialog.Builder(context)
+                    .setTitle(R.string.no_media_player)
+                    .setMessage(R.string.show_play_store)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                
+                            try {
+                                Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                                installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
+                                startActivity(installIntent);
+
+                            } catch (Throwable t2) {
+                                Log.e("TVHGuide", "Can't query market", t2);
+
+                            } finally {
+                                finish();
+                            }
+                        }
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
+
                 }
             }
         });
