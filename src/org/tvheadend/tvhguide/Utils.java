@@ -25,6 +25,7 @@ import java.util.Locale;
 import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Channel;
+import org.tvheadend.tvhguide.model.Connection;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.SeriesInfo;
@@ -37,6 +38,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +48,8 @@ import android.widget.TextView;
 
 public class Utils {
 
+    private final static String TAG = Utils.class.getSimpleName();
+    
     // Constants required for the date calculation
     private static final int twoDays = 1000 * 3600 * 24 * 2;
     private static final int sixDays = 1000 * 3600 * 24 * 6;
@@ -115,30 +119,42 @@ public class Utils {
     }
     
     /**
+     * TODO: return different error codes
      * 
      * @param context
      * @param force
      */
     public static void connect(final Context context, final boolean force) {
+        Log.i(TAG, "connect");
 
-        // Get the preferences object and retrieve the login credentials
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String hostname = prefs.getString("serverHostPref", "localhost");
-        int port = Integer.parseInt(prefs.getString("serverPortPref", "9982"));
-        String username = prefs.getString("usernamePref", "");
-        String password = prefs.getString("passwordPref", "");
+        Intent intent = null;
+        
+        // Get the currently selected connection
+        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        // If we got one connection, get the values
+        if (conn != null) {
+            Log.i(TAG, "connection available");
 
-        // Create an intent and pass on the data
-        Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_CONNECT);
-        intent.putExtra("hostname", hostname);
-        intent.putExtra("port", port);
-        intent.putExtra("username", username);
-        intent.putExtra("password", password);
-        intent.putExtra("force", force);
+            // Create an intent and pass on the connection details
+            intent = new Intent(context, HTSService.class);
+            intent.setAction(HTSService.ACTION_CONNECT);
+            intent.putExtra("hostname", conn.address);
+            intent.putExtra("port", conn.port);
+            intent.putExtra("username", conn.username);
+            intent.putExtra("password", conn.password);
+            intent.putExtra("force", force);
+        }
 
         // Start the service with given action and data
-        context.startService(intent);
+        if (intent != null) {
+            String host = intent.getStringExtra("hostname");
+            String port = String.valueOf(intent.getIntExtra("port", 99));
+            String username = intent.getStringExtra("username");
+            String password = intent.getStringExtra("password");
+            
+            Log.i(TAG, "starting connection: " + host + ":" + port + ", user " + username + ", pass " + password);
+            context.startService(intent);
+        }
     }
 
     /**
