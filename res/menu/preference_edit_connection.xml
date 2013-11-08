@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_save"
+        android:icon="?attr/ic_menu_save"
+        android:showAsAction="ifRoom|withText|collapseActionView"
+        android:title="@string/save"/>
+    <item
+        android:id="@+id/menu_cancel"
+        android:icon="?attr/ic_menu_cancel"
+        android:showAsAction="ifRoom|withText|collapseActionView"
+        android:title="@string/cancel"/>
+
+</menu>
