@@ -16,11 +16,33 @@
     <string name="menu_search_epg">Search the Program Guide</string>
     <string name="menu_search_channel">Search this Channel</string>
 
+    <string name="menu_select">Select</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_delete">Delete</string>
+    <string name="pref_manage_connections">Manage Connections</string>
+    <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
+    <string name="available_connections">Available Connections</string>
+    <string name="add_connection">Add Connection</string>
+    <string name="new_connection">Create a new connection</string>
+    <string name="no_connections">No connections available</string>
+    <string name="add">Add</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_cancel">Discard values and close?</string>
+    <string name="confirm_delete">Do you really want to delete the connection?</string>
+    <string name="error_name_already_taken">The name is already been taken. Please use another one</string>
+
     <string name="pref_connections">Connections</string>
+    <string name="pref_name">Connection Name</string>
+    <string name="pref_name_sum">Enter a unique name of the connection</string>
+    <string name="pref_selected">Default Connection</string>
+    <string name="pref_selected_sum">Select to make this the default connection and use it after the application has started.</string>
     <string name="pref_host">Hostname</string>
-    <string name="pref_host_sum">Enter Server Hostname</string>
+    <string name="pref_host_sum">Enter the Server Hostname</string>
     <string name="pref_port">Port</string>
-    <string name="pref_port_sum">Enter Server Port</string>
+    <string name="pref_port_sum">Enter the Server Port</string>
     <string name="pref_user">Username</string>
     <string name="pref_user_sum">Enter Username</string>
     <string name="pref_pass">Password</string>
