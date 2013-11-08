@@ -18,7 +18,6 @@
  */
 package org.tvheadend.tvhguide;
 
-import java.lang.reflect.Field;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -29,7 +28,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewConfiguration;
 import android.widget.Toast;
 
 public class ChannelListTabsActivity extends Activity {
@@ -41,28 +39,15 @@ public class ChannelListTabsActivity extends Activity {
 
         // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-        
+
         super.onCreate(savedInstanceState);
+        
+        DatabaseHelper.init(this.getApplicationContext()); 
         
         // setup action bar for tabs
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         getActionBar().setDisplayHomeAsUpEnabled(false);
         getActionBar().setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
-        
-
-        // Make the action bar collapse even when the hardware keys are present.
-        // This overrides the default behavior of the action bar.
-        try {
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        }
-        catch (Exception ex) {
-            // Ignore
-        }
 
         // Create a tab listener that is called when the user changes tabs.
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
@@ -145,6 +130,12 @@ public class ChannelListTabsActivity extends Activity {
             }
             break;
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        
     }
 
     @Override
