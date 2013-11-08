@@ -1,40 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
-
-	<PreferenceCategory 
-		android:title="@string/pref_connections">  >
-	    
-    <EditTextPreference
-    	android:name="@string/pref_host"
-        android:summary="@string/pref_host_sum"
-        android:defaultValue="localhost"
-        android:title="@string/pref_host"
-        android:key="serverHostPref" />
-
-    <EditTextPreference
-        android:name="@string/pref_port"
-        android:summary="@string/pref_port_sum"
-        android:defaultValue="9982"
-        android:inputType="number"
-        android:title="@string/pref_port"
-        android:key="serverPortPref" />
-
-    <EditTextPreference
-        android:name="@string/pref_user"
-        android:summary="@string/pref_user_sum"
-        android:defaultValue=""
-        android:title="@string/pref_user"
-        android:key="usernamePref" />
-
-    <EditTextPreference
-    	android:name="@string/pref_pass"
-        android:summary="@string/pref_pass_sum"
-        android:defaultValue=""
-        android:title="@string/pref_pass"
-        android:key="passwordPref"
-        android:password="true" />
-        
+    
+    <PreferenceCategory 
+        android:title="@string/pref_connections" >
+        <Preference
+            android:key="pref_manage_connections"
+            android:summary="@string/pref_manage_connections_sum"
+            android:title="@string/pref_manage_connections" >
+        </Preference>
+            
     </PreferenceCategory>
 
     <PreferenceCategory
