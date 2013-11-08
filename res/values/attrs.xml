@@ -2,6 +2,9 @@
 <resources>
 
     <attr name="ic_menu_search" format="reference" />
+    <attr name="ic_menu_save" format="reference" />
+    <attr name="ic_menu_cancel" format="reference" />
+    <attr name="ic_menu_add" format="reference" />
     <attr name="TitleFont" format="reference" />
 	<attr name="HeaderFont" format="reference" />
 	
