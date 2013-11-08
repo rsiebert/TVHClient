@@ -18,22 +18,72 @@
  */
 package org.tvheadend.tvhguide;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        
+
         // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-        
         super.onCreate(savedInstanceState);
-        
         setTitle(R.string.menu_settings);
-        
-        // Display the fragment as the main content.
+
+        // Show the specified fragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+    }
+    
+    public static class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            // Load the default values
+            PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
+
+            // Load the preferences from an XML resource
+            addPreferencesFromResource(R.xml.preferences);
+            
+            Preference pref = findPreference("pref_manage_connections");
+            pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(getActivity(), SettingsManageConnectionsActivity.class);
+                    startActivity(intent);
+                    return false;
+                }
+            });
+        }
+
+        public void onResume() {
+            super.onResume();       
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            prefs.registerOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            prefs.unregisterOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals("lightThemePref")) {
+                Toast.makeText(getActivity(), getString(R.string.restart_application), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
