@@ -2,42 +2,36 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <EditTextPreference
-        android:defaultValue="Default"
+        android:defaultValue=""
         android:key="pref_name"
-        android:persistent="false"
         android:summary="@string/pref_name_sum"
         android:title="@string/pref_name" />
     <EditTextPreference
-        android:defaultValue="localhost"
+        android:defaultValue=""
         android:key="pref_address"
-        android:persistent="false"
         android:summary="@string/pref_host_sum"
         android:title="@string/pref_host" />
     <EditTextPreference
-        android:defaultValue="9982"
+        android:defaultValue="9981"
         android:key="pref_port"
         android:inputType="number"
-        android:persistent="false"
         android:summary="@string/pref_port_sum"
         android:title="@string/pref_port" />
     <EditTextPreference
-        android:defaultValue="xbmc"
+        android:defaultValue=""
         android:key="pref_username"
-        android:persistent="false"
         android:summary="@string/pref_user_sum"
         android:title="@string/pref_user" />
     <EditTextPreference
-        android:defaultValue="xbmc"
+        android:defaultValue=""
         android:inputType="textPassword"
         android:key="pref_password"
-        android:persistent="false"
         android:summary="@string/pref_pass_sum"
         android:title="@string/pref_pass" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="pref_selected"
-        android:persistent="false"
         android:summary="@string/pref_selected_sum"
         android:title="@string/pref_selected" />
 
