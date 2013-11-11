@@ -29,8 +29,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -42,7 +40,7 @@ import android.view.MenuItem;
 public class SettingsAddConnectionActivity extends PreferenceActivity {
 
     private final static String TAG = SettingsAddConnectionActivity.class.getSimpleName();
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // Apply the specified theme
@@ -60,9 +58,16 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
     }
 
     public static class SettingsAddConnectionFragment extends PreferenceFragment implements
-            OnSharedPreferenceChangeListener, OnPreferenceClickListener {
+            OnSharedPreferenceChangeListener {
 
-        private SharedPreferences prefs;
+        private static final String PREF_NAME_KEY = "pref_name";
+        private static final String PREF_ADDRESS_KEY = "pref_address";
+        private static final String PREF_PORT_KEY = "pref_port";
+        private static final String PREF_USERNAME_KEY = "pref_username";
+        private static final String PREF_PASSWORD_KEY = "pref_password";
+        private static final String PREF_SELECTED_KEY = "pref_selected";
+
+        // Preference widgets
         private EditTextPreference prefName;
         private EditTextPreference prefAddress;
         private EditTextPreference prefPort;
@@ -70,25 +75,36 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
         private EditTextPreference prefPassword;
         private CheckBoxPreference prefSelected;
 
+        private SharedPreferences prefs;
+
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            Log.i(TAG, "onCreate");
+            
             setHasOptionsMenu(true);
             
+            // Remove all previously set values
+            prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            prefs.edit().remove(PREF_NAME_KEY).commit();
+            prefs.edit().remove(PREF_ADDRESS_KEY).commit();
+            prefs.edit().remove(PREF_PORT_KEY).commit();
+            prefs.edit().remove(PREF_USERNAME_KEY).commit();
+            prefs.edit().remove(PREF_PASSWORD_KEY).commit();
+            prefs.edit().remove(PREF_SELECTED_KEY).commit();
+
             // Load the preferences from an XML resource
             addPreferencesFromResource(R.xml.preferences_add_connection);
-
+            
             // Get the connectivity preferences for later usage
-            prefName = (EditTextPreference) findPreference("pref_name");
-            prefAddress = (EditTextPreference) findPreference("pref_address");
-            prefPort = (EditTextPreference) findPreference("pref_port");
-            prefUsername = (EditTextPreference) findPreference("pref_username");
-            prefPassword = (EditTextPreference) findPreference("pref_password");
-            prefSelected = (CheckBoxPreference) findPreference("pref_selected");
-            
-            
+            prefName = (EditTextPreference) findPreference(PREF_NAME_KEY);
+            prefAddress = (EditTextPreference) findPreference(PREF_ADDRESS_KEY);
+            prefPort = (EditTextPreference) findPreference(PREF_PORT_KEY);
+            prefUsername = (EditTextPreference) findPreference(PREF_USERNAME_KEY);
+            prefPassword = (EditTextPreference) findPreference(PREF_PASSWORD_KEY);
+            prefSelected = (CheckBoxPreference) findPreference(PREF_SELECTED_KEY);
         }
-
+        
         public void onResume() {
             super.onResume();
             Log.i(TAG, "onResume");
@@ -96,36 +112,28 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             // If an index is given then an existing connection shall be edited.
             long id = getActivity().getIntent().getLongExtra("id", 0);
             if (id > 0) {
-                Log.i(TAG, "onResume, editing connection with id " + id);
+                Log.i(TAG, "onResume, editing existing connection " + id);
 
-                // Load the connection data and assign the values to the
-                // preferences.
+                // Load the connection data and assign the values
                 Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
                 if (conn != null) {
-
-                    
-                    PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    SharedPreferences.Editor e = prefs.edit();
-                    e.putString("pref_name", conn.name);
-                    e.putString("pref_address", conn.address);
-                    e.putInt("pref_port", conn.port);
-                    e.putString("pref_username", conn.username);
-                    e.putString("pref_password", conn.password);
-                    e.putBoolean("pref_selected", conn.selected);
-                    e.commit();
-                    
-                    
+                    prefs.edit().putString(PREF_NAME_KEY, conn.name).commit();
+                    prefs.edit().putString(PREF_ADDRESS_KEY, conn.address).commit();
+                    prefs.edit().putString(PREF_PORT_KEY, String.valueOf(conn.port)).commit();
+                    prefs.edit().putString(PREF_USERNAME_KEY, conn.username).commit();
+                    prefs.edit().putString(PREF_PASSWORD_KEY, conn.password).commit();
+                    prefs.edit().putBoolean(PREF_SELECTED_KEY, conn.selected).commit();
                 }
             }
-            else {
-                Log.i(TAG, "onResume, adding new connection with default values");
 
-                // Load the default values, these are empty
-                PreferenceManager.getDefaultSharedPreferences(getActivity());
-                PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences_add_connection, true);
-            }
-
-            setPreferenceValues();
+            // Set the values from the preferences 
+            // or the defaults if no value is available
+            onSharedPreferenceChanged(prefs, PREF_NAME_KEY);
+            onSharedPreferenceChanged(prefs, PREF_ADDRESS_KEY);
+            onSharedPreferenceChanged(prefs, PREF_PORT_KEY);
+            onSharedPreferenceChanged(prefs, PREF_USERNAME_KEY);
+            onSharedPreferenceChanged(prefs, PREF_PASSWORD_KEY);
+            onSharedPreferenceChanged(prefs, PREF_SELECTED_KEY);
 
             // Now register for any changes
             prefs.registerOnSharedPreferenceChangeListener(this);
@@ -134,6 +142,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
         @Override
         public void onPause() {
             super.onPause();
+            Log.i(TAG, "onPause");
             prefs.unregisterOnSharedPreferenceChangeListener(this);
         }
 
@@ -163,35 +172,35 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             }
         }
 
-        /**
-         * Assigns the values of the given connection to the preferences.
-         * 
-         * @param model
-         */
-        private void setPreferenceValues() {
-
-            // Get the currently set values from the preferences
-            String name = prefs.getString("pref_name", "");
-            String address = prefs.getString("pref_address", "");
-            int port = prefs.getInt("pref_port", 9982);
-            String username = prefs.getString("pref_username", "");
-            String password = prefs.getString("pref_password", "");
-            int isSelected = prefs.getInt("pref_selected", 0);
-
-            // Update the summary text of the connectivity preferences with these values
-            prefName.setSummary(name.isEmpty() ? getString(R.string.pref_name_sum) : name);
-            prefAddress.setSummary(address.isEmpty() ? getString(R.string.pref_host_sum) : address);
-            prefPort.setSummary(port == 0 ? getString(R.string.pref_host_sum) : String.valueOf(port));
-            prefUsername.setSummary(username.isEmpty() ? getString(R.string.pref_user_sum) : username);
-            prefPassword.setSummary(password.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
-            prefSelected.setChecked((isSelected == 1));
-        }
-
         @Override
         public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-            Log.i("Add host", "changed pref " + key);
-
-            setPreferenceValues();
+            Log.i(TAG, "onSharedPreferenceChanged " + key);
+            
+            // Get the currently set values from the preferences
+            if (key == PREF_NAME_KEY) {
+                String name = prefs.getString(PREF_NAME_KEY, "Default");
+                prefName.setSummary(name.isEmpty() ? getString(R.string.pref_name_sum) : name);
+            } 
+            else if (key == PREF_ADDRESS_KEY) {
+                String address = prefs.getString(PREF_ADDRESS_KEY, "localhost");
+                prefAddress.setSummary(address.isEmpty() ? getString(R.string.pref_host_sum) : address);
+            }
+            else if (key == PREF_PORT_KEY) {
+                String port = prefs.getString(PREF_PORT_KEY, "9981");
+                prefPort.setSummary(port.isEmpty() ? getString(R.string.pref_host_sum) : port);
+            }
+            else if (key == PREF_USERNAME_KEY) {
+                String username = prefs.getString(PREF_USERNAME_KEY, "");
+                prefUsername.setSummary(username.isEmpty() ? getString(R.string.pref_user_sum) : username);
+            }
+            else if (key == PREF_PASSWORD_KEY) {
+                String password = prefs.getString(PREF_PASSWORD_KEY, "");
+                prefPassword.setSummary(password.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
+            }
+            else if (key == PREF_SELECTED_KEY) {
+                boolean isSelected = prefs.getBoolean(PREF_SELECTED_KEY, false);
+                prefSelected.setChecked(isSelected);
+            }
         }
 
         /**
@@ -263,12 +272,6 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             });
             AlertDialog alert = builder.create();
             alert.show();
-        }
-
-        @Override
-        public boolean onPreferenceClick(Preference pref) {
-            Log.i("Add host", "clicked on pref " + pref.getKey());
-            return false;
         }
     }
 }
