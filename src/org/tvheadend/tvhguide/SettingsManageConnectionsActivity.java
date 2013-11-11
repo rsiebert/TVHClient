@@ -69,6 +69,10 @@ public class SettingsManageConnectionsActivity extends Activity {
     public void onResume() {
         super.onResume();
         
+        showConnections();
+    }
+    
+    private void showConnections() {
         connList.clear();
         
         List<Connection> cl = DatabaseHelper.getInstance().getConnections();
@@ -92,10 +96,27 @@ public class SettingsManageConnectionsActivity extends Activity {
         
         switch (item.getItemId()) {
         case R.id.menu_select:
+            Log.i("Manage", "select active connection");
             
+            // Switch the selection status
             c.selected = (c.selected) ? false : true;
-            if (DatabaseHelper.getInstance().updateConnection(c))
-                connAdapter.update(c);
+            
+            // Set the previous connection to unselected 
+            // if the selected one is set as selected
+            if (c.selected) {
+                Connection previousConn = DatabaseHelper.getInstance().getSelectedConnection();
+                if (previousConn != null) {
+                    previousConn.selected = false;
+                    DatabaseHelper.getInstance().updateConnection(previousConn);
+                }
+            };
+            
+            // Update the currently selected connection
+            DatabaseHelper.getInstance().updateConnection(c);
+
+            // Refresh the display
+            showConnections();
+            
             return true;
 
         case R.id.menu_edit:
