@@ -130,17 +130,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 KEY_SELECTED + "=?", new String[] { "1" }, 
                 null, null, null);
         
-        if (c != null)
+        Connection conn = null;
+
+        if (c != null && c.getCount() > 0) {
             c.moveToFirst();
-        
-        Connection conn = new Connection();
-        conn.id = c.getInt(c.getColumnIndex(KEY_ID));
-        conn.name = c.getString(c.getColumnIndex(KEY_NAME));
-        conn.address = c.getString(c.getColumnIndex(KEY_ADDRESS));
-        conn.port = c.getInt(c.getColumnIndex(KEY_PORT));
-        conn.username = c.getString(c.getColumnIndex(KEY_USERNAME));
-        conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
-        conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
+
+            conn = new Connection();
+            conn.id = c.getInt(c.getColumnIndex(KEY_ID));
+            conn.name = c.getString(c.getColumnIndex(KEY_NAME));
+            conn.address = c.getString(c.getColumnIndex(KEY_ADDRESS));
+            conn.port = c.getInt(c.getColumnIndex(KEY_PORT));
+            conn.username = c.getString(c.getColumnIndex(KEY_USERNAME));
+            conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
+            conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
+        }
 
         return conn;
     }
