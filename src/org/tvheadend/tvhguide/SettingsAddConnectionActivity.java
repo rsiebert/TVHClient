@@ -78,7 +78,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            Log.i("SettingsAddConnectionFragment", "onCreate");
+            Log.i(TAG, "onCreate");
 
             setHasOptionsMenu(true);
             
@@ -107,15 +107,21 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
                 Log.i(TAG, "onResume, editing existing connection " + id);
 
                 // Load the connection data and assign the values
-                Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+                Connection conn = DatabaseHelper.getInstance().getConnection(id);
                 if (conn != null) {
+                    Log.i(TAG, "onResume, connection != null");
                     prefs.edit().putString(PREF_NAME_KEY, conn.name).commit();
                     prefs.edit().putString(PREF_ADDRESS_KEY, conn.address).commit();
                     prefs.edit().putString(PREF_PORT_KEY, String.valueOf(conn.port)).commit();
                     prefs.edit().putString(PREF_USERNAME_KEY, conn.username).commit();
                     prefs.edit().putString(PREF_PASSWORD_KEY, conn.password).commit();
+                    
+                    prefName.setDefaultValue(conn.name);
+                    prefAddress.setDefaultValue(conn.address);
                 }
             }
+            else
+                removePreferenceValues();
             
             // Show the default values with the summary 
             // text or the already set values 
@@ -126,12 +132,13 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
         }
 
         private void showPreferenceValues() {
+            Log.i(TAG, "showPreferenceValues");
             
             // Set the values only if they differ from the defaults
-            String name = prefs.getString(PREF_NAME_KEY, "Default");
+            String name = prefs.getString(PREF_NAME_KEY, "");
             prefName.setSummary(name.isEmpty() ? getString(R.string.pref_name_sum) : name);
             
-            String address = prefs.getString(PREF_ADDRESS_KEY, "localhost");
+            String address = prefs.getString(PREF_ADDRESS_KEY, "");
             prefAddress.setSummary(address.isEmpty() ? getString(R.string.pref_host_sum) : address);
             
             String port = prefs.getString(PREF_PORT_KEY, "9981");
@@ -207,8 +214,10 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
                 // to remove the selection from the current one.
                 if (prefSelected.isChecked()) {
                     Connection selConn = DatabaseHelper.getInstance().getSelectedConnection();
-                    selConn.selected = false;
-                    DatabaseHelper.getInstance().updateConnection(selConn);
+                    if (selConn != null) {
+                        selConn.selected = false;
+                        DatabaseHelper.getInstance().updateConnection(selConn);
+                    }
                 }
 
                 // Update the connection with the data from the preferences and
@@ -220,7 +229,6 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
                 DatabaseHelper.getInstance().addConnection(conn);
             }
 
-            removePreferenceValues();
             getActivity().finish();
         }
 
@@ -238,7 +246,6 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             // Define the action of the yes button
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    removePreferenceValues();
                     getActivity().finish();
                 }
             });
