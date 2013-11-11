@@ -16,6 +16,7 @@
     <EditTextPreference
         android:defaultValue="9982"
         android:key="pref_port"
+        android:inputType="number"
         android:persistent="false"
         android:summary="@string/pref_port_sum"
         android:title="@string/pref_port" />
