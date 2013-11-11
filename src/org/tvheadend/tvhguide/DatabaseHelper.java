@@ -148,7 +148,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return conn;
     }
     
-    public Connection getConnection(final int id) {
+    public Connection getConnection(final long id) {
         SQLiteDatabase db = this.getReadableDatabase(); 
         Cursor c = db.query(TABLE_NAME, COLUMNS, 
                 KEY_ID + "=?", new String[] { String.valueOf(id) }, 
