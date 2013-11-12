@@ -13,8 +13,8 @@
         android:title="@string/pref_host" />
     <EditTextPreference
         android:defaultValue="9981"
-        android:key="pref_port"
         android:inputType="number"
+        android:key="pref_port"
         android:summary="@string/pref_port_sum"
         android:title="@string/pref_port" />
     <EditTextPreference
