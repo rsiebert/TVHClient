@@ -33,7 +33,6 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,7 +49,6 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        Log.i("SettingsAddConnectionActivity", "onCreate");
 
         // Setup the action bar and show the title
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -61,23 +59,8 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
                 .commit();
     }
 
-    public void onStop() {
-        super.onStop();
-        Log.i("SettingsAddConnectionActivity", "onStop");
-        conn = null;
-    }
-
     public static class SettingsAddConnectionFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
-
-        private final static String TAG = SettingsAddConnectionFragment.class.getSimpleName();
-
-        private static final String PREF_NAME_KEY = "pref_name";
-        private static final String PREF_ADDRESS_KEY = "pref_address";
-        private static final String PREF_PORT_KEY = "pref_port";
-        private static final String PREF_USERNAME_KEY = "pref_username";
-        private static final String PREF_PASSWORD_KEY = "pref_password";
-        private static final String PREF_SELECTED_KEY = "pref_selected";
 
         // Preference widgets
         private EditTextPreference prefName;
@@ -96,31 +79,29 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             addPreferencesFromResource(R.xml.preferences_add_connection);
 
             // Get the connectivity preferences for later usage
-            prefName = (EditTextPreference) findPreference(PREF_NAME_KEY);
-            prefAddress = (EditTextPreference) findPreference(PREF_ADDRESS_KEY);
-            prefPort = (EditTextPreference) findPreference(PREF_PORT_KEY);
-            prefUsername = (EditTextPreference) findPreference(PREF_USERNAME_KEY);
-            prefPassword = (EditTextPreference) findPreference(PREF_PASSWORD_KEY);
-            prefSelected = (CheckBoxPreference) findPreference(PREF_SELECTED_KEY);
+            prefName = (EditTextPreference) findPreference("pref_name");
+            prefAddress = (EditTextPreference) findPreference("pref_address");
+            prefPort = (EditTextPreference) findPreference("pref_port");
+            prefUsername = (EditTextPreference) findPreference("pref_username");
+            prefPassword = (EditTextPreference) findPreference("pref_password");
+            prefSelected = (CheckBoxPreference) findPreference("pref_selected");
 
             // If the connection is null then this activity has been started for
             // the first time. If the connection is not null then the screen has
             // been rotated and we have to reuse the values.
             if (conn == null) {
-                Log.i(TAG, "Connection is null");
 
                 // If an index is given then we want to edit this connection
                 // Otherwise create a new connection with default values.
                 long id = getActivity().getIntent().getLongExtra("id", 0);
                 if (id > 0) {
-                    Log.i(TAG, "Existing connection with id " + id + " was given");
                     conn = DatabaseHelper.getInstance().getConnection(id);
                 }
                 else {
-                    Log.i(TAG, "New connection");
+                    // Create a new connection with these defaults 
                     conn = new Connection();
-                    conn.name = "Default";
-                    conn.address = "localhost";
+                    conn.name = "";
+                    conn.address = "";
                     conn.port = 9981;
                     conn.username = "";
                     conn.password = "";
@@ -128,18 +109,17 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
                 }
             }
 
-            Log.i(TAG, "Setting preferences from connection values");
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            prefs.edit().putString(PREF_NAME_KEY, conn.name).commit();
-            prefs.edit().putString(PREF_ADDRESS_KEY, conn.address).commit();
-            prefs.edit().putString(PREF_PORT_KEY, String.valueOf(conn.port)).commit();
-            prefs.edit().putString(PREF_USERNAME_KEY, conn.username).commit();
-            prefs.edit().putString(PREF_PASSWORD_KEY, conn.password).commit();
+            // Set the values
+            prefName.setText(conn.name);
+            prefAddress.setText(conn.address);
+            prefPort.setText(String.valueOf(conn.port));
+            prefUsername.setText(conn.username);
+            prefPassword.setText(conn.password);
+            prefSelected.setChecked(conn.selected);
         }
 
         public void onResume() {
             super.onResume();
-            Log.i(TAG, "onResume");
 
             // Show the values from the connection object
             // in the summary text of the preferences
@@ -150,13 +130,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             prefs.registerOnSharedPreferenceChangeListener(this);
         }
 
-        /**
-         * Displays the values from the
-         */
         private void showPreferenceSummary() {
-            Log.i(TAG, "showPreferenceSummary");
-
-            // Set the values only if they differ from the defaults
             prefName.setSummary(conn.name.isEmpty() ? getString(R.string.pref_name_sum) : conn.name);
             prefAddress.setSummary(conn.address.isEmpty() ? getString(R.string.pref_host_sum) : conn.address);
             prefPort.setSummary(conn.port == 0 ? getString(R.string.pref_host_sum) : String.valueOf(conn.port));
@@ -200,14 +174,14 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-
+            
             // Update the connection object with the new values
-            conn.name = pref.getString(PREF_NAME_KEY, "Default");
-            conn.address = pref.getString(PREF_ADDRESS_KEY, "localhost");
-            conn.port = Integer.parseInt(pref.getString(PREF_PORT_KEY, "9981"));
-            conn.username = pref.getString(PREF_USERNAME_KEY, "");
-            conn.password = pref.getString(PREF_PASSWORD_KEY, "");
-            conn.selected = pref.getBoolean(PREF_SELECTED_KEY, false);
+            conn.name = prefName.getText();
+            conn.address = prefAddress.getText();
+            conn.port = Integer.parseInt(prefPort.getText());
+            conn.username = prefUsername.getText();
+            conn.password = prefPassword.getText();
+            conn.selected = prefSelected.isChecked();
 
             // Show the values from the connection object
             // in the summary text of the preferences
@@ -237,14 +211,15 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             // If the connection shall be edited, get its id
             long id = getActivity().getIntent().getLongExtra("id", 0);
             if (id > 0) {
-                Log.i(TAG, "Saving existing connection with id " + id);
                 DatabaseHelper.getInstance().updateConnection(conn);
             }
             else {
-                Log.i(TAG, "Saving new connection");
                 DatabaseHelper.getInstance().addConnection(conn);
             }
 
+            // Delete the connection so that we start fresh when
+            // the settings activity is called again.
+            conn = null;
             getActivity().finish();
         }
 
@@ -303,8 +278,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
                 pattern = Patterns.IP_ADDRESS;
                 matcher = pattern.matcher(conn.address);
                 if (!matcher.matches()) {
-                    Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();
                     return false;
                 }
             }
@@ -344,6 +318,9 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             // Define the action of the yes button
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
+                    // Delete the connection so that we start fresh when
+                    // the settings activity is called again.
+                    conn = null;
                     getActivity().finish();
                 }
             });
