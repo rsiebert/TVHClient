@@ -5,6 +5,6 @@
         android:id="@+id/menu_add"
         android:icon="?attr/ic_menu_add"
         android:showAsAction="ifRoom|withText|collapseActionView"
-        android:title="@string/add"/>
+        android:title="@string/menu_add"/>
 
 </menu>
