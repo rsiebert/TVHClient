@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ConnectionListAdapter extends ArrayAdapter<Connection> {
@@ -52,7 +53,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
     static class ViewHolder {
         public TextView title;
         public TextView summary;
-        public TextView selected;
+        public ImageView selected;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
             holder = new ViewHolder();
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.summary = (TextView) view.findViewById(R.id.summary);
-            holder.selected = (TextView) view.findViewById(R.id.selected);
+            holder.selected = (ImageView) view.findViewById(R.id.selected);
             view.setTag(holder);
         }
         else {
@@ -78,7 +79,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         if (c != null) {
             holder.title.setText(c.name);
             holder.summary.setText(c.address + ":" + c.port);
-            holder.selected.setText((c.selected == true) ? "yes" : "no");
+            holder.selected.setVisibility(c.selected ? View.VISIBLE : View.GONE);
         }
         return view;
     }
