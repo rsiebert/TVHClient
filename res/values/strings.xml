@@ -39,18 +39,24 @@
     <string name="pref_connections">Connections</string>
     <string name="pref_name">Connection Name</string>
     <string name="pref_name_sum">Enter a unique name of the connection</string>
+    <string name="pref_name_error_empty">The name must not be empty.</string>
+    <string name="pref_name_error_invalid">The name must only contain letters, numbers, minus and underscore.</string>
     <string name="pref_selected">Default Connection</string>
     <string name="pref_selected_sum">Select to make this the default connection and use it after the application has started.</string>
     <string name="pref_host">Hostname</string>
     <string name="pref_host_sum">Enter the Server Hostname</string>
+    <string name="pref_host_error_empty">The IP-address or hostname must not be empty.</string>
+    <string name="pref_host_error_invalid">The IP-address is not valid.</string>
     <string name="pref_port">Port</string>
     <string name="pref_port_sum">Enter the Server Port</string>
+    <string name="pref_port_error_empty">The port number must not be empty.</string>
+    <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
     <string name="pref_user">Username</string>
     <string name="pref_user_sum">Enter Username</string>
     <string name="pref_pass">Password</string>
     <string name="pref_pass_sum">Enter Password</string>
     <string name="pref_pass_set_sum">Password is set but is not displayed.</string>
-
+    
     <string name="pref_ui">User interface</string>
     <string name="pref_icons">Channel icons</string>
     <string name="pref_icons_sum">Show channel icons?</string>

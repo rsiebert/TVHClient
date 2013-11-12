@@ -18,6 +18,9 @@
  */
 package org.tvheadend.tvhguide;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.tvheadend.tvhguide.model.Connection;
 
 import android.app.AlertDialog;
@@ -31,13 +34,15 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class SettingsAddConnectionActivity extends PreferenceActivity {
 
-    // Contains the currently set connection values 
+    // Contains the currently set connection values
     // and keeps them during orientation changes
     static Connection conn = null;
 
@@ -52,17 +57,16 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setTitle(R.string.add_connection);
 
-        getFragmentManager().beginTransaction()
-            .replace(android.R.id.content, new SettingsAddConnectionFragment())
-            .commit();
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsAddConnectionFragment())
+                .commit();
     }
 
     public void onStop() {
         super.onStop();
         Log.i("SettingsAddConnectionActivity", "onStop");
-        conn =  null;
+        conn = null;
     }
-    
+
     public static class SettingsAddConnectionFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
 
@@ -104,7 +108,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             // been rotated and we have to reuse the values.
             if (conn == null) {
                 Log.i(TAG, "Connection is null");
-                
+
                 // If an index is given then we want to edit this connection
                 // Otherwise create a new connection with default values.
                 long id = getActivity().getIntent().getLongExtra("id", 0);
@@ -137,7 +141,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             super.onResume();
             Log.i(TAG, "onResume");
 
-            // Show the values from the connection object 
+            // Show the values from the connection object
             // in the summary text of the preferences
             showPreferenceSummary();
 
@@ -147,7 +151,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
         }
 
         /**
-         * Displays the values from the 
+         * Displays the values from the
          */
         private void showPreferenceSummary() {
             Log.i(TAG, "showPreferenceSummary");
@@ -157,7 +161,8 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             prefAddress.setSummary(conn.address.isEmpty() ? getString(R.string.pref_host_sum) : conn.address);
             prefPort.setSummary(conn.port == 0 ? getString(R.string.pref_host_sum) : String.valueOf(conn.port));
             prefUsername.setSummary(conn.username.isEmpty() ? getString(R.string.pref_user_sum) : conn.username);
-            prefPassword.setSummary(conn.password.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
+            prefPassword.setSummary(conn.password.isEmpty() ? getString(R.string.pref_pass_sum)
+                    : getString(R.string.pref_pass_set_sum));
         }
 
         @Override
@@ -204,7 +209,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             conn.password = pref.getString(PREF_PASSWORD_KEY, "");
             conn.selected = pref.getBoolean(PREF_SELECTED_KEY, false);
 
-            // Show the values from the connection object 
+            // Show the values from the connection object
             // in the summary text of the preferences
             showPreferenceSummary();
         }
@@ -216,7 +221,8 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
          */
         private void save() {
 
-            // TODO Validate
+            if (!validateName() && !validatePort() && !validateAddress())
+                return;
 
             // If the current connection is set as selected
             // we need to unselect the previous one.
@@ -240,6 +246,88 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             }
 
             getActivity().finish();
+        }
+
+        /**
+         * Checks if the given name is not empty or does not contain special
+         * characters which are not allowed in the database
+         * 
+         * @return
+         */
+        private boolean validateName() {
+
+            if (conn.name.length() == 0) {
+                Toast.makeText(getActivity(), getString(R.string.pref_name_error_empty), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            // Check if the name contains only valid characters.
+            Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
+            Matcher matcher = pattern.matcher(conn.name);
+            if (!matcher.matches()) {
+                Toast.makeText(getActivity(), getString(R.string.pref_name_error_invalid), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Checks the given address for validity. It must not be empty and if it
+         * is an IP address it must only contain numbers between 1 and 255 and
+         * dots. If it is an host name it must contain only valid characters.
+         * 
+         * @return
+         */
+        private boolean validateAddress() {
+
+            if (conn.address.length() == 0) {
+                Toast.makeText(getActivity(), getString(R.string.pref_host_error_empty), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            // Check if the name contains only valid characters.
+            Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
+            Matcher matcher = pattern.matcher(conn.address);
+            if (!matcher.matches()) {
+                Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            // Check if the address has only numbers and dots in it.
+            pattern = Pattern.compile("^[0-9\\.]*$");
+            matcher = pattern.matcher(conn.address);
+
+            // Now validate the IP address
+            if (matcher.matches()) {
+                pattern = Patterns.IP_ADDRESS;
+                matcher = pattern.matcher(conn.address);
+                if (!matcher.matches()) {
+                    Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT)
+                            .show();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Validates the port number. It must not be empty and the value must be
+         * between the allowed port range of zero to 65535.
+         * 
+         * @return
+         */
+        private boolean validatePort() {
+
+            if (prefPort.getText().length() == 0) {
+                Toast.makeText(getActivity(), getString(R.string.pref_port_error_empty), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (conn.port <= 0 || conn.port > 65535) {
+                Toast.makeText(getActivity(), getString(R.string.pref_port_error_invalid), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            return true;
         }
 
         /**
