@@ -147,12 +147,6 @@ public class Utils {
 
         // Start the service with given action and data
         if (intent != null) {
-            String host = intent.getStringExtra("hostname");
-            String port = String.valueOf(intent.getIntExtra("port", 99));
-            String username = intent.getStringExtra("username");
-            String password = intent.getStringExtra("password");
-            
-            Log.i(TAG, "starting connection: " + host + ":" + port + ", user " + username + ", pass " + password);
             context.startService(intent);
         }
     }
