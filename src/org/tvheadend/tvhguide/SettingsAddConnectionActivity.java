@@ -102,7 +102,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
                     conn = new Connection();
                     conn.name = "";
                     conn.address = "";
-                    conn.port = 9981;
+                    conn.port = 9982;
                     conn.username = "";
                     conn.password = "";
                     conn.selected = false;
