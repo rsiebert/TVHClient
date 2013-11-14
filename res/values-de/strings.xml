@@ -12,20 +12,54 @@
     <string name="menu_record">Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
     <string name="menu_record_remove">Aufnahme entfernen</string>
-	<string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
+    <string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
     <string name="menu_search_epg">Suche im TV-Programm</string>
     <string name="menu_search_channel">Suche auf diesem Sender</string>
-    
+    <string name="menu_add">Hinzufügen</string>
+    <string name="menu_save">Speichern</string>
+    <string name="menu_cancel">Abbrechen</string>
+    <string name="menu_set_active">Aktivieren</string>
+    <string name="menu_set_not_active">Deaktivieren</string>
+    <string name="menu_edit">Bearbeiten</string>
+    <string name="menu_delete">Löschen</string>
+    <string name="menu_connections">Verbindungen</string>
+
+    <string name="pref_manage_connections">Verbindungen verwalten</string>
+    <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
+    <string name="available_connections">Verfügbare Verbindungen</string>
+    <string name="select_connection">Verbindung wählen</string>
+    <string name="add_connection">Verbindung hinzufügen</string>
+    <string name="new_connection">Neue Verbindung erstellen</string>
+    <string name="no_connections">Keine Verbindungen vorhanden</string>
+    <string name="delete_connection">Verbindung löschen</string>
+    <string name="cancel_connection">Abbrechen? Alle Änderungen gehen verloren.</string>
+    <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
+
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="confirm_cancel">Abbrechen bestätigen</string>
+    <string name="confirm_delete">Löschen bestätigen</string>
+
     <string name="pref_connections">Verbindungen</string>
+    <string name="pref_name">Name der Verbindung</string>
+    <string name="pref_name_sum">Bitte einen eindeutigen Namen eingeben.</string>
+    <string name="pref_name_error_empty">Der Name darf nicht leer sein.</string>
+    <string name="pref_name_error_invalid">Der Name darf nur Buchstaben, Ziffern, Minus oder Unterstrich enthalten.</string>
+    <string name="pref_selected">Standardverbindung</string>
+    <string name="pref_selected_sum">Wählen um diese Verbindung als Standard zu definieren. Sie wird beim Starten automatisch verwendet.</string>
     <string name="pref_host">Hostname</string>
     <string name="pref_host_sum">Hostname des Servers eingeben</string>
+    <string name="pref_host_error_empty">Die IP-Adresse oder der Hostname darf nicht leer sein.</string>
+    <string name="pref_host_error_invalid">Die IP-Adresse ist ungültig.</string>
     <string name="pref_port">Port</string>
     <string name="pref_port_sum">Server-Port eingeben</string>
+    <string name="pref_port_error_empty">Die Port-Nummer darf nicht leer sein.</string>
+    <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muß zwischen 1 und 65535 liegen.</string>
     <string name="pref_user">Benutzername</string>
     <string name="pref_user_sum">Benutzernamen eingeben</string>
     <string name="pref_pass">Passwort</string>
     <string name="pref_pass_sum">Passwort eingeben</string>
-	<string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
+    <string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
 
     <string name="pref_ui">Aussehen</string>
     <string name="pref_icons">Zeige Senderlogos</string>
