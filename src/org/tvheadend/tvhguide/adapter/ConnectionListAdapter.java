@@ -79,14 +79,14 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         if (c != null) {
             holder.title.setText(c.name);
             holder.summary.setText(c.address + ":" + c.port);
-            holder.selected.setVisibility(c.selected ? View.VISIBLE : View.GONE);
+//            holder.selected.setVisibility(c.selected ? View.VISIBLE : View.GONE);
             
-//            // Set the active / inactive icon depending on the theme and selection status
-//            if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
-//                holder.selected.setImageResource(c.selected ? R.drawable.item_active_light : R.drawable.item_not_active_light);
-//            } else {
-//                holder.selected.setImageResource(c.selected ? R.drawable.item_active_dark : R.drawable.item_not_active_dark);
-//            }
+           // Set the active / inactive icon depending on the theme and selection status
+           if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+               holder.selected.setImageResource(c.selected ? R.drawable.item_active_light : R.drawable.item_not_active_light);
+           } else {
+               holder.selected.setImageResource(c.selected ? R.drawable.item_active_dark : R.drawable.item_not_active_dark);
+           }
         }
         return view;
     }
