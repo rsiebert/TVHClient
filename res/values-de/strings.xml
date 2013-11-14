@@ -31,6 +31,7 @@
     <string name="add_connection">Verbindung hinzufügen</string>
     <string name="new_connection">Neue Verbindung erstellen</string>
     <string name="no_connections">Keine Verbindungen vorhanden</string>
+    <string name="connection_options">Optionen für Verbindung \'%s\'</string>
     <string name="delete_connection">Verbindung löschen</string>
     <string name="cancel_connection">Abbrechen? Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>

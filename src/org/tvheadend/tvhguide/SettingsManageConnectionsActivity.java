@@ -169,7 +169,7 @@ public class SettingsManageConnectionsActivity extends Activity {
 
         // Set the title of the context menu and show or hide
         // the menu items depending on the connection
-        menu.setHeaderTitle(connection.name);
+        menu.setHeaderTitle(getString(R.string.connection_options, connection.name));
     }
 
     @Override
