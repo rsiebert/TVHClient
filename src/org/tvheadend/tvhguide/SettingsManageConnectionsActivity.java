@@ -35,6 +35,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class SettingsManageConnectionsActivity extends Activity {
@@ -63,6 +64,13 @@ public class SettingsManageConnectionsActivity extends Activity {
         connListView = (ListView) findViewById(R.id.item_list);
         connListView.setAdapter(connAdapter);
         registerForContextMenu(connListView);
+        
+        connListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setConnectionActive(connAdapter.getItem(position));
+            }
+        });
     }
 
     public void onResume() {
@@ -96,22 +104,7 @@ public class SettingsManageConnectionsActivity extends Activity {
         switch (item.getItemId()) {
         case R.id.menu_set_active:
             
-            // Switch the selection status
-            c.selected = (c.selected) ? false : true;
-            
-            // Set the previous connection to unselected 
-            // if the selected one is set as selected
-            if (c.selected) {
-                Connection previousConn = DatabaseHelper.getInstance().getSelectedConnection();
-                if (previousConn != null) {
-                    previousConn.selected = false;
-                    DatabaseHelper.getInstance().updateConnection(previousConn);
-                }
-            };
-            
-            // Update the currently selected connection and refresh the display
-            DatabaseHelper.getInstance().updateConnection(c);
-            showConnections();
+            setConnectionActive(c);
             return true;
 
         case R.id.menu_set_not_active:
@@ -202,5 +195,24 @@ public class SettingsManageConnectionsActivity extends Activity {
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+    
+    private void setConnectionActive(Connection c) {
+        // Switch the selection status
+        c.selected = (c.selected) ? false : true;
+        
+        // Set the previous connection to unselected 
+        // if the selected one is set as selected
+        if (c.selected) {
+            Connection previousConn = DatabaseHelper.getInstance().getSelectedConnection();
+            if (previousConn != null) {
+                previousConn.selected = false;
+                DatabaseHelper.getInstance().updateConnection(previousConn);
+            }
+        };
+        
+        // Update the currently selected connection and refresh the display
+        DatabaseHelper.getInstance().updateConnection(c);
+        showConnections();
     }
 }
