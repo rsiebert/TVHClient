@@ -3,10 +3,14 @@
 
     <item
         android:id="@+id/menu_settings"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="?attr/ic_menu_settings"
         android:title="@string/menu_settings"/>
     <item
         android:id="@+id/menu_refresh"
-        android:icon="@android:drawable/ic_menu_rotate"
+        android:icon="?attr/ic_menu_refresh"
         android:title="@string/menu_refresh"/>
+    <item
+        android:id="@+id/menu_connections"
+        android:icon="?attr/ic_menu_selected"
+        android:title="@string/menu_connections"/>
 </menu>
