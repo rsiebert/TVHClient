@@ -95,7 +95,7 @@ public class SettingsManageConnectionsActivity extends Activity {
         final Connection c = connAdapter.getItem(info.position);
         
         switch (item.getItemId()) {
-        case R.id.menu_select:
+        case R.id.menu_set_active:
             Log.i("Manage", "select active connection");
             
             // Switch the selection status
@@ -119,7 +119,7 @@ public class SettingsManageConnectionsActivity extends Activity {
             
             return true;
 
-        case R.id.menu_deselect:
+        case R.id.menu_set_inactive:
             c.selected = false;
             DatabaseHelper.getInstance().updateConnection(c);
             return true;

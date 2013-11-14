@@ -18,9 +18,11 @@
     <string name="menu_add">Add</string>
     <string name="menu_save">Save</string>
     <string name="menu_cancel">Cancel</string>
-    <string name="menu_select">Select</string>
+    <string name="menu_set_active">Activate</string>
+    <string name="menu_set_inactive">Deactivate</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
+    <string name="menu_connections">Connections</string>
 
     <string name="pref_manage_connections">Manage Connections</string>
     <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
