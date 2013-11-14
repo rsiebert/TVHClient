@@ -119,6 +119,11 @@ public class SettingsManageConnectionsActivity extends Activity {
             
             return true;
 
+        case R.id.menu_deselect:
+            c.selected = false;
+            DatabaseHelper.getInstance().updateConnection(c);
+            return true;
+
         case R.id.menu_edit:
             Log.i("Manage", "Editing connection " + c.id);
             Intent intent = new Intent(this, SettingsAddConnectionActivity.class);
@@ -130,7 +135,8 @@ public class SettingsManageConnectionsActivity extends Activity {
             
             // Show confirmation dialog to cancel 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(getString(R.string.confirm_delete));
+            builder.setTitle("Delete connection");
+            builder.setMessage(getString(R.string.confirm_delete));
 
             // Define the action of the yes button
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -165,6 +171,8 @@ public class SettingsManageConnectionsActivity extends Activity {
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Connection connection = connAdapter.getItem(info.position);
+        
+        
         
         // Set the title of the context menu and show or hide 
         // the menu items depending on the connection
