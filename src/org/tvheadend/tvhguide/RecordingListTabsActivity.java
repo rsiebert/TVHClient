@@ -140,10 +140,10 @@ public class RecordingListTabsActivity extends Activity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Disable the refresh menu if no connection is available
-        if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
-            MenuItem item = menu.findItem(R.id.menu_refresh);
-            item.setVisible(false);
-        }
+        MenuItem item = menu.findItem(R.id.menu_refresh);
+        if (item != null)
+            item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null);
+
         return true;
     }
 
