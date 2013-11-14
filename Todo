@@ -2,5 +2,13 @@
 - icons in the light themes are too light (requires border)
 - Use custom player settings for channel and recordings
 - Add method header comments to the service classes
+
 - multiple servers
-- different configs for streaming programs and recordings 
+    - reconnect on different selection
+    - menu to select different connection
+    - validation
+    - sort / add strings
+    - rename add host pref menu
+    - show info in the channel list tab when no connection is defined
+    - disable the other tabs when no connection is defined
+    - Show connection name on context menu / confirmation dialogs

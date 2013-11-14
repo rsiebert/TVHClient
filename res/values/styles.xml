@@ -27,6 +27,17 @@
     <!-- Styles that will be used for the dark holo theme -->
     <style name="CustomTheme" parent="android:Theme.Holo">
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
+        <item name="ic_menu_save">@drawable/ic_menu_save_dark</item>
+        <item name="ic_menu_cancel">@drawable/ic_menu_cancel_dark</item>
+        <item name="ic_menu_add">@drawable/ic_menu_new_dark</item>
+        <item name="ic_menu_tags">@drawable/ic_menu_tags_dark</item>
+        <item name="ic_menu_refresh">@drawable/ic_menu_refresh_dark</item>
+        <item name="ic_menu_settings">@drawable/ic_menu_settings_dark</item>
+        <item name="ic_menu_play">@drawable/ic_menu_play_dark</item>
+        <item name="ic_menu_delete">@drawable/ic_menu_delete_dark</item>
+        <item name="ic_menu_edit">@drawable/ic_menu_edit_dark</item>
+        <item name="item_active">@drawable/item_active_dark</item>
+        <item name="item_not_active">@drawable/item_not_active_dark</item>
         <item name="TitleFont">@style/TitleFont.Dark</item>
         <item name="HeaderFont">@style/HeaderFont.Dark</item>
     </style>
@@ -34,6 +45,17 @@
     <!-- Styles that will be used for the light holo theme -->
     <style name="CustomTheme.Light" parent="android:Theme.Holo.Light">
         <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
+        <item name="ic_menu_save">@drawable/ic_menu_save_light</item>
+        <item name="ic_menu_cancel">@drawable/ic_menu_cancel_light</item>
+        <item name="ic_menu_add">@drawable/ic_menu_new_light</item>
+        <item name="ic_menu_tags">@drawable/ic_menu_tags_light</item>
+        <item name="ic_menu_refresh">@drawable/ic_menu_refresh_light</item>
+        <item name="ic_menu_settings">@drawable/ic_menu_settings_light</item>
+        <item name="ic_menu_play">@drawable/ic_menu_play_light</item>
+        <item name="ic_menu_delete">@drawable/ic_menu_delete_light</item>
+        <item name="ic_menu_edit">@drawable/ic_menu_edit_light</item>
+        <item name="item_active">@drawable/item_active_light</item>
+        <item name="item_not_active">@drawable/item_not_active_light</item>
         <item name="TitleFont">@style/TitleFont.Light</item>
         <item name="HeaderFont">@style/HeaderFont.Light</item>
     </style>

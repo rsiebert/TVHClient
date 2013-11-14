@@ -224,28 +224,38 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      * @param loading
      */
     private void setLoading(boolean loading) {
-        if (loading) {
+        
+        if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
             // Clear any channels in the list and 
-            // show that we are still loading data.
+            // show that we have no connection
             chAdapter.clear();
             chAdapter.notifyDataSetChanged();
-            getActivity().getActionBar().setSubtitle(R.string.loading);
+            getActivity().getActionBar().setSubtitle(R.string.no_connections);
         } 
         else {
-            // Fill the tag adapter with the available channel tags
-            TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
-            tagAdapter.clear();
-            for (ChannelTag t : app.getChannelTags()) {
-                tagAdapter.add(t);
+            if (loading) {
+                // Clear any channels in the list and 
+                // show that we are still loading data.
+                chAdapter.clear();
+                chAdapter.notifyDataSetChanged();
+                getActivity().getActionBar().setSubtitle(R.string.loading);
+            } 
+            else {
+                // Fill the tag adapter with the available channel tags
+                TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
+                tagAdapter.clear();
+                for (ChannelTag t : app.getChannelTags()) {
+                    tagAdapter.add(t);
+                }
+    
+                // Check if tags exist and set the previously used one
+                if (tagAdapter.getCount() > channelTagId)
+                    currentTag = tagAdapter.getItem(channelTagId);
+    
+                // Update the action bar text and fill the channel list
+                setCurrentTag(currentTag);
+                populateList();
             }
-
-            // Check if tags exist and set the previously used one
-            if (tagAdapter.getCount() > channelTagId)
-                currentTag = tagAdapter.getItem(channelTagId);
-
-            // Update the action bar text and fill the channel list
-            setCurrentTag(currentTag);
-            populateList();
         }
     }
 

@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tvheadend.tvhguide"
     android:versionCode="21"
-    android:versionName="1.7.1"
+    android:versionName="1.7.2"
     >
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
     <uses-sdk android:minSdkVersion="13" android:targetSdkVersion="17" />
     <application android:name="org.tvheadend.tvhguide.TVHGuideApplication" android:label="TVHGuide" android:icon="@drawable/logo_72">
         <meta-data android:name="android.app.default_searchable" android:value=".SearchResultActivity" />
@@ -22,6 +24,8 @@
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
+        <activity android:name="org.tvheadend.tvhguide.SettingsManageConnectionsActivity" />
+        <activity android:name="org.tvheadend.tvhguide.SettingsAddConnectionActivity" />
         <activity android:name="org.tvheadend.tvhguide.ProgramListActivity" />
         <activity android:name="org.tvheadend.tvhguide.ProgramDetailsActivity" />
         <activity android:name="org.tvheadend.tvhguide.RecordingDetailsActivity" />

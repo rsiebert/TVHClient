@@ -138,6 +138,16 @@ public class RecordingListTabsActivity extends Activity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Disable the refresh menu if no connection is available
+        MenuItem item = menu.findItem(R.id.menu_refresh);
+        if (item != null)
+            item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null);
+
+        return true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -151,15 +161,24 @@ public class RecordingListTabsActivity extends Activity {
         case android.R.id.home:
             onBackPressed();
             return true;
-        case R.id.menu_settings: {
+
+        case R.id.menu_settings:
             // Start the settings activity 
             intent = new Intent(this, SettingsActivity.class);
             startActivityForResult(intent, R.id.menu_settings);
             return true;
-        }
+
         case R.id.menu_refresh:
             Utils.connect(this, true);
             return true;
+
+        case R.id.menu_connections:
+            // Show the manage connections activity where 
+            // the user can choose a connection
+            intent = new Intent(this, SettingsManageConnectionsActivity.class);
+            startActivityForResult(intent, R.id.menu_connections);
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -198,6 +217,15 @@ public class RecordingListTabsActivity extends Activity {
         @Override
         public int getCount() {
             return getActionBar().getTabCount();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == R.id.menu_connections) {
+            if (resultCode == RESULT_OK){
+                Utils.connect(this, data.getBooleanExtra("reconnect", false));
+            }
         }
     }
 }

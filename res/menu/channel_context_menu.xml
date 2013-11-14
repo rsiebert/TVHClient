@@ -3,9 +3,11 @@
 
     <item
         android:id="@+id/menu_search"
+        android:icon="?attr/ic_menu_search"
         android:title="@string/menu_search_channel"/>
     <item
         android:id="@+id/menu_play"
+        android:icon="?attr/ic_menu_play"
         android:title="@string/menu_play"/>
 
 </menu>
