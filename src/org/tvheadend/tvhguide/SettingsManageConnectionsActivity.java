@@ -73,12 +73,12 @@ public class SettingsManageConnectionsActivity extends Activity {
         });
     }
 
+    @Override
     public void onResume() {
         super.onResume();
-        
         showConnections();
     }
-    
+
     private void showConnections() {
         connList.clear();
         
@@ -196,7 +196,15 @@ public class SettingsManageConnectionsActivity extends Activity {
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
+    @Override
+    public void onBackPressed() {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("reconnect", true);
+        setResult(RESULT_OK, returnIntent);
+        finish();
+    }
+
     private void setConnectionActive(Connection c) {
         // Switch the selection status
         c.selected = (c.selected) ? false : true;
