@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 public class ChannelListTabsActivity extends Activity {
 
+    private boolean reconnect = false;
     private int prevTabPosition = -1;
     
     @Override
@@ -141,7 +142,7 @@ public class ChannelListTabsActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-
+        
         // If the user has pressed the back button, the currently selected tab
         // would be active (like the recordings tab) which would show nothing
         // here. So we set the previously selected tab.
@@ -151,7 +152,8 @@ public class ChannelListTabsActivity extends Activity {
             prevTabPosition = -1;
         }
         
-        Utils.connect(this, false);
+        Utils.connect(this, reconnect);
+        reconnect = false;
     }
     
     @Override
@@ -181,26 +183,41 @@ public class ChannelListTabsActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
         switch (item.getItemId()) {
-            case R.id.menu_settings: {
-                // Save the current tab position so we show the previous tab
-                // again when we return from the settings menu.
-                prevTabPosition = getActionBar().getSelectedNavigationIndex();
-                // Now start the settings activity 
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivityForResult(intent, R.id.menu_settings);
-                return true;
-            }
-            case R.id.menu_refresh:
-                Utils.connect(this, true);
-                return true;
-            case R.id.menu_connections:
-                // Show a popup with the available 
-                // connection that the user can choose
-                
-                return true;
-            default: {
-                return super.onOptionsItemSelected(item);
+        case R.id.menu_settings:
+            // Save the current tab position so we show the previous tab
+            // again when we return from the settings menu.
+            prevTabPosition = getActionBar().getSelectedNavigationIndex();
+            // Now start the settings activity
+            intent = new Intent(this, SettingsActivity.class);
+            startActivityForResult(intent, R.id.menu_settings);
+            return true;
+
+        case R.id.menu_refresh:
+            Utils.connect(this, true);
+            return true;
+
+        case R.id.menu_connections:
+            // Save the current tab position so we show the previous tab
+            // again when we return from the settings menu.
+            prevTabPosition = getActionBar().getSelectedNavigationIndex();
+            // Show the manage connections activity where
+            // the user can choose a connection
+            intent = new Intent(this, SettingsManageConnectionsActivity.class);
+            startActivityForResult(intent, R.id.menu_connections);
+            return true;
+
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == R.id.menu_connections) {
+            if (resultCode == RESULT_OK){
+                reconnect = data.getBooleanExtra("reconnect", false);
             }
         }
     }
