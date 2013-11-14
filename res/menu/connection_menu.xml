@@ -5,6 +5,9 @@
         android:id="@+id/menu_select"
         android:title="@string/menu_select"/>
     <item
+        android:id="@+id/menu_deselect"
+        android:title="@string/menu_deselect"/>
+    <item
         android:id="@+id/menu_edit"
         android:title="@string/menu_edit"/>
     <item
