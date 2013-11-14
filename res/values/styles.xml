@@ -33,8 +33,11 @@
         <item name="ic_menu_tags">@drawable/ic_menu_tags_dark</item>
         <item name="ic_menu_refresh">@drawable/ic_menu_refresh_dark</item>
         <item name="ic_menu_settings">@drawable/ic_menu_settings_dark</item>
-        <item name="ic_menu_selected">@drawable/item_selected_dark</item>
-        <item name="ic_menu_not_selected">@drawable/item_not_selected_dark</item>
+        <item name="ic_menu_play">@drawable/ic_menu_play_dark</item>
+        <item name="ic_menu_delete">@drawable/ic_menu_delete_dark</item>
+        <item name="ic_menu_edit">@drawable/ic_menu_edit_dark</item>
+        <item name="item_active">@drawable/item_active_dark</item>
+        <item name="item_not_active">@drawable/item_not_active_dark</item>
         <item name="TitleFont">@style/TitleFont.Dark</item>
         <item name="HeaderFont">@style/HeaderFont.Dark</item>
     </style>
@@ -48,8 +51,11 @@
         <item name="ic_menu_tags">@drawable/ic_menu_tags_light</item>
         <item name="ic_menu_refresh">@drawable/ic_menu_refresh_light</item>
         <item name="ic_menu_settings">@drawable/ic_menu_settings_light</item>
-        <item name="ic_menu_selected">@drawable/item_selected_light</item>
-        <item name="ic_menu_not_selected">@drawable/item_not_selected_light</item>
+        <item name="ic_menu_play">@drawable/ic_menu_play_light</item>
+        <item name="ic_menu_delete">@drawable/ic_menu_delete_light</item>
+        <item name="ic_menu_edit">@drawable/ic_menu_edit_light</item>
+        <item name="item_active">@drawable/item_active_light</item>
+        <item name="item_not_active">@drawable/item_not_active_light</item>
         <item name="TitleFont">@style/TitleFont.Light</item>
         <item name="HeaderFont">@style/HeaderFont.Light</item>
     </style>

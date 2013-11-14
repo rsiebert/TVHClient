@@ -3,15 +3,19 @@
 
     <item
         android:id="@+id/menu_set_active"
+        android:icon="?attr/item_active"
         android:title="@string/menu_set_active"/>
     <item
         android:id="@+id/menu_set_not_active"
+        android:icon="?attr/item_not_active"
         android:title="@string/menu_set_not_active"/>
     <item
         android:id="@+id/menu_edit"
+        android:icon="?attr/ic_menu_edit"
         android:title="@string/menu_edit"/>
     <item
         android:id="@+id/menu_delete"
+        android:icon="?attr/ic_menu_delete"
         android:title="@string/menu_delete"/>
 
 </menu>

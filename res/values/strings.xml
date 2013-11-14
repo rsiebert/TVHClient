@@ -19,7 +19,7 @@
     <string name="menu_save">Save</string>
     <string name="menu_cancel">Cancel</string>
     <string name="menu_set_active">Activate</string>
-    <string name="menu_set_inactive">Deactivate</string>
+    <string name="menu_set_not_active">Deactivate</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_connections">Connections</string>
