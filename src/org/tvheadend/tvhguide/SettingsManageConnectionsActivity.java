@@ -29,7 +29,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -96,7 +95,6 @@ public class SettingsManageConnectionsActivity extends Activity {
         
         switch (item.getItemId()) {
         case R.id.menu_set_active:
-            Log.i("Manage", "select active connection");
             
             // Switch the selection status
             c.selected = (c.selected) ? false : true;
@@ -111,21 +109,18 @@ public class SettingsManageConnectionsActivity extends Activity {
                 }
             };
             
-            // Update the currently selected connection
+            // Update the currently selected connection and refresh the display
             DatabaseHelper.getInstance().updateConnection(c);
-
-            // Refresh the display
             showConnections();
-            
             return true;
 
-        case R.id.menu_set_inactive:
+        case R.id.menu_set_not_active:
             c.selected = false;
             DatabaseHelper.getInstance().updateConnection(c);
+            showConnections();
             return true;
 
         case R.id.menu_edit:
-            Log.i("Manage", "Editing connection " + c.id);
             Intent intent = new Intent(this, SettingsAddConnectionActivity.class);
             intent.putExtra("id", c.id);
             startActivity(intent);
@@ -162,19 +157,24 @@ public class SettingsManageConnectionsActivity extends Activity {
             return super.onContextItemSelected(item);
         }
     }
-    
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.connection_menu, menu);
-        
+
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Connection connection = connAdapter.getItem(info.position);
-        
-        
-        
-        // Set the title of the context menu and show or hide 
+
+        // Show or hide the activate / deactivate menu item
+        if (connection.selected) {
+            menu.getItem(0).setVisible(false);
+        } else {
+            menu.getItem(1).setVisible(false);
+        }
+
+        // Set the title of the context menu and show or hide
         // the menu items depending on the connection
         menu.setHeaderTitle(connection.name);
     }
