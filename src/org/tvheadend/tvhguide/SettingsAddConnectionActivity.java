@@ -313,6 +313,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
 
             // Show confirmation dialog to cancel
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(getString(R.string.cancel_connection));
             builder.setTitle(getString(R.string.confirm_cancel));
 
             // Define the action of the yes button

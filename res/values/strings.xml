@@ -31,12 +31,14 @@
     <string name="add_connection">Add Connection</string>
     <string name="new_connection">Create a new connection</string>
     <string name="no_connections">No connections available</string>
-    
+    <string name="delete_connection">Add Connection</string>
+    <string name="cancel_connection">Discard values? All changes will be lost.</string>
+    <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
+
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="confirm_cancel">Discard values and close?</string>
-    <string name="confirm_delete">Do you really want to delete the connection?</string>
-    <string name="error_name_already_taken">The name is already been taken. Please use another one</string>
+    <string name="confirm_cancel">Cancel</string>
+    <string name="confirm_delete">Delete</string>
 
     <string name="pref_connections">Connections</string>
     <string name="pref_name">Connection Name</string>
