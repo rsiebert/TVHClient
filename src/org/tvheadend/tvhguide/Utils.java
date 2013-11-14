@@ -38,7 +38,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,8 +46,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Utils {
-
-    private final static String TAG = Utils.class.getSimpleName();
     
     // Constants required for the date calculation
     private static final int twoDays = 1000 * 3600 * 24 * 2;
@@ -125,16 +122,12 @@ public class Utils {
      * @param force
      */
     public static void connect(final Context context, final boolean force) {
-        Log.i(TAG, "connect");
-
         Intent intent = null;
         
         // Get the currently selected connection
         Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
-            Log.i(TAG, "connection available");
-
             // Create an intent and pass on the connection details
             intent = new Intent(context, HTSService.class);
             intent.setAction(HTSService.ACTION_CONNECT);
