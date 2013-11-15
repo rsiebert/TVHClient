@@ -35,11 +35,6 @@
     <string name="cancel_connection">Discard values? All changes will be lost.</string>
     <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
 
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="confirm_cancel">Confirm Cancel</string>
-    <string name="confirm_delete">Confirm Delete</string>
-
     <string name="pref_connections">Connections</string>
     <string name="pref_name">Connection Name</string>
     <string name="pref_name_sum">Enter a unique name of the connection</string>
@@ -252,6 +247,9 @@
     <string name="rating">Rating</string>
     <string name="content_type">Content Type</string>
     <string name="series_information">Series Information</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string name="loading">Loading&#8230;</string>
     <string name="all_channels">All channels</string>    

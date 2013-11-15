@@ -32,13 +32,8 @@
     <string name="new_connection">Neue Verbindung erstellen</string>
     <string name="no_connections">Keine Verbindungen vorhanden</string>
     <string name="connection_options">Optionen für Verbindung \'%s\'</string>
-    <string name="cancel_connection">Abbrechen? Alle Änderungen gehen verloren.</string>
+    <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
-
-    <string name="yes">Ja</string>
-    <string name="no">Nein</string>
-    <string name="confirm_cancel">Abbrechen bestätigen</string>
-    <string name="confirm_delete">Löschen bestätigen</string>
 
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
@@ -238,7 +233,10 @@
     <string name="rating">Bewertung</string>
     <string name="content_type">Genre</string>
     <string name="series_information">Serien Information</string>
-        
+
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+
     <string name="loading">Lade&#8230;</string>
     <string name="all_channels">Alle Sender</string>
     <string name="season">Staffel</string>
