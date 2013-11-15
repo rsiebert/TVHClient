@@ -32,7 +32,6 @@
     <string name="new_connection">Neue Verbindung erstellen</string>
     <string name="no_connections">Keine Verbindungen vorhanden</string>
     <string name="connection_options">Optionen für Verbindung \'%s\'</string>
-    <string name="delete_connection">Verbindung löschen</string>
     <string name="cancel_connection">Abbrechen? Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
 
@@ -55,7 +54,7 @@
     <string name="pref_port">Port</string>
     <string name="pref_port_sum">Server-Port eingeben</string>
     <string name="pref_port_error_empty">Die Port-Nummer darf nicht leer sein.</string>
-    <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muß zwischen 1 und 65535 liegen.</string>
+    <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muss zwischen 1 und 65535 liegen.</string>
     <string name="pref_user">Benutzername</string>
     <string name="pref_user_sum">Benutzernamen eingeben</string>
     <string name="pref_pass">Passwort</string>

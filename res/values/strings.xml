@@ -32,7 +32,6 @@
     <string name="new_connection">Create a new connection</string>
     <string name="no_connections">No connections available</string>
     <string name="connection_options">Options for Connection \'%s\'</string>
-    <string name="delete_connection">Delete Connection</string>
     <string name="cancel_connection">Discard values? All changes will be lost.</string>
     <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
 
