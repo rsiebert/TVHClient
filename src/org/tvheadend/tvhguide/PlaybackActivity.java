@@ -34,9 +34,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -51,62 +49,56 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply the specified theme
+        setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
 
+        // Set the title (name of the channel or the recording)
         String title = getIntent().getStringExtra("title");
         setTitle(title);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.player_layout);
 
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
 
         final TextView clock = (TextView) findViewById(R.id.pl_clock);
-        final LinearLayout headerOverlay = (LinearLayout) findViewById(R.id.pl_header);
-        final LinearLayout middleOverlay = (LinearLayout) findViewById(R.id.pl_middle);
-        final LinearLayout footerOverlay = (LinearLayout) findViewById(R.id.pl_footer);
+        final LinearLayout header = (LinearLayout) findViewById(R.id.pl_header);
+        final LinearLayout middle = (LinearLayout) findViewById(R.id.pl_middle);
 
         videoView = (TVHVideoView) findViewById(R.id.pl_video);
         videoView.setOnPreparedListener(new OnPreparedListener() {
-
-            public void onPrepared(MediaPlayer arg0) {
-                middleOverlay.setVisibility(LinearLayout.GONE);
+            public void onPrepared(MediaPlayer mp) {
+                middle.setVisibility(LinearLayout.GONE);
             }
         });
 
         videoView.setOnErrorListener(new OnErrorListener() {
-
-            public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
+            public boolean onError(MediaPlayer mp, int what, int extra) {
                 finish();
                 return true;
             }
         });
 
-        LayoutInflater inflater = getLayoutInflater();
-        View v = inflater.inflate(R.layout.channel_list_widget, null, false);
-//        final ChannelListViewWrapper w = new ChannelListViewWrapper(v);
-        footerOverlay.addView(v);
-
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.pl_frame);
         frameLayout.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View arg0) {
-                if (headerOverlay.getVisibility() == LinearLayout.VISIBLE) {
-                    headerOverlay.setVisibility(LinearLayout.INVISIBLE);
-                    footerOverlay.setVisibility(LinearLayout.INVISIBLE);
-                } else {
-//                    w.repaint(channel);
+            public void onClick(View view) {
+                // If the header is visible hide it otherwise
+                // show it and display the clock and the title
+                if (header.getVisibility() == LinearLayout.VISIBLE) {
+                    header.setVisibility(LinearLayout.INVISIBLE);
+                }
+                else {
                     clock.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
                     clock.setText(DateFormat.getTimeFormat(clock.getContext()).format(new Date()));
-                    headerOverlay.setVisibility(LinearLayout.VISIBLE);
-                    footerOverlay.setVisibility(LinearLayout.VISIBLE);
+                    header.setVisibility(LinearLayout.VISIBLE);
                 }
             }
         });
 
+        // Get the ticket to play the stream
         Intent intent = new Intent(PlaybackActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_GET_TICKET);
         intent.putExtras(getIntent().getExtras());
@@ -116,7 +108,6 @@ public class PlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onResume() {
         super.onResume();
-
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
     }
@@ -124,13 +115,14 @@ public class PlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onPause() {
         super.onPause();
-
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.removeListener(this);
     }
 
     private void startPlayback(String path, String ticket) {
-        
+
+        // Get the values that was passed to this
+        // activity by the program selection activity
         String host = getIntent().getStringExtra("serverHostPref");
         Integer port = getIntent().getIntExtra("httpPortPref", 9981);
         Integer resolution = getIntent().getIntExtra("resolutionPref", 288);
@@ -139,7 +131,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
         String acodec = getIntent().getStringExtra("acodecPref");
         String vcodec = getIntent().getStringExtra("vcodecPref");
         String scodec = getIntent().getStringExtra("scodecPref");
-        
+
+        // Create the URL that is used to get the stream from the server
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
         url += "&mux=" + container;
@@ -150,18 +143,19 @@ public class PlaybackActivity extends Activity implements HTSListener {
             url += "&vcodec=" + vcodec;
             url += "&scodec=" + scodec;
         }
-        Log.i("PlaybackActivity", "Playing URL " + url);
 
+        // Set the details so the view can play the stream
         videoView.setVideoURI(Uri.parse(url));
         videoView.requestFocus();
         videoView.start();
         videoView.setAspectRatio(16, 9);
 
-        TextView codecInfo = (TextView) findViewById(R.id.pl_codec);
+        // Convert the container information like mpegts
+        // to a better readable format like MPEG-TS
+        container = valueToName(R.array.pref_container_list, R.array.pref_container_list_display, container);
 
-        container = valueToName(R.array.pref_container_list,
-                R.array.pref_container_list_display, container);
-
+        // Add additional information to the
+        // string if we transcode the stream
         String c = container;
         if (transcode) {
             c += " (";
@@ -170,7 +164,8 @@ public class PlaybackActivity extends Activity implements HTSListener {
             c += ")";
         }
 
-        codecInfo.setGravity(Gravity.CENTER_HORIZONTAL);
+        // Get the codec widget so we can show the used codec information
+        TextView codecInfo = (TextView) findViewById(R.id.pl_codec);
         codecInfo.setText(c);
     }
 
@@ -189,15 +184,12 @@ public class PlaybackActivity extends Activity implements HTSListener {
 
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_TICKET_ADD)) {
-
             this.runOnUiThread(new Runnable() {
-
                 public void run() {
                     HttpTicket t = (HttpTicket) obj;
                     startPlayback(t.path, t.ticket);
                 }
             });
-
         }
     }
 }
