@@ -88,7 +88,7 @@
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
         android:singleLine="true"
-        android:text="@string/disc_space" />
+        android:text="@string/unknown" />
 
     <TextView
         android:id="@+id/free_discspace"
@@ -98,6 +98,6 @@
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
         android:singleLine="true"
-        android:text="@string/disc_space" />
+        android:text="@string/unknown" />
 
 </LinearLayout>
