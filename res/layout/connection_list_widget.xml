@@ -12,7 +12,8 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/select_connection"
-        android:src="?attr/ic_menu_save" />
+        android:paddingRight="12dp"
+        android:src="?attr/item_not_active" />
 
     <TextView
         android:id="@+id/title"
