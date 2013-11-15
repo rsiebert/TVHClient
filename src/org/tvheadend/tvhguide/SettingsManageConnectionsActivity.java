@@ -124,7 +124,7 @@ public class SettingsManageConnectionsActivity extends Activity {
             // Show confirmation dialog to cancel 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(getString(R.string.delete_connection, c.name));
-            builder.setTitle(getString(R.string.confirm_delete));
+            builder.setTitle(getString(R.string.menu_delete));
 
             // Define the action of the yes button
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -133,6 +133,7 @@ public class SettingsManageConnectionsActivity extends Activity {
                         connAdapter.remove(c);
                         connAdapter.notifyDataSetChanged();
                         connAdapter.sort();
+                        getActionBar().setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
                     }
                 }
             });
