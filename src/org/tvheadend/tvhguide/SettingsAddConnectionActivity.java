@@ -195,7 +195,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
          */
         private void save() {
 
-            if (!validateName() && !validatePort() && !validateAddress())
+            if (!validateName() || !validatePort() || !validateAddress())
                 return;
 
             // If the current connection is set as selected
@@ -314,7 +314,7 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
             // Show confirmation dialog to cancel
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(getString(R.string.cancel_connection));
-            builder.setTitle(getString(R.string.confirm_cancel));
+            builder.setTitle(getString(R.string.menu_cancel));
 
             // Define the action of the yes button
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
