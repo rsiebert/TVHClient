@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.tvheadend.tvhguide.R;
+import org.tvheadend.tvhguide.Utils;
 import org.tvheadend.tvhguide.model.Connection;
 
 import android.app.Activity;
