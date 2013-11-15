@@ -28,7 +28,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 public class ChannelListTabsActivity extends Activity {
 
@@ -79,8 +78,8 @@ public class ChannelListTabsActivity extends Activity {
         getActionBar().addTab(tab);
         tab = getActionBar().newTab().setText(R.string.recordings).setTabListener(tabListener);
         getActionBar().addTab(tab);
-        tab = getActionBar().newTab().setText(R.string.program_guide).setTabListener(tabListener);
-        getActionBar().addTab(tab);
+//        tab = getActionBar().newTab().setText(R.string.program_guide).setTabListener(tabListener);
+//        getActionBar().addTab(tab);
         tab = getActionBar().newTab().setText(R.string.status).setTabListener(tabListener);
         getActionBar().addTab(tab);
         
@@ -116,11 +115,11 @@ public class ChannelListTabsActivity extends Activity {
             Intent intent = new Intent(this, RecordingListTabsActivity.class);
             startActivity(intent);
             break;
+//        case 2:
+//            // Show the program guide
+//            Toast.makeText(this, "No implemented yet", Toast.LENGTH_SHORT).show();
+//            break;
         case 2:
-            // Show the program guide
-            Toast.makeText(this, "No implemented yet", Toast.LENGTH_SHORT).show();
-            break;
-        case 3:
         	Fragment statusFrag = getFragmentManager().findFragmentByTag(tab.getText().toString());
             if (statusFrag == null) {
                 Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
