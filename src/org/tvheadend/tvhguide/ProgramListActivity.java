@@ -32,10 +32,11 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -47,8 +48,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class ProgramListActivity extends Activity implements HTSListener {
+public class ProgramListActivity extends ActionBarActivity implements HTSListener {
 
+    private ActionBar actionBar = null;
     private ProgramListAdapter prAdapter;
     private List<Program> prList;
     private ListView prListView;
@@ -75,15 +77,16 @@ public class ProgramListActivity extends Activity implements HTSListener {
         }
 
         // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setTitle(channel.name);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(channel.name);
         
         // Show or hide the channel icon if required
         boolean showIcon = Utils.showChannelIcons(this);
-        getActionBar().setDisplayUseLogoEnabled(showIcon);
+        actionBar.setDisplayUseLogoEnabled(showIcon);
         if (showIcon)
-            getActionBar().setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
         
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
@@ -92,7 +95,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
-                    getActionBar().setSubtitle(R.string.loading);
+                    actionBar.setSubtitle(R.string.loading);
                     loadMorePrograms();
                 }
             }
@@ -132,7 +135,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
         prAdapter.sort();
         prAdapter.notifyDataSetChanged();
 
-        getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+        actionBar.setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
     }
 
     @Override
@@ -271,7 +274,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
                         prAdapter.add(p);
                         prAdapter.notifyDataSetChanged();
                         prAdapter.sort();
-                        getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+                        actionBar.setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                     }
                 }
             });
@@ -281,7 +284,7 @@ public class ProgramListActivity extends Activity implements HTSListener {
                 public void run() {
                     prAdapter.remove((Program) obj);
                     prAdapter.notifyDataSetChanged();
-                    getActionBar().setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+                    actionBar.setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {

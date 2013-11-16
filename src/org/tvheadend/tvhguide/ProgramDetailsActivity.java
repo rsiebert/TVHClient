@@ -25,9 +25,10 @@ import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
-import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,8 +36,9 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class ProgramDetailsActivity extends Activity implements HTSListener {
+public class ProgramDetailsActivity extends ActionBarActivity implements HTSListener {
 
+    private ActionBar actionBar = null;
     // The currently selected program
     private Program program;
 
@@ -72,15 +74,16 @@ public class ProgramDetailsActivity extends Activity implements HTSListener {
         }
 
         // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setTitle(channel.name);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(channel.name);
 
         // Show or hide the channel icon if required
         boolean showIcon = Utils.showChannelIcons(this);
-        getActionBar().setDisplayUseLogoEnabled(showIcon);
+        actionBar.setDisplayUseLogoEnabled(showIcon);
         if (showIcon)
-            getActionBar().setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
         
         // Initialize all the widgets from the layout
         TextView title = (TextView) findViewById(R.id.title);

@@ -24,19 +24,21 @@ import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class RecordingDetailsActivity extends Activity implements HTSListener {
+public class RecordingDetailsActivity extends ActionBarActivity implements HTSListener {
 
- // The currently selected recording
-    Recording rec;
+    private ActionBar actionBar = null;
+    // The currently selected recording
+    private Recording rec;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,17 +57,18 @@ public class RecordingDetailsActivity extends Activity implements HTSListener {
         }
 
         // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
 
         if (rec.channel != null) {
-            getActionBar().setTitle(rec.channel.name);
+            actionBar.setTitle(rec.channel.name);
 
             // Show or hide the channel icon if required 
             boolean showIcon = Utils.showChannelIcons(this);
-            getActionBar().setDisplayUseLogoEnabled(showIcon);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
             if (showIcon && rec.channel.iconBitmap != null) {
-                getActionBar().setIcon(new BitmapDrawable(getResources(), rec.channel.iconBitmap));
+                actionBar.setIcon(new BitmapDrawable(getResources(), rec.channel.iconBitmap));
             }
         }
 
