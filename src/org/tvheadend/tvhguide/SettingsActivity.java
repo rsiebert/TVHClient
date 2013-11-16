@@ -24,12 +24,12 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends ActionBarActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class SettingsActivity extends PreferenceActivity {
         setTitle(R.string.menu_settings);
 
         // Show the specified fragment
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
     }
     
     public static class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
