@@ -165,7 +165,7 @@ public class RecordingListTabsActivity extends ActionBarActivity {
         case R.id.menu_settings:
             // Start the settings activity 
             intent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(intent, R.id.menu_settings);
+            startActivityForResult(intent, Utils.getResultCode(R.id.menu_settings));
             return true;
 
         case R.id.menu_refresh:
@@ -176,7 +176,7 @@ public class RecordingListTabsActivity extends ActionBarActivity {
             // Show the manage connections activity where 
             // the user can choose a connection
             intent = new Intent(this, SettingsManageConnectionsActivity.class);
-            startActivityForResult(intent, R.id.menu_connections);
+            startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
             return true;
 
         default:
@@ -222,7 +222,7 @@ public class RecordingListTabsActivity extends ActionBarActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == R.id.menu_connections) {
+        if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
             if (resultCode == RESULT_OK){
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
             }

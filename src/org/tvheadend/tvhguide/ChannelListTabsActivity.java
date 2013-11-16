@@ -186,7 +186,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             prevTabPosition = actionBar.getSelectedNavigationIndex();
             // Now start the settings activity
             intent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(intent, R.id.menu_settings);
+            startActivityForResult(intent, Utils.getResultCode(R.id.menu_settings));
             return true;
 
         case R.id.menu_refresh:
@@ -200,7 +200,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             // Show the manage connections activity where
             // the user can choose a connection
             intent = new Intent(this, SettingsManageConnectionsActivity.class);
-            startActivityForResult(intent, R.id.menu_connections);
+            startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
             return true;
 
         default:
@@ -210,7 +210,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == R.id.menu_connections) {
+        if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
             if (resultCode == RESULT_OK){
                 reconnect = data.getBooleanExtra("reconnect", false);
             }
