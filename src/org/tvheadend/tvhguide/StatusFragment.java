@@ -161,7 +161,7 @@ public class StatusFragment extends Fragment implements HTSListener {
             }
         }
 
-        currentlyRec.setVisibility(currentRecText.isEmpty() ? View.GONE : View.VISIBLE);
+        currentlyRec.setVisibility(currentRecText.length() == 0 ? View.GONE : View.VISIBLE);
         currentlyRec.setText(currentRecText);
         
         completedRec.setText(completedRecCount + " " + getString(R.string.completed));

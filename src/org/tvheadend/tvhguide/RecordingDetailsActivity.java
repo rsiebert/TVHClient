@@ -169,7 +169,7 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
     public void onMessage(String action, Object obj) {
         // An existing program has been updated, this is valid for all menu options. 
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
-            invalidateOptionsMenu();
+            supportInvalidateOptionsMenu();
             
             // Update the status icon
             ImageView state = (ImageView) findViewById(R.id.state);
