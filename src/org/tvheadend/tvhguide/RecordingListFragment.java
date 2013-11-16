@@ -28,7 +28,7 @@ import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -184,13 +184,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             // show that we have no connection
             recAdapter.clear();
             recAdapter.notifyDataSetChanged();
-            getActivity().getActionBar().setSubtitle(R.string.no_connections);
+            ((RecordingListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
         } 
         else {
             if (loading) {
                 recAdapter.clear();
                 recAdapter.notifyDataSetChanged();
-                getActivity().getActionBar().setSubtitle(R.string.loading);
+                ((RecordingListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.loading));
             } else {
                 populateList();
             }

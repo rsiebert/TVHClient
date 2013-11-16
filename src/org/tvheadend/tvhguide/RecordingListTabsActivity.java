@@ -20,21 +20,21 @@ package org.tvheadend.tvhguide;
 
 import java.lang.reflect.Field;
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
 
-public class RecordingListTabsActivity extends Activity {
+public class RecordingListTabsActivity extends ActionBarActivity {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingListTabsActivity.class.getSimpleName();
@@ -52,12 +52,12 @@ public class RecordingListTabsActivity extends Activity {
         setContentView(R.layout.pager_layout);
 
         // setup action bar for tabs
-        actionBar = getActionBar();
+        actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(R.string.menu_recordings);
 
-        adapter = new RecordingListPagerAdapter(getFragmentManager());
+        adapter = new RecordingListPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
 
@@ -109,11 +109,11 @@ public class RecordingListTabsActivity extends Activity {
         viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                getActionBar().setSelectedNavigationItem(position);
+                actionBar.setSelectedNavigationItem(position);
                 
                 // Get the fragment of the current tabs. The default tag given by the 
                 // FragmentPagerAdapater is "android:switcher:" + viewId + ":" + position;
-                RecordingListFragment fragment = (RecordingListFragment) getFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
+                RecordingListFragment fragment = (RecordingListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
                 
                 // Update the action bar subtitle
                 if (fragment != null)
@@ -125,7 +125,7 @@ public class RecordingListTabsActivity extends Activity {
         // the user has rotated the screen.
         if (savedInstanceState != null) {
             int index = savedInstanceState.getInt("selected_recording_tab_index", 0);
-            getActionBar().setSelectedNavigationItem(index);
+            actionBar.setSelectedNavigationItem(index);
         }
     }
 
@@ -133,7 +133,7 @@ public class RecordingListTabsActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save the currently selected tab
-        int index = getActionBar().getSelectedNavigationIndex();
+        int index = actionBar.getSelectedNavigationIndex();
         outState.putInt("selected_recording_tab_index", index);
     }
 
@@ -185,16 +185,16 @@ public class RecordingListTabsActivity extends Activity {
     }
 
     public void updateTitle(int position, int count) {
-        if (getActionBar().getSelectedNavigationIndex() == position) {
+        if (actionBar.getSelectedNavigationIndex() == position) {
             switch (position) {
             case 0:
-                getActionBar().setSubtitle(count + " " + getString(R.string.completed));
+                actionBar.setSubtitle(count + " " + getString(R.string.completed));
                 break;
             case 1:
-                getActionBar().setSubtitle(count + " " + getString(R.string.upcoming));
+                actionBar.setSubtitle(count + " " + getString(R.string.upcoming));
                 break;
             case 2:
-                getActionBar().setSubtitle(count + " " + getString(R.string.failed));
+                actionBar.setSubtitle(count + " " + getString(R.string.failed));
                 break;
             }
         }
@@ -216,7 +216,7 @@ public class RecordingListTabsActivity extends Activity {
 
         @Override
         public int getCount() {
-            return getActionBar().getTabCount();
+            return actionBar.getTabCount();
         }
     }
 
@@ -227,5 +227,9 @@ public class RecordingListTabsActivity extends Activity {
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
             }
         }
+    }
+
+    public void setActionBarSubtitle(final String subtitle) {
+        actionBar.setSubtitle(subtitle);
     }
 }
