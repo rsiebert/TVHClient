@@ -27,7 +27,7 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.ChannelTag;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -165,9 +165,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private void setCurrentTag(ChannelTag tag) {
         currentTag = tag;
         if (tag == null) {
-            getActivity().getActionBar().setTitle(R.string.all_channels);
+            ((ChannelListTabsActivity) getActivity()).setActionBarTitle(getString(R.string.all_channels));
         } else {
-            getActivity().getActionBar().setTitle(currentTag.name);
+            ((ChannelListTabsActivity) getActivity()).setActionBarTitle(currentTag.name);
         }
     }
 
@@ -181,7 +181,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         }
         chAdapter.sort();
         chAdapter.notifyDataSetChanged();
-        getActivity().getActionBar().setSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
+        ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
     }
 
     @Override
@@ -230,7 +230,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             // show that we have no connection
             chAdapter.clear();
             chAdapter.notifyDataSetChanged();
-            getActivity().getActionBar().setSubtitle(R.string.no_connections);
+            ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
         } 
         else {
             if (loading) {
@@ -238,7 +238,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 // show that we are still loading data.
                 chAdapter.clear();
                 chAdapter.notifyDataSetChanged();
-                getActivity().getActionBar().setSubtitle(R.string.loading);
+                ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.loading));
             } 
             else {
                 // Fill the tag adapter with the available channel tags
