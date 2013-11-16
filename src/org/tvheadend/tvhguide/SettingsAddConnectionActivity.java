@@ -134,11 +134,11 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         }
 
         private void showPreferenceSummary() {
-            prefName.setSummary(conn.name.isEmpty() ? getString(R.string.pref_name_sum) : conn.name);
-            prefAddress.setSummary(conn.address.isEmpty() ? getString(R.string.pref_host_sum) : conn.address);
+            prefName.setSummary(conn.name.length() == 0 ? getString(R.string.pref_name_sum) : conn.name);
+            prefAddress.setSummary(conn.address.length() == 0 ? getString(R.string.pref_host_sum) : conn.address);
             prefPort.setSummary(conn.port == 0 ? getString(R.string.pref_host_sum) : String.valueOf(conn.port));
-            prefUsername.setSummary(conn.username.isEmpty() ? getString(R.string.pref_user_sum) : conn.username);
-            prefPassword.setSummary(conn.password.isEmpty() ? getString(R.string.pref_pass_sum)
+            prefUsername.setSummary(conn.username.length() == 0 ? getString(R.string.pref_user_sum) : conn.username);
+            prefPassword.setSummary(conn.password.length() == 0 ? getString(R.string.pref_pass_sum)
                     : getString(R.string.pref_pass_set_sum));
         }
 
