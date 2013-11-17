@@ -182,7 +182,7 @@
     <string name="episode">Odcinek</string>
     <string name="part">Część</string>
     <string name="airing">Airing</string>
-    <string name="star_rating">Ocena</string>
+    <string name="rating">Ocena</string>
     <string name="content_type">Kategoria</string>
     <string name="series_information">Część</string>
 
