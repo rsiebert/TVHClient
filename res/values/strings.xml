@@ -250,6 +250,7 @@
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="nothing">Nothing</string>
 
     <string name="loading">Loading&#8230;</string>
     <string name="all_channels">All channels</string>    
@@ -264,7 +265,7 @@
     <string name="available">Available</string>
     <string name="unknown">Unknown</string>
     
-    <string name="currently_recording">Program %s is being recorded</string>
+    <string name="currently_recording">Currently recording</string>
     <string name="restart_application">Please restart the application to activate the new theme.</string>
     
     <string name="no_media_player">No media player found</string>
