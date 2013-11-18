@@ -25,6 +25,7 @@ import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -189,6 +190,13 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
 
         case R.id.menu_record:
             Utils.recordProgram(this, program.id, program.channel.id);
+            return true;
+
+        case R.id.menu_play:
+            // Open a new activity to stream the current program to this device
+            Intent intent = new Intent(this, PlaybackSelectionActivity.class);
+            intent.putExtra("channelId", program.channel.id);
+            startActivity(intent);
             return true;
 
         default:
