@@ -139,10 +139,13 @@ public class RecordingListTabsActivity extends ActionBarActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // Disable the refresh menu if no connection is available
+        // Disable the refresh menu if no connection is 
+        // available or the loading process is already active
         MenuItem item = menu.findItem(R.id.menu_refresh);
-        if (item != null)
-            item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null);
+        if (item != null) {
+            TVHGuideApplication app = (TVHGuideApplication) getApplication();
+            item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
+        }
 
         return true;
     }
