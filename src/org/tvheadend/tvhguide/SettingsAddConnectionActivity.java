@@ -30,17 +30,19 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.preference.PreferenceFragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class SettingsAddConnectionActivity extends PreferenceActivity {
+public class SettingsAddConnectionActivity extends ActionBarActivity {
 
+    private ActionBar actionBar = null;
     // Contains the currently set connection values
     // and keeps them during orientation changes
     static Connection conn = null;
@@ -51,11 +53,12 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
 
         // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setTitle(R.string.add_connection);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(R.string.add_connection);
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsAddConnectionFragment())
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsAddConnectionFragment())
                 .commit();
     }
 
@@ -131,11 +134,11 @@ public class SettingsAddConnectionActivity extends PreferenceActivity {
         }
 
         private void showPreferenceSummary() {
-            prefName.setSummary(conn.name.isEmpty() ? getString(R.string.pref_name_sum) : conn.name);
-            prefAddress.setSummary(conn.address.isEmpty() ? getString(R.string.pref_host_sum) : conn.address);
+            prefName.setSummary(conn.name.length() == 0 ? getString(R.string.pref_name_sum) : conn.name);
+            prefAddress.setSummary(conn.address.length() == 0 ? getString(R.string.pref_host_sum) : conn.address);
             prefPort.setSummary(conn.port == 0 ? getString(R.string.pref_host_sum) : String.valueOf(conn.port));
-            prefUsername.setSummary(conn.username.isEmpty() ? getString(R.string.pref_user_sum) : conn.username);
-            prefPassword.setSummary(conn.password.isEmpty() ? getString(R.string.pref_pass_sum)
+            prefUsername.setSummary(conn.username.length() == 0 ? getString(R.string.pref_user_sum) : conn.username);
+            prefPassword.setSummary(conn.password.length() == 0 ? getString(R.string.pref_pass_sum)
                     : getString(R.string.pref_pass_set_sum));
         }
 

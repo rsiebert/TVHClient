@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tvheadend.tvhguide"
     android:versionCode="21"
-    android:versionName="1.7.4" >
+    android:versionName="1.7.5" >
     <uses-permission android:name="android.permission.INTERNET" />
     
-    <uses-sdk android:minSdkVersion="13" android:targetSdkVersion="17" />
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17" />
     <application 
         android:name="org.tvheadend.tvhguide.TVHGuideApplication" 
         android:label="TVHGuide" android:icon="@drawable/logo">

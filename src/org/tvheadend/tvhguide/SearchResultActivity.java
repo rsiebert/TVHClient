@@ -32,10 +32,11 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -45,8 +46,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class SearchResultActivity extends Activity implements HTSListener {
+public class SearchResultActivity extends ActionBarActivity implements HTSListener {
 
+    private ActionBar actionBar = null;
     private SearchResultAdapter srAdapter;
     private ListView searchListView;
     private Pattern pattern;
@@ -64,10 +66,11 @@ public class SearchResultActivity extends Activity implements HTSListener {
         setContentView(R.layout.list_layout);
         
         // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setTitle("Searching");
-        getActionBar().setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle("Searching");
+        actionBar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
 
         searchListView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(searchListView);
@@ -132,7 +135,7 @@ public class SearchResultActivity extends Activity implements HTSListener {
             }
         }
 
-        getActionBar().setTitle(android.R.string.search_go);
+        actionBar.setTitle(android.R.string.search_go);
     }
 
     @Override
@@ -230,7 +233,7 @@ public class SearchResultActivity extends Activity implements HTSListener {
                         srAdapter.notifyDataSetChanged();
                         srAdapter.sort();
                         
-                        getActionBar().setSubtitle(srAdapter.getCount() + " " + getString(R.string.results));
+                        actionBar.setSubtitle(srAdapter.getCount() + " " + getString(R.string.results));
                     }
                 }
             });

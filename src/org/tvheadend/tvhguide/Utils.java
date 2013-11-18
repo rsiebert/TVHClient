@@ -459,4 +459,28 @@ public class Utils {
             }
         }
     }
+
+    /**
+     * This method is only used when the startActivityForResult is called. It
+     * returns a smaller integer instead of the passed one to avoid a
+     * segmentation fault. This only happens on android versions before 4.X.X
+     * 
+     * @param code
+     * @return
+     */
+    public static int getResultCode(final int code) {
+
+        // When the startActivityForResult method is called with the regular
+        // integer then the
+        // java.lang.IllegalArgumentException: Can only use lower 16 bits for
+        // resultCode
+        // The code value must be lower than 0xffff.
+        if (code == R.id.menu_settings) {
+            return 219;
+        } else if (code == R.id.menu_connections) {
+            return 221;
+        } else {
+            return 0;
+        }
+    }
 }

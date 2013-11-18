@@ -59,6 +59,10 @@ public class HTSConnection extends Thread {
     private Selector selector;
 
     public HTSConnection(HTSConnectionListener listener, String clientName, String clientVersion) {
+        
+        // Disable the use of IPv6
+        System.setProperty("java.net.preferIPv6Addresses", "false");
+        
         running = false;
         lock = new ReentrantLock();
         inBuf = ByteBuffer.allocateDirect(1024 * 1024);

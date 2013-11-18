@@ -132,7 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         Connection conn = null;
 
-        if (c != null && c.getCount() > 0) {
+        if (c.getCount() > 0) {
             c.moveToFirst();
 
             conn = new Connection();
@@ -144,6 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
             conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
         }
+        c.close();
 
         return conn;
     }
@@ -154,17 +155,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 KEY_ID + "=?", new String[] { String.valueOf(id) }, 
                 null, null, null);
         
-        if (c != null)
-            c.moveToFirst();
-        
-        Connection conn = new Connection();
-        conn.id = c.getInt(c.getColumnIndex(KEY_ID));
-        conn.name = c.getString(c.getColumnIndex(KEY_NAME));
-        conn.address = c.getString(c.getColumnIndex(KEY_ADDRESS));
-        conn.port = c.getInt(c.getColumnIndex(KEY_PORT));
-        conn.username = c.getString(c.getColumnIndex(KEY_USERNAME));
-        conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
-        conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
+        Connection conn = null;
+
+        if (c.moveToFirst()) {
+            conn = new Connection();
+            conn.id = c.getInt(c.getColumnIndex(KEY_ID));
+            conn.name = c.getString(c.getColumnIndex(KEY_NAME));
+            conn.address = c.getString(c.getColumnIndex(KEY_ADDRESS));
+            conn.port = c.getInt(c.getColumnIndex(KEY_PORT));
+            conn.username = c.getString(c.getColumnIndex(KEY_USERNAME));
+            conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
+            conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
+        }
+        c.close();
 
         return conn;
     }
@@ -190,6 +193,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 connList.add(conn);
             } while (c.moveToNext());
         }
+        c.close();
+
         return connList;
     }
 }

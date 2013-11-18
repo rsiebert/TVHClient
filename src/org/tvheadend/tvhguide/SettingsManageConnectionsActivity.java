@@ -24,11 +24,12 @@ import java.util.List;
 import org.tvheadend.tvhguide.adapter.ConnectionListAdapter;
 import org.tvheadend.tvhguide.model.Connection;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -38,8 +39,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class SettingsManageConnectionsActivity extends Activity {
+public class SettingsManageConnectionsActivity extends ActionBarActivity {
 
+    private ActionBar actionBar = null;
     private ConnectionListAdapter connAdapter;
     private List<Connection> connList;
     private ListView connListView;
@@ -55,9 +57,10 @@ public class SettingsManageConnectionsActivity extends Activity {
         setContentView(R.layout.list_layout);
         
         // Setup the action bar and show the title
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setTitle(R.string.pref_manage_connections);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(R.string.pref_manage_connections);
         
         connList = new ArrayList<Connection>();
         connAdapter = new ConnectionListAdapter(this, connList);
@@ -91,7 +94,7 @@ public class SettingsManageConnectionsActivity extends Activity {
         
         connAdapter.sort();
         connAdapter.notifyDataSetChanged();
-        getActionBar().setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
+        actionBar.setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
     }
 
     @Override
@@ -133,7 +136,7 @@ public class SettingsManageConnectionsActivity extends Activity {
                         connAdapter.remove(c);
                         connAdapter.notifyDataSetChanged();
                         connAdapter.sort();
-                        getActionBar().setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
+                        actionBar.setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
                     }
                 }
             });

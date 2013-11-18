@@ -24,25 +24,44 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.preference.PreferenceFragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends ActionBarActivity {
+
+    private ActionBar actionBar = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setTitle(R.string.menu_settings);
+
+        // Setup the action bar and show the title
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(R.string.menu_settings);
 
         // Show the specified fragment
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
     }
-    
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+            
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
     public static class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
         
         @Override

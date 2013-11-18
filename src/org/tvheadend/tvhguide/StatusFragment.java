@@ -24,9 +24,9 @@ import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,7 +161,7 @@ public class StatusFragment extends Fragment implements HTSListener {
             }
         }
 
-        currentlyRec.setVisibility(currentRecText.isEmpty() ? View.GONE : View.VISIBLE);
+        currentlyRec.setVisibility(currentRecText.length() == 0 ? View.GONE : View.VISIBLE);
         currentlyRec.setText(currentRecText);
         
         completedRec.setText(completedRecCount + " " + getString(R.string.completed));

@@ -19,18 +19,19 @@
 package org.tvheadend.tvhguide;
 
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
+import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ChannelListTabsActivity extends Activity {
+public class ChannelListTabsActivity extends ActionBarActivity {
 
+    private ActionBar actionBar = null;
     private boolean reconnect = false;
     private int prevTabPosition = -1;
     
@@ -45,9 +46,10 @@ public class ChannelListTabsActivity extends Activity {
         DatabaseHelper.init(this.getApplicationContext()); 
         
         // setup action bar for tabs
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        getActionBar().setDisplayHomeAsUpEnabled(false);
-        getActionBar().setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
+        actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
 
         // Create a tab listener that is called when the user changes tabs.
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
@@ -66,7 +68,7 @@ public class ChannelListTabsActivity extends Activity {
                 prevTabPosition = tab.getPosition();
                 
                 // Detach the channel list fragment, because another will be attached
-                Fragment prevFragment = getFragmentManager().findFragmentByTag(tab.getText().toString());
+                Fragment prevFragment = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
                 if (prevFragment != null) {
                     ft.detach(prevFragment);
                 }
@@ -74,19 +76,19 @@ public class ChannelListTabsActivity extends Activity {
         };
 
         // Add the tabs
-        Tab tab = getActionBar().newTab().setText(R.string.channels).setTabListener(tabListener);
-        getActionBar().addTab(tab);
-        tab = getActionBar().newTab().setText(R.string.recordings).setTabListener(tabListener);
-        getActionBar().addTab(tab);
-//        tab = getActionBar().newTab().setText(R.string.program_guide).setTabListener(tabListener);
-//        getActionBar().addTab(tab);
-        tab = getActionBar().newTab().setText(R.string.status).setTabListener(tabListener);
-        getActionBar().addTab(tab);
+        Tab tab = actionBar.newTab().setText(R.string.channels).setTabListener(tabListener);
+        actionBar.addTab(tab);
+        tab = actionBar.newTab().setText(R.string.recordings).setTabListener(tabListener);
+        actionBar.addTab(tab);
+//        tab = actionBar.newTab().setText(R.string.program_guide).setTabListener(tabListener);
+//        actionBar.addTab(tab);
+        tab = actionBar.newTab().setText(R.string.status).setTabListener(tabListener);
+        actionBar.addTab(tab);
         
         // Restore the previously selected tab
         if (savedInstanceState != null) {
             int index = savedInstanceState.getInt("selected_channel_tab_index", 0);
-            getActionBar().setSelectedNavigationItem(index);
+            actionBar.setSelectedNavigationItem(index);
         }
     }
 
@@ -101,7 +103,7 @@ public class ChannelListTabsActivity extends Activity {
             // Checks if the fragment is already initialized.
             // If not, it will be instantiated and added to the
             // activity. If it exists, it will simply attached to show it.
-            Fragment currentFrag = getFragmentManager().findFragmentByTag(tab.getText().toString());
+            Fragment currentFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
             if (currentFrag == null) {
                 Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
                 ft.add(android.R.id.content, fragment, tab.getText().toString());
@@ -120,7 +122,7 @@ public class ChannelListTabsActivity extends Activity {
 //            Toast.makeText(this, "No implemented yet", Toast.LENGTH_SHORT).show();
 //            break;
         case 2:
-        	Fragment statusFrag = getFragmentManager().findFragmentByTag(tab.getText().toString());
+        	Fragment statusFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
             if (statusFrag == null) {
                 Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
                 ft.add(android.R.id.content, fragment, tab.getText().toString());
@@ -140,8 +142,8 @@ public class ChannelListTabsActivity extends Activity {
         // would be active (like the recordings tab) which would show nothing
         // here. So we set the previously selected tab.
         if (prevTabPosition >= 0 &&
-                getActionBar().getSelectedNavigationIndex() == 1) {
-            getActionBar().setSelectedNavigationItem(prevTabPosition);
+                actionBar.getSelectedNavigationIndex() == 1) {
+            actionBar.setSelectedNavigationItem(prevTabPosition);
             prevTabPosition = -1;
         }
         
@@ -153,7 +155,7 @@ public class ChannelListTabsActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save the currently selected tab
-        int index = getActionBar().getSelectedNavigationIndex();
+        int index = actionBar.getSelectedNavigationIndex();
         outState.putInt("selected_channel_tab_index", index);
     }
     
@@ -181,10 +183,10 @@ public class ChannelListTabsActivity extends Activity {
         case R.id.menu_settings:
             // Save the current tab position so we show the previous tab
             // again when we return from the settings menu.
-            prevTabPosition = getActionBar().getSelectedNavigationIndex();
+            prevTabPosition = actionBar.getSelectedNavigationIndex();
             // Now start the settings activity
             intent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(intent, R.id.menu_settings);
+            startActivityForResult(intent, Utils.getResultCode(R.id.menu_settings));
             return true;
 
         case R.id.menu_refresh:
@@ -194,11 +196,11 @@ public class ChannelListTabsActivity extends Activity {
         case R.id.menu_connections:
             // Save the current tab position so we show the previous tab
             // again when we return from the settings menu.
-            prevTabPosition = getActionBar().getSelectedNavigationIndex();
+            prevTabPosition = actionBar.getSelectedNavigationIndex();
             // Show the manage connections activity where
             // the user can choose a connection
             intent = new Intent(this, SettingsManageConnectionsActivity.class);
-            startActivityForResult(intent, R.id.menu_connections);
+            startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
             return true;
 
         default:
@@ -208,10 +210,18 @@ public class ChannelListTabsActivity extends Activity {
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == R.id.menu_connections) {
+        if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
             if (resultCode == RESULT_OK){
                 reconnect = data.getBooleanExtra("reconnect", false);
             }
         }
+    }
+
+    public void setActionBarTitle(final String title) {
+        actionBar.setTitle(title);
+    }
+
+    public void setActionBarSubtitle(final String subtitle) {
+        actionBar.setSubtitle(subtitle);
     }
 }
