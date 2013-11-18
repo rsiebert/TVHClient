@@ -200,11 +200,14 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
     public void onMessage(String action, Object obj) {
         // An existing program has been updated, this is valid for all menu options. 
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
-            supportInvalidateOptionsMenu();
-            
-            // Update the status icon
-            ImageView state = (ImageView) findViewById(R.id.state);
-            Utils.setState(state, program.recording);
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    // Update the options menu and the status icon
+                    supportInvalidateOptionsMenu();
+                    ImageView state = (ImageView) findViewById(R.id.state);
+                    Utils.setState(state, program.recording);
+                }
+            });
         } 
     }
 }
