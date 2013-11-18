@@ -17,6 +17,9 @@
             <TextView
                 android:id="@+id/title"
                 style="?attr/TitleFont"
+                android:ellipsize="none"
+                android:scrollHorizontally="false"
+                android:singleLine="false"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.9"
