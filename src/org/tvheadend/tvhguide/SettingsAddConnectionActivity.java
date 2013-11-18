@@ -62,6 +62,42 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                 .commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        cancel();
+    }
+
+    /**
+     * Asks the user to confirm canceling the current activity. If no is
+     * chosen the user can continue to add or edit the connection. Otherwise
+     * the input will be discarded and the activity will be closed.
+     */
+    private void cancel() {
+
+        // Show confirmation dialog to cancel
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.cancel_connection));
+        builder.setTitle(getString(R.string.menu_cancel));
+
+        // Define the action of the yes button
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // Delete the connection so that we start fresh when
+                // the settings activity is called again.
+                conn = null;
+                finish();
+            }
+        });
+        // Define the action of the no button
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     public static class SettingsAddConnectionFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
 
@@ -159,7 +195,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()) {
             case android.R.id.home:
-                cancel();
+                ((SettingsAddConnectionActivity)getActivity()).cancel();
                 return true;
 
             case R.id.menu_save:
@@ -167,7 +203,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                 return true;
 
             case R.id.menu_cancel:
-                cancel();
+                ((SettingsAddConnectionActivity)getActivity()).cancel();
                 return true;
 
             default:
@@ -305,37 +341,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                 return false;
             }
             return true;
-        }
-
-        /**
-         * Asks the user to confirm canceling the current activity. If no is
-         * chosen the user can continue to add or edit the connection. Otherwise
-         * the input will be discarded and the activity will be closed.
-         */
-        private void cancel() {
-
-            // Show confirmation dialog to cancel
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(getString(R.string.cancel_connection));
-            builder.setTitle(getString(R.string.menu_cancel));
-
-            // Define the action of the yes button
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // Delete the connection so that we start fresh when
-                    // the settings activity is called again.
-                    conn = null;
-                    getActivity().finish();
-                }
-            });
-            // Define the action of the no button
-            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
         }
     }
 }
