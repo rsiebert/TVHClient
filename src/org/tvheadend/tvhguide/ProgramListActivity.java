@@ -188,7 +188,7 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
 
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(ProgramListActivity.this, PlaybackSelectionActivity.class);
+            Intent intent = new Intent(this, PlaybackSelectionActivity.class);
             intent.putExtra("channelId", program.channel.id);
             startActivity(intent);
             return true;
