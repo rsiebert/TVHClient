@@ -83,6 +83,16 @@
             android:text="@string/duration" />
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="8dip"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="3dp" />
+
     <TextView
         android:id="@+id/series_info"
         android:layout_width="fill_parent"
