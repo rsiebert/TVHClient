@@ -80,10 +80,12 @@
     <string name="pref_external">Bevorzuge externen Videoplayer</string>
     <string name="pref_external_sum">Soll ein externer Video-Player benutzt werden? (z.B. BSPlayer)</string>
     
-    <string name="err_auth">Zugriff verweigert</string>
-    <string name="err_inv">Ungültige Antwort des Servers</string>
-    <string name="err_connect">Konnte nicht mit dem Server verbinden</string>
-    <string name="err_con_lost">Verbindung zum Server verloren</string>
+    <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
+    <string name="err_inv">Konnte nicht korrekt mit dem Server kommunizieren.</string>
+    <string name="err_sending">Konnte die Daten nicht an den Server versenden.</string>
+    <string name="err_reading">Konnte die Daten nicht vom Server empfangen.</string>
+    <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
+    <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
     
      <string-array name="pr_content_type0">
         <item>Film / Drama</item>
