@@ -19,8 +19,6 @@
  */
 package org.tvheadend.tvhguide;
 
-import java.util.Date;
-
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
@@ -33,7 +31,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -97,17 +94,7 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
-        
-        // Get the start and end times to calculate the progress.
-        double durationTime = (rec.stop.getTime() - rec.start.getTime());
-        double elapsedTime = new Date().getTime() - rec.start.getTime();
-        
-        // Show the progress as a percentage
-        double percent = 0;
-        if (durationTime > 0)
-            percent = elapsedTime / durationTime;
-        progress.setProgress((int) Math.floor(percent * 100));
-        progress.setVisibility(percent > 0 ? View.VISIBLE : View.GONE);
+        Utils.setProgress(progress, rec.start, rec.stop, false);
 
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);

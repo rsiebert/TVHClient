@@ -43,6 +43,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class Utils {
@@ -481,6 +482,31 @@ public class Utils {
             return 221;
         } else {
             return 0;
+        }
+    }
+
+    /**
+     * 
+     * @param progress
+     * @param start
+     * @param stop
+     * @param showEmpty
+     */
+    public static void setProgress(final ProgressBar progress, final Date start, final Date stop, final boolean showEmpty) {
+        // Get the start and end times to calculate the progress.
+        double durationTime = (stop.getTime() - start.getTime());
+        double elapsedTime = new Date().getTime() - start.getTime();
+        
+        // Show the progress as a percentage
+        double percent = 0;
+        if (durationTime > 0)
+            percent = elapsedTime / durationTime;
+
+        progress.setProgress((int) Math.floor(percent * 100));
+        if (showEmpty) {
+            progress.setVisibility(View.VISIBLE);
+        } else {
+            progress.setVisibility(percent > 0 ? View.VISIBLE : View.GONE);
         }
     }
 }

@@ -19,8 +19,6 @@
  */
 package org.tvheadend.tvhguide;
 
-import java.util.Date;
-
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
@@ -117,17 +115,7 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
         Utils.setDate(date, program.start);
         Utils.setTime(time, program.start, program.stop);
         Utils.setDuration(duration, program.start, program.stop);
-
-        // Get the start and end times to calculate the progress.
-        double durationTime = (program.stop.getTime() - program.start.getTime());
-        double elapsedTime = new Date().getTime() - program.start.getTime();
-        
-        // Show the progress as a percentage
-        double percent = 0;
-        if (durationTime > 0)
-            percent = elapsedTime / durationTime;
-        progress.setProgress((int) Math.floor(percent * 100));
-        progress.setVisibility(percent > 0 ? View.VISIBLE : View.GONE);
+        Utils.setProgress(progress, program.start, program.stop, false);
 
         Utils.setDescription(summaryLabel, summary, program.summary);
         Utils.setDescription(descLabel, desc, program.description);

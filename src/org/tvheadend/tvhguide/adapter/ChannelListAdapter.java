@@ -19,7 +19,6 @@
 package org.tvheadend.tvhguide.adapter;
 
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -121,17 +120,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 holder.title.setText(p.title);
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
-
-                // Get the start and end times to calculate the progress.
-                double durationTime = (p.stop.getTime() - p.start.getTime());
-                double elapsedTime = new Date().getTime() - p.start.getTime();
-                
-                // Show the progress as a percentage
-                double percent = 0;
-                if (durationTime > 0)
-                    percent = elapsedTime / durationTime;
-                holder.progress.setProgress((int) Math.floor(percent * 100));
-                holder.progress.setVisibility(View.VISIBLE);
+                Utils.setProgress(holder.progress, p.start, p.stop, true);
 
             } else {
                 // The channel does not provide program data. Hide the progress bar
