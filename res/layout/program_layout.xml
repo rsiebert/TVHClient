@@ -35,6 +35,15 @@
                 android:scaleType="fitCenter" />
         </LinearLayout>
 
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="8dip"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="3dp" />
+
         <TextView
             android:id="@+id/summary_label"
             style="?attr/HeaderFont"
@@ -131,15 +140,6 @@
                     android:text="@string/duration" />
             </LinearLayout>
         </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="8dip"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="3dp" />
 
         <TextView
             android:id="@+id/content_type_label"
