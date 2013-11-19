@@ -32,7 +32,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class RecordingDetailsActivity extends ActionBarActivity implements HTSListener {
@@ -83,7 +82,6 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
         TextView channelName = (TextView) findViewById(R.id.channel);
         TextView date = (TextView) findViewById(R.id.date);
         TextView time = (TextView) findViewById(R.id.time);
-        ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
         TextView duration = (TextView) findViewById(R.id.duration);
 
         // Set the values
@@ -94,7 +92,6 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
-        Utils.setProgress(progress, rec.start, rec.stop, false);
 
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
