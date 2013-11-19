@@ -13,4 +13,5 @@
         android:id="@+id/menu_connections"
         android:icon="?attr/item_active"
         android:title="@string/menu_connections"/>
-</menu>
+
+</menu>
