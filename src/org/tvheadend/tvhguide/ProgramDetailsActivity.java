@@ -115,8 +115,7 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
         Utils.setDate(date, program.start);
         Utils.setTime(time, program.start, program.stop);
         Utils.setDuration(duration, program.start, program.stop);
-        Utils.setProgress(progress, program.start, program.stop, false);
-
+        Utils.setProgress(this, progress, program.start, program.stop, false);
         Utils.setDescription(summaryLabel, summary, program.summary);
         Utils.setDescription(descLabel, desc, program.description);
 

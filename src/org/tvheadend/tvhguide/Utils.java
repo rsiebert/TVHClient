@@ -487,13 +487,32 @@ public class Utils {
 
     /**
      * 
+     * @param context
+     * @param progress
+     * @param start
+     * @param stop
+     * @param showEmpty
+     */
+    public static void setProgress(final Context context, final ProgressBar progress, final Date start, final Date stop, final boolean showEmpty) {
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean("showProgressPref", false)) {
+            setProgress(progress, start, stop, showEmpty);
+        }
+        else {
+            progress.setVisibility(View.GONE);
+        }
+    }
+    
+    /**
+     * 
      * @param progress
      * @param start
      * @param stop
      * @param showEmpty
      */
     public static void setProgress(final ProgressBar progress, final Date start, final Date stop, final boolean showEmpty) {
-        // Get the start and end times to calculate the progress.
+     // Get the start and end times to calculate the progress.
         double durationTime = (stop.getTime() - start.getTime());
         double elapsedTime = new Date().getTime() - start.getTime();
         
