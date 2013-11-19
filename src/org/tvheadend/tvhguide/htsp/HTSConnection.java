@@ -41,6 +41,8 @@ public class HTSConnection extends Thread {
     public static final int CONNECTION_LOST_ERROR = 3;
     public static final int HTS_AUTH_ERROR = 4;
     public static final int HTS_MESSAGE_ERROR = 5;
+    public static final int HTS_SEND_ERROR = 6;
+    public static final int HTS_READ_ERROR = 7;
     private static final String TAG = "HTSPConnection";
     private volatile boolean running;
     private Lock lock;
@@ -212,7 +214,7 @@ public class HTSConnection extends Thread {
             selector.wakeup();
         } catch (Exception ex) {
             Log.e(TAG, "Can't transmit message", ex);
-            this.listener.onError(ex);
+            this.listener.onError(HTS_SEND_ERROR);
         } finally {
             lock.unlock();
         }
@@ -240,7 +242,8 @@ public class HTSConnection extends Thread {
             try {
                 selector.select(5000);
             } catch (IOException ex) {
-                listener.onError(ex);
+                Log.e(TAG, "Can't select socket", ex);
+                listener.onError(CONNECTION_LOST_ERROR);
                 running = false;
                 continue;
             }
@@ -262,7 +265,7 @@ public class HTSConnection extends Thread {
                 socketChannel.register(selector, ops);
             } catch (Exception ex) {
                 Log.e(TAG, "Can't read message", ex);
-                listener.onError(ex);
+                this.listener.onError(HTS_READ_ERROR);
                 running = false;
             } finally {
                 lock.unlock();

@@ -84,6 +84,8 @@
 
     <string name="err_auth">Access denied</string>
     <string name="err_inv">Invalid response from server</string>
+    <string name="err_sending">Can\'t send message to server</string>
+    <string name="err_reading">Can\'t read message from server</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
     
