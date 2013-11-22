@@ -28,13 +28,7 @@
 	        android:summary="@string/pref_icons_sum"
 	        android:defaultValue="true"
 		/>
-		
-        <CheckBoxPreference 
-            android:key="showProgressPref"
-            android:title="@string/pref_progress" 
-            android:summary="@string/pref_progress_sum"
-            android:defaultValue="true"
-        />
+
     </PreferenceCategory>  
     
     <PreferenceCategory

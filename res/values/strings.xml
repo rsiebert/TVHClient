@@ -59,8 +59,6 @@
     <string name="pref_ui">User interface</string>
     <string name="pref_icons">Channel icons</string>
     <string name="pref_icons_sum">Show channel icons?</string>
-    <string name="pref_progress">Show Progrss for the first Program</string>
-    <string name="pref_progress_sum">A progressbar shows how long the first program in the program list and in the details screen is already being transmitted.</string>
     <string name="pref_theme">Light theme</string>
     <string name="pref_theme_sum">Use a light theme</string>
     <string name="pref_res">Resolution</string>
@@ -261,6 +259,7 @@
     <string name="season">Season</string>
     <string name="episode">Episode</string>
     <string name="part">Part</string>
+    <string name="progress">%1$d%% of the show already shown</string>
     
     <string name="disc_space">Disc Space</string>
     <string name="free_disc_space">Free disc space</string>

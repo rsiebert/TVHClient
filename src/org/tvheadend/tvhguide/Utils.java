@@ -484,25 +484,6 @@ public class Utils {
             return 0;
         }
     }
-
-    /**
-     * 
-     * @param context
-     * @param progress
-     * @param start
-     * @param stop
-     * @param showEmpty
-     */
-    public static void setProgress(final Context context, final ProgressBar progress, final Date start, final Date stop, final boolean showEmpty) {
-        
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean("showProgressPref", false)) {
-            setProgress(progress, start, stop, showEmpty);
-        }
-        else {
-            progress.setVisibility(View.GONE);
-        }
-    }
     
     /**
      * 
@@ -511,8 +492,9 @@ public class Utils {
      * @param stop
      * @param showEmpty
      */
-    public static void setProgress(final ProgressBar progress, final Date start, final Date stop, final boolean showEmpty) {
-     // Get the start and end times to calculate the progress.
+    public static void setProgress(final ProgressBar progress, final Date start, final Date stop) {
+        
+        // Get the start and end times to calculate the progress.
         double durationTime = (stop.getTime() - start.getTime());
         double elapsedTime = new Date().getTime() - start.getTime();
         
@@ -522,10 +504,34 @@ public class Utils {
             percent = elapsedTime / durationTime;
 
         progress.setProgress((int) Math.floor(percent * 100));
-        if (showEmpty) {
-            progress.setVisibility(View.VISIBLE);
-        } else {
-            progress.setVisibility(percent > 0 ? View.VISIBLE : View.GONE);
+        progress.setVisibility(View.VISIBLE);
+    }
+    
+    /**
+     * 
+     * @param progressText
+     * @param start
+     * @param stop
+     */
+    public static void setProgressText(final TextView progressText, final Date start, final Date stop) {
+        
+        // Get the start and end times to calculate the progress.
+        final double durationTime = (stop.getTime() - start.getTime());
+        final double elapsedTime = new Date().getTime() - start.getTime();
+        
+        // Show the progress as a percentage
+        double percent = 0;
+        if (durationTime > 0)
+            percent = elapsedTime / durationTime;
+
+        int progress = (int) Math.floor(percent * 100);
+        if (progressText != null) {
+            if (progress > 0) {
+                progressText.setText(progressText.getResources().getString(R.string.progress, progress));
+                progressText.setVisibility(View.VISIBLE);
+            } else {
+                progressText.setVisibility(View.GONE);
+            }
         }
     }
 }

@@ -120,7 +120,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 holder.title.setText(p.title);
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
-                Utils.setProgress(holder.progress, p.start, p.stop, true);
+                Utils.setProgress(holder.progress, p.start, p.stop);
 
             } else {
                 // The channel does not provide program data. Hide the progress bar

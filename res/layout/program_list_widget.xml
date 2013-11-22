@@ -55,7 +55,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:paddingBottom="3dp"
             android:paddingLeft="6dp"
             android:paddingRight="3dp"
             android:text="@string/date" />
@@ -65,7 +64,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:paddingBottom="3dp"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
             android:text="@string/time" />
@@ -76,22 +74,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
             android:gravity="right"
-            android:paddingBottom="3dp"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:singleLine="true"
             android:text="@string/duration" />
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="8dip"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="3dp" />
+	<TextView
+	    android:id="@+id/progress"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:singleLine="true"
+	    android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingBottom="3dp"
+	    android:text="@string/progress" />
 
     <TextView
         android:id="@+id/series_info"

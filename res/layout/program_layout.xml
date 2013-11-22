@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <LinearLayout
+   <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -34,15 +34,6 @@
                 android:padding="3dp"
                 android:scaleType="fitCenter" />
         </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="8dip"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="3dp" />
 
         <TextView
             android:id="@+id/summary_label"
@@ -140,6 +131,13 @@
                     android:text="@string/duration" />
             </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/progress" />
 
         <TextView
             android:id="@+id/content_type_label"

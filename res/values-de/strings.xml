@@ -59,8 +59,6 @@
     <string name="pref_ui">Aussehen</string>
     <string name="pref_icons">Zeige Senderlogos</string>
     <string name="pref_icons_sum">Zu jeder Aufnahme wird das dazugehörige Senderlogo angezeigt (falls verfügbar).</string>
-    <string name="pref_progress">Zeige Sende-Fortschritt für das erste Programm</string>
-    <string name="pref_progress_sum">Ein Fortschrittsbalken zeigt an, wie lange das erste Programm in der Programmliste und im Details Bildschirm bereits läuft.</string>
     <string name="pref_theme">Helle Darstellung</string>
     <string name="pref_theme_sum">Verwendet die helleren Android Farben (Holo-Light Theme)</string>
     <string name="pref_res">Auflösung</string>
@@ -247,6 +245,7 @@
     <string name="season">Staffel</string>
     <string name="episode">Folge</string>
     <string name="part">Teil</string>
+    <string name="progress">%1$d%% der Sendung bereits vorbei</string>
 
     <string name="disc_space">Speicherplatz</string>
     <string name="free_disc_space">Freier Speicherplatz</string>

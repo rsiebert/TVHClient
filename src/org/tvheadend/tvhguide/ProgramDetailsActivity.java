@@ -34,7 +34,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -98,7 +97,7 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
         TextView date = (TextView) findViewById(R.id.date);
         TextView time = (TextView) findViewById(R.id.time);
         TextView duration = (TextView) findViewById(R.id.duration);
-        ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
+        TextView progress = (TextView) findViewById(R.id.progress);
         TextView contentTypeLabel = (TextView) findViewById(R.id.content_type_label);
         TextView contentType = (TextView) findViewById(R.id.content_type);
         TextView seriesInfoLabel = (TextView) findViewById(R.id.series_info_label);
@@ -115,7 +114,7 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
         Utils.setDate(date, program.start);
         Utils.setTime(time, program.start, program.stop);
         Utils.setDuration(duration, program.start, program.stop);
-        Utils.setProgress(this, progress, program.start, program.stop, false);
+        Utils.setProgressText(progress, program.start, program.stop);
         Utils.setDescription(summaryLabel, summary, program.summary);
         Utils.setDescription(descLabel, desc, program.description);
 
