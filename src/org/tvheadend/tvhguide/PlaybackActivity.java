@@ -20,31 +20,35 @@
 package org.tvheadend.tvhguide;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import org.tvheadend.tvhguide.htsp.HTSListener;
 import org.tvheadend.tvhguide.htsp.HTSService;
+import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.HttpTicket;
+import org.tvheadend.tvhguide.model.Program;
+import org.tvheadend.tvhguide.model.Recording;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateFormat;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class PlaybackActivity extends Activity implements HTSListener {
+public class PlaybackActivity extends ActionBarActivity implements HTSListener {
 
+    private Channel ch = null;
+    private Recording rec = null;
+    private ActionBar actionBar = null;
     private TVHVideoView videoView;
 
     @Override
@@ -52,25 +56,57 @@ public class PlaybackActivity extends Activity implements HTSListener {
         // Apply the specified theme
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-
-        // Set the title (name of the channel or the recording)
-        String title = getIntent().getStringExtra("title");
-        setTitle(title);
-
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.player_layout);
+        
+        // Setup the action bar and show the title
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        
+        // Set the title (name of the channel or the recording)        
+        actionBar.setTitle(getIntent().getStringExtra("title"));
 
-        getWindow().setFormat(PixelFormat.TRANSLUCENT);
+        // Get the channel which holds the program
+        TVHGuideApplication app = (TVHGuideApplication) getApplication();
+        ch = app.getChannel(getIntent().getLongExtra("channelId", 0));
+        rec = app.getRecording(getIntent().getLongExtra("dvrId", 0));
 
-        final TextView clock = (TextView) findViewById(R.id.pl_clock);
-        final LinearLayout header = (LinearLayout) findViewById(R.id.pl_header);
-        final LinearLayout middle = (LinearLayout) findViewById(R.id.pl_middle);
+        // Contains additional information about the played program or recording
+        final LinearLayout header = (LinearLayout) findViewById(R.id.player_header);
+        final TextView date = (TextView) findViewById(R.id.date);
+        final TextView time = (TextView) findViewById(R.id.time);
+        final TextView duration = (TextView) findViewById(R.id.duration);
+        final TextView desc = (TextView) findViewById(R.id.description);
+        final TextView seriesInfo = (TextView) findViewById(R.id.series_info);
 
-        videoView = (TVHVideoView) findViewById(R.id.pl_video);
+        // Get the first program from the channel
+        if (ch != null && ch.epg != null) {
+            Iterator<Program> it = ch.epg.iterator();
+            Program p = null;
+            if (it.hasNext())
+                p = it.next();
+            
+            if (p != null) {
+                Utils.setDate(date, p.start);
+                Utils.setTime(time, p.start, p.stop);
+                Utils.setDuration(duration, p.start, p.stop);
+                Utils.setDescription(null, desc, rec.description);
+                Utils.setSeriesInfo(null, seriesInfo, p.seriesInfo);
+            }
+        }
+        else if (rec != null) {
+            Utils.setDate(date, rec.start);
+            Utils.setTime(time, rec.start, rec.stop);
+            Utils.setDuration(duration, rec.start, rec.stop);
+            Utils.setDescription(null, desc, rec.description);
+            seriesInfo.setVisibility(View.GONE);
+        }
+
+        videoView = (TVHVideoView) findViewById(R.id.player_video);
         videoView.setOnPreparedListener(new OnPreparedListener() {
             public void onPrepared(MediaPlayer mp) {
+                // Hide the layout with the progress bar
+                final LinearLayout middle = (LinearLayout) findViewById(R.id.player_middle);
                 middle.setVisibility(LinearLayout.GONE);
             }
         });
@@ -82,18 +118,19 @@ public class PlaybackActivity extends Activity implements HTSListener {
             }
         });
 
-        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.pl_frame);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.player_frame);
         frameLayout.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 // If the header is visible hide it otherwise
                 // show it and display the clock and the title
-                if (header.getVisibility() == LinearLayout.VISIBLE) {
+                if (actionBar.isShowing()) {
                     header.setVisibility(LinearLayout.INVISIBLE);
+                    actionBar.hide();
                 }
                 else {
-                    clock.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
-                    clock.setText(DateFormat.getTimeFormat(clock.getContext()).format(new Date()));
                     header.setVisibility(LinearLayout.VISIBLE);
+                    actionBar.setSubtitle(DateFormat.getTimeFormat(actionBar.getThemedContext()).format(new Date()));
+                    actionBar.show();
                 }
             }
         });
@@ -165,15 +202,13 @@ public class PlaybackActivity extends Activity implements HTSListener {
         }
 
         // Get the codec widget so we can show the used codec information
-        TextView codecInfo = (TextView) findViewById(R.id.pl_codec);
+        TextView codecInfo = (TextView) findViewById(R.id.player_codec);
         codecInfo.setText(c);
     }
 
     private String valueToName(int valueRresouce, int nameResource, String val) {
-
         String[] names = getResources().getStringArray(nameResource);
         String[] values = getResources().getStringArray(valueRresouce);
-
         for (int i = 0; i < values.length; i++) {
             if (values[i].equals(val)) {
                 return names[i];
