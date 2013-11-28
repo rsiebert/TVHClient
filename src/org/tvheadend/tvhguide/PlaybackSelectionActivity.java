@@ -42,7 +42,7 @@ public class PlaybackSelectionActivity extends Activity {
 
             // Pass on the channel id and the other settings
             intent.putExtra("channelId", ch.id);
-            intent.putExtra("serverHostPref", prefs.getString("serverHostPref", "localhost"));
+            intent.putExtra("serverHostPref", prefs.getString("progServerHostPref", "localhost"));
             intent.putExtra("httpPortPref", Integer.parseInt(prefs.getString("progHttpPortPref", "9981")));
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("progResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("progTranscodePref", true));
@@ -64,7 +64,7 @@ public class PlaybackSelectionActivity extends Activity {
 
             // Pass on the recording id and the other settings
             intent.putExtra("dvrId", rec.id);
-            intent.putExtra("serverHostPref", prefs.getString("serverHostPref", "localhost"));
+            intent.putExtra("serverHostPref", prefs.getString("recServerHostPref", "localhost"));
             intent.putExtra("httpPortPref", Integer.parseInt(prefs.getString("recHttpPortPref", "9981")));
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("recResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("recTranscodePref", false));
