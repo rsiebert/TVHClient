@@ -38,9 +38,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -73,6 +75,9 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
 
         // Contains additional information about the played program or recording
         final LinearLayout header = (LinearLayout) findViewById(R.id.player_header);
+        TextView title = (TextView) findViewById(R.id.title);
+        ImageView state = (ImageView) findViewById(R.id.state);
+        TextView summary = (TextView) findViewById(R.id.summary);
         final TextView date = (TextView) findViewById(R.id.date);
         final TextView time = (TextView) findViewById(R.id.time);
         final TextView duration = (TextView) findViewById(R.id.duration);
@@ -81,23 +86,31 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
 
         // Get the first program from the channel
         if (ch != null && ch.epg != null) {
+            Log.i("PlaybackActivity", "Got channel and epg");
             Iterator<Program> it = ch.epg.iterator();
             Program p = null;
             if (it.hasNext())
                 p = it.next();
             
             if (p != null) {
+                Log.i("PlaybackActivity", "Got program from channel");
+                title.setText(p.title);
+                Utils.setState(state, p.recording);
                 Utils.setDate(date, p.start);
                 Utils.setTime(time, p.start, p.stop);
                 Utils.setDuration(duration, p.start, p.stop);
-                Utils.setDescription(null, desc, rec.description);
+                Utils.setDescription(null, summary, p.summary);
+                Utils.setDescription(null, desc, p.description);
                 Utils.setSeriesInfo(null, seriesInfo, p.seriesInfo);
             }
         }
         else if (rec != null) {
+            title.setText(rec.title);
+            Utils.setState(state, rec);
             Utils.setDate(date, rec.start);
             Utils.setTime(time, rec.start, rec.stop);
             Utils.setDuration(duration, rec.start, rec.stop);
+            Utils.setDescription(null, summary, rec.summary);
             Utils.setDescription(null, desc, rec.description);
             seriesInfo.setVisibility(View.GONE);
         }
@@ -105,6 +118,7 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
         videoView = (TVHVideoView) findViewById(R.id.player_video);
         videoView.setOnPreparedListener(new OnPreparedListener() {
             public void onPrepared(MediaPlayer mp) {
+                Log.i("PlaybackActivity", "Video player ready");
                 // Hide the layout with the progress bar
                 final LinearLayout middle = (LinearLayout) findViewById(R.id.player_middle);
                 middle.setVisibility(LinearLayout.GONE);
@@ -113,6 +127,7 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
 
         videoView.setOnErrorListener(new OnErrorListener() {
             public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.i("PlaybackActivity", "Error playing stream");
                 finish();
                 return true;
             }
