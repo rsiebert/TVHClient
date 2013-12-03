@@ -110,11 +110,20 @@ public class StatusFragment extends Fragment implements HTSListener {
         Map<String, String> list = obj;
         try {
             // Get the disc space values and convert them to megabytes
-            long free = Long.parseLong(list.get("freediskspace"));
-            long total = Long.parseLong(list.get("totaldiskspace"));
+            long free = (Long.parseLong(list.get("freediskspace")) / 1000000);
+            long total = (Long.parseLong(list.get("totaldiskspace")) / 1000000);
 
-            freediscspace.setText((free / 1000000) + " MB " + getString(R.string.available));
-            totaldiscspace.setText((total / 1000000) + " MB " + getString(R.string.total));
+            // Show the free amount of disc space as GB or MB
+            if (free > 1000)
+                freediscspace.setText((free / 1000) + " GB " + getString(R.string.available));
+            else
+                freediscspace.setText(free + " MB " + getString(R.string.available));
+            
+            // Show the total amount of disc space as GB or MB
+            if (total > 1000)
+                totaldiscspace.setText((total / 1000) + " GB " + getString(R.string.total));
+            else
+                totaldiscspace.setText(total + " MB " + getString(R.string.total));
         }
         catch (Exception e) {
             // Set the default values
