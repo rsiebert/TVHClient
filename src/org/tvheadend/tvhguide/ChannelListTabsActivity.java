@@ -89,6 +89,9 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             int index = savedInstanceState.getInt("selected_channel_tab_index", 0);
             actionBar.setSelectedNavigationItem(index);
         }
+        
+        if (changeLogDialog.firstRun())
+            changeLogDialog.getLogDialog().show();
     }
 
     /**
@@ -148,9 +151,6 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         
         Utils.connect(this, reconnect);
         reconnect = false;
-        
-        if (changeLogDialog.firstRun())
-            changeLogDialog.getLogDialog().show();
     }
     
     @Override
