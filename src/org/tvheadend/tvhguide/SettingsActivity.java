@@ -74,12 +74,22 @@ public class SettingsActivity extends ActionBarActivity {
             // Load the preferences from an XML resource
             addPreferencesFromResource(R.xml.preferences);
             
-            Preference pref = findPreference("pref_manage_connections");
-            pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            Preference prefManage = findPreference("pref_manage_connections");
+            prefManage.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     Intent intent = new Intent(getActivity(), SettingsManageConnectionsActivity.class);
                     startActivity(intent);
+                    return false;
+                }
+            });
+            
+            Preference prefChangelog = findPreference("pref_changelog");
+            prefChangelog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    ChangeLogDialog cld = new ChangeLogDialog(getActivity());
+                    cld.getFullLogDialog().show();
                     return false;
                 }
             });

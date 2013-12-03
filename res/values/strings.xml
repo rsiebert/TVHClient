@@ -81,7 +81,11 @@
     <string name="pref_transcode_sum">Request a transcoded stream during live playback</string>
     <string name="pref_external">Prefer external player</string>
     <string name="pref_external_sum">Use an external player for live streams (BSPlayer seems OK)</string>
-
+    
+    <string name="pref_information">Information</string>
+    <string name="pref_changelog">Changelog</string>
+    <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
+    
     <string name="err_auth">Access denied</string>
     <string name="err_inv">Invalid response from server</string>
     <string name="err_sending">Can\'t send message to server</string>
@@ -253,6 +257,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="nothing">Nothing</string>
+    <string name="ok">OK</string>
 
     <string name="loading">Loading&#8230;</string>
     <string name="all_channels">All channels</string>    

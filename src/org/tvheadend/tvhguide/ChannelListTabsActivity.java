@@ -34,16 +34,15 @@ public class ChannelListTabsActivity extends ActionBarActivity {
     private ActionBar actionBar = null;
     private boolean reconnect = false;
     private int prevTabPosition = -1;
-    
+    private ChangeLogDialog changeLogDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-
         super.onCreate(savedInstanceState);
         
         DatabaseHelper.init(this.getApplicationContext()); 
+        changeLogDialog = new ChangeLogDialog(this);
         
         // setup action bar for tabs
         actionBar = getSupportActionBar();
@@ -149,6 +148,9 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         
         Utils.connect(this, reconnect);
         reconnect = false;
+        
+        if (changeLogDialog.firstRun())
+            changeLogDialog.getLogDialog().show();
     }
     
     @Override

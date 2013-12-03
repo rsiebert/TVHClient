@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <style type='text/css'>
+      div.title    {
+          color:#999999;
+          font-size:1.2em;
+          margin-left:0.8em;
+          margin-top:1em;
+          margin-bottom:0.2em;
+          text-align:left }
+      div.subtitle {
+          color:#999999;
+          margin-left:1em;
+          margin-bottom:0.1em;
+          text-align:left }
+      div.freetext { color:#333333 }
+      div.list     { color:#333333 }
+    </style>
+  </head>
+  <body>
+$ 1.8.2
+  % VERSION 1.8.2
+  _ 03.12.2013
+    * Added Changelog dialog
+    * Status screen shows either MB or GB of free disc space
+$ 1.8.1
+  % VERSION 1.8.1
+  _ 20.11.2013
+    * Fixed player settings
+$ 1.8.0
+  % VERSION 1.8.0
+  _ 10.11.2013
+    * Ported application to support older Android versions.
+    * Bug fixes
+$ END_OF_CHANGE_LOG
+  </body>
+</html>

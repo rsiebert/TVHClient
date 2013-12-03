@@ -208,6 +208,15 @@
 
         </PreferenceScreen>
 
-	</PreferenceCategory>  
+	</PreferenceCategory>
+
+    <PreferenceCategory 
+        android:title="@string/pref_information" >
+        <Preference
+            android:key="pref_changelog"
+            android:summary="@string/pref_changelog_sum"
+            android:title="@string/pref_changelog" >
+        </Preference>
+    </PreferenceCategory>
 </PreferenceScreen>
 
