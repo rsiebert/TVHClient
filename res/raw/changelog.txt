@@ -1,16 +1,17 @@
 $ 1.8.2
   % VERSION 1.8.2
-  _ 03.12.2013
-    * Added Changelog dialog
+  _ 04.12.2013
+    * Added ChangeLog dialog
     * Status screen shows either MB or GB of free disc space
     * Removed unused strings
+    * Updated polish translation
 $ 1.8.1
   % VERSION 1.8.1
-  _ 20.11.2013
+  _ 29.11.2013
     * Fixed player settings
 $ 1.8.0
   % VERSION 1.8.0
-  _ 10.11.2013
+  _ 22.11.2013
     * Ported application to support older Android versions.
-    * Bug fixes
+    * Bug fixes   
 $ END_OF_CHANGE_LOG
