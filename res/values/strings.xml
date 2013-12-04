@@ -254,10 +254,7 @@
     <string name="content_type">Content Type</string>
     <string name="series_information">Series Information</string>
 
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
     <string name="nothing">Nothing</string>
-
     <string name="loading">Loading&#8230;</string>
     <string name="all_channels">All channels</string>    
     <string name="season">Season</string>

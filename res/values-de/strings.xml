@@ -240,10 +240,7 @@
     <string name="content_type">Genre</string>
     <string name="series_information">Serien Information</string>
 
-    <string name="yes">Ja</string>
-    <string name="no">Nein</string>
     <string name="nothing">Keine</string>
-
     <string name="loading">Lade&#8230;</string>
     <string name="all_channels">Alle Sender</string>
     <string name="season">Staffel</string>

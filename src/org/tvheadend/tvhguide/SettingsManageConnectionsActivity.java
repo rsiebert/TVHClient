@@ -130,7 +130,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
             builder.setTitle(getString(R.string.menu_delete));
 
             // Define the action of the yes button
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     if (DatabaseHelper.getInstance().removeConnection(c.id)) {
                         connAdapter.remove(c);
@@ -141,7 +141,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
                 }
             });
             // Define the action of the no button
-            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.cancel();
                 }

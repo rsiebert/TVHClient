@@ -80,7 +80,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         builder.setTitle(getString(R.string.menu_cancel));
 
         // Define the action of the yes button
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // Delete the connection so that we start fresh when
                 // the settings activity is called again.
@@ -89,7 +89,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             }
         });
         // Define the action of the no button
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }
