@@ -88,7 +88,7 @@ public class SettingsActivity extends ActionBarActivity {
             prefChangelog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    ChangeLogDialog cld = new ChangeLogDialog(getActivity());
+                    final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
                     cld.getFullLogDialog().show();
                     return false;
                 }
