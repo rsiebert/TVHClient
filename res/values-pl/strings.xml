@@ -8,18 +8,53 @@
     <string name="menu_recordings">Nagrania</string>
 
     <string name="menu_play">Play</string>
+    <string name="menu_search">Search</string>
     <string name="menu_record">Nagraj</string>
     <string name="menu_record_cancel">Anuluj nagrywanie</string>
     <string name="menu_record_remove">Usuń nagrywanie</string>
+    <string name="menu_search_imdb">Szukaj na IMDB</string>
+    <string name="menu_search_epg">Szukaj przewodnika programu</string>
+    <string name="menu_search_channel">Szukaj tego kanału</string>
+    <string name="menu_add">Dodaj</string>
+    <string name="menu_save">Zapisz</string>
+    <string name="menu_cancel">Anuluj</string>
+    <string name="menu_set_active">Aktywacja</string>
+    <string name="menu_set_not_active">Dezaktywacja</string>
+    <string name="menu_edit">Edycja</string>
+    <string name="menu_delete">Usuń</string>
+    <string name="menu_connections">Połączenia</string>
+    
+    <string name="pref_manage_connections">Zarządzanie połączeniami</string>
+    <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
+    <string name="available_connections">Dostępne połaczenia</string>
+    <string name="select_connection">Wybierz połączenie</string>
+    <string name="add_connection">Dodaj połączenie</string>
+    <string name="new_connection">Utwórz nowe połaczenie</string>
+    <string name="no_connections">Brak dostępnych połączeń</string>
+    <string name="connection_options">Opcje dla połączenie \'%s\'</string>
+    <string name="cancel_connection">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
+    <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
 
+    <string name="pref_connections">Połączenia</string>
+    <string name="pref_name">Nazwa połączenia</string>
+    <string name="pref_name_sum">Wpisz unikalną nazwę połączenia</string>
+    <string name="pref_name_error_empty">Nazwa nie może być pusta.</string>
+    <string name="pref_name_error_invalid">Nazwa może zawierać tylko litery, cyfry, minus i podkreślenie.</string>
+    <string name="pref_selected">Domyślne połączenie</string>
+    <string name="pref_selected_sum">Zaznacz jako domyślne połaczenie i użyj po uruchomieniu aplikacji.</string>
     <string name="pref_host">Nazwa hosta</string>
-    <string name="pref_host_sum">Wpisz serwer hosta</string>
+    <string name="pref_host_sum">Wpisz adres serwera hosta</string>
+    <string name="pref_host_error_empty">IP adres lub nazwa hosta nie może być pusta.</string>
+    <string name="pref_host_error_invalid">IP adres jest nie poprawny.</string>
     <string name="pref_port">Port</string>
     <string name="pref_port_sum">Wpisz port serwera</string>
+    <string name="pref_port_error_empty">Numer portu nie może być pusty.</string>
+    <string name="pref_port_error_invalid">Numer portu jest nie poprawny. Powinien zawierać się pomiędzy 1 a 65535.</string>
     <string name="pref_user">Nazwa użytkownika</string>
     <string name="pref_user_sum">Wpisz nazwę użytkownika</string>
     <string name="pref_pass">Hasło</string>
     <string name="pref_pass_sum">Wpisz hasło</string>
+    <string name="pref_pass_set_sum">Hasło jest ustawione ale nie jest wyświetlane.</string>
 
     <string name="pref_ui">Interfejs użytkownika</string>
     <string name="pref_icons">Ikony kanałów</string>
@@ -38,12 +73,16 @@
     <string name="pref_container_sum">Preferowany kontener mediów</string>
 
     <string name="pref_playback">Odtwarzanie</string>
+    <string name="pref_playback_programs_sum">Konfiguracja strumienia i opcje odtwarzania dla programów Live-TV.</string>
+    <string name="pref_playback_recordings_sum">Konfiguracja strumienia i opcje odtwarzania dla nagranych programów.</string>
     <string name="pref_http_port">Port HTTP</string>
     <string name="pref_http_port_sum">Wpisz port serwera HTTP</string>
     <string name="pref_transcode">Transkodowanie strumienia</string>
     <string name="pref_transcode_sum">Wysył transkodowanego strumienia podczas odtwarzania na żywo</string>
     <string name="pref_external">Preferowany zewnętrzny odtwarzacz</string>
     <string name="pref_external_sum">Użyj zewnętrznego odtwarzacza strumieni na żywo (BSPlayer wydaje się OK)</string>
+
+    <string name="pref_information">Informacja</string>
 
     <string name="err_auth">Odmowa dostępu</string>
     <string name="err_inv">Nieprawidłowa odpowiedź z serwera</string>
@@ -126,17 +165,18 @@
     </string-array>
 
     <string-array name="pr_content_type7">
-        <item>Sztuka/Kulturaitem</item>		<item>Wykonywanie sztuki</item>
-		<item>Sztuka piękna</item>
-		<item>Religia</item>
-		<item>Popularna kultura/Tradycyjna sztuka</item>
-		<item>Literatura</item>
-		<item>Film/Kino</item>
-		<item>Experymentalny Film/Video</item>
-		<item>Transmisja/Prasa</item>
-		<item>Nowe media</item>
-		<item>Magazyn</item>
-		<item>Moda</item>
+        <item>Sztuka/Kulturaitem</item>
+        <item>Wykonywanie sztuki</item>
+        <item>Sztuka piękna</item>
+        <item>Religia</item>
+        <item>Popularna kultura/Tradycyjna sztuka</item>
+        <item>Literatura</item>
+        <item>Film/Kino</item>
+        <item>Experymentalny Film/Video</item>
+        <item>Transmisja/Prasa</item>
+        <item>Nowe media</item>
+        <item>Magazyn</item>
+        <item>Moda</item>
     </string-array>
 
     <string-array name="pr_content_type8">
@@ -175,24 +215,57 @@
         <item>Transmisja na żywo</item>
     </string-array>
 
-    <string name="loading">Wczytywanie&#8230;</string>
-
-    <string name="all_channels">Wszystkie kanały</string>
-    <string name="season">Season</string>
-    <string name="episode">Odcinek</string>
-    <string name="part">Część</string>
+    <string name="no_transmission">Brak transmisji</string>
+    <string name="no_data">Brak dostępnych danych programu</string>
+    <string name="minutes">%d min</string>
+    
+    <string name="search_hint">Szukaj w EPG</string>
+    <string name="today">Dzisiaj</string>
+    
+    <string name="programs">Programy</string>
+    <string name="completed">Zaończone</string>
+    <string name="upcoming">Planowanie</string>
+    <string name="failed">Utracone / Nieprawidłowe</string>
+    
+    <string name="channels">Kanały</string>
+    <string name="recordings">Nagrania</string>
+    <string name="program_guide">Przewodnik programów</string>
+    <string name="status">Status</string>
+    <string name="items">Pozycja</string>
+    <string name="results">Wyniki</string>
+    
+    <string name="channel_icon">Ikony kanałów</string>
+    <string name="status_icon">Status Ikon</string>
+    <string name="title">Tytuł</string>
+    <string name="channel">Kanał</string>
+    <string name="time">Czas</string>
+    <string name="date">Data</string>
+    <string name="shown_on_channel">na</string>
+    <string name="summary">Podsumowanie</string>
+    <string name="description">Opis</string>
+    <string name="duration">Czas trwania</string>
     <string name="airing">Airing</string>
     <string name="rating">Ocena</string>
     <string name="content_type">Kategoria</string>
     <string name="series_information">Część</string>
 
-    <string name="upcoming">Planowanie</string>
-    <string name="recorded">Nagranie</string>
-    <string name="completed">Zaończone</string>
-    <string name="failed">Utracone / Nieprawidłowe</string>
-    
-    <string name="no_transmission">Brak transmisji</string>
-    <string name="search_hint">Szukaj w EPG</string>
-    <string name="today">Dzisiaj</string>
+    <string name="nothing">żaden</string>
+    <string name="loading">Wczytywanie&#8230;</string>
+    <string name="all_channels">Wszystkie kanały</string>    
+    <string name="season">Sezon</string>
+    <string name="episode">Odcinek</string>
+    <string name="part">Część</string>
 
+    <string name="disc_space">Przestrzeń dysku</string>
+    <string name="free_disc_space">Wolna przestrzeń dysku</string>
+    <string name="total_disc_space">Całkowita przestrzeń dysku</string>
+    <string name="total">Całość</string>
+    <string name="available">Dostępne</string>
+    <string name="unknown">Nieznane</string>
+    
+    <string name="currently_recording">Program %s jest nagrywany</string>
+    <string name="restart_application">Proszę zrestartować aplikację aby aktywować nowy motyw.</string>
+    
+    <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
+    <string name="show_play_store">Czy chcesz przejść do sklepu Google Play i poszukać dostępnych odtwarzaczy?</string>
 </resources>
