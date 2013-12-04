@@ -1,4 +1,5 @@
 /**
+ * Copyright (C) 2013-2014, Robert Siebert
  * Copyright (C) 2011-2013, Karsten Priegnitz
  *
  * Permission to use, copy, modify, and distribute this piece of software
@@ -35,6 +36,18 @@ public class ChangeLogDialog {
     private final Context context;
     private String lastVersion, thisVersion;
 
+    private String styleLight = 
+              "div.title { color:#AAAAAA; font-size:1.2em; margin-left:0.4em; margin-top:0.7em; margin-bottom:0.2em; text-align:left } "
+            + "div.subtitle {color:#AAAAAA; margin-left:0.6em; margin-bottom:0.0em; text-align:left }"
+            + "div.freetext { color:#333333 }"
+            + "div.list     { color:#333333 }";
+    
+    private String styleDark = 
+              "div.title { color:#DDDDDD; font-size:1.2em; margin-left:0.4em; margin-top:0.7em; margin-bottom:0.2em; text-align:left } "
+            + "div.subtitle {color:#DDDDDD; margin-left:0.6em; margin-bottom:0.0em; text-align:left }"
+            + "div.freetext { color:#AAAAAA }"
+            + "div.list     { color:#AAAAAA }";
+  
     // this is the key for storing the version name in SharedPreferences
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
 
@@ -134,7 +147,12 @@ public class ChangeLogDialog {
 
     private AlertDialog getDialog(boolean full) {
         WebView wv = new WebView(this.context);
-        wv.setBackgroundColor(Color.WHITE);
+
+        if (Utils.getThemeId(context) == R.style.CustomTheme_Light)
+            wv.setBackgroundColor(Color.WHITE);
+        else
+            wv.setBackgroundColor(Color.BLACK);
+        
         wv.loadDataWithBaseURL(null, this.getLog(full), "text/html", "UTF-8", null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
@@ -142,7 +160,7 @@ public class ChangeLogDialog {
         builder.setView(wv);
         builder.setCancelable(false);
         // OK button
-        builder.setPositiveButton(context.getResources().getString(R.string.ok),
+        builder.setPositiveButton(context.getResources().getString(android.R.string.ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         updateVersionInPreferences();
@@ -192,8 +210,19 @@ public class ChangeLogDialog {
     private static final String EOCL = "END_OF_CHANGE_LOG";
 
     private String getLog(boolean full) {
-        // read changelog.txt file
+        // Add the style sheet depending on the used theme
         sb = new StringBuffer();
+        sb.append("<html><head><style type=\'text/css\'>");
+        
+        if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+            sb.append(styleLight);
+        } else {
+            sb.append(styleDark);
+        }
+
+        sb.append("</style></head><body>");
+
+        // read changelog.txt file
         try {
             InputStream ins = context.getResources().openRawResource(R.raw.changelog);
             BufferedReader br = new BufferedReader(new InputStreamReader(ins));
@@ -260,6 +289,7 @@ public class ChangeLogDialog {
         catch (IOException e) {
             e.printStackTrace();
         }
+        sb.append("</body></html>");
 
         return sb.toString();
     }
