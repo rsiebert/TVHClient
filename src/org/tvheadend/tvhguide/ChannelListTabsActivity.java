@@ -18,8 +18,6 @@
  */
 package org.tvheadend.tvhguide;
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -141,7 +139,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
     @Override
     public void onResume() {
         super.onResume();
-        
+
         // If the user has pressed the back button, the currently selected tab
         // would be active (like the recordings or program guide tab) and
         // would show nothing. So we need to set the previously selected tab.
@@ -154,7 +152,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         Utils.connect(this, reconnect);
         reconnect = false;
     }
-    
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -162,7 +160,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         int index = actionBar.getSelectedNavigationIndex();
         outState.putInt("selected_channel_tab_index", index);
     }
-    
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Disable the refresh menu if no connection is 
@@ -214,7 +212,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
