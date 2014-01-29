@@ -13,21 +13,17 @@
 
     <PreferenceCategory 
         android:title="@string/pref_user_interface" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="lightThemePref"
+            android:summary="@string/pref_theme_sum"
+            android:title="@string/pref_theme" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showIconPref"
+            android:summary="@string/pref_icons_sum"
+            android:title="@string/pref_icons" />
 
-        <PreferenceScreen
-            android:title="@string/pref_ui"
-            android:summary="@string/pref_ui_sum" >
-	        <CheckBoxPreference
-	            android:defaultValue="true"
-	            android:key="lightThemePref"
-	            android:summary="@string/pref_theme_sum"
-	            android:title="@string/pref_theme" />
-	        <CheckBoxPreference
-	            android:defaultValue="true"
-	            android:key="showIconPref"
-	            android:summary="@string/pref_icons_sum"
-	            android:title="@string/pref_icons" />
-	    </PreferenceScreen>
 	    <PreferenceScreen
             android:title="@string/pref_program_guide"
             android:summary="@string/pref_program_guide_sum" >

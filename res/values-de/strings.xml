@@ -59,8 +59,6 @@
     <string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
 
     <string name="pref_user_interface">Benutzeroberfläche</string>
-    <string name="pref_ui">Aussehen</string>
-    <string name="pref_ui_sum">Konfiguriere das allgemeine Aussehen und andere Parameter.</string>
     <string name="pref_icons">Zeige Senderlogos</string>
     <string name="pref_icons_sum">Zu jeder Aufnahme wird das dazugehörige Senderlogo angezeigt (falls verfügbar).</string>
     <string name="pref_theme">Helle Darstellung</string>
@@ -87,7 +85,6 @@
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Änderungen</string>
     <string name="pref_changelog_sum">Zeige eine Liste der neuen Eigenschaften und Änderungen der verschiedenen Versionnen.</string>
-    
     <string name="pref_program_guide">Program Übersicht</string>
     <string name="pref_program_guide_sum">Konfiguriere das Aussehen und einige Parameter der Program Übersicht.</string>
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>

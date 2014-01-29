@@ -59,8 +59,6 @@
     <string name="pref_pass_set_sum">Password is set but is not displayed.</string>
     
     <string name="pref_user_interface">User interface</string>
-    <string name="pref_ui">Look and Feel</string>
-    <string name="pref_ui_sum">Define the general look and feel of the application.</string>
     <string name="pref_icons">Channel icons</string>
     <string name="pref_icons_sum">Show channel icons?</string>
     <string name="pref_theme">Light theme</string>
@@ -89,7 +87,6 @@
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Changelog</string>
     <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
-    
     <string name="pref_program_guide">Program Guide</string>
     <string name="pref_program_guide_sum">Configure the program guide screen and how the data shall be displayed.</string>
     <string name="pref_epg_hours_visible">Hours Visible</string>
