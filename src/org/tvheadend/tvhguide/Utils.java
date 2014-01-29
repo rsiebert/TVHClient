@@ -73,7 +73,7 @@ public class Utils {
      */
     public static int getThemeId(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean theme = prefs.getBoolean("lightThemePref", false);
+        Boolean theme = prefs.getBoolean("lightThemePref", true);
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
     }
 
@@ -84,7 +84,7 @@ public class Utils {
      */
     public static boolean showChannelIcons(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean showIcons = prefs.getBoolean("showIconPref", false);
+        Boolean showIcons = prefs.getBoolean("showIconPref", true);
         return showIcons;
     }
     
