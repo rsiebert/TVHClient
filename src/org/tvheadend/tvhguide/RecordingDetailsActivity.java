@@ -147,7 +147,7 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
             return true;
 
         case R.id.menu_record_remove:
-            Utils.removeProgram(this, rec.id);
+            Utils.removeProgram(this, rec);
             return true;
 
         case R.id.menu_record_cancel:

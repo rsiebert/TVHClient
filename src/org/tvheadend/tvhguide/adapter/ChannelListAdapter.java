@@ -22,14 +22,17 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.tvheadend.tvhguide.ProgramListActivity;
 import org.tvheadend.tvhguide.R;
 import org.tvheadend.tvhguide.Utils;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -37,12 +40,14 @@ import android.widget.TextView;
 
 public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
-    Activity context;
-    List<Channel> list;
+    private Activity context;
+    private List<Channel> list;
+    private int layout;
 
-    public ChannelListAdapter(Activity context, List<Channel> list) {
-        super(context, R.layout.channel_list_widget, list);
+    public ChannelListAdapter(Activity context, List<Channel> list, int layout) {
+        super(context, layout, list);
         this.context = context;
+        this.layout = layout;
         this.list = list;
     }
 
@@ -70,7 +75,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         ViewHolder holder = null;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.channel_list_widget, null);
+            view = context.getLayoutInflater().inflate(layout, null);
 
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
@@ -87,47 +92,85 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         }
 
         // Get the program and assign all the values
-        Channel c = getItem(position);
+        final Channel c = getItem(position);
         if (c != null) {
 
             // Set the initial values
-            holder.progress.setProgress(0);
-            holder.channel.setText(c.name);
-            Utils.setChannelIcon(holder.icon, null, c);
+            if (holder.progress != null)
+                holder.progress.setProgress(0);
+
+            if (holder.channel != null)
+                holder.channel.setText(c.name);
+
+            if (holder.icon != null) {
+                Utils.setChannelIcon(holder.icon, null, c);
             
+                // Add the listener to the icon so that a 
+                // click calls the program list of this channel
+                holder.icon.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (c.epg.isEmpty()) {
+                            return;
+                        }
+                        Intent intent = new Intent(context, ProgramListActivity.class);
+                        intent.putExtra("channelId", c.id);
+                        context.startActivity(intent);
+                    }
+                });
+            }
+
             // Add a small recording icon above the channel icon, if we are
             // recording the current program.
-            if (c.isRecording()) {
-                holder.state.setImageResource(R.drawable.ic_rec_small);
-                holder.state.setVisibility(View.VISIBLE);
-            } else {
-                holder.state.setImageDrawable(null);
-                holder.state.setVisibility(View.GONE);
+            if (holder.state != null) {
+                if (c.isRecording()) {
+                    holder.state.setImageResource(R.drawable.ic_rec_small);
+                    holder.state.setVisibility(View.VISIBLE);
+                }
+                else {
+                    holder.state.setImageDrawable(null);
+                    holder.state.setVisibility(View.GONE);
+                }
             }
             
             // Get the iterator so we can check the channel status 
             Iterator<Program> it = c.epg.iterator();
             
-            // Check if the channel is actually transmitting 
+            // Check if the channel is actually transmitting
             // data and contains program data which can be shown.
             if (!c.isTransmitting && it.hasNext()) {
-                holder.title.setText(R.string.no_transmission);
-            } else if (it.hasNext()) {
-                
+                if (holder.title != null)
+                    holder.title.setText(R.string.no_transmission);
+            }
+            else if (it.hasNext()) {
+
                 // Get the program that is currently running
                 // and set all the available values
                 Program p = it.next();
-                holder.title.setText(p.title);
-                Utils.setTime(holder.time, p.start, p.stop);
-                Utils.setDuration(holder.duration, p.start, p.stop);
-                Utils.setProgress(holder.progress, p.start, p.stop);
 
-            } else {
-                // The channel does not provide program data. Hide the progress bar
-                // and clear the time and duration texts. These two items provide 
-                // some space so that the next list item is not too close.
-                holder.title.setText(R.string.no_data);
-                holder.progress.setVisibility(View.GONE);
+                if (holder.title != null)
+                    holder.title.setText(p.title);
+
+                if (holder.time != null)
+                    Utils.setTime(holder.time, p.start, p.stop);
+                
+                if (holder.duration != null)
+                    Utils.setDuration(holder.duration, p.start, p.stop);
+                
+                if (holder.progress != null)
+                    Utils.setProgress(holder.progress, p.start, p.stop);
+
+            }
+            else {
+                // The channel does not provide program data. Hide the progress
+                // bar and clear the time and duration texts. These two items
+                // provide some space so that the next list item is not too
+                // close.
+                if (holder.title != null)
+                    holder.title.setText(R.string.no_data);
+
+                if (holder.progress != null)
+                    holder.progress.setVisibility(View.GONE);
             }
         }
         return view;

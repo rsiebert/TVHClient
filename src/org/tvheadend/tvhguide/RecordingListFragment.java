@@ -166,7 +166,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return true;
             
         case R.id.menu_record_remove:
-            Utils.removeProgram(getActivity(), rec.id);
+            Utils.removeProgram(getActivity(), rec);
             return true;
 
         case R.id.menu_record_cancel:

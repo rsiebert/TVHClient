@@ -9,35 +9,61 @@
             android:summary="@string/pref_manage_connections_sum"
             android:title="@string/pref_manage_connections" >
         </Preference>
-            
+    </PreferenceCategory>
+
+    <PreferenceCategory 
+        android:title="@string/pref_user_interface" >
+
+        <PreferenceScreen
+            android:title="@string/pref_ui"
+            android:summary="@string/pref_ui_sum" >
+	        <CheckBoxPreference
+	            android:defaultValue="true"
+	            android:key="lightThemePref"
+	            android:summary="@string/pref_theme_sum"
+	            android:title="@string/pref_theme" />
+	        <CheckBoxPreference
+	            android:defaultValue="true"
+	            android:key="showIconPref"
+	            android:summary="@string/pref_icons_sum"
+	            android:title="@string/pref_icons" />
+	    </PreferenceScreen>
+	    <PreferenceScreen
+            android:title="@string/pref_program_guide"
+            android:summary="@string/pref_program_guide_sum" >
+	        <EditTextPreference
+	            android:id="@+id/pref_epg_hours_visible"
+	            android:name="@string/pref_epg_hours_visible"
+	            android:defaultValue="4"
+	            android:key="epgHoursVisible"
+	            android:numeric="integer"
+	            android:summary="@string/pref_epg_hours_visible_sum"
+	            android:title="@string/pref_epg_hours_visible" />
+	        <EditTextPreference
+	            android:id="@+id/pref_epg_max_days"
+	            android:name="@string/pref_epg_max_days"
+	            android:defaultValue="7"
+	            android:key="epgMaxDays"
+	            android:numeric="integer"
+	            android:summary="@string/pref_epg_max_days_sum"
+	            android:title="@string/pref_epg_max_days" />
+	        <EditTextPreference
+	            android:id="@+id/pref_programs_to_load"
+	            android:name="@string/pref_programs_to_load"
+	            android:defaultValue="10"
+	            android:key="programsToLoad"
+	            android:numeric="integer"
+	            android:summary="@string/pref_programs_to_load_sum"
+	            android:title="@string/pref_programs_to_load" />
+	    </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_ui">  
-        
-		<CheckBoxPreference 
-		    android:key="lightThemePref"
-		    android:title="@string/pref_theme" 
-	        android:summary="@string/pref_theme_sum"
-		    android:defaultValue="false"
-		/>
-	
-		<CheckBoxPreference 
-		    android:key="showIconPref"
-		    android:title="@string/pref_icons" 
-	        android:summary="@string/pref_icons_sum"
-	        android:defaultValue="true"
-		/>
-
-    </PreferenceCategory>  
-    
-    <PreferenceCategory
         android:title="@string/pref_playback">
-		
         <PreferenceScreen
-        android:key="pref_program_playback"
-        android:title="@string/programs"
-        android:summary="@string/pref_playback_programs_sum" >
+	        android:key="pref_program_playback"
+	        android:title="@string/programs"
+	        android:summary="@string/pref_playback_programs_sum" >
             <EditTextPreference
                 android:id="@+id/pref_host"
                 android:name="@string/pref_host"
@@ -69,7 +95,6 @@
 	            android:defaultValue="true"
 	            android:title="@string/pref_external"
 	            android:key="progExternalPref" />
-	
 	        <CheckBoxPreference 
 	            android:id="@+id/pref_transcode"
 	            android:name="@string/pref_transcode"
@@ -117,9 +142,8 @@
 	            android:dependency="progTranscodePref"
 	            android:entries="@array/pref_scodec_list_display"
 	            android:entryValues="@array/pref_scodec_list" />
-
         </PreferenceScreen>
-        
+
         <PreferenceScreen
             android:key="pref_playback_recordings"
             android:title="@string/recordings"
@@ -139,7 +163,6 @@
                 android:numeric="integer"
                 android:summary="@string/pref_http_port_sum"
                 android:title="@string/pref_http_port" />
-
             <ListPreference
                 android:name="@string/pref_container"
                 android:defaultValue="matroska"
@@ -149,7 +172,6 @@
                 android:key="recContainerPref"
                 android:summary="@string/pref_container_sum"
                 android:title="@string/pref_container" />
-
             <CheckBoxPreference
                 android:id="@+id/pref_external"
                 android:name="@string/pref_external"
@@ -157,7 +179,6 @@
                 android:key="recExternalPref"
                 android:summary="@string/pref_external_sum"
                 android:title="@string/pref_external" />
-
 	        <CheckBoxPreference 
 	            android:id="@+id/pref_transcode"
 	            android:name="@string/pref_transcode"
@@ -205,9 +226,7 @@
 	            android:dependency="recTranscodePref"
 	            android:entries="@array/pref_scodec_list_display"
 	            android:entryValues="@array/pref_scodec_list" />
-
         </PreferenceScreen>
-
 	</PreferenceCategory>
 
     <PreferenceCategory 
@@ -219,4 +238,3 @@
         </Preference>
     </PreferenceCategory>
 </PreferenceScreen>
-

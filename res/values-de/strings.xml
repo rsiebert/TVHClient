@@ -23,6 +23,7 @@
     <string name="menu_edit">Bearbeiten</string>
     <string name="menu_delete">Löschen</string>
     <string name="menu_connections">Verbindungen</string>
+    <string name="menu_timeframe">Zeitraum</string>
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
@@ -34,6 +35,7 @@
     <string name="connection_options">Optionen für Verbindung \'%s\'</string>
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
+    <string name="delete_connection">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
 
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
@@ -56,7 +58,9 @@
     <string name="pref_pass_sum">Passwort eingeben</string>
     <string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
 
+    <string name="pref_user_interface">Benutzeroberfläche</string>
     <string name="pref_ui">Aussehen</string>
+    <string name="pref_ui_sum">Konfiguriere das allgemeine Aussehen und andere Parameter.</string>
     <string name="pref_icons">Zeige Senderlogos</string>
     <string name="pref_icons_sum">Zu jeder Aufnahme wird das dazugehörige Senderlogo angezeigt (falls verfügbar).</string>
     <string name="pref_theme">Helle Darstellung</string>
@@ -83,6 +87,15 @@
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Änderungen</string>
     <string name="pref_changelog_sum">Zeige eine Liste der neuen Eigenschaften und Änderungen der verschiedenen Versionnen.</string>
+    
+    <string name="pref_program_guide">Program Übersicht</string>
+    <string name="pref_program_guide_sum">Konfiguriere das Aussehen und einige Parameter der Program Übersicht.</string>
+    <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
+    <string name="pref_epg_hours_visible_sum">Anzahl der Stunden der Programm Übersicht die maximal auf einem Bildschirm angezeigt werden sollen. Zuviele Stunden erschweren die Lesbarkeit.</string>
+    <string name="pref_epg_max_days">Anzahl der Tage</string>
+    <string name="pref_epg_max_days_sum">Begrenzt die Programm Übersicht auf diese maximale Anzahl an Tagen.</string>
+    <string name="pref_programs_to_load">Programme Laden</string>
+    <string name="pref_programs_to_load_sum">Wieviele Programme sollen pro Sender vom Server geladen werden, um mehr in der Programmliste oder Übersicht anzuzeigen. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_inv">Konnte nicht korrekt mit dem Server kommunizieren.</string>
@@ -212,7 +225,16 @@
     
     <string name="search_hint">Suche im TV-Programm</string>
     <string name="today">Heute</string>
-    
+    <string name="tomorrow">Morgen</string>
+    <string name="in_2_days">In 2 Tagen</string>
+    <string name="monday">Montag</string>
+    <string name="tuesday">Dienstag</string>
+    <string name="wednesday">Mittwoch</string>
+    <string name="thursday">Donnerstag</string>
+    <string name="friday">Freitag</string>
+    <string name="saturday">Samstag</string>
+    <string name="sunday">Sonntag</string>
+
     <string name="programs">Programme</string>
     <string name="completed">Aufgenommen</string>
     <string name="upcoming">Geplant</string>
@@ -254,7 +276,8 @@
     <string name="total">Total</string>
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>
-    
+    <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
+
     <string name="currently_recording">Laufende Aufnahmen</string>
     <string name="restart_application">Um das neue Theme zu verwenden muss die Anwendung neu gestartet werden.</string>
     

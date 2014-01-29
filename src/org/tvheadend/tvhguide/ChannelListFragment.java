@@ -27,10 +27,10 @@ import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.ChannelTag;
 
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -51,8 +51,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private AlertDialog tagDialog;
     private ChannelTag currentTag;
     private ListView channelListView;
-    private int channelTagId;
-    
+
+    // This is the default view for the channel list adapter
+    private int viewLayout = R.layout.list_layout;
+    private int adapterLayout = R.layout.channel_list_widget;
+    private boolean disableMenus = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -62,17 +66,28 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         if (container == null)
             return null;
 
-        View v = inflater.inflate(R.layout.list_layout, container, false);
+        // Get the passed layout id. Only used in the program guide icon list
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            viewLayout = bundle.getInt("viewLayout", R.layout.list_layout);
+            adapterLayout = bundle.getInt("adapterLayout", R.layout.channel_list_widget);
+            disableMenus  = bundle.getBoolean("disableMenus", false);
+        }
+
+        View v = inflater.inflate(viewLayout, container, false);
         channelListView = (ListView) v.findViewById(R.id.item_list);
+
         return v;
     }
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
         
-        chAdapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>());
+        if (!disableMenus)
+            setHasOptionsMenu(true);
+        
+        chAdapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);
         channelListView.setAdapter(chAdapter);
 
         channelListView.setOnItemClickListener(new OnItemClickListener() {
@@ -99,24 +114,14 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
                 setCurrentTag(tagAdapter.getItem(pos));
-                channelTagId = pos;
+                Utils.setChannelTagId(pos);
                 populateList();
             }
         });
         tagDialog = builder.create();
 
-        registerForContextMenu(channelListView);
-        
-        // Restore the previously selected tag
-        if (savedInstanceState != null) {
-            channelTagId = savedInstanceState.getInt("selected_channel_tag_id", 0);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("selected_channel_tag_id", channelTagId);
+        if (!disableMenus)
+            registerForContextMenu(channelListView);
     }
 
     @Override
@@ -165,9 +170,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private void setCurrentTag(ChannelTag tag) {
         currentTag = tag;
         if (tag == null) {
-            ((ChannelListTabsActivity) getActivity()).setActionBarTitle(getString(R.string.all_channels));
+            if (getActivity() instanceof ChannelListTabsActivity)
+                ((ChannelListTabsActivity) getActivity()).setActionBarTitle(getString(R.string.all_channels));
         } else {
-            ((ChannelListTabsActivity) getActivity()).setActionBarTitle(currentTag.name);
+            if (getActivity() instanceof ChannelListTabsActivity)
+                ((ChannelListTabsActivity) getActivity()).setActionBarTitle(currentTag.name);
         }
     }
 
@@ -181,7 +188,14 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         }
         chAdapter.sort();
         chAdapter.notifyDataSetChanged();
-        ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
+
+        if (getActivity() instanceof ChannelListTabsActivity)
+            ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
+        
+        // Set the scroll position of the list view
+        if (getActivity() instanceof ProgramGuideTabsActivity) {
+            channelListView.setSelection(((ProgramGuideTabsActivity) getActivity()).getScrollingSelectionIndex());
+        }
     }
 
     @Override
@@ -225,12 +239,14 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      */
     private void setLoading(boolean loading) {
         
-        if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
+        if (DatabaseHelper.getInstance() != null && DatabaseHelper.getInstance().getSelectedConnection() == null) {
             // Clear any channels in the list and 
             // show that we have no connection
             chAdapter.clear();
             chAdapter.notifyDataSetChanged();
-            ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
+            
+            if (getActivity() instanceof ChannelListTabsActivity)
+                ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
         } 
         else {
             if (loading) {
@@ -238,7 +254,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 // show that we are still loading data.
                 chAdapter.clear();
                 chAdapter.notifyDataSetChanged();
-                ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.loading));
+                
+                if (getActivity() instanceof ChannelListTabsActivity)
+                    ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.loading));
             } 
             else {
                 // Fill the tag adapter with the available channel tags
@@ -249,8 +267,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 }
     
                 // Check if tags exist and set the previously used one
-                if (tagAdapter.getCount() > channelTagId)
-                    currentTag = tagAdapter.getItem(channelTagId);
+                if (tagAdapter.getCount() > Utils.getChannelTagId())
+                    currentTag = tagAdapter.getItem(Utils.getChannelTagId());
     
                 // Update the action bar text and fill the channel list
                 setCurrentTag(currentTag);
@@ -305,6 +323,17 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_UPDATE)) {
             //NOP
+        }
+    }
+    
+    public void scrollListViewTo(int index) {
+        if (channelListView != null)
+            channelListView.setSelection(index);
+    }
+    
+    public void scrollListViewToPosition(int index, int pos) {
+        if (channelListView != null) {
+            channelListView.setSelectionFromTop(index, pos);
         }
     }
 }

@@ -193,7 +193,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             return true;
             
         case R.id.menu_record_remove:
-            Utils.removeProgram(this, program.recording.id);
+            Utils.removeProgram(this, program.recording);
             return true;
 
         case R.id.menu_record_cancel:

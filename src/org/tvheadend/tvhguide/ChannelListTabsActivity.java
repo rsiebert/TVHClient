@@ -19,6 +19,7 @@
 package org.tvheadend.tvhguide;
 
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -79,8 +80,8 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         actionBar.addTab(tab);
         tab = actionBar.newTab().setText(R.string.recordings).setTabListener(tabListener);
         actionBar.addTab(tab);
-//        tab = actionBar.newTab().setText(R.string.program_guide).setTabListener(tabListener);
-//        actionBar.addTab(tab);
+        tab = actionBar.newTab().setText(R.string.program_guide).setTabListener(tabListener);
+        actionBar.addTab(tab);
         tab = actionBar.newTab().setText(R.string.status).setTabListener(tabListener);
         actionBar.addTab(tab);
         
@@ -116,14 +117,15 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             break;
         case 1:
             // Show the list of recordings
-            Intent intent = new Intent(this, RecordingListTabsActivity.class);
-            startActivity(intent);
+            Intent recIntent = new Intent(this, RecordingListTabsActivity.class);
+            startActivity(recIntent);
             break;
-//        case 2:
-//            // Show the program guide
-//            Toast.makeText(this, "No implemented yet", Toast.LENGTH_SHORT).show();
-//            break;
         case 2:
+            // Show the program guide
+            Intent epgIntent = new Intent(this, ProgramGuideTabsActivity.class);
+            startActivity(epgIntent);
+            break;
+        case 3:
         	Fragment statusFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
             if (statusFrag == null) {
                 Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
@@ -141,10 +143,10 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         super.onResume();
         
         // If the user has pressed the back button, the currently selected tab
-        // would be active (like the recordings tab) which would show nothing
-        // here. So we set the previously selected tab.
-        if (prevTabPosition >= 0 &&
-                actionBar.getSelectedNavigationIndex() == 1) {
+        // would be active (like the recordings or program guide tab) and
+        // would show nothing. So we need to set the previously selected tab.
+        if (prevTabPosition >= 0
+                && (actionBar.getSelectedNavigationIndex() == 1 || actionBar.getSelectedNavigationIndex() == 2)) {
             actionBar.setSelectedNavigationItem(prevTabPosition);
             prevTabPosition = -1;
         }

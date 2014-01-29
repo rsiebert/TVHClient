@@ -20,12 +20,10 @@
 package org.tvheadend.tvhguide;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.tvheadend.tvhguide.adapter.ProgramListAdapter;
 import org.tvheadend.tvhguide.htsp.HTSListener;
-import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.intent.SearchEPGIntent;
 import org.tvheadend.tvhguide.intent.SearchIMDbIntent;
 import org.tvheadend.tvhguide.model.Channel;
@@ -175,7 +173,7 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
             return true;
             
         case R.id.menu_record_remove:
-            Utils.removeProgram(this, program.recording.id);
+            Utils.removeProgram(this, program.recording);
             return true;
 
         case R.id.menu_record_cancel:
@@ -323,35 +321,6 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
             return;
         
         isLoading = true;
-        
-        Iterator<Program> it = channel.epg.iterator();
-        Program p = null;
-        long nextId = 0;
-
-        while (it.hasNext()) {
-            p = it.next();
-            if (p.id != nextId && nextId != 0) {
-                break;
-            }
-            nextId = p.nextId;
-        }
-
-        if (p == null) {
-            return;
-        }
-        if (nextId == 0) {
-            nextId = p.nextId;
-        }
-        if (nextId == 0) {
-            nextId = p.id;
-        }
-
-        // Set the required information and start the service command.
-        Intent intent = new Intent(this, HTSService.class);
-        intent.setAction(HTSService.ACTION_GET_EVENTS);
-        intent.putExtra("eventId", nextId);
-        intent.putExtra("channelId", channel.id);
-        intent.putExtra("count", newProgramsToLoad);
-        startService(intent);
+        Utils.loadMorePrograms(this, newProgramsToLoad, channel);
     }
 }

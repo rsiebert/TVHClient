@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Font for the program/channel/recording title texts in the details screens -->
     <style name="TitleFont.Light" parent="@android:style/TextAppearance.Large">
         <item name="android:ellipsize">end</item>
         <item name="android:scrollHorizontally">false</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">#AAAAAA</item>
+        <item name="android:textColor">#999999</item>
         <item name="android:textAllCaps">true</item>
     </style>
 
@@ -16,12 +16,64 @@
 
     <!-- Font for the header texts in the details screens -->
     <style name="HeaderFont.Light" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">#AAAAAA</item>
+        <item name="android:textColor">#999999</item>
         <item name="android:textAllCaps">true</item>
     </style>
 
     <style name="HeaderFont.Dark" parent="HeaderFont.Light">
         <item name="android:textColor">#DDDDDD</item>
+    </style>
+
+    <!-- Font for the program title in the program guide screen -->
+    <style name="ProgramGuideTimelineFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">#444444</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ProgramGuideTimelineFont.Dark" parent="ProgramGuideTimelineFont.Light">
+        <item name="android:textColor">#DDDDDD</item>
+    </style>
+
+    <!-- Font for the program title in the program guide screen -->
+    <style name="ProgramGuideTitleFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">#999999</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light">
+        <item name="android:textColor">#DDDDDD</item>
+    </style>
+
+    <!-- Font for the additional information in the program guide screen -->
+    <style name="ProgramGuideFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#666666</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="ProgramGuideFont.Dark" parent="ProgramGuideFont.Light">
+        <item name="android:textColor">#DDDDDD</item>
+    </style>
+
+    <!-- Font for the actionbar title texts in the program guide screen -->
+    <style name="ActionBarTab_TitleFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#666666</item>
+    </style>
+
+    <style name="ActionBarTab_TitleFont.Dark" parent="ActionBarTab_TitleFont.Light">
+        <item name="android:textColor">#DDDDDD</item>
+    </style>
+
+    <!-- Font for the actionbar title texts in the program guide screen -->
+    <style name="ActionBarTab_SubtitleFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#444444</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ActionBarTab_SubtitleFont.Dark" parent="ActionBarTab_SubtitleFont.Light">
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
@@ -36,10 +88,19 @@
         <item name="ic_menu_play">@drawable/ic_menu_play_dark</item>
         <item name="ic_menu_delete">@drawable/ic_menu_delete_dark</item>
         <item name="ic_menu_edit">@drawable/ic_menu_edit_dark</item>
+        <item name="ic_menu_timeframe">@drawable/ic_menu_timeframe_dark</item>
         <item name="item_active">@drawable/item_active_dark</item>
         <item name="item_not_active">@drawable/item_not_active_dark</item>
         <item name="TitleFont">@style/TitleFont.Dark</item>
         <item name="HeaderFont">@style/HeaderFont.Dark</item>
+        <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Dark</item>
+        <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
+        <item name="ProgramGuideFont">@style/ProgramGuideFont.Dark</item>
+        <item name="ActionBarTab_TitleFont">@style/ActionBarTab_TitleFont.Dark</item>
+        <item name="ActionBarTab_SubtitleFont">@style/ActionBarTab_SubtitleFont.Dark</item>
+        <item name="TimelineItemLayoutStyle">@drawable/timeline_item_dark</item>
+        <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_dark</item>
+        <item name="TimelineListLayoutStyle">@drawable/timeline_list_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -54,10 +115,19 @@
         <item name="ic_menu_play">@drawable/ic_menu_play_light</item>
         <item name="ic_menu_delete">@drawable/ic_menu_delete_light</item>
         <item name="ic_menu_edit">@drawable/ic_menu_edit_light</item>
+        <item name="ic_menu_timeframe">@drawable/ic_menu_timeframe_light</item>
         <item name="item_active">@drawable/item_active_light</item>
         <item name="item_not_active">@drawable/item_not_active_light</item>
         <item name="TitleFont">@style/TitleFont.Light</item>
         <item name="HeaderFont">@style/HeaderFont.Light</item>
+        <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Light</item>
+        <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
+        <item name="ProgramGuideFont">@style/ProgramGuideFont.Light</item>
+        <item name="ActionBarTab_TitleFont">@style/ActionBarTab_TitleFont.Light</item>
+        <item name="ActionBarTab_SubtitleFont">@style/ActionBarTab_SubtitleFont.Light</item>
+        <item name="TimelineItemLayoutStyle">@drawable/timeline_item_light</item>
+        <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_light</item>
+        <item name="TimelineListLayoutStyle">@drawable/timeline_list_light</item>
     </style>
 
 </resources>

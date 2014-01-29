@@ -20,6 +20,7 @@ package org.tvheadend.tvhguide;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 
 import org.tvheadend.tvhguide.R.string;
@@ -36,8 +37,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,10 +51,21 @@ import android.widget.TextView;
 
 public class Utils {
     
+    // The currently selected tag. This allows showing the same amount of
+    // channels (with this tag only) in the channel list and program guide
+    // screens.
+    private static int channelTagId = 0;
+
     // Constants required for the date calculation
     private static final int twoDays = 1000 * 3600 * 24 * 2;
     private static final int sixDays = 1000 * 3600 * 24 * 6;
     
+    // This is the width in pixels from the icon in the program_guide_list.xml
+    // We need to subtract this value from the window width to get the real
+    // usable width. The same values is also used in the
+    // ProgramGuideListFragment class.
+    private final static int LAYOUT_ICON_OFFSET = 66;
+
     /**
      * 
      * @param context
@@ -150,14 +164,16 @@ public class Utils {
      * @param context
      * @param id
      */
-    public static void removeProgram(final Context context, final long id) {
+    public static void removeProgram(final Context context, final Recording rec) {
 
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_DELETE);
-        intent.putExtra("id", id);
+        intent.putExtra("id", rec.id);
         
         // Show a confirmation dialog before deleting the recording
-        new AlertDialog.Builder(context).setTitle(R.string.menu_record_remove)
+        new AlertDialog.Builder(context)
+        .setTitle(R.string.menu_record_remove)
+        .setMessage(context.getString(R.string.delete_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 context.startService(intent);
@@ -376,7 +392,41 @@ public class Utils {
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
             dateText = sdf.format(start.getTime());
         }
-        date.setText(dateText);
+
+        // Translate the day strings
+        if (dateText.equals("today")) {
+            date.setText(R.string.today);
+        }
+        else if (dateText.equals("tomorrow")) {
+            date.setText(R.string.tomorrow);
+        }
+        else if (dateText.equals("in 2 days")) {
+            date.setText(R.string.in_2_days);
+        }
+        else if (dateText.equals("Monday")) {
+            date.setText(R.string.monday);
+        }
+        else if (dateText.equals("Tuesday")) {
+            date.setText(R.string.tuesday);
+        }
+        else if (dateText.equals("Wednesday")) {
+            date.setText(R.string.wednesday);
+        }
+        else if (dateText.equals("Thursday")) {
+            date.setText(R.string.thursday);
+        }
+        else if (dateText.equals("Friday")) {
+            date.setText(R.string.friday);
+        }
+        else if (dateText.equals("Saturday")) {
+            date.setText(R.string.saturday);
+        }
+        else if (dateText.equals("Sunday")) {
+            date.setText(R.string.sunday);
+        }
+        else {
+            date.setText(dateText);
+        }
     }
 
     /**
@@ -503,8 +553,10 @@ public class Utils {
         if (durationTime > 0)
             percent = elapsedTime / durationTime;
 
-        progress.setProgress((int) Math.floor(percent * 100));
-        progress.setVisibility(View.VISIBLE);
+        if (progress != null) {
+            progress.setProgress((int) Math.floor(percent * 100));
+            progress.setVisibility(View.VISIBLE);
+        }
     }
     
     /**
@@ -533,5 +585,78 @@ public class Utils {
                 progressText.setVisibility(View.GONE);
             }
         }
+    }
+    
+    /**
+     * 
+     * @param context
+     * @param numberOfProgramsToLoad
+     * @param channel
+     */
+    public static void loadMorePrograms(final Context context, final int numberOfProgramsToLoad, final Channel channel) {
+        
+        Iterator<Program> it = channel.epg.iterator();
+        Program p = null;
+        long nextId = 0;
+
+        while (it.hasNext()) {
+            p = it.next();
+            // Check if there is a next program available or if the current
+            // program has an id for the next one
+            if (p.id != nextId && nextId != 0) {
+                break;
+            }
+            // Get the next id of the program so we can check in
+            // the next iteration if this program is the last one.
+            nextId = p.nextId;
+        }
+
+        if (p == null) {
+            return;
+        }
+        // In case the while loop was not entered get the next id 
+        // or if there is none the current id if the program.
+        if (nextId == 0) {
+            nextId = p.nextId;
+        }
+        if (nextId == 0) {
+            nextId = p.id;
+        }
+
+        // Set the required information and start the service command.
+        Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(HTSService.ACTION_GET_EVENTS);
+        intent.putExtra("eventId", nextId);
+        intent.putExtra("channelId", channel.id);
+        intent.putExtra("count", numberOfProgramsToLoad);
+        context.startService(intent);
+    }
+
+    /**
+     * Calculates the available display width of one minute in pixels. This
+     * depends how wide the screen is and how many hours shall be shown in one
+     * screen.
+     * 
+     * @param context
+     * @param tabIndex
+     * @param hoursToShow
+     * @return
+     */
+    public static float getPixelsPerMinute(FragmentActivity context, int tabIndex, int hoursToShow) {
+        // Get the usable width. Subtract the icon width if its visible.
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        context.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        float displayWidth = displaymetrics.widthPixels - ((tabIndex == 0) ? LAYOUT_ICON_OFFSET : 0);
+        float pixelsPerMinute = ((float) displayWidth / (60.0f * (float) hoursToShow));
+
+        return pixelsPerMinute;
+    }
+
+    public static int getChannelTagId() {
+        return channelTagId;
+    }
+
+    public static void setChannelTagId(int channelTagId) {
+        Utils.channelTagId = channelTagId;
     }
 }

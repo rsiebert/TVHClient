@@ -594,13 +594,21 @@ public class HTSService extends Service implements HTSConnectionListener {
         o.outHeight = height;
 
         Bitmap bitmap = BitmapFactory.decodeStream(is, null, o);
-        
+
         if(bitmap != null) {
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-            bitmap.recycle();
         
-            resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-            resizedBitmap.recycle();
+            try {
+            	resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            }
+            catch (Exception e) {
+            	Log.d(TAG, "Exception in compressing resized bitmap");
+            	bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            }
+            finally {
+            	bitmap.recycle();
+            	resizedBitmap.recycle();
+            }
         }
         os.close();
         is.close();
