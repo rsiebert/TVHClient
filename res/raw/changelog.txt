@@ -1,3 +1,9 @@
+$ 1.9.0
+  % VERSION 1.9.0
+  _ 29.01.2014
+    * Added Program Guide
+    * Updated UI Settings
+    * Improved Dialog Messages
 $ 1.8.2
   % VERSION 1.8.2
   _ 04.12.2013

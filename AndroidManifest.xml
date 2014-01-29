@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tvheadend.tvhguide"
     android:versionCode="21"
-    android:versionName="1.8.1" >
+    android:versionName="1.9.0" >
     <uses-permission android:name="android.permission.INTERNET" />
     
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17" />
@@ -31,6 +31,7 @@
         <activity android:name="org.tvheadend.tvhguide.ProgramListActivity" />
         <activity android:name="org.tvheadend.tvhguide.ProgramDetailsActivity" />
         <activity android:name="org.tvheadend.tvhguide.RecordingDetailsActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ProgramGuideTabsActivity" />
         <activity android:name="org.tvheadend.tvhguide.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhguide.PlaybackSelectionActivity" />
         <activity android:name="org.tvheadend.tvhguide.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
