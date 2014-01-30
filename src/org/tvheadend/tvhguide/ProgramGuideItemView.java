@@ -323,7 +323,7 @@ public class ProgramGuideItemView extends LinearLayout {
      */
     private void addCurrentProgramToView(final Program p, final int layoutWidth, final boolean expandLayout) {
 
-    	View v = context.getLayoutInflater().inflate(R.layout.program_guide_list_widget, null);
+    	View v = context.getLayoutInflater().inflate(R.layout.program_guide_data_item, null);
         final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
         final TextView title = (TextView) v.findViewById(R.id.title);
         final ImageView state = (ImageView) v.findViewById(R.id.state);
@@ -387,12 +387,12 @@ public class ProgramGuideItemView extends LinearLayout {
     }
 
     private void addEmptyProgramToView() {
-        View v = inflate(getContext(), R.layout.program_guide_list_widget_empty, null);
+        View v = inflate(getContext(), R.layout.program_guide_data_item_empty, null);
         layout.addView(v);
     }
 
     private void addLoadingIndication() {
-        View v = inflate(getContext(), R.layout.program_guide_list_widget_loading, null);
+        View v = inflate(getContext(), R.layout.program_guide_data_item_loading, null);
         layout.addView(v);
     }
 

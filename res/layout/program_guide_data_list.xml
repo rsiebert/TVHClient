@@ -50,8 +50,8 @@
         android:id="@+id/current_time"
         android:layout_width="3dp"
         android:layout_height="fill_parent"
-        android:scaleType="fitXY"
         android:contentDescription="@string/time"
+        android:scaleType="fitXY"
         android:src="@drawable/current_time" />
 
 </RelativeLayout>

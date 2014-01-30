@@ -67,7 +67,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.program_guide_pager_layout);
+        setContentView(R.layout.program_guide_pager);
 
         // Calculate the max number of fragments in the view pager 
         calcFragmentCount();
@@ -82,8 +82,8 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             // Pass the correct layout information to the fragment. Here we only
             // want to show the channel icons, nothing more.
             Bundle args = new Bundle();
-            args.putInt("viewLayout", R.layout.program_guide_pager_layout);
-            args.putInt("adapterLayout", R.layout.program_guide_channel_list_widget);
+            args.putInt("viewLayout", R.layout.program_guide_pager);
+            args.putInt("adapterLayout", R.layout.program_guide_channel_item);
             args.putBoolean("disableMenus", true);
             Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
             fragment.setArguments(args);
