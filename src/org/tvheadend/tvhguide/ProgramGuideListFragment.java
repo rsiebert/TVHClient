@@ -95,7 +95,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             // Set the current date in the title
             Utils.setDate(titleDateText, startDate);
 
-            final SimpleDateFormat sdf2 = new SimpleDateFormat("dd:MM:yyyy", Locale.US);
+            final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
             Utils.setDate(titleDate, startDate);
             titleDate.setText("(" + sdf2.format(startDate) + ")");
             
