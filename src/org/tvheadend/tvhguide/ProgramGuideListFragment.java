@@ -25,6 +25,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -96,10 +97,15 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             Utils.setDate(titleDateText, startDate);
 
             final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            Utils.setDate(titleDate, startDate);
             titleDate.setText("(" + sdf2.format(startDate) + ")");
             
-            if (titleDateText.getText().equals(titleDate.getText())) {
+            // Get the usable width
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+            // Hide the date text if it shows the date time or the display is too narrow
+            if (titleDateText.getText().equals(titleDate.getText()) || 
+                ((int) displaymetrics.widthPixels < 400)) {
                 titleDate.setVisibility(View.GONE);
             }
             
