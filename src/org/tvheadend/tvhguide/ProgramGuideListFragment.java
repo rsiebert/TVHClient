@@ -476,4 +476,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     public void setSelectedContextItem(Program p) {
         selectedProgram = p;
     }
+
+    @Override
+    public void setMenuSelection(MenuItem item) {
+        onContextItemSelected(item);
+        adapter.notifyDataSetChanged();
+    }
 }

@@ -12,6 +12,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -366,9 +368,24 @@ public class ProgramGuideItemView extends LinearLayout {
 	                fragmentInterface.setSelectedContextItem(p);
 	                menu.setHeaderTitle(p.title);
 	                Utils.setProgramMenu(menu, p);
+	                
+                    // Add a listener to each menu item. When the menu item is
+                    // called the context handler method from the fragment will
+                    // be called. Without this the context menu handler from the
+                    // channel list fragment was called (not clear why) which 
+	                // resulted in a null pointer exception.
+	                for (int i = 0; i < menu.size(); ++i) {
+	                    menu.getItem(i).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+	                        @Override
+	                        public boolean onMenuItemClick(MenuItem item) {
+	                            fragmentInterface.setMenuSelection(item);
+	                            return true;
+	                        }
+	                    }); 
+	                }
 	            }
 	        }));
-	
+	        
 	        // Add the listener to the layout so that a 
 	        // click will show the program details activity
 	        itemLayout.setOnClickListener(new OnClickListener() {
@@ -402,5 +419,6 @@ public class ProgramGuideItemView extends LinearLayout {
     
     public interface ProgramContextMenuInterface {
         public void setSelectedContextItem(Program p);
+        public void setMenuSelection(MenuItem item);
     }
 }
