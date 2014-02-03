@@ -10,11 +10,11 @@
     <string name="menu_play">Play</string>
     <string name="menu_search">Search</string>
     <string name="menu_record">Record</string>
-    <string name="menu_record_cancel">Cancel Recording</string>
-    <string name="menu_record_remove">Remove Recording</string>
+    <string name="menu_record_cancel">Cancel recording</string>
+    <string name="menu_record_remove">Remove recording</string>
     <string name="menu_search_imdb">Search on IMDB</string>
-    <string name="menu_search_epg">Search the Program Guide</string>
-    <string name="menu_search_channel">Search this Channel</string>
+    <string name="menu_search_epg">Search the program guide</string>
+    <string name="menu_search_channel">Search this channel</string>
     <string name="menu_add">Add</string>
     <string name="menu_save">Save</string>
     <string name="menu_cancel">Cancel</string>
@@ -25,37 +25,37 @@
     <string name="menu_connections">Connections</string>
     <string name="menu_timeframe">Timeframe</string>
 
-    <string name="pref_manage_connections">Manage Connections</string>
+    <string name="pref_manage_connections">Manage connections</string>
     <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
-    <string name="available_connections">Available Connections</string>
-    <string name="select_connection">Select Connection</string>
-    <string name="add_connection">Add Connection</string>
+    <string name="available_connections">Available connections</string>
+    <string name="select_connection">Select connection</string>
+    <string name="add_connection">Add connection</string>
     <string name="new_connection">Create a new connection</string>
     <string name="no_connections">No connections available</string>
-    <string name="connection_options">Options for Connection \'%s\'</string>
+    <string name="connection_options">Options for connection \'%s\'</string>
     <string name="cancel_connection">Discard values? All changes will be lost.</string>
     <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
     <string name="delete_recording">Do you really want to delete the recording \'%s\'?</string>
 
     <string name="pref_connections">Connections</string>
-    <string name="pref_name">Connection Name</string>
+    <string name="pref_name">Connection name</string>
     <string name="pref_name_sum">Enter a unique name of the connection</string>
     <string name="pref_name_error_empty">The name must not be empty.</string>
     <string name="pref_name_error_invalid">The name must only contain letters, numbers, minus and underscore.</string>
-    <string name="pref_selected">Default Connection</string>
+    <string name="pref_selected">Default connection</string>
     <string name="pref_selected_sum">Select to make this the default connection and use it after the application has started.</string>
     <string name="pref_host">Hostname</string>
-    <string name="pref_host_sum">Enter the Server Hostname</string>
+    <string name="pref_host_sum">Enter the server hostname</string>
     <string name="pref_host_error_empty">The IP-address or hostname must not be empty.</string>
     <string name="pref_host_error_invalid">The IP-address is not valid.</string>
     <string name="pref_port">Port</string>
-    <string name="pref_port_sum">Enter the Server Port</string>
+    <string name="pref_port_sum">Enter the server port</string>
     <string name="pref_port_error_empty">The port number must not be empty.</string>
     <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
     <string name="pref_user">Username</string>
-    <string name="pref_user_sum">Enter Username</string>
+    <string name="pref_user_sum">Enter username</string>
     <string name="pref_pass">Password</string>
-    <string name="pref_pass_sum">Enter Password</string>
+    <string name="pref_pass_sum">Enter password</string>
     <string name="pref_pass_set_sum">Password is set but is not displayed.</string>
     
     <string name="pref_user_interface">User interface</string>
@@ -87,13 +87,13 @@
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Changelog</string>
     <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
-    <string name="pref_program_guide">Program Guide</string>
+    <string name="pref_program_guide">Program guide</string>
     <string name="pref_program_guide_sum">Configure the program guide screen and how the data shall be displayed.</string>
-    <string name="pref_epg_hours_visible">Hours Visible</string>
+    <string name="pref_epg_hours_visible">Hours visible</string>
     <string name="pref_epg_hours_visible_sum">Define how many hours of the program guide shall be shown on one screen. Too many hours will display too many programs and thus clutters the screen and decrease the readability.</string>
-    <string name="pref_epg_max_days">Maximum Days to show</string>
+    <string name="pref_epg_max_days">Maximum days to show</string>
     <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
-    <string name="pref_programs_to_load">Number of Programs to load</string>
+    <string name="pref_programs_to_load">Number of programs to load</string>
     <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
 
     <string name="err_auth">Access denied</string>
@@ -237,7 +237,7 @@
     <string name="search_hint">Search the EPG</string>
     <string name="today">today</string>
     <string name="tomorrow">Tomorrow</string>
-    <string name="in_2_days">In 2 Days</string>
+    <string name="in_2_days">In 2 days</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
@@ -253,13 +253,13 @@
     
     <string name="channels">Channels</string>
     <string name="recordings">Recordings</string>
-    <string name="program_guide">Program Guide</string>
+    <string name="program_guide">Program guide</string>
     <string name="status">Status</string>
     <string name="items">Items</string>
     <string name="results">Results</string>
     
-    <string name="channel_icon">Channel Icon</string>
-    <string name="status_icon">Status Icon</string>
+    <string name="channel_icon">Channel icon</string>
+    <string name="status_icon">Status icon</string>
     <string name="title">Title</string>
     <string name="channel">Channel</string>
     <string name="time">Time</string>
@@ -270,8 +270,8 @@
     <string name="duration">Duration</string>
     <string name="airing">Airing</string>
     <string name="rating">Rating</string>
-    <string name="content_type">Content Type</string>
-    <string name="series_information">Series Information</string>
+    <string name="content_type">Content type</string>
+    <string name="series_information">Series information</string>
 
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>
@@ -281,7 +281,7 @@
     <string name="part">Part</string>
     <string name="progress">%1$d%% of the show already shown</string>
     
-    <string name="disc_space">Disc Space</string>
+    <string name="disc_space">Disc space</string>
     <string name="free_disc_space">Free disc space</string>
     <string name="total_disc_space">Total disc space</string>
     <string name="total">Total</string>
