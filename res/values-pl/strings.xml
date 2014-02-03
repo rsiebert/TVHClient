@@ -83,6 +83,16 @@
     <string name="pref_external_sum">Użyj zewnętrznego odtwarzacza strumieni na żywo (BSPlayer wydaje się OK)</string>
 
     <string name="pref_information">Informacja</string>
+    <string name="pref_changelog">Changelog</string>
+    <string name="pref_changelog_sum">Pokaż listę funkcji i zmian różnych wersji aplikacji.</string>
+    <string name="pref_program_guide">Przewodnik programów</string>
+    <string name="pref_program_guide_sum">Konfiguracja wyświetlania przewodnika programów i danych jakie powinny być wyświetlane.</string>
+    <string name="pref_epg_hours_visible">Widoczne godziny</string>
+    <string name="pref_epg_hours_visible_sum">Definiuje ile godzin przewodnika programów zostanie wyświetlone na jednym ekranie. Zbyt duża ilość godzin i programów wyświetlanych na tym samym ekranie zmniejsza czytelność.</string>
+    <string name="pref_epg_max_days">Maksimum dni do wyświetlenia</string>
+    <string name="pref_epg_max_days_sum">Definiuje maksymalną liczbę dni przewodnika programów która zostanie wyświetlona.</string>
+    <string name="pref_programs_to_load">Liczba programów do załadowania</string>
+    <string name="pref_programs_to_load_sum">Definiuje ile programów będzie pobieranych z serwera aby zobaczyć więcej na liście programów lub liście przewodnika. Większa liczba oznacza dłuższy czas ładowania i aktualizowania.</string>
 
     <string name="err_auth">Odmowa dostępu</string>
     <string name="err_inv">Nieprawidłowa odpowiedź z serwera</string>
@@ -263,7 +273,7 @@
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>
     
-    <string name="currently_recording">Program %s jest nagrywany</string>
+    <string name="currently_recording">Jest nagrywany</string>
     <string name="restart_application">Proszę zrestartować aplikację aby aktywować nowy motyw.</string>
     
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>

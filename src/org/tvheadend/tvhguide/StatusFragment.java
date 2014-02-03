@@ -143,6 +143,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         int upcomingRecCount = 0;
         int failedRecCount = 0;
         
+        // Initialize an empty string
         String currentRecText = "";
         
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
@@ -164,12 +165,13 @@ public class StatusFragment extends Fragment implements HTSListener {
             
             // Add the information what is currently being recorded.
             if (rec.isRecording() == true) {
-                currentRecText += getString(R.string.currently_recording, rec.title);
+                currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
                 if (rec.channel != null)
                     currentRecText += " (" + getString(R.string.channel) + " " + rec.channel.name + ")\n";
             }
         }
 
+        // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
         completedRec.setText(completedRecCount + " " + getString(R.string.completed));
         upcomingRec.setText(upcomingRecCount + " " + getString(R.string.upcoming));
