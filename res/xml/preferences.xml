@@ -95,7 +95,7 @@
 	            android:id="@+id/pref_transcode"
 	            android:name="@string/pref_transcode"
 	            android:summary="@string/pref_transcode_sum"
-	            android:defaultValue="true"
+	            android:defaultValue="false"
 	            android:title="@string/pref_transcode"
 	            android:key="progTranscodePref" />
 	        <ListPreference
