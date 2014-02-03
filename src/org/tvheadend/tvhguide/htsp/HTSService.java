@@ -20,12 +20,14 @@ package org.tvheadend.tvhguide.htsp;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -584,37 +586,53 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
         
         OutputStream os = new FileOutputStream(f);
-        
-        float scale = getResources().getDisplayMetrics().scaledDensity;
+
+        float scale = getResources().getDisplayMetrics().density;
         int width = (int) (64 * scale);
         int height = (int) (64 * scale);
-        
+
+        // Set the options for a bitmap and decode an input stream into a bitmap
         BitmapFactory.Options o = new BitmapFactory.Options();
-        o.outWidth  = width;
-        o.outHeight = height;
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(is, null, o);
+        is.close();
 
+        if (url.startsWith("http")) {
+            is = new BufferedInputStream(new URL(url).openStream());
+        }
+        else if (connection.getProtocolVersion() > 9) {
+            is = new HTSFileInputStream(connection, url);
+        }
+
+        // Set the sample size of the image. This is the number of pixels in
+        // either dimension that correspond to a single pixel in the decoded
+        // bitmap. For example, inSampleSize == 4 returns an image that is 1/4
+        // the width/height of the original, and 1/16 the number of pixels.
+        int ratio = Math.max(o.outWidth / width, o.outHeight / height);
+        int sampleSize = Integer.highestOneBit((int) Math.floor(ratio));
+        o = new BitmapFactory.Options();
+        o.inSampleSize = sampleSize;
+
+        // Now decode an input stream into a bitmap and compress it.
         Bitmap bitmap = BitmapFactory.decodeStream(is, null, o);
-
-        if(bitmap != null) {
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-        
-            try {
-            	resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-            }
-            catch (Exception e) {
-            	Log.d(TAG, "Exception in compressing resized bitmap");
-            	bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-            }
-            finally {
-            	bitmap.recycle();
-            	resizedBitmap.recycle();
-            }
+        if (bitmap != null) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
         }
         os.close();
         is.close();
     }
 
     private Bitmap getIcon(final String url) throws MalformedURLException, IOException {
+
+        // When no channel icon shall be shown return null instead of the icon.
+        // The icon will not be shown anyway, so returning null will drastically
+        // reduce memory consumption.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Boolean showIcons = prefs.getBoolean("showIconPref", false);
+        if (!showIcons) {
+            return null; 
+        }
+
         if (url == null || url.length() == 0) {
             return null;
         }
@@ -631,9 +649,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void getChannelIcon(final Channel ch) {
         execService.execute(new Runnable() {
-
+            @Override
             public void run() {
-
                 try {
                     ch.iconBitmap = getIcon(ch.icon);
                     TVHGuideApplication app = (TVHGuideApplication) getApplication();
