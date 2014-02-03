@@ -1,6 +1,7 @@
 package org.tvheadend.tvhguide;
 
 import org.tvheadend.tvhguide.model.Channel;
+import org.tvheadend.tvhguide.model.Connection;
 import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.Stream;
 
@@ -23,6 +24,7 @@ public class PlaybackSelectionActivity extends Activity {
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         final Channel ch = app.getChannel(getIntent().getLongExtra("channelId", 0));
         final Recording rec = app.getRecording(getIntent().getLongExtra("dvrId", 0));
+        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
 
         Intent intent = null;
 
@@ -42,7 +44,7 @@ public class PlaybackSelectionActivity extends Activity {
 
             // Pass on the channel id and the other settings
             intent.putExtra("channelId", ch.id);
-            intent.putExtra("serverHostPref", prefs.getString("progServerHostPref", "localhost"));
+            intent.putExtra("serverHostPref", conn.address);
             intent.putExtra("httpPortPref", Integer.parseInt(prefs.getString("progHttpPortPref", "9981")));
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("progResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("progTranscodePref", true));
@@ -64,7 +66,7 @@ public class PlaybackSelectionActivity extends Activity {
 
             // Pass on the recording id and the other settings
             intent.putExtra("dvrId", rec.id);
-            intent.putExtra("serverHostPref", prefs.getString("recServerHostPref", "localhost"));
+            intent.putExtra("serverHostPref", conn.address);
             intent.putExtra("httpPortPref", Integer.parseInt(prefs.getString("recHttpPortPref", "9981")));
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("recResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("recTranscodePref", false));
