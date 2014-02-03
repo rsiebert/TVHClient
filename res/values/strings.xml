@@ -64,25 +64,25 @@
     <string name="pref_theme">Light theme</string>
     <string name="pref_theme_sum">Use a light theme</string>
     <string name="pref_res">Resolution</string>
-    <string name="pref_res_sum">Maximum resolution for the transcoder</string>
+    <string name="pref_res_sum">Specify the maximum resolution that the transcoder shall use.</string>
     <string name="pref_acodec">Audio codec</string>
-    <string name="pref_acodec_sum">Audio codec to use with the transcoder</string>
+    <string name="pref_acodec_sum">Define the type of audio that the transcoder shall use.</string>
     <string name="pref_vcodec">Video codec</string>
-    <string name="pref_vcodec_sum">Video codec to use with the transcoder</string>
+    <string name="pref_vcodec_sum">Define the type of video that the transcoder shall use.</string>
     <string name="pref_scodec">Subtitle codec</string>
-    <string name="pref_scodec_sum">Subtitle codec to use with the transcoder</string>
+    <string name="pref_scodec_sum">Define the subtitle type that the transcoder shall use.</string>
     <string name="pref_container">Media container</string>
-    <string name="pref_container_sum">Preferred media container</string>
+    <string name="pref_container_sum">Define the media container that shall be used to transport the audio and video streams. Matroshka is usually the preferred choice.</string>
     
     <string name="pref_playback">Playback</string>
-    <string name="pref_playback_programs_sum">Configure streaming and playback options for the Live-TV programs.</string>
-    <string name="pref_playback_recordings_sum">Configure streaming and playback options for your recorded programs.</string>
+    <string name="pref_playback_programs_sum">Configure playback options for the Live-TV programs.</string>
+    <string name="pref_playback_recordings_sum">Configure playback options for your recorded programs.</string>
     <string name="pref_http_port">HTTP port</string>
-    <string name="pref_http_port_sum">Enter Server HTTP Port</string>
+    <string name="pref_http_port_sum">Enter server HTTP port</string>
     <string name="pref_transcode">Transcode stream</string>
-    <string name="pref_transcode_sum">Request a transcoded stream during live playback</string>
+    <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
     <string name="pref_external">Prefer external player</string>
-    <string name="pref_external_sum">Use an external player for live streams (BSPlayer seems OK)</string>
+    <string name="pref_external_sum">Use an external player (like BSPlayer or MXPlayer) for the program or recording.</string>
 
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Changelog</string>
@@ -94,7 +94,7 @@
     <string name="pref_epg_max_days">Maximum Days to show</string>
     <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
     <string name="pref_programs_to_load">Number of Programs to load</string>
-    <string name="pref_programs_to_load_sum">How many programs shall be fetched from the server to show more  in the program list or guide. Higher numbers mean higher loading and updating time.</string>
+    <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
 
     <string name="err_auth">Access denied</string>
     <string name="err_inv">Invalid response from server</string>

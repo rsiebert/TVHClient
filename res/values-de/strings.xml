@@ -53,46 +53,48 @@
     <string name="pref_port_error_empty">Die Port-Nummer darf nicht leer sein.</string>
     <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muss zwischen 1 und 65535 liegen.</string>
     <string name="pref_user">Benutzername</string>
-    <string name="pref_user_sum">Benutzernamen eingeben</string>
+    <string name="pref_user_sum">Benutzername eingeben</string>
     <string name="pref_pass">Passwort</string>
     <string name="pref_pass_sum">Passwort eingeben</string>
     <string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
 
     <string name="pref_user_interface">Benutzeroberfläche</string>
     <string name="pref_icons">Zeige Senderlogos</string>
-    <string name="pref_icons_sum">Zu jeder Aufnahme wird das dazugehörige Senderlogo angezeigt (falls verfügbar).</string>
-    <string name="pref_theme">Helle Darstellung</string>
-    <string name="pref_theme_sum">Verwendet die helleren Android Farben (Holo-Light Theme)</string>
+    <string name="pref_icons_sum">Zu jeder Aufnahme wird (falls verfügbar) das dazugehörige Senderlogo angezeigt.</string>
+    <string name="pref_theme">Zeige ein helles Theme</string>
+    <string name="pref_theme_sum">Verwendet die helleren Android Farben (Holo-Light Theme) für die Darstellung.</string>
     <string name="pref_res">Auflösung</string>
-    <string name="pref_res_sum">Maximale Auflösung für den Transcoder</string>
+    <string name="pref_res_sum">Maximale Auflösung, die der Transcoder verwenden soll.</string>
     <string name="pref_acodec">Audio-Codec</string>
-    <string name="pref_acodec_sum">Audio-Codec des Transcoders verwenden</string>
+    <string name="pref_acodec_sum">Definiert welche Art von Audio der Transcoder verwenden soll.</string>
     <string name="pref_vcodec">Video-Codec</string>
-    <string name="pref_vcodec_sum">Video-Codec des Transcoder verwenden</string>
+    <string name="pref_vcodec_sum">Definiert welche Art von Video der Transcoder verwenden soll.</string>
     <string name="pref_scodec">Untertitel Codec</string>
-    <string name="pref_scodec_sum">Untertitel Codec des Transcoder verwenden</string>
+    <string name="pref_scodec_sum">Definiert welche Art von Untertiteln der Transcoder verwenden soll.</string>
     <string name="pref_container">Medien-Container</string>
-    <string name="pref_container_sum">Bevorzugter Medien-Container</string>
+    <string name="pref_container_sum">Die Art des Medien-Containers in dem die Audio- und Videoinformationen gesendet werden. Matroschka ist üblicherweise die bevorzugte Wahl.</string>
 
     <string name="pref_playback">Wiedergabe</string>
+    <string name="pref_playback_programs_sum">Einstellungen für die Wiedergabe von Live-TV.</string>
+    <string name="pref_playback_recordings_sum">Einstellungen für die Wiedergabe der aufgenommenen Programme.</string>
     <string name="pref_http_port">HTTP-Port</string>
     <string name="pref_http_port_sum">HTTP-Port des Servers</string>
     <string name="pref_transcode">Stream transkodieren</string>
-    <string name="pref_transcode_sum">Transkodiere Stream während der Live-Wiedergabe</string>
-    <string name="pref_external">Bevorzuge externen Videoplayer</string>
-    <string name="pref_external_sum">Soll ein externer Video-Player benutzt werden? (z.B. BSPlayer)</string>
+    <string name="pref_transcode_sum">Konvertiere die Live-Wiedergabe oder das Program während der Übertragung in ein anderes Format. (Der TVHeadend Server muss dies unterstützen)</string>
+    <string name="pref_external">Verwende externen Videoplayer</string>
+    <string name="pref_external_sum">Soll ein externer Videoplayer (z.B. BSPlayer oder MXPlayer) benutzt werden?</string>
 
-    <string name="pref_information">Information</string>
+    <string name="pref_information">Informationen</string>
     <string name="pref_changelog">Änderungen</string>
-    <string name="pref_changelog_sum">Zeige eine Liste der neuen Eigenschaften und Änderungen der verschiedenen Versionnen.</string>
-    <string name="pref_program_guide">Program Übersicht</string>
-    <string name="pref_program_guide_sum">Konfiguriere das Aussehen und einige Parameter der Program Übersicht.</string>
+    <string name="pref_changelog_sum">Zeige eine Liste der Änderungen und neuen Eigenschaften der aktuellen Anwendung.</string>
+    <string name="pref_program_guide">Programmübersicht</string>
+    <string name="pref_program_guide_sum">Konfiguriere das Aussehen und einige Parameter der Programmübersicht.</string>
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
-    <string name="pref_epg_hours_visible_sum">Anzahl der Stunden der Programm Übersicht die maximal auf einem Bildschirm angezeigt werden sollen. Zuviele Stunden erschweren die Lesbarkeit.</string>
+    <string name="pref_epg_hours_visible_sum">Anzahl der Stunden die auf einem Bildschirm angezeigt werden sollen. Je höher die Anzahl, desto mehr Programme werden gleichzeitig pro Sender angezeigt. Dies erschwert die Lesbarkeit deutlich.</string>
     <string name="pref_epg_max_days">Anzahl der Tage</string>
-    <string name="pref_epg_max_days_sum">Begrenzt die Programm Übersicht auf diese maximale Anzahl an Tagen.</string>
-    <string name="pref_programs_to_load">Programme Laden</string>
-    <string name="pref_programs_to_load_sum">Wieviele Programme sollen pro Sender vom Server geladen werden, um mehr in der Programmliste oder Übersicht anzuzeigen. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
+    <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf maximale Anzahl an Tagen.</string>
+    <string name="pref_programs_to_load">Programme vom Server laden</string>
+    <string name="pref_programs_to_load_sum">Wieviele Programme sollen auf einmal pro Sender vom Server geladen werden. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_inv">Konnte nicht korrekt mit dem Server kommunizieren.</string>
@@ -278,6 +280,6 @@
     <string name="currently_recording">Laufende Aufnahmen</string>
     <string name="restart_application">Um das neue Theme zu verwenden muss die Anwendung neu gestartet werden.</string>
     
-    <string name="no_media_player">Kein Media Player gefunden</string>
-    <string name="show_play_store">Möchten Sie im Google Play Store nach einem geeigneten Videoplayer suchen?</string>
+    <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
+    <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
 </resources>
