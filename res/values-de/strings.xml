@@ -32,6 +32,7 @@
     <string name="add_connection">Verbindung hinzufügen</string>
     <string name="new_connection">Neue Verbindung erstellen</string>
     <string name="no_connections">Keine Verbindungen vorhanden</string>
+    <string name="create_new_connections">Möchtest Du jetzt eine neue Verbindung zu einem Server erstellen?</string>
     <string name="connection_options">Optionen für Verbindung \'%s\'</string>
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>

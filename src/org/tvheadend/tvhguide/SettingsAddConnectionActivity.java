@@ -25,6 +25,7 @@ import org.tvheadend.tvhguide.model.Connection;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -259,6 +260,9 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             // Delete the connection so that we start fresh when
             // the settings activity is called again.
             conn = null;
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("reconnect", true);
+            getActivity().setResult(RESULT_OK, returnIntent);
             getActivity().finish();
         }
 

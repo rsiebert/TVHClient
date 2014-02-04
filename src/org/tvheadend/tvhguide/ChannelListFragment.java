@@ -247,6 +247,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             
             if (getActivity() instanceof ChannelListTabsActivity)
                 ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
+            
+            // Show a dialog so the user can create a new connection
+            showCreateConnectionDialog();
         } 
         else {
             if (loading) {
@@ -275,6 +278,36 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 populateList();
             }
         }
+    }
+
+    /**
+     * In case no connection is available right after the start of the
+     * application this dialog will be shown. If he chooses yes then the
+     * activity where he can create a new connection will be shown.
+     */
+    private void showCreateConnectionDialog() {
+        // Show confirmation dialog to cancel 
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.create_new_connections));
+        builder.setTitle(getString(R.string.no_connections));
+
+        // Define the action of the yes button
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // Show the manage connections activity where
+                // the user can choose a connection
+                Intent intent = new Intent(getActivity(), SettingsAddConnectionActivity.class);
+                startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
+            }
+        });
+        // Define the action of the no button
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void onMessage(String action, final Object obj) {
