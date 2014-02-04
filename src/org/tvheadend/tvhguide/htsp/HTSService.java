@@ -628,7 +628,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // The icon will not be shown anyway, so returning null will drastically
         // reduce memory consumption.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Boolean showIcons = prefs.getBoolean("showIconPref", false);
+        Boolean showIcons = prefs.getBoolean("showIconPref", true);
         if (!showIcons) {
             return null; 
         }
