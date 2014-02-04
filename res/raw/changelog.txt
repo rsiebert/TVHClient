@@ -6,6 +6,7 @@ $ 1.9.1
     * Added setting to select the application language
     * Updated english, german and polish translations
     * Fixed possible crash in the program guide
+    * Shows a dialog to create a new connection
 $ 1.9.0
   % VERSION 1.9.0
   _ 29.01.2014
