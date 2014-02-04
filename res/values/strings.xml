@@ -63,6 +63,8 @@
     <string name="pref_icons_sum">Show channel icons?</string>
     <string name="pref_theme">Light theme</string>
     <string name="pref_theme_sum">Use a light theme</string>
+    <string name="pref_language">Language</string>
+    <string name="pref_language_sum">Choose the language that shall be used by the application.</string>
     <string name="pref_res">Resolution</string>
     <string name="pref_res_sum">Specify the maximum resolution that the transcoder shall use.</string>
     <string name="pref_acodec">Audio codec</string>

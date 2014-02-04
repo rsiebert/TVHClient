@@ -18,8 +18,13 @@
  */
 package org.tvheadend.tvhguide;
 
+import java.util.Locale;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -34,15 +39,22 @@ public class ChannelListTabsActivity extends ActionBarActivity {
     private boolean reconnect = false;
     private int prevTabPosition = -1;
     private ChangeLogDialog changeLogDialog;
+    private Configuration config;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        
+
+        // Change the language to the defined setting
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        config = new Configuration(getResources().getConfiguration());
+        config.locale = new Locale(prefs.getString("languagePref", "en-us"));
+        getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+
         DatabaseHelper.init(this.getApplicationContext()); 
         changeLogDialog = new ChangeLogDialog(this);
-        
+
         // setup action bar for tabs
         actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

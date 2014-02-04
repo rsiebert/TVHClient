@@ -23,7 +23,16 @@
             android:key="showIconPref"
             android:summary="@string/pref_icons_sum"
             android:title="@string/pref_icons" />
-
+        <ListPreference
+            android:name="@string/pref_language"
+            android:summary="@string/pref_language_sum"
+            android:defaultValue="en-us"
+            android:title="@string/pref_language"
+            android:key="languagePref"
+            android:dialogTitle="@string/pref_language"
+            android:entries="@array/pref_language_list_display"
+            android:entryValues="@array/pref_language_list" />
+        
 	    <PreferenceScreen
             android:title="@string/pref_program_guide"
             android:summary="@string/pref_program_guide_sum" >

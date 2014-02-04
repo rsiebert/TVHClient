@@ -110,7 +110,7 @@ public class SettingsActivity extends ActionBarActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals("lightThemePref")) {
+            if (key.equals("lightThemePref") || key.equals("languagePref")) {
                 Toast.makeText(getActivity(), getString(R.string.restart_application), Toast.LENGTH_SHORT).show();
             }
         }
