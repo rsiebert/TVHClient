@@ -68,7 +68,7 @@
     <string-array name="pref_language_list_display">
         <item>English</item>
         <item>Deutsch</item>
-        <item>Język polski</item>
+        <item>Polski</item>
         <item>czeski</item>
     </string-array>
 </resources>
