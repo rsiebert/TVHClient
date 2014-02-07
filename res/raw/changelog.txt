@@ -1,3 +1,7 @@
+$ 1.9.2
+  % VERSION 1.9.2
+  _ 07.02.2014
+    * Updated polish translations
 $ 1.9.1
   % VERSION 1.9.1
   _ 04.02.2014
