@@ -1,3 +1,9 @@
+$ 1.9.3
+  % VERSION 1.9.3
+  _ 24.02.2014
+    * Remember the channel tag for each connection
+    * Always show the play and record icons where available
+    - Fixed show channel icon default setting
 $ 1.9.2
   % VERSION 1.9.2
   _ 07.02.2014
