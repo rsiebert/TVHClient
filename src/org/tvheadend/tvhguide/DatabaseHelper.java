@@ -15,7 +15,7 @@ import android.provider.BaseColumns;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "tvhguide";
     public static final String TABLE_NAME = "connections";
     
@@ -27,6 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_USERNAME     = "username";
     public static final String KEY_PASSWORD     = "password";
     public static final String KEY_SELECTED     = "selected";
+    public static final String KEY_CHANNEL_TAG  = "channel_tag";
     
     // Defines a list of columns to retrieve from 
     // the Cursor and load into an output row
@@ -37,7 +38,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         KEY_PORT, 
         KEY_USERNAME, 
         KEY_PASSWORD, 
-        KEY_SELECTED
+        KEY_SELECTED,
+        KEY_CHANNEL_TAG,
     };
 
     public static DatabaseHelper instance = null;
@@ -65,20 +67,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_ADDRESS  + " TEXT NOT NULL, "
                 + KEY_PORT     + " INT NOT NULL, "
                 + KEY_USERNAME + " TEXT NULL, "
-                + KEY_PASSWORD + " TEXT NULL, "
-                + KEY_SELECTED + " INT NOT NULL);";
+                + KEY_PASSWORD + " TEXT NULL, ";
         // Create the connection table
         db.execSQL(query);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        // create a fresh table
-        onCreate(db);
+        if (newVersion == 1) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+            onCreate(db);
+        }
+        else if (oldVersion == 1 && newVersion == 2) {
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_CHANNEL_TAG + " INT DEFAULT 0;");
+        }
     }
-    
+
     public long addConnection(final Connection conn) {
         
         ContentValues values = new ContentValues();
@@ -88,7 +92,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_USERNAME, conn.username);
         values.put(KEY_PASSWORD, conn.password);
         values.put(KEY_SELECTED, (conn.selected) ? "1" : "0");
-
+        values.put(KEY_CHANNEL_TAG, conn.channelTag);
+        
         SQLiteDatabase db = this.getWritableDatabase();
         long newId = db.insert(TABLE_NAME, null, values);
         db.close();
@@ -115,7 +120,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_USERNAME, conn.username);
         values.put(KEY_PASSWORD, conn.password);
         values.put(KEY_SELECTED, (conn.selected) ? "1" : "0");
-
+        values.put(KEY_CHANNEL_TAG, conn.channelTag);
+        
         SQLiteDatabase db = this.getWritableDatabase();
         long rows = db.update(TABLE_NAME, values, KEY_ID + "=" + conn.id, null);
         db.close();
@@ -143,6 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.username = c.getString(c.getColumnIndex(KEY_USERNAME));
             conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
             conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
+            conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
         }
         c.close();
 
@@ -166,6 +173,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.username = c.getString(c.getColumnIndex(KEY_USERNAME));
             conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
             conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
+            conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
         }
         c.close();
 
@@ -188,6 +196,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 conn.username = c.getString(c.getColumnIndex(KEY_USERNAME));
                 conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
                 conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
+                conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
  
                 // Add book to books
                 connList.add(conn);

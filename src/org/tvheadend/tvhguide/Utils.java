@@ -662,10 +662,23 @@ public class Utils {
     }
 
     public static int getChannelTagId() {
-        return channelTagId;
+        // Get the selected tag for the active connection in the database. If
+        // none exist then use the variable here.
+        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        if (conn != null)
+            return conn.channelTag;
+        
+        return Utils.channelTagId;
     }
 
     public static void setChannelTagId(int channelTagId) {
         Utils.channelTagId = channelTagId;
+
+        // Save the selected tag for the active connection in the database
+        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        if (conn != null) {
+            conn.channelTag = channelTagId;
+            DatabaseHelper.getInstance().updateConnection(conn);
+        }
     }
 }
