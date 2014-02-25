@@ -20,6 +20,8 @@ package org.tvheadend.tvhguide;
 
 import java.util.Locale;
 
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -63,8 +65,23 @@ public class ChannelListTabsActivity extends ActionBarActivity {
 
         // Create a tab listener that is called when the user changes tabs.
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                handleTabSelection(tab, ft);
+            public void onTabSelected(final ActionBar.Tab tab, final FragmentTransaction ft) {
+                
+                // Show the change log once when the application was upgraded.
+                // When the change log dialog was closed show the first
+                // fragment. In any other case show the selected fragment. 
+                if (changeLogDialog.firstRun()) {
+                    changeLogDialog.getLogDialog().setOnDismissListener(new OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface di) {
+                            handleTabSelection(tab, ft);
+                        }
+                    });
+                    changeLogDialog.getLogDialog().show();
+                }
+                else {
+                    handleTabSelection(tab, ft);
+                }
             }
 
             @Override
@@ -100,9 +117,6 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             int index = savedInstanceState.getInt("selected_channel_tab_index", 0);
             actionBar.setSelectedNavigationItem(index);
         }
-        
-        if (changeLogDialog.firstRun())
-            changeLogDialog.getLogDialog().show();
     }
 
     /**
