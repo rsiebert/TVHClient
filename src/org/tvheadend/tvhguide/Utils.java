@@ -227,9 +227,19 @@ public class Utils {
         // Disable these menus as a default
         searchMenuItem.setVisible(false);
         
+        // Show the play menu item when the current 
+        // time is between the program start and end time
+        long currentTime = new Date().getTime();
+        if (currentTime > program.start.getTime() && 
+                currentTime < program.stop.getTime()) {
+            playMenuItem.setVisible(true);
+        }
+        else {
+            playMenuItem.setVisible(false);
+        }
+        
         if (program.recording == null) {
             // Show the record menu
-            playMenuItem.setVisible(false);
             recordCancelMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
         }
@@ -240,7 +250,6 @@ public class Utils {
         }
         else if (program.isScheduled()) {
             // Show the cancel and play menu
-            playMenuItem.setVisible(false);
             recordMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
         }
