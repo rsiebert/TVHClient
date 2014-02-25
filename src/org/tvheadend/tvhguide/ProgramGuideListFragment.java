@@ -196,8 +196,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             public void onClick(DialogInterface arg0, int pos) {
                 setCurrentTag(tagAdapter.getItem(pos));
                 Utils.setChannelTagId(pos);
-
-                activity.onChannelTagChanged();
+                populateList();
             }
         });
         tagDialog = builder.create();
