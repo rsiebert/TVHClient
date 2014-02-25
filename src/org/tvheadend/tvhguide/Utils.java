@@ -491,7 +491,7 @@ public class Utils {
         if (icon != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
-            final boolean showIcons = prefs.getBoolean("showIconPref", false);
+            final boolean showIcons = prefs.getBoolean("showIconPref", true);
     
             icon.setImageBitmap((ch != null) ? ch.iconBitmap : null);
             icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
