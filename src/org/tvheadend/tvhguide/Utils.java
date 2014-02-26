@@ -21,11 +21,13 @@ package org.tvheadend.tvhguide;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import org.tvheadend.tvhguide.R.string;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Channel;
+import org.tvheadend.tvhguide.model.ChannelTag;
 import org.tvheadend.tvhguide.model.Connection;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
@@ -50,11 +52,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class Utils {
-    
-    // The currently selected tag. This allows showing the same amount of
-    // channels (with this tag only) in the channel list and program guide
-    // screens.
-    private static int channelTagId = 0;
 
     // Constants required for the date calculation
     private static final int twoDays = 1000 * 3600 * 24 * 2;
@@ -668,17 +665,23 @@ public class Utils {
         if (conn != null)
             return conn.channelTag;
         
-        return Utils.channelTagId;
+        return 0;
     }
 
     public static void setChannelTagId(int channelTagId) {
-        Utils.channelTagId = channelTagId;
-
         // Save the selected tag for the active connection in the database
         Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
         if (conn != null) {
             conn.channelTag = channelTagId;
             DatabaseHelper.getInstance().updateConnection(conn);
         }
+    }
+
+    public static ChannelTag getChannelTag(final TVHGuideApplication app) {
+        List<ChannelTag> ctl = app.getChannelTags();        
+        if (ctl.size() > getChannelTagId())
+            return ctl.get(getChannelTagId());
+
+        return null;
     }
 }

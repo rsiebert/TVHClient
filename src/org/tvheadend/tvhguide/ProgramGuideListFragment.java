@@ -54,7 +54,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     private ProgramGuideListAdapter adapter;
     private ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
-    private ChannelTag currentTag;
     private ListView listView;
     private LinearLayout titleLayout;
     private TextView titleDateText;
@@ -194,9 +193,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
-                setCurrentTag(tagAdapter.getItem(pos));
                 Utils.setChannelTagId(pos);
                 populateList();
+                ChannelListFragment channelFrag = (ChannelListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+                if (channelFrag != null) {
+                    channelFrag.populateList();
+                }
             }
         });
         tagDialog = builder.create();
@@ -234,19 +236,11 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         inflater.inflate(R.menu.epg_menu, menu);
     }
 
-    private void setCurrentTag(ChannelTag tag) {
-        currentTag = tag;
-        if (tag == null) {
-            activity.setActionBarSubtitle(getString(R.string.all_channels));
-        }
-        else {
-            activity.setActionBarSubtitle(currentTag.name);
-        }
-    }
-
     private void populateList() {
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         adapter.clear();
+        
+        ChannelTag currentTag = Utils.getChannelTag(app);
         for (Channel ch : app.getChannels()) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
                 adapter.add(ch);
@@ -255,6 +249,13 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         adapter.sort();
         adapter.notifyDataSetChanged();
 
+        // Show the number of channels that are in the selected tag
+        if (getActivity() instanceof ProgramGuideTabsActivity) {
+            ProgramGuideTabsActivity activity = (ProgramGuideTabsActivity) getActivity();
+            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
+            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+        }
+        
         // Set the scroll position of the list view
         listView.setSelection(activity.getScrollingSelectionIndex());
     }
@@ -364,13 +365,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                 for (ChannelTag t : app.getChannelTags()) {
                     tagAdapter.add(t);
                 }
-
-                // Check if tags exist and set the previously used one
-                if (tagAdapter.getCount() > Utils.getChannelTagId())
-                    currentTag = tagAdapter.getItem(Utils.getChannelTagId());
-
-                // Update the action bar text and fill the channel list
-                setCurrentTag(currentTag);
                 populateList();
             }
         }
@@ -439,13 +433,21 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                 public void run() {
                     adapter.update((Channel) obj);
 
-                    // Only update the views if list is empty and therefore no
-                    // programs are being loaded from the server. Also show a
-                    // message that the view is being updated. When the update
-                    // is done show the selected channel tag.
+                    // Only update the view if no more programs are being loaded
+                    // from the server. Also show the number of available
+                    // channels from the selected tag in the action bar.
                     if (activity.channelLoadingList.isEmpty()) {
+                        TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
+                        ChannelTag currentTag = Utils.getChannelTag(app);
+                        int count = 0;
+                        for (Channel ch : app.getChannels()) {
+                            if (currentTag == null || ch.hasTag(currentTag.id)) {
+                                count++;
+                            }
+                        }
                         adapter.notifyDataSetChanged();
-                        setCurrentTag(currentTag);
+                        activity.setActionBarSubtitle(count + " " + getString(R.string.items));
+                        
                     }
                 }
             });

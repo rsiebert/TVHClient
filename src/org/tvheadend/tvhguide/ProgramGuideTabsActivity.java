@@ -345,6 +345,10 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
+    public void setActionBarTitle(final String title) {
+        actionBar.setTitle(title);
+    }
+
     public void setActionBarSubtitle(final String subtitle) {
         actionBar.setSubtitle(subtitle);
     }

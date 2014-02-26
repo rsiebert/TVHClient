@@ -49,7 +49,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private ChannelListAdapter chAdapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
-    private ChannelTag currentTag;
     private ListView channelListView;
 
     // This is the default view for the channel list adapter
@@ -113,7 +112,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
-                setCurrentTag(tagAdapter.getItem(pos));
                 Utils.setChannelTagId(pos);
                 populateList();
             }
@@ -167,20 +165,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         menu.setHeaderTitle(channel.name);
     }
 
-    private void setCurrentTag(ChannelTag tag) {
-        currentTag = tag;
-        if (tag == null) {
-            if (getActivity() instanceof ChannelListTabsActivity)
-                ((ChannelListTabsActivity) getActivity()).setActionBarTitle(getString(R.string.all_channels));
-        } else {
-            if (getActivity() instanceof ChannelListTabsActivity)
-                ((ChannelListTabsActivity) getActivity()).setActionBarTitle(currentTag.name);
-        }
-    }
-
-    private void populateList() {
+    public void populateList() {
+        
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         chAdapter.clear();
+
+        ChannelTag currentTag = Utils.getChannelTag(app);
         for (Channel ch : app.getChannels()) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
                 chAdapter.add(ch);
@@ -189,9 +179,13 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         chAdapter.sort();
         chAdapter.notifyDataSetChanged();
 
-        if (getActivity() instanceof ChannelListTabsActivity)
-            ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
-        
+        // Show the number of channels that are in the selected tag
+        if (getActivity() instanceof ChannelListTabsActivity) {
+            ChannelListTabsActivity activity = (ChannelListTabsActivity) getActivity();
+            activity.setActionBarSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
+            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+        }
+
         // Set the scroll position of the list view
         if (getActivity() instanceof ProgramGuideTabsActivity) {
             channelListView.setSelection(((ProgramGuideTabsActivity) getActivity()).getScrollingSelectionIndex());
@@ -268,13 +262,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 for (ChannelTag t : app.getChannelTags()) {
                     tagAdapter.add(t);
                 }
-    
-                // Check if tags exist and set the previously used one
-                if (tagAdapter.getCount() > Utils.getChannelTagId())
-                    currentTag = tagAdapter.getItem(Utils.getChannelTagId());
-    
-                // Update the action bar text and fill the channel list
-                setCurrentTag(currentTag);
                 populateList();
             }
         }
