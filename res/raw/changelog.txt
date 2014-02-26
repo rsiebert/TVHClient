@@ -4,7 +4,7 @@ $ 1.9.3
     * Remember the channel tag for each connection
     * Always show the play and record icons where available
     * Fixed show channel icon default setting
-    * Show the number of channels in the header of the program guide
+    * Show the number of channels and the tag in the header of the program guide
 $ 1.9.2
   % VERSION 1.9.2
   _ 07.02.2014
