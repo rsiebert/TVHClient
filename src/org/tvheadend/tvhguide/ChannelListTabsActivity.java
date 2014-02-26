@@ -20,8 +20,8 @@ package org.tvheadend.tvhguide;
 
 import java.util.Locale;
 
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
+import org.tvheadend.tvhguide.ChangeLogDialog.ChangeLogDialogInterface;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -35,7 +35,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ChannelListTabsActivity extends ActionBarActivity {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface {
 
     private ActionBar actionBar = null;
     private boolean reconnect = false;
@@ -63,25 +63,21 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
 
+        // Show the change log once when the application was upgraded.
+        // In any other case show the selected fragment.
+        if (changeLogDialog.firstRun()) {
+            changeLogDialog.getLogDialog().show();
+        }
+        else {
+            createTabListeners(savedInstanceState);
+        }        
+    }
+
+    protected void createTabListeners(Bundle savedInstanceState) {
         // Create a tab listener that is called when the user changes tabs.
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-            public void onTabSelected(final ActionBar.Tab tab, final FragmentTransaction ft) {
-                
-                // Show the change log once when the application was upgraded.
-                // When the change log dialog was closed show the first
-                // fragment. In any other case show the selected fragment. 
-                if (changeLogDialog.firstRun()) {
-                    changeLogDialog.getLogDialog().setOnDismissListener(new OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface di) {
-                            handleTabSelection(tab, ft);
-                        }
-                    });
-                    changeLogDialog.getLogDialog().show();
-                }
-                else {
-                    handleTabSelection(tab, ft);
-                }
+            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+                handleTabSelection(tab, ft);
             }
 
             @Override
@@ -118,7 +114,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             actionBar.setSelectedNavigationItem(index);
         }
     }
-
+    
     /**
      * 
      * @param tab
@@ -254,5 +250,10 @@ public class ChannelListTabsActivity extends ActionBarActivity {
 
     public void setActionBarSubtitle(final String subtitle) {
         actionBar.setSubtitle(subtitle);
+    }
+
+    @Override
+    public void dialogDismissed() {
+        createTabListeners(null);
     }
 }

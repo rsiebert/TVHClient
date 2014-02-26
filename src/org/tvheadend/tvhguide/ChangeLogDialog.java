@@ -35,6 +35,7 @@ public class ChangeLogDialog {
 
     private final Context context;
     private String lastVersion, thisVersion;
+    private ChangeLogDialogInterface di;
 
     private String styleLight = 
               "div.title { color:#AAAAAA; font-size:1.2em; margin-left:0.4em; margin-top:0.7em; margin-bottom:0.2em; text-align:left } "
@@ -63,6 +64,7 @@ public class ChangeLogDialog {
      */
     public ChangeLogDialog(Context context) {
         this(context, PreferenceManager.getDefaultSharedPreferences(context));
+        di = (ChangeLogDialogInterface) context; 
     }
 
     /**
@@ -164,6 +166,7 @@ public class ChangeLogDialog {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         updateVersionInPreferences();
+                        di.dialogDismissed();
                     }
                 });
 
@@ -326,5 +329,9 @@ public class ChangeLogDialog {
      */
     public void dontuseSetLastVersion(String lastVersion) {
         this.lastVersion = lastVersion;
+    }
+    
+    public interface ChangeLogDialogInterface {
+        public void dialogDismissed();
     }
 }
