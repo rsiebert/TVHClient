@@ -28,8 +28,8 @@
 
             <ImageView
                 android:id="@+id/state"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:contentDescription="@string/status_icon"
                 android:padding="3dp"
                 android:scaleType="fitCenter" />
