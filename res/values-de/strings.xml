@@ -99,9 +99,6 @@
     <string name="pref_programs_to_load_sum">Wieviele Programme sollen auf einmal pro Sender vom Server geladen werden. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
-    <string name="err_inv">Konnte nicht korrekt mit dem Server kommunizieren.</string>
-    <string name="err_sending">Konnte die Daten nicht an den Server versenden.</string>
-    <string name="err_reading">Konnte die Daten nicht vom Server empfangen.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
     

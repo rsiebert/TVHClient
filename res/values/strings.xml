@@ -98,9 +98,6 @@
     <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
 
     <string name="err_auth">Access denied</string>
-    <string name="err_inv">Invalid response from server</string>
-    <string name="err_sending">Can\'t send message to server</string>
-    <string name="err_reading">Can\'t read message from server</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
     
