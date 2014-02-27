@@ -27,7 +27,6 @@
     
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
-    <string name="available_connections">Dostępne połaczenia</string>
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
     <string name="new_connection">Utwórz nowe połaczenie</string>
@@ -284,8 +283,6 @@
     <string name="progress">%1$d%% z transmisji zostało pokazane</string>
 
     <string name="disc_space">Przestrzeń dysku</string>
-    <string name="free_disc_space">Wolna przestrzeń dysku</string>
-    <string name="total_disc_space">Całkowita przestrzeń dysku</string>
     <string name="total">Całość</string>
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>

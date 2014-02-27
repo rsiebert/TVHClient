@@ -21,7 +21,7 @@
     <string name="pref_pass">Lösenord</string>
     <string name="pref_pass_sum">Skriv in lösenord</string>
 
-    <string name="pref_ui">Användargränssnitt</string>
+    <string name="pref_user_interface">Användargränssnitt</string>
     <string name="pref_theme">Ljust tema</string>
     <string name="pref_theme_sum">Använd ett ljust tema</string>
     <string name="pref_icons">Kanallogotyper</string>

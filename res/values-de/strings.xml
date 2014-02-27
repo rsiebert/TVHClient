@@ -27,7 +27,6 @@
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
-    <string name="available_connections">Verfügbare Verbindungen</string>
     <string name="select_connection">Verbindung wählen</string>
     <string name="add_connection">Verbindung hinzufügen</string>
     <string name="new_connection">Neue Verbindung erstellen</string>
@@ -273,8 +272,6 @@
     <string name="progress">%1$d%% der Sendung bereits vorbei</string>
 
     <string name="disc_space">Speicherplatz</string>
-    <string name="free_disc_space">Freier Speicherplatz</string>
-    <string name="total_disc_space">Gesamter Speicherplatz</string>
     <string name="total">Total</string>
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>
