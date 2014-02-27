@@ -45,16 +45,14 @@ public class StatusFragment extends Fragment implements HTSListener {
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
         // Return if frame for this fragment doesn't
         // exist because the fragment will not be shown.
-        if (container == null)
+        if (container == null) {
             return null;
-
+        }
         View v = inflater.inflate(R.layout.status_layout, container, false);
         freediscspace = (TextView) v.findViewById(R.id.free_discspace);
         totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
-        
         channels = (TextView) v.findViewById(R.id.channels);
         currentlyRec = (TextView) v.findViewById(R.id.currently_recording);
         completedRec = (TextView) v.findViewById(R.id.completed_recordings);
@@ -66,7 +64,6 @@ public class StatusFragment extends Fragment implements HTSListener {
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
 	}
 	
     @Override
@@ -74,17 +71,15 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         app.addListener(this);
-
-        // Get the information about the disc space
+        
+        showChannelSatus();
+        showRecordingStatus();
+        
+        // Upon the first call no information is available about the disc space
+        // so call the server to get that information.
         Intent intent = new Intent(getActivity(), HTSService.class);
         intent.setAction(HTSService.ACTION_GET_DISC_STATUS);
         getActivity().startService(intent);
-        
-        // Show the channel status
-        showChannelSatus();
-        
-        // Show the information about the recordings
-        showRecordingStatus();
     }
 
     @Override
@@ -106,6 +101,12 @@ public class StatusFragment extends Fragment implements HTSListener {
         }
 	}
 
+    /**
+     * Shows the available and total disc space either in MB or GB to avoid
+     * showing large numbers. This depends on the size of the value.
+     * 
+     * @param obj
+     */
     protected void showDiscSpace(Map<String, String> obj) {
         Map<String, String> list = obj;
         try {
@@ -114,60 +115,62 @@ public class StatusFragment extends Fragment implements HTSListener {
             long total = (Long.parseLong(list.get("totaldiskspace")) / 1000000);
 
             // Show the free amount of disc space as GB or MB
-            if (free > 1000)
+            if (free > 1000) {
                 freediscspace.setText((free / 1000) + " GB " + getString(R.string.available));
-            else
+            } else {
                 freediscspace.setText(free + " MB " + getString(R.string.available));
-            
+            }
             // Show the total amount of disc space as GB or MB
-            if (total > 1000)
+            if (total > 1000) {
                 totaldiscspace.setText((total / 1000) + " GB " + getString(R.string.total));
-            else
+            } else {
                 totaldiscspace.setText(total + " MB " + getString(R.string.total));
-        }
-        catch (Exception e) {
-            // Set the default values
+            }
+        } catch (Exception e) {
             freediscspace.setText(getString(R.string.unknown));
             totaldiscspace.setText(getString(R.string.unknown));
         }
     }
 
+    /**
+     * Shows the information how many channels are available.
+     */
     private void showChannelSatus() {
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         channels.setText(app.getChannels().size() + " " + getString(R.string.available));
     }
 
+    /**
+     * Shows the program that is currently being recorded and the summary about
+     * the available, scheduled and failed recordings.
+     */
     private void showRecordingStatus() {
-        
         int completedRecCount = 0;
         int upcomingRecCount = 0;
         int failedRecCount = 0;
-        
-        // Initialize an empty string
         String currentRecText = "";
         
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
-        
         for (Recording rec : app.getRecordings()) {
             if (rec.error == null && rec.state.equals("completed")) {
                 ++completedRecCount;
-            }
-            else if (rec.error == null &&
+            } else if (rec.error == null &&
                     (rec.state.equals("scheduled") || 
                      rec.state.equals("recording") ||
                      rec.state.equals("autorec"))) {
                 ++upcomingRecCount;
-            }
-            else if ((rec.error != null || 
-                    (rec.state.equals("missed") || rec.state.equals("invalid")))) {
+            } else if ((rec.error != null || 
+                    (rec.state.equals("missed") || 
+                            rec.state.equals("invalid")))) {
                 ++failedRecCount;
             }
             
             // Add the information what is currently being recorded.
             if (rec.isRecording() == true) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
-                if (rec.channel != null)
+                if (rec.channel != null) {
                     currentRecText += " (" + getString(R.string.channel) + " " + rec.channel.name + ")\n";
+                }
             }
         }
 

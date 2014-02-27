@@ -13,9 +13,9 @@ public class SeriesInfo {
 	public String onScreen;
 
 	public String toString() {
-		if (onScreen != null && onScreen.length() > 0)
+		if (onScreen != null && onScreen.length() > 0) {
 			return onScreen;
-
+		}
 		String s = "";
 
 		if (seasonNumber > 0) {

@@ -43,23 +43,18 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     private ActionBar actionBar = null;
     private ProgramGuidePagerAdapter adapter = null;
     public List<Channel> channelLoadingList = new ArrayList<Channel>();
-
     // Indicates that a loading is in progress, the next channel can only be loaded when this is false 
     private boolean isLoadingChannels = false;
-    
     // The dialog that allows the user to select a certain time frame
     private AlertDialog programGuideTimeDialog;
-
     // The time frame (start and end times) that shall be shown in a single fragment.  
     private static List<Long> startTimes = new ArrayList<Long>();
     private static List<Long> endTimes = new ArrayList<Long>();
     private static int daysToShow;
     private static int hoursToShow;
     private static int fragmentCount;
-    
     private static ViewPager viewPager = null;
     private static int scrollingSelectionIndex = 0;
-    
     // Amount of programs of a channel that shall be loaded from the server 
     private static int programsToLoad = 20;
     
@@ -87,10 +82,8 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             args.putBoolean("disableMenus", true);
             Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
             fragment.setArguments(args);
-            
             ft.add(android.R.id.content, fragment, "channel_icon_list");
-        }
-        else {
+        } else {
             ft.attach(channelFrag);
         }
         ft.commit();
@@ -138,17 +131,17 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
-        if (menu == null)
+        if (menu == null) {
             return true;
-        
+        }
         // Disable the refresh menu if no connection is 
         // available or the loading process is already active
         MenuItem item = menu.findItem(R.id.menu_refresh);
         if (item != null) {
             TVHGuideApplication app = (TVHGuideApplication) getApplication();
-            if (app != null && DatabaseHelper.getInstance() != null)
+            if (app != null && DatabaseHelper.getInstance() != null) {
                 item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
+            }
         }
         return true;
     }
@@ -223,8 +216,12 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         programGuideTimeDialog = builder.create();
     }
 
+    /**
+     * Pager adapter that is responsible for handling the fragment that will be shown when the user swipes the screen.
+     * @author rsiebert
+     *
+     */
     private static class ProgramGuidePagerAdapter extends FragmentPagerAdapter {
-
         public ProgramGuidePagerAdapter(FragmentManager fm, Context context) {
             super(fm);
         }
@@ -237,7 +234,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             bundle.putInt("hoursToShow", hoursToShow);
             bundle.putLong("startTime", startTimes.get(position));
             bundle.putLong("endTime", endTimes.get(position));
-
             fragment.setArguments(bundle);
             return fragment;
         }
@@ -248,10 +244,15 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
+    /**
+     * When the user has scrolled within one fragment, the other available
+     * fragments in the view pager must be scrolled to the same position. Calls
+     * the scrollListViewTo method on every available fragment that the view 
+     * pager contains.
+     */
     @Override
     public void onScrollChanged(int index) {
         scrollingSelectionIndex = index;
-
         for (int i = 0; i < fragmentCount; ++i) {
             ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
                     "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
@@ -274,23 +275,24 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
+    /**
+     * Reloads all data if the connection details have changed, a new one was
+     * created or if the number of hours per time slot have changed.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
-            if (resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
             }
-        }
-        else if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
-
+        } else if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             programsToLoad = Integer.parseInt(prefs.getString("programsToLoad", "10"));
-            
-            // Only recalculate the times when they have changed 
-            if (daysToShow != Integer.parseInt(prefs.getString("epgMaxDays", "7")) ||
-                hoursToShow != Integer.parseInt(prefs.getString("epgHoursVisible", "4"))) {
+            // Only recalculate the times when they have changed
+            if (daysToShow != Integer.parseInt(prefs.getString("epgMaxDays", "7"))
+                    || hoursToShow != Integer.parseInt(prefs.getString("epgHoursVisible", "4"))) {
 
-                // Restarting this activity
+                // Restart this activity
                 Intent intent = getIntent();
                 finish();
                 startActivity(intent);
@@ -374,7 +376,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         if (channel == null || channelLoadingList.contains(channel)) {
             return;
         }
-
         channelLoadingList.add(channel);
         startLoadingPrograms();
     }
@@ -391,9 +392,12 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
     @Override
     public void onMessage(final String action, final Object obj) {
-
         if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -421,9 +425,9 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     /**
      * A private custom adapter that contains the list of
      * ProgramGuideTimeDialogItem. This is pretty much only a list of dates and
-     * times that can be shown from a dialog. This has been used to improve the
-     * look of the contents. A simple adapter with two line did not allow easy
-     * styling of the contents.
+     * times that can be shown from a dialog. This is used to improve the look
+     * of the dialog. A simple adapter with two line does not provide the amount
+     * of styling flexibility.
      * 
      * @author rsiebert
      * 
@@ -446,7 +450,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            
             View view = convertView;
             if (view == null) {
                 view = inflater.inflate(R.layout.program_guide_time_dialog, null);
@@ -455,8 +458,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
                 holder.date2 = (TextView) view.findViewById(R.id.date2);
                 holder.time = (TextView) view.findViewById(R.id.time);
                 view.setTag(holder);
-            }
-            else {
+            } else {
                 holder = (ViewHolder) view.getTag();
             }
 
@@ -482,9 +484,12 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.tvheadend.tvhguide.ChannelTagListener#onChannelTagChanged()
+     */
     @Override
     public void onChannelTagChanged() {
-        
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         for (int i = 0; i < fragmentCount; ++i) {
             ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
@@ -502,5 +507,11 @@ interface ScrollListener {
 }
 
 interface ChannelTagListener {
+    /**
+     * When the user has scrolled within one fragment, the other available
+     * fragments in the view pager must be scrolled to the same position. Calls
+     * the scrollListViewTo method on every available fragment that the view 
+     * pager contains.
+     */
     public void onChannelTagChanged();
 }

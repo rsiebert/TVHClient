@@ -68,7 +68,6 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, null);
-
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
@@ -78,8 +77,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.duration = (TextView) view.findViewById(R.id.duration);
             holder.description = (TextView) view.findViewById(R.id.description);
             view.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 

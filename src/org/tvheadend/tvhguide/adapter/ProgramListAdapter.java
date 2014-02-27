@@ -70,7 +70,6 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.program_list_widget, null);
-
             holder = new ViewHolder();
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.state = (ImageView) view.findViewById(R.id.state);
@@ -82,8 +81,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             holder.contentType = (TextView) view.findViewById(R.id.content_type);
             holder.description = (TextView) view.findViewById(R.id.description);
             view.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 

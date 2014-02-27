@@ -64,6 +64,7 @@ public class Utils {
     private final static int LAYOUT_ICON_OFFSET = 66;
 
     /**
+     * Returns the id of the chosen theme to allow calling setTheme(...).
      * 
      * @param context
      * @return
@@ -75,6 +76,7 @@ public class Utils {
     }
 
     /**
+     * Returns the information if channels shall be shown or not
      * 
      * @param context
      * @return
@@ -86,15 +88,14 @@ public class Utils {
     }
     
     /**
-     * 
+     * Combines the episode and series values into a single string
      * @param info
      * @return
      */
     public static String buildSeriesInfoString(final Context context, final SeriesInfo info) {
-        
-        if (info.onScreen != null && info.onScreen.length() > 0)
+        if (info.onScreen != null && info.onScreen.length() > 0) {
             return info.onScreen;
-
+        }
         String s = "";
         final String season = context.getResources().getString(string.season);
         final String episode = context.getResources().getString(string.episode);
@@ -103,7 +104,6 @@ public class Utils {
         if (info.onScreen.length() > 0) {
             return info.onScreen;
         }
-        
         if (info.seasonNumber > 0) {
             if (s.length() > 0)
                 s += ", ";
@@ -119,24 +119,20 @@ public class Utils {
                 s += ", ";
             s += String.format("%s %d", part.toLowerCase(Locale.getDefault()), info.partNumber);
         }
-
         if (s.length() > 0) {
             s = s.substring(0,1).toUpperCase(Locale.getDefault()) + s.substring(1);
         }
-        
         return s;
     }
     
     /**
-     * TODO: return different error codes
+     * Connects to the server with the currently active connection.
      * 
      * @param context
      * @param force
      */
     public static void connect(final Context context, final boolean force) {
         Intent intent = null;
-        
-        // Get the currently selected connection
         Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
@@ -149,7 +145,6 @@ public class Utils {
             intent.putExtra("password", conn.password);
             intent.putExtra("force", force);
         }
-
         // Start the service with given action and data
         if (intent != null) {
             context.startService(intent);
@@ -157,12 +152,13 @@ public class Utils {
     }
 
     /**
+     * Removes the program with the given id from the server. A dialog is shown
+     * up front to confirm the deletion.
      * 
      * @param context
      * @param id
      */
     public static void removeProgram(final Context context, final Recording rec) {
-
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_DELETE);
         intent.putExtra("id", rec.id);
@@ -183,6 +179,7 @@ public class Utils {
     }
 
     /**
+     * Tells the server to cancel the recording with the given id.
      * 
      * @param context
      * @param id
@@ -195,6 +192,7 @@ public class Utils {
     }
 
     /**
+     * Tells the server to record the program with the given id.
      * 
      * @param context
      * @param id
@@ -209,7 +207,9 @@ public class Utils {
     }
 
     /**
-     * 
+     * Shows or hides certain items from the program menu. This depends on the
+     * current state of the program.
+     *
      * @param menu
      * @param program
      */
@@ -230,8 +230,7 @@ public class Utils {
         if (currentTime > program.start.getTime() && 
                 currentTime < program.stop.getTime()) {
             playMenuItem.setVisible(true);
-        }
-        else {
+        } else {
             playMenuItem.setVisible(false);
         }
         
@@ -239,18 +238,15 @@ public class Utils {
             // Show the record menu
             recordCancelMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
-        }
-        else if (program.isRecording()) {
+        } else if (program.isRecording()) {
             // Show the cancel menu
             recordMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
-        }
-        else if (program.isScheduled()) {
+        } else if (program.isScheduled()) {
             // Show the cancel and play menu
             recordMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
-        }
-        else {
+        } else {
             // Show the delete menu
             recordMenuItem.setVisible(false);
             recordCancelMenuItem.setVisible(false);
@@ -258,6 +254,8 @@ public class Utils {
     }
 
     /**
+     * Shows or hides certain items from the recording menu. This depends on the
+     * current state of the recording.
      * 
      * @param menu
      * @param rec
@@ -280,8 +278,7 @@ public class Utils {
             recordMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
             playMenuItem.setVisible(false);
-        }
-        else {
+        } else {
             // Show the delete and play menu
             recordMenuItem.setVisible(false);
             recordCancelMenuItem.setVisible(false);
@@ -289,43 +286,37 @@ public class Utils {
     }
 
     /**
+     * Shows an icon for the state of the current recording. If no recording was
+     * given, the icon will be hidden.
      * 
      * @param state
      * @param recording
      */
     public static void setState(ImageView state, final Recording recording) {
-
-        if (state == null)
+        if (state == null) {
             return;
-
+        }
         // If no recording was given hide the state icon
         if (recording == null) {
             state.setImageDrawable(null);
             state.setVisibility(ImageView.GONE);
-        }
-        else {
+        } else {
             // Show the state icon and set the correct image
             state.setVisibility(ImageView.VISIBLE);
 
             if (recording.error != null) {
                 state.setImageResource(R.drawable.ic_error_small);
-            }
-            else if ("completed".equals(recording.state)) {
+            } else if ("completed".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_success_small);
-            }
-            else if ("invalid".equals(recording.state)) {
+            } else if ("invalid".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_error_small);
-            }
-            else if ("missed".equals(recording.state)) {
+            } else if ("missed".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_error_small);
-            }
-            else if ("recording".equals(recording.state)) {
+            } else if ("recording".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_rec_small);
-            }
-            else if ("scheduled".equals(recording.state)) {
+            } else if ("scheduled".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_schedule_small);
-            }
-            else {
+            } else {
                 state.setImageDrawable(null);
                 state.setVisibility(ImageView.GONE);
             }
@@ -333,32 +324,32 @@ public class Utils {
     }
 
     /**
+     * Shows the given duration for the given view. If the duration is zero the
+     * view will be hidden.
      * 
      * @param duration
      * @param start
      * @param stop
      */
     public static void setDuration(TextView duration, final Date start, final Date stop) {
-        
         if (duration != null) {
             // Get the start and end times so we can show them
             // and calculate the duration. Then show the duration in minutes
             final double durationTime = ((stop.getTime() - start.getTime()) / 1000 / 60);
             final String s = duration.getContext().getString(R.string.minutes, (int) durationTime);
-
             duration.setText(duration.getContext().getString(R.string.minutes, (int) durationTime));
             duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
         }
     }
 
     /**
+     * Shows the given time for the given view.
      * 
      * @param time
      * @param start
      * @param stop
      */
     public static void setTime(TextView time, final Date start, final Date stop) {
-        
         if (time != null) {
             final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
             final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
@@ -367,33 +358,31 @@ public class Utils {
     }
 
     /**
+     * Shows the given date. The date for the first days will be shown as words.
+     * After one week the date value will be used.
      * 
      * @param date
      * @param start
      */
     public static void setDate(TextView date, final Date start) {
-
-        if (date == null)
+        if (date == null) {
             return;
-
+        }
         String dateText = "";
         if (DateUtils.isToday(start.getTime())) {
             // Show the string today
             dateText = date.getContext().getString(R.string.today);
-        }
-        else if (start.getTime() < System.currentTimeMillis() + twoDays
+        } else if (start.getTime() < System.currentTimeMillis() + twoDays
                 && start.getTime() > System.currentTimeMillis() - twoDays) {
             // Show a string like "42 minutes ago"
             dateText = DateUtils.getRelativeTimeSpanString(start.getTime(), System.currentTimeMillis(),
                     DateUtils.DAY_IN_MILLIS).toString();
-        }
-        else if (start.getTime() < System.currentTimeMillis() + sixDays
+        } else if (start.getTime() < System.currentTimeMillis() + sixDays
                 && start.getTime() > System.currentTimeMillis() - twoDays) {
             // Show the day of the week, like Monday or Tuesday
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
             dateText = sdf.format(start.getTime());
-        }
-        else {
+        } else {
             // Show the regular date format like 31.07.2013
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
             dateText = sdf.format(start.getTime());
@@ -402,53 +391,42 @@ public class Utils {
         // Translate the day strings
         if (dateText.equals("today")) {
             date.setText(R.string.today);
-        }
-        else if (dateText.equals("tomorrow")) {
+        } else if (dateText.equals("tomorrow")) {
             date.setText(R.string.tomorrow);
-        }
-        else if (dateText.equals("in 2 days")) {
+        } else if (dateText.equals("in 2 days")) {
             date.setText(R.string.in_2_days);
-        }
-        else if (dateText.equals("Monday")) {
+        } else if (dateText.equals("Monday")) {
             date.setText(R.string.monday);
-        }
-        else if (dateText.equals("Tuesday")) {
+        } else if (dateText.equals("Tuesday")) {
             date.setText(R.string.tuesday);
-        }
-        else if (dateText.equals("Wednesday")) {
+        } else if (dateText.equals("Wednesday")) {
             date.setText(R.string.wednesday);
-        }
-        else if (dateText.equals("Thursday")) {
+        } else if (dateText.equals("Thursday")) {
             date.setText(R.string.thursday);
-        }
-        else if (dateText.equals("Friday")) {
+        } else if (dateText.equals("Friday")) {
             date.setText(R.string.friday);
-        }
-        else if (dateText.equals("Saturday")) {
+        } else if (dateText.equals("Saturday")) {
             date.setText(R.string.saturday);
-        }
-        else if (dateText.equals("Sunday")) {
+        } else if (dateText.equals("Sunday")) {
             date.setText(R.string.sunday);
-        }
-        else {
+        } else {
             date.setText(dateText);
         }
     }
 
     /**
+     * Shows the given series text for the given view. If the text is empty
+     * then the view will be hidden.
      * 
      * @param seriesInfoLabel
      * @param seriesInfo
      * @param si
      */
     public static void setSeriesInfo(TextView seriesInfoLabel, TextView seriesInfo, final SeriesInfo si) {
-
         if (seriesInfo != null) {
             final String s = Utils.buildSeriesInfoString(seriesInfo.getContext(), si);
-            
             seriesInfo.setText(s);
             seriesInfo.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
-            
             if (seriesInfoLabel != null) {
                 seriesInfoLabel.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
             }
@@ -456,21 +434,19 @@ public class Utils {
     }
 
     /**
+     * Shows the given content type text for the given view. If the text is empty
+     * then the view will be hidden.
      * 
      * @param contentTypeLabel
      * @param contentType
      * @param ct
      */
     public static void setContentType(TextView contentTypeLabel, TextView contentType, final int ct) {
-        
         if (contentType != null) {
-            
             final SparseArray<String> ctl = TVHGuideApplication.getContentTypes(contentType.getContext());
             final String type = ctl.get(ct, "");
-            
             contentType.setText(type);
             contentType.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
-            
             if (contentTypeLabel != null) {
                 contentTypeLabel.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
             }
@@ -478,39 +454,38 @@ public class Utils {
     }
 
     /**
+     * Shows the channel icon and optionally the channel name. The icon will
+     * only be shown when the user has activated the setting.
      * 
      * @param icon
      * @param channel
      * @param ch
      */
     public static void setChannelIcon(ImageView icon, final TextView channel, final Channel ch) {
-
         if (icon != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
             final boolean showIcons = prefs.getBoolean("showIconPref", true);
-    
             icon.setImageBitmap((ch != null) ? ch.iconBitmap : null);
             icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
         }
-
         if (channel != null) {
             channel.setText((ch != null) ? ch.name : "");
         }
     }
 
     /**
+     * Shows the given description text for the given view. If the text is empty
+     * then the view will be hidden.
      * 
      * @param descriptionLabel
      * @param description
      * @param desc
      */
     public static void setDescription(TextView descriptionLabel, TextView description, final String desc) {
-        
         if (description != null) {
             description.setText(desc);
             description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
-            
             if (descriptionLabel != null) {
                 descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
             }
@@ -526,12 +501,10 @@ public class Utils {
      * @return
      */
     public static int getResultCode(final int code) {
-
         // When the startActivityForResult method is called with the regular
-        // integer then the
-        // java.lang.IllegalArgumentException: Can only use lower 16 bits for
-        // resultCode
-        // The code value must be lower than 0xffff.
+        // integer then the java.lang.IllegalArgumentException: Can only use
+        // lower 16 bits for resultCode The code value must be lower than
+        // 0xffff.
         if (code == R.id.menu_settings) {
             return 219;
         } else if (code == R.id.menu_connections) {
@@ -540,25 +513,24 @@ public class Utils {
             return 0;
         }
     }
-    
+
     /**
+     * Shows the progress as a progress bar.
      * 
      * @param progress
      * @param start
      * @param stop
-     * @param showEmpty
      */
     public static void setProgress(final ProgressBar progress, final Date start, final Date stop) {
-        
         // Get the start and end times to calculate the progress.
         double durationTime = (stop.getTime() - start.getTime());
         double elapsedTime = new Date().getTime() - start.getTime();
         
         // Show the progress as a percentage
         double percent = 0;
-        if (durationTime > 0)
+        if (durationTime > 0) {
             percent = elapsedTime / durationTime;
-
+        }
         if (progress != null) {
             progress.setProgress((int) Math.floor(percent * 100));
             progress.setVisibility(View.VISIBLE);
@@ -566,22 +538,23 @@ public class Utils {
     }
     
     /**
+     * Shows the progress not as a progress bar but as a text with the
+     * percentage symbol.
      * 
      * @param progressText
      * @param start
      * @param stop
      */
     public static void setProgressText(final TextView progressText, final Date start, final Date stop) {
-        
         // Get the start and end times to calculate the progress.
         final double durationTime = (stop.getTime() - start.getTime());
         final double elapsedTime = new Date().getTime() - start.getTime();
         
         // Show the progress as a percentage
         double percent = 0;
-        if (durationTime > 0)
+        if (durationTime > 0) {
             percent = elapsedTime / durationTime;
-
+        }
         int progress = (int) Math.floor(percent * 100);
         if (progressText != null) {
             if (progress > 0) {
@@ -594,13 +567,14 @@ public class Utils {
     }
     
     /**
+     * Gets the last program id from the given channel. The id is used to tell
+     * the server where to continue loading programs.
      * 
      * @param context
      * @param numberOfProgramsToLoad
      * @param channel
      */
     public static void loadMorePrograms(final Context context, final int numberOfProgramsToLoad, final Channel channel) {
-        
         Iterator<Program> it = channel.epg.iterator();
         Program p = null;
         long nextId = 0;
@@ -654,7 +628,6 @@ public class Utils {
         context.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         float displayWidth = displaymetrics.widthPixels - ((tabIndex == 0) ? LAYOUT_ICON_OFFSET : 0);
         float pixelsPerMinute = ((float) displayWidth / (60.0f * (float) hoursToShow));
-
         return pixelsPerMinute;
     }
 
@@ -662,12 +635,18 @@ public class Utils {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
         Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        if (conn != null)
+        if (conn != null) {
             return conn.channelTag;
-        
+        }
         return 0;
     }
 
+    /**
+     * Saves the channel tag for the active connection to remember it across
+     * application starts and connection changes.
+     * 
+     * @param channelTagId
+     */
     public static void setChannelTagId(int channelTagId) {
         // Save the selected tag for the active connection in the database
         Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
@@ -677,11 +656,17 @@ public class Utils {
         }
     }
 
+    /**
+     * Returns the saved channel tag for the active connection.
+     * 
+     * @param app
+     * @return
+     */
     public static ChannelTag getChannelTag(final TVHGuideApplication app) {
         List<ChannelTag> ctl = app.getChannelTags();        
-        if (ctl.size() > getChannelTagId())
+        if (ctl.size() > getChannelTagId()) {
             return ctl.get(getChannelTagId());
-
+        }
         return null;
     }
 }

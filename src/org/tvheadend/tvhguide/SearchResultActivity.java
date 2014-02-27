@@ -58,10 +58,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
 
     @Override
     public void onCreate(Bundle icicle) {
-
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-
         super.onCreate(icicle);
         setContentView(R.layout.list_layout);
         
@@ -213,7 +210,6 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.context_menu, menu);
-
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         program = srAdapter.getItem(info.position);
 
@@ -223,6 +219,11 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         Utils.setProgramMenu(menu, program);
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
+    @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_ADD)) {
             runOnUiThread(new Runnable() {

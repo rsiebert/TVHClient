@@ -45,21 +45,17 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-        
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.program_layout);
     	
-    	// Get the channel which holds the program
+    	// Get the selected channel
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         Channel channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
         if (channel == null) {
             finish();
             return;
         }
-
         // Get the selected program from the current channel
         long eventId = getIntent().getLongExtra("eventId", 0);
         for (Program p : channel.epg) {
@@ -68,7 +64,7 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
                 break;
             }
         }
-
+        // Exit if no program was found.
         if (program == null) {
             finish();
             return;
@@ -83,9 +79,9 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
         // Show or hide the channel icon if required
         boolean showIcon = Utils.showChannelIcons(this);
         actionBar.setDisplayUseLogoEnabled(showIcon);
-        if (showIcon)
+        if (showIcon) {
             actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
-        
+        }
         // Initialize all the widgets from the layout
         TextView title = (TextView) findViewById(R.id.title);
         ImageView state = (ImageView) findViewById(R.id.state);
@@ -109,7 +105,6 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
         // Set the values
         title.setText(program.title);
         channelName.setText(channel.name);
-        
         Utils.setState(state, program.recording);
         Utils.setDate(date, program.start);
         Utils.setTime(time, program.start, program.stop);
@@ -117,7 +112,6 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
         Utils.setProgressText(progress, program.start, program.stop);
         Utils.setDescription(summaryLabel, summary, program.summary);
         Utils.setDescription(descLabel, desc, program.description);
-
         Utils.setSeriesInfo(seriesInfoLabel, seriesInfo, program.seriesInfo);
         Utils.setContentType(contentTypeLabel, contentType, program.contentType);
         
@@ -162,7 +156,6 @@ public class ProgramDetailsActivity extends ActionBarActivity implements HTSList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
         case android.R.id.home:
             onBackPressed();

@@ -44,10 +44,7 @@ public class RecordingListTabsActivity extends ActionBarActivity {
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pager_layout);
 
@@ -70,8 +67,7 @@ public class RecordingListTabsActivity extends ActionBarActivity {
                 menuKeyField.setAccessible(true);
                 menuKeyField.setBoolean(config, false);
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             // Ignore
         }
 
@@ -110,14 +106,14 @@ public class RecordingListTabsActivity extends ActionBarActivity {
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
-                
                 // Get the fragment of the current tabs. The default tag given by the 
                 // FragmentPagerAdapater is "android:switcher:" + viewId + ":" + position;
-                RecordingListFragment fragment = (RecordingListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
-                
+                RecordingListFragment fragment = (RecordingListFragment) getSupportFragmentManager().findFragmentByTag(
+                                "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
                 // Update the action bar subtitle
-                if (fragment != null)
+                if (fragment != null) {
                     updateTitle(position, fragment.getRecordingCount());
+                }
             }
         });
 
@@ -146,7 +142,6 @@ public class RecordingListTabsActivity extends ActionBarActivity {
             TVHGuideApplication app = (TVHGuideApplication) getApplication();
             item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
         }
-
         return true;
     }
 
@@ -187,6 +182,12 @@ public class RecordingListTabsActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Updates the action bar title with the type and number of recordings.
+     * 
+     * @param position
+     * @param count
+     */
     public void updateTitle(int position, int count) {
         if (actionBar.getSelectedNavigationIndex() == position) {
             switch (position) {
@@ -203,6 +204,13 @@ public class RecordingListTabsActivity extends ActionBarActivity {
         }
     }
     
+    /**
+     * Adapter that manages and holds the fragments of the different recording
+     * types.
+     * 
+     * @author rsiebert
+     * 
+     */
     private class RecordingListPagerAdapter extends FragmentPagerAdapter {
         public RecordingListPagerAdapter(FragmentManager fm) {
             super(fm);
