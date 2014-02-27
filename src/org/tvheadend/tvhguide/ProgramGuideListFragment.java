@@ -240,14 +240,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         }
         adapter.sort();
         adapter.notifyDataSetChanged();
-
-        // TODO: Let the channel list fragment do this
-        // Show the number of channels that are in the selected tag
-        if (getActivity() instanceof ProgramGuideTabsActivity) {
-            ProgramGuideTabsActivity activity = (ProgramGuideTabsActivity) getActivity();
-            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
-            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
-        }
         
         // Set the scroll position of the list view
         listView.setSelection(activity.getScrollingSelectionIndex());
@@ -424,16 +416,14 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                     // from the server. Also show the number of available
                     // channels from the selected tag in the action bar.
                     if (activity.channelLoadingList.isEmpty()) {
-                        TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
-                        ChannelTag currentTag = Utils.getChannelTag(app);
-                        int count = 0;
-                        for (Channel ch : app.getChannels()) {
-                            if (currentTag == null || ch.hasTag(currentTag.id)) {
-                                count++;
-                            }
-                        }
                         adapter.notifyDataSetChanged();
-                        activity.setActionBarSubtitle(count + " " + getString(R.string.items));
+
+                        ChannelListFragment channelFrag = (ChannelListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+                        if (channelFrag != null) {
+                            TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
+                            ChannelTag currentTag = Utils.getChannelTag(app);
+                            channelFrag.updateItemCount(currentTag);
+                        }
                     }
                 }
             });

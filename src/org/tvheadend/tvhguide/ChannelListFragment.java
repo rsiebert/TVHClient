@@ -180,22 +180,38 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         adapter.sort();
         adapter.notifyDataSetChanged();
 
-        // TODO: Reuse this for the program guide
         // Show the number of channels that are in the selected tag
-        if (getActivity() instanceof ChannelListTabsActivity) {
-            ChannelListTabsActivity activity = (ChannelListTabsActivity) getActivity();
-            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
-            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
-        }
+        updateItemCount(currentTag);
 
         // Set the scroll position of the list view. Only required when this
         // class is used in the program guide where the channels are shown on
         // the the left side and shall scroll with the guide data.
-        if (getActivity() instanceof ProgramGuideTabsActivity) {
+        if (getActivity() instanceof ProgramGuideTabsActivity) { 
             channelListView.setSelection(((ProgramGuideTabsActivity) getActivity()).getScrollingSelectionIndex());
         }
     }
 
+    /**
+     * Shows the currently visible number of the channels that are in the
+     * selected channel tag. This method is also called from the program guide
+     * activity to remove the loading indication and show the numbers again.  
+     * 
+     * @param currentTag
+     */
+    public void updateItemCount(ChannelTag currentTag) {
+        if (getActivity() instanceof ChannelListTabsActivity) {
+            
+            ChannelListTabsActivity activity = (ChannelListTabsActivity) getActivity();
+            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
+            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+        } else if (getActivity() instanceof ProgramGuideTabsActivity) {
+            
+            ProgramGuideTabsActivity activity = (ProgramGuideTabsActivity) getActivity(); 
+            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
+            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+        }
+    }
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
