@@ -14,8 +14,11 @@ import android.provider.BaseColumns;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+	@SuppressWarnings("unused")
+	private final static String TAG = DatabaseHelper.class.getSimpleName();
+
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "tvhguide";
     public static final String TABLE_NAME = "connections";
 
@@ -39,7 +42,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         KEY_USERNAME, 
         KEY_PASSWORD,
         KEY_SELECTED, 
-        KEY_CHANNEL_TAG, };
+        KEY_CHANNEL_TAG
+    };
 
     public static DatabaseHelper instance = null;
 
@@ -55,28 +59,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    	super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String query = "CREATE TABLE " + TABLE_NAME + " (" 
+    	final String query = "CREATE TABLE " + TABLE_NAME + " (" 
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_NAME + " TEXT NOT NULL," 
                 + KEY_ADDRESS + " TEXT NOT NULL, " 
                 + KEY_PORT + " INT NOT NULL, "
-                + KEY_USERNAME + " TEXT NULL, " 
-                + KEY_PASSWORD + " TEXT NULL );";
+                + KEY_USERNAME + " TEXT NULL, "
+                + KEY_PASSWORD + " TEXT NULL, "
+                + KEY_SELECTED + " INT NOT NULL);";
         db.execSQL(query);
+        // Call this because somehow the onUpgrade does not get called automatically
+        onUpgrade(db, db.getVersion(), DATABASE_VERSION);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion == 1) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-            onCreate(db);
-        }
-        else if (oldVersion == 1 && newVersion == 2) {
+    	// Current installations run with the database 
+    	// version 2, so we need to upgrade to 3 here
+    	if (oldVersion < 3) {
             db.execSQL("ALTER TABLE " + TABLE_NAME + 
                     " ADD COLUMN " + KEY_CHANNEL_TAG + " INT DEFAULT 0;");
         }
