@@ -64,7 +64,11 @@ public class ChangeLogDialog {
      */
     public ChangeLogDialog(Context context) {
         this(context, PreferenceManager.getDefaultSharedPreferences(context));
-        di = (ChangeLogDialogInterface) context; 
+        if (context instanceof ChangeLogDialogInterface) {
+        	di = (ChangeLogDialogInterface) context; 
+        } else {
+        	di = null;
+        }
     }
 
     /**
@@ -166,7 +170,9 @@ public class ChangeLogDialog {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         updateVersionInPreferences();
-                        di.dialogDismissed();
+                        if (di != null) {
+                        	di.dialogDismissed();
+                        }
                     }
                 });
 
