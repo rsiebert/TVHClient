@@ -144,7 +144,9 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                     conn.port = 9982;
                     conn.username = "";
                     conn.password = "";
-                    conn.selected = false;
+                    
+                    // If this is the first connection make it active
+                    conn.selected = (DatabaseHelper.getInstance().getConnections().size() == 0) ? true : false;
                 }
             }
 
