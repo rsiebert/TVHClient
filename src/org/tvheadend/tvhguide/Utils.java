@@ -641,10 +641,12 @@ public class Utils {
     public static int getChannelTagId() {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
-        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        if (conn != null) {
-            return conn.channelTag;
-        }
+    	if (DatabaseHelper.getInstance() != null) {
+	        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+	        if (conn != null) {
+	            return conn.channelTag;
+	        }
+    	}
         return 0;
     }
 
@@ -656,11 +658,13 @@ public class Utils {
      */
     public static void setChannelTagId(int channelTagId) {
         // Save the selected tag for the active connection in the database
-        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        if (conn != null) {
-            conn.channelTag = channelTagId;
-            DatabaseHelper.getInstance().updateConnection(conn);
-        }
+    	if (DatabaseHelper.getInstance() != null) {
+	        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+	        if (conn != null) {
+	            conn.channelTag = channelTagId;
+	            DatabaseHelper.getInstance().updateConnection(conn);
+	        }
+	    }
     }
 
     /**
