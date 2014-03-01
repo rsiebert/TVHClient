@@ -409,6 +409,8 @@ public class Utils {
             date.setText(R.string.saturday);
         } else if (dateText.equals("Sunday")) {
             date.setText(R.string.sunday);
+        } else if (dateText.equals("yesterday")) {
+            date.setText(R.string.yesterday);
         } else {
             date.setText(dateText);
         }

@@ -233,6 +233,7 @@
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Szukaj w EPG</string>
+    <string name="yesterday">Wczoraj</string>
     <string name="today">Dzisiaj</string>
     <string name="tomorrow">Jutro</string>
     <string name="in_2_days">Za 2 dni</string>

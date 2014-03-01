@@ -222,6 +222,7 @@
     <string name="minutes">%d Min</string>
     
     <string name="search_hint">Suche im TV-Programm</string>
+    <string name="yesterday">Gestern</string>
     <string name="today">Heute</string>
     <string name="tomorrow">Morgen</string>
     <string name="in_2_days">In 2 Tagen</string>
