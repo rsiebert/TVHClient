@@ -158,14 +158,18 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             }
             else {
                 // The channel does not provide program data. Hide the progress
-                // bar and clear the time and duration texts. These two items
-                // provide some space so that the next list item is not too
-                // close.
+                // bar,the time and duration texts.
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_data);
                 }
                 if (holder.progress != null) {
                     holder.progress.setVisibility(View.GONE);
+                }
+                if (holder.time != null) {
+                	holder.time.setVisibility(View.GONE);
+                }
+                if (holder.duration != null) {
+                	holder.duration.setVisibility(View.GONE);
                 }
             }
         }
