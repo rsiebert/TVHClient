@@ -26,7 +26,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.webkit.WebView;
@@ -87,9 +86,9 @@ public class ChangeLogDialog {
         this.lastVersion = sp.getString(VERSION_KEY, NO_VERSION);
         Log.d(TAG, "lastVersion: " + lastVersion);
         try {
-            this.thisVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-        }
-        catch (NameNotFoundException e) {
+            this.thisVersion = context.getPackageManager()
+            		.getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (NameNotFoundException e) {
             this.thisVersion = NO_VERSION;
             Log.e(TAG, "could not get version name from manifest!");
             e.printStackTrace();
@@ -154,11 +153,11 @@ public class ChangeLogDialog {
     private AlertDialog getDialog(boolean full) {
         WebView wv = new WebView(this.context);
 
-        if (Utils.getThemeId(context) == R.style.CustomTheme_Light)
+        if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
             wv.setBackgroundColor(Color.WHITE);
-        else
+        } else {
             wv.setBackgroundColor(Color.BLACK);
-        
+        }
         wv.loadDataWithBaseURL(null, this.getLog(full), "text/html", "UTF-8", null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
@@ -221,14 +220,12 @@ public class ChangeLogDialog {
         } else {
             sb.append(styleDark);
         }
-
         sb.append("</style></head><body>");
 
         // read changelog.txt file
         try {
             InputStream ins = context.getResources().openRawResource(R.raw.changelog);
             BufferedReader br = new BufferedReader(new InputStreamReader(ins));
-
             String line = null;
             
             // if true: ignore further version sections
@@ -245,13 +242,11 @@ public class ChangeLogDialog {
                     if (!full) {
                         if (this.lastVersion.equals(version)) {
                             advanceToEOVS = true;
-                        }
-                        else if (version.equals(EOCL)) {
+                        } else if (version.equals(EOCL)) {
                             advanceToEOVS = false;
                         }
                     }
-                }
-                else if (!advanceToEOVS) {
+                } else if (!advanceToEOVS) {
                     switch (marker) {
                     case '%':
                         // line contains version title
@@ -287,8 +282,7 @@ public class ChangeLogDialog {
             }
             this.closeList();
             br.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         sb.append("</body></html>");
@@ -301,8 +295,7 @@ public class ChangeLogDialog {
             closeList();
             if (listMode == Listmode.ORDERED) {
                 sb.append("<div class='list'><ol>\n");
-            }
-            else if (listMode == Listmode.UNORDERED) {
+            } else if (listMode == Listmode.UNORDERED) {
                 sb.append("<div class='list'><ul>\n");
             }
             this.listMode = listMode;
@@ -312,8 +305,7 @@ public class ChangeLogDialog {
     private void closeList() {
         if (this.listMode == Listmode.ORDERED) {
             sb.append("</ol></div>\n");
-        }
-        else if (this.listMode == Listmode.UNORDERED) {
+        } else if (this.listMode == Listmode.UNORDERED) {
             sb.append("</ul></div>\n");
         }
         this.listMode = Listmode.NONE;
