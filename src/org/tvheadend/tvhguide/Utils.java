@@ -271,17 +271,22 @@ public class Utils {
         MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
 
         // Disable these menus as a default
+        recordMenuItem.setVisible(false);
+        recordCancelMenuItem.setVisible(false);
+        recordRemoveMenuItem.setVisible(false);
+        playMenuItem.setVisible(false);
         searchMenuItem.setVisible(false);
-        
-        if (rec.isRecording() || rec.isScheduled()) {
-            // Show the cancel menu
-            recordMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
-            playMenuItem.setVisible(false);
-        } else {
-            // Show the delete and play menu
-            recordMenuItem.setVisible(false);
-            recordCancelMenuItem.setVisible(false);
+
+        if (rec.error == null && rec.state.equals("completed")) {
+        	// The recording is available, it can be played and removed
+            recordRemoveMenuItem.setVisible(true);
+            playMenuItem.setVisible(true);
+        } else if (rec.isRecording() || rec.isScheduled()) {
+            // The recording is recording or scheduled, it can only be cancelled
+            recordCancelMenuItem.setVisible(true);
+        } else if (rec.error != null) {
+        	// The recording has failed, just allow removal
+        	recordRemoveMenuItem.setVisible(true);
         }
     }
 
