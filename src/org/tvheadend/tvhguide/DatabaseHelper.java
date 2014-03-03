@@ -18,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "tvhguide";
     public static final String TABLE_NAME = "connections";
 
@@ -60,12 +60,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private DatabaseHelper(Context context) {
     	super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    	Log.d(TAG, "ctor, version " + getWritableDatabase().getVersion());
     }
 
+    /**
+     * Called when the database is created for the very first time.
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "onCreate, version " + db.getVersion());
+        Log.d(TAG, "onCreate");
+
     	final String query = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" 
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_NAME + " TEXT NOT NULL," 
@@ -73,34 +76,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_PORT + " INT NOT NULL, "
                 + KEY_USERNAME + " TEXT NULL, "
                 + KEY_PASSWORD + " TEXT NULL, "
-                + KEY_SELECTED + " INT NOT NULL);";
+                + KEY_SELECTED + " INT NOT NULL, "
+                + KEY_CHANNEL_TAG + " INT DEFAULT 0);";
         db.execSQL(query);
     }
 
-    @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "onDowngrade, from version " + oldVersion + " to " + newVersion);
-        // Drop the database and create the initial version
-        if (newVersion == 1) {
-            db.execSQL("DROP TABLE " + TABLE_NAME + ";");
-            onCreate(db);
-        }
-    }
-
+    /**
+     * Called when the database version has changed.
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(TAG, "onUpgrade, from version " + oldVersion + " to " + newVersion);
-        if (oldVersion < newVersion) {
-            switch (newVersion) {
-            case 2:
-                // Current installations run with the database
-                // version 2, so we need to upgrade to 3 here
-                break;
-            case 3:
-                // Add the channel tag column
-                db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_CHANNEL_TAG + " INT DEFAULT 0;");
-                break;
-            }
+
+        if (oldVersion < newVersion && newVersion == 2) {
+            // Add the channel tag column in database version 2 
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_CHANNEL_TAG
+                    + " INT DEFAULT 0;");
         }
     }
 
