@@ -11,10 +11,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-	@SuppressWarnings("unused")
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
@@ -60,11 +60,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private DatabaseHelper(Context context) {
     	super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    	Log.d(TAG, "ctor, version " + getWritableDatabase().getVersion());
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-    	final String query = "CREATE TABLE " + TABLE_NAME + " (" 
+        Log.d(TAG, "onCreate, version " + db.getVersion());
+    	final String query = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" 
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_NAME + " TEXT NOT NULL," 
                 + KEY_ADDRESS + " TEXT NOT NULL, " 
@@ -73,17 +75,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_PASSWORD + " TEXT NULL, "
                 + KEY_SELECTED + " INT NOT NULL);";
         db.execSQL(query);
-        // Call this because somehow the onUpgrade does not get called automatically
-        onUpgrade(db, db.getVersion(), DATABASE_VERSION);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d(TAG, "onDowngrade, from version " + oldVersion + " to " + newVersion);
+        // Drop the database and create the initial version
+        if (newVersion == 1) {
+            db.execSQL("DROP TABLE " + TABLE_NAME + ";");
+            onCreate(db);
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    	// Current installations run with the database 
-    	// version 2, so we need to upgrade to 3 here
-    	if (oldVersion < 3) {
-            db.execSQL("ALTER TABLE " + TABLE_NAME + 
-                    " ADD COLUMN " + KEY_CHANNEL_TAG + " INT DEFAULT 0;");
+        Log.d(TAG, "onUpgrade, from version " + oldVersion + " to " + newVersion);
+        if (oldVersion < newVersion) {
+            switch (newVersion) {
+            case 2:
+                // Current installations run with the database
+                // version 2, so we need to upgrade to 3 here
+                break;
+            case 3:
+                // Add the channel tag column
+                db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_CHANNEL_TAG + " INT DEFAULT 0;");
+                break;
+            }
         }
     }
 
