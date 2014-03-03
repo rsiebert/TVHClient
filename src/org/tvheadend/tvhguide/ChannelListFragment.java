@@ -366,11 +366,29 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         }
     }
 
+    /**
+     * Scrolls the channel list to the given position. The scrolling is not per
+     * pixel but only per row. This is used when the program guide screen is
+     * visible. The channel list is scrolled parallel with the program guide
+     * view.
+     * 
+     * @param index The index (starting at 0) of the channel item to be selected
+     */
     public void scrollListViewTo(int index) {
         if (channelListView != null)
             channelListView.setSelection(index);
     }
-    
+
+    /**
+     * Scrolls the channel list to the given pixel position. The scrolling is
+     * accurate because the pixel value is used. This method is also used when
+     * the program guide screen is visible. The channel list is scrolled
+     * parallel with the program guide.
+     * 
+     * @param index The index (starting at 0) of the channel item to be selected
+     * @param pos The distance from the top edge of the channel list that the
+     *            item will be positioned.
+     */
     public void scrollListViewToPosition(int index, int pos) {
         if (channelListView != null) {
             channelListView.setSelectionFromTop(index, pos);
