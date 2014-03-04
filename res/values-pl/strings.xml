@@ -14,7 +14,7 @@
     <string name="menu_record_remove">Usuń nagranie</string>
     <string name="menu_search_imdb">Szukaj na IMDB</string>
     <string name="menu_search_epg">Szukaj w przewodniku programów</string>
-    <string name="menu_search_channel">Szukaj tego kanału</string>
+    <string name="menu_search_channel">Szukaj w tym kanale</string>
     <string name="menu_add">Dodaj</string>
     <string name="menu_save">Zapisz</string>
     <string name="menu_cancel">Anuluj</string>
