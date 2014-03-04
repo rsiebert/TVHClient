@@ -64,14 +64,12 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.connection_list_widget, null);
-
             holder = new ViewHolder();
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.summary = (TextView) view.findViewById(R.id.summary);
             holder.selected = (ImageView) view.findViewById(R.id.selected);
             view.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 
@@ -80,7 +78,6 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         if (c != null) {
             holder.title.setText(c.name);
             holder.summary.setText(c.address + ":" + c.port);
-//            holder.selected.setVisibility(c.selected ? View.VISIBLE : View.GONE);
             
            // Set the active / inactive icon depending on the theme and selection status
            if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {

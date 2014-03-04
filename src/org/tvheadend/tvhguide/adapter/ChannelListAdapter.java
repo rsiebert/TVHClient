@@ -76,7 +76,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(layout, null);
-
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
@@ -86,8 +85,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             holder.duration = (TextView) view.findViewById(R.id.duration);
             holder.state = (ImageView) view.findViewById(R.id.state);
             view.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 
@@ -96,12 +94,12 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         if (c != null) {
 
             // Set the initial values
-            if (holder.progress != null)
+            if (holder.progress != null) {
                 holder.progress.setProgress(0);
-
-            if (holder.channel != null)
+            }
+            if (holder.channel != null) {
                 holder.channel.setText(c.name);
-
+            }
             if (holder.icon != null) {
                 Utils.setChannelIcon(holder.icon, null, c);
             
@@ -126,8 +124,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (c.isRecording()) {
                     holder.state.setImageResource(R.drawable.ic_rec_small);
                     holder.state.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     holder.state.setImageDrawable(null);
                     holder.state.setVisibility(View.GONE);
                 }
@@ -139,38 +136,41 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Check if the channel is actually transmitting
             // data and contains program data which can be shown.
             if (!c.isTransmitting && it.hasNext()) {
-                if (holder.title != null)
+                if (holder.title != null) {
                     holder.title.setText(R.string.no_transmission);
-            }
-            else if (it.hasNext()) {
-
+                }
+            } else if (it.hasNext()) {
                 // Get the program that is currently running
                 // and set all the available values
                 Program p = it.next();
-
-                if (holder.title != null)
+                if (holder.title != null) {
                     holder.title.setText(p.title);
-
-                if (holder.time != null)
+                }
+                if (holder.time != null) {
                     Utils.setTime(holder.time, p.start, p.stop);
-                
-                if (holder.duration != null)
+                }
+                if (holder.duration != null) {
                     Utils.setDuration(holder.duration, p.start, p.stop);
-                
-                if (holder.progress != null)
+                }
+                if (holder.progress != null) {
                     Utils.setProgress(holder.progress, p.start, p.stop);
-
+                }
             }
             else {
                 // The channel does not provide program data. Hide the progress
-                // bar and clear the time and duration texts. These two items
-                // provide some space so that the next list item is not too
-                // close.
-                if (holder.title != null)
+                // bar,the time and duration texts.
+                if (holder.title != null) {
                     holder.title.setText(R.string.no_data);
-
-                if (holder.progress != null)
+                }
+                if (holder.progress != null) {
                     holder.progress.setVisibility(View.GONE);
+                }
+                if (holder.time != null) {
+                	holder.time.setVisibility(View.GONE);
+                }
+                if (holder.duration != null) {
+                	holder.duration.setVisibility(View.GONE);
+                }
             }
         }
         return view;

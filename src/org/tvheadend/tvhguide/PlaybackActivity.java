@@ -55,7 +55,6 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_layout);
@@ -171,10 +170,15 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
         app.removeListener(this);
     }
 
+    /**
+     * When the first ticket from the HTSService has been received the URL is
+     * created and then passed to the internal media player.
+     * 
+     * @param path
+     * @param ticket
+     */
     private void startPlayback(String path, String ticket) {
-
-        // Get the values that was passed to this
-        // activity by the program selection activity
+        // Get the values that were passed by the program selection activity
         String host = getIntent().getStringExtra("serverHostPref");
         Integer port = getIntent().getIntExtra("httpPortPref", 9981);
         Integer resolution = getIntent().getIntExtra("resolutionPref", 288);
@@ -196,18 +200,16 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
             url += "&scodec=" + scodec;
         }
 
-        // Set the details so the view can play the stream
+        // Set the details so the video view can play the stream
         videoView.setVideoURI(Uri.parse(url));
         videoView.requestFocus();
         videoView.start();
         videoView.setAspectRatio(16, 9);
 
-        // Convert the container information like mpegts
-        // to a better readable format like MPEG-TS
+        // Converts a string to a better readable format. 
         container = valueToName(R.array.pref_container_list, R.array.pref_container_list_display, container);
 
-        // Add additional information to the
-        // string if we transcode the stream
+        // Add additional information
         String c = container;
         if (transcode) {
             c += " (";
@@ -216,11 +218,24 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
             c += ")";
         }
 
-        // Get the codec widget so we can show the used codec information
+        // Get the codec widget so we can show which one is used
         TextView codecInfo = (TextView) findViewById(R.id.player_codec);
-        codecInfo.setText(c);
+        if (codecInfo != null) {
+            codecInfo.setText(c);
+        }
     }
 
+    /**
+     * Gets the index from one array where the given string is. Returns the
+     * string at the index from the second array. This is used to convert
+     * informational strings like mpegts to a better readable format like
+     * MPEG-TS.
+     * 
+     * @param valueRresouce
+     * @param nameResource
+     * @param val
+     * @return
+     */
     private String valueToName(int valueRresouce, int nameResource, String val) {
         String[] names = getResources().getStringArray(nameResource);
         String[] values = getResources().getStringArray(valueRresouce);
@@ -232,6 +247,11 @@ public class PlaybackActivity extends ActionBarActivity implements HTSListener {
         return "";
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
+    @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_TICKET_ADD)) {
             this.runOnUiThread(new Runnable() {

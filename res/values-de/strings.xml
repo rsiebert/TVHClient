@@ -27,7 +27,6 @@
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
-    <string name="available_connections">Verfügbare Verbindungen</string>
     <string name="select_connection">Verbindung wählen</string>
     <string name="add_connection">Verbindung hinzufügen</string>
     <string name="new_connection">Neue Verbindung erstellen</string>
@@ -36,7 +35,7 @@
     <string name="connection_options">Optionen für Verbindung \'%s\'</string>
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
-    <string name="delete_connection">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
+    <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
 
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
@@ -100,9 +99,6 @@
     <string name="pref_programs_to_load_sum">Wieviele Programme sollen auf einmal pro Sender vom Server geladen werden. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
-    <string name="err_inv">Konnte nicht korrekt mit dem Server kommunizieren.</string>
-    <string name="err_sending">Konnte die Daten nicht an den Server versenden.</string>
-    <string name="err_reading">Konnte die Daten nicht vom Server empfangen.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
     
@@ -226,6 +222,7 @@
     <string name="minutes">%d Min</string>
     
     <string name="search_hint">Suche im TV-Programm</string>
+    <string name="yesterday">Gestern</string>
     <string name="today">Heute</string>
     <string name="tomorrow">Morgen</string>
     <string name="in_2_days">In 2 Tagen</string>
@@ -273,8 +270,6 @@
     <string name="progress">%1$d%% der Sendung bereits vorbei</string>
 
     <string name="disc_space">Speicherplatz</string>
-    <string name="free_disc_space">Freier Speicherplatz</string>
-    <string name="total_disc_space">Gesamter Speicherplatz</string>
     <string name="total">Total</string>
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>

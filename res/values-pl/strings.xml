@@ -27,7 +27,6 @@
     
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
-    <string name="available_connections">Dostępne połaczenia</string>
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
     <string name="new_connection">Utwórz nowe połaczenie</string>
@@ -100,9 +99,6 @@
     <string name="pref_programs_to_load_sum">Definiuje ile programów będzie pobieranych z serwera aby zobaczyć więcej na liście programów lub liście przewodnika. Większa liczba oznacza dłuższy czas ładowania i aktualizowania.</string>
 
     <string name="err_auth">Odmowa dostępu</string>
-    <string name="err_inv">Nieprawidłowa odpowiedź z serwera</string>
-    <string name="err_sending">Nie można wysłać wiadomoci do serwera</string>
-    <string name="err_reading">Nie można odczytać wiadomości z serwera</string>
     <string name="err_connect">Nie można połączyć się z serweram</string>
     <string name="err_con_lost">Utracono połączenie z serwerem</string>
 
@@ -237,6 +233,7 @@
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Szukaj w EPG</string>
+    <string name="yesterday">Wczoraj</string>
     <string name="today">Dzisiaj</string>
     <string name="tomorrow">Jutro</string>
     <string name="in_2_days">Za 2 dni</string>
@@ -284,8 +281,6 @@
     <string name="progress">%1$d%% z transmisji zostało pokazane</string>
 
     <string name="disc_space">Przestrzeń dysku</string>
-    <string name="free_disc_space">Wolna przestrzeń dysku</string>
-    <string name="total_disc_space">Całkowita przestrzeń dysku</string>
     <string name="total">Całość</string>
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>

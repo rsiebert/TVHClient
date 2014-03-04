@@ -62,6 +62,7 @@
         <item>Společnost / Politika / Ekonomie</item>
         <item>Vzdělání / Věda / Naučné</item>
         <item>Hobby</item>
+        <item>Misc</item>
     </string-array>
 
     <string name="no_transmission">Žádný přenos</string>

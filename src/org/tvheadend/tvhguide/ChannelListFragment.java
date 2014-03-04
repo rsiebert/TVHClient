@@ -46,37 +46,33 @@ import android.widget.ListView;
 
 public class ChannelListFragment extends Fragment implements HTSListener {
 
-    private ChannelListAdapter chAdapter;
+    private ChannelListAdapter adapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
-    private ChannelTag currentTag;
     private ListView channelListView;
 
-    // This is the default view for the channel list adapter
+    // This is the default view for the channel list adapter. Other views can be
+    // passed to the adapter to show less information. This is used in the
+    // program guide where only the channel icon is relevant.
     private int viewLayout = R.layout.list_layout;
     private int adapterLayout = R.layout.channel_list_widget;
-    private boolean disableMenus = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
         // Return if frame for this fragment doesn't
         // exist because the fragment will not be shown.
-        if (container == null)
+        if (container == null) {
             return null;
-
-        // Get the passed layout id. Only used in the program guide icon list
+        }
+        // Get the passed layout id. Only used in the program guide icon list.
         Bundle bundle = getArguments();
         if (bundle != null) {
             viewLayout = bundle.getInt("viewLayout", R.layout.list_layout);
             adapterLayout = bundle.getInt("adapterLayout", R.layout.channel_list_widget);
-            disableMenus  = bundle.getBoolean("disableMenus", false);
         }
-
         View v = inflater.inflate(viewLayout, container, false);
         channelListView = (ListView) v.findViewById(R.id.item_list);
-
         return v;
     }
     
@@ -84,16 +80,17 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         
-        if (!disableMenus)
+        if (getActivity() instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
+        }
+        adapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);
+        channelListView.setAdapter(adapter);
         
-        chAdapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);
-        channelListView.setAdapter(chAdapter);
-
+        // Show the details of the program when the user clicked on the channel 
         channelListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Channel ch = (Channel) chAdapter.getItem(position);
+                Channel ch = (Channel) adapter.getItem(position);
                 if (ch.epg.isEmpty()) {
                     return;
                 }
@@ -103,25 +100,24 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             }
         });
 
+        // Create the dialog where the user can select the different tags
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.menu_tags);
-
         tagAdapter = new ArrayAdapter<ChannelTag>(
                 getActivity(),
                 android.R.layout.simple_dropdown_item_1line,
                 new ArrayList<ChannelTag>());
-
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
-                setCurrentTag(tagAdapter.getItem(pos));
                 Utils.setChannelTagId(pos);
                 populateList();
             }
         });
         tagDialog = builder.create();
 
-        if (!disableMenus)
+        if (getActivity() instanceof ChannelListTabsActivity) {
             registerForContextMenu(channelListView);
+        }
     }
 
     @Override
@@ -135,7 +131,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         
         // Get the currently selected channel from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Channel channel = chAdapter.getItem(info.position);
+        Channel channel = adapter.getItem(info.position);
         
         Intent intent = null;
         switch (item.getItemId()) {
@@ -163,41 +159,59 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         getActivity().getMenuInflater().inflate(R.menu.channel_context_menu, menu);
         
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Channel channel = chAdapter.getItem(info.position);
+        Channel channel = adapter.getItem(info.position);
         menu.setHeaderTitle(channel.name);
     }
 
-    private void setCurrentTag(ChannelTag tag) {
-        currentTag = tag;
-        if (tag == null) {
-            if (getActivity() instanceof ChannelListTabsActivity)
-                ((ChannelListTabsActivity) getActivity()).setActionBarTitle(getString(R.string.all_channels));
-        } else {
-            if (getActivity() instanceof ChannelListTabsActivity)
-                ((ChannelListTabsActivity) getActivity()).setActionBarTitle(currentTag.name);
-        }
-    }
-
-    private void populateList() {
+    /**
+     * Fills the list with the available channel data. Only the channels that
+     * are part of the selected tag are shown.
+     */
+    public void populateList() {
+        
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
-        chAdapter.clear();
+        ChannelTag currentTag = Utils.getChannelTag(app);
+        adapter.clear();
         for (Channel ch : app.getChannels()) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
-                chAdapter.add(ch);
+                adapter.add(ch);
             }
         }
-        chAdapter.sort();
-        chAdapter.notifyDataSetChanged();
+        adapter.sort();
+        adapter.notifyDataSetChanged();
 
-        if (getActivity() instanceof ChannelListTabsActivity)
-            ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(chAdapter.getCount() + " " + getString(R.string.items));
-        
-        // Set the scroll position of the list view
-        if (getActivity() instanceof ProgramGuideTabsActivity) {
+        // Show the number of channels that are in the selected tag
+        updateItemCount(currentTag);
+
+        // Set the scroll position of the list view. Only required when this
+        // class is used in the program guide where the channels are shown on
+        // the the left side and shall scroll with the guide data.
+        if (getActivity() instanceof ProgramGuideTabsActivity) { 
             channelListView.setSelection(((ProgramGuideTabsActivity) getActivity()).getScrollingSelectionIndex());
         }
     }
 
+    /**
+     * Shows the currently visible number of the channels that are in the
+     * selected channel tag. This method is also called from the program guide
+     * activity to remove the loading indication and show the numbers again.  
+     * 
+     * @param currentTag
+     */
+    public void updateItemCount(ChannelTag currentTag) {
+        if (getActivity() instanceof ChannelListTabsActivity) {
+            
+            ChannelListTabsActivity activity = (ChannelListTabsActivity) getActivity();
+            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
+            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+        } else if (getActivity() instanceof ProgramGuideTabsActivity) {
+            
+            ProgramGuideTabsActivity activity = (ProgramGuideTabsActivity) getActivity(); 
+            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
+            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+        }
+    }
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -230,60 +244,48 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     }
 
     /**
-     * Shows either that the channel data is still being loaded or fills the
-     * list with the available channel data. Additionally only the channels with
-     * the previously selected tag will be shown. This happens usually after an
-     * orientation change (screen rotation).
+     * Show that either no connection (and no data) is available, the data is
+     * loaded or calls the method to display it.
      * 
      * @param loading
      */
     private void setLoading(boolean loading) {
-        
-        if (DatabaseHelper.getInstance() != null && DatabaseHelper.getInstance().getSelectedConnection() == null) {
-            // Clear any channels in the list and 
-            // show that we have no connection
-            chAdapter.clear();
-            chAdapter.notifyDataSetChanged();
-            
-            if (getActivity() instanceof ChannelListTabsActivity)
+        if (DatabaseHelper.getInstance() != null && 
+                DatabaseHelper.getInstance().getSelectedConnection() == null) {
+            adapter.clear();
+            adapter.notifyDataSetChanged();
+            // Only update the header when the channels are shown. Do not do
+            // this when this class is used by the program guide.
+            if (getActivity() instanceof ChannelListTabsActivity) {
                 ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
-            
-            // Show a dialog so the user can create a new connection
+            }
             showCreateConnectionDialog();
-        } 
-        else {
+        } else {
             if (loading) {
-                // Clear any channels in the list and 
-                // show that we are still loading data.
-                chAdapter.clear();
-                chAdapter.notifyDataSetChanged();
-                
-                if (getActivity() instanceof ChannelListTabsActivity)
+                adapter.clear();
+                adapter.notifyDataSetChanged();
+                // Only update the header when the channels are shown. Do not do
+                // this when this class is used by the program guide.
+                if (getActivity() instanceof ChannelListTabsActivity) {
                     ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.loading));
-            } 
-            else {
-                // Fill the tag adapter with the available channel tags
+                }
+            } else {
+                // Fill the tag adapter with the available tags
                 TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
                 tagAdapter.clear();
                 for (ChannelTag t : app.getChannelTags()) {
                     tagAdapter.add(t);
                 }
-    
-                // Check if tags exist and set the previously used one
-                if (tagAdapter.getCount() > Utils.getChannelTagId())
-                    currentTag = tagAdapter.getItem(Utils.getChannelTagId());
-    
-                // Update the action bar text and fill the channel list
-                setCurrentTag(currentTag);
+                // Update the list with the new channel data
                 populateList();
             }
         }
     }
 
     /**
-     * In case no connection is available right after the start of the
-     * application this dialog will be shown. If he chooses yes then the
-     * activity where he can create a new connection will be shown.
+     * Shows a dialog to the user where he can choose to go directly to the
+     * connection screen. This dialog is only shown after the start of the
+     * application when no connection is available.
      */
     private void showCreateConnectionDialog() {
         // Show confirmation dialog to cancel 
@@ -310,6 +312,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         alert.show();
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
+    @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
             getActivity().runOnUiThread(new Runnable() {
@@ -321,23 +328,23 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_ADD)) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    chAdapter.add((Channel) obj);
-                    chAdapter.notifyDataSetChanged();
-                    chAdapter.sort();
+                    adapter.add((Channel) obj);
+                    adapter.notifyDataSetChanged();
+                    adapter.sort();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_DELETE)) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    chAdapter.remove((Channel) obj);
-                    chAdapter.notifyDataSetChanged();
+                    adapter.remove((Channel) obj);
+                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_CHANNEL_UPDATE)) {
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    chAdapter.update((Channel) obj);
-                    chAdapter.notifyDataSetChanged();
+                    adapter.update((Channel) obj);
+                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHGuideApplication.ACTION_TAG_ADD)) {
@@ -358,12 +365,30 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             //NOP
         }
     }
-    
+
+    /**
+     * Scrolls the channel list to the given position. The scrolling is not per
+     * pixel but only per row. This is used when the program guide screen is
+     * visible. The channel list is scrolled parallel with the program guide
+     * view.
+     * 
+     * @param index The index (starting at 0) of the channel item to be selected
+     */
     public void scrollListViewTo(int index) {
         if (channelListView != null)
             channelListView.setSelection(index);
     }
-    
+
+    /**
+     * Scrolls the channel list to the given pixel position. The scrolling is
+     * accurate because the pixel value is used. This method is also used when
+     * the program guide screen is visible. The channel list is scrolled
+     * parallel with the program guide.
+     * 
+     * @param index The index (starting at 0) of the channel item to be selected
+     * @param pos The distance from the top edge of the channel list that the
+     *            item will be positioned.
+     */
     public void scrollListViewToPosition(int index, int pos) {
         if (channelListView != null) {
             channelListView.setSelectionFromTop(index, pos);

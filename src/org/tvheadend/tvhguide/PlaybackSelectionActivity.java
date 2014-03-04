@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class PlaybackSelectionActivity extends Activity {
 
@@ -18,22 +17,17 @@ public class PlaybackSelectionActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         // Get the information if we shall play a program or recording
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         final Channel ch = app.getChannel(getIntent().getLongExtra("channelId", 0));
         final Recording rec = app.getRecording(getIntent().getLongExtra("dvrId", 0));
         final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
 
+        // Set the required values of either the channel or the recording. If
+        // none of the two is existing then do nothing an exit
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = null;
-
-        // Set the required values of either the 
-        // channel or the recording. If none of the 
-        // two is existing then do nothing an exit
-        if (ch != null) {
-            Log.i("PlaybackSelectionActivity", "Playing program");
-            
+        if (ch != null) {            
             // Check if an external player shall be used
             if (prefs.getBoolean("progExternalPref", false)) {
                 intent = new Intent(this, ExternalPlaybackActivity.class);
@@ -41,7 +35,6 @@ public class PlaybackSelectionActivity extends Activity {
                 intent = new Intent(this, PlaybackActivity.class);
                 intent.putExtra("title", ch.name);
             }
-
             // Pass on the channel id and the other settings
             intent.putExtra("channelId", ch.id);
             intent.putExtra("serverHostPref", conn.address);
@@ -52,10 +45,8 @@ public class PlaybackSelectionActivity extends Activity {
             intent.putExtra("vcodecPref", prefs.getString("progVcodecPref", Stream.STREAM_TYPE_H264));
             intent.putExtra("scodecPref", prefs.getString("progScodecPref", "NONE"));
             intent.putExtra("containerPref", prefs.getString("progContainerPref", "matroska"));
-        }
-        else if (rec != null) {
-            Log.i("PlaybackSelectionActivity", "Playing recording");
-            
+
+        } else if (rec != null) {
             // Check if an external player shall be used
             if (prefs.getBoolean("recExternalPref", false)) {
                 intent = new Intent(this, ExternalPlaybackActivity.class);
@@ -63,7 +54,6 @@ public class PlaybackSelectionActivity extends Activity {
                 intent = new Intent(this, PlaybackActivity.class);
                 intent.putExtra("title", rec.title);
             }
-
             // Pass on the recording id and the other settings
             intent.putExtra("dvrId", rec.id);
             intent.putExtra("serverHostPref", conn.address);

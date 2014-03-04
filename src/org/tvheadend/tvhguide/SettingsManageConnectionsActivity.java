@@ -49,10 +49,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
     
     @Override
     public void onCreate(Bundle icicle) {
-        
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-        
         super.onCreate(icicle);
         setContentView(R.layout.list_layout);
         
@@ -82,16 +79,17 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
         showConnections();
     }
 
+    /**
+     * Shows all available connections from the database in the list.
+     */
     private void showConnections() {
         connList.clear();
-        
         List<Connection> cl = DatabaseHelper.getInstance().getConnections();
         if (cl != null && cl.size() > 0) {
             for (int i = 0; i < cl.size(); ++i) {
                 connList.add(cl.get(i));
             }
         }
-        
         connAdapter.sort();
         connAdapter.notifyDataSetChanged();
         actionBar.setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
@@ -99,14 +97,12 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         final Connection c = connAdapter.getItem(info.position);
         
         switch (item.getItemId()) {
         case R.id.menu_set_active:
-            
             setConnectionActive(c);
             return true;
 
@@ -123,12 +119,10 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
             return true;
 
         case R.id.menu_delete:
-            
             // Show confirmation dialog to cancel 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(getString(R.string.delete_connection, c.name));
             builder.setTitle(getString(R.string.menu_delete));
-
             // Define the action of the yes button
             builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -170,7 +164,6 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
         } else {
             menu.getItem(1).setVisible(false);
         }
-
         // Set the title of the context menu and show or hide
         // the menu items depending on the connection
         menu.setHeaderTitle(getString(R.string.connection_options, connection.name));
@@ -185,7 +178,6 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
         case android.R.id.home:
             onBackPressed();
@@ -209,12 +201,15 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
         finish();
     }
 
+    /**
+     * Switched the selection status of the connection by setting the previous
+     * connection to unselected if the selected one is set as selected.
+     * 
+     * @param c
+     */
     private void setConnectionActive(Connection c) {
         // Switch the selection status
         c.selected = (c.selected) ? false : true;
-        
-        // Set the previous connection to unselected 
-        // if the selected one is set as selected
         if (c.selected) {
             Connection previousConn = DatabaseHelper.getInstance().getSelectedConnection();
             if (previousConn != null) {
@@ -222,7 +217,6 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
                 DatabaseHelper.getInstance().updateConnection(previousConn);
             }
         };
-        
         // Update the currently selected connection and refresh the display
         DatabaseHelper.getInstance().updateConnection(c);
         showConnections();

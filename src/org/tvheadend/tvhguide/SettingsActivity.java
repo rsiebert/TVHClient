@@ -63,17 +63,16 @@ public class SettingsActivity extends ActionBarActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
-        
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            // Load the default values
+            // Set the default values and then load the preferences from the XML resource
             PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
-
-            // Load the preferences from an XML resource
             addPreferencesFromResource(R.xml.preferences);
             
+            // Add a listener to the connection preference so that the 
+            // SettingsManageConnectionsActivity can be shown.
             Preference prefManage = findPreference("pref_manage_connections");
             prefManage.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
@@ -84,6 +83,8 @@ public class SettingsActivity extends ActionBarActivity {
                 }
             });
             
+            // Add a listener to the connection preference so that the 
+            // ChangeLogDialog with all changes can be shown.
             Preference prefChangelog = findPreference("pref_changelog");
             prefChangelog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
@@ -108,6 +109,10 @@ public class SettingsActivity extends ActionBarActivity {
             prefs.unregisterOnSharedPreferenceChangeListener(this);
         }
 
+        /**
+         * Show a notification to the user in case the theme or language
+         * preference has changed.
+         */
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals("lightThemePref") || key.equals("languagePref")) {

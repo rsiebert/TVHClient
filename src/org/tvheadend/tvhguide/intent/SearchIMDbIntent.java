@@ -38,15 +38,12 @@ public class SearchIMDbIntent extends Intent {
             // Try to encode the URL with the default character set.
             // Only continue if this was successful
             url = URLEncoder.encode(query, "utf-8");
-            
             setData(Uri.parse("imdb:///find?s=tt&q=" + url));
-
             PackageManager packageManager = ctx.getPackageManager();
             if (packageManager.queryIntentActivities(this, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
                 setData(Uri.parse("http://akas.imdb.org/find?s=tt&q=" + url));
             }
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             Log.i("SearchIMDbIntent", e.getLocalizedMessage());
         }
     }

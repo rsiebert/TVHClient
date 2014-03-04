@@ -71,7 +71,6 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.search_result_widget, null);
-
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
@@ -84,8 +83,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
             holder.contentType = (TextView) view.findViewById(R.id.content_type);
             holder.description = (TextView) view.findViewById(R.id.description);
             view.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 

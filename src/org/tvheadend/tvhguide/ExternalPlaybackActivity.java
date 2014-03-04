@@ -40,10 +40,8 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
-        
         Intent intent = new Intent(ExternalPlaybackActivity.this, HTSService.class);
         intent.setAction(HTSService.ACTION_GET_TICKET);
-
         intent.putExtras(getIntent().getExtras());
         this.startService(intent);
     }
@@ -51,7 +49,6 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onResume() {
         super.onResume();
-
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.addListener(this);
     }
@@ -59,13 +56,18 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onPause() {
         super.onPause();
-
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         app.removeListener(this);
     }
 
+    /**
+     * When the first ticket from the HTSService has been received the URL is
+     * created and then passed to the external media player.
+     * 
+     * @param path
+     * @param ticket
+     */
     private void startPlayback(String path, String ticket) {
-
         String host = getIntent().getStringExtra("serverHostPref");
         Integer port = getIntent().getIntExtra("httpPortPref", 9981);
         Integer resolution = getIntent().getIntExtra("resolutionPref", 288);
@@ -76,6 +78,7 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         String scodec = getIntent().getStringExtra("scodecPref");
         String mime = "application/octet-stream";
 
+        // Set the correct MIME type. For 'pass' we assume MPEG-TS
         if ("mpegps".equals(container)) {
             mime = "video/mp2p";
         } else if ("mpegts".equals(container)) {
@@ -83,9 +86,11 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         } else if ("matroska".equals(container)) {
             mime = "video/x-matroska";
         } else if ("pass".equals(container)) {
-            mime = "video/mp2t"; //assume mpegts
+            mime = "video/mp2t";
         }
 
+        // Create the URL for the external media player that is required to get
+        // the stream from the server
         String url = "http://" + host + ":" + port + path;
         url += "?ticket=" + ticket;
         url += "&mux=" + container;
@@ -96,16 +101,16 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
             url += "&vcodec=" + vcodec;
             url += "&scodec=" + scodec;
         }
-        Log.i("ExternalPlaybackActivity", "Playing URL " + url);
 
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
         playbackIntent.setDataAndType(Uri.parse(url), mime);
+        Log.d("TVHGuide", "Playing URL " + url);
 
+        // Start playing the video now in the UI thread
         this.runOnUiThread(new Runnable() {
             public void run() {
                 try {
                     startActivity(playbackIntent);
-
                 } catch (Throwable t) {
                     Log.e("TVHGuide", "Can't execute external media player", t);
 
@@ -115,15 +120,12 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
                     .setMessage(R.string.show_play_store)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                
                             try {
                                 Intent installIntent = new Intent(Intent.ACTION_VIEW);
                                 installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
                                 startActivity(installIntent);
-
                             } catch (Throwable t2) {
                                 Log.e("TVHGuide", "Can't query market", t2);
-
                             } finally {
                                 finish();
                             }
@@ -133,12 +135,16 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
                             finish();
                         }
                     }).show();
-
                 }
             }
         });
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
+    @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_TICKET_ADD)) {
             HttpTicket t = (HttpTicket) obj;

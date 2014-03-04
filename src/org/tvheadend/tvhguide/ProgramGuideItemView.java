@@ -1,6 +1,7 @@
 package org.tvheadend.tvhguide;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.Program;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
@@ -21,7 +23,6 @@ import android.widget.TextView;
 
 public class ProgramGuideItemView extends LinearLayout {
 
-    @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideItemView.class.getSimpleName();
 
     private LinearLayout layout;
@@ -36,8 +37,8 @@ public class ProgramGuideItemView extends LinearLayout {
     // width will be reduced.
     private int displayWidthRemaining;
 
-    // Only show details like the duration when the program width in is this
-    // wide in pixels
+    // Only show details like the duration when 
+    // the program width in is this wide in pixels
     private final static int MIN_DISPLAY_WIDTH_FOR_DETAILS = 70;
 
     // The ratio how many minutes a pixel represents on the screen.
@@ -46,6 +47,7 @@ public class ProgramGuideItemView extends LinearLayout {
     private ProgramLoadingInterface activityInterface;
     private ProgramContextMenuInterface fragmentInterface;
 
+    // Status variables that define where the program is located within the given time.
     private final static int PROGRAM_TIMESLOT_ERROR = 0;
     private final static int PROGRAM_MOVES_INTO_TIMESLOT = 1;
     private final static int PROGRAM_IS_WITHIN_TIMESLOT = 2;
@@ -85,13 +87,13 @@ public class ProgramGuideItemView extends LinearLayout {
     }
 
     /**
-     * Adds all programs from the channel program guide to the current view.
+     * Adds all programs from the program guide to the current view.
      * Only those programs that are within the defined time slot are added. If
-     * the last program was reached a call to load more programs is made.
+     * the last program was reached, a call to load more programs is made.
      */
     public void addPrograms() {
 
-        // Clear all previously shown programs 
+        // Clear all previously shown programs
         layout.removeAllViews();
         
         // Show that no programs are available
@@ -105,17 +107,19 @@ public class ProgramGuideItemView extends LinearLayout {
         // width will be reduced.
         displayWidthRemaining = displayWidth;
 
-        // Now show the program data within the given times
-        Iterator<Program> it = channel.epg.iterator();
-        Program p = null;
-
+        // Indicates that at least one program has been added
         boolean programAdded = false;
+        // Indicated that the last program in the list has 
+        // been found. More program need to be loaded.
         boolean lastProgramFound = false;
+        // Defaults
         int programType = PROGRAM_TIMESLOT_ERROR;
         int programsAddedCounter = 0;
         
         try {
             // Go through all programs and add them to the view
+            Iterator<Program> it = channel.epg.iterator();
+            Program p = null;
             while (it.hasNext()) {
                 p = it.next();
 
@@ -130,9 +134,9 @@ public class ProgramGuideItemView extends LinearLayout {
 				// Increase the counter which is required to fill in placeholder
 				// programs in case the first program in the guide data is
 				// already within the time slot and not one that moves into one.
-                if (programAdded)
+                if (programAdded) {
                 	programsAddedCounter += 1;
-
+                }
                 // Check if there is more guide data available
                 lastProgramFound = !it.hasNext();
                 
@@ -141,12 +145,13 @@ public class ProgramGuideItemView extends LinearLayout {
 				// is the last one that fits into or overlaps the time slot.
                 if ((programType == PROGRAM_IS_WITHIN_TIMESLOT && lastProgramFound) ||
 	                programType == PROGRAM_MOVES_OUT_OF_TIMESLOT || 
-                    programType == PROGRAM_OVERLAPS_TIMESLOT)
+                    programType == PROGRAM_OVERLAPS_TIMESLOT) {
                     break;
+                }
             }
         }
-        catch (Exception e) {
-            
+        catch (NoSuchElementException e) {
+            Log.e(TAG, "The selected channel contains no programs.");
         }
 
         // Add the loading indication
@@ -166,41 +171,44 @@ public class ProgramGuideItemView extends LinearLayout {
     }
 
     /**
+     * Returns the type of the program with respect to its starting and end
+     * times and the given time slot. The program can either be outside of the
+     * time, overlap it partly or be within the time.
      * 
      * @param p
      * @return
      */
     private int getProgramType(final Program p) {
-    	
-    	final long programStartTime = p.start.getTime();
+        final long programStartTime = p.start.getTime();
         final long programEndTime = p.stop.getTime();
 
-    	// The program starts on the previous day and goes over midnight into
-        // the current one. The end time must be within this time slot.
         if (programStartTime < startTime && programEndTime > startTime && programEndTime < endTime) {
-        	return PROGRAM_MOVES_INTO_TIMESLOT;
-        }
-        // The program is with the current day. The start or end time is within
-        // the time slot.
-        else if (programStartTime >= startTime && programEndTime <= endTime) {
-        	return PROGRAM_IS_WITHIN_TIMESLOT;
-        }
-        // The program starts on the current day and moves over midnight into 
-        // the next one. The start time must be within this time slot
-        else if (programStartTime > startTime && programStartTime < endTime && programEndTime > endTime) {
-        	return PROGRAM_MOVES_OUT_OF_TIMESLOT;
-        }
-        // The program starts before and ends after the time slot times
-        else if (programStartTime < startTime && programEndTime > endTime) {
-        	return PROGRAM_OVERLAPS_TIMESLOT;
-        }
-        // The program start and ends times are not part of the time slot
-        else {
-        	return PROGRAM_OUTSIDE_OF_TIMESLOT;
+            // The program starts on the previous day and goes over midnight
+            // into the current one. The end time must be within this time slot.
+            return PROGRAM_MOVES_INTO_TIMESLOT;
+        } else if (programStartTime >= startTime && programEndTime <= endTime) {
+            // The program is with the current day. The start or end time is
+            // within the time slot.
+            return PROGRAM_IS_WITHIN_TIMESLOT;
+        } else if (programStartTime > startTime && programStartTime < endTime
+                && programEndTime > endTime) {
+            // The program starts on the current day and moves over midnight
+            // into the next one. The start time must be within this time slot
+            return PROGRAM_MOVES_OUT_OF_TIMESLOT;
+        } else if (programStartTime < startTime && programEndTime > endTime) {
+            // The program starts before and ends after the time slot times
+            return PROGRAM_OVERLAPS_TIMESLOT;
+        } else {
+            // The program start and ends times are not part of the time slot
+            return PROGRAM_OUTSIDE_OF_TIMESLOT;
         }
     }
 
     /**
+     * Depending on the given program type a call to the method to get the
+     * required width of the program within the view is made. Then the method to
+     * add the program is made and the remaining width for the other programs is
+     * reduced.
      * 
      * @param program
      * @param programType
@@ -213,7 +221,6 @@ public class ProgramGuideItemView extends LinearLayout {
 
         switch (programType) {
         case PROGRAM_MOVES_INTO_TIMESLOT:
-
         	addCurrentProgramToView(program, width, false);
             displayWidthRemaining -= width;
         	break;
@@ -223,12 +230,10 @@ public class ProgramGuideItemView extends LinearLayout {
 			// within the time slot it would start somewhere in the middle of
 			// the view. So we need to fill in a placeholder program. 
 			if (programsAddedCounter == 0) {
-
 				final double durationTime = ((program.start.getTime() - startTime) / 1000 / 60);
 				final int w = (int) (durationTime * pixelsPerMinute);
 				addCurrentProgramToView(null, w, false);
 			}
-        	
         	addCurrentProgramToView(program, width, false);
             displayWidthRemaining -= width;
         	break;
@@ -238,32 +243,29 @@ public class ProgramGuideItemView extends LinearLayout {
 			// within the time slot it would start somewhere in the middle of
 			// the view. So we need to fill in a placeholder program. 
         	if (programsAddedCounter == 0) {
-
         		final double durationTime = ((program.start.getTime() - startTime) / 1000 / 60);
         		final int w = (int) (durationTime * pixelsPerMinute);
         		addCurrentProgramToView(null, w, false);
         	}
-
         	// Set the width to the remaining width to indicate for the next
 			// program (by the program logic no additional program will be
 			// added) there is not space left. The boolean flag will let the
 			// layout use the full space instead of the given width.
-            if (width >= displayWidthRemaining)
+            if (width >= displayWidthRemaining) {
                 width = displayWidthRemaining;
-
+            }
             addCurrentProgramToView(program, width, true);
             displayWidthRemaining -= width;
         	break;
         	
         case PROGRAM_OVERLAPS_TIMESLOT:
-
 			// Set the width to the remaining width to indicate for the next
 			// program (by the program logic no additional program will be
 			// added) there is not space left. The boolean flag will let the
 			// layout use the full space instead of the given width.
-        	if (width >= displayWidthRemaining)
+        	if (width >= displayWidthRemaining) {
                 width = displayWidthRemaining;
-
+        	}
             addCurrentProgramToView(program, width, true);
             displayWidthRemaining -= width;
         	break;
@@ -274,35 +276,36 @@ public class ProgramGuideItemView extends LinearLayout {
     }
 
     /**
+     * Calculates from the length of the program the required width in pixels.
+     * The factor pixels per minute is also considered which depends on the
+     * setting how many hours the current time slot shall show.
      * 
      * @param p
      * @param programType
      * @return
      */
     private int getProgramLayoutWidth(final Program p, final int programType) {
-    	
     	final long programStartTime = p.start.getTime();
         final long programEndTime = p.stop.getTime();
         final double durationTime = ((p.stop.getTime() - p.start.getTime()) / 1000 / 60);
-        
         int offset = 0;
         int width = 0;
-        
+
         switch (programType) {
         case PROGRAM_MOVES_INTO_TIMESLOT:
         	offset = (int) (durationTime - ((startTime - programStartTime) / 1000 / 60));
             width = (int) (offset * pixelsPerMinute);   
         	break;
-        	
+
         case PROGRAM_IS_WITHIN_TIMESLOT:
         	width = (int) (durationTime * pixelsPerMinute);
         	break;
-        	
+
         case PROGRAM_MOVES_OUT_OF_TIMESLOT:
         	offset = (int) (durationTime - ((programEndTime - endTime)) / 1000 / 60);
             width = (int) (offset * pixelsPerMinute);
         	break;
-        	
+
         case PROGRAM_OVERLAPS_TIMESLOT:
         	offset = (int) (durationTime - ((programEndTime - endTime)) / 1000 / 60);
             width = (int) (offset * pixelsPerMinute);
@@ -311,13 +314,12 @@ public class ProgramGuideItemView extends LinearLayout {
         default:
         	break;
         }
-        
         return width;
     }
 
     /**
-     * Creates the views and layout for the given program and adds all
-     * information to the views.
+     * Creates the views and layout for the given program and adds all required
+     * information to it.
      * 
      * @param p
      * @param layoutWidth
@@ -336,27 +338,25 @@ public class ProgramGuideItemView extends LinearLayout {
             LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(layoutWidth, LayoutParams.MATCH_PARENT);
             itemLayout.setLayoutParams(parms);
         }
-        
+
         // Show the placeholder if there is no program
         if (p == null) {
         	title.setText(R.string.unknown);
         	state.setVisibility(View.GONE);
         	duration.setVisibility(View.GONE);
         }
-        
+
         if (p != null) {
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
 	        Utils.setState(state, p.recording);
-        
+
 	        // Only show the duration if the layout is wide enough
 	        if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {
 	            Utils.setDuration(duration, p.start, p.stop);
-	        }
-	        else {
+	        } else {
 	            duration.setVisibility(View.GONE);
 	        }
-	
 	        // Create the context menu so that the user can
 	        // record or do other stuff with the selected program
 	        itemLayout.setOnCreateContextMenuListener((new OnCreateContextMenuListener() {
@@ -385,7 +385,7 @@ public class ProgramGuideItemView extends LinearLayout {
 	                }
 	            }
 	        }));
-	        
+
 	        // Add the listener to the layout so that a 
 	        // click will show the program details activity
 	        itemLayout.setOnClickListener(new OnClickListener() {
@@ -399,7 +399,6 @@ public class ProgramGuideItemView extends LinearLayout {
 	            }
 	        });
         }
-
         layout.addView(v);
     }
 

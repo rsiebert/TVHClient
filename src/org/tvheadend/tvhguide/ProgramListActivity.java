@@ -59,16 +59,12 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
     
     @Override
     public void onCreate(Bundle icicle) {
-        
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-        
         super.onCreate(icicle);
         setContentView(R.layout.list_layout);
         
         TVHGuideApplication app = (TVHGuideApplication) getApplication();
         channel = app.getChannel(getIntent().getLongExtra("channelId", 0));
-
         if (channel == null) {
             finish();
             return;
@@ -83,9 +79,9 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
         // Show or hide the channel icon if required
         boolean showIcon = Utils.showChannelIcons(this);
         actionBar.setDisplayUseLogoEnabled(showIcon);
-        if (showIcon)
+        if (showIcon) {
             actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
-        
+        }
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
         prListView = (ListView) findViewById(R.id.item_list);
@@ -109,13 +105,11 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showProgramDetails(position);
             }
-            
         });
         
         prList = new ArrayList<Program>();
         prAdapter = new ProgramListAdapter(this, prList);
         prListView.setAdapter(prAdapter);
-
         registerForContextMenu(prListView);
     }
 
@@ -132,7 +126,6 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
         prList.addAll(channel.epg);
         prAdapter.sort();
         prAdapter.notifyDataSetChanged();
-
         actionBar.setSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
     }
 
@@ -257,13 +250,18 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
         return true;
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
+    @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_ADD)) {
             
             // Increase the counter that will allow loading more programs.
-            if (++newProgramsLoadedCounter >= newProgramsToLoad)
+            if (++newProgramsLoadedCounter >= newProgramsToLoad) {
                 isLoading  = false;
-            
+            }
             // A new program has been added
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -310,16 +308,12 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
         }
     }
 
-    /**
-     * 
-     */
     protected void loadMorePrograms() {
-
         // Do not load more programs if we are already doing it. This avoids
         // calling the service for nothing and reduces the used bandwidth.
-        if (isLoading)
+        if (isLoading) {
             return;
-        
+        }
         isLoading = true;
         Utils.loadMorePrograms(this, newProgramsToLoad, channel);
     }

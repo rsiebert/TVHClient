@@ -56,17 +56,17 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
         // Return if frame for this fragment doesn't
         // exist because the fragment will not be shown.
-        if (container == null)
+        if (container == null) {
             return null;
-        
+        }
         View v = inflater.inflate(R.layout.list_layout, container, false);
         recListView = (ListView) v.findViewById(R.id.item_list);
         
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
-        if (bundle != null)
+        if (bundle != null) {
             tabIndex = bundle.getInt("tabIndex", 0);
-        
+        }
         return v;
     }
     
@@ -79,7 +79,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         recAdapter = new RecordingListAdapter(getActivity(), recList);
         recListView.setAdapter(recAdapter);
         registerForContextMenu(recListView);
-
+        // Set the listener to show the recording details activity when the user
+        // has selected a recording
         recListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -143,9 +144,9 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      
         // The context menu is triggered for all fragments in a fragment pager.
         // Do nothing if this fragment is not visible.
-        if (!getUserVisibleHint())
+        if (!getUserVisibleHint()) {
             return super.onContextItemSelected(item);
-
+        }
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Recording rec = recAdapter.getItem(info.position);
@@ -178,6 +179,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
     }
 
+    /**
+     * Show that either no connection (and no data) is available, the data is
+     * loaded or calls the method to display it.
+     * 
+     * @param loading
+     */
     private void setLoading(boolean loading) {
         if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
             // Clear any channels in the list and 
@@ -185,8 +192,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             recAdapter.clear();
             recAdapter.notifyDataSetChanged();
             ((RecordingListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
-        } 
-        else {
+        } else {
             if (loading) {
                 recAdapter.clear();
                 recAdapter.notifyDataSetChanged();
@@ -197,6 +203,9 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
     }
 
+    /**
+     * Fills the list with the available recordings.
+     */
     private void populateList() {
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
         recList.clear();
@@ -207,15 +216,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                     rec.error == null &&
                     rec.state.equals("completed")) {
                 recList.add(rec);
-            }
-            else if (tabIndex == 1 &&
+            } else if (tabIndex == 1 &&
                     rec.error == null &&
                     (rec.state.equals("scheduled") || 
                      rec.state.equals("recording") ||
                      rec.state.equals("autorec"))) {
                 recList.add(rec);
-            }
-            else if (tabIndex == 2 &&
+            } else if (tabIndex == 2 &&
                     (rec.error != null ||
                     (rec.state.equals("missed") || rec.state.equals("invalid")))) {
                 recList.add(rec);
@@ -225,7 +232,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         recAdapter.notifyDataSetChanged();
         ((RecordingListTabsActivity)getActivity()).updateTitle(tabIndex, recList.size());
     }
-    
+
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
+    @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
             getActivity().runOnUiThread(new Runnable() {
@@ -260,9 +272,9 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     }
 
     public int getRecordingCount() {
-        if (recList != null)
+        if (recList != null) {
             return recList.size();
-        
+        }
         return 0;
     }
 }

@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
+        android:id="@+id/menu_play"
+        android:icon="?attr/ic_menu_play"
+        android:title="@string/menu_play"
+        app:showAsAction="ifRoom|withText"/>
+    <item
         android:id="@+id/menu_search"
         android:icon="?attr/ic_menu_search"
         android:title="@string/menu_search"
@@ -11,9 +16,5 @@
         android:id="@+id/menu_settings"
         android:icon="?attr/ic_menu_settings"
         android:title="@string/menu_settings"/>
-    <item
-        android:id="@+id/menu_play"
-        android:icon="?attr/ic_menu_play"
-        android:title="@string/menu_play"/>
 
 </menu>

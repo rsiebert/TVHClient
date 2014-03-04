@@ -20,6 +20,8 @@ package org.tvheadend.tvhguide;
 
 import java.util.Locale;
 
+import org.tvheadend.tvhguide.ChangeLogDialog.ChangeLogDialogInterface;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -33,7 +35,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ChannelListTabsActivity extends ActionBarActivity {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface {
 
     private ActionBar actionBar = null;
     private boolean reconnect = false;
@@ -55,13 +57,29 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         DatabaseHelper.init(this.getApplicationContext()); 
         changeLogDialog = new ChangeLogDialog(this);
 
-        // setup action bar for tabs
+        // Setup action bar for tabs
         actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
 
-        // Create a tab listener that is called when the user changes tabs.
+        // Show the change log once when the application was upgraded.
+        // In any other case show the selected fragment.
+        if (changeLogDialog.firstRun()) {
+            changeLogDialog.getLogDialog().show();
+        }
+        else {
+            createTabListeners(savedInstanceState);
+        }        
+    }
+
+    /**
+     * Creates the tab listener that is called when the user has selected or
+     * unselected a tab. In the latter tab position will be saved.
+     * 
+     * @param savedInstanceState
+     */
+    protected void createTabListeners(Bundle savedInstanceState) {
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
                 handleTabSelection(tab, ft);
@@ -76,7 +94,6 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             public void onTabUnselected(Tab tab, FragmentTransaction ft) {
                 // Save the position of the tab that has been unselected.
                 prevTabPosition = tab.getPosition();
-                
                 // Detach the channel list fragment, because another will be attached
                 Fragment prevFragment = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
                 if (prevFragment != null) {
@@ -85,7 +102,7 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             }
         };
 
-        // Add the tabs
+        // Add the tabs to the action bar
         Tab tab = actionBar.newTab().setText(R.string.channels).setTabListener(tabListener);
         actionBar.addTab(tab);
         tab = actionBar.newTab().setText(R.string.recordings).setTabListener(tabListener);
@@ -100,12 +117,11 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             int index = savedInstanceState.getInt("selected_channel_tab_index", 0);
             actionBar.setSelectedNavigationItem(index);
         }
-        
-        if (changeLogDialog.firstRun())
-            changeLogDialog.getLogDialog().show();
     }
 
     /**
+     * Depending on the selected tab, the channel or recording list, the program
+     * guide or status screen is shown.
      * 
      * @param tab
      * @param ft
@@ -113,11 +129,12 @@ public class ChannelListTabsActivity extends ActionBarActivity {
     protected void handleTabSelection(Tab tab, FragmentTransaction ft) {
         switch (tab.getPosition()) {
         case 0:
-            // Checks if the fragment is already initialized.
-            // If not, it will be instantiated and added to the
-            // activity. If it exists, it will simply attached to show it.
+            // Show the channel list screen.
             Fragment currentFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
             if (currentFrag == null) {
+                // If the fragment is not already initialized, it will be
+                // instantiated and added to the activity. If it exists, it will
+                // simply attached to show it.
                 Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
                 ft.add(android.R.id.content, fragment, tab.getText().toString());
             }
@@ -126,18 +143,22 @@ public class ChannelListTabsActivity extends ActionBarActivity {
             }
             break;
         case 1:
-            // Show the list of recordings
+            // Show the list of recordings screen
             Intent recIntent = new Intent(this, RecordingListTabsActivity.class);
             startActivity(recIntent);
             break;
         case 2:
-            // Show the program guide
+            // Show the program guide screen
             Intent epgIntent = new Intent(this, ProgramGuideTabsActivity.class);
             startActivity(epgIntent);
             break;
         case 3:
+            // Show the status screen
         	Fragment statusFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
             if (statusFrag == null) {
+                // If the fragment is not already initialized, it will be
+                // instantiated and added to the activity. If it exists, it will
+                // simply attached to show it.
                 Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
                 ft.add(android.R.id.content, fragment, tab.getText().toString());
             }
@@ -176,13 +197,12 @@ public class ChannelListTabsActivity extends ActionBarActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Disable the refresh menu if no connection is 
-        // available or the loading process is already active
+        // available or the loading process is active
         MenuItem item = menu.findItem(R.id.menu_refresh);
         if (item != null) {
             TVHGuideApplication app = (TVHGuideApplication) getApplication();
             item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
         }
-       
         return true;
     }
 
@@ -212,10 +232,9 @@ public class ChannelListTabsActivity extends ActionBarActivity {
 
         case R.id.menu_connections:
             // Save the current tab position so we show the previous tab
-            // again when we return from the settings menu.
+            // again when we return from the settings menu. Then show
+            // the manage connections activity
             prevTabPosition = actionBar.getSelectedNavigationIndex();
-            // Show the manage connections activity where
-            // the user can choose a connection
             intent = new Intent(this, SettingsManageConnectionsActivity.class);
             startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
             return true;
@@ -225,6 +244,9 @@ public class ChannelListTabsActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Reloads all data if the connection details have changed or a new one was created.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
@@ -240,5 +262,10 @@ public class ChannelListTabsActivity extends ActionBarActivity {
 
     public void setActionBarSubtitle(final String subtitle) {
         actionBar.setSubtitle(subtitle);
+    }
+
+    @Override
+    public void dialogDismissed() {
+        createTabListeners(null);
     }
 }

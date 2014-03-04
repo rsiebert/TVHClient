@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,13 +49,11 @@ import android.widget.TextView;
 
 public class ProgramGuideListFragment extends Fragment implements HTSListener, ProgramContextMenuInterface {
 
-    @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideListFragment.class.getSimpleName();
 
     private ProgramGuideListAdapter adapter;
     private ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
-    private ChannelTag currentTag;
     private ListView listView;
     private LinearLayout titleLayout;
     private TextView titleDateText;
@@ -71,8 +70,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
         // Return if frame for this fragment doesn't
         // exist because the fragment will not be shown.
-        if (container == null)
+        if (container == null) {
             return null;
+        }
 
         View v = inflater.inflate(R.layout.program_guide_data_list, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
@@ -82,10 +82,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         titleHours = (TextView) v.findViewById(R.id.pager_title_hours);
         currentTimeIndication = (ImageView) v.findViewById(R.id.current_time);
 
-        // Get the passed arguments
-        bundle = getArguments();
-
         // Set the date and the time slot hours in the title of the fragment
+        bundle = getArguments();
         if (bundle != null) {
 
             final long startTime = bundle.getLong("startTime", 0);
@@ -93,26 +91,22 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             final long endTime = bundle.getLong("endTime", 0);
             final Date endDate = new Date(endTime);
 
-            // Set the current date in the title
+            // Set the current date and the date as text in the title
             Utils.setDate(titleDateText, startDate);
-
             final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
             titleDate.setText("(" + sdf2.format(startDate) + ")");
-            
-            // Get the usable width
-            DisplayMetrics displaymetrics = new DisplayMetrics();
-            activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
             // Hide the date text if it shows the date time or the display is too narrow
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             if (titleDateText.getText().equals(titleDate.getText()) || 
                 ((int) displaymetrics.widthPixels < 400)) {
                 titleDate.setVisibility(View.GONE);
             }
-            
+
             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
             final String start = sdf.format(startDate);
             final String end = sdf.format(endDate);
-
             titleHours.setText(start + " - " + end);
         }
         return v;
@@ -121,11 +115,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         try {
             this.activity = (ProgramGuideTabsActivity) activity;
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString());
         }
     }
@@ -138,17 +130,14 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         adapter = new ProgramGuideListAdapter(getActivity(), this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
 
+        // When the user has scrolled the program guide data list, inform the
+        // activity about it so it can also scroll the channel list 
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_IDLE) {
                     if (activity != null) {
                         activity.onScrollChanged(view.getFirstVisiblePosition());
-
-                        // Set the scroll position of the list view to
-                        // avoid having the list item stop in the middle
-                        // listView.setSelection(view.getFirstVisiblePosition());
-                        // scrollListViewTo(activity.getScrollingSelectionIndex());
                     }
                 }
             }
@@ -156,21 +145,19 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 // TODO Auto-generated method stub
-
             }
         });
 
         listView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     int index = listView.getFirstVisiblePosition();
                     View v = listView.getChildAt(0);
                     int position = (v == null) ? 0 : v.getTop();
-                    
-                    if (activity != null)
+                    if (activity != null) {
                         activity.onScrollPositionChanged(index, position);
+                    }
                 }
                 return false;
             }
@@ -186,18 +173,20 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             }
         });
 
+        // Create the dialog where the user can select the different tags
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.menu_tags);
-
-        tagAdapter = new ArrayAdapter<ChannelTag>(getActivity(), android.R.layout.simple_dropdown_item_1line,
+        tagAdapter = new ArrayAdapter<ChannelTag>(getActivity(), 
+                android.R.layout.simple_dropdown_item_1line,
                 new ArrayList<ChannelTag>());
-
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
-                setCurrentTag(tagAdapter.getItem(pos));
                 Utils.setChannelTagId(pos);
-
-                activity.onChannelTagChanged();
+                populateList();
+                ChannelListFragment channelFrag = (ChannelListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+                if (channelFrag != null) {
+                    channelFrag.populateList();
+                }
             }
         });
         tagDialog = builder.create();
@@ -213,9 +202,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                     public void run() {
                         try {
                             setCurrentTimeIndication();
-                        }
-                        catch (Exception e) {
-                            // TODO Auto-generated catch block
+                        } catch (Exception e) {
+                            Log.e(TAG, "Could not set the current time indication (vertical line).");
                         }
                     }
                 });
@@ -225,8 +213,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     }
 
     public void scrollListViewTo(int index) {
-        if (listView != null)
+        if (listView != null) {
             listView.setSelection(index);
+        }
     }
 
     @Override
@@ -235,18 +224,14 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         inflater.inflate(R.menu.epg_menu, menu);
     }
 
-    private void setCurrentTag(ChannelTag tag) {
-        currentTag = tag;
-        if (tag == null) {
-            activity.setActionBarSubtitle(getString(R.string.all_channels));
-        }
-        else {
-            activity.setActionBarSubtitle(currentTag.name);
-        }
-    }
-
+    /**
+     * Fills the list with the available program guide data from the available
+     * channels. Only the channels that are part of the selected tag are shown.
+     */
     private void populateList() {
+
         TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
+        ChannelTag currentTag = Utils.getChannelTag(app);
         adapter.clear();
         for (Channel ch : app.getChannels()) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
@@ -255,7 +240,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         }
         adapter.sort();
         adapter.notifyDataSetChanged();
-
+        
         // Set the scroll position of the list view
         listView.setSelection(activity.getScrollingSelectionIndex());
     }
@@ -285,17 +270,14 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     }
 
     /**
-     * Shows a vertical line in the first screen of the program guide to
-     * indicate the current time.
+     * Shows a vertical line in the program guide to indicate the current time.
+     * This line is only visible in the first screen where the current time is
+     * shown.
      */
     private void setCurrentTimeIndication() {
-
         if (bundle != null && currentTimeIndication != null) {
             int tabIndex = bundle.getInt("tabIndex", 0);
-
-            // Only show the current time in the first fragment
             if (tabIndex == 0) {
-
                 // Get the difference between the current time and the given
                 // start time. Calculate from this value in minutes the width in
                 // pixels. This will be horizontal offset for the time
@@ -319,8 +301,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                 RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(3, LayoutParams.MATCH_PARENT);
                 parms.setMargins(offset, titleLayoutRect.height(), 0, 0);
                 currentTimeIndication.setLayoutParams(parms);
-            }
-            else {
+            } else {
                 currentTimeIndication.setVisibility(View.GONE);
             }
         }
@@ -334,44 +315,31 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     }
 
     /**
-     * Shows either that the channel data is still being loaded or fills the
-     * list with the available channel data. Additionally only the channels with
-     * the previously selected tag will be shown. This happens usually after an
-     * orientation change (screen rotation).
+     * Show that either no connection (and no data) is available, the data is
+     * loaded or calls the method to display it.
      * 
      * @param loading
      */
     public void setLoading(boolean loading) {
 
-        if (DatabaseHelper.getInstance() != null && DatabaseHelper.getInstance().getSelectedConnection() == null) {
-            // Clear any channels in the list and
-            // show that we have no connection
+        if (DatabaseHelper.getInstance() != null && 
+                DatabaseHelper.getInstance().getSelectedConnection() == null) {
             adapter.clear();
             adapter.notifyDataSetChanged();
             activity.setActionBarSubtitle(getString(R.string.no_connections));
-        }
-        else {
+        } else {
             if (loading) {
-                // Clear any channels in the list and
-                // show that we are still loading data.
                 adapter.clear();
                 adapter.notifyDataSetChanged();
                 activity.setActionBarSubtitle(getString(R.string.loading));
-            }
-            else {
+            } else {
                 // Fill the tag adapter with the available channel tags
                 TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
                 tagAdapter.clear();
                 for (ChannelTag t : app.getChannelTags()) {
                     tagAdapter.add(t);
                 }
-
-                // Check if tags exist and set the previously used one
-                if (tagAdapter.getCount() > Utils.getChannelTagId())
-                    currentTag = tagAdapter.getItem(Utils.getChannelTagId());
-
-                // Update the action bar text and fill the channel list
-                setCurrentTag(currentTag);
+                // Update the list with the new guide data
                 populateList();
             }
         }
@@ -379,9 +347,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-
-        if (selectedProgram == null)
+        if (selectedProgram == null) {
             return true;
+        }
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
@@ -409,6 +377,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         }
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHGuideApplication.ACTION_LOADING)) {
             getActivity().runOnUiThread(new Runnable() {
@@ -440,13 +412,18 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                 public void run() {
                     adapter.update((Channel) obj);
 
-                    // Only update the views if list is empty and therefore no
-                    // programs are being loaded from the server. Also show a
-                    // message that the view is being updated. When the update
-                    // is done show the selected channel tag.
+                    // Only update the view if no more programs are being loaded
+                    // from the server. Also show the number of available
+                    // channels from the selected tag in the action bar.
                     if (activity.channelLoadingList.isEmpty()) {
                         adapter.notifyDataSetChanged();
-                        setCurrentTag(currentTag);
+
+                        ChannelListFragment channelFrag = (ChannelListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+                        if (channelFrag != null) {
+                            TVHGuideApplication app = (TVHGuideApplication) getActivity().getApplication();
+                            ChannelTag currentTag = Utils.getChannelTag(app);
+                            channelFrag.updateItemCount(currentTag);
+                        }
                     }
                 }
             });

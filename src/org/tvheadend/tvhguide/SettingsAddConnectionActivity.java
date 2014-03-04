@@ -59,8 +59,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle(R.string.add_connection);
 
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsAddConnectionFragment())
-                .commit();
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsAddConnectionFragment()).commit();
     }
 
     @Override
@@ -136,8 +136,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                 long id = getActivity().getIntent().getLongExtra("id", 0);
                 if (id > 0) {
                     conn = DatabaseHelper.getInstance().getConnection(id);
-                }
-                else {
+                } else {
                     // Create a new connection with these defaults 
                     conn = new Connection();
                     conn.name = "";
@@ -145,7 +144,9 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                     conn.port = 9982;
                     conn.username = "";
                     conn.password = "";
-                    conn.selected = false;
+                    
+                    // If this is the first connection make it active
+                    conn.selected = (DatabaseHelper.getInstance().getConnections().size() == 0) ? true : false;
                 }
             }
 
@@ -160,11 +161,9 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
 
         public void onResume() {
             super.onResume();
-
             // Show the values from the connection object
             // in the summary text of the preferences
             showPreferenceSummary();
-
             // Now register for any changes
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             prefs.registerOnSharedPreferenceChangeListener(this);
@@ -214,7 +213,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-            
             // Update the connection object with the new values
             conn.name = prefName.getText();
             conn.address = prefAddress.getText();
@@ -222,7 +220,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             conn.username = prefUsername.getText();
             conn.password = prefPassword.getText();
             conn.selected = prefSelected.isChecked();
-
             // Show the values from the connection object
             // in the summary text of the preferences
             showPreferenceSummary();
@@ -234,10 +231,9 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * updated.
          */
         private void save() {
-
-            if (!validateName() || !validatePort() || !validateAddress())
+            if (!validateName() || !validatePort() || !validateAddress()) {
                 return;
-
+            }
             // If the current connection is set as selected
             // we need to unselect the previous one.
             if (prefSelected.isChecked()) {
@@ -252,8 +248,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             long id = getActivity().getIntent().getLongExtra("id", 0);
             if (id > 0) {
                 DatabaseHelper.getInstance().updateConnection(conn);
-            }
-            else {
+            } else {
                 DatabaseHelper.getInstance().addConnection(conn);
             }
 
@@ -273,7 +268,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * @return
          */
         private boolean validateName() {
-
             if (conn.name.length() == 0) {
                 Toast.makeText(getActivity(), getString(R.string.pref_name_error_empty), Toast.LENGTH_SHORT).show();
                 return false;
@@ -286,7 +280,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                 Toast.makeText(getActivity(), getString(R.string.pref_name_error_invalid), Toast.LENGTH_SHORT).show();
                 return false;
             }
-
             return true;
         }
 
@@ -298,7 +291,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * @return
          */
         private boolean validateAddress() {
-
             if (conn.address.length() == 0) {
                 Toast.makeText(getActivity(), getString(R.string.pref_host_error_empty), Toast.LENGTH_SHORT).show();
                 return false;
@@ -335,7 +327,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * @return
          */
         private boolean validatePort() {
-
             if (prefPort.getText().length() == 0) {
                 Toast.makeText(getActivity(), getString(R.string.pref_port_error_empty), Toast.LENGTH_SHORT).show();
                 return false;

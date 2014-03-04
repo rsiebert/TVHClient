@@ -42,10 +42,7 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-        // Apply the specified theme
         setTheme(Utils.getThemeId(this));
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recording_layout);
 
@@ -87,12 +84,10 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
         // Set the values
         title.setText(rec.title);
         channelName.setText(rec.channel.name);
-        
         Utils.setState(state, rec);
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
-
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
     }
@@ -127,7 +122,6 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
         case android.R.id.home:
             onBackPressed();
@@ -165,12 +159,15 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
     @Override
     public void onMessage(String action, Object obj) {
         // An existing program has been updated, this is valid for all menu options. 
         if (action.equals(TVHGuideApplication.ACTION_PROGRAMME_UPDATE)) {
             supportInvalidateOptionsMenu();
-            
             // Update the status icon
             ImageView state = (ImageView) findViewById(R.id.state);
             Utils.setState(state, rec);

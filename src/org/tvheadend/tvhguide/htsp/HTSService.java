@@ -218,12 +218,6 @@ public class HTSService extends Service implements HTSConnectionListener {
             case HTSConnection.HTS_AUTH_ERROR:
                 showError(R.string.err_auth);
                 break;
-            case HTSConnection.HTS_SEND_ERROR:
-                showError(R.string.err_sending);
-                break;
-            case HTSConnection.HTS_READ_ERROR:
-                showError(R.string.err_reading);
-                break;
         }
     }
 

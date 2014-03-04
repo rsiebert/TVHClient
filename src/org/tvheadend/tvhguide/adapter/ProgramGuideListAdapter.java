@@ -68,8 +68,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
             holder.timeline = (LinearLayout) view.findViewById(R.id.timeline);
             holder.item = new ProgramGuideItemView(activity, fragment, holder.timeline, bundle);
             view.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 

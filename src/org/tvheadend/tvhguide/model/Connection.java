@@ -8,4 +8,5 @@ public class Connection {
     public String username;
     public String password;
     public boolean selected;
+    public int channelTag;
 }
