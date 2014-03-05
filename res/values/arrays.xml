@@ -71,4 +71,32 @@
         <item>Polski</item>
         <item>Czeski</item>
     </string-array>
+
+    <!-- Colors for the program guide genres, taken from XBMC -->
+
+    <!-- movie drama, orange -->
+	<color name="EPG_MOVIES">#44db7817</color>
+	<!-- news, green -->
+	<color name="EPG_NEWS">#44649a64</color>
+	<!-- show, yellow -->
+	<color name="EPG_SHOWS">#44dbd917</color>
+	<!-- sports, red -->
+	<color name="EPG_SPORTS">#44ed0e28</color>
+	<!-- child, turquoise -->
+	<color name="EPG_CHILD">#4417dbc2</color>
+	<!-- music, bright green -->
+	<color name="EPG_MUSIC">#4441ea4d</color>
+	<!-- arts, blue -->
+	<color name="EPG_ARTS">#440043ec</color>
+	<!-- social, grey -->
+	<color name="EPG_SOCIAL">#44c6c8cb</color>
+	<!-- science, violet -->
+	<color name="EPG_SCIENCE">#449e209e</color>
+	<!-- hobby, grey blue -->
+	<color name="EPG_HOBBY">#449393cf</color>
+	<!-- special, cyan -->
+	<color name="EPG_SPECIAL">#441da1b1</color>
+	<!-- other/unknown, dark grey -->
+	<color name="EPG_OTHER">#447f8185</color>
+
 </resources>

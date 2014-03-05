@@ -8,7 +8,9 @@ import org.tvheadend.tvhguide.model.Program;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -347,6 +349,12 @@ public class ProgramGuideItemView extends LinearLayout {
         }
 
         if (p != null) {
+            
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            if (prefs.getBoolean("showGenreColorsPref", false)) {
+                setGenreBackgroundColor(p, itemLayout);
+            }
+
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
 	        Utils.setState(state, p.recording);
@@ -410,6 +418,59 @@ public class ProgramGuideItemView extends LinearLayout {
     private void addLoadingIndication() {
         View v = inflate(getContext(), R.layout.program_guide_data_item_loading, null);
         layout.addView(v);
+    }
+    
+    /**
+     * Sets the background color of the layout based on the content type. The
+     * first byte of hex number represents the main category.
+     * 
+     * @param p
+     * @param layout
+     */
+    private void setGenreBackgroundColor(Program p, LinearLayout layout) {
+        int type = 0;
+        if (p.contentType > 0) {
+            type = ((p.contentType) / 16) - 1;
+        }
+
+        switch (type) {
+        case 1:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_MOVIES));
+            break;
+        case 2:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_NEWS));
+            break;
+        case 3:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SHOWS));
+            break;
+        case 4:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SPORTS));
+            break;
+        case 5:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_CHILD));
+            break;
+        case 6:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_MUSIC));
+            break;
+        case 7:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_ARTS));
+            break;
+        case 8:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SOCIAL));
+            break;
+        case 9:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SCIENCE));
+            break;
+        case 10:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_HOBBY));
+            break;
+        case 11:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SPECIAL));
+            break;
+        case 12:
+            layout.setBackgroundColor(getResources().getColor(R.color.EPG_OTHER));
+            break;
+        }
     }
 
     public interface ProgramLoadingInterface {

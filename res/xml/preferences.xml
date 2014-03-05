@@ -36,6 +36,11 @@
 	    <PreferenceScreen
             android:title="@string/pref_program_guide"
             android:summary="@string/pref_program_guide_sum" >
+            <CheckBoxPreference
+	            android:defaultValue="false"
+	            android:key="showGenreColorsPref"
+	            android:summary="@string/pref_genre_colors_sum"
+	            android:title="@string/pref_genre_colors" />
 	        <EditTextPreference
 	            android:id="@+id/pref_epg_hours_visible"
 	            android:name="@string/pref_epg_hours_visible"
