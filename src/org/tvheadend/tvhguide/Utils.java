@@ -338,6 +338,7 @@ public class Utils {
      */
     public static void setDuration(TextView duration, final Date start, final Date stop) {
         if (duration != null) {
+            duration.setVisibility(View.VISIBLE);
             // Get the start and end times so we can show them
             // and calculate the duration. Then show the duration in minutes
             final double durationTime = ((stop.getTime() - start.getTime()) / 1000 / 60);
@@ -356,6 +357,7 @@ public class Utils {
      */
     public static void setTime(TextView time, final Date start, final Date stop) {
         if (time != null) {
+            time.setVisibility(View.VISIBLE);
             final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
             final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
             time.setText(startTime + " - " + endTime);
