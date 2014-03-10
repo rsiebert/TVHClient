@@ -9,6 +9,8 @@ import org.tvheadend.tvhguide.model.Program;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -43,6 +45,9 @@ public class ProgramGuideItemView extends LinearLayout {
     // the program width in is this wide in pixels
     private final static int MIN_DISPLAY_WIDTH_FOR_DETAILS = 70;
 
+    // The width of the vertical line that indicates the type of genre
+    private final static int SHAPE_STROKE_WIDTH = 8;
+    
     // The ratio how many minutes a pixel represents on the screen.
     private float pixelsPerMinute;
 
@@ -97,7 +102,7 @@ public class ProgramGuideItemView extends LinearLayout {
 
         // Clear all previously shown programs
         layout.removeAllViews();
-        
+
         // Show that no programs are available
         if (channel == null || channel.epg.isEmpty()) {
             addEmptyProgramToView();
@@ -349,12 +354,8 @@ public class ProgramGuideItemView extends LinearLayout {
         }
 
         if (p != null) {
-            
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            if (prefs.getBoolean("showGenreColorsPref", false)) {
-                setGenreBackgroundColor(p, itemLayout);
-            }
 
+            setGenreBackgroundColor(p, itemLayout);
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
 	        Utils.setState(state, p.recording);
@@ -425,51 +426,70 @@ public class ProgramGuideItemView extends LinearLayout {
      * first byte of hex number represents the main category.
      * 
      * @param p
-     * @param layout
+     * @param itemLayout
      */
-    private void setGenreBackgroundColor(Program p, LinearLayout layout) {
-        int type = 0;
-        if (p.contentType > 0) {
-            type = ((p.contentType) / 16) - 1;
+    private void setGenreBackgroundColor(final Program p, LinearLayout itemLayout) {
+
+        // Make the vertical line invisible as a default
+        int color = android.R.color.transparent;
+        LayerDrawable layers = (LayerDrawable) itemLayout.getBackground();
+        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre_shape));
+        shape.setStroke(SHAPE_STROKE_WIDTH, color);
+        
+        // Don't set colors if no genre type is given
+        if (p.contentType == 0) {
+            return;
         }
 
+        int type = ((p.contentType) / 16) - 1;
         switch (type) {
         case 1:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_MOVIES));
+            color = R.color.EPG_MOVIES;
             break;
         case 2:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_NEWS));
+            color = R.color.EPG_NEWS;
             break;
         case 3:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SHOWS));
+            color = R.color.EPG_SHOWS;
             break;
         case 4:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SPORTS));
+            color = R.color.EPG_SPORTS;
             break;
         case 5:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_CHILD));
+            color = R.color.EPG_CHILD;
             break;
         case 6:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_MUSIC));
+            color = R.color.EPG_MUSIC;
             break;
         case 7:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_ARTS));
+            color = R.color.EPG_ARTS;
             break;
         case 8:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SOCIAL));
+            color = R.color.EPG_SOCIAL;
             break;
         case 9:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SCIENCE));
+            color = R.color.EPG_SCIENCE;
             break;
         case 10:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_HOBBY));
+            color = R.color.EPG_HOBBY;
             break;
         case 11:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_SPECIAL));
+            color = R.color.EPG_SPECIAL;
             break;
         case 12:
-            layout.setBackgroundColor(getResources().getColor(R.color.EPG_OTHER));
+            color = R.color.EPG_OTHER;
             break;
+        }
+
+        // Draw the vertical genre line with the width and color
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean("showGenreColorsLinePref", false)) {
+            shape.setStroke(SHAPE_STROKE_WIDTH, color);
+        }
+
+        // Set the genre background color as a box
+        if (prefs.getBoolean("showGenreColorsBoxPref", false)) {
+            itemLayout.setBackgroundColor(color);
         }
     }
 
