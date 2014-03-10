@@ -32,15 +32,23 @@
             android:dialogTitle="@string/pref_language"
             android:entries="@array/pref_language_list_display"
             android:entryValues="@array/pref_language_list" />
-        
+        <PreferenceScreen
+            android:title="@string/pref_genre_colors" 
+            android:summary="@string/pref_genre_colors_sum" >
+	        <CheckBoxPreference
+	            android:defaultValue="true"
+	            android:key="showGenreColorsLinePref"
+	            android:summary="@string/pref_genre_colors_line_sum"
+	            android:title="@string/pref_genre_colors_line" />
+	        <CheckBoxPreference
+	            android:defaultValue="false"
+	            android:key="showGenreColorsBoxPref"
+	            android:summary="@string/pref_genre_colors_box_sum"
+	            android:title="@string/pref_genre_colors_box" />
+        </PreferenceScreen>
 	    <PreferenceScreen
             android:title="@string/pref_program_guide"
             android:summary="@string/pref_program_guide_sum" >
-            <CheckBoxPreference
-	            android:defaultValue="false"
-	            android:key="showGenreColorsPref"
-	            android:summary="@string/pref_genre_colors_sum"
-	            android:title="@string/pref_genre_colors" />
 	        <EditTextPreference
 	            android:id="@+id/pref_epg_hours_visible"
 	            android:name="@string/pref_epg_hours_visible"
