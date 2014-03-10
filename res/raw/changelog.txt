@@ -1,6 +1,6 @@
 $ 1.9.4
   % VERSION 1.9.4
-  _ 06.03.2014
+  _ 11.03.2014
     * Show genre colors in the program guide
 $ 1.9.3
   % VERSION 1.9.3
