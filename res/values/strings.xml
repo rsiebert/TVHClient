@@ -96,9 +96,13 @@
     <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
     <string name="pref_programs_to_load">Number of programs to load</string>
     <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
-    <string name="pref_genre_colors">Show genre colors</string>
-    <string name="pref_genre_colors_sum">Displays a genre of the program as a colored background.</string>
-        
+    <string name="pref_genre_colors">Genre colors</string>
+    <string name="pref_genre_colors_sum">Choose how the genre colors shall be displayed.</string>
+    <string name="pref_genre_colors_line">Vertical line</string>
+    <string name="pref_genre_colors_line_sum">Draw a colored vertical line in front of the program text.</string>
+    <string name="pref_genre_colors_box">Background</string>
+    <string name="pref_genre_colors_box_sum">The entire area of the program text is used for the genre color.</string>
+    
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>

@@ -97,8 +97,12 @@
     <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf maximale Anzahl an Tagen.</string>
     <string name="pref_programs_to_load">Programme vom Server laden</string>
     <string name="pref_programs_to_load_sum">Wieviele Programme sollen auf einmal pro Sender vom Server geladen werden. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
-    <string name="pref_genre_colors">Zeige Genrefarben</string>
-    <string name="pref_genre_colors_sum">Stellt das Genre des Programmes als farbigen Hintergrund dar.</string>
+    <string name="pref_genre_colors">Genrefarben</string>
+    <string name="pref_genre_colors_sum">Wie sollen die Genrefarben eines Programmes dargestellt werden.</string>
+    <string name="pref_genre_colors_line">Vertikale Linie</string>
+    <string name="pref_genre_colors_line_sum">Zeichnet eine schmale verikale Linie vor dem Programtext.</string>
+    <string name="pref_genre_colors_box">Hintergrund</string>
+    <string name="pref_genre_colors_box_sum">Verwendet den gesamten Hintergrund, um die Genrefarbe des Programmes darzustellen.</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
