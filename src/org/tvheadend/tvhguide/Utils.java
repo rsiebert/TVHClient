@@ -602,7 +602,7 @@ public class Utils {
 
         if (showGenre) {
             int color = getGenreColor(contentType);
-            view.setBackgroundColor(color);
+            view.setBackgroundColor(context.getResources().getColor(color));
             view.setVisibility(View.VISIBLE);
         } else {
             view.setVisibility(View.GONE);
