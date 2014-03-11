@@ -340,15 +340,16 @@ public class Utils {
      * @param stop
      */
     public static void setDuration(TextView duration, final Date start, final Date stop) {
-        if (duration != null) {
-            duration.setVisibility(View.VISIBLE);
-            // Get the start and end times so we can show them
-            // and calculate the duration. Then show the duration in minutes
-            final double durationTime = ((stop.getTime() - start.getTime()) / 1000 / 60);
-            final String s = duration.getContext().getString(R.string.minutes, (int) durationTime);
-            duration.setText(duration.getContext().getString(R.string.minutes, (int) durationTime));
-            duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
+        if (duration == null) {
+            return;
         }
+        duration.setVisibility(View.VISIBLE);
+        // Get the start and end times so we can show them
+        // and calculate the duration. Then show the duration in minutes
+        final double durationTime = ((stop.getTime() - start.getTime()) / 1000 / 60);
+        final String s = duration.getContext().getString(R.string.minutes, (int) durationTime);
+        duration.setText(duration.getContext().getString(R.string.minutes, (int) durationTime));
+        duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -359,12 +360,13 @@ public class Utils {
      * @param stop
      */
     public static void setTime(TextView time, final Date start, final Date stop) {
-        if (time != null) {
-            time.setVisibility(View.VISIBLE);
-            final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
-            final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
-            time.setText(startTime + " - " + endTime);
+        if (time == null) {
+            return;
         }
+        time.setVisibility(View.VISIBLE);
+        final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
+        final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
+        time.setText(startTime + " - " + endTime);
     }
 
     /**
@@ -454,14 +456,15 @@ public class Utils {
      * @param ct
      */
     public static void setContentType(TextView contentTypeLabel, TextView contentType, final int ct) {
-        if (contentType != null) {
-            final SparseArray<String> ctl = TVHGuideApplication.getContentTypes(contentType.getContext());
-            final String type = ctl.get(ct, "");
-            contentType.setText(type);
-            contentType.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
-            if (contentTypeLabel != null) {
-                contentTypeLabel.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
-            }
+        if (contentType == null) {
+            return;
+        }
+        final SparseArray<String> ctl = TVHGuideApplication.getContentTypes(contentType.getContext());
+        final String type = ctl.get(ct, "");
+        contentType.setText(type);
+        contentType.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
+        if (contentTypeLabel != null) {
+            contentTypeLabel.setVisibility((type.length() > 0) ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -495,12 +498,13 @@ public class Utils {
      * @param desc
      */
     public static void setDescription(TextView descriptionLabel, TextView description, final String desc) {
-        if (description != null) {
-            description.setText(desc);
-            description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
-            if (descriptionLabel != null) {
-                descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
-            }
+        if (description == null) {
+            return;
+        }
+        description.setText(desc);
+        description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
+        if (descriptionLabel != null) {
+            descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -534,6 +538,9 @@ public class Utils {
      * @param stop
      */
     public static void setProgress(final ProgressBar progress, final Date start, final Date stop) {
+        if (progress == null) {
+            return;
+        }
         // Get the start and end times to calculate the progress.
         double durationTime = (stop.getTime() - start.getTime());
         double elapsedTime = new Date().getTime() - start.getTime();
@@ -543,10 +550,8 @@ public class Utils {
         if (durationTime > 0) {
             percent = elapsedTime / durationTime;
         }
-        if (progress != null) {
-            progress.setProgress((int) Math.floor(percent * 100));
-            progress.setVisibility(View.VISIBLE);
-        }
+        progress.setProgress((int) Math.floor(percent * 100));
+        progress.setVisibility(View.VISIBLE);
     }
     
     /**
@@ -558,6 +563,9 @@ public class Utils {
      * @param stop
      */
     public static void setProgressText(final TextView progressText, final Date start, final Date stop) {
+        if (progressText == null) {
+            return;
+        }
         // Get the start and end times to calculate the progress.
         final double durationTime = (stop.getTime() - start.getTime());
         final double elapsedTime = new Date().getTime() - start.getTime();
@@ -568,13 +576,11 @@ public class Utils {
             percent = elapsedTime / durationTime;
         }
         int progress = (int) Math.floor(percent * 100);
-        if (progressText != null) {
-            if (progress > 0) {
-                progressText.setText(progressText.getResources().getString(R.string.progress, progress));
-                progressText.setVisibility(View.VISIBLE);
-            } else {
-                progressText.setVisibility(View.GONE);
-            }
+        if (progress > 0) {
+            progressText.setText(progressText.getResources().getString(R.string.progress, progress));
+            progressText.setVisibility(View.VISIBLE);
+        } else {
+            progressText.setVisibility(View.GONE);
         }
     }
     
@@ -585,28 +591,29 @@ public class Utils {
      * @param contentType
      */
     public static void setGenreColor(final Context context, final TextView view, final int contentType) {
-        if (view != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean showGenre = false;
-            
-            // Check which class is calling and get the setting
-            if (context instanceof ChannelListTabsActivity) {
-                showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
-            } else if (context instanceof ProgramListActivity) {
-                showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
-            } else if (context instanceof RecordingListTabsActivity) {
-                showGenre = prefs.getBoolean("showGenreColorsRecordingsPref", false);
-            } else if (context instanceof ProgramGuideTabsActivity) {
-                showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
-            }
-    
-            if (showGenre) {
-                int color = getGenreColor(contentType);
-                view.setBackgroundColor(context.getResources().getColor(color));
-                view.setVisibility(View.VISIBLE);
-            } else {
-                view.setVisibility(View.GONE);
-            }
+        if (view == null) {
+            return;
+        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showGenre = false;
+        
+        // Check which class is calling and get the setting
+        if (context instanceof ChannelListTabsActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
+        } else if (context instanceof ProgramListActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
+        } else if (context instanceof RecordingListTabsActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsRecordingsPref", false);
+        } else if (context instanceof ProgramGuideTabsActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
+        }
+
+        if (showGenre) {
+            int color = getGenreColor(contentType);
+            view.setBackgroundColor(context.getResources().getColor(color));
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
         }
     }
 
@@ -617,12 +624,13 @@ public class Utils {
      * @param contentType
      */
     public static void setGenreColor(final Context context, final LinearLayout view, final int contentType) {
-        if (view != null) {
-            int color = getGenreColor(contentType);
-            LayerDrawable layers = (LayerDrawable) view.getBackground();
-            GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
-            shape.setColor(context.getResources().getColor(color));
+        if (view == null) {
+            return;
         }
+        int color = getGenreColor(contentType);
+        LayerDrawable layers = (LayerDrawable) view.getBackground();
+        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+        shape.setColor(context.getResources().getColor(color));
     }
 
     /**
@@ -637,44 +645,44 @@ public class Utils {
         int type = 0;
         if (contentType > 0) {
             type = (contentType / 16) - 1;
-        }
-        switch (type) {
-        case 1:
-            color = R.color.EPG_MOVIES;
-            break;
-        case 2:
-            color = R.color.EPG_NEWS;
-            break;
-        case 3:
-            color = R.color.EPG_SHOWS;
-            break;
-        case 4:
-            color = R.color.EPG_SPORTS;
-            break;
-        case 5:
-            color = R.color.EPG_CHILD;
-            break;
-        case 6:
-            color = R.color.EPG_MUSIC;
-            break;
-        case 7:
-            color = R.color.EPG_ARTS;
-            break;
-        case 8:
-            color = R.color.EPG_SOCIAL;
-            break;
-        case 9:
-            color = R.color.EPG_SCIENCE;
-            break;
-        case 10:
-            color = R.color.EPG_HOBBY;
-            break;
-        case 11:
-            color = R.color.EPG_SPECIAL;
-            break;
-        case 12:
-            color = R.color.EPG_OTHER;
-            break;
+            switch (type) {
+            case 1:
+                color = R.color.EPG_MOVIES;
+                break;
+            case 2:
+                color = R.color.EPG_NEWS;
+                break;
+            case 3:
+                color = R.color.EPG_SHOWS;
+                break;
+            case 4:
+                color = R.color.EPG_SPORTS;
+                break;
+            case 5:
+                color = R.color.EPG_CHILD;
+                break;
+            case 6:
+                color = R.color.EPG_MUSIC;
+                break;
+            case 7:
+                color = R.color.EPG_ARTS;
+                break;
+            case 8:
+                color = R.color.EPG_SOCIAL;
+                break;
+            case 9:
+                color = R.color.EPG_SCIENCE;
+                break;
+            case 10:
+                color = R.color.EPG_HOBBY;
+                break;
+            case 11:
+                color = R.color.EPG_SPECIAL;
+                break;
+            case 12:
+                color = R.color.EPG_OTHER;
+                break;
+            }
         }
         return color;
     }
