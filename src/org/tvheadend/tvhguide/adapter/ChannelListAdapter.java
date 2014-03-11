@@ -148,18 +148,10 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (holder.title != null) {
                     holder.title.setText(p.title);
                 }
-                if (holder.time != null) {
-                    Utils.setTime(holder.time, p.start, p.stop);
-                }
-                if (holder.duration != null) {
-                    Utils.setDuration(holder.duration, p.start, p.stop);
-                }
-                if (holder.progress != null) {
-                    Utils.setProgress(holder.progress, p.start, p.stop);
-                }
-                if (holder.genre != null) {
-                    Utils.setGenreColor(context, holder.genre, p.contentType);
-                }
+                Utils.setTime(holder.time, p.start, p.stop);
+                Utils.setDuration(holder.duration, p.start, p.stop);
+                Utils.setProgress(holder.progress, p.start, p.stop);
+                Utils.setGenreColor(context, holder.genre, p.contentType);
             }
             else {
                 // The channel does not provide program data. Hide the progress
