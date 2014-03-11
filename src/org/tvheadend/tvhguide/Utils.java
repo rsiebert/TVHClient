@@ -38,6 +38,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
@@ -602,15 +603,15 @@ public class Utils {
             showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
         } else if (context instanceof ProgramListActivity) {
             showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
-        } else if (context instanceof RecordingListTabsActivity) {
-            showGenre = prefs.getBoolean("showGenreColorsRecordingsPref", false);
+        } else if (context instanceof SearchResultActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsSearchPref", false);
         } else if (context instanceof ProgramGuideTabsActivity) {
             showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
         }
 
         if (showGenre) {
-            int color = getGenreColor(contentType);
-            view.setBackgroundColor(context.getResources().getColor(color));
+            int color = getGenreColor(context, contentType);
+            view.setBackgroundColor(color);
             view.setVisibility(View.VISIBLE);
         } else {
             view.setVisibility(View.GONE);
@@ -627,10 +628,10 @@ public class Utils {
         if (view == null) {
             return;
         }
-        int color = getGenreColor(contentType);
+        int color = getGenreColor(context, contentType);
         LayerDrawable layers = (LayerDrawable) view.getBackground();
         GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
-        shape.setColor(context.getResources().getColor(color));
+        shape.setColor(color);
     }
 
     /**
@@ -640,11 +641,14 @@ public class Utils {
      * @param contentType
      * @return
      */
-    private static int getGenreColor(final int contentType) {
-        int color = android.R.color.transparent;
-        int type = 0;
-        if (contentType > 0) {
-            type = (contentType / 16) - 1;
+    private static int getGenreColor(final Context context, final int contentType) {
+        if (contentType == 0) {
+            // Return a fully transparent color in case no genre is available
+            return android.R.color.transparent;
+        } else {
+            // Get the genre color from the content type
+            int color = R.color.EPG_OTHER;
+            int type = (contentType / 16) - 1;
             switch (type) {
             case 1:
                 color = R.color.EPG_MOVIES;
@@ -679,12 +683,13 @@ public class Utils {
             case 11:
                 color = R.color.EPG_SPECIAL;
                 break;
-            case 12:
-                color = R.color.EPG_OTHER;
-                break;
             }
+            // Add the transparency value from the settings
+            int c = context.getResources().getColor(color);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            int alpha = prefs.getInt("showGenreColorsTransparencyPref", 50);
+            return Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
         }
-        return color;
     }
 
     /**
