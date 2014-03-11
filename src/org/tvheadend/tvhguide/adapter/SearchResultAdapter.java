@@ -62,6 +62,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
         public TextView seriesInfo;
         public TextView contentType;
         public ImageView state;
+        public TextView genre;
     }
 
     @Override
@@ -82,6 +83,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
             holder.seriesInfo = (TextView) view.findViewById(R.id.series_info);
             holder.contentType = (TextView) view.findViewById(R.id.content_type);
             holder.description = (TextView) view.findViewById(R.id.description);
+            holder.genre = (TextView) view.findViewById(R.id.genre);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -99,6 +101,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);
+            Utils.setGenreColor(context, holder.genre, p.contentType);
         }
         return view;
     }

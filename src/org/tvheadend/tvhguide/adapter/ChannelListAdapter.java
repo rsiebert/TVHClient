@@ -31,8 +31,8 @@ import org.tvheadend.tvhguide.model.Program;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -67,6 +67,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         public TextView duration;
         public ProgressBar progress;
         public ImageView state;
+        public TextView genre;
     }
 
     @Override
@@ -84,6 +85,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.duration = (TextView) view.findViewById(R.id.duration);
             holder.state = (ImageView) view.findViewById(R.id.state);
+            holder.genre = (TextView) view.findViewById(R.id.genre);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -154,6 +156,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
                 if (holder.progress != null) {
                     Utils.setProgress(holder.progress, p.start, p.stop);
+                }
+                if (holder.genre != null) {
+                    Utils.setGenreColor(context, holder.genre, p.contentType);
                 }
             }
             else {
