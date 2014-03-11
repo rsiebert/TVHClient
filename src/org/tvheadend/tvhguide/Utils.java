@@ -687,7 +687,7 @@ public class Utils {
             // Add the transparency value from the settings
             int c = context.getResources().getColor(color);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            int alpha = prefs.getInt("showGenreColorsTransparencyPref", 50);
+            int alpha = (int)(prefs.getFloat("showGenreColorsTransparencyPref", 0.5f) * 255);
             return Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
         }
     }
