@@ -76,10 +76,15 @@
 	    <!-- You can define as many summaries as you'd like -->
 	    <!-- The active summary will reflect the preference's current value between 0.0 and 1.0 -->
 	    <item>0% visible</item>
+	    <item>10% visible</item>
 	    <item>20% visible</item>
+	    <item>30% visible</item>
 	    <item>40% visible</item>
+	    <item>50% visible</item>
 	    <item>60% visible</item>
+	    <item>70% visible</item>
 	    <item>80% visible</item>
+	    <item>90% visible</item>
 	    <item>100% visible</item>
 	</string-array>
 
