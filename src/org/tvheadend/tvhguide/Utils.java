@@ -585,27 +585,28 @@ public class Utils {
      * @param contentType
      */
     public static void setGenreColor(final Context context, final TextView view, final int contentType) {
-        
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean showGenre = false;
-        
-        // Check which class is calling and get the setting
-        if (context instanceof ChannelListTabsActivity) {
-            showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
-        } else if (context instanceof ProgramListActivity) {
-            showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
-        } else if (context instanceof RecordingListTabsActivity) {
-            showGenre = prefs.getBoolean("showGenreColorsRecordingsPref", false);
-        } else if (context instanceof ProgramGuideTabsActivity) {
-            showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
-        }
-
-        if (showGenre) {
-            int color = getGenreColor(contentType);
-            view.setBackgroundColor(context.getResources().getColor(color));
-            view.setVisibility(View.VISIBLE);
-        } else {
-            view.setVisibility(View.GONE);
+        if (view != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean showGenre = false;
+            
+            // Check which class is calling and get the setting
+            if (context instanceof ChannelListTabsActivity) {
+                showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
+            } else if (context instanceof ProgramListActivity) {
+                showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
+            } else if (context instanceof RecordingListTabsActivity) {
+                showGenre = prefs.getBoolean("showGenreColorsRecordingsPref", false);
+            } else if (context instanceof ProgramGuideTabsActivity) {
+                showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
+            }
+    
+            if (showGenre) {
+                int color = getGenreColor(contentType);
+                view.setBackgroundColor(context.getResources().getColor(color));
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -616,10 +617,12 @@ public class Utils {
      * @param contentType
      */
     public static void setGenreColor(final Context context, final LinearLayout view, final int contentType) {
-        int color = getGenreColor(contentType);
-        LayerDrawable layers = (LayerDrawable) view.getBackground();
-        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
-        shape.setColor(context.getResources().getColor(color));
+        if (view != null) {
+            int color = getGenreColor(contentType);
+            LayerDrawable layers = (LayerDrawable) view.getBackground();
+            GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+            shape.setColor(context.getResources().getColor(color));
+        }
     }
 
     /**
