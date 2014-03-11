@@ -26,8 +26,11 @@
     <attr name="TimelineHeaderLayoutStyle" format="reference" />
     <attr name="TimelineListLayoutStyle" format="reference" />
 
+    <attr name="resolution" format="integer"/>
+    
     <declare-styleable name="SliderPreference">
         <attr name="android:summary" />
+        <attr name="resolution" />
     </declare-styleable>
 
 </resources>

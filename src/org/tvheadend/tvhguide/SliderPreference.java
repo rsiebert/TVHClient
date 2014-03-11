@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 
@@ -18,10 +19,9 @@ import android.widget.SeekBar;
  */
 public class SliderPreference extends DialogPreference {
 
-    protected final static int SEEKBAR_RESOLUTION = 10000;
-
     protected float mValue;
     protected int mSeekBarValue;
+    protected int mSeekBarResolution;
     protected CharSequence[] mSummaries;
 
     /**
@@ -30,6 +30,7 @@ public class SliderPreference extends DialogPreference {
      */
     public SliderPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        Log.i("Slider", "ctor");
         setup(context, attrs);
     }
 
@@ -44,10 +45,12 @@ public class SliderPreference extends DialogPreference {
     }
 
     private void setup(Context context, AttributeSet attrs) {
+    	Log.i("Slider", "setup");
         setDialogLayoutResource(R.layout.slider_preference_dialog);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SliderPreference);
         try {
             setSummary(a.getTextArray(R.styleable.SliderPreference_android_summary));
+            mSeekBarResolution = a.getInteger(R.styleable.SliderPreference_resolution, 10000);
         } catch (Exception e) {
             // Do nothing
         }
@@ -111,10 +114,10 @@ public class SliderPreference extends DialogPreference {
 
     @Override
     protected View onCreateDialogView() {
-        mSeekBarValue = (int) (mValue * SEEKBAR_RESOLUTION);
+        mSeekBarValue = (int) (mValue * mSeekBarResolution);
         View view = super.onCreateDialogView();
         SeekBar seekbar = (SeekBar) view.findViewById(R.id.slider_preference_seekbar);
-        seekbar.setMax(SEEKBAR_RESOLUTION);
+        seekbar.setMax(mSeekBarResolution);
         seekbar.setProgress(mSeekBarValue);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -138,7 +141,7 @@ public class SliderPreference extends DialogPreference {
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
-        final float newValue = (float) mSeekBarValue / SEEKBAR_RESOLUTION;
+        final float newValue = (float) mSeekBarValue / mSeekBarResolution;
         if (positiveResult && callChangeListener(newValue)) {
             setValue(newValue);
         }

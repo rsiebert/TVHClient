@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/org.tvheadend.tvhguide" >
     
     <PreferenceCategory 
         android:title="@string/pref_connections" >
@@ -59,6 +60,7 @@
 		        android:defaultValue="0.5"
 		        android:dialogMessage="@string/pref_genre_colors_visibility_message"
 		        android:key="showGenreColorsVisibilityPref"
+		        custom:resolution="10"
 		        android:summary="@array/pref_genre_colors_visibility_values"
 		        android:title="@string/pref_genre_colors_visibility" />
         </PreferenceScreen>
