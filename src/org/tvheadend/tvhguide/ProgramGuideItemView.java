@@ -45,9 +45,6 @@ public class ProgramGuideItemView extends LinearLayout {
     // the program width in is this wide in pixels
     private final static int MIN_DISPLAY_WIDTH_FOR_DETAILS = 70;
 
-    // The width of the vertical line that indicates the type of genre
-    private final static int SHAPE_STROKE_WIDTH = 8;
-    
     // The ratio how many minutes a pixel represents on the screen.
     private float pixelsPerMinute;
 
@@ -429,19 +426,15 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param itemLayout
      */
     private void setGenreBackgroundColor(final Program p, LinearLayout itemLayout) {
-
-        // Make the vertical line invisible as a default
-        int color = android.R.color.transparent;
-        LayerDrawable layers = (LayerDrawable) itemLayout.getBackground();
-        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre_shape));
-        shape.setStroke(SHAPE_STROKE_WIDTH, color);
-        
-        // Don't set colors if no genre type is given
-        if (p.contentType == 0) {
+        // Don't set colors if no genre type is given or not wanted
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (p.contentType == 0 || !prefs.getBoolean("showGenreColorsGuidePref", false)) {
             return;
         }
 
+        int color = android.R.color.transparent;
         int type = ((p.contentType) / 16) - 1;
+
         switch (type) {
         case 1:
             color = R.color.EPG_MOVIES;
@@ -480,17 +473,10 @@ public class ProgramGuideItemView extends LinearLayout {
             color = R.color.EPG_OTHER;
             break;
         }
-
-        // Draw the vertical genre line with the width and color
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean("showGenreColorsLinePref", false)) {
-            shape.setStroke(SHAPE_STROKE_WIDTH, color);
-        }
-
-        // Set the genre background color as a box
-        if (prefs.getBoolean("showGenreColorsBoxPref", false)) {
-            itemLayout.setBackgroundColor(color);
-        }
+        
+        LayerDrawable layers = (LayerDrawable) itemLayout.getBackground();
+        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+        shape.setColor(context.getResources().getColor(color));
     }
 
     public interface ProgramLoadingInterface {
