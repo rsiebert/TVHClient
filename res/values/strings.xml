@@ -106,6 +106,8 @@
     <string name="pref_genre_colors_epg_sum">Show the genre color in the background of each program guide entry.</string>
     <string name="pref_genre_colors_search_results">Search results</string>
     <string name="pref_genre_colors_search_results_sum">Show genre colors as a vertical line in the search result list.</string>
+    <string name="pref_genre_colors_transparency_message">Set the opacity of the genre color between 0\%% and 100\%%. The lower the value the stronger the colors will be.</string>
+    <string name="pref_genre_colors_transparency">Genre color transparency</string>
 
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
