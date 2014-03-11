@@ -105,6 +105,8 @@
     <string name="pref_genre_colors_programs_sum">Das Genre wird als farbige vertikale Linie für jedes Program in der Liste und in der Detailansicht angezeigt.</string>
     <string name="pref_genre_colors_epg">Programübersicht</string>
     <string name="pref_genre_colors_epg_sum">Das Genre wird als farbiger Hintergrund für jedes Program angezeigt.</string>
+    <string name="pref_genre_colors_search_results">Suchergebnisse</string>
+    <string name="pref_genre_colors_search_results_sum">Das Genre wird als farbige vertikale Linie für die Programme bei den Suchergebnissen angezeigt.</string>
     
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>

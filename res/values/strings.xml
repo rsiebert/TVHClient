@@ -104,7 +104,9 @@
     <string name="pref_genre_colors_programs_sum">Show genre colors as a vertical line in the program lists and the program details.</string>
     <string name="pref_genre_colors_epg">Program guide</string>
     <string name="pref_genre_colors_epg_sum">Show the genre color in the background of each program guide entry.</string>
-    
+    <string name="pref_genre_colors_search_results">Search results</string>
+    <string name="pref_genre_colors_search_results_sum">Show genre colors as a vertical line in the search result list.</string>
+
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
