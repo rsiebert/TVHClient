@@ -97,11 +97,15 @@
     <string name="pref_programs_to_load">Number of programs to load</string>
     <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
     <string name="pref_genre_colors">Genre colors</string>
-    <string name="pref_genre_colors_sum">Choose how the genre colors shall be displayed.</string>
-    <string name="pref_genre_colors_line">Vertical line</string>
-    <string name="pref_genre_colors_line_sum">Draw a colored vertical line in front of the program text.</string>
-    <string name="pref_genre_colors_box">Background</string>
-    <string name="pref_genre_colors_box_sum">The entire area of the program text is used for the genre color.</string>
+    <string name="pref_genre_colors_sum">Show genre colors in the different parts of the application.</string>
+    <string name="pref_genre_colors_channels">Channels</string>
+    <string name="pref_genre_colors_channels_sum">Show genre colors as a vertical line in the channel list.</string>
+    <string name="pref_genre_colors_programs">Programs</string>
+    <string name="pref_genre_colors_programs_sum">Show genre colors as a vertical line in the program lists and the program details.</string>
+    <string name="pref_genre_colors_recordings">Recordings</string>
+    <string name="pref_genre_colors_recordings_sum">Show genre colors as a vertical line in the recording lists.</string>
+    <string name="pref_genre_colors_epg">Program guide</string>
+    <string name="pref_genre_colors_epg_sum">Show the genre color in the background of each program guide entry.</string>
     
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>

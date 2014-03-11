@@ -97,8 +97,6 @@
     <string name="pref_epg_max_days_sum">Definiuje maksymalną liczbę dni przewodnika programów która zostanie wyświetlona.</string>
     <string name="pref_programs_to_load">Liczba programów do załadowania</string>
     <string name="pref_programs_to_load_sum">Definiuje ile programów będzie pobieranych z serwera aby zobaczyć więcej na liście programów lub liście przewodnika. Większa liczba oznacza dłuższy czas ładowania i aktualizowania.</string>
-    <string name="pref_genre_colors">Pokaż rodzaje kolorów</string>
-    <string name="pref_genre_colors_sum">Wyświetl gatunek programu jako kolorowe tło.</string>
 
     <string name="err_auth">Odmowa dostępu</string>
     <string name="err_connect">Nie można połączyć się z serweram</string>
