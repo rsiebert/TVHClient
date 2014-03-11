@@ -5,6 +5,14 @@
     android:orientation="horizontal"
     android:paddingBottom="12dp" >
 
+    <TextView
+        android:id="@+id/genre"
+        android:layout_width="12dip"
+        android:layout_height="fill_parent"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="" />
+
     <ImageView
         android:id="@+id/icon"
         android:layout_width="54dp"
