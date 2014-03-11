@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -21,6 +22,8 @@ import android.widget.TextView;
 public class SliderPreference extends DialogPreference {
 
     protected float mValue;
+    protected float mMinValue;
+    protected float mMaxValue;
     protected int mSeekBarValue;
     protected int mSeekBarResolution;
     protected CharSequence[] mSummaries;
@@ -52,6 +55,8 @@ public class SliderPreference extends DialogPreference {
         try {
             setSummary(a.getTextArray(R.styleable.SliderPreference_android_summary));
             mSeekBarResolution = a.getInteger(R.styleable.SliderPreference_resolution, 10000);
+            mMinValue = a.getFloat(R.styleable.SliderPreference_minimum, 0.0f) * mSeekBarResolution;
+            mMaxValue = a.getFloat(R.styleable.SliderPreference_maximum, 1.0f) * mSeekBarResolution;
         } catch (Exception e) {
             // Do nothing
         }
@@ -103,7 +108,7 @@ public class SliderPreference extends DialogPreference {
     }
 
     public void setValue(float value) {
-        value = Math.max(0, Math.min(value, 1)); // clamp to [0, 1]
+        value = Math.max(mMinValue, Math.min(value, mMaxValue)); // clamp to [0, 1]
         if (shouldPersist()) {
             persistFloat(value);
         }
@@ -120,7 +125,7 @@ public class SliderPreference extends DialogPreference {
         
         // Set the text that is at the index of the value array
         final TextView seekbarValue = (TextView) view.findViewById(R.id.slider_preference_value);
-        seekbarValue.setText(mSeekBarValueArray[mSeekBarValue]);
+        seekbarValue.setText(String.valueOf(mSeekBarValue));
 
         final SeekBar seekbar = (SeekBar) view.findViewById(R.id.slider_preference_seekbar);
         seekbar.setMax(mSeekBarResolution);
@@ -138,9 +143,13 @@ public class SliderPreference extends DialogPreference {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    SliderPreference.this.mSeekBarValue = progress;
+                	SliderPreference.this.mSeekBarValue = progress;
                     // Update the current value text
-                    seekbarValue.setText(mSeekBarValueArray[mSeekBarValue]);
+                	float rel = ((float)progress / (float)mSeekBarResolution);
+                    float value = (mMinValue + (rel * (mMaxValue - mMinValue)));
+                    seekbarValue.setText(String.valueOf(value));
+                    
+                    Log.i("Slider", "p, min, max, value, rel " + progress + ", " + mMinValue + ", " + mMaxValue + ", " + value + ", " + rel);
                 }
             }
         });
