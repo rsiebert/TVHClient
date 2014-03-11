@@ -67,6 +67,9 @@ public class Utils {
     // ProgramGuideListFragment class.
     private final static int LAYOUT_ICON_OFFSET = 66;
 
+    // Offset that reduces the visibility of the program guide colors a little
+    private final static int GENRE_COLOR_ALPHA_EPG_OFFSET = 50;
+
     /**
      * Returns the id of the chosen theme to allow calling setTheme(...).
      * 
@@ -591,14 +594,15 @@ public class Utils {
      * @param view
      * @param contentType
      */
-    public static void setGenreColor(final Context context, final TextView view, final int contentType) {
-        if (view == null) {
+    public static void setGenreColor(final Context context, final View view, final int contentType) {
+    	if (view == null) {
             return;
         }
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean showGenre = false;
-        
-        // Check which class is calling and get the setting
+        int offset = 0;
+
+    	// Check which class is calling and get the setting
         if (context instanceof ChannelListTabsActivity) {
             showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
         } else if (context instanceof ProgramListActivity) {
@@ -606,32 +610,25 @@ public class Utils {
         } else if (context instanceof SearchResultActivity) {
             showGenre = prefs.getBoolean("showGenreColorsSearchPref", false);
         } else if (context instanceof ProgramGuideTabsActivity) {
-            showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
+        	showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
+        	offset = GENRE_COLOR_ALPHA_EPG_OFFSET;
         }
-
-        if (showGenre) {
-            int color = getGenreColor(context, contentType);
-            view.setBackgroundColor(color);
-            view.setVisibility(View.VISIBLE);
-        } else {
-            view.setVisibility(View.GONE);
+        
+        if (view instanceof TextView) {
+        	if (showGenre) {
+        		view.setBackgroundColor(getGenreColor(context, contentType, offset));
+        		view.setVisibility(View.VISIBLE);
+        	} else {
+        		view.setVisibility(View.GONE);
+        	}
+        } else if (view instanceof LinearLayout) {
+        	if (showGenre) {
+	        	// Get the shape where the background color will be set 
+		        LayerDrawable layers = (LayerDrawable) view.getBackground();
+		        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+		        shape.setColor(getGenreColor(context, contentType, offset));
+        	}
         }
-    }
-
-    /**
-     * 
-     * @param context
-     * @param view
-     * @param contentType
-     */
-    public static void setGenreColor(final Context context, final LinearLayout view, final int contentType) {
-        if (view == null) {
-            return;
-        }
-        int color = getGenreColor(context, contentType);
-        LayerDrawable layers = (LayerDrawable) view.getBackground();
-        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
-        shape.setColor(color);
     }
 
     /**
@@ -641,7 +638,7 @@ public class Utils {
      * @param contentType
      * @return
      */
-    private static int getGenreColor(final Context context, final int contentType) {
+    private static int getGenreColor(final Context context, final int contentType, final int offset) {
         if (contentType == 0) {
             // Return a fully transparent color in case no genre is available
             return android.R.color.transparent;
@@ -684,11 +681,15 @@ public class Utils {
                 color = R.color.EPG_SPECIAL;
                 break;
             }
-            // Add the transparency value from the settings
-            int c = context.getResources().getColor(color);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            int alpha = (int)(prefs.getFloat("showGenreColorsVisibilityPref", 0.5f) * 255);
-            return Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
+            
+            // Get the color with the desired alpha value
+        	int c = context.getResources().getColor(color);
+        	int alpha = (int) (prefs.getFloat("showGenreColorsVisibilityPref", 0.7f) * 255);
+        	if (alpha > offset) {
+        		alpha -= offset;
+        	}
+        	return Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
         }
     }
 
