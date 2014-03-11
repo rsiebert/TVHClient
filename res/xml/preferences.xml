@@ -57,10 +57,12 @@
                 android:summary="@string/pref_genre_colors_search_results_sum"
                 android:title="@string/pref_genre_colors_search_results" />
             <org.tvheadend.tvhguide.SliderPreference
-		        android:defaultValue="0.5"
+		        android:defaultValue="0.7"
 		        android:dialogMessage="@string/pref_genre_colors_visibility_message"
 		        android:key="showGenreColorsVisibilityPref"
-		        custom:resolution="10"
+		        custom:minimum="0.3"
+		        custom:resolution="20"
+		        custom:maximum="0.9"
 		        android:summary="@array/pref_genre_colors_visibility_values"
 		        android:title="@string/pref_genre_colors_visibility" />
         </PreferenceScreen>

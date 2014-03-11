@@ -27,10 +27,14 @@
     <attr name="TimelineListLayoutStyle" format="reference" />
 
     <attr name="resolution" format="integer"/>
+    <attr name="minimum" format="float"/>
+	<attr name="maximum" format="float"/>
     
     <declare-styleable name="SliderPreference">
         <attr name="android:summary" />
         <attr name="resolution" />
+        <attr name="minimum" />
+        <attr name="maximum" />
     </declare-styleable>
 
 </resources>
