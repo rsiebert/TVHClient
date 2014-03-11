@@ -38,6 +38,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
@@ -48,6 +50,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -575,6 +578,104 @@ public class Utils {
         }
     }
     
+    /**
+     * 
+     * @param context
+     * @param view
+     * @param contentType
+     */
+    public static void setGenreColor(final Context context, final TextView view, final int contentType) {
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showGenre = false;
+        
+        // Check which class is calling and get the setting
+        if (context instanceof ChannelListTabsActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
+        } else if (context instanceof ProgramListActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
+        } else if (context instanceof RecordingListTabsActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsRecordingsPref", false);
+        } else if (context instanceof ProgramGuideTabsActivity) {
+            showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
+        }
+
+        if (showGenre) {
+            int color = getGenreColor(contentType);
+            view.setBackgroundColor(color);
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 
+     * @param context
+     * @param view
+     * @param contentType
+     */
+    public static void setGenreColor(final Context context, final LinearLayout view, final int contentType) {
+        int color = getGenreColor(contentType);
+        LayerDrawable layers = (LayerDrawable) view.getBackground();
+        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+        shape.setColor(context.getResources().getColor(color));
+    }
+
+    /**
+     * Returns the background color of the genre based on the content type. The
+     * first byte of hex number represents the main category.
+     * 
+     * @param contentType
+     * @return
+     */
+    private static int getGenreColor(final int contentType) {
+        int color = android.R.color.transparent;
+        int type = 0;
+        if (contentType > 0) {
+            type = (contentType / 16) - 1;
+        }
+        switch (type) {
+        case 1:
+            color = R.color.EPG_MOVIES;
+            break;
+        case 2:
+            color = R.color.EPG_NEWS;
+            break;
+        case 3:
+            color = R.color.EPG_SHOWS;
+            break;
+        case 4:
+            color = R.color.EPG_SPORTS;
+            break;
+        case 5:
+            color = R.color.EPG_CHILD;
+            break;
+        case 6:
+            color = R.color.EPG_MUSIC;
+            break;
+        case 7:
+            color = R.color.EPG_ARTS;
+            break;
+        case 8:
+            color = R.color.EPG_SOCIAL;
+            break;
+        case 9:
+            color = R.color.EPG_SCIENCE;
+            break;
+        case 10:
+            color = R.color.EPG_HOBBY;
+            break;
+        case 11:
+            color = R.color.EPG_SPECIAL;
+            break;
+        case 12:
+            color = R.color.EPG_OTHER;
+            break;
+        }
+        return color;
+    }
+
     /**
      * Gets the last program id from the given channel. The id is used to tell
      * the server where to continue loading programs.
