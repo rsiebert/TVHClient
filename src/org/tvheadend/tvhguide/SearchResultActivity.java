@@ -34,7 +34,9 @@ import org.tvheadend.tvhguide.model.Recording;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
@@ -158,6 +160,17 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Hide the genre color menu item of not required
+        MenuItem genreItem = menu.findItem(R.id.menu_genre_color_info);
+        if (genreItem != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            genreItem.setVisible(prefs.getBoolean("showGenreColorsSearchPref", false));
+        }
+        return true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_menu, menu);
         return true;
@@ -172,6 +185,9 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         case R.id.menu_search:
             // Show the search text input in the action bar
             onSearchRequested();
+            return true;
+        case R.id.menu_genre_color_info:
+            // TODO
             return true;
         default:
             return super.onOptionsItemSelected(item);

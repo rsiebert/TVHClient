@@ -24,6 +24,7 @@
     <string name="menu_delete">Löschen</string>
     <string name="menu_connections">Verbindungen</string>
     <string name="menu_timeframe">Zeitraum</string>
+    <string name="menu_genre_color_info">Genrefarben</string>
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>

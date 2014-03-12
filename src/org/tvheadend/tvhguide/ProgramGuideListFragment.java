@@ -21,9 +21,11 @@ import org.tvheadend.tvhguide.model.Program;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -219,6 +221,16 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // Hide the genre color menu item of not required
+        MenuItem genreItem = menu.findItem(R.id.menu_genre_color_info);
+        if (genreItem != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            genreItem.setVisible(prefs.getBoolean("showGenreColorsGuidePref", false));
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.epg_menu, menu);
@@ -254,6 +266,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
         case R.id.menu_tags:
             tagDialog.show();
+            return true;
+
+        case R.id.menu_genre_color_info:
+            // TODO
             return true;
 
         default:

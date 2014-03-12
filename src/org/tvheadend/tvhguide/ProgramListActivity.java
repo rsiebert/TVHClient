@@ -31,8 +31,10 @@ import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
@@ -184,6 +186,10 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
             startActivity(intent);
             return true;
 
+        case R.id.menu_genre_color_info:
+            // TODO
+            return true;
+
         default:
             return super.onContextItemSelected(item);
         }
@@ -209,7 +215,18 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
             playMenuItem.setVisible(true);
         }
     }
-    
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Hide the genre color menu item of not required
+        MenuItem genreItem = menu.findItem(R.id.menu_genre_color_info);
+        if (genreItem != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            genreItem.setVisible(prefs.getBoolean("showGenreColorsProgramsPref", false));
+        }
+        return true;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.program_menu, menu);

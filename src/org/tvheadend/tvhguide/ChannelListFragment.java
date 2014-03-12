@@ -29,7 +29,9 @@ import org.tvheadend.tvhguide.model.ChannelTag;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -121,6 +123,16 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // Hide the genre color menu item of not required
+        MenuItem genreItem = menu.findItem(R.id.menu_genre_color_info);
+        if (genreItem != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            genreItem.setVisible(prefs.getBoolean("showGenreColorsChannelsPref", false));
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.channel_menu, menu);
@@ -146,6 +158,10 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             intent = new Intent();
             intent.putExtra("channelId", channel.id);
             getActivity().startSearch(null, false, intent.getExtras(), false);
+            return true;
+
+        case R.id.menu_genre_color_info:
+            // TODO
             return true;
 
         default:
