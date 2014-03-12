@@ -21,12 +21,13 @@ import android.widget.TextView;
  */
 public class SliderPreference extends DialogPreference {
 
-    protected float mValue;
-    protected float mMinValue;
-    protected float mMaxValue;
+    protected int mValue;
     protected int mSeekBarValue;
+    protected int mSeekBarMinValue;
+    protected int mSeekBarMaxValue;
     protected int mSeekBarResolution;
-    protected CharSequence[] mSummaries;
+
+    // protected CharSequence[] mSummaries;
     protected String[] mSeekBarValueArray;
 
     /**
@@ -53,64 +54,41 @@ public class SliderPreference extends DialogPreference {
         mSeekBarValueArray = context.getResources().getStringArray(R.array.pref_genre_colors_visibility_values);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SliderPreference);
         try {
-            setSummary(a.getTextArray(R.styleable.SliderPreference_android_summary));
-            mSeekBarResolution = a.getInteger(R.styleable.SliderPreference_resolution, 10000);
-            mMinValue = a.getFloat(R.styleable.SliderPreference_minimum, 0.0f) * mSeekBarResolution;
-            mMaxValue = a.getFloat(R.styleable.SliderPreference_maximum, 1.0f) * mSeekBarResolution;
-        } catch (Exception e) {
-            // Do nothing
+            setSummary(getContext().getResources().getString(R.string.pref_genre_colors_visibility_value, mValue));
+            mSeekBarMinValue = a.getInteger(R.styleable.SliderPreference_minimumValue, 0);
+            mSeekBarMaxValue = a.getInteger(R.styleable.SliderPreference_maximumValue, 100);
+            mSeekBarResolution = mSeekBarMaxValue - mSeekBarMinValue;
+        }
+        catch (Exception e) {
+            Log.d("Slider", e.toString());
         }
         a.recycle();
     }
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getFloat(index, 0);
+        return a.getInt(index, 0);
     }
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setValue(restoreValue ? getPersistedFloat(mValue) : (Float) defaultValue);
+        setValue(restoreValue ? getPersistedInt(mValue) : (Integer) defaultValue);
     }
 
     @Override
     public CharSequence getSummary() {
-        if (mSummaries != null && mSummaries.length > 0) {
-            int index = (int) (mValue * mSummaries.length);
-            index = Math.min(index, mSummaries.length - 1);
-            return mSummaries[index];
-        } else {
-            return super.getSummary();
-        }
+        return getContext().getResources().getString(R.string.pref_genre_colors_visibility_value,
+                mValue);
     }
 
-    public void setSummary(CharSequence[] summaries) {
-        mSummaries = summaries;
-    }
-
-    @Override
-    public void setSummary(CharSequence summary) {
-        super.setSummary(summary);
-        mSummaries = null;
-    }
-
-    @Override
-    public void setSummary(int summaryResId) {
-        try {
-            setSummary(getContext().getResources().getStringArray(summaryResId));
-        } catch (Exception e) {
-            super.setSummary(summaryResId);
-        }
-    }
-
-    public float getValue() {
+    public int getValue() {
         return mValue;
     }
 
-    public void setValue(float value) {
-        value = Math.max(mMinValue, Math.min(value, mMaxValue)); // clamp to [0, 1]
+    public void setValue(int value) {
+        value = Math.max(mSeekBarMinValue, Math.min(value, mSeekBarMaxValue));
         if (shouldPersist()) {
-            persistFloat(value);
+            persistInt(value);
         }
         if (value != mValue) {
             mValue = value;
@@ -120,18 +98,18 @@ public class SliderPreference extends DialogPreference {
 
     @Override
     protected View onCreateDialogView() {
-        mSeekBarValue = (int) (mValue * mSeekBarResolution);
+        mSeekBarValue = mValue;
         View view = super.onCreateDialogView();
-        
+
         // Set the text that is at the index of the value array
         final TextView seekbarValue = (TextView) view.findViewById(R.id.slider_preference_value);
         seekbarValue.setText(String.valueOf(mSeekBarValue));
 
         final SeekBar seekbar = (SeekBar) view.findViewById(R.id.slider_preference_seekbar);
         seekbar.setMax(mSeekBarResolution);
-        seekbar.setProgress(mSeekBarValue);
+        seekbar.setProgress(mSeekBarValue - mSeekBarMinValue);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-        
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
@@ -143,13 +121,8 @@ public class SliderPreference extends DialogPreference {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                	SliderPreference.this.mSeekBarValue = progress;
-                    // Update the current value text
-                	float rel = ((float)progress / (float)mSeekBarResolution);
-                    float value = (mMinValue + (rel * (mMaxValue - mMinValue)));
-                    seekbarValue.setText(String.valueOf(value));
-                    
-                    Log.i("Slider", "p, min, max, value, rel " + progress + ", " + mMinValue + ", " + mMaxValue + ", " + value + ", " + rel);
+                    SliderPreference.this.mSeekBarValue = progress;
+                    seekbarValue.setText(String.valueOf(progress + mSeekBarMinValue));
                 }
             }
         });
@@ -158,7 +131,7 @@ public class SliderPreference extends DialogPreference {
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
-        final float newValue = (float) mSeekBarValue / mSeekBarResolution;
+        final int newValue = mSeekBarValue + mSeekBarMinValue;
         if (positiveResult && callChangeListener(newValue)) {
             setValue(newValue);
         }
@@ -167,4 +140,3 @@ public class SliderPreference extends DialogPreference {
 
     // TODO: Save and restore preference state.
 }
-
