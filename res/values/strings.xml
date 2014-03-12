@@ -96,18 +96,19 @@
     <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
     <string name="pref_programs_to_load">Number of programs to load</string>
     <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
-    <string name="pref_genre_colors">Genre colors</string>
-    <string name="pref_genre_colors_sum">Show genre colors in the different parts of the application.</string>
+    <string name="pref_genre_colors">Enable genre colors</string>
+    <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
     <string name="pref_genre_colors_channels">Channels</string>
-    <string name="pref_genre_colors_channels_sum">Show genre colors as a vertical line in the channel list.</string>
+    <string name="pref_genre_colors_channels_sum">The genre color will be shown as a vertical line on the left side of the channel list screen.</string>
     <string name="pref_genre_colors_programs">Programs</string>
-    <string name="pref_genre_colors_programs_sum">Show genre colors as a vertical line in the program lists and the program details.</string>
+    <string name="pref_genre_colors_programs_sum">The genre color will be shown as a vertical line on the left side of the program lists and the program details screen.</string>
     <string name="pref_genre_colors_epg">Program guide</string>
-    <string name="pref_genre_colors_epg_sum">Show the genre color in the background of each program guide entry.</string>
+    <string name="pref_genre_colors_epg_sum">Shows the genre color in the background of each program guide item.</string>
     <string name="pref_genre_colors_search_results">Search results</string>
-    <string name="pref_genre_colors_search_results_sum">Show genre colors as a vertical line in the search result list.</string>
-    <string name="pref_genre_colors_visibility_message">Set the visibility of the genre colors. Lower values mean more transparent colors.</string>
+    <string name="pref_genre_colors_search_results_sum">The genre color will be shown as a vertical line on the left side of the search result list.</string>
+    <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
     <string name="pref_genre_colors_visibility">Genre color visibility</string>
+    <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
 
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>

@@ -97,18 +97,19 @@
     <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf maximale Anzahl an Tagen.</string>
     <string name="pref_programs_to_load">Programme vom Server laden</string>
     <string name="pref_programs_to_load_sum">Wieviele Programme sollen auf einmal pro Sender vom Server geladen werden. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
-    <string name="pref_genre_colors">Genrefarben</string>
-    <string name="pref_genre_colors_sum">Aktiviere die farbige Genreanzeige für verschiedene Bereiche in der Applikation.</string>
+    <string name="pref_genre_colors">Aktiviere Genrefarben</string>
+    <string name="pref_genre_colors_sum">Definiere in welchen Ansichten Genrefarben für Sender oder Programme angezeigt werden sollen.</string>
     <string name="pref_genre_colors_channels">TV-Sender</string>
-    <string name="pref_genre_colors_channels_sum">Das Genre wird als farbige vertikale Linie für jeden TV-Sender in der Liste angezeigt.</string>
+    <string name="pref_genre_colors_channels_sum">Die Genrefarbe wird als vertikale Linie im linken Bereich der Senderliste angezeigt.</string>
     <string name="pref_genre_colors_programs">Programme</string>
-    <string name="pref_genre_colors_programs_sum">Das Genre wird als farbige vertikale Linie für jedes Program in der Liste und in der Detailansicht angezeigt.</string>
+    <string name="pref_genre_colors_programs_sum">Die Genrefarbe wird als vertikale Linie im linken Bereich in der Programmliste und in der Detailansicht angezeigt.</string>
     <string name="pref_genre_colors_epg">Programübersicht</string>
-    <string name="pref_genre_colors_epg_sum">Das Genre wird als farbiger Hintergrund für jedes Program angezeigt.</string>
+    <string name="pref_genre_colors_epg_sum">Zeige die Genrefarbe als farbigen Hintergrund für jedes Programm an.</string>
     <string name="pref_genre_colors_search_results">Suchergebnisse</string>
-    <string name="pref_genre_colors_search_results_sum">Das Genre wird als farbige vertikale Linie für die Programme bei den Suchergebnissen angezeigt.</string>
-    <string name="pref_genre_colors_visibility_message">Definiere die Sichtbarkeit der Genrefarben. Je niedriger der Wert, desto transparenter sind die Farben.</string>
+    <string name="pref_genre_colors_search_results_sum">Die Genrefarbe wird als vertikale Linie im linken Bereich der Suchergebnissliste angezeigt.</string>
+    <string name="pref_genre_colors_visibility_message">Definiere die Sichtbarkeit der Farben. Je höher der Wert, desto stärker wirken die Farben.</string>
     <string name="pref_genre_colors_visibility">Sichtbarkeit der Genrefarben</string>
+    <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
