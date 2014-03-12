@@ -685,7 +685,7 @@ public class Utils {
             
             // Get the color with the desired alpha value
         	int c = context.getResources().getColor(color);
-        	int alpha = (int) (prefs.getFloat("showGenreColorsVisibilityPref", 0.7f) * 255);
+        	int alpha = (int) (((float) prefs.getInt("showGenreColorsVisibilityPref", 70)) / 100.0f * 255.0f);
         	if (alpha > offset) {
         		alpha -= offset;
         	}
