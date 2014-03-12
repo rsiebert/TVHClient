@@ -21,6 +21,8 @@ import android.widget.TextView;
  */
 public class SliderPreference extends DialogPreference {
 
+    private final static String TAG = SliderPreference.class.getSimpleName();
+
     protected int mValue;
     protected int mSeekBarValue;
     protected int mSeekBarMinValue;
@@ -28,6 +30,8 @@ public class SliderPreference extends DialogPreference {
     protected int mSeekBarResolution;
 
     /**
+     * Constructor that initializes the slider preference
+     * 
      * @param context
      * @param attrs
      */
@@ -37,6 +41,8 @@ public class SliderPreference extends DialogPreference {
     }
 
     /**
+     * Constructor that initializes the slider preference
+     *  
      * @param context
      * @param attrs
      * @param defStyle
@@ -46,6 +52,12 @@ public class SliderPreference extends DialogPreference {
         setup(context, attrs);
     }
 
+    /**
+     * Initializes the slider preference by reading the values defined in the XML resource file.
+     * 
+     * @param context
+     * @param attrs
+     */
     private void setup(Context context, AttributeSet attrs) {
         setDialogLayoutResource(R.layout.slider_preference_dialog);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SliderPreference);
@@ -56,7 +68,7 @@ public class SliderPreference extends DialogPreference {
             mSeekBarResolution = mSeekBarMaxValue - mSeekBarMinValue;
         }
         catch (Exception e) {
-            Log.d("Slider", e.toString());
+            Log.d(TAG, e.toString());
         }
         a.recycle();
     }
@@ -73,14 +85,15 @@ public class SliderPreference extends DialogPreference {
 
     @Override
     public CharSequence getSummary() {
-        return getContext().getResources().getString(R.string.pref_genre_colors_visibility_value,
-                mValue);
+        return getContext().getResources().getString(R.string.pref_genre_colors_visibility_value, mValue);
     }
 
-    public int getValue() {
-        return mValue;
-    }
-
+    /**
+     * Assures that the given value is within the defined minimum and maximum
+     * range. The value is then stored in the persistent storage.
+     * 
+     * @param value
+     */
     public void setValue(int value) {
         value = Math.max(mSeekBarMinValue, Math.min(value, mSeekBarMaxValue));
         if (shouldPersist()) {
@@ -97,10 +110,12 @@ public class SliderPreference extends DialogPreference {
         mSeekBarValue = mValue;
         View view = super.onCreateDialogView();
 
-        // Set the text that is at the index of the value array
+        // Show the value of the slider as a text
         final TextView seekbarValue = (TextView) view.findViewById(R.id.slider_preference_value);
         seekbarValue.setText(String.valueOf(mSeekBarValue));
 
+        // Set the actual value of the slider and create the listener that
+        // updates the text and saves the value when the slider is moved.
         final SeekBar seekbar = (SeekBar) view.findViewById(R.id.slider_preference_seekbar);
         seekbar.setMax(mSeekBarResolution);
         seekbar.setProgress(mSeekBarValue - mSeekBarMinValue);
@@ -133,6 +148,4 @@ public class SliderPreference extends DialogPreference {
         }
         super.onDialogClosed(positiveResult);
     }
-
-    // TODO: Save and restore preference state.
 }
