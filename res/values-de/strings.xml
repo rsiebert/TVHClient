@@ -64,7 +64,7 @@
     <string name="pref_theme">Zeige ein helles Theme</string>
     <string name="pref_theme_sum">Verwendet die helleren Android Farben (Holo-Light Theme) für die Darstellung.</string>
     <string name="pref_language">Sprache</string>
-    <string name="pref_language_sum">Wähle die Sprache, die in der Applikation verwendet werden soll.</string>
+    <string name="pref_language_sum">Wähle die Sprache, die verwendet werden soll.</string>
     <string name="pref_res">Auflösung</string>
     <string name="pref_res_sum">Maximale Auflösung, die der Transcoder verwenden soll.</string>
     <string name="pref_acodec">Audio-Codec</string>
@@ -87,8 +87,8 @@
     <string name="pref_external_sum">Soll ein externer Videoplayer (z.B. BSPlayer oder MXPlayer) benutzt werden?</string>
 
     <string name="pref_information">Informationen</string>
-    <string name="pref_changelog">Änderungen</string>
-    <string name="pref_changelog_sum">Zeige eine Liste der Änderungen und neuen Eigenschaften der aktuellen Anwendung.</string>
+    <string name="pref_changelog">Änderungshistorie</string>
+    <string name="pref_changelog_sum">Zeige eine Liste aller Änderungen und Eigenschaften zwischen den Versionen.</string>
     <string name="pref_program_guide">Programmübersicht</string>
     <string name="pref_program_guide_sum">Konfiguriere das Aussehen und einige Parameter der Programmübersicht.</string>
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
@@ -97,8 +97,8 @@
     <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf maximale Anzahl an Tagen.</string>
     <string name="pref_programs_to_load">Programme vom Server laden</string>
     <string name="pref_programs_to_load_sum">Wieviele Programme sollen auf einmal pro Sender vom Server geladen werden. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
-    <string name="pref_genre_colors">Aktiviere Genrefarben</string>
-    <string name="pref_genre_colors_sum">Definiere in welchen Ansichten Genrefarben für Sender oder Programme angezeigt werden sollen.</string>
+    <string name="pref_genre_colors">Zeige Genrefarben</string>
+    <string name="pref_genre_colors_sum">Zu jedem Sender oder Programm soll das dazugehörige Genre farbig angezeigt werden.</string>
     <string name="pref_genre_colors_channels">TV-Sender</string>
     <string name="pref_genre_colors_channels_sum">Die Genrefarbe wird als vertikale Linie im linken Bereich der Senderliste angezeigt.</string>
     <string name="pref_genre_colors_programs">Programme</string>
