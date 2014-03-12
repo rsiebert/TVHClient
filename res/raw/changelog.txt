@@ -1,7 +1,9 @@
 $ 1.9.4
   % VERSION 1.9.4
-  _ 11.03.2014
-    * Show genre colors in the program guide
+  _ 12.03.2014
+    * Added genre colors for different screens
+    * Allow customizing the genre color visibility
+    * Added dialog to explain the genre colors 
 $ 1.9.3
   % VERSION 1.9.3
   _ 25.02.2014
