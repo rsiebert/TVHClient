@@ -72,16 +72,4 @@
         <item>Czeski</item>
     </string-array>
 
-	<string-array name="pref_genre_colors_visibility_values">
-	    <!-- You can define as many summaries as you'd like -->
-	    <!-- The active summary will reflect the preference's current value between 0.0 and 1.0 -->
-	    <item>30% visible</item>
-	    <item>40% visible</item>
-	    <item>50% visible</item>
-	    <item>60% visible</item>
-	    <item>70% visible</item>
-	    <item>80% visible</item>
-	    <item>90% visible</item>
-	</string-array>
-
 </resources>

@@ -27,9 +27,6 @@ public class SliderPreference extends DialogPreference {
     protected int mSeekBarMaxValue;
     protected int mSeekBarResolution;
 
-    // protected CharSequence[] mSummaries;
-    protected String[] mSeekBarValueArray;
-
     /**
      * @param context
      * @param attrs
@@ -51,7 +48,6 @@ public class SliderPreference extends DialogPreference {
 
     private void setup(Context context, AttributeSet attrs) {
         setDialogLayoutResource(R.layout.slider_preference_dialog);
-        mSeekBarValueArray = context.getResources().getStringArray(R.array.pref_genre_colors_visibility_values);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SliderPreference);
         try {
             setSummary(getContext().getResources().getString(R.string.pref_genre_colors_visibility_value, mValue));
