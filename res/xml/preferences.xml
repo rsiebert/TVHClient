@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/org.tvheadend.tvhguide" >
+    
+    <PreferenceCategory 
+        android:title="@string/pref_connections" >
+        <Preference
+            android:key="pref_manage_connections"
+            android:summary="@string/pref_manage_connections_sum"
+            android:title="@string/pref_manage_connections" >
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory 
+        android:title="@string/pref_user_interface" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="lightThemePref"
+            android:summary="@string/pref_theme_sum"
+            android:title="@string/pref_theme" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showIconPref"
+            android:summary="@string/pref_icons_sum"
+            android:title="@string/pref_icons" />
+        <ListPreference
+            android:name="@string/pref_language"
+            android:summary="@string/pref_language_sum"
+            android:defaultValue="en-us"
+            android:title="@string/pref_language"
+            android:key="languagePref"
+            android:dialogTitle="@string/pref_language"
+            android:entries="@array/pref_language_list_display"
+            android:entryValues="@array/pref_language_list" />
+        <PreferenceScreen
+            android:title="@string/pref_genre_colors" 
+            android:summary="@string/pref_genre_colors_sum" >
+	        <CheckBoxPreference
+	            android:defaultValue="false"
+	            android:key="showGenreColorsChannelsPref"
+	            android:summary="@string/pref_genre_colors_channels_sum"
+	            android:title="@string/pref_genre_colors_channels" />
+	        <CheckBoxPreference
+	            android:defaultValue="false"
+	            android:key="showGenreColorsProgramsPref"
+	            android:summary="@string/pref_genre_colors_programs_sum"
+	            android:title="@string/pref_genre_colors_programs" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="showGenreColorsGuidePref"
+                android:summary="@string/pref_genre_colors_epg_sum"
+                android:title="@string/pref_genre_colors_epg" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="showGenreColorsSearchPref"
+                android:summary="@string/pref_genre_colors_search_results_sum"
+                android:title="@string/pref_genre_colors_search_results" />
+            <org.tvheadend.tvhguide.SliderPreference
+		        android:defaultValue="70"
+		        custom:minimumValue="30"
+                custom:maximumValue="80"
+		        android:dialogMessage="@string/pref_genre_colors_visibility_message"
+		        android:key="showGenreColorsVisibilityPref"
+		        android:summary="@string/pref_genre_colors_visibility_value"
+		        android:title="@string/pref_genre_colors_visibility" />
+        </PreferenceScreen>
+	    <PreferenceScreen
+            android:title="@string/pref_program_guide"
+            android:summary="@string/pref_program_guide_sum" >
+	        <EditTextPreference
+	            android:id="@+id/pref_epg_hours_visible"
+	            android:name="@string/pref_epg_hours_visible"
+	            android:defaultValue="4"
+	            android:key="epgHoursVisible"
+	            android:numeric="integer"
+	            android:summary="@string/pref_epg_hours_visible_sum"
+	            android:title="@string/pref_epg_hours_visible" />
+	        <EditTextPreference
+	            android:id="@+id/pref_epg_max_days"
+	            android:name="@string/pref_epg_max_days"
+	            android:defaultValue="7"
+	            android:key="epgMaxDays"
+	            android:numeric="integer"
+	            android:summary="@string/pref_epg_max_days_sum"
+	            android:title="@string/pref_epg_max_days" />
+	        <EditTextPreference
+	            android:id="@+id/pref_programs_to_load"
+	            android:name="@string/pref_programs_to_load"
+	            android:defaultValue="10"
+	            android:key="programsToLoad"
+	            android:numeric="integer"
+	            android:summary="@string/pref_programs_to_load_sum"
+	            android:title="@string/pref_programs_to_load" />
+	    </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_playback">
+        <PreferenceScreen
+	        android:key="pref_program_playback"
+	        android:title="@string/programs"
+	        android:summary="@string/pref_playback_programs_sum" >
+            <EditTextPreference
+                android:id="@+id/pref_host"
+                android:name="@string/pref_host"
+                android:summary="@string/pref_host_sum"
+                android:defaultValue="localhost"
+                android:title="@string/pref_host"
+                android:key="progServerHostPref" />
+	        <EditTextPreference
+	            android:id="@+id/pref_http_port"
+	            android:name="@string/pref_http_port"
+	            android:summary="@string/pref_http_port_sum"
+	            android:defaultValue="9981"
+	            android:title="@string/pref_http_port"
+	            android:key="progHttpPortPref"
+	            android:numeric="integer" />
+	        <ListPreference
+	            android:name="@string/pref_container"
+	            android:summary="@string/pref_container_sum"
+	            android:defaultValue="matroska"
+	            android:title="@string/pref_container"
+	            android:key="progContainerPref"
+	            android:dialogTitle="@string/pref_container"
+	            android:entries="@array/pref_container_list_display"
+	            android:entryValues="@array/pref_container_list" />
+	        <CheckBoxPreference 
+	            android:id="@+id/pref_external"
+	            android:name="@string/pref_external"
+	            android:summary="@string/pref_external_sum"
+	            android:defaultValue="true"
+	            android:title="@string/pref_external"
+	            android:key="progExternalPref" />
+	        <CheckBoxPreference 
+	            android:id="@+id/pref_transcode"
+	            android:name="@string/pref_transcode"
+	            android:summary="@string/pref_transcode_sum"
+	            android:defaultValue="false"
+	            android:title="@string/pref_transcode"
+	            android:key="progTranscodePref" />
+	        <ListPreference
+	            android:name="@string/pref_res"
+	            android:summary="@string/pref_res_sum"
+	            android:defaultValue="384"
+	            android:title="@string/pref_res"
+	            android:key="progResolutionPref"
+	            android:dialogTitle="@string/pref_res"
+	            android:dependency="progTranscodePref"
+	            android:entries="@array/pref_res_list_display"
+	            android:entryValues="@array/pref_res_list" />
+	        <ListPreference
+	            android:name="@string/pref_acodec"
+	            android:summary="@string/pref_acodec_sum"
+	            android:defaultValue="AAC"
+	            android:title="@string/pref_acodec"
+	            android:key="progAcodecPref"
+	            android:dialogTitle="@string/pref_acodec"
+	            android:dependency="progTranscodePref"
+	            android:entries="@array/pref_acodec_list_display"
+	            android:entryValues="@array/pref_acodec_list" />
+	        <ListPreference
+	            android:name="@string/pref_vcodec"
+	            android:summary="@string/pref_vcodec_sum"
+	            android:defaultValue="H264"
+	            android:title="@string/pref_vcodec"
+	            android:key="progVcodecPref"
+	            android:dialogTitle="@string/pref_vcodec"
+	            android:dependency="progTranscodePref"
+	            android:entries="@array/pref_vcodec_list_display"
+	            android:entryValues="@array/pref_vcodec_list" />
+	        <ListPreference
+	            android:name="@string/pref_scodec"
+	            android:summary="@string/pref_scodec_sum"
+	            android:defaultValue="NONE"
+	            android:title="@string/pref_scodec"
+	            android:key="progScodecPref"
+	            android:dialogTitle="@string/pref_scodec"
+	            android:dependency="progTranscodePref"
+	            android:entries="@array/pref_scodec_list_display"
+	            android:entryValues="@array/pref_scodec_list" />
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:key="pref_playback_recordings"
+            android:title="@string/recordings"
+            android:summary="@string/pref_playback_recordings_sum" >
+	        <EditTextPreference
+                android:id="@+id/pref_host"
+                android:name="@string/pref_host"
+                android:summary="@string/pref_host_sum"
+                android:defaultValue="localhost"
+                android:title="@string/pref_host"
+                android:key="recServerHostPref" />
+            <EditTextPreference
+                android:id="@+id/pref_http_port"
+                android:name="@string/pref_http_port"
+                android:defaultValue="9981"
+                android:key="recHttpPortPref"
+                android:numeric="integer"
+                android:summary="@string/pref_http_port_sum"
+                android:title="@string/pref_http_port" />
+            <ListPreference
+                android:name="@string/pref_container"
+                android:defaultValue="matroska"
+                android:dialogTitle="@string/pref_container"
+                android:entries="@array/pref_container_list_display"
+                android:entryValues="@array/pref_container_list"
+                android:key="recContainerPref"
+                android:summary="@string/pref_container_sum"
+                android:title="@string/pref_container" />
+            <CheckBoxPreference
+                android:id="@+id/pref_external"
+                android:name="@string/pref_external"
+                android:defaultValue="true"
+                android:key="recExternalPref"
+                android:summary="@string/pref_external_sum"
+                android:title="@string/pref_external" />
+	        <CheckBoxPreference 
+	            android:id="@+id/pref_transcode"
+	            android:name="@string/pref_transcode"
+	            android:summary="@string/pref_transcode_sum"
+	            android:defaultValue="false"
+	            android:title="@string/pref_transcode"
+	            android:key="recTranscodePref" />
+	        <ListPreference
+	            android:name="@string/pref_res"
+	            android:summary="@string/pref_res_sum"
+	            android:defaultValue="384"
+	            android:title="@string/pref_res"
+	            android:key="recResolutionPref"
+	            android:dialogTitle="@string/pref_res"
+	            android:dependency="recTranscodePref"
+	            android:entries="@array/pref_res_list_display"
+	            android:entryValues="@array/pref_res_list" />
+	        <ListPreference
+	            android:name="@string/pref_acodec"
+	            android:summary="@string/pref_acodec_sum"
+	            android:defaultValue="AAC"
+	            android:title="@string/pref_acodec"
+	            android:key="recAcodecPref"
+	            android:dialogTitle="@string/pref_acodec"
+	            android:dependency="recTranscodePref"
+	            android:entries="@array/pref_acodec_list_display"
+	            android:entryValues="@array/pref_acodec_list" />
+	        <ListPreference
+	            android:name="@string/pref_vcodec"
+	            android:summary="@string/pref_vcodec_sum"
+	            android:defaultValue="MPEG4VIDEO"
+	            android:title="@string/pref_vcodec"
+	            android:key="recVcodecPref"
+	            android:dialogTitle="@string/pref_vcodec"
+	            android:dependency="recTranscodePref"
+	            android:entries="@array/pref_vcodec_list_display"
+	            android:entryValues="@array/pref_vcodec_list" />
+	        <ListPreference
+	            android:name="@string/pref_scodec"
+	            android:summary="@string/pref_scodec_sum"
+	            android:defaultValue="PASS"
+	            android:title="@string/pref_scodec"
+	            android:key="recScodecPref"
+	            android:dialogTitle="@string/pref_scodec"
+	            android:dependency="recTranscodePref"
+	            android:entries="@array/pref_scodec_list_display"
+	            android:entryValues="@array/pref_scodec_list" />
+        </PreferenceScreen>
+	</PreferenceCategory>
+
+    <PreferenceCategory 
+        android:title="@string/pref_information" >
+        <Preference
+            android:key="pref_changelog"
+            android:summary="@string/pref_changelog_sum"
+            android:title="@string/pref_changelog" >
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

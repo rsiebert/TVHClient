@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- 
+    Draws a border at the left side of the layout that shows a 
+    single program. This separates each program from each other. 
+    -->
+    <item
+        android:id="@+id/timeline_item_genre"
+        android:bottom="-2dp"
+        android:left="0dp"
+        android:right="-2dp"
+        android:top="-2dp">
+        <shape android:shape="rectangle" >
+            <stroke
+                android:width="2dp"
+                android:color="#FFDDDDDD" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+</layer-list>

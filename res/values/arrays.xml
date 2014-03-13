@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_res_list">
+        <item>576</item>
+        <item>480</item>
+        <item>384</item>
+        <item>288</item>
+        <item>192</item>
+    </string-array>
+    <string-array name="pref_res_list_display">
+        <item>576p</item>
+        <item>480p</item>
+        <item>384p</item>
+        <item>288p</item>
+        <item>192p</item>
+    </string-array>
+    
+    <string-array name="pref_acodec_list">
+        <item>AAC</item>
+        <item>MPEG2AUDIO</item>
+    </string-array>
+    <string-array name="pref_acodec_list_display">
+        <item>Advanced Audio Codec (AAC)</item>
+        <item>MPEG-2 Audio Layer II (MP2)</item>
+    </string-array>
+    
+    <string-array name="pref_vcodec_list">
+        <item>H264</item>
+        <item>MPEG4VIDEO</item>
+        <item>VP8</item>
+    </string-array>
+    <string-array name="pref_vcodec_list_display">
+        <item>MPEG-4 AVC (H.264)</item>
+        <item>MPEG-4 Part 2</item>
+        <item>VP8</item>
+    </string-array>
+    
+    <string-array name="pref_scodec_list">
+        <item>PASS</item>
+        <item>NONE</item>
+    </string-array>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>None</item>
+    </string-array>
+    
+    <string-array name="pref_container_list">
+        <item>matroska</item>
+        <item>mpegts</item>
+        <item>mpegps</item>
+        <item>pass</item>
+    </string-array>
+    
+    <string-array name="pref_container_list_display">
+        <item>Matroska</item>
+        <item>MPEG-TS</item>
+        <item>MPEG-PS</item>
+        <item>Pass-through</item>
+    </string-array>
+
+    <string-array name="pref_language_list">
+        <item>en-us</item>
+        <item>de</item>
+        <item>pl</item>
+        <item>cs</item>
+    </string-array>
+    
+    <string-array name="pref_language_list_display">
+        <item>English</item>
+        <item>Deutsch</item>
+        <item>Polski</item>
+        <item>Czeski</item>
+    </string-array>
+
+</resources>

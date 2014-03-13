@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.tvheadend.tvhguide"
+    android:versionCode="21"
+    android:versionName="1.9.4" >
+    <uses-permission android:name="android.permission.INTERNET" />
+    
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19" />
+    <application 
+        android:allowBackup="true"
+        android:name="org.tvheadend.tvhguide.TVHGuideApplication" 
+        android:label="TVHGuide" android:icon="@drawable/logo">
+        <meta-data 
+            android:name="android.app.default_searchable" 
+            android:value=".SearchResultActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ChannelListTabsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="org.tvheadend.tvhguide.RecordingListTabsActivity" />
+        <activity android:name="org.tvheadend.tvhguide.SearchResultActivity" android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
+        </activity>
+        <activity android:name="org.tvheadend.tvhguide.SettingsManageConnectionsActivity" />
+        <activity android:name="org.tvheadend.tvhguide.SettingsAddConnectionActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ProgramListActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ProgramDetailsActivity" />
+        <activity android:name="org.tvheadend.tvhguide.RecordingDetailsActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ProgramGuideTabsActivity" />
+        <activity android:name="org.tvheadend.tvhguide.SettingsActivity"/>
+        <activity android:name="org.tvheadend.tvhguide.PlaybackSelectionActivity" />
+        <activity android:name="org.tvheadend.tvhguide.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="org.tvheadend.tvhguide.PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>
+        <service android:name="org.tvheadend.tvhguide.htsp.HTSService" android:enabled="true"/>
+    </application>
+</manifest>

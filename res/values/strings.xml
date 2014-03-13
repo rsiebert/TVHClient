@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">TVHGuide</string>
+
+    <string name="menu_settings">Settings</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_tags">Tags</string>
+    <string name="menu_recordings">Recordings</string>
+
+    <string name="menu_play">Play</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_record">Record</string>
+    <string name="menu_record_cancel">Cancel recording</string>
+    <string name="menu_record_remove">Remove recording</string>
+    <string name="menu_search_imdb">Search on IMDB</string>
+    <string name="menu_search_epg">Search the program guide</string>
+    <string name="menu_search_channel">Search this channel</string>
+    <string name="menu_add">Add</string>
+    <string name="menu_save">Save</string>
+    <string name="menu_cancel">Cancel</string>
+    <string name="menu_set_active">Activate</string>
+    <string name="menu_set_not_active">Deactivate</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_connections">Connections</string>
+    <string name="menu_timeframe">Timeframe</string>
+    <string name="menu_genre_color_info">Explain genre colors</string>
+
+    <string name="pref_manage_connections">Manage connections</string>
+    <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
+    <string name="select_connection">Select connection</string>
+    <string name="add_connection">Add connection</string>
+    <string name="no_connections">No connections available</string>
+    <string name="create_new_connections">Do you want to create a new connection now?</string>
+    <string name="connection_options">Options for connection \'%s\'</string>
+    <string name="cancel_connection">Discard values? All changes will be lost.</string>
+    <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
+    <string name="delete_recording">Do you really want to delete the recording \'%s\'?</string>
+
+    <string name="pref_connections">Connections</string>
+    <string name="pref_name">Connection name</string>
+    <string name="pref_name_sum">Enter a unique name of the connection</string>
+    <string name="pref_name_error_empty">The name must not be empty.</string>
+    <string name="pref_name_error_invalid">The name must only contain letters, numbers, minus and underscore.</string>
+    <string name="pref_selected">Default connection</string>
+    <string name="pref_selected_sum">Select to make this the default connection and use it after the application has started.</string>
+    <string name="pref_host">Hostname</string>
+    <string name="pref_host_sum">Enter the server hostname</string>
+    <string name="pref_host_error_empty">The IP-address or hostname must not be empty.</string>
+    <string name="pref_host_error_invalid">The IP-address is not valid.</string>
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Enter the server port</string>
+    <string name="pref_port_error_empty">The port number must not be empty.</string>
+    <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
+    <string name="pref_user">Username</string>
+    <string name="pref_user_sum">Enter username</string>
+    <string name="pref_pass">Password</string>
+    <string name="pref_pass_sum">Enter password</string>
+    <string name="pref_pass_set_sum">Password is set but is not displayed.</string>
+    
+    <string name="pref_user_interface">User interface</string>
+    <string name="pref_icons">Channel icons</string>
+    <string name="pref_icons_sum">Show channel icons?</string>
+    <string name="pref_theme">Light theme</string>
+    <string name="pref_theme_sum">Use a light theme</string>
+    <string name="pref_language">Language</string>
+    <string name="pref_language_sum">Choose the language that shall be used by the application.</string>
+    <string name="pref_res">Resolution</string>
+    <string name="pref_res_sum">Specify the maximum resolution that the transcoder shall use.</string>
+    <string name="pref_acodec">Audio codec</string>
+    <string name="pref_acodec_sum">Define the type of audio that the transcoder shall use.</string>
+    <string name="pref_vcodec">Video codec</string>
+    <string name="pref_vcodec_sum">Define the type of video that the transcoder shall use.</string>
+    <string name="pref_scodec">Subtitle codec</string>
+    <string name="pref_scodec_sum">Define the subtitle type that the transcoder shall use.</string>
+    <string name="pref_container">Media container</string>
+    <string name="pref_container_sum">Define the media container that shall be used to transport the audio and video streams. Matroshka is usually the preferred choice.</string>
+    
+    <string name="pref_playback">Playback</string>
+    <string name="pref_playback_programs_sum">Configure playback options for the Live-TV programs.</string>
+    <string name="pref_playback_recordings_sum">Configure playback options for your recorded programs.</string>
+    <string name="pref_http_port">HTTP port</string>
+    <string name="pref_http_port_sum">Enter server HTTP port</string>
+    <string name="pref_transcode">Transcode stream</string>
+    <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
+    <string name="pref_external">Prefer external player</string>
+    <string name="pref_external_sum">Use an external player (like BSPlayer or MXPlayer) for the program or recording.</string>
+
+    <string name="pref_information">Information</string>
+    <string name="pref_changelog">Changelog</string>
+    <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
+    <string name="pref_program_guide">Program guide</string>
+    <string name="pref_program_guide_sum">Configure the program guide screen and how the data shall be displayed.</string>
+    <string name="pref_epg_hours_visible">Hours visible</string>
+    <string name="pref_epg_hours_visible_sum">Define how many hours of the program guide shall be shown on one screen. Too many hours will display too many programs and thus clutters the screen and decrease the readability.</string>
+    <string name="pref_epg_max_days">Maximum days to show</string>
+    <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
+    <string name="pref_programs_to_load">Number of programs to load</string>
+    <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
+    <string name="pref_genre_colors">Enable genre colors</string>
+    <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
+    <string name="pref_genre_colors_channels">Channels</string>
+    <string name="pref_genre_colors_channels_sum">The genre color will be shown as a vertical line on the left side of the channel list screen.</string>
+    <string name="pref_genre_colors_programs">Programs</string>
+    <string name="pref_genre_colors_programs_sum">The genre color will be shown as a vertical line on the left side of the program lists and the program details screen.</string>
+    <string name="pref_genre_colors_epg">Program guide</string>
+    <string name="pref_genre_colors_epg_sum">Shows the genre color in the background of each program guide item.</string>
+    <string name="pref_genre_colors_search_results">Search results</string>
+    <string name="pref_genre_colors_search_results_sum">The genre color will be shown as a vertical line on the left side of the search result list.</string>
+    <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
+    <string name="pref_genre_colors_visibility">Genre color visibility</string>
+    <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
+
+    <string name="err_auth">Access denied</string>
+    <string name="err_connect">Can\'t connect to server</string>
+    <string name="err_con_lost">Lost connection to server</string>
+    
+    <string-array name="pr_content_type0">
+        <item>Movie/Drama</item>
+        <item>News/Current affairs</item>
+        <item>Show/Game show</item>
+        <item>Sports</item>
+        <item>Children\'s / Youth</item>
+        <item>Music/Ballet/Dance</item>
+        <item>Arts/Culture</item>
+        <item>Social/Political issues/Economics</item>
+        <item>Education/Science/Factual</item>
+        <item>Leisure hobbies</item>
+        <item>Misc</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Movie/Drama</item>
+        <item>Detective/Thriller</item>
+        <item>Adventure/Western/War</item>
+        <item>Science Fiction/Fantasy/Horror</item>
+        <item>Comedy</item>
+        <item>Soap/Melodrama/Folkloric</item>
+        <item>Romance</item>
+        <item>Serious/ClassicalReligion/Historical</item>
+        <item>Adult Movie/Drama</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>News/Current affairs</item>
+        <item>News/Weather Report</item>
+        <item>Magazine</item>
+        <item>Documentary</item>
+        <item>Discussion/Interview/Debate</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Show/Game show</item>
+        <item>Game show/Quiz/Contest</item>
+        <item>Variety</item>
+        <item>Talk</item>
+    </string-array>
+    
+    <string-array name="pr_content_type4">
+        <item>Sports</item>
+        <item>Special Event</item>
+        <item>Magazine</item>
+        <item>Football/Soccer</item>
+        <item>Tennis/Squash</item>
+        <item>Team sports</item>
+        <item>Athletics</item>
+        <item>Motor Sport</item>
+        <item>Water Sport</item>
+        <item>Winter Sports</item>
+        <item>Equestrian</item>
+        <item>Martial sports</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Children\'s / Youth</item>
+        <item>Pre-school</item>
+        <item>Entertainment (6 to 14 year-olds)</item>
+        <item>Entertainment (10 to 16 year-olds)</item>
+        <item>Informational/Educational/Schools</item>
+        <item>Cartoons/Puppets</item>
+    </string-array>
+    
+    <string-array name="pr_content_type6">
+        <item>Music/Ballet/Dance</item>
+        <item>Rock/Pop</item>
+        <item>Serious music/Classical Music</item>
+        <item>Folk/Traditional music</item>
+        <item>Jazz</item>
+        <item>Musical/Opera</item>
+        <item>Ballet</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Arts/Culture</item>
+        <item>Performing Arts</item>
+        <item>Fine Arts</item>
+        <item>Religion</item>
+        <item>Popular Culture/Tradital Arts</item>
+        <item>Literature</item>
+        <item>Film/Cinema</item>
+        <item>Experimental Film/Video</item>
+        <item>Broadcasting/Press</item>
+        <item>New Media</item>
+        <item>Magazine</item>
+        <item>Fashion</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Social/Political issues/Economics</item>
+        <item>Magazine/Report/Domentary</item>
+        <item>Economics/Social Advisory</item>
+        <item>Remarkable People</item>
+    </string-array>
+
+    
+    <string-array name="pr_content_type9">
+        <item>Education/Science/Factual</item>        
+        <item>Nature/Animals/Environment</item>
+        <item>Technology/Natural sciences</item>
+        <item>Medicine/Physiology/Psychology</item>
+        <item>Foreign Countries/Expeditions</item>
+        <item>Social/Spiritual Sciences</item>
+        <item>Further Education</item>
+        <item>Languages</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Leisure hobbies</item>
+        <item>Tourism/Travel</item>
+        <item>Handicraft</item>
+        <item>Motoring</item>
+        <item>Fitness and Health</item>
+        <item>Cooking</item>
+        <item>Advertisement/Shopping</item>
+        <item>Gardening</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Misc</item>
+        <item>Black and White</item>
+        <item>Unpublished</item>
+        <item>Live Broadcast</item>
+    </string-array>
+
+    <string name="no_transmission">No transmission</string>
+    <string name="no_data">No program data available</string>
+    <string name="minutes">%d min</string>
+    
+    <string name="search_hint">Search the EPG</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="in_2_days">In 2 days</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+
+    <string name="programs">Programs</string>
+    <string name="completed">Completed</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="failed">Failed</string>
+    
+    <string name="channels">Channels</string>
+    <string name="recordings">Recordings</string>
+    <string name="program_guide">Program guide</string>
+    <string name="status">Status</string>
+    <string name="items">Items</string>
+    <string name="results">Results</string>
+    
+    <string name="channel_icon">Channel icon</string>
+    <string name="status_icon">Status icon</string>
+    <string name="title">Title</string>
+    <string name="channel">Channel</string>
+    <string name="time">Time</string>
+    <string name="date">Date</string>
+    <string name="shown_on_channel">on</string>
+    <string name="summary">Summary</string>
+    <string name="description">Description</string>
+    <string name="duration">Duration</string>
+    <string name="airing">Airing</string>
+    <string name="rating">Rating</string>
+    <string name="content_type">Content type</string>
+    <string name="series_information">Series information</string>
+    <string name="genre_color_list">List of genre colors and their meaning.</string>
+
+    <string name="nothing">Nothing</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="all_channels">All channels</string>    
+    <string name="season">Season</string>
+    <string name="episode">Episode</string>
+    <string name="part">Part</string>
+    <string name="progress">%1$d%% of the show already shown</string>
+    
+    <string name="disc_space">Disc space</string>
+    <string name="total">Total</string>
+    <string name="available">Available</string>
+    <string name="unknown">Unknown</string>
+    <string name="select_timeframe">Show the program guide for the selected date and time.</string>
+
+    <string name="currently_recording">Currently recording</string>
+    <string name="restart_application">Please restart the application to activate the new theme.</string>
+    
+    <string name="no_media_player">No media player found</string>
+    <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
+</resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">TVHGuide</string>
+
+    <string name="menu_settings">Inställningar</string>
+    <string name="menu_refresh">Uppdatera</string>
+    <string name="menu_tags">Taggar</string>
+    <string name="menu_recordings">Inspelningar</string>
+
+    <string name="menu_play">Spela</string>
+    <string name="menu_record">Spela in</string>
+    <string name="menu_record_remove">Ta bort inspelning</string>
+    <string name="menu_record_cancel">Avbryt inspelning</string>
+
+    <string name="pref_host">Värdnamn</string>
+    <string name="pref_host_sum">Skriv in värdnamn</string>
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Skriv in portnummer</string>
+    <string name="pref_user">Användarnamn</string>
+    <string name="pref_user_sum">Skriv in användarnamn</string>
+    <string name="pref_pass">Lösenord</string>
+    <string name="pref_pass_sum">Skriv in lösenord</string>
+
+    <string name="pref_user_interface">Användargränssnitt</string>
+    <string name="pref_theme">Ljust tema</string>
+    <string name="pref_theme_sum">Använd ett ljust tema</string>
+    <string name="pref_icons">Kanallogotyper</string>
+    <string name="pref_icons_sum">Visa kanalers logotyper?</string>
+    <string name="pref_res">Upplösning</string>
+    <string name="pref_res_sum">Maximal upplösning vid omkodning</string>
+    <string name="pref_acodec">Ljud</string>
+    <string name="pref_acodec_sum">Kodek att använda vid omkodning av ljud</string>
+    <string name="pref_vcodec">Video</string>
+    <string name="pref_vcodec_sum">Kodek att använda vid omkodning av video</string>
+    <string name="pref_scodec">Undertexter</string>
+    <string name="pref_scodec_sum">Kodek att använda vid omkodning av undertexter</string>
+    <string name="pref_container">Media container</string>
+    <string name="pref_container_sum">Media container att föredra</string>
+    
+    <string name="pref_playback">Uppspelning</string>
+    <string name="pref_http_port">HTTP port</string>
+    <string name="pref_http_port_sum">Skriv in HTTP portnummer</string>
+    <string name="pref_transcode">Koda om ström</string>
+    <string name="pref_transcode_sum">Begär omkodning av direktsänd media</string>
+    <string name="pref_external">Föredra extern spelare</string>
+    <string name="pref_external_sum">Använd en extern spelare för direktsänd media (BSPlayer verkar OK)</string>
+
+    <string name="err_auth">Åtkomst nekad</string>
+    <string name="err_inv">Felaktigt svar från servern</string>
+    <string name="err_connect">Kan inte ansluta till servern</string>
+    <string name="err_con_lost">Tappade anslutningen till servern</string>
+
+    <string name="loading">Laddar&#8230;</string>
+
+    <string name="all_channels">Alla kanaler</string>
+    <string name="season">Säsong</string>
+    <string name="episode">Avsnitt</string>
+    <string name="part">Del</string>
+    <string name="airing">Sänds</string>
+    <string name="rating">Omdömme</string>
+    <string name="content_type">Typ</string>
+    <string name="series_information">Del</string>
+    
+    <string name="upcoming">Schemalagd</string>
+    <string name="completed">Avslutad</string>
+    <string name="failed">Missad / Ogiltig</string>
+
+    <string name="no_transmission">Sändningsuppehåll</string>
+    <string name="search_hint">Sök i programtablån</string>
+    <string name="today">idag</string>
+</resources>

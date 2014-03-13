@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">TVHGuide</string>
+
+    <string name="menu_settings">Einstellungen</string>
+    <string name="menu_refresh">Aktualisieren</string>
+    <string name="menu_tags">Anzeige Filtern</string>
+    <string name="menu_recordings">Aufnahmen</string>
+
+    <string name="menu_play">Abspielen</string>
+    <string name="menu_search">Suchen</string>
+    <string name="menu_record">Aufnehmen</string>
+    <string name="menu_record_cancel">Aufnahme abbrechen</string>
+    <string name="menu_record_remove">Aufnahme entfernen</string>
+    <string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
+    <string name="menu_search_epg">Suche im TV-Programm</string>
+    <string name="menu_search_channel">Suche auf diesem Sender</string>
+    <string name="menu_add">Hinzufügen</string>
+    <string name="menu_save">Speichern</string>
+    <string name="menu_cancel">Abbrechen</string>
+    <string name="menu_set_active">Aktivieren</string>
+    <string name="menu_set_not_active">Deaktivieren</string>
+    <string name="menu_edit">Bearbeiten</string>
+    <string name="menu_delete">Löschen</string>
+    <string name="menu_connections">Verbindungen</string>
+    <string name="menu_timeframe">Zeitraum</string>
+    <string name="menu_genre_color_info">Bedeutung der Genrefarben</string>
+
+    <string name="pref_manage_connections">Verbindungen verwalten</string>
+    <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
+    <string name="select_connection">Verbindung wählen</string>
+    <string name="add_connection">Verbindung hinzufügen</string>
+    <string name="new_connection">Neue Verbindung erstellen</string>
+    <string name="no_connections">Keine Verbindungen vorhanden</string>
+    <string name="create_new_connections">Möchtest Du jetzt eine neue Verbindung zu einem Server erstellen?</string>
+    <string name="connection_options">Optionen für Verbindung \'%s\'</string>
+    <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
+    <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
+    <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
+
+    <string name="pref_connections">Verbindungen</string>
+    <string name="pref_name">Name der Verbindung</string>
+    <string name="pref_name_sum">Bitte einen eindeutigen Namen eingeben.</string>
+    <string name="pref_name_error_empty">Der Name darf nicht leer sein.</string>
+    <string name="pref_name_error_invalid">Der Name darf nur Buchstaben, Ziffern, Minus oder Unterstrich enthalten.</string>
+    <string name="pref_selected">Standardverbindung</string>
+    <string name="pref_selected_sum">Wählen um diese Verbindung als Standard zu definieren. Sie wird beim Starten automatisch verwendet.</string>
+    <string name="pref_host">Hostname</string>
+    <string name="pref_host_sum">Hostname des Servers eingeben</string>
+    <string name="pref_host_error_empty">Die IP-Adresse oder der Hostname darf nicht leer sein.</string>
+    <string name="pref_host_error_invalid">Die IP-Adresse ist ungültig.</string>
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Server-Port eingeben</string>
+    <string name="pref_port_error_empty">Die Port-Nummer darf nicht leer sein.</string>
+    <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muss zwischen 1 und 65535 liegen.</string>
+    <string name="pref_user">Benutzername</string>
+    <string name="pref_user_sum">Benutzername eingeben</string>
+    <string name="pref_pass">Passwort</string>
+    <string name="pref_pass_sum">Passwort eingeben</string>
+    <string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
+
+    <string name="pref_user_interface">Benutzeroberfläche</string>
+    <string name="pref_icons">Zeige Senderlogos</string>
+    <string name="pref_icons_sum">Zu jeder Aufnahme wird (falls verfügbar) das dazugehörige Senderlogo angezeigt.</string>
+    <string name="pref_theme">Zeige ein helles Theme</string>
+    <string name="pref_theme_sum">Verwendet die helleren Android Farben (Holo-Light Theme) für die Darstellung.</string>
+    <string name="pref_language">Sprache</string>
+    <string name="pref_language_sum">Wähle die Sprache, die verwendet werden soll.</string>
+    <string name="pref_res">Auflösung</string>
+    <string name="pref_res_sum">Maximale Auflösung, die der Transcoder verwenden soll.</string>
+    <string name="pref_acodec">Audio-Codec</string>
+    <string name="pref_acodec_sum">Definiert welche Art von Audio der Transcoder verwenden soll.</string>
+    <string name="pref_vcodec">Video-Codec</string>
+    <string name="pref_vcodec_sum">Definiert welche Art von Video der Transcoder verwenden soll.</string>
+    <string name="pref_scodec">Untertitel Codec</string>
+    <string name="pref_scodec_sum">Definiert welche Art von Untertiteln der Transcoder verwenden soll.</string>
+    <string name="pref_container">Medien-Container</string>
+    <string name="pref_container_sum">Die Art des Medien-Containers in dem die Audio- und Videoinformationen gesendet werden. Matroschka ist üblicherweise die bevorzugte Wahl.</string>
+
+    <string name="pref_playback">Wiedergabe</string>
+    <string name="pref_playback_programs_sum">Einstellungen für die Wiedergabe von Live-TV.</string>
+    <string name="pref_playback_recordings_sum">Einstellungen für die Wiedergabe der aufgenommenen Programme.</string>
+    <string name="pref_http_port">HTTP-Port</string>
+    <string name="pref_http_port_sum">HTTP-Port des Servers</string>
+    <string name="pref_transcode">Stream transkodieren</string>
+    <string name="pref_transcode_sum">Konvertiere die Live-Wiedergabe oder das Program während der Übertragung in ein anderes Format. (Der TVHeadend Server muss dies unterstützen)</string>
+    <string name="pref_external">Verwende externen Videoplayer</string>
+    <string name="pref_external_sum">Soll ein externer Videoplayer (z.B. BSPlayer oder MXPlayer) benutzt werden?</string>
+
+    <string name="pref_information">Informationen</string>
+    <string name="pref_changelog">Änderungshistorie</string>
+    <string name="pref_changelog_sum">Zeige eine Liste aller Änderungen und Eigenschaften zwischen den Versionen.</string>
+    <string name="pref_program_guide">Programmübersicht</string>
+    <string name="pref_program_guide_sum">Konfiguriere das Aussehen und einige Parameter der Programmübersicht.</string>
+    <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
+    <string name="pref_epg_hours_visible_sum">Anzahl der Stunden die auf einem Bildschirm angezeigt werden sollen. Je höher die Anzahl, desto mehr Programme werden gleichzeitig pro Sender angezeigt. Dies erschwert die Lesbarkeit deutlich.</string>
+    <string name="pref_epg_max_days">Anzahl der Tage</string>
+    <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf maximale Anzahl an Tagen.</string>
+    <string name="pref_programs_to_load">Programme vom Server laden</string>
+    <string name="pref_programs_to_load_sum">Wieviele Programme sollen auf einmal pro Sender vom Server geladen werden. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
+    <string name="pref_genre_colors">Zeige Genrefarben</string>
+    <string name="pref_genre_colors_sum">Zu jedem Sender oder Programm soll das dazugehörige Genre farbig angezeigt werden.</string>
+    <string name="pref_genre_colors_channels">TV-Sender</string>
+    <string name="pref_genre_colors_channels_sum">Die Genrefarbe wird als vertikale Linie im linken Bereich der Senderliste angezeigt.</string>
+    <string name="pref_genre_colors_programs">Programme</string>
+    <string name="pref_genre_colors_programs_sum">Die Genrefarbe wird als vertikale Linie im linken Bereich in der Programmliste und in der Detailansicht angezeigt.</string>
+    <string name="pref_genre_colors_epg">Programübersicht</string>
+    <string name="pref_genre_colors_epg_sum">Zeige die Genrefarbe als farbigen Hintergrund für jedes Programm an.</string>
+    <string name="pref_genre_colors_search_results">Suchergebnisse</string>
+    <string name="pref_genre_colors_search_results_sum">Die Genrefarbe wird als vertikale Linie im linken Bereich der Suchergebnissliste angezeigt.</string>
+    <string name="pref_genre_colors_visibility_message">Definiere die Sichtbarkeit der Farben. Je höher der Wert, desto stärker wirken die Farben.</string>
+    <string name="pref_genre_colors_visibility">Sichtbarkeit der Genrefarben</string>
+    <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
+
+    <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
+    <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
+    <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
+    
+     <string-array name="pr_content_type0">
+        <item>Film / Drama</item>
+        <item>Nachrichten / Aktuelles</item>
+        <item>Show / Spielshow</item>
+        <item>Sport</item>
+        <item>Kinder / Jugend</item>
+        <item>Musik / Ballett / Tanz</item>
+        <item>Kunst / Kultur</item>
+        <item>Gesellschaft / Politik / Wirtschaft</item>
+        <item>Bildung / Wissenschaft</item>
+        <item>Freizeit / Hobbys</item>
+        <item>Verschiedenes</item>
+    </string-array>
+    <string-array name="pr_content_type1">
+        <item>Film / Drama</item>
+        <item>Krimi / Thriller</item>
+        <item>Abenteuer / Western / Krieg</item>
+        <item>Science Fiction / Fantasy / Horror</item>
+        <item>Komödie</item>
+        <item>Seifenoper / Melodrama / Folklore</item>
+        <item>Romanze</item>
+        <item>Historisches</item>
+        <item>Erwachsenen Film / Drama</item>
+    </string-array>
+    <string-array name="pr_content_type2">
+        <item>Nachrichten / Aktuelles</item>
+        <item>Nachrichten / Wetterbericht</item>
+        <item>Magazin</item>
+        <item>Dokumentation</item>
+        <item>Diskussion / Interview / Debatte</item>
+    </string-array>
+    <string-array name="pr_content_type3">
+        <item>Show / Spielshow</item>
+        <item>Spielshow / Quiz / Contest</item>
+        <item>Varietee</item>
+        <item>Unterhaltung</item>
+    </string-array>
+    <string-array name="pr_content_type4">
+        <item>Sport</item>
+        <item>Sondersendung</item>
+        <item>Magazin</item>
+        <item>Fußball</item>
+        <item>Tennis / Squash</item>
+        <item>Mannschaftssport</item>
+        <item>Leichtathletik</item>
+        <item>Motorsport</item>
+        <item>Wassersport</item>
+        <item>Wintersport</item>
+        <item>Reitsport</item>
+        <item>Kampfsport</item>
+    </string-array>
+    <string-array name="pr_content_type5">
+        <item>Kinder / Jugend</item>
+        <item>Vorschule</item>
+        <item>Unterhaltung (6 bis 14-Jährige)</item>
+        <item>Unterhaltung (10 bis 16-Jährige)</item>
+        <item>Informatives / Bildung / Schule</item>
+        <item>Cartoons / Zeichentrick</item>
+    </string-array>
+    <string-array name="pr_content_type6">
+        <item>Musik / Ballett / Tanz</item>
+        <item>Rock und Pop</item>
+        <item>Klassik</item>
+        <item>Folk / Traditionelle Musik</item>
+        <item>Jazz</item>
+        <item>Musical / Oper</item>
+        <item>Ballet</item>
+    </string-array>
+    <string-array name="pr_content_type7">
+        <item>Kunst / Kultur</item>
+        <item>Darstellende Kunst</item>
+        <item>Ästhetisches</item>
+        <item>Religion</item>
+        <item>Pop-Kultur / Traditionelle Kunst</item>
+        <item>Literatur</item>
+        <item>Film / Kino</item>
+        <item>Experimenteller Film / Video</item>
+        <item>Rundfunk / Presse</item>
+        <item>Neue Medien</item>
+        <item>Magazin</item>
+        <item>Mode</item>
+    </string-array>
+    <string-array name="pr_content_type8">
+        <item>Gesellschaft / Politik / Wirtschaft</item>
+        <item>Magazin / Report / Dokumentation</item>
+        <item>Wirtschaft / Soziales Engagement</item>
+        <item>Bemerkenswerte Menschen</item>
+    </string-array>
+    <string-array name="pr_content_type9">
+        <item>Bildung / Wissenschaft</item>
+        <item>Natur / Tiere / Umwelt</item>
+        <item>Technik / Naturwissenschaften</item>
+        <item>Medizin / Physiologie / Psychologie</item>
+        <item>Ausland / Expeditionen</item>
+        <item>Soziales / Spirituelles</item>
+        <item>Weiterbildung</item>
+        <item>Sprachen</item>
+    </string-array>
+    <string-array name="pr_content_type10">
+        <item>Freizeit / Hobbys</item>
+        <item>Tourismus / Reisen</item>
+        <item>Handwerk</item>
+        <item>Motorsport</item>
+        <item>Fitness und Gesundheit</item>
+        <item>Kochen</item>
+        <item>Werbung / Shopping</item>
+        <item>Garten</item>
+    </string-array>
+    <string-array name="pr_content_type11">
+        <item>Verschiedenes</item>
+        <item>Schwarz / Weiß</item>
+        <item>Unveröffentlicht</item>
+        <item>Live-Sendung</item>
+    </string-array>
+    
+    <string name="no_transmission">Keine Übertragung</string>
+    <string name="no_data">Keine Programme verfügbar</string>
+    <string name="minutes">%d Min</string>
+    
+    <string name="search_hint">Suche im TV-Programm</string>
+    <string name="yesterday">Gestern</string>
+    <string name="today">Heute</string>
+    <string name="tomorrow">Morgen</string>
+    <string name="in_2_days">In 2 Tagen</string>
+    <string name="monday">Montag</string>
+    <string name="tuesday">Dienstag</string>
+    <string name="wednesday">Mittwoch</string>
+    <string name="thursday">Donnerstag</string>
+    <string name="friday">Freitag</string>
+    <string name="saturday">Samstag</string>
+    <string name="sunday">Sonntag</string>
+
+    <string name="programs">Programme</string>
+    <string name="completed">Aufgenommen</string>
+    <string name="upcoming">Geplant</string>
+    <string name="failed">Fehlerhaft</string>
+    
+    <string name="channels">Sender</string>
+    <string name="recordings">Aufnahmen</string>
+    <string name="program_guide">TV-Programm</string>
+    <string name="status">Status</string>
+    <string name="items">Elemente</string>
+    <string name="results">Ergebnisse</string>
+    
+    <string name="channel_icon">Senderlogo</string>
+    <string name="status_icon">Statuslogo</string>
+    <string name="title">Titel</string>
+    <string name="channel">Sender</string>
+    <string name="time">Zeit</string>
+    <string name="date">Datum</string>
+    <string name="shown_on_channel">auf</string>
+    <string name="summary">Zusammenfassung</string>
+    <string name="description">Beschreibung</string>
+    <string name="duration">Dauer</string>
+    <string name="airing">Ausstrahlung</string>
+    <string name="rating">Bewertung</string>
+    <string name="content_type">Genre</string>
+    <string name="series_information">Serien Information</string>
+    <string name="genre_color_list">Liste der Genrefarben und deren Bedeutung.</string>
+
+    <string name="nothing">Keine</string>
+    <string name="loading">Lade&#8230;</string>
+    <string name="all_channels">Alle Sender</string>
+    <string name="season">Staffel</string>
+    <string name="episode">Folge</string>
+    <string name="part">Teil</string>
+    <string name="progress">%1$d%% der Sendung bereits vorbei</string>
+
+    <string name="disc_space">Speicherplatz</string>
+    <string name="total">Total</string>
+    <string name="available">Verfügbar</string>
+    <string name="unknown">Unbekannt</string>
+    <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
+
+    <string name="currently_recording">Laufende Aufnahmen</string>
+    <string name="restart_application">Um das neue Theme zu verwenden muss die Anwendung neu gestartet werden.</string>
+    
+    <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
+    <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
+</resources>

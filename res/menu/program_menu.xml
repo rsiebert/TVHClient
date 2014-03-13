@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/menu_play"
+        android:icon="?attr/ic_menu_play"
+        android:title="@string/menu_play"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_search"
+        android:icon="?attr/ic_menu_search"
+        android:title="@string/menu_search"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_genre_color_info"
+        android:title="@string/menu_genre_color_info"/>
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="?attr/ic_menu_settings"
+        android:title="@string/menu_settings"/>
+
+</menu>
