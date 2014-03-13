@@ -642,7 +642,7 @@ public class Utils {
      * @param contentType
      * @return
      */
-    private static int getGenreColor(final Context context, final int contentType, final int offset) {
+    public static int getGenreColor(final Context context, final int contentType, final int offset) {
         if (contentType == 0) {
             // Return a fully transparent color in case no genre is available
             return android.R.color.transparent;
