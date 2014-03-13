@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <org.tvheadend.tvhguide.TVHVideoView
+    <org.tvheadend.tvhclient.TVHVideoView
         android:id="@+id/player_video"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

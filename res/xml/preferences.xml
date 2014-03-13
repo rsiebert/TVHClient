@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/org.tvheadend.tvhguide" >
+    xmlns:custom="http://schemas.android.com/apk/res/org.tvheadend.tvhclient" >
     
     <PreferenceCategory 
         android:title="@string/pref_connections" >
@@ -56,9 +56,9 @@
                 android:key="showGenreColorsSearchPref"
                 android:summary="@string/pref_genre_colors_search_results_sum"
                 android:title="@string/pref_genre_colors_search_results" />
-            <org.tvheadend.tvhguide.SliderPreference
+            <org.tvheadend.tvhclient.SliderPreference
 		        android:defaultValue="70"
-		        custom:minimumValue="30"
+                custom:minimumValue="30"
                 custom:maximumValue="80"
 		        android:dialogMessage="@string/pref_genre_colors_visibility_message"
 		        android:key="showGenreColorsVisibilityPref"
