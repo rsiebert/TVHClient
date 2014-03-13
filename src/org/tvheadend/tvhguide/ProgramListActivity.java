@@ -251,7 +251,7 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
             startActivity(intent);
             return true;
         case R.id.menu_genre_color_info:
-            // TODO
+            Utils.showGenreColorDialog(this);
             return true;
         default:
             return super.onOptionsItemSelected(item);

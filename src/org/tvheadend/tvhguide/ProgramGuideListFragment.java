@@ -269,7 +269,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             return true;
 
         case R.id.menu_genre_color_info:
-            // TODO
+            Utils.showGenreColorDialog(getActivity());
             return true;
 
         default:

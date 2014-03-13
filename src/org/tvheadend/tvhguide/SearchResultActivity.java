@@ -187,7 +187,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             onSearchRequested();
             return true;
         case R.id.menu_genre_color_info:
-            // TODO
+            Utils.showGenreColorDialog(this);
             return true;
         default:
             return super.onOptionsItemSelected(item);
