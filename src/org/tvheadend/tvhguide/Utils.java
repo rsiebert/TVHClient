@@ -50,7 +50,6 @@ import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -704,8 +703,6 @@ public class Utils {
      * can be shown later.
      */
     public static void showGenreColorDialog(Activity context) {
-        Log.i("Utils", "showGenreColorDialog");
-        
         final String[] s = context.getResources().getStringArray(R.array.pr_content_type0);
 
         // Fill the list for the adapter
