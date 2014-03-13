@@ -160,10 +160,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             getActivity().startSearch(null, false, intent.getExtras(), false);
             return true;
 
-        case R.id.menu_genre_color_info:
-            // TODO
-            return true;
-
         default:
             return false;
         }
@@ -237,6 +233,10 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
         case R.id.menu_tags:
             tagDialog.show();
+            return true;
+
+        case R.id.menu_genre_color_info:
+            Utils.showGenreColorDialog(getActivity());
             return true;
 
         default:

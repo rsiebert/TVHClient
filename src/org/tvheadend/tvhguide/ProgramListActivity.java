@@ -186,10 +186,6 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
             startActivity(intent);
             return true;
 
-        case R.id.menu_genre_color_info:
-            // TODO
-            return true;
-
         default:
             return super.onContextItemSelected(item);
         }
@@ -253,6 +249,9 @@ public class ProgramListActivity extends ActionBarActivity implements HTSListene
             Intent intent = new Intent(ProgramListActivity.this, PlaybackSelectionActivity.class);
             intent.putExtra("channelId", channel.id);
             startActivity(intent);
+            return true;
+        case R.id.menu_genre_color_info:
+            // TODO
             return true;
         default:
             return super.onOptionsItemSelected(item);
