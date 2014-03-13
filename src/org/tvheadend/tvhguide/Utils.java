@@ -19,20 +19,24 @@
 package org.tvheadend.tvhguide;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.tvheadend.tvhguide.R.string;
+import org.tvheadend.tvhguide.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhguide.htsp.HTSService;
 import org.tvheadend.tvhguide.model.Channel;
 import org.tvheadend.tvhguide.model.ChannelTag;
 import org.tvheadend.tvhguide.model.Connection;
+import org.tvheadend.tvhguide.model.GenreColorDialogItem;
 import org.tvheadend.tvhguide.model.Program;
 import org.tvheadend.tvhguide.model.Recording;
 import org.tvheadend.tvhguide.model.SeriesInfo;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,6 +50,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -691,6 +696,34 @@ public class Utils {
         	}
         	return Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
         }
+    }
+
+    /**
+     * Prepares a dialog that shows the available genre colors and the names. In
+     * here the data for the adapter is created and the dialog prepared which
+     * can be shown later.
+     */
+    public static void showGenreColorDialog(Activity context) {
+        Log.i("Utils", "showGenreColorDialog");
+        
+        final String[] s = context.getResources().getStringArray(R.array.pr_content_type0);
+
+        // Fill the list for the adapter
+        List<GenreColorDialogItem> items = new ArrayList<GenreColorDialogItem>();
+        for (int i = 0; i < s.length; ++i) {
+            GenreColorDialogItem item = new GenreColorDialogItem();
+            item.color = getGenreColor(context, ((i + 1) * 16), 0);
+            item.genre = s[i];
+            items.add(item);
+        }
+
+        // Create the dialog and set the adapter
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.genre_color_list);
+        builder.setAdapter(new GenreColorDialogAdapter(context, items), null);
+
+        AlertDialog genreColorDialog = builder.create();
+        genreColorDialog.show();
     }
 
     /**
