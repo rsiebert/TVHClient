@@ -12,7 +12,7 @@
         android:summary="@string/pref_host_sum"
         android:title="@string/pref_host" />
     <EditTextPreference
-        android:defaultValue="9981"
+        android:defaultValue="9982"
         android:inputType="number"
         android:key="pref_port"
         android:summary="@string/pref_port_sum"
