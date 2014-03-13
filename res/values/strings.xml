@@ -81,8 +81,6 @@
     <string name="pref_playback">Playback</string>
     <string name="pref_playback_programs_sum">Configure playback options for the Live-TV programs.</string>
     <string name="pref_playback_recordings_sum">Configure playback options for your recorded programs.</string>
-    <string name="pref_http_port">HTTP port</string>
-    <string name="pref_http_port_sum">Enter server HTTP port</string>
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
     <string name="pref_external">Prefer external player</string>

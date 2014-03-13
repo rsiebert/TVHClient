@@ -82,8 +82,6 @@
     <string name="pref_playback">Wiedergabe</string>
     <string name="pref_playback_programs_sum">Einstellungen für die Wiedergabe von Live-TV.</string>
     <string name="pref_playback_recordings_sum">Einstellungen für die Wiedergabe der aufgenommenen Programme.</string>
-    <string name="pref_http_port">HTTP-Port</string>
-    <string name="pref_http_port_sum">HTTP-Port des Servers</string>
     <string name="pref_transcode">Stream transkodieren</string>
     <string name="pref_transcode_sum">Konvertiere die Live-Wiedergabe oder das Program während der Übertragung in ein anderes Format. (Der TVHeadend Server muss dies unterstützen)</string>
     <string name="pref_external">Verwende externen Videoplayer</string>

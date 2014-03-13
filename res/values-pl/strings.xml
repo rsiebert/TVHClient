@@ -79,8 +79,6 @@
     <string name="pref_playback">Odtwarzanie</string>
     <string name="pref_playback_programs_sum">Opcje konfiguracji odtwarzania dla programów telewizji na żywo.</string>
     <string name="pref_playback_recordings_sum">Opcje konfiguracji odtwarzania dla nagranych programów.</string>
-    <string name="pref_http_port">Port HTTP</string>
-    <string name="pref_http_port_sum">Wpisz port serwera HTTP</string>
     <string name="pref_transcode">Transkodowanie strumienia</string>
     <string name="pref_transcode_sum">Konwersja programu lub nagrania na inny format podczas odtwarzania. (Opcja musi być obsługiwana przez serwer TVHeadend)</string>
     <string name="pref_external">Preferowany zewnętrzny odtwarzacz</string>

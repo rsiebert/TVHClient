@@ -39,8 +39,6 @@
     <string name="pref_container_sum">Preferovaný proudový kontejner</string>
     
     <string name="pref_playback">Přehrávání</string>
-    <string name="pref_http_port">HTTP port</string>
-    <string name="pref_http_port_sum">Vložte HTTP port Serveru</string>
     <string name="pref_transcode">Překódovat proud</string>
     <string name="pref_transcode_sum">Požadovat překódování pro živý přenos</string>
     <string name="pref_external">Preferovaný externí přehrávač</string>
