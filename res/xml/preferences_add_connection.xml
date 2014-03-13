@@ -18,6 +18,12 @@
         android:summary="@string/pref_port_sum"
         android:title="@string/pref_port" />
     <EditTextPreference
+        android:defaultValue="9981"
+        android:inputType="number"
+        android:key="pref_streaming_port"
+        android:summary="@string/pref_streaming_port_sum"
+        android:title="@string/pref_streaming_port" />
+    <EditTextPreference
         android:defaultValue=""
         android:key="pref_username"
         android:summary="@string/pref_user_sum"
