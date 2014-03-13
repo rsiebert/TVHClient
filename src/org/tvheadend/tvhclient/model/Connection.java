@@ -9,4 +9,5 @@ public class Connection {
     public String password;
     public boolean selected;
     public int channelTag;
+    public int streaming_port;
 }

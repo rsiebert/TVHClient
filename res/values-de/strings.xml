@@ -53,8 +53,8 @@
     <string name="pref_port_sum">Server-Port eingeben</string>
     <string name="pref_port_error_empty">Die Port-Nummer darf nicht leer sein.</string>
     <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muss zwischen 1 und 65535 liegen.</string>
-    <string name="pref_streaming_port">Port für Media-Streaming</string>
-    <string name="pref_streaming_port_sum">Server-Port der verwendet werden soll, um TV-Programme oder Aufnahmen anzuschauen. 9981 ist der übliche Standardport.</string>
+    <string name="pref_streaming_port">Port zum Streamen</string>
+    <string name="pref_streaming_port_sum">Port %d wird zum Streamen von TV-Programmen oder Aufnahmen verwendet. Der Standardport ist 9981 und kann meistens beibehalten werden.</string>
     <string name="pref_user">Benutzername</string>
     <string name="pref_user_sum">Benutzername eingeben</string>
     <string name="pref_pass">Passwort</string>

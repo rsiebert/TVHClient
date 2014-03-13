@@ -107,6 +107,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         private EditTextPreference prefName;
         private EditTextPreference prefAddress;
         private EditTextPreference prefPort;
+        private EditTextPreference prefStreamingPort;
         private EditTextPreference prefUsername;
         private EditTextPreference prefPassword;
         private CheckBoxPreference prefSelected;
@@ -123,6 +124,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefName = (EditTextPreference) findPreference("pref_name");
             prefAddress = (EditTextPreference) findPreference("pref_address");
             prefPort = (EditTextPreference) findPreference("pref_port");
+            prefStreamingPort = (EditTextPreference) findPreference("pref_streaming_port");
             prefUsername = (EditTextPreference) findPreference("pref_username");
             prefPassword = (EditTextPreference) findPreference("pref_password");
             prefSelected = (CheckBoxPreference) findPreference("pref_selected");
@@ -143,9 +145,10 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                     conn.name = "";
                     conn.address = "";
                     conn.port = 9982;
+                    conn.streaming_port = 9981;
                     conn.username = "";
                     conn.password = "";
-                    
+
                     // If this is the first connection make it active
                     conn.selected = (DatabaseHelper.getInstance().getConnections().size() == 0) ? true : false;
                 }
@@ -155,6 +158,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefName.setText(conn.name);
             prefAddress.setText(conn.address);
             prefPort.setText(String.valueOf(conn.port));
+            prefStreamingPort.setText(String.valueOf(conn.streaming_port));
             prefUsername.setText(conn.username);
             prefPassword.setText(conn.password);
             prefSelected.setChecked(conn.selected);
@@ -173,7 +177,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         private void showPreferenceSummary() {
             prefName.setSummary(conn.name.length() == 0 ? getString(R.string.pref_name_sum) : conn.name);
             prefAddress.setSummary(conn.address.length() == 0 ? getString(R.string.pref_host_sum) : conn.address);
-            prefPort.setSummary(conn.port == 0 ? getString(R.string.pref_host_sum) : String.valueOf(conn.port));
+            prefPort.setSummary(conn.port == 0 ? getString(R.string.pref_port_sum) : String.valueOf(conn.port));
+            prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum, conn.streaming_port));
             prefUsername.setSummary(conn.username.length() == 0 ? getString(R.string.pref_user_sum) : conn.username);
             prefPassword.setSummary(conn.password.length() == 0 ? getString(R.string.pref_pass_sum)
                     : getString(R.string.pref_pass_set_sum));
@@ -218,6 +223,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             conn.name = prefName.getText();
             conn.address = prefAddress.getText();
             conn.port = Integer.parseInt(prefPort.getText());
+            conn.streaming_port = Integer.parseInt(prefStreamingPort.getText());
             conn.username = prefUsername.getText();
             conn.password = prefPassword.getText();
             conn.selected = prefSelected.isChecked();
@@ -322,17 +328,19 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         }
 
         /**
-         * Validates the port number. It must not be empty and the value must be
+         * Validates the port numbers. It must not be empty and the value must be
          * between the allowed port range of zero to 65535.
          * 
          * @return
          */
         private boolean validatePort() {
-            if (prefPort.getText().length() == 0) {
+            if (prefPort.getText().length() == 0 || 
+                    prefStreamingPort.getText().length() == 0) {
                 Toast.makeText(getActivity(), getString(R.string.pref_port_error_empty), Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (conn.port <= 0 || conn.port > 65535) {
+            if ((conn.port <= 0 || conn.port > 65535) ||
+                    (conn.streaming_port <= 0 || conn.streaming_port > 65535)) {
                 Toast.makeText(getActivity(), getString(R.string.pref_port_error_invalid), Toast.LENGTH_SHORT).show();
                 return false;
             }

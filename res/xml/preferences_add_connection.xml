@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-
     <EditTextPreference
         android:defaultValue=""
         android:key="pref_name"
@@ -18,11 +17,11 @@
         android:summary="@string/pref_port_sum"
         android:title="@string/pref_port" />
     <EditTextPreference
-        android:defaultValue="9981"
-        android:inputType="number"
-        android:key="pref_streaming_port"
-        android:summary="@string/pref_streaming_port_sum"
-        android:title="@string/pref_streaming_port" />
+		android:defaultValue="9981"
+		android:inputType="number"
+		android:key="pref_streaming_port"
+		android:summary="@string/pref_streaming_port_sum"
+		android:title="@string/pref_streaming_port" />
     <EditTextPreference
         android:defaultValue=""
         android:key="pref_username"
@@ -34,11 +33,9 @@
         android:key="pref_password"
         android:summary="@string/pref_pass_sum"
         android:title="@string/pref_pass" />
-
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="pref_selected"
         android:summary="@string/pref_selected_sum"
         android:title="@string/pref_selected" />
-
 </PreferenceScreen>

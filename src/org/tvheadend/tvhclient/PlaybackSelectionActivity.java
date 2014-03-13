@@ -38,7 +38,7 @@ public class PlaybackSelectionActivity extends Activity {
             // Pass on the channel id and the other settings
             intent.putExtra("channelId", ch.id);
             intent.putExtra("serverHostPref", conn.address);
-            intent.putExtra("httpPortPref", Integer.parseInt(prefs.getString("progHttpPortPref", "9981")));
+            intent.putExtra("httpPortPref", conn.streaming_port);
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("progResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("progTranscodePref", true));
             intent.putExtra("acodecPref", prefs.getString("progAcodecPref", Stream.STREAM_TYPE_AAC));
@@ -57,7 +57,7 @@ public class PlaybackSelectionActivity extends Activity {
             // Pass on the recording id and the other settings
             intent.putExtra("dvrId", rec.id);
             intent.putExtra("serverHostPref", conn.address);
-            intent.putExtra("httpPortPref", Integer.parseInt(prefs.getString("recHttpPortPref", "9981")));
+            intent.putExtra("httpPortPref", conn.streaming_port);
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("recResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("recTranscodePref", false));
             intent.putExtra("acodecPref", prefs.getString("recAcodecPref", Stream.STREAM_TYPE_AAC));

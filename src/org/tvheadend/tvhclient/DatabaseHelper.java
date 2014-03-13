@@ -18,8 +18,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 2;
-    public static final String DATABASE_NAME = "tvhguide";
+    public static final int DATABASE_VERSION = 3;
+    public static final String DATABASE_NAME = "tvhclient";
     public static final String TABLE_NAME = "connections";
 
     // Database column names
@@ -31,6 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_SELECTED = "selected";
     public static final String KEY_CHANNEL_TAG = "channel_tag";
+    public static final String KEY_STREAMING_PORT = "streaming_port";
 
     // Defines a list of columns to retrieve from
     // the Cursor and load into an output row
@@ -38,11 +39,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         KEY_ID, 
         KEY_NAME, 
         KEY_ADDRESS, 
-        KEY_PORT, 
+        KEY_PORT,
         KEY_USERNAME, 
         KEY_PASSWORD,
         KEY_SELECTED, 
-        KEY_CHANNEL_TAG
+        KEY_CHANNEL_TAG,
+        KEY_STREAMING_PORT
     };
 
     public static DatabaseHelper instance = null;
@@ -73,11 +75,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_NAME + " TEXT NOT NULL," 
                 + KEY_ADDRESS + " TEXT NOT NULL, " 
-                + KEY_PORT + " INT NOT NULL, "
+                + KEY_PORT + " INT DEFAULT 9982, "
                 + KEY_USERNAME + " TEXT NULL, "
                 + KEY_PASSWORD + " TEXT NULL, "
                 + KEY_SELECTED + " INT NOT NULL, "
-                + KEY_CHANNEL_TAG + " INT DEFAULT 0);";
+                + KEY_CHANNEL_TAG + " INT DEFAULT 0, "
+                + KEY_STREAMING_PORT + " INT DEFAULT 9981);";
         db.execSQL(query);
     }
 
@@ -92,6 +95,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // Add the channel tag column in database version 2 
             db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_CHANNEL_TAG
                     + " INT DEFAULT 0;");
+        }
+        if (oldVersion < newVersion && newVersion == 3) {
+            // Add the streaming port column in database version 3 
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_STREAMING_PORT
+                    + " INT DEFAULT 9981;");
         }
     }
 
@@ -109,6 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_PASSWORD, conn.password);
         values.put(KEY_SELECTED, (conn.selected) ? "1" : "0");
         values.put(KEY_CHANNEL_TAG, conn.channelTag);
+        values.put(KEY_STREAMING_PORT, conn.streaming_port);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long newId = db.insert(TABLE_NAME, null, values);
@@ -144,6 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_PASSWORD, conn.password);
         values.put(KEY_SELECTED, (conn.selected) ? "1" : "0");
         values.put(KEY_CHANNEL_TAG, conn.channelTag);
+        values.put(KEY_STREAMING_PORT, conn.streaming_port);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long rows = db.update(TABLE_NAME, values, KEY_ID + "=" + conn.id, null);
@@ -174,6 +184,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
             conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
             conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
+            conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
         }
         c.close();
         return conn;
@@ -200,6 +211,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
             conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
             conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
+            conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
         }
         c.close();
         return conn;
@@ -226,6 +238,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 conn.password = c.getString(c.getColumnIndex(KEY_PASSWORD));
                 conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
                 conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
+                conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
 
                 // Add book to books
                 connList.add(conn);
