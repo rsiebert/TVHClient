@@ -108,14 +108,6 @@
                 android:defaultValue="localhost"
                 android:title="@string/pref_host"
                 android:key="progServerHostPref" />
-	        <EditTextPreference
-	            android:id="@+id/pref_http_port"
-	            android:name="@string/pref_http_port"
-	            android:summary="@string/pref_http_port_sum"
-	            android:defaultValue="9981"
-	            android:title="@string/pref_http_port"
-	            android:key="progHttpPortPref"
-	            android:numeric="integer" />
 	        <ListPreference
 	            android:name="@string/pref_container"
 	            android:summary="@string/pref_container_sum"
@@ -192,14 +184,6 @@
                 android:defaultValue="localhost"
                 android:title="@string/pref_host"
                 android:key="recServerHostPref" />
-            <EditTextPreference
-                android:id="@+id/pref_http_port"
-                android:name="@string/pref_http_port"
-                android:defaultValue="9981"
-                android:key="recHttpPortPref"
-                android:numeric="integer"
-                android:summary="@string/pref_http_port_sum"
-                android:title="@string/pref_http_port" />
             <ListPreference
                 android:name="@string/pref_container"
                 android:defaultValue="matroska"
