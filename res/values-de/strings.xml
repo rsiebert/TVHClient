@@ -24,7 +24,7 @@
     <string name="menu_delete">Löschen</string>
     <string name="menu_connections">Verbindungen</string>
     <string name="menu_timeframe">Zeitraum</string>
-    <string name="menu_genre_color_info">Genrefarben</string>
+    <string name="menu_genre_color_info">Bedeutung der Genrefarben</string>
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
@@ -274,6 +274,7 @@
     <string name="rating">Bewertung</string>
     <string name="content_type">Genre</string>
     <string name="series_information">Serien Information</string>
+    <string name="genre_color_list">Liste der Genrefarben und deren Bedeutung.</string>
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>
