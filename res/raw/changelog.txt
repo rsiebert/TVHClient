@@ -1,49 +1,5 @@
-$ 1.9.4
-  % VERSION 1.9.4
-  _ 12.03.2014
-    * Added genre colors for different screens
-    * Allow customizing the genre color visibility
-    * Added dialog to explain the genre colors 
-$ 1.9.3
-  % VERSION 1.9.3
-  _ 25.02.2014
-    * Remember the channel tag for each connection
-    * Always show the play and record icons where available
-    * Fixed show channel icon default setting
-    * Show the number of channels and the tag in the header of the program guide
-$ 1.9.2
-  % VERSION 1.9.2
-  _ 07.02.2014
-    * Updated polish translations
-$ 1.9.1
-  % VERSION 1.9.1
-  _ 04.02.2014
-    * Use the server address defined in the connection to stream content
-    * Reduce memory consumption by only loading icons when required
-    * Added setting to select the application language
-    * Updated english, german and polish translations
-    * Fixed possible crash in the program guide
-    * Shows a dialog to create a new connection
-$ 1.9.0
-  % VERSION 1.9.0
-  _ 29.01.2014
-    * Added Program Guide
-    * Updated UI Settings
-    * Improved Dialog Messages
-$ 1.8.2
-  % VERSION 1.8.2
-  _ 04.12.2013
-    * Added ChangeLog dialog
-    * Status screen shows either MB or GB of free disc space
-    * Removed unused strings
-    * Updated polish translation
-$ 1.8.1
-  % VERSION 1.8.1
-  _ 29.11.2013
-    * Fixed player settings
-$ 1.8.0
-  % VERSION 1.8.0
-  _ 22.11.2013
-    * Ported application to support older Android versions.
-    * Bug fixes   
+$ 1.0.0
+  % VERSION 1.0.0
+  _ 14.03.2014
+    * Initial version   
 $ END_OF_CHANGE_LOG
