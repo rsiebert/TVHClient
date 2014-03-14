@@ -29,7 +29,6 @@
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
-    <string name="new_connection">Utwórz nowe połaczenie</string>
     <string name="no_connections">Brak dostępnych połączeń</string>
     <string name="create_new_connections">Chcesz utworzyć teraz nowe połączenie?</string>
     <string name="connection_options">Opcje dla połączenia \'%s\'</string>
