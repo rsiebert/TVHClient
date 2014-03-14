@@ -206,7 +206,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                         try {
                             setCurrentTimeIndication();
                         } catch (Exception e) {
-                            Log.e(TAG, "Could not set the current time indication (vertical line).");
+                            Log.e(TAG, "Could not set the current time indication (vertical line), " + e.toString());
                         }
                     }
                 });
