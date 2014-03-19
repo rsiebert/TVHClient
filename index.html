@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="TVHClient : An Android client for TVHeadend using the HTSP protocol" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>TVHClient</title>
+    
+    <script type="text/javascript">
+        var sources = new Array('TVHClient phone channel list.png',
+                                'TVHClient phone program guide landscape no color.png',
+                                'TVHClient phone program list.png',
+                                'TVHClient phone recording list.png',
+                                'TVHClient phone settings.png');
+        var index = 0;
+        function nextImage(img) {
+                index++;
+                if(index >= sources.length)
+                        index = 0;
+
+                img.src = sources[index];
+        }
+        </script>
+
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/rsiebert/TVHClient">View on GitHub</a>
+
+          <h1 id="project_title">TVHClient</h1>
+          <h2 id="project_tagline">An Android client for TVHeadend using the HTSP protocol</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/rsiebert/TVHClient/zipball/development">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/rsiebert/TVHClient/tarball/development">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>TVHClient is an Android client for <a href="https://www.lonelycoder.com/tvheadend">TVHeadend</a>, a TV streaming server. Some of its featrues are:</p>
+            <table style="border-style:none;">
+                <tr>
+                    <td style="vertical-align:top; border-style:none; min-width:450px">
+                        <ul>
+                            <li>List all channels and their current programs</li>
+                            <li>List all recordings</li>
+                            <li>Show a complete and customizable program guide</li>
+                            <li>Search the EPG for upcoming programs</li>
+                            <li>Schedule, cancel and remove recordings</li>
+                            <li>Stream audio and video</li>
+                            <li>Show status information</li>
+                            <li>Connect to multiple servers</li>
+                            <li>Separate playback profiles for programs and recordings</li>
+                            <li>Manually select a different language</li>
+                        </ul>
+                    </td>
+<!--
+                    <td style="vertical-align:top; border-style:none">
+                        <img src="qrcode.png">
+                    </td>
+-->
+                </tr>
+            </table>
+<!--
+        <p>
+            Download the <a href="https://github.com/rsiebert/TVHGuide/raw/gh-pages/TVHGuide.apk">latest</a> version of the application as an apk file or just scan the QR-Code.
+        </p>
+-->
+        <p>Here are some screenshots (click to see the next image)
+        <img
+                src="screenshot_channels.png" width="350px"
+                alt="Screenshot"
+                onClick="javascript:nextImage(this);"
+                style="cursor:pointer;"
+         />
+         </p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">TVHClient maintained by <a href="https://github.com/rsiebert">rsiebert</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+  </body>
+</html>
