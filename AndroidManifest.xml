@@ -9,7 +9,7 @@
     <application 
         android:allowBackup="true"
         android:name="org.tvheadend.tvhclient.TVHClientApplication" 
-        android:label="TVHClient" android:icon="@drawable/logo">
+        android:label="TVHClient" android:icon="@drawable/ic_launcher">
         <meta-data 
             android:name="android.app.default_searchable" 
             android:value=".SearchResultActivity" />
