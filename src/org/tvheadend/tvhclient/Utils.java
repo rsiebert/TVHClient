@@ -627,11 +627,13 @@ public class Utils {
         		view.setVisibility(View.GONE);
         	}
         } else if (view instanceof LinearLayout) {
-        	if (showGenre) {
-	        	// Get the shape where the background color will be set 
-		        LayerDrawable layers = (LayerDrawable) view.getBackground();
-		        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+        	// Get the shape where the background color will be set 
+	        LayerDrawable layers = (LayerDrawable) view.getBackground();
+	        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+	        if (showGenre) {    
 		        shape.setColor(getGenreColor(context, contentType, offset));
+        	} else {
+        	    shape.setColor(context.getResources().getColor(android.R.color.transparent));
         	}
         }
     }
@@ -646,7 +648,7 @@ public class Utils {
     public static int getGenreColor(final Context context, final int contentType, final int offset) {
         if (contentType == 0) {
             // Return a fully transparent color in case no genre is available
-            return android.R.color.transparent;
+            return context.getResources().getColor(android.R.color.transparent);
         } else {
             // Get the genre color from the content type
             int color = R.color.EPG_OTHER;
@@ -691,7 +693,7 @@ public class Utils {
             // Get the color with the desired alpha value
         	int c = context.getResources().getColor(color);
         	int alpha = (int) (((float) prefs.getInt("showGenreColorsVisibilityPref", 70)) / 100.0f * 255.0f);
-        	if (alpha > offset) {
+        	if (alpha >= offset) {
         		alpha -= offset;
         	}
         	return Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
