@@ -24,7 +24,7 @@
     <string name="menu_delete">Usuń</string>
     <string name="menu_connections">Połączenia</string>
     <string name="menu_timeframe">Ramy czasowe</string>
-	<string name="menu_genre_color_info">Objaśnienie rodzaju kolorów</string>
+	<string name="menu_genre_color_info">Objaśnienie rodzaju kolorów!!</string>
     
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
@@ -95,7 +95,7 @@
     <string name="pref_epg_max_days_sum">Definiuje maksymalną liczbę dni przewodnika programów która zostanie wyświetlona.</string>
     <string name="pref_programs_to_load">Liczba programów do załadowania</string>
     <string name="pref_programs_to_load_sum">Definiuje ile programów będzie pobieranych z serwera aby zobaczyć więcej na liście programów lub liście przewodnika. Większa liczba oznacza dłuższy czas ładowania i aktualizowania.</string>
-	<string name="pref_genre_colors">Włącz rodzaje kolorów</string>
+	<string name="pref_genre_colors">Włącz rodzaje kolorów!!</string>
     <string name="pref_genre_colors_sum">Określa na których ekranach rodzaje kolorów będą pokazywane.</string>
     <string name="pref_genre_colors_channels">Kanały</string>
     <string name="pref_genre_colors_channels_sum">Rodzaj koloru będzie pokazywany jako linia pionowa po lewej stronie na ekranie listy kanałów.</string>
