@@ -37,12 +37,12 @@
             android:title="@string/pref_genre_colors" 
             android:summary="@string/pref_genre_colors_sum" >
 	        <CheckBoxPreference
-	            android:defaultValue="true"
+	            android:defaultValue="false"
 	            android:key="showGenreColorsChannelsPref"
 	            android:summary="@string/pref_genre_colors_channels_sum"
 	            android:title="@string/pref_genre_colors_channels" />
 	        <CheckBoxPreference
-	            android:defaultValue="true"
+	            android:defaultValue="false"
 	            android:key="showGenreColorsProgramsPref"
 	            android:summary="@string/pref_genre_colors_programs_sum"
 	            android:title="@string/pref_genre_colors_programs" />
@@ -52,7 +52,7 @@
                 android:summary="@string/pref_genre_colors_epg_sum"
                 android:title="@string/pref_genre_colors_epg" />
             <CheckBoxPreference
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:key="showGenreColorsSearchPref"
                 android:summary="@string/pref_genre_colors_search_results_sum"
                 android:title="@string/pref_genre_colors_search_results" />
