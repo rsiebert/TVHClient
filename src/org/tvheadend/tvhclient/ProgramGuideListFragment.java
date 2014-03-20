@@ -293,7 +293,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
      */
     private void setCurrentTimeIndication() {
         if (bundle != null && currentTimeIndication != null) {
-            int tabIndex = bundle.getInt("tabIndex", 0);
+            int tabIndex = bundle.getInt("tabIndex", -1);
             if (tabIndex == 0) {
                 // Get the difference between the current time and the given
                 // start time. Calculate from this value in minutes the width in
