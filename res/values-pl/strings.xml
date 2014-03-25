@@ -24,6 +24,7 @@
     <string name="menu_delete">Usuń</string>
     <string name="menu_connections">Połączenia</string>
     <string name="menu_timeframe">Ramy czasowe</string>
+    <string name="menu_genre_color_info">Objaśnienie rodzaju kolorów</string>
     
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
@@ -94,6 +95,19 @@
     <string name="pref_epg_max_days_sum">Definiuje maksymalną liczbę dni przewodnika programów która zostanie wyświetlona.</string>
     <string name="pref_programs_to_load">Liczba programów do załadowania</string>
     <string name="pref_programs_to_load_sum">Definiuje ile programów będzie pobieranych z serwera aby zobaczyć więcej na liście programów lub liście przewodnika. Większa liczba oznacza dłuższy czas ładowania i aktualizowania.</string>
+    <string name="pref_genre_colors">Włącz rodzaje kolorów</string>
+    <string name="pref_genre_colors_sum">Określa na których ekranach rodzaje kolorów będą pokazywane.</string>
+    <string name="pref_genre_colors_channels">Kanały</string>
+    <string name="pref_genre_colors_channels_sum">Rodzaj koloru będzie pokazywany jako linia pionowa po lewej stronie na ekranie listy kanałów.</string>
+    <string name="pref_genre_colors_programs">Programy</string>
+    <string name="pref_genre_colors_programs_sum">Rodzaj koloru będzie pokazywany jako linia pionowa po lewej stronie listy programów i ekranie szczegółów.</string>
+    <string name="pref_genre_colors_epg">Przewodnik programów</string>
+    <string name="pref_genre_colors_epg_sum">Pokazuje roszaj koloru w tle na każdej pozycji prowadzonego programu.</string>
+    <string name="pref_genre_colors_search_results">Wyniki wyszukiwania</string>
+    <string name="pref_genre_colors_search_results_sum">Rodzaj koloru będzie pokazywany jako linia pionowa po lewej stronie listy wyszukiwania.</string>
+    <string name="pref_genre_colors_visibility_message">Ustaw widoczność kolorów. Wyższe wartości oznaczją mocniejsze kolory.</string>
+    <string name="pref_genre_colors_visibility">Widoczność rodzaju koloru</string>
+    <string name="pref_genre_colors_visibility_value">%1$d%% widoczności</string>
 
     <string name="err_auth">Odmowa dostępu</string>
     <string name="err_connect">Nie można połączyć się z serweram</string>
@@ -268,6 +282,7 @@
     <string name="rating">Ocena</string>
     <string name="content_type">Kategoria</string>
     <string name="series_information">Część</string>
+	<string name="genre_color_list">Lista rodzaju kolorów i ich znaczenie.</string>
 
     <string name="nothing">Żaden</string>
     <string name="loading">Wczytywanie&#8230;</string>
