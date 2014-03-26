@@ -104,7 +104,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             }
             if (holder.icon != null) {
                 Utils.setChannelIcon(holder.icon, null, c);
-            
+
                 // Add the listener to the icon so that a 
                 // click calls the program list of this channel
                 holder.icon.setOnClickListener(new OnClickListener() {
@@ -131,7 +131,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.state.setVisibility(View.GONE);
                 }
             }
-            
+
             // Get the iterator so we can check the channel status 
             Iterator<Program> it = c.epg.iterator();
             
@@ -163,10 +163,10 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.progress.setVisibility(View.GONE);
                 }
                 if (holder.time != null) {
-                	holder.time.setVisibility(View.GONE);
+                    holder.time.setVisibility(View.GONE);
                 }
                 if (holder.duration != null) {
-                	holder.duration.setVisibility(View.GONE);
+                    holder.duration.setVisibility(View.GONE);
                 }
             }
         }
