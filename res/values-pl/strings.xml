@@ -284,7 +284,7 @@
     <string name="series_information">Część</string>
 	<string name="genre_color_list">Lista rodzaju kolorów i ich znaczenie.</string>
 
-    <string name="nothing">Żaden</string>
+    <string name="nothing">Brak</string>
     <string name="loading">Wczytywanie&#8230;</string>
     <string name="all_channels">Wszystkie kanały</string>    
     <string name="season">Sezon</string>
@@ -298,7 +298,7 @@
     <string name="unknown">Nieznane</string>
     <string name="select_timeframe">Pokaż przewodnik po programach dla wybranej daty i czasu.</string>
     
-    <string name="currently_recording">Aktualne nagrania</string>
+    <string name="currently_recording">Aktualnie nagrywane</string>
     <string name="restart_application">Proszę zrestartować aplikację aby aktywować nowy motyw.</string>
     
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
