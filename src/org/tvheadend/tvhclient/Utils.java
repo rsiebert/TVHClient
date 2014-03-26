@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.tvheadend.tvhclient.R.string;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.Channel;
@@ -34,8 +35,6 @@ import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.R.string;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -479,20 +478,34 @@ public class Utils {
 
     /**
      * Shows the channel icon and optionally the channel name. The icon will
-     * only be shown when the user has activated the setting.
+     * only be shown when the user has activated the setting and an icon is 
+     * actually available. If no icon is available the channel name will be 
+     * shown as a placeholder.
      * 
      * @param icon
+     * @param iconText
      * @param channel
      * @param ch
      */
-    public static void setChannelIcon(ImageView icon, final TextView channel, final Channel ch) {
-        if (icon != null) {
+    public static void setChannelIcon(ImageView icon, TextView iconText, final TextView channel, final Channel ch) {
+
+        if (icon != null && ch != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
             final boolean showIcons = prefs.getBoolean("showIconPref", true);
-            icon.setImageBitmap((ch != null) ? ch.iconBitmap : null);
-            icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
+
+            // Show the channel icon, if it is not available hide it            
+            icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
+            icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
+
+            // Show the icon text if the channel icon could not be shown
+            if (iconText != null) {
+                iconText.setVisibility((ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
+                iconText.setText(ch.name);
+            }
         }
+
+        // Show the channel name
         if (channel != null) {
             channel.setText((ch != null) ? ch.name : "");
         }
