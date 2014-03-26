@@ -120,6 +120,11 @@ public class SettingsActivity extends ActionBarActivity {
             if (key.equals("lightThemePref") || key.equals("languagePref")) {
                 Toast.makeText(getActivity(), getString(R.string.restart_application), Toast.LENGTH_SHORT).show();
             }
+            // Reload the data to fetch the channel icons. They are not loaded
+            // (to save bandwidth) when not required.  
+            if (key.equals("showIconPref")) {
+                Utils.connect(getActivity(), true);
+            }
         }
     }
 }
