@@ -1,5 +1,11 @@
+$ 1.0.1
+  % VERSION 1.0.1
+  _ 27.03.2014
+    * Updated polish translation
+    * Show channel name if no icon is available
+    * Set application language automatically
 $ 1.0.0
   % VERSION 1.0.0
   _ 14.03.2014
-    * Initial version   
+    * Initial version
 $ END_OF_CHANGE_LOG
