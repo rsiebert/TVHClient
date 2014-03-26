@@ -16,7 +16,7 @@
         android:scaleType="fitCenter" />
 
     <TextView
-        android:id="@+id/icon_name"
+        android:id="@+id/icon_text"
         android:layout_width="54dp"
         android:layout_height="66dp"
         android:layout_marginLeft="6dp"
