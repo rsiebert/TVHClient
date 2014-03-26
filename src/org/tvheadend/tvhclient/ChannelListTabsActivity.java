@@ -49,11 +49,15 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
 
-        // Change the language to the defined setting
+        // Change the language to the defined setting. If the default is set
+        // then let the application decide which language shall be used.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        config = new Configuration(getResources().getConfiguration());
-        config.locale = new Locale(prefs.getString("languagePref", "en-us"));
-        getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+        String locale = prefs.getString("languagePref", "default");
+        if (!locale.equals("default")) {
+            config = new Configuration(getResources().getConfiguration());
+            config.locale = new Locale(locale);
+            getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+        }
 
         DatabaseHelper.init(this.getApplicationContext()); 
         changeLogDialog = new ChangeLogDialog(this);
