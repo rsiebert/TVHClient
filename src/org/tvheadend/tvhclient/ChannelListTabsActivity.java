@@ -33,7 +33,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,9 +52,10 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         super.onCreate(savedInstanceState);
         setContentView(R.layout.channel_layout);
 
+		// Check if the layout supports showing the program list next to the
+		// channel list. This is usually available on tablets 
         View v = findViewById(R.id.program_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
-        Log.i("CTA", "isDualPane " + isDualPane);
         
         // Change the language to the defined setting. If the default is set
         // then let the application decide which language shall be used.
@@ -149,7 +149,8 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
                 // instantiated and added to the activity. If it exists, it will
                 // simply attached to show it.
                 Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
-                ft.add(R.id.main_fragment, fragment, tab.getText().toString());
+                ft.replace(R.id.main_fragment, fragment, tab.getText().toString());
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             }
             else {
                 ft.attach(currentFrag);
@@ -173,7 +174,8 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
                 // instantiated and added to the activity. If it exists, it will
                 // simply attached to show it.
                 Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
-                ft.add(R.id.main_fragment, fragment, tab.getText().toString());
+                ft.replace(R.id.main_fragment, fragment, tab.getText().toString());
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             }
             else {
                 ft.attach(statusFrag);
@@ -318,7 +320,8 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 			args.putLong("channelId", channelId);
 			Fragment fragment = Fragment.instantiate(this, tag);
 			fragment.setArguments(args);
-			ft.add(R.id.program_fragment, fragment, tag);
+			ft.replace(R.id.program_fragment, fragment, tag);
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.commit();
 		}
 	}
