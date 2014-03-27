@@ -748,6 +748,9 @@ public class Utils {
      * @param channel
      */
     public static void loadMorePrograms(final Context context, final int numberOfProgramsToLoad, final Channel channel) {
+        if (channel == null) {
+            return;
+        }
         Iterator<Program> it = channel.epg.iterator();
         Program p = null;
         long nextId = 0;

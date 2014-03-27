@@ -125,7 +125,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         // a program to the schedule or has deleted one from it we need to
         // update the list to reflect these changes.
         prList.clear();
-        prList.addAll(channel.epg);
+        if (channel != null) {
+            prList.addAll(channel.epg);
+        }
         prAdapter.sort();
         prAdapter.notifyDataSetChanged();
         
@@ -246,7 +248,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
             Intent intent = new Intent(getActivity(), PlaybackSelectionActivity.class);
-            intent.putExtra("channelId", channel.id);
+            if (channel != null) {
+                intent.putExtra("channelId", channel.id);
+            }
             startActivity(intent);
             return true;
         case R.id.menu_genre_color_info:
@@ -259,7 +263,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
 
     public boolean onSearchRequested() {
         Bundle bundle = new Bundle();
-        bundle.putLong("channelId", channel.id);
+        if (channel != null) {
+            bundle.putLong("channelId", channel.id);
+        }
         getActivity().startSearch(null, false, bundle, false);
         return true;
     }
@@ -329,7 +335,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     protected void loadMorePrograms() {
         // Do not load more programs if we are already doing it. This avoids
         // calling the service for nothing and reduces the used bandwidth.
-        if (isLoading) {
+        if (isLoading || channel == null) {
             return;
         }
         isLoading = true;
