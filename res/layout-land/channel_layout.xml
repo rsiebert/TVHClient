@@ -6,15 +6,15 @@
     android:orientation="horizontal" >
 
     <FrameLayout
-        android:id="@+id/channel_fragment_holder"
+        android:id="@+id/main_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.5" />
+        android:layout_weight="0.6" />
 
     <FrameLayout
-        android:id="@+id/program_list_fragment_holder"
+        android:id="@+id/program_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.5" />
+        android:layout_weight="0.4" />
 
 </LinearLayout>

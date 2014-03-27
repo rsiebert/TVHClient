@@ -49,6 +49,7 @@ import android.widget.ListView;
 
 public class ChannelListFragment extends Fragment implements HTSListener {
 
+	private OnChannelSelectedListener channelSelectedListener;
     private ChannelListAdapter adapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
@@ -85,7 +86,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         
         if (getActivity() instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
+            channelSelectedListener = (OnChannelSelectedListener) getActivity();
         }
+
         adapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);
         channelListView.setAdapter(adapter);
         
@@ -97,9 +100,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 if (ch.epg.isEmpty()) {
                     return;
                 }
-                Intent intent = new Intent(getActivity().getBaseContext(), ProgramListActivity.class);
-                intent.putExtra("channelId", ch.id);
-                startActivity(intent);
+                // Inform the parent activity to show the program list
+                channelSelectedListener.onChannelSelected(ch.id);
             }
         });
 
@@ -410,5 +412,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         if (channelListView != null) {
             channelListView.setSelectionFromTop(index, pos);
         }
+    }
+    
+    public interface OnChannelSelectedListener {
+        public void onChannelSelected(long id);
     }
 }

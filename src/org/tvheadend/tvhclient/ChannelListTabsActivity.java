@@ -21,6 +21,7 @@ package org.tvheadend.tvhclient;
 import java.util.Locale;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
+import org.tvheadend.tvhclient.ChannelListFragment.OnChannelSelectedListener;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,14 +36,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelSelectedListener {
 
     private ActionBar actionBar = null;
     private boolean reconnect = false;
     private int prevTabPosition = -1;
     private ChangeLogDialog changeLogDialog;
     private Configuration config;
+    private boolean isDualPane = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,10 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         super.onCreate(savedInstanceState);
         setContentView(R.layout.channel_layout);
 
+        View v = findViewById(R.id.program_fragment);
+        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
+        Log.i("CTA", "isDualPane " + isDualPane);
+        
         // Change the language to the defined setting. If the default is set
         // then let the application decide which language shall be used.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -135,43 +142,17 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     protected void handleTabSelection(Tab tab, FragmentTransaction ft) {
         switch (tab.getPosition()) {
         case 0:
-            // Show the channel list screen.
-            final String chFragmentTag = ChannelListFragment.class.getName();
-            Fragment currentChannelListFrag = getSupportFragmentManager().findFragmentByTag(chFragmentTag);
-            if (currentChannelListFrag == null) {
+            // Show the channel list fragment
+            Fragment currentFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
+            if (currentFrag == null) {
                 // If the fragment is not already initialized, it will be
                 // instantiated and added to the activity. If it exists, it will
                 // simply attached to show it.
-                Fragment fragment = Fragment.instantiate(this, chFragmentTag);
-                ft.add(R.id.channel_fragment_holder, fragment, chFragmentTag);
+                Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
+                ft.add(R.id.main_fragment, fragment, tab.getText().toString());
             }
             else {
-                ft.attach(currentChannelListFrag);
-            }
-            
-            // Check the orientation. It returns the value 1 for Portrait and 2 for Landscape
-            if (getResources().getConfiguration().orientation == 2) {
-                Log.i("CLA", "landscape mode");
-
-                // Show the program list screen.
-                final String progFragmentTag = ProgramListFragment.class.getName();
-                Fragment currentProgramListFrag = getSupportFragmentManager().findFragmentByTag(progFragmentTag);
-                if (currentProgramListFrag == null) {
-                    Log.i("CLA", "adding new program list fragment");
-                    // If the fragment is not already initialized, it will be
-                    // instantiated and added to the activity. If it exists, it will
-                    // simply attached to show it.
-                    Fragment fragment = Fragment.instantiate(this, progFragmentTag);
-                    ft.add(R.id.program_list_fragment_holder, fragment, progFragmentTag);
-                }
-                else {
-                    Log.i("CLA", "attaching existing program list fragment");
-                    ft.attach(currentProgramListFrag);
-                }
-            } else {
-                Log.i("CLA", "portrait mode");
-                // Remove any instances of the program list fragment
-                
+                ft.attach(currentFrag);
             }
             break;
         case 1:
@@ -192,11 +173,21 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
                 // instantiated and added to the activity. If it exists, it will
                 // simply attached to show it.
                 Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
-                ft.add(android.R.id.content, fragment, tab.getText().toString());
+                ft.add(R.id.main_fragment, fragment, tab.getText().toString());
             }
             else {
                 ft.attach(statusFrag);
             }
+            
+			// Remove the program list fragment so it is not visible when the
+			// status screen is shown
+			if (isDualPane) {
+				Fragment currentProgramListFrag = getSupportFragmentManager()
+						.findFragmentByTag(ProgramListFragment.class.getName());
+				if (currentProgramListFrag != null) {
+					ft.remove(currentProgramListFrag);
+				}
+			}
             break;
         }
     }
@@ -300,4 +291,35 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     public void dialogDismissed() {
         createTabListeners(null);
     }
+
+    /**
+	 * This method is called when the user has selected an item in the channel
+	 * list fragment. The program list activity will be called in portrait mode.
+	 * In landscape mode the fragment will be recreated with the given channel 
+	 * number and added to the layout.
+	 */
+	@Override
+	public void onChannelSelected(long channelId) {
+		if (!isDualPane) {
+			Intent intent = new Intent(this, ProgramListActivity.class);
+			intent.putExtra("channelId", channelId);
+			startActivity(intent);
+		} else {
+			// Recreate the fragment with the new channel id
+			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			final String tag = ProgramListFragment.class.getName();
+
+			Fragment currentProgramListFrag = getSupportFragmentManager().findFragmentByTag(tag);
+			if (currentProgramListFrag != null) {
+				ft.remove(currentProgramListFrag);
+			}
+
+			Bundle args = new Bundle();
+			args.putLong("channelId", channelId);
+			Fragment fragment = Fragment.instantiate(this, tag);
+			fragment.setArguments(args);
+			ft.add(R.id.program_fragment, fragment, tag);
+			ft.commit();
+		}
+	}
 }
