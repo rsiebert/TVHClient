@@ -24,6 +24,15 @@
         android:contentDescription="@string/channel_icon"
         android:scaleType="fitCenter" />
 
+    <TextView
+        android:id="@+id/icon_text"
+        android:layout_width="54dp"
+        android:layout_height="66dp"
+        android:paddingTop="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        style="?attr/ProgramGuideTitleFont" />
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
