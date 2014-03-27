@@ -21,7 +21,6 @@ package org.tvheadend.tvhclient;
 import java.util.Locale;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
-import org.tvheadend.tvhclient.R;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +32,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -48,6 +48,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.channel_layout);
 
         // Change the language to the defined setting. If the default is set
         // then let the application decide which language shall be used.
@@ -135,16 +136,42 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         switch (tab.getPosition()) {
         case 0:
             // Show the channel list screen.
-            Fragment currentFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
-            if (currentFrag == null) {
+            final String chFragmentTag = ChannelListFragment.class.getName();
+            Fragment currentChannelListFrag = getSupportFragmentManager().findFragmentByTag(chFragmentTag);
+            if (currentChannelListFrag == null) {
                 // If the fragment is not already initialized, it will be
                 // instantiated and added to the activity. If it exists, it will
                 // simply attached to show it.
-                Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
-                ft.add(android.R.id.content, fragment, tab.getText().toString());
+                Fragment fragment = Fragment.instantiate(this, chFragmentTag);
+                ft.add(R.id.channel_fragment_holder, fragment, chFragmentTag);
             }
             else {
-                ft.attach(currentFrag);
+                ft.attach(currentChannelListFrag);
+            }
+            
+            // Check the orientation. It returns the value 1 for Portrait and 2 for Landscape
+            if (getResources().getConfiguration().orientation == 2) {
+                Log.i("CLA", "landscape mode");
+
+                // Show the program list screen.
+                final String progFragmentTag = ProgramListFragment.class.getName();
+                Fragment currentProgramListFrag = getSupportFragmentManager().findFragmentByTag(progFragmentTag);
+                if (currentProgramListFrag == null) {
+                    Log.i("CLA", "adding new program list fragment");
+                    // If the fragment is not already initialized, it will be
+                    // instantiated and added to the activity. If it exists, it will
+                    // simply attached to show it.
+                    Fragment fragment = Fragment.instantiate(this, progFragmentTag);
+                    ft.add(R.id.program_list_fragment_holder, fragment, progFragmentTag);
+                }
+                else {
+                    Log.i("CLA", "attaching existing program list fragment");
+                    ft.attach(currentProgramListFrag);
+                }
+            } else {
+                Log.i("CLA", "portrait mode");
+                // Remove any instances of the program list fragment
+                
             }
             break;
         case 1:
