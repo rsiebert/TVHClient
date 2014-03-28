@@ -21,7 +21,7 @@ package org.tvheadend.tvhclient;
 import java.util.Locale;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
-import org.tvheadend.tvhclient.ChannelListFragment.OnChannelSelectedListener;
+import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,11 +33,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelSelectedListener {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener {
 
     private ActionBar actionBar = null;
     private boolean reconnect = false;
@@ -56,7 +57,8 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 		// channel list. This is usually available on tablets 
         View v = findViewById(R.id.program_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
-        
+        Log.i("CTA", "dual pane " + isDualPane);
+
         // Change the language to the defined setting. If the default is set
         // then let the application decide which language shall be used.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -67,7 +69,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
             getResources().updateConfiguration(config,getResources().getDisplayMetrics());
         }
 
-        DatabaseHelper.init(this.getApplicationContext()); 
+        DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
 
         // Setup action bar for tabs
@@ -83,7 +85,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         }
         else {
             createTabListeners(savedInstanceState);
-        }        
+        }
     }
 
     /**
@@ -197,7 +199,6 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     @Override
     public void onResume() {
         super.onResume();
-
         // If the user has pressed the back button, the currently selected tab
         // would be active (like the recordings or program guide tab) and
         // would show nothing. So we need to set the previously selected tab.
@@ -213,6 +214,16 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        // When the orientation changes from landscape to portrait the program
+        // list fragment would crash because the container is null. So we remove
+        // it entirely before the orientation change happens.
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment currentProgramListFrag = getSupportFragmentManager().findFragmentByTag(ProgramListFragment.class.getName());
+        if (currentProgramListFrag != null) {
+            ft.remove(currentProgramListFrag);
+            ft.commit();
+        }
+
         super.onSaveInstanceState(outState);
         // Save the currently selected tab
         int index = actionBar.getSelectedNavigationIndex();
@@ -325,4 +336,15 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 			ft.commit();
 		}
 	}
+
+    @Override
+    public void onChannelListPopulated() {
+        Log.i("CTA", "onChannelListPopulated");
+        String tag = actionBar.getTabAt(actionBar.getSelectedNavigationIndex()).getText().toString();
+        Fragment f = getSupportFragmentManager().findFragmentByTag(tag);
+        if (f != null) {
+            Log.i("CTA", "got f");
+            ((ChannelListFragment) f).setSelectedItem(0);
+        }
+    }
 }

@@ -50,7 +50,7 @@ import android.widget.ListView;
 
 public class ChannelListFragment extends Fragment implements HTSListener {
 
-	private OnChannelSelectedListener channelSelectedListener;
+	private OnChannelListListener channelListListener;
     private ChannelListAdapter adapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
@@ -90,7 +90,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         
         if (getActivity() instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
-            channelSelectedListener = (OnChannelSelectedListener) getActivity();
+            channelListListener = (OnChannelListListener) getActivity();
             
             if (savedInstanceState != null) {
             	selectedListItem = savedInstanceState.getInt("selected_list_item", 0);
@@ -110,8 +110,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 if (ch.epg.isEmpty()) {
                     return;
                 }
-                // Inform the parent activity to show the program list
-                channelSelectedListener.onChannelSelected(ch.id);
+                if (channelListListener != null) {
+                    channelListListener.onChannelSelected(ch.id);
+                }
             }
         });
 
@@ -215,6 +216,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
         // Show the number of channels that are in the selected tag
         updateItemCount(currentTag);
+
+        // Inform the listeners that the channel list is populated.
+        // They could then define the preselected list item.
+        if (channelListListener != null) {
+            channelListListener.onChannelListPopulated();
+        }
 
         // Set the scroll position of the list view. Only required when this
         // class is used in the program guide where the channels are shown on
@@ -431,8 +438,22 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             channelListView.setSelectionFromTop(index, pos);
         }
     }
-    
-    public interface OnChannelSelectedListener {
+
+    /**
+     * Sets the selected item in the list to the desired position. Any listener
+     * is then informed that a new channel item has been selected.
+     * 
+     * @param position
+     */
+    public void setSelectedItem(int position) {
+        if (channelListView.getCount() > position && adapter.getCount() > position) {
+            channelListView.setSelection(position);
+            channelListListener.onChannelSelected(adapter.getItem(position).id);
+        }
+    }
+
+    public interface OnChannelListListener {
         public void onChannelSelected(long id);
+        public void onChannelListPopulated();
     }
 }
