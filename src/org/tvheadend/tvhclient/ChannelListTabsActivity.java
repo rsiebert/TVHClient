@@ -47,6 +47,9 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     private Configuration config;
     private boolean isDualPane = false;
 
+    private static final String MAIN_FRAGMENT_TAG = "channel_list_fragment";
+    private static final String RIGHT_FRAGMENT_TAG = "program_list_fragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
@@ -145,18 +148,9 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         switch (tab.getPosition()) {
         case 0:
             // Show the channel list fragment
-            Fragment currentFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
-            if (currentFrag == null) {
-                // If the fragment is not already initialized, it will be
-                // instantiated and added to the activity. If it exists, it will
-                // simply attached to show it.
-                Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
-                ft.replace(R.id.main_fragment, fragment, tab.getText().toString());
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            }
-            else {
-                ft.attach(currentFrag);
-            }
+            Fragment clf = Fragment.instantiate(this, ChannelListFragment.class.getName());
+            ft.replace(R.id.main_fragment, clf, MAIN_FRAGMENT_TAG);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             break;
         case 1:
             // Show the list of recordings screen
@@ -169,27 +163,17 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
             startActivity(epgIntent);
             break;
         case 3:
-            // Show the status screen
-        	Fragment statusFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
-            if (statusFrag == null) {
-                // If the fragment is not already initialized, it will be
-                // instantiated and added to the activity. If it exists, it will
-                // simply attached to show it.
-                Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
-                ft.replace(R.id.main_fragment, fragment, tab.getText().toString());
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            }
-            else {
-                ft.attach(statusFrag);
-            }
+            // Show the status fragment
+            Fragment sf = Fragment.instantiate(this, StatusFragment.class.getName());
+            ft.replace(R.id.main_fragment, sf, MAIN_FRAGMENT_TAG);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             
 			// Remove the program list fragment so it is not visible when the
 			// status screen is shown
 			if (isDualPane) {
-				Fragment currentProgramListFrag = getSupportFragmentManager()
-						.findFragmentByTag(ProgramListFragment.class.getName());
-				if (currentProgramListFrag != null) {
-					ft.remove(currentProgramListFrag);
+				Fragment plf = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+				if (plf != null) {
+					ft.remove(plf);
 				}
 			}
             break;
@@ -218,9 +202,9 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         // list fragment would crash because the container is null. So we remove
         // it entirely before the orientation change happens.
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment currentProgramListFrag = getSupportFragmentManager().findFragmentByTag(ProgramListFragment.class.getName());
-        if (currentProgramListFrag != null) {
-            ft.remove(currentProgramListFrag);
+        Fragment pListFrag = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+        if (pListFrag != null) {
+            ft.remove(pListFrag);
             ft.commit();
         }
 
@@ -318,20 +302,18 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 			intent.putExtra("channelId", channelId);
 			startActivity(intent);
 		} else {
-			// Recreate the fragment with the new channel id
-			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			final String tag = ProgramListFragment.class.getName();
-
-			Fragment currentProgramListFrag = getSupportFragmentManager().findFragmentByTag(tag);
-			if (currentProgramListFrag != null) {
-				ft.remove(currentProgramListFrag);
+			// Recreate the fragment and pass over the new channel id
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			Fragment f = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+			if (f != null) {
+				ft.remove(f);
 			}
 
 			Bundle args = new Bundle();
 			args.putLong("channelId", channelId);
-			Fragment fragment = Fragment.instantiate(this, tag);
+			Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
 			fragment.setArguments(args);
-			ft.replace(R.id.program_fragment, fragment, tag);
+			ft.replace(R.id.program_fragment, fragment, RIGHT_FRAGMENT_TAG);
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.commit();
 		}
@@ -339,11 +321,8 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 
     @Override
     public void onChannelListPopulated() {
-        String tag = actionBar.getTabAt(actionBar.getSelectedNavigationIndex()).getText().toString();
-        Log.i("CTA", "onChannelListPopulated " + tag);
-        Fragment f = getSupportFragmentManager().findFragmentByTag(tag);
+        Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         if (f != null && isDualPane) {
-            Log.i("CTA", "got f");
             ((ChannelListFragment) f).setSelectedItem(0);
         }
     }
