@@ -273,35 +273,40 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     }
 
     /**
-	 * This method is called when the user has selected an item in the channel
-	 * list fragment. The program list activity will be called in portrait mode.
-	 * In landscape mode the fragment will be recreated with the given channel 
-	 * number and added to the layout.
-	 */
+     * Provided by the channel list listener interface. This method is called
+     * when the user has selected an item from the channel list. In dual pane
+     * mode the program list on the right side will be recreated to show the new
+     * programs for the selected channel. In normal mode the activity will be
+     * called that shows the program list.
+     */
 	@Override
 	public void onChannelSelected(long channelId) {
 		if (!isDualPane) {
+		    // Start the activity
 			Intent intent = new Intent(this, ProgramListActivity.class);
 			intent.putExtra("channelId", channelId);
 			startActivity(intent);
 		} else {
-			// Recreate the fragment and pass over the new channel id
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			Fragment f = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
-			if (f != null) {
-				ft.remove(f);
-			}
-
+			// Recreate the fragment with the new channel id
+		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		    Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
 			Bundle args = new Bundle();
-			args.putLong("channelId", channelId);
-			Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
+            args.putLong("channelId", channelId);
 			fragment.setArguments(args);
+
+			// Replace the previous fragment with the new one
 			ft.replace(R.id.program_fragment, fragment, RIGHT_FRAGMENT_TAG);
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.commit();
 		}
 	}
 
+    /**
+     * Provided by the channel list listener interface. This method called when
+     * the channel list has been fully populated. In a two pane layout a channel
+     * list item must be preselected so that the program list on the right side
+     * shows its list with programs from this very selected channel.
+     */
     @Override
     public void onChannelListPopulated() {
         Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
