@@ -339,10 +339,10 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 
     @Override
     public void onChannelListPopulated() {
-        Log.i("CTA", "onChannelListPopulated");
         String tag = actionBar.getTabAt(actionBar.getSelectedNavigationIndex()).getText().toString();
+        Log.i("CTA", "onChannelListPopulated " + tag);
         Fragment f = getSupportFragmentManager().findFragmentByTag(tag);
-        if (f != null) {
+        if (f != null && isDualPane) {
             Log.i("CTA", "got f");
             ((ChannelListFragment) f).setSelectedItem(0);
         }
