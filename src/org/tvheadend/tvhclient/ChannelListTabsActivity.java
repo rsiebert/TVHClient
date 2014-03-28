@@ -18,22 +18,16 @@
  */
 package org.tvheadend.tvhclient;
 
-import java.util.Locale;
-
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +38,6 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     private boolean reconnect = false;
     private int prevTabPosition = -1;
     private ChangeLogDialog changeLogDialog;
-    private Configuration config;
     private boolean isDualPane = false;
 
     private static final String MAIN_FRAGMENT_TAG = "channel_list_fragment";
@@ -55,22 +48,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.channel_layout);
+        Utils.setLanguage(this);
 
 		// Check if the layout supports showing the program list next to the
 		// channel list. This is usually available on tablets 
         View v = findViewById(R.id.program_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
-        Log.i("CTA", "dual pane " + isDualPane);
-
-        // Change the language to the defined setting. If the default is set
-        // then let the application decide which language shall be used.
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String locale = prefs.getString("languagePref", "default");
-        if (!locale.equals("default")) {
-            config = new Configuration(getResources().getConfiguration());
-            config.locale = new Locale(locale);
-            getResources().updateConfiguration(config,getResources().getDisplayMetrics());
-        }
 
         DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
