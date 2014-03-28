@@ -39,6 +39,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     private int prevTabPosition = -1;
     private ChangeLogDialog changeLogDialog;
     private boolean isDualPane = false;
+    private int selectedChannelListPosition = 0;
 
     private static final String MAIN_FRAGMENT_TAG = "channel_list_fragment";
     private static final String RIGHT_FRAGMENT_TAG = "program_list_fragment";
@@ -113,10 +114,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         tab = actionBar.newTab().setText(R.string.status).setTabListener(tabListener);
         actionBar.addTab(tab);
         
-        // Restore the previously selected tab
         if (savedInstanceState != null) {
+            // Restore the previously selected tab
             int index = savedInstanceState.getInt("selected_channel_tab_index", 0);
             actionBar.setSelectedNavigationItem(index);
+            // Get the previously selected channel item position
+            selectedChannelListPosition = savedInstanceState.getInt("selected_channel_list_position", 0);
         }
     }
 
@@ -195,6 +198,8 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         // Save the currently selected tab
         int index = actionBar.getSelectedNavigationIndex();
         outState.putInt("selected_channel_tab_index", index);
+        // Save the position of the selected channel list item
+        outState.putInt("selected_channel_list_position", selectedChannelListPosition);
     }
 
     @Override
@@ -280,7 +285,9 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
      * called that shows the program list.
      */
 	@Override
-	public void onChannelSelected(long channelId) {
+	public void onChannelSelected(int position, long channelId) {
+	    selectedChannelListPosition = position;
+	    
 		if (!isDualPane) {
 		    // Start the activity
 			Intent intent = new Intent(this, ProgramListActivity.class);
@@ -311,7 +318,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     public void onChannelListPopulated() {
         Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         if (f != null && isDualPane) {
-            ((ChannelListFragment) f).setSelectedItem(0);
+            ((ChannelListFragment) f).setSelectedItem(selectedChannelListPosition);
         }
     }
 }

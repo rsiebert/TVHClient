@@ -25,7 +25,6 @@ import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.R;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -34,7 +33,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -61,8 +59,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     // program guide where only the channel icon is relevant.
     private int viewLayout = R.layout.list_layout;
     private int adapterLayout = R.layout.channel_list_widget;
-
-	private int selectedListItem = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,11 +87,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         if (getActivity() instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
             channelListListener = (OnChannelListListener) getActivity();
-            
-            if (savedInstanceState != null) {
-            	selectedListItem = savedInstanceState.getInt("selected_list_item", 0);
-            }
-            Log.i("CLF", "onCreateView selectedListItem " + selectedListItem);
         }
 
         adapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);
@@ -105,13 +96,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         channelListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            	selectedListItem = position;
                 Channel ch = (Channel) adapter.getItem(position);
                 if (ch.epg.isEmpty()) {
                     return;
                 }
                 if (channelListListener != null) {
-                    channelListListener.onChannelSelected(ch.id);
+                    channelListListener.onChannelSelected(position, ch.id);
                 }
             }
         });
@@ -134,14 +124,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         if (getActivity() instanceof ChannelListTabsActivity) {
             registerForContextMenu(channelListView);
         }
-    }
-
-    @Override
-	public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Save the currently selected selection
-        outState.putInt("selected_list_item", selectedListItem);
-        Log.i("CLF", "onSaveInstanceState selectedListItem " + selectedListItem);
     }
 
     @Override
@@ -448,12 +430,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     public void setSelectedItem(int position) {
         if (channelListView.getCount() > position && adapter.getCount() > position) {
             channelListView.setSelection(position);
-            channelListListener.onChannelSelected(adapter.getItem(position).id);
+            channelListListener.onChannelSelected(position, adapter.getItem(position).id);
         }
     }
 
     public interface OnChannelListListener {
-        public void onChannelSelected(long id);
+        public void onChannelSelected(int position, long id);
         public void onChannelListPopulated();
     }
 }
