@@ -36,7 +36,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ChannelTagListener, ProgramLoadingInterface {
+public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ProgramLoadingInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideTabsActivity.class.getSimpleName();
@@ -484,30 +484,4 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             return view;
         }
     }
-
-    /*
-     * (non-Javadoc)
-     * @see org.tvheadend.tvhguide.ChannelTagListener#onChannelTagChanged()
-     */
-    @Override
-    public void onChannelTagChanged() {
-        TVHClientApplication app = (TVHClientApplication) getApplication();
-        for (int i = 0; i < fragmentCount; ++i) {
-            ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
-                    "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
-            if (f != null) {
-                f.setLoading(app.isLoading());
-            }
-        }
-    }
-}
-
-interface ChannelTagListener {
-    /**
-     * When the user has scrolled within one fragment, the other available
-     * fragments in the view pager must be scrolled to the same position. Calls
-     * the scrollListViewTo method on every available fragment that the view 
-     * pager contains.
-     */
-    public void onChannelTagChanged();
 }
