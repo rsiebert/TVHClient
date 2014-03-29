@@ -36,7 +36,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ScrollListener, ChannelTagListener, ProgramLoadingInterface {
+public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ChannelTagListener, ProgramLoadingInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideTabsActivity.class.getSimpleName();
@@ -251,7 +251,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
      * the scrollListViewTo method on every available fragment that the view 
      * pager contains.
      */
-    @Override
+    
     public void onScrollChanged(int index) {
         scrollingSelectionIndex = index;
         for (int i = 0; i < fragmentCount; ++i) {
@@ -268,7 +268,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
-    @Override
+    
     public void onScrollPositionChanged(int index, int pos) {
         ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
         if (f != null) {
@@ -500,11 +500,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             }
         }
     }
-}
-
-interface ScrollListener {
-    public void onScrollChanged(int index);
-    public void onScrollPositionChanged(int index, int pos);
 }
 
 interface ChannelTagListener {
