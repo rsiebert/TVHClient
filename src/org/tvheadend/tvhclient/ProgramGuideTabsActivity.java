@@ -7,8 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.R;
 
