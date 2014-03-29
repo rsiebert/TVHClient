@@ -20,6 +20,7 @@ package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface {
 
     private ActionBar actionBar = null;
     private boolean reconnect = false;
@@ -264,10 +265,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         }
     }
 
+    @Override
     public void setActionBarTitle(final String title) {
         actionBar.setTitle(title);
     }
 
+    @Override
     public void setActionBarSubtitle(final String subtitle) {
         actionBar.setSubtitle(subtitle);
     }

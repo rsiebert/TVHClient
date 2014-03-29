@@ -19,6 +19,7 @@
  */
 package org.tvheadend.tvhclient;
 
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 
 import android.os.Bundle;
@@ -27,7 +28,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
-public class ProgramListActivity extends ActionBarActivity {
+public class ProgramListActivity extends ActionBarActivity implements ActionBarInterface {
 
     private ActionBar actionBar = null;
     private Channel channel;
@@ -70,7 +71,14 @@ public class ProgramListActivity extends ActionBarActivity {
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
+    @Override
+    public void setActionBarTitle(String string) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
     public void setActionBarSubtitle(final String subtitle) {
         actionBar.setSubtitle(subtitle);
     }

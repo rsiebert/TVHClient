@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.R;
 
@@ -46,6 +47,7 @@ import android.widget.ListView;
 
 public class RecordingListFragment extends Fragment implements HTSListener {
 
+    private ActionBarInterface actionBarInterface;
     private RecordingListAdapter recAdapter;
     private ListView recListView;
     private List<Recording> recList;
@@ -75,6 +77,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+
+        try {
+            actionBarInterface = (ActionBarInterface) getActivity();
+        } catch (Exception e) {
+            
+        }
 
         recList = new ArrayList<Recording>();
         recAdapter = new RecordingListAdapter(getActivity(), recList);
@@ -192,12 +200,16 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             // show that we have no connection
             recAdapter.clear();
             recAdapter.notifyDataSetChanged();
-            ((RecordingListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
+            if (actionBarInterface != null) {
+                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections));
+            }
         } else {
             if (loading) {
                 recAdapter.clear();
                 recAdapter.notifyDataSetChanged();
-                ((RecordingListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.loading));
+                if (actionBarInterface != null) {
+                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading));
+                }
             } else {
                 populateList();
             }

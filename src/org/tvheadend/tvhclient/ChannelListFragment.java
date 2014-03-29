@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 
@@ -49,6 +50,7 @@ import android.widget.ListView;
 public class ChannelListFragment extends Fragment implements HTSListener {
 
 	private OnChannelListListener channelListListener;
+	private ActionBarInterface actionBarInterface;
     private ChannelListAdapter adapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
@@ -86,7 +88,13 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         
         if (getActivity() instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
+        }
+
+        try {
             channelListListener = (OnChannelListListener) getActivity();
+            actionBarInterface = (ActionBarInterface) getActivity();
+        } catch (Exception e) {
+            
         }
 
         adapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);
@@ -221,16 +229,9 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      * @param currentTag
      */
     public void updateItemCount(ChannelTag currentTag) {
-        if (getActivity() instanceof ChannelListTabsActivity) {
-            
-            ChannelListTabsActivity activity = (ChannelListTabsActivity) getActivity();
-            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
-            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
-        } else if (getActivity() instanceof ProgramGuideTabsActivity) {
-            
-            ProgramGuideTabsActivity activity = (ProgramGuideTabsActivity) getActivity(); 
-            activity.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
-            activity.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
+            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
         }
     }
     
@@ -282,8 +283,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             adapter.notifyDataSetChanged();
             // Only update the header when the channels are shown. Do not do
             // this when this class is used by the program guide.
-            if (getActivity() instanceof ChannelListTabsActivity) {
-                ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.no_connections));
+            if (actionBarInterface != null) {
+                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections));
             }
             showCreateConnectionDialog();
         } else {
@@ -292,8 +293,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 adapter.notifyDataSetChanged();
                 // Only update the header when the channels are shown. Do not do
                 // this when this class is used by the program guide.
-                if (getActivity() instanceof ChannelListTabsActivity) {
-                    ((ChannelListTabsActivity) getActivity()).setActionBarSubtitle(getString(R.string.loading));
+                if (actionBarInterface != null) {
+                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading));
                 }
             } else {
                 // Fill the tag adapter with the available tags

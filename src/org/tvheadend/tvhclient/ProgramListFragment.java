@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
@@ -51,6 +52,7 @@ import android.widget.ListView;
 
 public class ProgramListFragment extends Fragment implements HTSListener {
 
+    private ActionBarInterface actionBarInterface;
     private ProgramListAdapter prAdapter;
     private List<Program> prList;
     private ListView prListView;
@@ -85,12 +87,18 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        try {
+            actionBarInterface = (ActionBarInterface) getActivity();
+        } catch (Exception e) {
+            
+        }
+
         prListView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
-                    if (getActivity() instanceof ProgramListActivity) {
-                        ((ProgramListActivity) getActivity()).setActionBarSubtitle(getString(R.string.loading));
+                    if (actionBarInterface != null) {
+                        actionBarInterface.setActionBarSubtitle(getString(R.string.loading));
                     }
                     loadMorePrograms();
                 }
@@ -131,8 +139,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         prAdapter.sort();
         prAdapter.notifyDataSetChanged();
         
-        if (getActivity() instanceof ProgramListActivity) {
-            ((ProgramListActivity) getActivity()).setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
         }
     }
 
@@ -290,8 +298,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                         prAdapter.add(p);
                         prAdapter.notifyDataSetChanged();
                         prAdapter.sort();
-                        if (getActivity() instanceof ProgramListActivity) {
-                            ((ProgramListActivity) getActivity()).setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+                        if (actionBarInterface != null) {
+                            actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                         }
                     }
                 }
@@ -302,8 +310,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 public void run() {
                     prAdapter.remove((Program) obj);
                     prAdapter.notifyDataSetChanged();
-                    if (getActivity() instanceof ProgramListActivity) {
-                        ((ProgramListActivity) getActivity()).setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+                    if (actionBarInterface != null) {
+                        actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
                     }
                 }
             });
