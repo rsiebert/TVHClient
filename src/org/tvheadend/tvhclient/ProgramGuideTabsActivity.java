@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,10 +46,13 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     private ActionBar actionBar = null;
     private ProgramGuidePagerAdapter adapter = null;
     public List<Channel> channelLoadingList = new ArrayList<Channel>();
+    private HashMap<Channel, Integer> channelEpgSizeList = new HashMap<Channel, Integer>();
+    
     // Indicates that a loading is in progress, the next channel can only be loaded when this is false 
     private boolean isLoadingChannels = false;
     // The dialog that allows the user to select a certain time frame
     private AlertDialog programGuideTimeDialog;
+
     // The time frame (start and end times) that shall be shown in a single fragment.  
     private static List<Long> startTimes = new ArrayList<Long>();
     private static List<Long> endTimes = new ArrayList<Long>();
@@ -346,13 +350,30 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             startTime += offsetTime;
         }
     }
+
     @Override
     public void setActionBarTitle(final String title) {
         actionBar.setTitle(title);
     }
+
     @Override
     public void setActionBarSubtitle(final String subtitle) {
         actionBar.setSubtitle(subtitle);
+    }
+
+    /**
+     * This activity does not know how many items are in the channel list and
+     * which are selected by the given channel tag. Use the channel list
+     * fragment (which has this information) to update the status in the action
+     * bar subtitle.
+     */
+    private void setActionBarSubtitle() {
+        ChannelListFragment channelFrag = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+        if (channelFrag != null) {
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            ChannelTag currentTag = Utils.getChannelTag(app);
+            channelFrag.updateItemCount(currentTag);
+        }
     }
 
     /**
@@ -383,13 +404,38 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
 
     /**
      * Calls the method to actually load the program guide data from the first
-     * channel in the list.
+     * channel in the list. Also checks if the amount of programs in the channel
+     * has changed since the last loading. If not then the loading will be
+     * blocked to avoid unnecessary calls to the server.
      */
     private void startLoadingPrograms() {
-        if (!channelLoadingList.isEmpty() && !isLoadingChannels ) {
-        	isLoadingChannels = true;
-            actionBar.setSubtitle(R.string.loading);
-            Utils.loadMorePrograms(this, programsToLoad, channelLoadingList.get(0));
+        if (!channelLoadingList.isEmpty() && !isLoadingChannels) {
+            final Channel ch = channelLoadingList.get(0);
+
+            // Indication if the channel program count didn't change and we
+            // should not continue to try to load more programs. 
+            boolean isBlocked = false;
+
+            // Add the channel to the list or if it exists, check if the 
+            // program count has changed
+            if (!channelEpgSizeList.containsKey(ch)) {
+                channelEpgSizeList.put(ch, ch.epg.size());
+            } else {
+                isBlocked = channelEpgSizeList.get(ch) == ch.epg.size();
+                channelEpgSizeList.remove(ch);
+                channelEpgSizeList.put(ch, ch.epg.size());
+            }
+
+            // Either load more programs or remove the channel from the list and
+            // update the action bar subtitle
+            if (!isBlocked) {
+                isLoadingChannels = true;
+                actionBar.setSubtitle(R.string.loading);
+                Utils.loadMorePrograms(this, programsToLoad, ch);
+            } else {
+                channelLoadingList.remove(ch);
+                setActionBarSubtitle();
+            }
         }
     }
 
@@ -410,12 +456,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
                     // Show the number of available channels from the selected
                     // tag in the action bar.
                     if (channelLoadingList.isEmpty()) {
-                        ChannelListFragment channelFrag = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
-                        if (channelFrag != null) {
-                            TVHClientApplication app = (TVHClientApplication) getApplication();
-                            ChannelTag currentTag = Utils.getChannelTag(app);
-                            channelFrag.updateItemCount(currentTag);
-                        }
+                        setActionBarSubtitle();
                     }
                 }
             });
