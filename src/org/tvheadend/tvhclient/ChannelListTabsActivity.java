@@ -31,7 +31,6 @@ import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface {
 
@@ -54,8 +53,15 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 
 		// Check if the layout supports showing the program list next to the
 		// channel list. This is usually available on tablets 
-        View v = findViewById(R.id.program_fragment);
-        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
+        
+        /*
+         * TODO Deactivate the dual pane for now. If the program list fragment
+         * is shown, it updates the action bar title instead of the channel list
+         * fragment. Also the handling logic and how to show the recordings or
+         * the program details is not clear.
+         */
+//        View v = findViewById(R.id.program_fragment);
+//        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
         DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
@@ -291,24 +297,25 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 	public void onChannelSelected(int position, long channelId) {
 	    selectedChannelListPosition = position;
 	    
-		if (!isDualPane) {
+	    // TODO Dual pane is disabled for now
+//		if (!isDualPane) {
 		    // Start the activity
 			Intent intent = new Intent(this, ProgramListActivity.class);
 			intent.putExtra("channelId", channelId);
 			startActivity(intent);
-		} else {
-			// Recreate the fragment with the new channel id
-		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		    Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
-			Bundle args = new Bundle();
-            args.putLong("channelId", channelId);
-			fragment.setArguments(args);
-
-			// Replace the previous fragment with the new one
-			ft.replace(R.id.program_fragment, fragment, RIGHT_FRAGMENT_TAG);
-			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			ft.commit();
-		}
+//		} else {
+//			// Recreate the fragment with the new channel id
+//		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//		    Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
+//			Bundle args = new Bundle();
+//            args.putLong("channelId", channelId);
+//			fragment.setArguments(args);
+//
+//			// Replace the previous fragment with the new one
+//			ft.replace(R.id.program_fragment, fragment, RIGHT_FRAGMENT_TAG);
+//			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//			ft.commit();
+//		}
 	}
 
     /**
