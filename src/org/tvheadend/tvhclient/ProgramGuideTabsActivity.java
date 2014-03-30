@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.R;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -36,7 +36,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ProgramLoadingInterface {
+public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ProgramLoadingInterface, ActionBarInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideTabsActivity.class.getSimpleName();
@@ -251,7 +251,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
      * the scrollListViewTo method on every available fragment that the view 
      * pager contains.
      */
-    
     public void onScrollChanged(int index) {
         scrollingSelectionIndex = index;
         for (int i = 0; i < fragmentCount; ++i) {
@@ -268,7 +267,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
-    
     public void onScrollPositionChanged(int index, int pos) {
         ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
         if (f != null) {
@@ -347,11 +345,11 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             startTime += offsetTime;
         }
     }
-
+    @Override
     public void setActionBarTitle(final String title) {
         actionBar.setTitle(title);
     }
-
+    @Override
     public void setActionBarSubtitle(final String subtitle) {
         actionBar.setSubtitle(subtitle);
     }
@@ -373,6 +371,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
      * ProgramGuideItemView class. A channel can't be added twice to the loading
      * list to avoid loading the same or too many data.
      */
+    @Override
     public void loadMorePrograms(int fragmentId, Channel channel) {
         if (channel == null || channelLoadingList.contains(channel)) {
             return;
@@ -388,7 +387,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     private void startLoadingPrograms() {
         if (!channelLoadingList.isEmpty() && !isLoadingChannels ) {
         	isLoadingChannels = true;
-            actionBar.setSubtitle(getString(R.string.loading));
+            actionBar.setSubtitle(R.string.loading);
             Utils.loadMorePrograms(this, programsToLoad, channelLoadingList.get(0));
         }
     }

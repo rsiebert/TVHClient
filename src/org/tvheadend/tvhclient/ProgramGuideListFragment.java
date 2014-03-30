@@ -14,10 +14,10 @@ import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter.ViewHolder;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -54,6 +54,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
     private final static String TAG = ProgramGuideListFragment.class.getSimpleName();
 
+    private ActionBarInterface actionBarInterface;
     private ProgramGuideListAdapter adapter;
     private ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
@@ -84,6 +85,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         titleDate = (TextView) v.findViewById(R.id.pager_title_date);
         titleHours = (TextView) v.findViewById(R.id.pager_title_hours);
         currentTimeIndication = (ImageView) v.findViewById(R.id.current_time);
+
+        try {
+            actionBarInterface = (ActionBarInterface) getActivity();
+        } catch (Exception e) {
+
+        }
 
         // Set the date and the time slot hours in the title of the fragment
         bundle = getArguments();
@@ -440,6 +447,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                             TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
                             ChannelTag currentTag = Utils.getChannelTag(app);
                             channelFrag.updateItemCount(currentTag);
+                        }
+                        if (actionBarInterface != null) {
+                            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
                         }
                     }
                 }
