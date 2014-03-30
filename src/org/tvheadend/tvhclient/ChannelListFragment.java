@@ -92,9 +92,14 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
         try {
             channelListListener = (OnChannelListListener) getActivity();
+        } catch (Exception e) {
+
+        }
+
+        try {
             actionBarInterface = (ActionBarInterface) getActivity();
         } catch (Exception e) {
-            
+
         }
 
         adapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);
