@@ -11,6 +11,7 @@ import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -405,6 +406,17 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
                     channelLoadingList.remove(channel);
                     isLoadingChannels = false;
                     startLoadingPrograms();
+
+                    // Show the number of available channels from the selected
+                    // tag in the action bar.
+                    if (channelLoadingList.isEmpty()) {
+                        ChannelListFragment channelFrag = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+                        if (channelFrag != null) {
+                            TVHClientApplication app = (TVHClientApplication) getApplication();
+                            ChannelTag currentTag = Utils.getChannelTag(app);
+                            channelFrag.updateItemCount(currentTag);
+                        }
+                    }
                 }
             });
         } 
