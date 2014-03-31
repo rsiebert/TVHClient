@@ -41,6 +41,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingListTabsActivity.class.getSimpleName();
+
     private ActionBar actionBar = null;
     private RecordingListPagerAdapter adapter = null;
     private static ViewPager viewPager = null;
@@ -244,13 +245,13 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
     }
 
     @Override
-    public void setActionBarTitle(String string) {
+    public void setActionBarTitle(String string, final String tag) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setActionBarSubtitle(final String subtitle) {
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
         actionBar.setSubtitle(subtitle);
     }
 }

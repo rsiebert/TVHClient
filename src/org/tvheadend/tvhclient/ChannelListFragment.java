@@ -49,6 +49,8 @@ import android.widget.ListView;
 
 public class ChannelListFragment extends Fragment implements HTSListener {
 
+    private final static String TAG = ChannelListFragment.class.getSimpleName();
+
 	private OnChannelListListener channelListListener;
 	private ActionBarInterface actionBarInterface;
     private ChannelListAdapter adapter;
@@ -235,8 +237,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      */
     public void updateItemCount(ChannelTag currentTag) {
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items));
-            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items), TAG);
+            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
         }
     }
     
@@ -289,7 +291,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             // Only update the header when the channels are shown. Do not do
             // this when this class is used by the program guide.
             if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections));
+                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections), TAG);
             }
             showCreateConnectionDialog();
         } else {
@@ -299,7 +301,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 // Only update the header when the channels are shown. Do not do
                 // this when this class is used by the program guide.
                 if (actionBarInterface != null) {
-                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading));
+                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
                 }
             } else {
                 // Fill the tag adapter with the available tags

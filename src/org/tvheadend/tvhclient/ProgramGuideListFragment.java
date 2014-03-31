@@ -342,12 +342,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                 DatabaseHelper.getInstance().getSelectedConnection() == null) {
             adapter.clear();
             adapter.notifyDataSetChanged();
-            activity.setActionBarSubtitle(getString(R.string.no_connections));
+            activity.setActionBarSubtitle(getString(R.string.no_connections), TAG);
         } else {
             if (loading) {
                 adapter.clear();
                 adapter.notifyDataSetChanged();
-                activity.setActionBarSubtitle(getString(R.string.loading));
+                activity.setActionBarSubtitle(getString(R.string.loading), TAG);
             } else {
                 // Fill the tag adapter with the available channel tags
                 TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();

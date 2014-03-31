@@ -73,13 +73,13 @@ public class ProgramListActivity extends ActionBarActivity implements ActionBarI
     }
 
     @Override
-    public void setActionBarTitle(String string) {
+    public void setActionBarTitle(final String string, final String tag) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setActionBarSubtitle(final String subtitle) {
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
         actionBar.setSubtitle(subtitle);
     }
 }

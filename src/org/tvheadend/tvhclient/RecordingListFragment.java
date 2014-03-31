@@ -47,6 +47,8 @@ import android.widget.ListView;
 
 public class RecordingListFragment extends Fragment implements HTSListener {
 
+    private final static String TAG = RecordingListFragment.class.getSimpleName();
+
     private ActionBarInterface actionBarInterface;
     private RecordingListAdapter recAdapter;
     private ListView recListView;
@@ -201,14 +203,14 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             recAdapter.clear();
             recAdapter.notifyDataSetChanged();
             if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections));
+                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections), TAG);
             }
         } else {
             if (loading) {
                 recAdapter.clear();
                 recAdapter.notifyDataSetChanged();
                 if (actionBarInterface != null) {
-                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading));
+                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
                 }
             } else {
                 populateList();

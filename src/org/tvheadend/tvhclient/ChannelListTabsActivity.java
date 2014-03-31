@@ -34,6 +34,9 @@ import android.view.MenuItem;
 
 public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface {
 
+    @SuppressWarnings("unused")
+    private final static String TAG = ChannelListTabsActivity.class.getSimpleName();
+
     private ActionBar actionBar = null;
     private boolean reconnect = false;
     private int prevTabPosition = -1;
@@ -272,12 +275,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     }
 
     @Override
-    public void setActionBarTitle(final String title) {
+    public void setActionBarTitle(final String title, final String tag) {
         actionBar.setTitle(title);
     }
 
     @Override
-    public void setActionBarSubtitle(final String subtitle) {
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
         actionBar.setSubtitle(subtitle);
     }
 

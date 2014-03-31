@@ -2,8 +2,8 @@ package org.tvheadend.tvhclient.interfaces;
 
 public interface ActionBarInterface {
 
-    void setActionBarTitle(String string);
+    void setActionBarTitle(final String string, final String tag);
 
-    void setActionBarSubtitle(String string);
+    void setActionBarSubtitle(final String string, final String tag);
 
 }

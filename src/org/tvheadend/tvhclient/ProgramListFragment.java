@@ -52,6 +52,8 @@ import android.widget.ListView;
 
 public class ProgramListFragment extends Fragment implements HTSListener {
 
+    private final static String TAG = ProgramListFragment.class.getSimpleName();
+
     private ActionBarInterface actionBarInterface;
     private ProgramListAdapter prAdapter;
     private List<Program> prList;
@@ -98,7 +100,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(getString(R.string.loading));
+                        actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
                     }
                     loadMorePrograms();
                 }
@@ -140,7 +142,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         prAdapter.notifyDataSetChanged();
         
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+            actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs), TAG);
         }
     }
 
@@ -299,7 +301,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                         prAdapter.notifyDataSetChanged();
                         prAdapter.sort();
                         if (actionBarInterface != null) {
-                            actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+                            actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs), TAG);
                         }
                     }
                 }
@@ -311,7 +313,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                     prAdapter.remove((Program) obj);
                     prAdapter.notifyDataSetChanged();
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs));
+                        actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs), TAG);
                     }
                 }
             });
