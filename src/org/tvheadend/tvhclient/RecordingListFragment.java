@@ -197,7 +197,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * @param loading
      */
     private void setLoading(boolean loading) {
-        if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
+        if (DatabaseHelper.getInstance() != null && 
+                DatabaseHelper.getInstance().getSelectedConnection() == null) {
             // Clear any channels in the list and 
             // show that we have no connection
             recAdapter.clear();
