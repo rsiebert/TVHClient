@@ -32,11 +32,13 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -88,22 +90,25 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         prListView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
-    
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            actionBarInterface = (ActionBarInterface) activity;
+        } catch (Exception e) {
+            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
+        }
+        try {
+            loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
+        } catch (Exception e) {
+            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
+        }
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        try {
-            actionBarInterface = (ActionBarInterface) getActivity();
-        } catch (Exception e) {
-            
-        }
-        
-        try {
-            loadMoreProgramsInterface = (ProgramLoadingInterface) getActivity();
-        } catch (Exception e) {
-            
-        }
 
         prListView.setOnScrollListener(new OnScrollListener() {
             @Override

@@ -123,13 +123,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         try {
             programGuideInterface = (ProgramGuideInterface) activity;
         } catch (ClassCastException e) {
-
+            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
         }
-        
         try {
             actionBarInterface = (ActionBarInterface) getActivity();
         } catch (Exception e) {
-            
+            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
         }
     }
 

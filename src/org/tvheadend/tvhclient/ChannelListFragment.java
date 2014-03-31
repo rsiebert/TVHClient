@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -86,31 +88,33 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         channelListView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
-    
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);   
+        try {
+            channelListListener = (OnChannelListListener) activity;
+        } catch (Exception e) {
+            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
+        }
+        try {
+            actionBarInterface = (ActionBarInterface) activity;
+        } catch (Exception e) {
+            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
+        }
+        try {
+            programGuideInterface = (ProgramGuideInterface) activity;
+        } catch (ClassCastException e) {
+            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
+        }
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
         if (getActivity() instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
-        }
-
-        try {
-            channelListListener = (OnChannelListListener) getActivity();
-        } catch (Exception e) {
-
-        }
-
-        try {
-            actionBarInterface = (ActionBarInterface) getActivity();
-        } catch (Exception e) {
-
-        }
-
-        try {
-            programGuideInterface = (ProgramGuideInterface) getActivity();
-        } catch (ClassCastException e) {
-
         }
 
         adapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);

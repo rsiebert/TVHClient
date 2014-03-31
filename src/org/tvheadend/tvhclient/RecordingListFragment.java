@@ -31,8 +31,10 @@ import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.R;
 
 import android.support.v4.app.Fragment;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -74,17 +76,21 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
         return v;
     }
-    
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            actionBarInterface = (ActionBarInterface) activity;
+        } catch (Exception e) {
+            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
+        }
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-
-        try {
-            actionBarInterface = (ActionBarInterface) getActivity();
-        } catch (Exception e) {
-            
-        }
 
         recList = new ArrayList<Recording>();
         recAdapter = new RecordingListAdapter(getActivity(), recList);
