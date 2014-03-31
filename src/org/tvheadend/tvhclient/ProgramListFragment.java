@@ -38,7 +38,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -94,15 +93,11 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
+        if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
-        } catch (Exception e) {
-            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
         }
-        try {
+        if (activity instanceof ProgramLoadingInterface) {
             loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
-        } catch (Exception e) {
-            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
         }
     }
 

@@ -36,21 +36,20 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnTouchListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -96,20 +95,14 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);   
-        try {
+        if (activity instanceof OnChannelListListener) {
             channelListListener = (OnChannelListListener) activity;
-        } catch (Exception e) {
-            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
         }
-        try {
+        if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
-        } catch (Exception e) {
-            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
         }
-        try {
+        if (activity instanceof ProgramGuideInterface) {
             programGuideInterface = (ProgramGuideInterface) activity;
-        } catch (ClassCastException e) {
-            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
         }
     }
 

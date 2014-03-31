@@ -28,13 +28,11 @@ import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.R;
 
-import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -80,10 +78,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
+        if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
-        } catch (Exception e) {
-            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
         }
     }
 

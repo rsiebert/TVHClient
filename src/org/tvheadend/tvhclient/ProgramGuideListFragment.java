@@ -30,7 +30,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -120,15 +119,11 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);        
-        try {
-            programGuideInterface = (ProgramGuideInterface) activity;
-        } catch (ClassCastException e) {
-            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
         }
-        try {
-            actionBarInterface = (ActionBarInterface) getActivity();
-        } catch (Exception e) {
-            Log.e(TAG, "Error casting activity, " + e.getMessage().toString());
+        if (activity instanceof ProgramGuideInterface) {
+            programGuideInterface = (ProgramGuideInterface) activity;
         }
     }
 
@@ -210,11 +205,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
-                        try {
-                            setCurrentTimeIndication();
-                        } catch (Exception e) {
-                            Log.e(TAG, "Could not set the current time indication (vertical line), " + e.toString());
-                        }
+                        setCurrentTimeIndication();
                     }
                 });
             }
@@ -309,7 +300,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
      * shown.
      */
     private void setCurrentTimeIndication() {
-        if (bundle != null && currentTimeIndication != null) {
+        if (bundle != null && currentTimeIndication != null && getActivity() != null) {
             int tabIndex = bundle.getInt("tabIndex", -1);
             if (tabIndex == 0) {
                 // Get the difference between the current time and the given
