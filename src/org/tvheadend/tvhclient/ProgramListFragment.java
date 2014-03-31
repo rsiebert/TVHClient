@@ -27,6 +27,7 @@ import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
@@ -55,11 +56,14 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     private final static String TAG = ProgramListFragment.class.getSimpleName();
 
     private ActionBarInterface actionBarInterface;
+    private ProgramLoadingInterface loadMoreProgramsInterface;
+
     private ProgramListAdapter prAdapter;
     private List<Program> prList;
     private ListView prListView;
     private Channel channel;
     private boolean isLoading = false;
+
     private static int newProgramsLoadedCounter = 0;
     private static final int newProgramsToLoad = 10;
 
@@ -94,6 +98,12 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         } catch (Exception e) {
             
         }
+        
+        try {
+            loadMoreProgramsInterface = (ProgramLoadingInterface) getActivity();
+        } catch (Exception e) {
+            
+        }
 
         prListView.setOnScrollListener(new OnScrollListener() {
             @Override
@@ -102,7 +112,16 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                     if (actionBarInterface != null) {
                         actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
                     }
-                    loadMorePrograms();
+                    
+                    // Do not load more programs if we are already doing it. This avoids
+                    // calling the service for nothing and reduces the used bandwidth.
+                    if (isLoading || channel == null) {
+                        return;
+                    }
+                    isLoading = true;
+                    if (loadMoreProgramsInterface != null) {
+                        loadMoreProgramsInterface.loadMorePrograms(channel);
+                    }
                 }
             }
 
@@ -340,15 +359,5 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 }
             });
         }
-    }
-
-    protected void loadMorePrograms() {
-        // Do not load more programs if we are already doing it. This avoids
-        // calling the service for nothing and reduces the used bandwidth.
-        if (isLoading || channel == null) {
-            return;
-        }
-        isLoading = true;
-        Utils.loadMorePrograms(getActivity(), newProgramsToLoad, channel);
     }
 }

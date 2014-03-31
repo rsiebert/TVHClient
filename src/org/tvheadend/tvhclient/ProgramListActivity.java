@@ -20,6 +20,7 @@
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 
 import android.os.Bundle;
@@ -28,10 +29,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
-public class ProgramListActivity extends ActionBarActivity implements ActionBarInterface {
+public class ProgramListActivity extends ActionBarActivity implements ActionBarInterface, ProgramLoadingInterface {
 
     private ActionBar actionBar = null;
     private Channel channel;
+    
+    // Amount of programs of a channel that shall be loaded from the server 
+    private static int programsToLoad = 20;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -81,5 +85,10 @@ public class ProgramListActivity extends ActionBarActivity implements ActionBarI
     @Override
     public void setActionBarSubtitle(final String subtitle, final String tag) {
         actionBar.setSubtitle(subtitle);
+    }
+
+    @Override
+    public void loadMorePrograms(Channel channel) {
+        Utils.loadMorePrograms(this, programsToLoad, channel);
     }
 }
