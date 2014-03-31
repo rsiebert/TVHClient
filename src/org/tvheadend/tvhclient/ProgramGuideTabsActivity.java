@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -507,6 +507,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
      */
     @Override
     public void onScrollStateIdle(final String tag) {
+        // Scroll all program guide fragments to the desired position
         for (int i = 0; i < fragmentCount; ++i) {
             ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
                     "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
@@ -514,11 +515,11 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
                 f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
             }
         }
-        
-//        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
-//        if (f != null) {
-//            f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
-//        }
+        // Scroll the channel list fragment so the program guide is aligned with the channels
+        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+        if (f != null) {
+            f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
+        }
     }
 
     /**
@@ -531,16 +532,16 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         scrollingSelectionIndex = index;
         scrollingSelectionPosition = pos;
 
-        if (tag.equals(ProgramListFragment.class.getName())) {
+        if (tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
             // Scroll the list in the channel list fragment
             ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
             if (f != null) {
                 f.scrollListViewToPosition(index, pos);
             }
-        } else if (tag.equals(ChannelListFragment.class.getName())) {
+        } else if (tag.equals(ChannelListFragment.class.getSimpleName())) {
             // Scroll the list in the currently visible program guide fragment
             ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
-                    "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(viewPager.getCurrentItem()));
+                    "android:switcher:" + viewPager.getId() + ":0");
             if (f != null) {
                 f.scrollListViewToPosition(index, pos);
             }
