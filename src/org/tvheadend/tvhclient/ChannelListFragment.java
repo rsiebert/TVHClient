@@ -39,14 +39,18 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnTouchListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -131,6 +135,38 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 if (channelListListener != null) {
                     channelListListener.onChannelSelected(position, ch.id);
                 }
+            }
+        });
+
+        // Inform the parent activity about the state of scrolling. 
+        channelListView.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE) {
+
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        // Inform the parent activity about the motion event state.
+        channelListView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (programGuideInterface != null) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        
+                    } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+    
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+    
+                    }
+                }
+                return false;
             }
         });
 
