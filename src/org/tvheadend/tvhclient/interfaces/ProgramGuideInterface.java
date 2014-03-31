@@ -1,9 +1,9 @@
 package org.tvheadend.tvhclient.interfaces;
 
 public interface ProgramGuideInterface {
-    public void onScrollPositionChanged(final int index, final int pos);
+    public void onScrollingChanged(final int index, final int pos, final String tag);
 
-    public void onScrollStateIdle();
+    public void onScrollStateIdle(final String tag);
 
     public int getScrollingSelectionIndex();
 

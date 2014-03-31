@@ -147,7 +147,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_IDLE) {
                     if (programGuideInterface != null) {
-                        programGuideInterface.onScrollStateIdle();
+                        programGuideInterface.onScrollStateIdle(TAG);
                     }
                 }
             }
@@ -166,7 +166,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                     View v = listView.getChildAt(0);
                     int position = (v == null) ? 0 : v.getTop();
                     if (programGuideInterface != null) {
-                        programGuideInterface.onScrollPositionChanged(index, position);
+                        programGuideInterface.onScrollingChanged(index, position, TAG);
                     }
                 }
                 return false;
