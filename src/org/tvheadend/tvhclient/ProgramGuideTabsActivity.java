@@ -394,7 +394,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
      * list to avoid loading the same or too many data.
      */
     @Override
-    public void loadMorePrograms(int fragmentId, Channel channel) {
+    public void loadMorePrograms(Channel channel) {
         if (channel == null || channelLoadingList.contains(channel)) {
             return;
         }

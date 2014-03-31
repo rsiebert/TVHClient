@@ -174,7 +174,7 @@ public class ProgramGuideItemView extends LinearLayout {
         // Also load programs when no program at all was added.
         if ((programAdded && lastProgramFound) || !programAdded) {
             if (loadMoreProgramsInterface != null) {
-                loadMoreProgramsInterface.loadMorePrograms(tabIndex, channel);
+                loadMoreProgramsInterface.loadMorePrograms(channel);
             }
         }
     }
