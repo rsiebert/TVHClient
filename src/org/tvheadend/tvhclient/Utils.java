@@ -105,10 +105,15 @@ public class Utils {
      * @return
      */
     public static String buildSeriesInfoString(final Context context, final SeriesInfo info) {
+        String s = "";
+        if (info == null) {
+            return s;
+        }
+
         if (info.onScreen != null && info.onScreen.length() > 0) {
             return info.onScreen;
         }
-        String s = "";
+        
         final String season = context.getResources().getString(string.season);
         final String episode = context.getResources().getString(string.episode);
         final String part = context.getResources().getString(string.part);
@@ -171,6 +176,9 @@ public class Utils {
      * @param id
      */
     public static void removeProgram(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_DELETE);
         intent.putExtra("id", rec.id);
@@ -236,11 +244,20 @@ public class Utils {
         // Disable these menus as a default
         searchMenuItem.setVisible(false);
         
+        // Disable all menus if the program is not valid
+        if (program == null) {
+            recordMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(false);
+            return;
+        }
+
         // Show the play menu item when the current 
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (currentTime > program.start.getTime() && 
-                currentTime < program.stop.getTime()) {
+        if (program.start != null && program.stop != null && 
+                currentTime > program.start.getTime()
+                && currentTime < program.stop.getTime()) {
             playMenuItem.setVisible(true);
         } else {
             playMenuItem.setVisible(false);
@@ -288,6 +305,11 @@ public class Utils {
         recordRemoveMenuItem.setVisible(false);
         playMenuItem.setVisible(false);
         searchMenuItem.setVisible(false);
+
+        // Disable all menus if the recording is not valid
+        if (rec == null) {
+            return;
+        }
 
         if (rec.error == null && rec.state.equals("completed")) {
         	// The recording is available, it can be played and removed
@@ -349,7 +371,7 @@ public class Utils {
      * @param stop
      */
     public static void setDuration(TextView duration, final Date start, final Date stop) {
-        if (duration == null) {
+        if (duration == null || start == null || stop == null) {
             return;
         }
         duration.setVisibility(View.VISIBLE);
@@ -369,7 +391,7 @@ public class Utils {
      * @param stop
      */
     public static void setTime(TextView time, final Date start, final Date stop) {
-        if (time == null) {
+        if (time == null || start == null || stop == null) {
             return;
         }
         time.setVisibility(View.VISIBLE);
@@ -386,7 +408,7 @@ public class Utils {
      * @param start
      */
     public static void setDate(TextView date, final Date start) {
-        if (date == null) {
+        if (date == null || start == null) {
             return;
         }
         String dateText = "";
@@ -488,7 +510,7 @@ public class Utils {
      * @param channel
      * @param ch
      */
-    public static void setChannelIcon(ImageView icon, TextView iconText, final TextView channel, final Channel ch) {
+    public static void setChannelIcon(ImageView icon, TextView iconText, TextView channel, final Channel ch) {
 
         if (icon != null && ch != null) {
             // Get the setting if the channel icon shall be shown or not
@@ -560,8 +582,8 @@ public class Utils {
      * @param start
      * @param stop
      */
-    public static void setProgress(final ProgressBar progress, final Date start, final Date stop) {
-        if (progress == null) {
+    public static void setProgress(ProgressBar progress, final Date start, final Date stop) {
+        if (progress == null || start == null || stop == null) {
             return;
         }
         // Get the start and end times to calculate the progress.
@@ -585,8 +607,8 @@ public class Utils {
      * @param start
      * @param stop
      */
-    public static void setProgressText(final TextView progressText, final Date start, final Date stop) {
-        if (progressText == null) {
+    public static void setProgressText(TextView progressText, final Date start, final Date stop) {
+        if (progressText == null || start == null || stop == null) {
             return;
         }
         // Get the start and end times to calculate the progress.
@@ -613,7 +635,7 @@ public class Utils {
      * @param view
      * @param contentType
      */
-    public static void setGenreColor(final Context context, final View view, final int contentType) {
+    public static void setGenreColor(final Context context, View view, final int contentType) {
     	if (view == null) {
             return;
         }
@@ -719,7 +741,7 @@ public class Utils {
      * here the data for the adapter is created and the dialog prepared which
      * can be shown later.
      */
-    public static void showGenreColorDialog(Activity context) {
+    public static void showGenreColorDialog(final Activity context) {
         final String[] s = context.getResources().getStringArray(R.array.pr_content_type0);
 
         // Fill the list for the adapter
@@ -799,7 +821,7 @@ public class Utils {
      * @param hoursToShow
      * @return
      */
-    public static float getPixelsPerMinute(FragmentActivity context, int tabIndex, int hoursToShow) {
+    public static float getPixelsPerMinute(final FragmentActivity context, final int tabIndex, final int hoursToShow) {
         // Get the usable width. Subtract the icon width if its visible.
         DisplayMetrics displaymetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -826,7 +848,7 @@ public class Utils {
      * 
      * @param channelTagId
      */
-    public static void setChannelTagId(int channelTagId) {
+    public static void setChannelTagId(final int channelTagId) {
         // Save the selected tag for the active connection in the database
     	if (DatabaseHelper.getInstance() != null) {
 	        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
@@ -857,7 +879,7 @@ public class Utils {
 	 *
 	 * @param context
 	 */
-	public static void setLanguage(Activity context) {
+	public static void setLanguage(final Activity context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String locale = prefs.getString("languagePref", "default");
 		if (!locale.equals("default")) {
