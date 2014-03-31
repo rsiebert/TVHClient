@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
@@ -38,7 +39,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ProgramLoadingInterface, ActionBarInterface {
+public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ProgramLoadingInterface, ActionBarInterface, ProgramGuideInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideTabsActivity.class.getSimpleName();
@@ -61,6 +62,8 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     private static int fragmentCount;
     private static ViewPager viewPager = null;
     private static int scrollingSelectionIndex = 0;
+    private static int scrollingSelectionPosition = 0;
+
     // Amount of programs of a channel that shall be loaded from the server 
     private static int programsToLoad = 20;
     
@@ -251,35 +254,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     }
 
     /**
-     * When the user has scrolled within one fragment, the other available
-     * fragments in the view pager must be scrolled to the same position. Calls
-     * the scrollListViewTo method on every available fragment that the view 
-     * pager contains.
-     */
-    public void onScrollChanged(int index) {
-        scrollingSelectionIndex = index;
-        for (int i = 0; i < fragmentCount; ++i) {
-            ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
-                    "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
-            if (f != null) {
-                f.scrollListViewTo(scrollingSelectionIndex);
-            }
-        }
-        
-        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
-        if (f != null) {
-            f.scrollListViewTo(scrollingSelectionIndex);
-        }
-    }
-
-    public void onScrollPositionChanged(int index, int pos) {
-        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
-        if (f != null) {
-            f.scrollListViewToPosition(index, pos);
-        }
-    }
-
-    /**
      * Reloads all data if the connection details have changed, a new one was
      * created or if the number of hours per time slot have changed.
      */
@@ -374,17 +348,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             ChannelTag currentTag = Utils.getChannelTag(app);
             channelFrag.updateItemCount(currentTag);
         }
-    }
-
-    /**
-     * Returns the index of of the first list item that is visible. The method
-     * used is listView.getFirstVisiblePosition(). This can be used to jump to
-     * certain positions in the list. No smooth scrolling is possible with this.
-     * 
-     * @return
-     */
-    public int getScrollingSelectionIndex() {
-        return scrollingSelectionIndex;
     }
 
     /**
@@ -535,5 +498,68 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             }
             return view;
         }
+    }
+    /**
+     * When the user has scrolled within one fragment, the other available
+     * fragments in the view pager must be scrolled to the same position. Scroll
+     * the list view in every fragment that the view pager contains to the same
+     * position this fragment has.
+     */
+    @Override
+    public void onScrollStateIdle() {
+        for (int i = 0; i < fragmentCount; ++i) {
+            ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
+                    "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
+            if (f != null) {
+                f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
+            }
+        }
+        
+        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+        if (f != null) {
+            f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
+        }
+    }
+
+    /**
+     * 
+     * @param index
+     * @param pos
+     */
+    @Override
+    public void onScrollPositionChanged(int index, int pos) {
+        scrollingSelectionIndex = index;
+        scrollingSelectionPosition = pos;
+
+        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+        if (f != null) {
+            f.scrollListViewToPosition(index, pos);
+        }
+    }
+
+    /**
+     * Returns the index of of the first list item that is visible. The method
+     * used is listView.getFirstVisiblePosition(). This can be used to jump to
+     * certain positions in the list. No smooth scrolling is possible with this.
+     * 
+     * @return
+     */
+    @Override
+    public int getScrollingSelectionIndex() {
+        return scrollingSelectionIndex;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    @Override
+    public int getScrollingSelectionPosition() {
+        return scrollingSelectionPosition;
+    }
+
+    @Override
+    public boolean isChannelLoadingListEmpty() {
+        return channelLoadingList.isEmpty();
     }
 }

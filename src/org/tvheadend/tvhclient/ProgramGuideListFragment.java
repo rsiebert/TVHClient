@@ -14,6 +14,8 @@ import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter.ViewHolder;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
@@ -53,6 +55,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
     private final static String TAG = ProgramGuideListFragment.class.getSimpleName();
 
+    private ProgramGuideInterface programGuideInterface;
+    private ActionBarInterface actionBarInterface;
     private ProgramGuideListAdapter adapter;
     private ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
@@ -62,7 +66,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     private TextView titleDate;
     private TextView titleHours;
     private ImageView currentTimeIndication;
-    private ProgramGuideTabsActivity activity;
     private Bundle bundle;
     private Program selectedProgram = null;
 
@@ -100,7 +103,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
             // Hide the date text if it shows the date time or the display is too narrow
             DisplayMetrics displaymetrics = new DisplayMetrics();
-            activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             if (titleDateText.getText().equals(titleDate.getText()) || 
                 ((int) displaymetrics.widthPixels < 400)) {
                 titleDate.setVisibility(View.GONE);
@@ -116,11 +119,17 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
     @Override
     public void onAttach(Activity activity) {
-        super.onAttach(activity);
+        super.onAttach(activity);        
         try {
-            this.activity = (ProgramGuideTabsActivity) activity;
+            programGuideInterface = (ProgramGuideInterface) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString());
+
+        }
+        
+        try {
+            actionBarInterface = (ActionBarInterface) getActivity();
+        } catch (Exception e) {
+            
         }
     }
 
@@ -138,8 +147,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_IDLE) {
-                    if (activity != null) {
-                        activity.onScrollChanged(view.getFirstVisiblePosition());
+                    if (programGuideInterface != null) {
+                        programGuideInterface.onScrollStateIdle();
                     }
                 }
             }
@@ -157,8 +166,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                     int index = listView.getFirstVisiblePosition();
                     View v = listView.getChildAt(0);
                     int position = (v == null) ? 0 : v.getTop();
-                    if (activity != null) {
-                        activity.onScrollPositionChanged(index, position);
+                    if (programGuideInterface != null) {
+                        programGuideInterface.onScrollPositionChanged(index, position);
                     }
                 }
                 return false;
@@ -220,6 +229,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         }
     }
 
+    public void scrollListViewToPosition(int index, int pos) {
+        if (listView != null) {
+            listView.setSelectionFromTop(index, pos);
+        }
+    }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu item of not required
@@ -254,7 +269,11 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         adapter.notifyDataSetChanged();
         
         // Set the scroll position of the list view
-        listView.setSelection(activity.getScrollingSelectionIndex());
+        if (programGuideInterface != null) {
+            listView.setSelection(programGuideInterface.getScrollingSelectionIndex());
+        } else {
+            listView.setSelection(0);
+        }
     }
 
     @Override
@@ -342,12 +361,16 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                 DatabaseHelper.getInstance().getSelectedConnection() == null) {
             adapter.clear();
             adapter.notifyDataSetChanged();
-            activity.setActionBarSubtitle(getString(R.string.no_connections), TAG);
+            if (actionBarInterface != null) {
+                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections), TAG);
+            }
         } else {
             if (loading) {
                 adapter.clear();
                 adapter.notifyDataSetChanged();
-                activity.setActionBarSubtitle(getString(R.string.loading), TAG);
+                if (actionBarInterface != null) {
+                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
+                }
             } else {
                 // Fill the tag adapter with the available channel tags
                 TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
@@ -430,8 +453,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
                     // Only update the view if no more programs are being loaded
                     // from the server.
-                    if (activity.channelLoadingList.isEmpty()) {
-                        adapter.notifyDataSetChanged();
+                    if (programGuideInterface != null) {
+                        if (programGuideInterface.isChannelLoadingListEmpty()) {
+                            adapter.notifyDataSetChanged();
+                        }
                     }
                 }
             });
