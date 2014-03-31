@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 
@@ -51,8 +52,10 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
+    private ProgramGuideInterface programGuideInterface;
 	private OnChannelListListener channelListListener;
 	private ActionBarInterface actionBarInterface;
+
     private ChannelListAdapter adapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
@@ -101,6 +104,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         try {
             actionBarInterface = (ActionBarInterface) getActivity();
         } catch (Exception e) {
+
+        }
+
+        try {
+            programGuideInterface = (ProgramGuideInterface) getActivity();
+        } catch (ClassCastException e) {
 
         }
 
@@ -223,8 +232,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         // Set the scroll position of the list view. Only required when this
         // class is used in the program guide where the channels are shown on
         // the the left side and shall scroll with the guide data.
-        if (getActivity() instanceof ProgramGuideTabsActivity) { 
-            channelListView.setSelection(((ProgramGuideTabsActivity) getActivity()).getScrollingSelectionIndex());
+        if (programGuideInterface != null) {
+            channelListView.setSelection(programGuideInterface.getScrollingSelectionIndex());
         }
     }
 
