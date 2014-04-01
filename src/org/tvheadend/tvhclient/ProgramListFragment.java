@@ -104,6 +104,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
 
         prListView.setOnScrollListener(new OnScrollListener() {
             @Override

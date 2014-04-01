@@ -95,6 +95,8 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+
         title.setText(rec.title);
         channelName.setText(rec.channel.name);
         Utils.setState(state, rec);

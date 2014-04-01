@@ -125,6 +125,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
 
         title.setText(program.title);
         channelName.setText(channel.name);
