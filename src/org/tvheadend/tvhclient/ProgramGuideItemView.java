@@ -372,7 +372,7 @@ public class ProgramGuideItemView extends LinearLayout {
 	        itemLayout.setOnCreateContextMenuListener((new OnCreateContextMenuListener() {
 	            @Override
 	            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-	                context.getMenuInflater().inflate(R.menu.context_menu, menu);
+	                context.getMenuInflater().inflate(R.menu.program_context_menu, menu);
 	                // Set the title of the context menu and show or hide
 	                // the menu items depending on the program state
 	                fragmentInterface.setSelectedContextItem(p);

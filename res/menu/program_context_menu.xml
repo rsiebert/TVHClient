@@ -27,9 +27,13 @@
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_record_cancel"
-        android:title="@string/menu_record_cancel"/>
+        android:icon="?attr/ic_menu_record_cancel"
+        android:title="@string/menu_record_cancel"
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_record_remove"
-        android:title="@string/menu_record_remove"/>
+        android:icon="?attr/ic_menu_record_remove"
+        android:title="@string/menu_record_remove"
+        app:showAsAction="ifRoom|withText"/>
 
 </menu>

@@ -167,7 +167,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.context_menu, menu);
+        inflater.inflate(R.menu.program_context_menu, menu);
     }
 
     @Override
