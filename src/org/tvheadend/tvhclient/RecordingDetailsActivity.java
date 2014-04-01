@@ -30,8 +30,10 @@ import android.view.MenuItem;
 
 public class RecordingDetailsActivity extends ActionBarActivity {
 
+    @SuppressWarnings("unused")
+    private final static String TAG = RecordingDetailsActivity.class.getSimpleName();
+
     private ActionBar actionBar = null;
-    // The currently selected recording
     private Recording rec;
 
     @Override

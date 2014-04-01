@@ -41,6 +41,9 @@ import android.widget.TextView;
 
 public class ProgramDetailsFragment extends Fragment implements HTSListener {
 
+    @SuppressWarnings("unused")
+    private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
+
     private Activity activity;
     private Program program;
     private Channel channel;

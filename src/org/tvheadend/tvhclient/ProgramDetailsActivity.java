@@ -31,6 +31,9 @@ import android.view.MenuItem;
 
 public class ProgramDetailsActivity extends ActionBarActivity {
 
+    @SuppressWarnings("unused")
+    private final static String TAG = ProgramDetailsActivity.class.getSimpleName();
+
     private ActionBar actionBar = null;
     private Program program;
 

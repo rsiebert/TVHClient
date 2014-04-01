@@ -39,6 +39,9 @@ import android.widget.TextView;
 
 public class RecordingDetailsFragment extends Fragment implements HTSListener {
 
+    @SuppressWarnings("unused")
+    private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
+
     private Activity activity;
     private Recording rec;
 
