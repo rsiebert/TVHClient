@@ -318,8 +318,8 @@ public class Utils {
         } else if (rec.isRecording() || rec.isScheduled()) {
             // The recording is recording or scheduled, it can only be cancelled
             recordCancelMenuItem.setVisible(true);
-        } else if (rec.error != null) {
-        	// The recording has failed, just allow removal
+        } else if (rec.error != null || rec.state.equals("missed")) {
+        	// The recording has failed or has been missed, allow removal
         	recordRemoveMenuItem.setVisible(true);
         }
     }
