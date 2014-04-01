@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,7 +43,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     @SuppressWarnings("unused")
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
-    private Activity activity;
+    private FragmentActivity activity;
     private Recording rec;
 
     private TextView title;
@@ -59,7 +60,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = activity;
+        this.activity = (FragmentActivity) activity;
     }
 
     @Override
@@ -177,9 +178,16 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     public void onMessage(String action, Object obj) {
         // An existing program has been updated, this is valid for all menu options. 
         if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)) {
-            activity.invalidateOptionsMenu();
+            getActivity().supportInvalidateOptionsMenu();
             // Update the status icon
             Utils.setState(state, rec);
-        } 
+        } else if (action.equals(TVHClientApplication.ACTION_DVR_DELETE)) {
+            // An existing program has been deleted
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    activity.finish();
+                }
+            });
+        }
     }
 }

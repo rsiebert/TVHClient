@@ -29,6 +29,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,7 +45,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     @SuppressWarnings("unused")
     private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
 
-    private Activity activity;
+    private FragmentActivity activity;
     private Program program;
     private Channel channel;
 
@@ -70,7 +71,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = activity;
+        this.activity = (FragmentActivity) activity;
     }
     
     @Override
@@ -223,10 +224,10 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Update the options menu and the status icon
-                    activity.invalidateOptionsMenu();
+                    activity.supportInvalidateOptionsMenu();
                     Utils.setState(state, program.recording);
                 }
             });
-        } 
+        }
     }
 }
