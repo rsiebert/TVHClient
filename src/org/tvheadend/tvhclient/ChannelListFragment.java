@@ -57,6 +57,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
+    private Activity activity;
     private ProgramGuideInterface programGuideInterface;
 	private OnChannelListListener channelListListener;
 	private ActionBarInterface actionBarInterface;
@@ -94,7 +95,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
     @Override
     public void onAttach(Activity activity) {
-        super.onAttach(activity);   
+        super.onAttach(activity);
+        this.activity = activity;
         if (activity instanceof OnChannelListListener) {
             channelListListener = (OnChannelListListener) activity;
         }
@@ -110,11 +112,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof ChannelListTabsActivity) {
+        if (activity instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
         }
 
-        adapter = new ChannelListAdapter(getActivity(), new ArrayList<Channel>(), adapterLayout);
+        adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
         channelListView.setAdapter(adapter);
         
         // Show the details of the program when the user clicked on the channel 
@@ -165,10 +167,10 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         });
 
         // Create the dialog where the user can select the different tags
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.menu_tags);
         tagAdapter = new ArrayAdapter<ChannelTag>(
-                getActivity(),
+                activity,
                 android.R.layout.simple_dropdown_item_1line,
                 new ArrayList<ChannelTag>());
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
@@ -179,7 +181,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         });
         tagDialog = builder.create();
 
-        if (getActivity() instanceof ChannelListTabsActivity) {
+        if (activity instanceof ChannelListTabsActivity) {
             registerForContextMenu(channelListView);
         }
     }
@@ -189,7 +191,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         // Hide the genre color menu item of not required
         MenuItem genreItem = menu.findItem(R.id.menu_genre_color_info);
         if (genreItem != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             genreItem.setVisible(prefs.getBoolean("showGenreColorsChannelsPref", false));
         }
     }
@@ -210,7 +212,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         Intent intent = null;
         switch (item.getItemId()) {
         case R.id.menu_play:
-            intent = new Intent(getActivity(), PlaybackSelectionActivity.class);
+            intent = new Intent(activity, PlaybackSelectionActivity.class);
             intent.putExtra("channelId", channel.id);
             startActivity(intent);
             return true;
@@ -219,7 +221,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             // TODO show "Search this Channel" in the input line
             intent = new Intent();
             intent.putExtra("channelId", channel.id);
-            getActivity().startSearch(null, false, intent.getExtras(), false);
+            activity.startSearch(null, false, intent.getExtras(), false);
             return true;
 
         default:
@@ -230,7 +232,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.channel_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.channel_context_menu, menu);
         
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Channel channel = adapter.getItem(info.position);
@@ -243,7 +245,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      */
     public void populateList() {
         
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         ChannelTag currentTag = Utils.getChannelTag(app);
         adapter.clear();
         for (Channel ch : app.getChannels()) {
@@ -289,7 +291,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_search:
-            getActivity().onSearchRequested();
+            activity.onSearchRequested();
             return true;
 
         case R.id.menu_tags:
@@ -297,7 +299,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_genre_color_info:
-            Utils.showGenreColorDialog(getActivity());
+            Utils.showGenreColorDialog(activity);
             return true;
 
         default:
@@ -308,7 +310,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         setLoading(app.isLoading());
     }
@@ -316,7 +318,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -348,7 +350,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 }
             } else {
                 // Fill the tag adapter with the available tags
-                TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+                TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                 tagAdapter.clear();
                 for (ChannelTag t : app.getChannelTags()) {
                     tagAdapter.add(t);
@@ -366,7 +368,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      */
     private void showCreateConnectionDialog() {
         // Show confirmation dialog to cancel 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(getString(R.string.create_new_connections));
         builder.setTitle(getString(R.string.no_connections));
 
@@ -375,7 +377,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             public void onClick(DialogInterface dialog, int id) {
                 // Show the manage connections activity where
                 // the user can choose a connection
-                Intent intent = new Intent(getActivity(), SettingsAddConnectionActivity.class);
+                Intent intent = new Intent(activity, SettingsAddConnectionActivity.class);
                 startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
             }
         });
@@ -396,14 +398,14 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHClientApplication.ACTION_LOADING)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
                     setLoading(loading);
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_CHANNEL_ADD)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((Channel) obj);
                     adapter.notifyDataSetChanged();
@@ -411,28 +413,28 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_CHANNEL_DELETE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.remove((Channel) obj);
                     adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_CHANNEL_UPDATE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.update((Channel) obj);
                     adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_TAG_ADD)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
                     tagAdapter.add(tag);
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_TAG_DELETE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
                     tagAdapter.remove(tag);

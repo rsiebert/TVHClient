@@ -56,6 +56,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
 
     private final static String TAG = ProgramListFragment.class.getSimpleName();
 
+    private Activity activity;
     private ActionBarInterface actionBarInterface;
     private ProgramLoadingInterface loadMoreProgramsInterface;
 
@@ -79,7 +80,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             channel = app.getChannel(bundle.getLong("channelId", 0));
         }
 
@@ -93,6 +94,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        this.activity = activity;
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
@@ -140,7 +142,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         });
         
         prList = new ArrayList<Program>();
-        prAdapter = new ProgramListAdapter(getActivity(), prList);
+        prAdapter = new ProgramListAdapter(activity, prList);
         prListView.setAdapter(prAdapter);
         registerForContextMenu(prListView);
     }
@@ -148,7 +150,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         
         // In case we return from the program details screen and the user added
@@ -169,13 +171,13 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
     protected void showProgramDetails(int position) {
         Program p = prAdapter.getItem(position);
-        Intent intent = new Intent(getActivity(), ProgramDetailsActivity.class);
+        Intent intent = new Intent(activity, ProgramDetailsActivity.class);
         intent.putExtra("eventId", p.id);
         intent.putExtra("channelId", p.channel.id);
         startActivity(intent);
@@ -195,28 +197,28 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(getActivity(), program.title));
+            startActivity(new SearchIMDbIntent(activity, program.title));
             return true;
 
         case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(getActivity(), program.title));
+            startActivity(new SearchEPGIntent(activity, program.title));
             return true;
             
         case R.id.menu_record_remove:
-            Utils.removeProgram(getActivity(), program.recording);
+            Utils.removeProgram(activity, program.recording);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.cancelProgram(getActivity(), program.recording.id);
+            Utils.cancelProgram(activity, program.recording.id);
             return true;
 
         case R.id.menu_record:
-            Utils.recordProgram(getActivity(), program.id, program.channel.id);
+            Utils.recordProgram(activity, program.id, program.channel.id);
             return true;
 
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(getActivity(), PlaybackSelectionActivity.class);
+            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
             intent.putExtra("channelId", program.channel.id);
             startActivity(intent);
             return true;
@@ -229,7 +231,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
@@ -252,7 +254,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         // Hide the genre color menu item of not required
         MenuItem genreItem = menu.findItem(R.id.menu_genre_color_info);
         if (genreItem != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             genreItem.setVisible(prefs.getBoolean("showGenreColorsProgramsPref", false));
         }
     }
@@ -272,19 +274,19 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             return true;
         case R.id.menu_settings:
             // Now start the settings activity 
-            Intent i = new Intent(getActivity(), SettingsActivity.class);
+            Intent i = new Intent(activity, SettingsActivity.class);
             startActivityForResult(i, Utils.getResultCode(R.id.menu_settings));
             return true;
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(getActivity(), PlaybackSelectionActivity.class);
+            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
             if (channel != null) {
                 intent.putExtra("channelId", channel.id);
             }
             startActivity(intent);
             return true;
         case R.id.menu_genre_color_info:
-            Utils.showGenreColorDialog(getActivity());
+            Utils.showGenreColorDialog(activity);
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -296,7 +298,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (channel != null) {
             bundle.putLong("channelId", channel.id);
         }
-        getActivity().startSearch(null, false, bundle, false);
+        activity.startSearch(null, false, bundle, false);
         return true;
     }
 
@@ -313,7 +315,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 isLoading  = false;
             }
             // A new program has been added
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
                     if (channel != null && p.channel.id == channel.id) {
@@ -328,7 +330,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_DELETE)) {
             // An existing program has been deleted
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     prAdapter.remove((Program) obj);
                     prAdapter.notifyDataSetChanged();
@@ -339,7 +341,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)) {
             // An existing program has been updated
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     prAdapter.update((Program) obj);
                     prAdapter.notifyDataSetChanged();
@@ -347,7 +349,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
             // An existing recording has been updated
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     Recording rec = (Recording) obj;
                     for (Program p : prAdapter.getList()) {

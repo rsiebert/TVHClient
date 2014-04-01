@@ -49,6 +49,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     private final static String TAG = RecordingListFragment.class.getSimpleName();
 
+    private Activity activity;
     private ActionBarInterface actionBarInterface;
     private RecordingListAdapter recAdapter;
     private ListView recListView;
@@ -78,6 +79,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        this.activity = activity;
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
@@ -89,7 +91,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         setHasOptionsMenu(true);
 
         recList = new ArrayList<Recording>();
-        recAdapter = new RecordingListAdapter(getActivity(), recList);
+        recAdapter = new RecordingListAdapter(activity, recList);
         recListView.setAdapter(recAdapter);
         registerForContextMenu(recListView);
         // Set the listener to show the recording details activity when the user
@@ -98,7 +100,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recording rec = (Recording) recAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), RecordingDetailsActivity.class);
+                Intent intent = new Intent(activity, RecordingDetailsActivity.class);
                 intent.putExtra("id", rec.id);
                 startActivity(intent);
             }
@@ -108,7 +110,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         setLoading(app.isLoading());
     }
@@ -116,7 +118,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -130,7 +132,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_search:
-            getActivity().onSearchRequested();
+            activity.onSearchRequested();
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -140,7 +142,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
@@ -166,25 +168,25 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         switch (item.getItemId()) {
         case R.id.menu_play:
-            Intent pi = new Intent(getActivity(), PlaybackSelectionActivity.class);
+            Intent pi = new Intent(activity, PlaybackSelectionActivity.class);
             pi.putExtra("dvrId", rec.id);
             startActivity(pi);
             return true;
 
         case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(getActivity(), rec.title));
+            startActivity(new SearchIMDbIntent(activity, rec.title));
             return true;
 
         case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(getActivity(), rec.title));
+            startActivity(new SearchEPGIntent(activity, rec.title));
             return true;
             
         case R.id.menu_record_remove:
-            Utils.removeProgram(getActivity(), rec);
+            Utils.removeProgram(activity, rec);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.cancelProgram(getActivity(), rec.id);
+            Utils.cancelProgram(activity, rec.id);
             return true;
 
         default:
@@ -225,7 +227,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * Fills the list with the available recordings.
      */
     private void populateList() {
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         recList.clear();
         
         // Show only the recordings that belong to the tab
@@ -248,7 +250,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
         recAdapter.sort();
         recAdapter.notifyDataSetChanged();
-        ((RecordingListTabsActivity)getActivity()).updateTitle(tabIndex, recList.size());
+        ((RecordingListTabsActivity)activity).updateTitle(tabIndex, recList.size());
     }
 
     /**
@@ -258,14 +260,14 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHClientApplication.ACTION_LOADING)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
                     setLoading(loading);
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_ADD)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     recAdapter.add((Recording) obj);
                     recAdapter.notifyDataSetChanged();
@@ -273,14 +275,14 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_DELETE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     recAdapter.remove((Recording) obj);
                     recAdapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     recAdapter.update((Recording) obj);
                     recAdapter.notifyDataSetChanged();

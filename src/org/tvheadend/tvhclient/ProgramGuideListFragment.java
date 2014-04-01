@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,6 +55,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
     private final static String TAG = ProgramGuideListFragment.class.getSimpleName();
 
+    private FragmentActivity activity;
     private ProgramGuideInterface programGuideInterface;
     private ActionBarInterface actionBarInterface;
     private ProgramGuideListAdapter adapter;
@@ -102,7 +104,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
             // Hide the date text if it shows the date time or the display is too narrow
             DisplayMetrics displaymetrics = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             if (titleDateText.getText().equals(titleDate.getText()) || 
                 ((int) displaymetrics.widthPixels < 400)) {
                 titleDate.setVisibility(View.GONE);
@@ -118,7 +120,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
     @Override
     public void onAttach(Activity activity) {
-        super.onAttach(activity);        
+        super.onAttach(activity);
+        this.activity = (FragmentActivity) activity;
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
@@ -132,7 +135,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
 
-        adapter = new ProgramGuideListAdapter(getActivity(), this, new ArrayList<Channel>(), bundle);
+        adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
 
         // When the user has scrolled the program guide data list, inform the
@@ -179,16 +182,16 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         });
 
         // Create the dialog where the user can select the different tags
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.menu_tags);
-        tagAdapter = new ArrayAdapter<ChannelTag>(getActivity(), 
+        tagAdapter = new ArrayAdapter<ChannelTag>(activity, 
                 android.R.layout.simple_dropdown_item_1line,
                 new ArrayList<ChannelTag>());
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
                 Utils.setChannelTagId(pos);
                 populateList();
-                ChannelListFragment channelFrag = (ChannelListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+                ChannelListFragment channelFrag = (ChannelListFragment) activity.getSupportFragmentManager().findFragmentByTag("channel_icon_list");
                 if (channelFrag != null) {
                     channelFrag.populateList();
                 }
@@ -230,7 +233,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         // Hide the genre color menu item of not required
         MenuItem genreItem = menu.findItem(R.id.menu_genre_color_info);
         if (genreItem != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             genreItem.setVisible(prefs.getBoolean("showGenreColorsGuidePref", false));
         }
     }
@@ -247,7 +250,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
      */
     private void populateList() {
 
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         ChannelTag currentTag = Utils.getChannelTag(app);
         adapter.clear();
         for (Channel ch : app.getChannels()) {
@@ -270,7 +273,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_search:
-            getActivity().onSearchRequested();
+            activity.onSearchRequested();
             return true;
 
         case R.id.menu_tags:
@@ -278,7 +281,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             return true;
 
         case R.id.menu_genre_color_info:
-            Utils.showGenreColorDialog(getActivity());
+            Utils.showGenreColorDialog(activity);
             return true;
 
         default:
@@ -289,7 +292,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         setLoading(app.isLoading());
     }
@@ -300,7 +303,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
      * shown.
      */
     private void setCurrentTimeIndication() {
-        if (bundle != null && currentTimeIndication != null && getActivity() != null) {
+        if (bundle != null && currentTimeIndication != null && activity != null) {
             int tabIndex = bundle.getInt("tabIndex", -1);
             if (tabIndex == 0) {
                 // Get the difference between the current time and the given
@@ -315,7 +318,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
                 // The pixels per minute are smaller if icons are shown. Add the
                 // icon width to start from the correct position
-                final float pixelsPerMinute = Utils.getPixelsPerMinute(getActivity(), 0, hoursToShow);
+                final float pixelsPerMinute = Utils.getPixelsPerMinute(activity, 0, hoursToShow);
                 final int offset = (int) (durationTime * pixelsPerMinute);
 
                 // Get the height of the pager title layout
@@ -335,7 +338,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -363,7 +366,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                 }
             } else {
                 // Fill the tag adapter with the available channel tags
-                TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+                TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                 tagAdapter.clear();
                 for (ChannelTag t : app.getChannelTags()) {
                     tagAdapter.add(t);
@@ -382,23 +385,23 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
-            getActivity().startActivity(new SearchIMDbIntent(getActivity(), selectedProgram.title));
+            activity.startActivity(new SearchIMDbIntent(activity, selectedProgram.title));
             return true;
 
         case R.id.menu_search_epg:
-            getActivity().startActivity(new SearchEPGIntent(getActivity(), selectedProgram.title));
+            activity.startActivity(new SearchEPGIntent(activity, selectedProgram.title));
             return true;
 
         case R.id.menu_record_remove:
-            Utils.removeProgram(getActivity(), selectedProgram.recording);
+            Utils.removeProgram(activity, selectedProgram.recording);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.cancelProgram(getActivity(), selectedProgram.recording.id);
+            Utils.cancelProgram(activity, selectedProgram.recording.id);
             return true;
 
         case R.id.menu_record:
-            Utils.recordProgram(getActivity(), selectedProgram.id, selectedProgram.channel.id);
+            Utils.recordProgram(activity, selectedProgram.id, selectedProgram.channel.id);
             return true;
 
         default:
@@ -412,7 +415,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
      */
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHClientApplication.ACTION_LOADING)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
                     setLoading(loading);
@@ -420,7 +423,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             });
         }
         else if (action.equals(TVHClientApplication.ACTION_CHANNEL_ADD)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((Channel) obj);
                     adapter.notifyDataSetChanged();
@@ -429,7 +432,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             });
         }
         else if (action.equals(TVHClientApplication.ACTION_CHANNEL_DELETE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.remove((Channel) obj);
                     adapter.notifyDataSetChanged();
@@ -437,7 +440,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             });
         }
         else if (action.equals(TVHClientApplication.ACTION_CHANNEL_UPDATE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.update((Channel) obj);
 
@@ -452,7 +455,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             });
         }
         else if (action.equals(TVHClientApplication.ACTION_TAG_ADD)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
                     tagAdapter.add(tag);
@@ -460,7 +463,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             });
         }
         else if (action.equals(TVHClientApplication.ACTION_TAG_DELETE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 public void run() {
                     ChannelTag tag = (ChannelTag) obj;
                     tagAdapter.remove(tag);
