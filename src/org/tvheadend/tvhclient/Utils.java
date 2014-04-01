@@ -204,11 +204,27 @@ public class Utils {
      * @param context
      * @param id
      */
-    public static void cancelProgram(final Context context, final long id) {
-        Intent intent = new Intent(context, HTSService.class);
+    public static void cancelProgram(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
+        final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_CANCEL);
-        intent.putExtra("id", id);
-        context.startService(intent);
+        intent.putExtra("id", rec.id);
+
+        // Show a confirmation dialog before deleting the recording
+        new AlertDialog.Builder(context)
+        .setTitle(R.string.menu_record_cancel)
+        .setMessage(context.getString(R.string.cancel_recording, rec.title))
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                context.startService(intent);
+            }
+        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // NOP
+            }
+        }).show();
     }
 
     /**
