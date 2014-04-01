@@ -19,23 +19,16 @@
  */
 package org.tvheadend.tvhclient;
 
-import org.tvheadend.tvhclient.htsp.HTSListener;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.R;
 
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-public class RecordingDetailsActivity extends ActionBarActivity implements HTSListener {
+public class RecordingDetailsActivity extends ActionBarActivity {
 
     private ActionBar actionBar = null;
     // The currently selected recording
@@ -45,10 +38,10 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.recording_layout);
 
+        final long id = getIntent().getLongExtra("id", 0);
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        rec = app.getRecording(getIntent().getLongExtra("id", 0));
+        rec = app.getRecording(id);
         if (rec == null) {
             finish();
             return;
@@ -70,55 +63,12 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
             }
         }
 
-        // Initialize all the widgets from the layout
-        TextView title = (TextView) findViewById(R.id.title);
-        ImageView state = (ImageView) findViewById(R.id.state);
-        TextView summaryLabel = (TextView) findViewById(R.id.summary_label);
-        TextView summary = (TextView) findViewById(R.id.summary);
-        TextView descLabel = (TextView) findViewById(R.id.description_label);
-        TextView desc = (TextView) findViewById(R.id.description);
-        TextView channelName = (TextView) findViewById(R.id.channel);
-        TextView date = (TextView) findViewById(R.id.date);
-        TextView time = (TextView) findViewById(R.id.time);
-        TextView duration = (TextView) findViewById(R.id.duration);
-
-        // Set the values
-        title.setText(rec.title);
-        channelName.setText(rec.channel.name);
-        Utils.setState(state, rec);
-        Utils.setDate(date, rec.start);
-        Utils.setTime(time, rec.start, rec.stop);
-        Utils.setDuration(duration, rec.start, rec.stop);
-        Utils.setDescription(summaryLabel, summary, rec.summary);
-        Utils.setDescription(descLabel, desc, rec.description);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        TVHClientApplication app = (TVHClientApplication) getApplication();
-        app.addListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getApplication();
-        app.removeListener(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.context_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // Show or hide the menu items depending on the recording state
-        Utils.setRecordingMenu(menu, rec);
-        return true;
+        // Show the fragment
+        Bundle args = new Bundle();
+        args.putLong("id", id);
+        Fragment fragment = Fragment.instantiate(this, RecordingDetailsFragment.class.getName());
+        fragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 
     @Override
@@ -127,51 +77,8 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
         case android.R.id.home:
             onBackPressed();
             return true;
-
-        case R.id.menu_search:
-            // Show the search text input in the action bar
-            onSearchRequested();
-            return true;
-
-        case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(this, rec.title));
-            return true;
-
-        case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(this, rec.title));
-            return true;
-
-        case R.id.menu_record_remove:
-            Utils.removeProgram(this, rec);
-            return true;
-
-        case R.id.menu_record_cancel:
-            Utils.cancelProgram(this, rec.id);
-            return true;
-
-        case R.id.menu_play:
-            Intent pi = new Intent(this, PlaybackSelectionActivity.class);
-            pi.putExtra("dvrId", rec.id);
-            startActivity(pi);
-            return true;
-
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the correct action will then be executed here.
-     */
-    @Override
-    public void onMessage(String action, Object obj) {
-        // An existing program has been updated, this is valid for all menu options. 
-        if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)) {
-            supportInvalidateOptionsMenu();
-            // Update the status icon
-            ImageView state = (ImageView) findViewById(R.id.state);
-            Utils.setState(state, rec);
-        } 
     }
 }
