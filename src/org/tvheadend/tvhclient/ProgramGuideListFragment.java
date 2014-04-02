@@ -144,6 +144,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_IDLE) {
+                    scrollingChanged();
                     if (programGuideInterface != null) {
                         programGuideInterface.onScrollStateIdle(TAG);
                     }
@@ -160,12 +161,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    int index = listView.getFirstVisiblePosition();
-                    View v = listView.getChildAt(0);
-                    int position = (v == null) ? 0 : v.getTop();
-                    if (programGuideInterface != null) {
-                        programGuideInterface.onScrollingChanged(index, position, TAG);
-                    }
+                    scrollingChanged();
                 }
                 return false;
             }
@@ -214,6 +210,15 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             }
         };
         timer.schedule(doAsynchronousTask, 0, 60000);
+    }
+
+    private void scrollingChanged() {
+        int index = listView.getFirstVisiblePosition();
+        View v = listView.getChildAt(0);
+        int position = (v == null) ? 0 : v.getTop();
+        if (programGuideInterface != null) {
+            programGuideInterface.onScrollingChanged(index, position, TAG);
+        }
     }
 
     public void scrollListViewTo(int index) {

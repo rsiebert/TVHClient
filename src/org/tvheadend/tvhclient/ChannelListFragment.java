@@ -138,6 +138,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_IDLE) {
+                    scrollingChanged();
                     if (programGuideInterface != null) {
                         programGuideInterface.onScrollStateIdle(TAG);
                     }
@@ -155,12 +156,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    int index = channelListView.getFirstVisiblePosition();
-                    View v = channelListView.getChildAt(0);
-                    int position = (v == null) ? 0 : v.getTop();
-                    if (programGuideInterface != null) {
-                        programGuideInterface.onScrollingChanged(index, position, TAG);
-                    }
+                    scrollingChanged();
                 }
                 return false;
             }
@@ -183,6 +179,15 @@ public class ChannelListFragment extends Fragment implements HTSListener {
 
         if (activity instanceof ChannelListTabsActivity) {
             registerForContextMenu(channelListView);
+        }
+    }
+
+    private void scrollingChanged() {
+        int index = channelListView.getFirstVisiblePosition();
+        View v = channelListView.getChildAt(0);
+        int position = (v == null) ? 0 : v.getTop();
+        if (programGuideInterface != null) {
+            programGuideInterface.onScrollingChanged(index, position, TAG);
         }
     }
 
