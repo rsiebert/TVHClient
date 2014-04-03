@@ -19,6 +19,7 @@
  */
 package org.tvheadend.tvhclient;
 
+import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.graphics.drawable.BitmapDrawable;
@@ -28,7 +29,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
-public class RecordingDetailsActivity extends ActionBarActivity {
+public class RecordingDetailsActivity extends ActionBarActivity implements HTSListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingDetailsActivity.class.getSimpleName();
@@ -74,6 +75,20 @@ public class RecordingDetailsActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        app.addListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        app.removeListener(this);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
@@ -81,6 +96,23 @@ public class RecordingDetailsActivity extends ActionBarActivity {
             return true;
         default:
             return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
+    @Override
+    public void onMessage(String action, Object obj) {
+        // An existing program has been updated, this is valid for all menu options. 
+        if (action.equals(TVHClientApplication.ACTION_DVR_DELETE)) {
+            // An existing program has been deleted
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    finish();
+                }
+            });
         }
     }
 }

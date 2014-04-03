@@ -181,13 +181,6 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
             getActivity().supportInvalidateOptionsMenu();
             // Update the status icon
             Utils.setState(state, rec);
-        } else if (action.equals(TVHClientApplication.ACTION_DVR_DELETE)) {
-            // An existing program has been deleted
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    activity.finish();
-                }
-            });
         }
     }
 }
