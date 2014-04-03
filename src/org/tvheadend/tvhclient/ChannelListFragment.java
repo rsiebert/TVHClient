@@ -20,13 +20,17 @@
 package org.tvheadend.tvhclient;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.intent.SearchEPGIntent;
+import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Program;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -212,36 +216,80 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         
         // Get the currently selected channel from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Program program = null;
         Channel channel = adapter.getItem(info.position);
-        
-        Intent intent = null;
+        if (channel != null) {
+            Iterator<Program> it = channel.epg.iterator();
+            if (channel.isTransmitting && it.hasNext()) {
+                program = it.next();
+            }
+        }
+
         switch (item.getItemId()) {
+        case R.id.menu_search:
+            Bundle bundle = new Bundle();
+            bundle.putLong("channelId", program.channel.id);
+            activity.startSearch(null, false, bundle, false);
+            return true;
+
+        case R.id.menu_search_imdb:
+            startActivity(new SearchIMDbIntent(activity, program.title));
+            return true;
+
+        case R.id.menu_search_epg:
+            startActivity(new SearchEPGIntent(activity, program.title));
+            return true;
+            
+        case R.id.menu_record_remove:
+            Utils.removeProgram(activity, program.recording);
+            return true;
+
+        case R.id.menu_record_cancel:
+            Utils.cancelProgram(activity, program.recording);
+            return true;
+
+        case R.id.menu_record:
+            Utils.recordProgram(activity, program.id, program.channel.id);
+            return true;
+
         case R.id.menu_play:
-            intent = new Intent(activity, PlaybackSelectionActivity.class);
-            intent.putExtra("channelId", channel.id);
+            // Open a new activity to stream the current program to this device
+            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+            intent.putExtra("channelId", program.channel.id);
             startActivity(intent);
             return true;
 
-        case R.id.menu_search:
-            // TODO show "Search this Channel" in the input line
-            intent = new Intent();
-            intent.putExtra("channelId", channel.id);
-            activity.startSearch(null, false, intent.getExtras(), false);
+        case R.id.menu_tags:
+            tagDialog.show();
+            return true;
+
+        case R.id.menu_genre_color_info:
+            Utils.showGenreColorDialog(activity);
             return true;
 
         default:
-            return false;
+            return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.channel_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
         
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        Program program = null;
         Channel channel = adapter.getItem(info.position);
-        menu.setHeaderTitle(channel.name);
+        if (channel != null) {
+            Iterator<Program> it = channel.epg.iterator();
+            if (channel.isTransmitting && it.hasNext()) {
+                program = it.next();
+            }
+        }
+        if (program != null) {
+            menu.setHeaderTitle(program.title);
+        }
+        Utils.setProgramMenu(menu, program);
     }
 
     /**
