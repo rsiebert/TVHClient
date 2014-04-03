@@ -4,8 +4,8 @@ $ 1.1.0
     * Show channel name if no icon is available
     * Automatically set available application language
     * Scrolling improvements in the program guide
-    * Added menu items for stopping and removing a recording
-    * Long pressing on a channel shows the menu options for the current program
+    * Added menu items to cancel or remove a recording in all recording screens
+    * Long pressing in the channel list shows the menu options for the current program
     * Updated polish translation
     * Small bug fixes
 $ 1.0.0
