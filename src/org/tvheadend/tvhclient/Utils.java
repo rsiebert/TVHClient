@@ -244,6 +244,24 @@ public class Utils {
 
     /**
      * Shows or hides certain items from the program menu. This depends on the
+     * current state of the program. The first program of the given channel 
+     * will be used.
+     *
+     * @param menu
+     * @param channel
+     */
+    public static void setProgramMenu(final Menu menu, final Channel channel) {
+        if (channel != null) {
+            Iterator<Program> it = channel.epg.iterator();
+            if (channel.isTransmitting && it.hasNext()) {
+                Program p = it.next();
+                Utils.setProgramMenu(menu, p);
+            }
+        }
+    }
+
+    /**
+     * Shows or hides certain items from the program menu. This depends on the
      * current state of the program.
      *
      * @param menu
