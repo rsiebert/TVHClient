@@ -244,24 +244,6 @@ public class Utils {
 
     /**
      * Shows or hides certain items from the program menu. This depends on the
-     * current state of the program. The first program of the given channel 
-     * will be used.
-     *
-     * @param menu
-     * @param channel
-     */
-    public static void setProgramMenu(final Menu menu, final Channel channel) {
-        if (channel != null) {
-            Iterator<Program> it = channel.epg.iterator();
-            if (channel.isTransmitting && it.hasNext()) {
-                Program p = it.next();
-                Utils.setProgramMenu(menu, p);
-            }
-        }
-    }
-
-    /**
-     * Shows or hides certain items from the program menu. This depends on the
      * current state of the program.
      *
      * @param menu
@@ -273,18 +255,18 @@ public class Utils {
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        
-        // Disable these menus as a default
-        searchMenuItem.setVisible(false);
-        
+        MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
+        MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
+
         // Disable all menus if the program is not valid
         if (program == null) {
             recordMenuItem.setVisible(false);
             recordCancelMenuItem.setVisible(false);
             recordRemoveMenuItem.setVisible(false);
+            searchMenuItemEpg.setVisible(false);
+            searchMenuItemImdb.setVisible(false);
             return;
-        }
+        } 
 
         // Show the play menu item when the current 
         // time is between the program start and end time
@@ -331,19 +313,25 @@ public class Utils {
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
+        MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
 
         // Disable these menus as a default
         recordMenuItem.setVisible(false);
         recordCancelMenuItem.setVisible(false);
         recordRemoveMenuItem.setVisible(false);
         playMenuItem.setVisible(false);
-        searchMenuItem.setVisible(false);
+        searchMenuItemEpg.setVisible(false);
+        searchMenuItemImdb.setVisible(false);
 
         // Disable all menus if the recording is not valid
         if (rec == null) {
             return;
         }
+
+        // Allow searching the recordings
+        searchMenuItemEpg.setVisible(true);
+        searchMenuItemImdb.setVisible(true);
 
         if (rec.error == null && rec.state.equals("completed")) {
         	// The recording is available, it can be played and removed
