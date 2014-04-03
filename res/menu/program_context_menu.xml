@@ -13,14 +13,6 @@
         android:title="@string/menu_search"
         app:showAsAction="ifRoom|withText"/>
     <item
-        android:id="@+id/menu_search_imdb"
-        android:icon="?attr/ic_menu_search"
-        android:title="@string/menu_search_imdb"/>
-    <item
-        android:id="@+id/menu_search_epg"
-        android:icon="?attr/ic_menu_search"
-        android:title="@string/menu_search_epg"/>
-    <item
         android:id="@+id/menu_record"
         android:icon="?attr/ic_menu_record"
         android:title="@string/menu_record"
@@ -35,5 +27,13 @@
         android:icon="?attr/ic_menu_record_remove"
         android:title="@string/menu_record_remove"
         app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_search_imdb"
+        android:icon="?attr/ic_menu_search"
+        android:title="@string/menu_search_imdb"/>
+    <item
+        android:id="@+id/menu_search_epg"
+        android:icon="?attr/ic_menu_search"
+        android:title="@string/menu_search_epg"/>
 
 </menu>
