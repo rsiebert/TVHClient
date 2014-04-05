@@ -6,6 +6,6 @@
         android:id="@+id/menu_search"
         android:icon="?attr/ic_menu_search"
         android:title="@android:string/search_go"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>
