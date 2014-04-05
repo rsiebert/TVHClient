@@ -93,7 +93,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
         Program p = getItem(position);
         if (p != null) {
             holder.title.setText(p.title);
-            Utils.setChannelIcon(holder.icon, holder.channel, p.channel);
+            Utils.setChannelIcon(holder.icon, null, holder.channel, p.channel);
             Utils.setState(holder.state, p.recording);
             Utils.setDate(holder.date, p.start);
             Utils.setTime(holder.time, p.start, p.stop);

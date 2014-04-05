@@ -85,7 +85,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         Recording rec = getItem(position);
         if (rec != null) {
             holder.title.setText(rec.title);
-            Utils.setChannelIcon(holder.icon, holder.channel, rec.channel);
+            Utils.setChannelIcon(holder.icon, null, holder.channel, rec.channel);
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);

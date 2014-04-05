@@ -27,7 +27,7 @@
         <ListPreference
             android:name="@string/pref_language"
             android:summary="@string/pref_language_sum"
-            android:defaultValue="en-us"
+            android:defaultValue="default"
             android:title="@string/pref_language"
             android:key="languagePref"
             android:dialogTitle="@string/pref_language"

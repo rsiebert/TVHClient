@@ -4,13 +4,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.model.ChannelTag;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -28,6 +31,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,18 +40,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ScrollListener, ChannelTagListener, ProgramLoadingInterface {
+public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ProgramLoadingInterface, ActionBarInterface, ProgramGuideInterface {
 
-    @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideTabsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
     private ProgramGuidePagerAdapter adapter = null;
     public List<Channel> channelLoadingList = new ArrayList<Channel>();
+    private HashMap<Channel, Integer> channelEpgSizeList = new HashMap<Channel, Integer>();
+    
     // Indicates that a loading is in progress, the next channel can only be loaded when this is false 
     private boolean isLoadingChannels = false;
     // The dialog that allows the user to select a certain time frame
     private AlertDialog programGuideTimeDialog;
+
     // The time frame (start and end times) that shall be shown in a single fragment.  
     private static List<Long> startTimes = new ArrayList<Long>();
     private static List<Long> endTimes = new ArrayList<Long>();
@@ -56,6 +62,8 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     private static int fragmentCount;
     private static ViewPager viewPager = null;
     private static int scrollingSelectionIndex = 0;
+    private static int scrollingSelectionPosition = 0;
+
     // Amount of programs of a channel that shall be loaded from the server 
     private static int programsToLoad = 20;
     
@@ -246,37 +254,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     }
 
     /**
-     * When the user has scrolled within one fragment, the other available
-     * fragments in the view pager must be scrolled to the same position. Calls
-     * the scrollListViewTo method on every available fragment that the view 
-     * pager contains.
-     */
-    @Override
-    public void onScrollChanged(int index) {
-        scrollingSelectionIndex = index;
-        for (int i = 0; i < fragmentCount; ++i) {
-            ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
-                    "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
-            if (f != null) {
-                f.scrollListViewTo(scrollingSelectionIndex);
-            }
-        }
-        
-        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
-        if (f != null) {
-            f.scrollListViewTo(scrollingSelectionIndex);
-        }
-    }
-
-    @Override
-    public void onScrollPositionChanged(int index, int pos) {
-        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
-        if (f != null) {
-            f.scrollListViewToPosition(index, pos);
-        }
-    }
-
-    /**
      * Reloads all data if the connection details have changed, a new one was
      * created or if the number of hours per time slot have changed.
      */
@@ -348,23 +325,29 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
-    public void setActionBarTitle(final String title) {
+    @Override
+    public void setActionBarTitle(final String title, final String tag) {
         actionBar.setTitle(title);
     }
 
-    public void setActionBarSubtitle(final String subtitle) {
+    @Override
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
         actionBar.setSubtitle(subtitle);
     }
 
     /**
-     * Returns the index of of the first list item that is visible. The method
-     * used is listView.getFirstVisiblePosition(). This can be used to jump to
-     * certain positions in the list. No smooth scrolling is possible with this.
-     * 
-     * @return
+     * This activity does not know how many items are in the channel list and
+     * which are selected by the given channel tag. Use the channel list
+     * fragment (which has this information) to update the status in the action
+     * bar subtitle.
      */
-    public int getScrollingSelectionIndex() {
-        return scrollingSelectionIndex;
+    private void setActionBarSubtitle() {
+        ChannelListFragment channelFrag = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+        if (channelFrag != null) {
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            ChannelTag currentTag = Utils.getChannelTag(app);
+            channelFrag.updateItemCount(currentTag);
+        }
     }
 
     /**
@@ -373,7 +356,8 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
      * ProgramGuideItemView class. A channel can't be added twice to the loading
      * list to avoid loading the same or too many data.
      */
-    public void loadMorePrograms(int fragmentId, Channel channel) {
+    @Override
+    public void loadMorePrograms(Channel channel) {
         if (channel == null || channelLoadingList.contains(channel)) {
             return;
         }
@@ -383,13 +367,41 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
 
     /**
      * Calls the method to actually load the program guide data from the first
-     * channel in the list.
+     * channel in the list. Also checks if the amount of programs in the channel
+     * has changed since the last loading. If not then the loading will be
+     * blocked to avoid unnecessary calls to the server.
      */
     private void startLoadingPrograms() {
-        if (!channelLoadingList.isEmpty() && !isLoadingChannels ) {
-        	isLoadingChannels = true;
-            actionBar.setSubtitle(getString(R.string.loading));
-            Utils.loadMorePrograms(this, programsToLoad, channelLoadingList.get(0));
+        if (!channelLoadingList.isEmpty() && !isLoadingChannels) {
+            final Channel ch = channelLoadingList.get(0);
+
+            // Indication if the channel program count didn't change and we
+            // should not continue to try to load more programs. 
+            boolean isBlocked = false;
+
+            // Add the channel to the list or if it exists, check if the 
+            // program count has changed
+            if (!channelEpgSizeList.containsKey(ch)) {
+                channelEpgSizeList.put(ch, ch.epg.size());
+            } else {
+                isBlocked = channelEpgSizeList.get(ch) == ch.epg.size();
+                channelEpgSizeList.remove(ch);
+                channelEpgSizeList.put(ch, ch.epg.size());
+            }
+
+            // Either load more programs or remove the channel from the list and
+            // update the action bar subtitle
+            if (!isBlocked) {
+                isLoadingChannels = true;
+                actionBar.setSubtitle(R.string.loading);
+                Utils.loadMorePrograms(this, programsToLoad, ch);
+            } else {
+                Log.d(TAG, "Channel " + ch.name + " is blocked");
+                channelLoadingList.remove(ch);
+                if (channelLoadingList.isEmpty()) {
+                    setActionBarSubtitle();
+                }
+            }
         }
     }
 
@@ -406,6 +418,12 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
                     channelLoadingList.remove(channel);
                     isLoadingChannels = false;
                     startLoadingPrograms();
+
+                    // Show the number of available channels from the selected
+                    // tag in the action bar.
+                    if (channelLoadingList.isEmpty()) {
+                        setActionBarSubtitle();
+                    }
                 }
             });
         } 
@@ -484,35 +502,78 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             return view;
         }
     }
-
-    /*
-     * (non-Javadoc)
-     * @see org.tvheadend.tvhguide.ChannelTagListener#onChannelTagChanged()
+    /**
+     * When the user has scrolled within one fragment, the other available
+     * fragments in the view pager must be scrolled to the same position. Scroll
+     * the list view in every fragment that the view pager contains to the same
+     * position this fragment has.
      */
     @Override
-    public void onChannelTagChanged() {
-        TVHClientApplication app = (TVHClientApplication) getApplication();
+    public void onScrollStateIdle(final String tag) {
+        // Scroll all program guide fragments to the desired position
         for (int i = 0; i < fragmentCount; ++i) {
             ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
                     "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
             if (f != null) {
-                f.setLoading(app.isLoading());
+                f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
+            }
+        }
+        // Scroll the channel list fragment so the program guide is aligned with the channels
+        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+        if (f != null) {
+            f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
+        }
+    }
+
+    /**
+     * 
+     * @param index
+     * @param pos
+     */
+    @Override
+    public void onScrollingChanged(final int index, final int pos, final String tag) {
+        scrollingSelectionIndex = index;
+        scrollingSelectionPosition = pos;
+
+        if (tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
+            // Scroll the list in the channel list fragment
+            ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+            if (f != null) {
+                f.scrollListViewToPosition(index, pos);
+            }
+        } else if (tag.equals(ChannelListFragment.class.getSimpleName())) {
+            // Scroll the list in the currently visible program guide fragment
+            ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
+                    "android:switcher:" + viewPager.getId() + ":0");
+            if (f != null) {
+                f.scrollListViewToPosition(index, pos);
             }
         }
     }
-}
 
-interface ScrollListener {
-    public void onScrollChanged(int index);
-    public void onScrollPositionChanged(int index, int pos);
-}
-
-interface ChannelTagListener {
     /**
-     * When the user has scrolled within one fragment, the other available
-     * fragments in the view pager must be scrolled to the same position. Calls
-     * the scrollListViewTo method on every available fragment that the view 
-     * pager contains.
+     * Returns the index of of the first list item that is visible. The method
+     * used is listView.getFirstVisiblePosition(). This can be used to jump to
+     * certain positions in the list. No smooth scrolling is possible with this.
+     * 
+     * @return
      */
-    public void onChannelTagChanged();
+    @Override
+    public int getScrollingSelectionIndex() {
+        return scrollingSelectionIndex;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    @Override
+    public int getScrollingSelectionPosition() {
+        return scrollingSelectionPosition;
+    }
+
+    @Override
+    public boolean isChannelLoadingListEmpty() {
+        return channelLoadingList.isEmpty();
+    }
 }

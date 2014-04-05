@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.R;
@@ -45,7 +46,7 @@ public class ProgramGuideItemView extends LinearLayout {
     // The ratio how many minutes a pixel represents on the screen.
     private float pixelsPerMinute;
 
-    private ProgramLoadingInterface activityInterface;
+    private ProgramLoadingInterface loadMoreProgramsInterface;
     private ProgramContextMenuInterface fragmentInterface;
 
     // Status variables that define where the program is located within the given time.
@@ -69,7 +70,12 @@ public class ProgramGuideItemView extends LinearLayout {
         this.layout = layout;
 
         // Create the interface so we can talk to the fragment
-        activityInterface = (ProgramLoadingInterface) activity;
+        try {
+            loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
+        } catch (Exception e) {
+            
+        }
+
         fragmentInterface = (ProgramContextMenuInterface) fragment;
 
         if (bundle != null) {
@@ -167,7 +173,9 @@ public class ProgramGuideItemView extends LinearLayout {
         // the last program in the guide then try to load more programs.
         // Also load programs when no program at all was added.
         if ((programAdded && lastProgramFound) || !programAdded) {
-            activityInterface.loadMorePrograms(tabIndex, channel);
+            if (loadMoreProgramsInterface != null) {
+                loadMoreProgramsInterface.loadMorePrograms(channel);
+            }
         }
     }
 
@@ -364,7 +372,7 @@ public class ProgramGuideItemView extends LinearLayout {
 	        itemLayout.setOnCreateContextMenuListener((new OnCreateContextMenuListener() {
 	            @Override
 	            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-	                context.getMenuInflater().inflate(R.menu.context_menu, menu);
+	                context.getMenuInflater().inflate(R.menu.program_context_menu, menu);
 	                // Set the title of the context menu and show or hide
 	                // the menu items depending on the program state
 	                fragmentInterface.setSelectedContextItem(p);
@@ -413,13 +421,10 @@ public class ProgramGuideItemView extends LinearLayout {
         View v = inflate(getContext(), R.layout.program_guide_data_item_loading, null);
         layout.addView(v);
     }
-
-    public interface ProgramLoadingInterface {
-        public void loadMorePrograms(int tabIndex, Channel channel);
-    }
     
     public interface ProgramContextMenuInterface {
         public void setSelectedContextItem(Program p);
+
         public void setMenuSelection(MenuItem item);
     }
 }

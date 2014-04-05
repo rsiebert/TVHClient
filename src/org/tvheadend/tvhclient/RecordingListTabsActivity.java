@@ -21,6 +21,7 @@ package org.tvheadend.tvhclient;
 import java.lang.reflect.Field;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,10 +37,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
 
-public class RecordingListTabsActivity extends ActionBarActivity {
+public class RecordingListTabsActivity extends ActionBarActivity implements ActionBarInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingListTabsActivity.class.getSimpleName();
+
     private ActionBar actionBar = null;
     private RecordingListPagerAdapter adapter = null;
     private static ViewPager viewPager = null;
@@ -242,7 +244,14 @@ public class RecordingListTabsActivity extends ActionBarActivity {
         }
     }
 
-    public void setActionBarSubtitle(final String subtitle) {
+    @Override
+    public void setActionBarTitle(String string, final String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
         actionBar.setSubtitle(subtitle);
     }
 }

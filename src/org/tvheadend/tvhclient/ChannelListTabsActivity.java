@@ -18,16 +18,12 @@
  */
 package org.tvheadend.tvhclient;
 
-import java.util.Locale;
-
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
-import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -36,26 +32,41 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface {
+
+    @SuppressWarnings("unused")
+    private final static String TAG = ChannelListTabsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
     private boolean reconnect = false;
     private int prevTabPosition = -1;
     private ChangeLogDialog changeLogDialog;
-    private Configuration config;
+    private boolean isDualPane = false;
+    private int selectedChannelListPosition = 0;
+
+    private static final String MAIN_FRAGMENT_TAG = "channel_list_fragment";
+    private static final String RIGHT_FRAGMENT_TAG = "program_list_fragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.channel_layout);
+        Utils.setLanguage(this);
 
-        // Change the language to the defined setting
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        config = new Configuration(getResources().getConfiguration());
-        config.locale = new Locale(prefs.getString("languagePref", "en-us"));
-        getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+		// Check if the layout supports showing the program list next to the
+		// channel list. This is usually available on tablets 
+        
+        /*
+         * TODO Deactivate the dual pane for now. If the program list fragment
+         * is shown, it updates the action bar title instead of the channel list
+         * fragment. Also the handling logic and how to show the recordings or
+         * the program details is not clear.
+         */
+//        View v = findViewById(R.id.program_fragment);
+//        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
-        DatabaseHelper.init(this.getApplicationContext()); 
+        DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
 
         // Setup action bar for tabs
@@ -71,7 +82,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         }
         else {
             createTabListeners(savedInstanceState);
-        }        
+        }
     }
 
     /**
@@ -113,10 +124,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         tab = actionBar.newTab().setText(R.string.status).setTabListener(tabListener);
         actionBar.addTab(tab);
         
-        // Restore the previously selected tab
         if (savedInstanceState != null) {
+            // Restore the previously selected tab
             int index = savedInstanceState.getInt("selected_channel_tab_index", 0);
             actionBar.setSelectedNavigationItem(index);
+            // Get the previously selected channel item position
+            selectedChannelListPosition = savedInstanceState.getInt("selected_channel_list_position", 0);
         }
     }
 
@@ -130,18 +143,10 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     protected void handleTabSelection(Tab tab, FragmentTransaction ft) {
         switch (tab.getPosition()) {
         case 0:
-            // Show the channel list screen.
-            Fragment currentFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
-            if (currentFrag == null) {
-                // If the fragment is not already initialized, it will be
-                // instantiated and added to the activity. If it exists, it will
-                // simply attached to show it.
-                Fragment fragment = Fragment.instantiate(this, ChannelListFragment.class.getName());
-                ft.add(android.R.id.content, fragment, tab.getText().toString());
-            }
-            else {
-                ft.attach(currentFrag);
-            }
+            // Show the channel list fragment
+            Fragment clf = Fragment.instantiate(this, ChannelListFragment.class.getName());
+            ft.replace(R.id.main_fragment, clf, MAIN_FRAGMENT_TAG);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             break;
         case 1:
             // Show the list of recordings screen
@@ -154,18 +159,19 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
             startActivity(epgIntent);
             break;
         case 3:
-            // Show the status screen
-        	Fragment statusFrag = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
-            if (statusFrag == null) {
-                // If the fragment is not already initialized, it will be
-                // instantiated and added to the activity. If it exists, it will
-                // simply attached to show it.
-                Fragment fragment = Fragment.instantiate(this, StatusFragment.class.getName());
-                ft.add(android.R.id.content, fragment, tab.getText().toString());
-            }
-            else {
-                ft.attach(statusFrag);
-            }
+            // Show the status fragment
+            Fragment sf = Fragment.instantiate(this, StatusFragment.class.getName());
+            ft.replace(R.id.main_fragment, sf, MAIN_FRAGMENT_TAG);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            
+			// Remove the program list fragment so it is not visible when the
+			// status screen is shown
+			if (isDualPane) {
+				Fragment plf = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+				if (plf != null) {
+					ft.remove(plf);
+				}
+			}
             break;
         }
     }
@@ -173,7 +179,6 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     @Override
     public void onResume() {
         super.onResume();
-
         // If the user has pressed the back button, the currently selected tab
         // would be active (like the recordings or program guide tab) and
         // would show nothing. So we need to set the previously selected tab.
@@ -189,10 +194,22 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        // When the orientation changes from landscape to portrait the program
+        // list fragment would crash because the container is null. So we remove
+        // it entirely before the orientation change happens.
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment pListFrag = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+        if (pListFrag != null) {
+            ft.remove(pListFrag);
+            ft.commit();
+        }
+
         super.onSaveInstanceState(outState);
         // Save the currently selected tab
         int index = actionBar.getSelectedNavigationIndex();
         outState.putInt("selected_channel_tab_index", index);
+        // Save the position of the selected channel list item
+        outState.putInt("selected_channel_list_position", selectedChannelListPosition);
     }
 
     @Override
@@ -257,16 +274,64 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         }
     }
 
-    public void setActionBarTitle(final String title) {
+    @Override
+    public void setActionBarTitle(final String title, final String tag) {
         actionBar.setTitle(title);
     }
 
-    public void setActionBarSubtitle(final String subtitle) {
+    @Override
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
         actionBar.setSubtitle(subtitle);
     }
 
     @Override
     public void dialogDismissed() {
         createTabListeners(null);
+    }
+
+    /**
+     * Provided by the channel list listener interface. This method is called
+     * when the user has selected an item from the channel list. In dual pane
+     * mode the program list on the right side will be recreated to show the new
+     * programs for the selected channel. In normal mode the activity will be
+     * called that shows the program list.
+     */
+	@Override
+	public void onChannelSelected(int position, long channelId) {
+	    selectedChannelListPosition = position;
+	    
+	    // TODO Dual pane is disabled for now
+//		if (!isDualPane) {
+		    // Start the activity
+			Intent intent = new Intent(this, ProgramListActivity.class);
+			intent.putExtra("channelId", channelId);
+			startActivity(intent);
+//		} else {
+//			// Recreate the fragment with the new channel id
+//		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//		    Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
+//			Bundle args = new Bundle();
+//            args.putLong("channelId", channelId);
+//			fragment.setArguments(args);
+//
+//			// Replace the previous fragment with the new one
+//			ft.replace(R.id.program_fragment, fragment, RIGHT_FRAGMENT_TAG);
+//			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//			ft.commit();
+//		}
+	}
+
+    /**
+     * Provided by the channel list listener interface. This method called when
+     * the channel list has been fully populated. In a two pane layout a channel
+     * list item must be preselected so that the program list on the right side
+     * shows its list with programs from this very selected channel.
+     */
+    @Override
+    public void onChannelListPopulated() {
+        Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        if (f != null && isDualPane) {
+            ((ChannelListFragment) f).setSelectedItem(selectedChannelListPosition);
+        }
     }
 }

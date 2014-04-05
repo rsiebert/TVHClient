@@ -61,6 +61,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
     static class ViewHolder {
         public ImageView icon;
+        public TextView icon_text;
         public TextView title;
         public TextView channel;
         public TextView time;
@@ -79,6 +80,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             view = context.getLayoutInflater().inflate(layout, null);
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
+            holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.progress = (ProgressBar) view.findViewById(R.id.progress);
@@ -103,8 +105,8 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 holder.channel.setText(c.name);
             }
             if (holder.icon != null) {
-                Utils.setChannelIcon(holder.icon, null, c);
-            
+                Utils.setChannelIcon(holder.icon, holder.icon_text, null, c);
+
                 // Add the listener to the icon so that a 
                 // click calls the program list of this channel
                 holder.icon.setOnClickListener(new OnClickListener() {
@@ -131,7 +133,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.state.setVisibility(View.GONE);
                 }
             }
-            
+
             // Get the iterator so we can check the channel status 
             Iterator<Program> it = c.epg.iterator();
             
@@ -163,10 +165,10 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.progress.setVisibility(View.GONE);
                 }
                 if (holder.time != null) {
-                	holder.time.setVisibility(View.GONE);
+                    holder.time.setVisibility(View.GONE);
                 }
                 if (holder.duration != null) {
-                	holder.duration.setVisibility(View.GONE);
+                    holder.duration.setVisibility(View.GONE);
                 }
             }
         }

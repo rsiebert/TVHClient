@@ -1,5 +1,15 @@
+$ 1.1.0
+  % VERSION 1.1.0
+  _ 03.04.2014
+    * Show channel name if no icon is available
+    * Automatically set available application language
+    * Scrolling improvements in the program guide
+    * Added menu items to cancel or remove a recording in all recording screens
+    * Long pressing in the channel list shows the menu options for the current program
+    * Updated polish translation
+    * Small bug fixes
 $ 1.0.0
   % VERSION 1.0.0
   _ 14.03.2014
-    * Initial version   
+    * Initial version
 $ END_OF_CHANGE_LOG
