@@ -52,6 +52,8 @@
     <string name="pref_port_sum">Wpisz port serwera</string>
     <string name="pref_port_error_empty">Numer portu nie może być pusty.</string>
     <string name="pref_port_error_invalid">Numer portu jest nie poprawny. Powinien zawierać się pomiędzy 1 a 65535.</string>
+    <string name="pref_streaming_port">Port dla streamingu mediów</string>
+    <string name="pref_streaming_port_sum">%d zostanie użyty do streamingu mediów. Domyślnie jest to port 9981 którego zazwyczaj jest najlepiej używać.</string>
     <string name="pref_user">Nazwa użytkownika</string>
     <string name="pref_user_sum">Wpisz nazwę użytkownika</string>
     <string name="pref_pass">Hasło</string>
