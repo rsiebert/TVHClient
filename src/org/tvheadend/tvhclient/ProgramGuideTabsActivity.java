@@ -31,6 +31,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +42,6 @@ import android.widget.TextView;
 
 public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSListener, ProgramLoadingInterface, ActionBarInterface, ProgramGuideInterface {
 
-    @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideTabsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
@@ -396,8 +396,11 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
                 actionBar.setSubtitle(R.string.loading);
                 Utils.loadMorePrograms(this, programsToLoad, ch);
             } else {
+                Log.d(TAG, "Channel " + ch.name + " is blocked");
                 channelLoadingList.remove(ch);
-                setActionBarSubtitle();
+                if (channelLoadingList.isEmpty()) {
+                    setActionBarSubtitle();
+                }
             }
         }
     }
