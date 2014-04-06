@@ -255,7 +255,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
             Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-            intent.putExtra("channelId", program.channel.id);
+            intent.putExtra("channelId", channel.id);
             startActivity(intent);
             return true;
 
