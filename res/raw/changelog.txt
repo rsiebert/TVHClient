@@ -1,3 +1,7 @@
+$ 1.1.1
+  % VERSION 1.1.1
+  _ 06.04.2014
+    * Prevent crash playing a channel with no programs
 $ 1.1.0
   % VERSION 1.1.0
   _ 03.04.2014
