@@ -108,6 +108,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
 
         srAdapter.clear();
 
+        // Create the intent with the search options 
         String query = intent.getStringExtra(SearchManager.QUERY);
         pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
         intent = new Intent(SearchResultActivity.this, HTSService.class);
@@ -120,17 +121,29 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         startService(intent);
 
         if (channel == null) {
+            // Go through the list of programs in all channels and search if the
+            // desired program exists
             for (Channel ch : app.getChannels()) {
-                for (Program p : ch.epg) {
-                    if (pattern.matcher(p.title).find()) {
-                        srAdapter.add(p);
+                if (ch != null) {
+                    for (Program p : ch.epg) {
+                        if (p != null && p.title != null && p.title.length() > 0) {
+                            if (pattern.matcher(p.title).find()) {
+                                srAdapter.add(p);
+                            }
+                        }
                     }
                 }
             }
         } else {
-            for (Program p : channel.epg) {
-                if (pattern.matcher(p.title).find()) {
-                    srAdapter.add(p);
+            // Go through the list of programs in the given channel and search
+            // if the desired program exists
+            if (channel.epg != null) {
+                for (Program p : channel.epg) {
+                    if (p != null && p.title != null && p.title.length() > 0) {
+                        if (pattern.matcher(p.title).find()) {
+                            srAdapter.add(p);
+                        }
+                    }
                 }
             }
         }
@@ -154,10 +167,12 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
 
     protected void showProgramDetails(int position) {
         Program p = (Program) srAdapter.getItem(position);
-        Intent intent = new Intent(this, ProgramDetailsActivity.class);
-        intent.putExtra("eventId", p.id);
-        intent.putExtra("channelId", p.channel.id);
-        startActivity(intent);
+        if (p != null) {
+            Intent intent = new Intent(this, ProgramDetailsActivity.class);
+            intent.putExtra("eventId", p.id);
+            intent.putExtra("channelId", p.channel.id);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -183,13 +198,16 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         case android.R.id.home:
             onBackPressed();
             return true;
+
         case R.id.menu_search:
             // Show the search text input in the action bar
             onSearchRequested();
             return true;
+
         case R.id.menu_genre_color_info:
             Utils.showGenreColorDialog(this);
             return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -232,7 +250,9 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
 
         // Set the title of the context menu and show or hide 
         // the menu items depending on the program state
-        menu.setHeaderTitle(program.title);
+        if (program != null) {
+            menu.setHeaderTitle(program.title);
+        }
         Utils.setProgramMenu(menu, program);
     }
 
@@ -246,12 +266,14 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
-                    if (pattern != null && pattern.matcher(p.title).find()) {
-                        srAdapter.add(p);
-                        srAdapter.notifyDataSetChanged();
-                        srAdapter.sort();
-                        
-                        actionBar.setSubtitle(srAdapter.getCount() + " " + getString(R.string.results));
+                    if (p != null && p.title != null && p.title.length() > 0) {
+                        if (pattern != null && pattern.matcher(p.title).find()) {
+                            srAdapter.add(p);
+                            srAdapter.notifyDataSetChanged();
+                            srAdapter.sort();
+                            
+                            actionBar.setSubtitle(srAdapter.getCount() + " " + getString(R.string.results));
+                        }
                     }
                 }
             });
