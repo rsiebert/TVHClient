@@ -24,7 +24,9 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -235,11 +237,34 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         }
     }
 
+    /**
+     * Reloads all data if the connection details have changed or a new one was created.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
             if (resultCode == RESULT_OK){
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
+            }
+        } else if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
+            if (resultCode == RESULT_OK){
+                if (data.getBooleanExtra("restart", false)) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (Build.VERSION.SDK_INT >= 11) {
+                                recreate();
+                            } else {
+                                Intent intent = getIntent();
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                finish();
+                                overridePendingTransition(0, 0);
+                                startActivity(intent);
+                                overridePendingTransition(0, 0);
+                            }
+                        }
+                    });
+                }
             }
         }
     }
