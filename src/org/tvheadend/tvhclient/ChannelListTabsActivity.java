@@ -29,12 +29,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface {
 
-    @SuppressWarnings("unused")
     private final static String TAG = ChannelListTabsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
@@ -150,12 +150,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         case 1:
             // Show the list of recordings screen
             Intent recIntent = new Intent(this, RecordingListTabsActivity.class);
-            startActivity(recIntent);
+            startActivityForResult(recIntent, Constants.RESULT_CODE_RECORDINGS);
             break;
         case 2:
             // Show the program guide screen
             Intent epgIntent = new Intent(this, ProgramGuideTabsActivity.class);
-            startActivity(epgIntent);
+            startActivityForResult(epgIntent, Constants.RESULT_CODE_PROGRAM_GUIDE);
             break;
         case 3:
             // Show the status fragment
@@ -178,26 +178,6 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     @Override
     public void onResume() {
         super.onResume();
-
-        boolean restart = false;
-        // Restart the activity if the current theme is
-        // different from the one defined in the settings. If the settings
-        // activity is called from the recording tabs or program guide
-        // activities then they get updated due to the onActivityResult method.
-        // This activity will not be updated like this. When the user leaves the
-        // recording tabs or program guide tabs activities this one can be
-        // updated in the onResume method.
-        final int currentThemeId = Utils.getCurrentThemeId(this);
-        if (currentThemeId != 0 && currentThemeId != Utils.getThemeId(this)) {
-            restart = true;
-        }
-
-        if (restart) {
-            Intent intent = getIntent();
-            finish();
-            startActivity(intent);
-        }
-
         // If the user has pressed the back button, the currently selected tab
         // would be active (like the recordings or program guide tab) and
         // would show nothing. So we need to set the previously selected tab.
@@ -289,9 +269,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
             if (resultCode == RESULT_OK) {
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
             }
-        } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
+        } else if (requestCode == Constants.RESULT_CODE_SETTINGS || 
+                requestCode == Constants.RESULT_CODE_RECORDINGS ||
+                requestCode == Constants.RESULT_CODE_PROGRAM_GUIDE) {
             if (resultCode == RESULT_OK) {
                 if (data.getBooleanExtra("restart", false)) {
+                    Log.d(TAG, "onActivityResult, request from " + requestCode + ", restarting activity");
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);

@@ -32,18 +32,19 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
 
 public class RecordingListTabsActivity extends ActionBarActivity implements ActionBarInterface {
 
-    @SuppressWarnings("unused")
     private final static String TAG = RecordingListTabsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
     private RecordingListPagerAdapter adapter = null;
     private static ViewPager viewPager = null;
+    private boolean restart = false;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,8 +189,9 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
 
     @Override
     public void onBackPressed() {
-        Intent returnIntent = new Intent();
-        setResult(RESULT_OK, returnIntent);
+        Intent intent = new Intent();
+        intent.putExtra("restart", restart);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
@@ -253,10 +255,14 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
             }
         } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
             if (resultCode == RESULT_OK){
-                if (data.getBooleanExtra("restart", false)) {
+                restart = data.getBooleanExtra("restart", false);
+                if (restart) {
+                    Log.d(TAG, "onActivityResult, request from " + requestCode + ", restarting activity");
                     Intent intent = getIntent();
+                    intent.putExtra("restart", restart);
+                    setResult(RESULT_OK, intent);
                     finish();
-                    startActivity(intent);
+                    startActivityForResult(intent, Constants.RESULT_CODE_RECORDINGS);
                 }
             }
         }

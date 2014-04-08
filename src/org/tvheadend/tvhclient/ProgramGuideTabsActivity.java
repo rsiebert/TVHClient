@@ -66,7 +66,9 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
 
     // Amount of programs of a channel that shall be loaded from the server 
     private static String defaultProgramsToLoad = "20";
-    
+
+    private boolean restart = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
@@ -200,8 +202,9 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
 
     @Override
     public void onBackPressed() {
-        Intent returnIntent = new Intent();
-        setResult(RESULT_OK, returnIntent);
+        Intent intent = new Intent();
+        intent.putExtra("restart", restart);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
@@ -273,10 +276,14 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             }
         } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
             if (resultCode == RESULT_OK) {
-                if (data.getBooleanExtra("restart", false)) {
+                restart = data.getBooleanExtra("restart", false);
+                if (restart) {
+                    Log.d(TAG, "onActivityResult, request from " + requestCode + ", restarting activity");
                     Intent intent = getIntent();
+                    intent.putExtra("restart", restart);
+                    setResult(RESULT_OK, intent);
                     finish();
-                    startActivity(intent);
+                    startActivityForResult(intent, Constants.RESULT_CODE_PROGRAM_GUIDE);
                 }
             }
         }
