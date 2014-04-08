@@ -23,7 +23,6 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -95,21 +94,5 @@ public class ProgramListActivity extends ActionBarActivity implements ActionBarI
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int programsToLoad = Integer.parseInt(prefs.getString("programsToLoad", defaultProgramsToLoad));
         Utils.loadMorePrograms(this, programsToLoad, channel);
-    }
-    
-    /**
-     * Reloads all data if the connection details have changed or a new one was created.
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
-            if (resultCode == RESULT_OK){
-                if (data.getBooleanExtra("restart", false)) {
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                }
-            }
-        }
     }
 }
