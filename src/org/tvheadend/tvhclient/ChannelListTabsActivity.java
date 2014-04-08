@@ -23,9 +23,7 @@ import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -180,7 +178,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     @Override
     public void onResume() {
         super.onResume();
-
+        
         // If the user has pressed the back button, the currently selected tab
         // would be active (like the recordings or program guide tab) and
         // would show nothing. So we need to set the previously selected tab.
@@ -269,27 +267,15 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
-            if (resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
             }
         } else if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
-            if (resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 if (data.getBooleanExtra("restart", false)) {
-                    new Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (Build.VERSION.SDK_INT >= 11) {
-                                recreate();
-                            } else {
-                                Intent intent = getIntent();
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                finish();
-                                overridePendingTransition(0, 0);
-                                startActivity(intent);
-                                overridePendingTransition(0, 0);
-                            }
-                        }
-                    });
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
                 }
             }
         }

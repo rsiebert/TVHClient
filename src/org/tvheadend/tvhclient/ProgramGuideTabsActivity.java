@@ -196,7 +196,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     /**
      * Prepares a dialog that shows the available dates and times the user can
      * choose from. In here the data for the adapter is created and the dialog

@@ -20,13 +20,10 @@ package org.tvheadend.tvhclient;
 
 import java.lang.reflect.Field;
 
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -249,21 +246,9 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         } else if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
             if (resultCode == RESULT_OK){
                 if (data.getBooleanExtra("restart", false)) {
-                    new Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (Build.VERSION.SDK_INT >= 11) {
-                                recreate();
-                            } else {
-                                Intent intent = getIntent();
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                finish();
-                                overridePendingTransition(0, 0);
-                                startActivity(intent);
-                                overridePendingTransition(0, 0);
-                            }
-                        }
-                    });
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
                 }
             }
         }
