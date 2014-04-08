@@ -21,9 +21,7 @@ package org.tvheadend.tvhclient;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
@@ -131,6 +129,9 @@ public class SettingsActivity extends ActionBarActivity {
                 restart = true;
                 ((SettingsActivity) getActivity()).restartActivity();
             }
+            if (key.equals("programsToLoad") || key.equals("epgMaxDays") || key.equals("epgHoursVisible")) {
+                restart = true;
+            }
             if (key.equals("languagePref")) {
                 Toast.makeText(getActivity(), getString(R.string.restart_application), Toast.LENGTH_SHORT).show();
             }
@@ -147,20 +148,8 @@ public class SettingsActivity extends ActionBarActivity {
      * language
      */
     private void restartActivity() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                if (Build.VERSION.SDK_INT >= 11) {
-                    recreate();
-                } else {
-                    Intent intent = getIntent();
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(intent);
-                    overridePendingTransition(0, 0);
-                }
-            }
-        });
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }
