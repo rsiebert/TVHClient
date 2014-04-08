@@ -20,9 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -67,7 +65,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     private static int scrollingSelectionPosition = 0;
 
     // Amount of programs of a channel that shall be loaded from the server 
-    private static int programsToLoad = 20;
+    private static String defaultProgramsToLoad = "20";
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -266,34 +264,12 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
             }
         } else if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            programsToLoad = Integer.parseInt(prefs.getString("programsToLoad", "10"));
-            // Only recalculate the times when they have changed
-            if (daysToShow != Integer.parseInt(prefs.getString("epgMaxDays", "7"))
-                    || hoursToShow != Integer.parseInt(prefs.getString("epgHoursVisible", "4"))) {
-
-                // Restart this activity
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
-            
-            if (data.getBooleanExtra("restart", false)) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Build.VERSION.SDK_INT >= 11) {
-                            recreate();
-                        } else {
-                            Intent intent = getIntent();
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            finish();
-                            overridePendingTransition(0, 0);
-                            startActivity(intent);
-                            overridePendingTransition(0, 0);
-                        }
-                    }
-                });
+            if (resultCode == RESULT_OK) {
+                if (data.getBooleanExtra("restart", false)) {
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
             }
         }
     }
@@ -414,6 +390,8 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             if (!isBlocked) {
                 isLoadingChannels = true;
                 actionBar.setSubtitle(R.string.loading);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                int programsToLoad = Integer.parseInt(prefs.getString("programsToLoad", defaultProgramsToLoad));
                 Utils.loadMorePrograms(this, programsToLoad, ch);
             } else {
                 Log.d(TAG, "Channel " + ch.name + " is blocked");
