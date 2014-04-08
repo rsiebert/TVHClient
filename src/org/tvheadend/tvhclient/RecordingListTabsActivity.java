@@ -50,6 +50,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pager_layout);
+        Utils.setLanguage(this);
 
         // setup action bar for tabs
         actionBar = getSupportActionBar();
@@ -166,7 +167,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         case R.id.menu_settings:
             // Start the settings activity 
             intent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(intent, Utils.getResultCode(R.id.menu_settings));
+            startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
             return true;
 
         case R.id.menu_refresh:
@@ -177,12 +178,19 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
             // Show the manage connections activity where 
             // the user can choose a connection
             intent = new Intent(this, SettingsManageConnectionsActivity.class);
-            startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
+            startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
             return true;
 
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_OK, returnIntent);
+        finish();
     }
 
     /**
@@ -239,11 +247,11 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
+        if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
             if (resultCode == RESULT_OK){
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
             }
-        } else if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
+        } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
             if (resultCode == RESULT_OK){
                 if (data.getBooleanExtra("restart", false)) {
                     Intent intent = getIntent();

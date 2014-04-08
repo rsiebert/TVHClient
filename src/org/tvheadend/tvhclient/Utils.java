@@ -18,6 +18,8 @@
  */
 package org.tvheadend.tvhclient;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,7 +53,9 @@ import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,6 +65,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class Utils {
+
+    private final static String TAG = Utils.class.getSimpleName();
 
     // Constants required for the date calculation
     private static final int twoDays = 1000 * 3600 * 24 * 2;
@@ -76,7 +82,7 @@ public class Utils {
     private final static int GENRE_COLOR_ALPHA_EPG_OFFSET = 50;
 
     /**
-     * Returns the id of the chosen theme to allow calling setTheme(...).
+     * Returns the id of the theme that is currently set in the settings.
      * 
      * @param context
      * @return
@@ -85,6 +91,31 @@ public class Utils {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean theme = prefs.getBoolean("lightThemePref", true);
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+    }
+
+    /**
+     * Returns the id of the current theme that is used by the given context.
+     * 
+     * @param context
+     * @return
+     */
+    public static int getCurrentThemeId(final Context context) {
+        int themeResId = 0;
+        try {
+            Class<?> clazz = ContextThemeWrapper.class;
+            Method method = clazz.getMethod("getThemeResId");
+            method.setAccessible(true);
+            themeResId = (Integer) method.invoke(context);
+        } catch (NoSuchMethodException e) {
+            Log.e(TAG, "Failed to get theme resource ID", e);
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "Failed to get theme resource ID", e);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Failed to get theme resource ID", e);
+        } catch (InvocationTargetException e) {
+            Log.e(TAG, "Failed to get theme resource ID", e);
+        }
+        return themeResId;
     }
 
     /**
@@ -572,28 +603,6 @@ public class Utils {
         description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
         if (descriptionLabel != null) {
             descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
-        }
-    }
-
-    /**
-     * This method is only used when the startActivityForResult is called. It
-     * returns a smaller integer instead of the passed one to avoid a
-     * segmentation fault. This only happens on android versions before 4.X.X
-     * 
-     * @param code
-     * @return
-     */
-    public static int getResultCode(final int code) {
-        // When the startActivityForResult method is called with the regular
-        // integer then the java.lang.IllegalArgumentException: Can only use
-        // lower 16 bits for resultCode The code value must be lower than
-        // 0xffff.
-        if (code == R.id.menu_settings) {
-            return 219;
-        } else if (code == R.id.menu_connections) {
-            return 221;
-        } else {
-            return 0;
         }
     }
 

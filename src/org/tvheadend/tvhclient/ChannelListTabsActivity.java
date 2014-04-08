@@ -178,7 +178,26 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     @Override
     public void onResume() {
         super.onResume();
-        
+
+        boolean restart = false;
+        // Restart the activity if the current theme is
+        // different from the one defined in the settings. If the settings
+        // activity is called from the recording tabs or program guide
+        // activities then they get updated due to the onActivityResult method.
+        // This activity will not be updated like this. When the user leaves the
+        // recording tabs or program guide tabs activities this one can be
+        // updated in the onResume method.
+        final int currentThemeId = Utils.getCurrentThemeId(this);
+        if (currentThemeId != 0 && currentThemeId != Utils.getThemeId(this)) {
+            restart = true;
+        }
+
+        if (restart) {
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        }
+
         // If the user has pressed the back button, the currently selected tab
         // would be active (like the recordings or program guide tab) and
         // would show nothing. So we need to set the previously selected tab.
@@ -240,7 +259,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
             prevTabPosition = actionBar.getSelectedNavigationIndex();
             // Now start the settings activity
             intent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(intent, Utils.getResultCode(R.id.menu_settings));
+            startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
             return true;
 
         case R.id.menu_refresh:
@@ -253,7 +272,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
             // the manage connections activity
             prevTabPosition = actionBar.getSelectedNavigationIndex();
             intent = new Intent(this, SettingsManageConnectionsActivity.class);
-            startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
+            startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
             return true;
 
         default:
@@ -266,11 +285,11 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Utils.getResultCode(R.id.menu_connections)) {
+        if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
             if (resultCode == RESULT_OK) {
                 Utils.connect(this, data.getBooleanExtra("reconnect", false));
             }
-        } else if (requestCode == Utils.getResultCode(R.id.menu_settings)) {
+        } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
             if (resultCode == RESULT_OK) {
                 if (data.getBooleanExtra("restart", false)) {
                     Intent intent = getIntent();

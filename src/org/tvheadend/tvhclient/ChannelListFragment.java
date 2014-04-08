@@ -431,7 +431,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
                 // Show the manage connections activity where
                 // the user can choose a connection
                 Intent intent = new Intent(activity, SettingsAddConnectionActivity.class);
-                startActivityForResult(intent, Utils.getResultCode(R.id.menu_connections));
+                startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
             }
         });
         // Define the action of the no button

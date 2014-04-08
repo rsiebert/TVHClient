@@ -29,7 +29,6 @@ import android.support.v4.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 public class SettingsActivity extends ActionBarActivity {
 
@@ -40,6 +39,7 @@ public class SettingsActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
+        Utils.setLanguage(this);
 
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
@@ -125,15 +125,11 @@ public class SettingsActivity extends ActionBarActivity {
          */
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals("lightThemePref")) {
+            if (key.equals("lightThemePref") || key.equals("languagePref")) {
                 restart = true;
                 ((SettingsActivity) getActivity()).restartActivity();
-            }
-            if (key.equals("programsToLoad") || key.equals("epgMaxDays") || key.equals("epgHoursVisible")) {
+            } else if (key.equals("programsToLoad") || key.equals("epgMaxDays") || key.equals("epgHoursVisible")) {
                 restart = true;
-            }
-            if (key.equals("languagePref")) {
-                Toast.makeText(getActivity(), getString(R.string.restart_application), Toast.LENGTH_SHORT).show();
             }
             // Reload the data to fetch the channel icons. They are not loaded
             // (to save bandwidth) when not required.  
@@ -152,6 +148,6 @@ public class SettingsActivity extends ActionBarActivity {
         intent.putExtra("restart", restart);
         setResult(RESULT_OK, intent);
         finish();
-        startActivityForResult(intent, Utils.getResultCode(R.id.menu_settings));
+        startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
     }
 }
