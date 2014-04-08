@@ -149,7 +149,9 @@ public class SettingsActivity extends ActionBarActivity {
      */
     private void restartActivity() {
         Intent intent = getIntent();
+        intent.putExtra("restart", restart);
+        setResult(RESULT_OK, intent);
         finish();
-        startActivity(intent);
+        startActivityForResult(intent, Utils.getResultCode(R.id.menu_settings));
     }
 }
