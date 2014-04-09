@@ -1,3 +1,10 @@
+$ 1.2.0
+  % VERSION 1.2.0
+  _ 09.04.2014
+    * New theme or language will be set immediately (no restart required)
+    * Only reload data when the connection has actually changed
+    * Improved the context menu in the connection settings
+    * Stability fixes
 $ 1.1.1
   % VERSION 1.1.1
   _ 06.04.2014
