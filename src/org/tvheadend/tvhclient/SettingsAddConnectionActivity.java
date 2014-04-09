@@ -22,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.R;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -45,6 +44,7 @@ import android.widget.Toast;
 public class SettingsAddConnectionActivity extends ActionBarActivity {
 
     private ActionBar actionBar = null;
+    private static boolean connectionChanged;
     // Contains the currently set connection values
     // and keeps them during orientation changes
     static Connection conn = null;
@@ -66,7 +66,10 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        cancel();
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("reconnect", connectionChanged);
+        setResult(RESULT_OK, returnIntent);
+        finish();
     }
 
     /**
@@ -75,7 +78,10 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
      * the input will be discarded and the activity will be closed.
      */
     private void cancel() {
-
+        // Do not show the cancel dialog if nothing has changed
+        if (!connectionChanged) {
+            onBackPressed();
+        }
         // Show confirmation dialog to cancel
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.cancel_connection));
@@ -87,7 +93,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                 // Delete the connection so that we start fresh when
                 // the settings activity is called again.
                 conn = null;
-                finish();
+                onBackPressed();
             }
         });
         // Define the action of the no button
@@ -219,6 +225,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
+            connectionChanged = true;
+            
             // Update the connection object with the new values
             conn.name = prefName.getText();
             conn.address = prefAddress.getText();
@@ -263,7 +271,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             // the settings activity is called again.
             conn = null;
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("reconnect", true);
+            returnIntent.putExtra("reconnect", connectionChanged);
             getActivity().setResult(RESULT_OK, returnIntent);
             getActivity().finish();
         }

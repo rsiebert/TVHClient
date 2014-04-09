@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
 import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.R;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -47,6 +46,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
     private List<Connection> connList;
     private ListView connListView;
     protected int prevPosition;
+    private boolean connectionChanged;
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -116,7 +116,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
         case R.id.menu_edit:
             Intent intent = new Intent(this, SettingsAddConnectionActivity.class);
             intent.putExtra("id", c.id);
-            startActivity(intent);
+            startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
             return true;
 
         case R.id.menu_delete:
@@ -132,6 +132,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
                         connAdapter.notifyDataSetChanged();
                         connAdapter.sort();
                         actionBar.setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
+                        connectionChanged = true;
                     }
                 }
             });
@@ -186,7 +187,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
 
         case R.id.menu_add:
             Intent intent = new Intent(this, SettingsAddConnectionActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
             return true;
 
         default:
@@ -197,7 +198,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("reconnect", true);
+        returnIntent.putExtra("reconnect", connectionChanged);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
@@ -209,6 +210,8 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
      * @param c
      */
     private void setConnectionActive(Connection c) {
+        connectionChanged = true;
+
         // Switch the selection status
         c.selected = (c.selected) ? false : true;
         if (c.selected) {
@@ -221,5 +224,14 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity {
         // Update the currently selected connection and refresh the display
         DatabaseHelper.getInstance().updateConnection(c);
         showConnections();
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
+            if (resultCode == RESULT_OK) {
+                connectionChanged = data.getBooleanExtra("reconnect", false);
+            }
+        }
     }
 }

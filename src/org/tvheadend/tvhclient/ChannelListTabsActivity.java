@@ -29,12 +29,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface {
 
+    @SuppressWarnings("unused")
     private final static String TAG = ChannelListTabsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
@@ -261,20 +261,36 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     }
 
     /**
-     * Reloads all data if the connection details have changed or a new one was created.
+     * Called when an activity was closed and this one is active again. Restarts
+     * the activity if required or reconnects to the server to update all data.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
             if (resultCode == RESULT_OK) {
-                Utils.connect(this, data.getBooleanExtra("reconnect", false));
+                // Reload all data from the server
+                if (data.getBooleanExtra("reconnect", false)) {
+                    Utils.connect(this, true);
+                }
             }
-        } else if (requestCode == Constants.RESULT_CODE_SETTINGS || 
-                requestCode == Constants.RESULT_CODE_RECORDINGS ||
+        } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
+            if (resultCode == RESULT_OK) {
+                // Reload all data from the server
+                if (data.getBooleanExtra("reconnect", false)) {
+                    Utils.connect(this, true);
+                }
+                // Restart the activity
+                if (data.getBooleanExtra("restart", false)) {
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+            }
+        } else if (requestCode == Constants.RESULT_CODE_RECORDINGS || 
                 requestCode == Constants.RESULT_CODE_PROGRAM_GUIDE) {
             if (resultCode == RESULT_OK) {
+                // Restart the activity
                 if (data.getBooleanExtra("restart", false)) {
-                    Log.d(TAG, "onActivityResult, request from " + requestCode + ", restarting activity");
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);

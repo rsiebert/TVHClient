@@ -262,20 +262,28 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     }
 
     /**
-     * Reloads all data if the connection details have changed, a new one was
-     * created or if the number of hours per time slot have changed.
+     * Called when an activity was closed and this one is active again. Reloads
+     * all data if the connection details have changed, a new one was created or
+     * if the number of hours per time slot have changed.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
             if (resultCode == RESULT_OK) {
-                Utils.connect(this, data.getBooleanExtra("reconnect", false));
+                // Reload all data from the server
+                if (data.getBooleanExtra("reconnect", false)) {
+                    Utils.connect(this, true);
+                }
             }
-        } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
+        } else if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
             if (resultCode == RESULT_OK) {
+                // Reload all data from the server
+                if (data.getBooleanExtra("reconnect", false)) {
+                    Utils.connect(this, true);
+                }
+                // Restart the activity
                 restart = data.getBooleanExtra("restart", false);
                 if (restart) {
-                    Log.d(TAG, "onActivityResult, request from " + requestCode + ", restarting activity");
                     Intent intent = getIntent();
                     intent.putExtra("restart", restart);
                     setResult(RESULT_OK, intent);

@@ -34,6 +34,7 @@ public class SettingsActivity extends ActionBarActivity {
 
     private ActionBar actionBar = null;
     private static boolean restart = false;
+    private static boolean reconnect = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class SettingsActivity extends ActionBarActivity {
     public void onBackPressed() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("restart", restart);
+        returnIntent.putExtra("reconnect", reconnect);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
@@ -88,7 +90,7 @@ public class SettingsActivity extends ActionBarActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     Intent intent = new Intent(getActivity(), SettingsManageConnectionsActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
                     return false;
                 }
             });
@@ -137,6 +139,15 @@ public class SettingsActivity extends ActionBarActivity {
                 Utils.connect(getActivity(), true);
             }
         }
+        
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (requestCode == Constants.RESULT_CODE_SETTINGS) {
+                if (resultCode == RESULT_OK) {
+                    reconnect = data.getBooleanExtra("reconnect", false);
+                }
+            }
+        }
     }
 
     /**
@@ -146,6 +157,7 @@ public class SettingsActivity extends ActionBarActivity {
     private void restartActivity() {
         Intent intent = getIntent();
         intent.putExtra("restart", restart);
+        intent.putExtra("reconnect", reconnect);
         setResult(RESULT_OK, intent);
         finish();
         startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
