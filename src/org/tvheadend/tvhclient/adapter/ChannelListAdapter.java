@@ -23,13 +23,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.tvheadend.tvhclient.ProgramListActivity;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -104,9 +106,19 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             if (holder.channel != null) {
                 holder.channel.setText(c.name);
             }
-            if (holder.icon != null) {
-                Utils.setChannelIcon(holder.icon, holder.icon_text, null, c);
 
+            Utils.setChannelIcon(holder.icon, holder.icon_text, c);
+            // Only show the channel text in the program guide when no icons shall be shown
+            if (holder.icon_text != null) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                final boolean showIcons = prefs.getBoolean("showIconPref", true);
+                if (!showIcons && layout == R.layout.program_guide_channel_item) {
+                    holder.icon_text.setText(c.name);
+                    holder.icon_text.setVisibility(ImageView.VISIBLE);
+                }
+            }
+
+            if (holder.icon != null) {
                 // Add the listener to the icon so that a 
                 // click calls the program list of this channel
                 holder.icon.setOnClickListener(new OnClickListener() {

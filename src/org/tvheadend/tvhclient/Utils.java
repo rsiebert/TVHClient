@@ -532,27 +532,23 @@ public class Utils {
      * @param channel
      * @param ch
      */
-    public static void setChannelIcon(ImageView icon, TextView iconText, TextView channel, final Channel ch) {
-
+    public static void setChannelIcon(ImageView icon, TextView iconText, final Channel ch) {
         if (icon != null && ch != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
             final boolean showIcons = prefs.getBoolean("showIconPref", true);
 
-            // Show the channel icon, if it is not available hide it            
-            icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
-            icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
-
-            // Show the icon text if the channel icon could not be shown
-            if (iconText != null) {
-                iconText.setVisibility((ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
-                iconText.setText(ch.name);
+            // Show the channels icon if available. If not hide the view. 
+            if (icon != null) {
+                icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
+                icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
             }
-        }
-
-        // Show the channel name
-        if (channel != null) {
-            channel.setText((ch != null) ? ch.name : "");
+            
+            // If the channel icon is not available show the channel name as a placeholder.
+            if (iconText != null) {
+                iconText.setText(ch.name);
+                iconText.setVisibility((showIcons && ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
+            }
         }
     }
 
