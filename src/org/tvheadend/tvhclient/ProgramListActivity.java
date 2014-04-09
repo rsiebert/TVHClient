@@ -23,9 +23,7 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -35,9 +33,6 @@ public class ProgramListActivity extends ActionBarActivity implements ActionBarI
 
     private ActionBar actionBar = null;
     private Channel channel;
-    
-    // Amount of programs of a channel that shall be loaded from the server 
-    private static String defaultProgramsToLoad = "20";
     
     @Override
     public void onCreate(Bundle icicle) {
@@ -91,8 +86,6 @@ public class ProgramListActivity extends ActionBarActivity implements ActionBarI
 
     @Override
     public void loadMorePrograms(Channel channel) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int programsToLoad = Integer.parseInt(prefs.getString("programsToLoad", defaultProgramsToLoad));
-        Utils.loadMorePrograms(this, programsToLoad, channel);
+        Utils.loadMorePrograms(this, channel);
     }
 }

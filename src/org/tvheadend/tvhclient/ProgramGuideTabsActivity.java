@@ -64,9 +64,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     private static int scrollingSelectionIndex = 0;
     private static int scrollingSelectionPosition = 0;
 
-    // Amount of programs of a channel that shall be loaded from the server 
-    private static String defaultProgramsToLoad = "20";
-
     private boolean restart = false;
 
     @Override
@@ -405,9 +402,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             if (!isBlocked) {
                 isLoadingChannels = true;
                 actionBar.setSubtitle(R.string.loading);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                int programsToLoad = Integer.parseInt(prefs.getString("programsToLoad", defaultProgramsToLoad));
-                Utils.loadMorePrograms(this, programsToLoad, ch);
+                Utils.loadMorePrograms(this, ch);
             } else {
                 Log.d(TAG, "Channel " + ch.name + " is blocked");
                 channelLoadingList.remove(ch);

@@ -84,14 +84,6 @@
 	            android:numeric="integer"
 	            android:summary="@string/pref_epg_max_days_sum"
 	            android:title="@string/pref_epg_max_days" />
-	        <EditTextPreference
-	            android:id="@+id/pref_programs_to_load"
-	            android:name="@string/pref_programs_to_load"
-	            android:defaultValue="10"
-	            android:key="programsToLoad"
-	            android:numeric="integer"
-	            android:summary="@string/pref_programs_to_load_sum"
-	            android:title="@string/pref_programs_to_load" />
 	    </PreferenceScreen>
     </PreferenceCategory>
 

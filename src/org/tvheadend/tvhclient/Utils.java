@@ -763,10 +763,9 @@ public class Utils {
      * the server where to continue loading programs.
      * 
      * @param context
-     * @param numberOfProgramsToLoad
      * @param channel
      */
-    public static void loadMorePrograms(final Context context, final int numberOfProgramsToLoad, final Channel channel) {
+    public static void loadMorePrograms(final Context context, final Channel channel) {
         if (channel == null) {
             return;
         }
@@ -803,7 +802,7 @@ public class Utils {
         intent.setAction(HTSService.ACTION_GET_EVENTS);
         intent.putExtra("eventId", nextId);
         intent.putExtra("channelId", channel.id);
-        intent.putExtra("count", numberOfProgramsToLoad);
+        intent.putExtra("count", Constants.PREF_PROGRAMS_TO_LOAD);
         context.startService(intent);
     }
 
