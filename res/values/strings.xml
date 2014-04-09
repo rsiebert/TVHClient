@@ -14,7 +14,6 @@
     <string name="menu_record_remove">Remove recording</string>
     <string name="menu_search_imdb">Search on IMDB</string>
     <string name="menu_search_epg">Search the program guide</string>
-    <string name="menu_search_channel">Search this channel</string>
     <string name="menu_add">Add</string>
     <string name="menu_save">Save</string>
     <string name="menu_cancel">Cancel</string>
@@ -96,9 +95,7 @@
     <string name="pref_epg_hours_visible_sum">Define how many hours of the program guide shall be shown on one screen. Too many hours will display too many programs and thus clutters the screen and decrease the readability.</string>
     <string name="pref_epg_max_days">Maximum days to show</string>
     <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
-    <string name="pref_programs_to_load">Number of programs to load</string>
-    <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
-    <string name="pref_genre_colors">Enable genre colors</string>
+    <string name="pref_genre_colors">Genre colors</string>
     <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
     <string name="pref_genre_colors_channels">Channels</string>
     <string name="pref_genre_colors_channels_sum">The genre color will be shown as a vertical line on the left side of the channel list screen.</string>
@@ -301,9 +298,7 @@
     <string name="available">Available</string>
     <string name="unknown">Unknown</string>
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
-
     <string name="currently_recording">Currently recording</string>
-    <string name="restart_application">Please restart the application to activate the new theme.</string>
     
     <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>

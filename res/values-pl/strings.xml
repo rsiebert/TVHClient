@@ -14,7 +14,6 @@
     <string name="menu_record_remove">Usuń nagranie</string>
     <string name="menu_search_imdb">Szukaj na IMDB</string>
     <string name="menu_search_epg">Szukaj w przewodniku programów</string>
-    <string name="menu_search_channel">Szukaj w tym kanale</string>
     <string name="menu_add">Dodaj</string>
     <string name="menu_save">Zapisz</string>
     <string name="menu_cancel">Anuluj</string>
@@ -52,6 +51,8 @@
     <string name="pref_port_sum">Wpisz port serwera</string>
     <string name="pref_port_error_empty">Numer portu nie może być pusty.</string>
     <string name="pref_port_error_invalid">Numer portu jest nie poprawny. Powinien zawierać się pomiędzy 1 a 65535.</string>
+    <string name="pref_streaming_port">Port dla strumieniowej transmisji multimediów</string>
+    <string name="pref_streaming_port_sum">Port %d będzie wykorzystany do strumieniowej transmisji multimediów. Domyślnie jest to port 9981, który zazwyczaj jest najlepiej używać.</string>
     <string name="pref_user">Nazwa użytkownika</string>
     <string name="pref_user_sum">Wpisz nazwę użytkownika</string>
     <string name="pref_pass">Hasło</string>
@@ -93,8 +94,6 @@
     <string name="pref_epg_hours_visible_sum">Definiuje ile godzin przewodnika programów zostanie wyświetlone na jednym ekranie. Zbyt duża ilość godzin i programów wyświetlanych na tym samym ekranie zmniejsza czytelność.</string>
     <string name="pref_epg_max_days">Maksimum dni do wyświetlenia</string>
     <string name="pref_epg_max_days_sum">Definiuje maksymalną liczbę dni przewodnika programów która zostanie wyświetlona.</string>
-    <string name="pref_programs_to_load">Liczba programów do załadowania</string>
-    <string name="pref_programs_to_load_sum">Definiuje ile programów będzie pobieranych z serwera aby zobaczyć więcej na liście programów lub liście przewodnika. Większa liczba oznacza dłuższy czas ładowania i aktualizowania.</string>
     <string name="pref_genre_colors">Włącz rodzaje kolorów</string>
     <string name="pref_genre_colors_sum">Określa na których ekranach rodzaje kolorów będą pokazywane.</string>
     <string name="pref_genre_colors_channels">Kanały</string>
@@ -297,9 +296,7 @@
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>
     <string name="select_timeframe">Pokaż przewodnik po programach dla wybranej daty i czasu.</string>
-    
     <string name="currently_recording">Aktualnie nagrywane</string>
-    <string name="restart_application">Proszę zrestartować aplikację aby aktywować nowy motyw.</string>
     
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
     <string name="show_play_store">Czy chcesz przejść do sklepu Google Play i poszukać dostępnych odtwarzaczy?</string>

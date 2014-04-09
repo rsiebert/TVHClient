@@ -14,7 +14,6 @@
     <string name="menu_record_remove">Aufnahme entfernen</string>
     <string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
     <string name="menu_search_epg">Suche im TV-Programm</string>
-    <string name="menu_search_channel">Suche auf diesem Sender</string>
     <string name="menu_add">Hinzufügen</string>
     <string name="menu_save">Speichern</string>
     <string name="menu_cancel">Abbrechen</string>
@@ -96,9 +95,7 @@
     <string name="pref_epg_hours_visible_sum">Anzahl der Stunden die auf einem Bildschirm angezeigt werden sollen. Je höher die Anzahl, desto mehr Programme werden gleichzeitig pro Sender angezeigt. Dies erschwert die Lesbarkeit deutlich.</string>
     <string name="pref_epg_max_days">Anzahl der Tage</string>
     <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf maximale Anzahl an Tagen.</string>
-    <string name="pref_programs_to_load">Programme vom Server laden</string>
-    <string name="pref_programs_to_load_sum">Wieviele Programme sollen auf einmal pro Sender vom Server geladen werden. Je höher die Zahl desto länger dauert das Laden und Anzeigen.</string>
-    <string name="pref_genre_colors">Zeige Genrefarben</string>
+    <string name="pref_genre_colors">Genrefarben</string>
     <string name="pref_genre_colors_sum">Zu jedem Sender oder Programm soll das dazugehörige Genre farbig angezeigt werden.</string>
     <string name="pref_genre_colors_channels">TV-Sender</string>
     <string name="pref_genre_colors_channels_sum">Die Genrefarbe wird als vertikale Linie im linken Bereich der Senderliste angezeigt.</string>
@@ -289,9 +286,7 @@
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>
     <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
-
     <string name="currently_recording">Laufende Aufnahmen</string>
-    <string name="restart_application">Um das neue Theme zu verwenden muss die Anwendung neu gestartet werden.</string>
     
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
     <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
