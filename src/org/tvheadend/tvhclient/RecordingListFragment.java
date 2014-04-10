@@ -51,8 +51,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
-    private RecordingListAdapter recAdapter;
-    private ListView recListView;
+    private RecordingListAdapter adapter;
+    private ListView listView;
     private List<Recording> recList;
     private int tabIndex = 0;
     
@@ -66,7 +66,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return null;
         }
         View v = inflater.inflate(R.layout.list_layout, container, false);
-        recListView = (ListView) v.findViewById(R.id.item_list);
+        listView = (ListView) v.findViewById(R.id.item_list);
         
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
@@ -91,15 +91,15 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         setHasOptionsMenu(true);
 
         recList = new ArrayList<Recording>();
-        recAdapter = new RecordingListAdapter(activity, recList);
-        recListView.setAdapter(recAdapter);
-        registerForContextMenu(recListView);
+        adapter = new RecordingListAdapter(activity, recList);
+        listView.setAdapter(adapter);
+        registerForContextMenu(listView);
         // Set the listener to show the recording details activity when the user
         // has selected a recording
-        recListView.setOnItemClickListener(new OnItemClickListener() {
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Recording rec = (Recording) recAdapter.getItem(position);
+                Recording rec = (Recording) adapter.getItem(position);
                 Intent intent = new Intent(activity, RecordingDetailsActivity.class);
                 intent.putExtra("id", rec.id);
                 startActivity(intent);
@@ -146,7 +146,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Recording rec = recAdapter.getItem(info.position);
+        Recording rec = adapter.getItem(info.position);
         
         // Set the title of the context menu and show or hide 
         // the menu items depending on the recording state
@@ -164,7 +164,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Recording rec = recAdapter.getItem(info.position);
+        Recording rec = adapter.getItem(info.position);
         
         switch (item.getItemId()) {
         case R.id.menu_play:
@@ -205,15 +205,15 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 DatabaseHelper.getInstance().getSelectedConnection() == null) {
             // Clear any channels in the list and 
             // show that we have no connection
-            recAdapter.clear();
-            recAdapter.notifyDataSetChanged();
+            adapter.clear();
+            adapter.notifyDataSetChanged();
             if (actionBarInterface != null) {
                 actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections), TAG);
             }
         } else {
             if (loading) {
-                recAdapter.clear();
-                recAdapter.notifyDataSetChanged();
+                adapter.clear();
+                adapter.notifyDataSetChanged();
                 if (actionBarInterface != null) {
                     actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
                 }
@@ -248,8 +248,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 recList.add(rec);
             }
         }
-        recAdapter.sort();
-        recAdapter.notifyDataSetChanged();
+        adapter.sort();
+        adapter.notifyDataSetChanged();
         ((RecordingListTabsActivity)activity).updateTitle(tabIndex, recList.size());
     }
 
@@ -269,23 +269,23 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         } else if (action.equals(TVHClientApplication.ACTION_DVR_ADD)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    recAdapter.add((Recording) obj);
-                    recAdapter.notifyDataSetChanged();
-                    recAdapter.sort();
+                    adapter.add((Recording) obj);
+                    adapter.notifyDataSetChanged();
+                    adapter.sort();
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    recAdapter.remove((Recording) obj);
-                    recAdapter.notifyDataSetChanged();
+                    adapter.remove((Recording) obj);
+                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    recAdapter.update((Recording) obj);
-                    recAdapter.notifyDataSetChanged();
+                    adapter.update((Recording) obj);
+                    adapter.notifyDataSetChanged();
                 }
             });
         }

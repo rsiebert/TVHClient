@@ -42,9 +42,9 @@ import android.widget.ListView;
 public class SettingsManageConnectionsActivity extends ActionBarActivity implements ActionMode.Callback {
 
     private ActionBar actionBar = null;
-    private ConnectionListAdapter connAdapter;
+    private ConnectionListAdapter adapter;
     private List<Connection> connList;
-    private ListView connListView;
+    private ListView listView;
     protected int prevPosition;
     private boolean connectionChanged;
     private ActionMode actionMode;
@@ -62,15 +62,15 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
         actionBar.setTitle(R.string.pref_manage_connections);
         
         connList = new ArrayList<Connection>();
-        connAdapter = new ConnectionListAdapter(this, connList);
-        connListView = (ListView) findViewById(R.id.item_list);
-        connListView.setAdapter(connAdapter);
-        connListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        adapter = new ConnectionListAdapter(this, connList);
+        listView = (ListView) findViewById(R.id.item_list);
+        listView.setAdapter(adapter);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         // Show the available menu options when the user clicks on a connection.
         // The options are realized by using the action mode instead of a
         // regular context menu. 
-        connListView.setOnItemClickListener(new OnItemClickListener() {
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (actionMode != null) {
@@ -78,7 +78,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
                 }
                 // Set the currently selected item as checked so we know which
                 // position the user has clicked
-                connListView.setItemChecked(position, true);
+                listView.setItemChecked(position, true);
                 actionMode = startSupportActionMode(SettingsManageConnectionsActivity.this);
                 view.setSelected(true);
                 return;
@@ -103,9 +103,9 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
                 connList.add(cl.get(i));
             }
         }
-        connAdapter.sort();
-        connAdapter.notifyDataSetChanged();
-        actionBar.setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
+        adapter.sort();
+        adapter.notifyDataSetChanged();
+        actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections));
     }
 
     @Override
@@ -175,8 +175,8 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         // Get the currently selected program from the list
-        int position = connListView.getCheckedItemPosition();
-        final Connection c = connAdapter.getItem(position);
+        int position = listView.getCheckedItemPosition();
+        final Connection c = adapter.getItem(position);
         
         switch (item.getItemId()) {
         case R.id.menu_set_active:
@@ -207,10 +207,10 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
             builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     if (DatabaseHelper.getInstance().removeConnection(c.id)) {
-                        connAdapter.remove(c);
-                        connAdapter.notifyDataSetChanged();
-                        connAdapter.sort();
-                        actionBar.setSubtitle(connAdapter.getCount() + " " + getString(R.string.pref_connections));
+                        adapter.remove(c);
+                        adapter.notifyDataSetChanged();
+                        adapter.sort();
+                        actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections));
                         connectionChanged = true;
                     }
                 }
@@ -247,8 +247,8 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         // Get the currently selected program from the list
-        int position = connListView.getCheckedItemPosition();
-        final Connection c = connAdapter.getItem(position);
+        int position = listView.getCheckedItemPosition();
+        final Connection c = adapter.getItem(position);
 
         // Show or hide the activate / deactivate menu item
         if (c != null && c.selected) {

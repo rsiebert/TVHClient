@@ -60,9 +60,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     private ActionBarInterface actionBarInterface;
     private ProgramLoadingInterface loadMoreProgramsInterface;
 
-    private ProgramListAdapter prAdapter;
+    private ProgramListAdapter adapter;
     private List<Program> prList;
-    private ListView prListView;
+    private ListView listView;
     private Channel channel;
     private boolean isLoading = false;
 
@@ -86,7 +86,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         // Add a listener to check if the program list has been scrolled.
         // If the last list item is visible, load more data and show it.
         View v = inflater.inflate(R.layout.list_layout, container, false);
-        prListView = (ListView) v.findViewById(R.id.item_list);
+        listView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
 
@@ -107,7 +107,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
 
-        prListView.setOnScrollListener(new OnScrollListener() {
+        listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
@@ -133,7 +133,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             }
         });
 
-        prListView.setOnItemClickListener(new OnItemClickListener() {
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showProgramDetails(position);
@@ -141,9 +141,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         });
         
         prList = new ArrayList<Program>();
-        prAdapter = new ProgramListAdapter(activity, prList);
-        prListView.setAdapter(prAdapter);
-        registerForContextMenu(prListView);
+        adapter = new ProgramListAdapter(activity, prList);
+        listView.setAdapter(adapter);
+        registerForContextMenu(listView);
     }
 
     @Override
@@ -159,11 +159,11 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (channel != null) {
             prList.addAll(channel.epg);
         }
-        prAdapter.sort();
-        prAdapter.notifyDataSetChanged();
+        adapter.sort();
+        adapter.notifyDataSetChanged();
         
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs), TAG);
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
         }
     }
 
@@ -175,7 +175,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     }
 
     protected void showProgramDetails(int position) {
-        Program p = prAdapter.getItem(position);
+        Program p = adapter.getItem(position);
         Intent intent = new Intent(activity, ProgramDetailsActivity.class);
         intent.putExtra("eventId", p.id);
         intent.putExtra("channelId", p.channel.id);
@@ -187,7 +187,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Program program = prAdapter.getItem(info.position);
+        Program program = adapter.getItem(info.position);
         
         switch (item.getItemId()) {
         case R.id.menu_search:
@@ -234,7 +234,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Program program = prAdapter.getItem(info.position);
+        Program program = adapter.getItem(info.position);
         
         // Set the title of the context menu and show or hide 
         // the menu items depending on the program state
@@ -313,11 +313,11 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 public void run() {
                     Program p = (Program) obj;
                     if (channel != null && p.channel.id == channel.id) {
-                        prAdapter.add(p);
-                        prAdapter.notifyDataSetChanged();
-                        prAdapter.sort();
+                        adapter.add(p);
+                        adapter.notifyDataSetChanged();
+                        adapter.sort();
                         if (actionBarInterface != null) {
-                            actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs), TAG);
+                            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
                         }
                     }
                 }
@@ -326,10 +326,10 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             // An existing program has been deleted
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    prAdapter.remove((Program) obj);
-                    prAdapter.notifyDataSetChanged();
+                    adapter.remove((Program) obj);
+                    adapter.notifyDataSetChanged();
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(prAdapter.getCount() + " " + getString(R.string.programs), TAG);
+                        actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
                     }
                 }
             });
@@ -337,8 +337,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             // An existing program has been updated
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    prAdapter.update((Program) obj);
-                    prAdapter.notifyDataSetChanged();
+                    adapter.update((Program) obj);
+                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
@@ -346,10 +346,10 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Program p : prAdapter.getList()) {
+                    for (Program p : adapter.getList()) {
                         if (rec == p.recording) {
-                            prAdapter.update(p);
-                            prAdapter.notifyDataSetChanged();
+                            adapter.update(p);
+                            adapter.notifyDataSetChanged();
                             return;
                         }
                     }

@@ -52,8 +52,8 @@ import android.widget.ListView;
 public class SearchResultActivity extends ActionBarActivity implements HTSListener {
 
     private ActionBar actionBar = null;
-    private SearchResultAdapter srAdapter;
-    private ListView searchListView;
+    private SearchResultAdapter adapter;
+    private ListView listView;
     private Pattern pattern;
     private Channel channel;
     // The currently selected program
@@ -72,15 +72,15 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         actionBar.setTitle("Searching");
         actionBar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
 
-        searchListView = (ListView) findViewById(R.id.item_list);
-        registerForContextMenu(searchListView);
+        listView = (ListView) findViewById(R.id.item_list);
+        registerForContextMenu(listView);
         
         List<Program> srList = new ArrayList<Program>();
-        srAdapter = new SearchResultAdapter(this, srList);
-        srAdapter.sort();
-        searchListView.setAdapter(srAdapter);
+        adapter = new SearchResultAdapter(this, srList);
+        adapter.sort();
+        listView.setAdapter(adapter);
 
-        searchListView.setOnItemClickListener(new OnItemClickListener() {
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showProgramDetails(position);
@@ -106,7 +106,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             channel = null;
         }
 
-        srAdapter.clear();
+        adapter.clear();
 
         // Create the intent with the search options 
         String query = intent.getStringExtra(SearchManager.QUERY);
@@ -128,7 +128,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                     for (Program p : ch.epg) {
                         if (p != null && p.title != null && p.title.length() > 0) {
                             if (pattern.matcher(p.title).find()) {
-                                srAdapter.add(p);
+                                adapter.add(p);
                             }
                         }
                     }
@@ -141,7 +141,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                 for (Program p : channel.epg) {
                     if (p != null && p.title != null && p.title.length() > 0) {
                         if (pattern.matcher(p.title).find()) {
-                            srAdapter.add(p);
+                            adapter.add(p);
                         }
                     }
                 }
@@ -166,7 +166,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     }
 
     protected void showProgramDetails(int position) {
-        Program p = (Program) srAdapter.getItem(position);
+        Program p = (Program) adapter.getItem(position);
         if (p != null) {
             Intent intent = new Intent(this, ProgramDetailsActivity.class);
             intent.putExtra("eventId", p.id);
@@ -246,7 +246,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.program_context_menu, menu);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        program = srAdapter.getItem(info.position);
+        program = adapter.getItem(info.position);
 
         // Set the title of the context menu and show or hide 
         // the menu items depending on the program state
@@ -268,11 +268,11 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                     Program p = (Program) obj;
                     if (p != null && p.title != null && p.title.length() > 0) {
                         if (pattern != null && pattern.matcher(p.title).find()) {
-                            srAdapter.add(p);
-                            srAdapter.notifyDataSetChanged();
-                            srAdapter.sort();
+                            adapter.add(p);
+                            adapter.notifyDataSetChanged();
+                            adapter.sort();
                             
-                            actionBar.setSubtitle(srAdapter.getCount() + " " + getString(R.string.results));
+                            actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
                         }
                     }
                 }
@@ -281,25 +281,25 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
-                    srAdapter.remove(p);
-                    srAdapter.notifyDataSetChanged();
+                    adapter.remove(p);
+                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    srAdapter.update((Program) obj);
-                    srAdapter.notifyDataSetChanged();
+                    adapter.update((Program) obj);
+                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Program p : srAdapter.getList()) {
+                    for (Program p : adapter.getList()) {
                         if (rec == p.recording) {
-                            srAdapter.update((Program) obj);
-                            srAdapter.notifyDataSetChanged();
+                            adapter.update((Program) obj);
+                            adapter.notifyDataSetChanged();
                             return;
                         }
                     }

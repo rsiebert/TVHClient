@@ -69,7 +69,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     private ChannelListAdapter adapter;
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
-    private ListView channelListView;
+    private ListView listView;
 
     // This is the default view for the channel list adapter. Other views can be
     // passed to the adapter to show less information. This is used in the
@@ -93,7 +93,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         }
 
         View v = inflater.inflate(viewLayout, container, false);
-        channelListView = (ListView) v.findViewById(R.id.item_list);
+        listView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
 
@@ -121,10 +121,10 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         }
 
         adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
-        channelListView.setAdapter(adapter);
+        listView.setAdapter(adapter);
         
         // Show the details of the program when the user clicked on the channel 
-        channelListView.setOnItemClickListener(new OnItemClickListener() {
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Channel ch = (Channel) adapter.getItem(position);
@@ -138,7 +138,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         });
 
         // Inform the parent activity about the state of scrolling. 
-        channelListView.setOnScrollListener(new OnScrollListener() {
+        listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_IDLE) {
@@ -156,7 +156,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         });
 
         // Inform the parent activity about the motion event state.
-        channelListView.setOnTouchListener(new OnTouchListener() {
+        listView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -182,13 +182,13 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         tagDialog = builder.create();
 
         if (activity instanceof ChannelListTabsActivity) {
-            registerForContextMenu(channelListView);
+            registerForContextMenu(listView);
         }
     }
 
     private void scrollingChanged() {
-        int index = channelListView.getFirstVisiblePosition();
-        View v = channelListView.getChildAt(0);
+        int index = listView.getFirstVisiblePosition();
+        View v = listView.getChildAt(0);
         int position = (v == null) ? 0 : v.getTop();
         if (programGuideInterface != null) {
             programGuideInterface.onScrollingChanged(index, position, TAG);
@@ -322,7 +322,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         // class is used in the program guide where the channels are shown on
         // the the left side and shall scroll with the guide data.
         if (programGuideInterface != null) {
-            channelListView.setSelection(programGuideInterface.getScrollingSelectionIndex());
+            listView.setSelection(programGuideInterface.getScrollingSelectionIndex());
         }
     }
 
@@ -507,8 +507,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      * @param index The index (starting at 0) of the channel item to be selected
      */
     public void scrollListViewTo(int index) {
-        if (channelListView != null)
-            channelListView.setSelection(index);
+        if (listView != null)
+            listView.setSelection(index);
     }
 
     /**
@@ -522,8 +522,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      *            item will be positioned.
      */
     public void scrollListViewToPosition(int index, int pos) {
-        if (channelListView != null) {
-            channelListView.setSelectionFromTop(index, pos);
+        if (listView != null) {
+            listView.setSelectionFromTop(index, pos);
         }
     }
 
@@ -534,8 +534,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      * @param position
      */
     public void setSelectedItem(int position) {
-        if (channelListView.getCount() > position && adapter.getCount() > position) {
-            channelListView.setSelection(position);
+        if (listView.getCount() > position && adapter.getCount() > position) {
+            listView.setSelection(position);
             channelListListener.onChannelSelected(position, adapter.getItem(position).id);
         }
     }
