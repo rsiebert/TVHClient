@@ -115,6 +115,20 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (!showIcons && layout == R.layout.program_guide_channel_item) {
                     holder.icon_text.setText(c.name);
                     holder.icon_text.setVisibility(ImageView.VISIBLE);
+                    
+                    // Add the listener to the icon so that a 
+                    // click calls the program list of this channel
+                    holder.icon_text.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (c.epg.isEmpty()) {
+                                return;
+                            }
+                            Intent intent = new Intent(context, ProgramListActivity.class);
+                            intent.putExtra("channelId", c.id);
+                            context.startActivity(intent);
+                        }
+                    });
                 }
             }
 
