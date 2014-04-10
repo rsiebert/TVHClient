@@ -301,12 +301,16 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 
     @Override
     public void setActionBarTitle(final String title, final String tag) {
-        actionBar.setTitle(title);
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
     }
 
     @Override
     public void setActionBarSubtitle(final String subtitle, final String tag) {
-        actionBar.setSubtitle(subtitle);
+        if (actionBar != null) {
+            actionBar.setSubtitle(subtitle);
+        }
     }
 
     @Override

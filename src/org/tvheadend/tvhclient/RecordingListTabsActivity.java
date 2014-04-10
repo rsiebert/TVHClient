@@ -284,6 +284,8 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
 
     @Override
     public void setActionBarSubtitle(final String subtitle, final String tag) {
-        actionBar.setSubtitle(subtitle);
+        if (actionBar != null) {
+            actionBar.setSubtitle(subtitle);
+        }
     }
 }
