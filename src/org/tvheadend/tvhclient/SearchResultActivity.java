@@ -69,7 +69,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle("Searching");
+        actionBar.setTitle(R.string.menu_search);
         actionBar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
 
         listView = (ListView) findViewById(R.id.item_list);
@@ -127,6 +127,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                 if (ch != null) {
                     for (Program p : ch.epg) {
                         if (p != null && p.title != null && p.title.length() > 0) {
+                            // Check if the program name matches the search pattern
                             if (pattern.matcher(p.title).find()) {
                                 adapter.add(p);
                             }
@@ -140,6 +141,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             if (channel.epg != null) {
                 for (Program p : channel.epg) {
                     if (p != null && p.title != null && p.title.length() > 0) {
+                        // Check if the program name matches the search pattern
                         if (pattern.matcher(p.title).find()) {
                             adapter.add(p);
                         }
@@ -248,11 +250,11 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         program = adapter.getItem(info.position);
 
-        // Set the title of the context menu and show or hide 
-        // the menu items depending on the program state
+        // Set the title of the context menu
         if (program != null) {
             menu.setHeaderTitle(program.title);
         }
+        //  Show or hide the menu items depending on the program state
         Utils.setProgramMenu(menu, program);
     }
 
@@ -271,7 +273,6 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                             adapter.add(p);
                             adapter.notifyDataSetChanged();
                             adapter.sort();
-                            
                             actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
                         }
                     }
