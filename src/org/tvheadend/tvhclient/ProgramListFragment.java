@@ -67,7 +67,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     private boolean isLoading = false;
 
     private static int newProgramsLoadedCounter = 0;
-    private static final int newProgramsToLoad = 10;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -306,7 +305,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (action.equals(TVHClientApplication.ACTION_PROGRAMME_ADD)) {
             
             // Increase the counter that will allow loading more programs.
-            if (++newProgramsLoadedCounter >= newProgramsToLoad) {
+            if (++newProgramsLoadedCounter >= Constants.PREF_PROGRAMS_TO_LOAD) {
                 isLoading  = false;
             }
             // A new program has been added
