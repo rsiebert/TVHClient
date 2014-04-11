@@ -769,20 +769,22 @@ public class Utils {
         if (channel == null) {
             return;
         }
-        Iterator<Program> it = channel.epg.iterator();
+
         Program p = null;
         long nextId = 0;
-
-        while (it.hasNext()) {
-            p = it.next();
-            // Check if there is a next program available or if the current
-            // program has an id for the next one
-            if (p.id != nextId && nextId != 0) {
-                break;
+        synchronized(channel.epg) {
+            Iterator<Program> it = channel.epg.iterator();
+            while (it.hasNext()) {
+                p = it.next();
+                // Check if there is a next program available or if the current
+                // program has an id for the next one
+                if (p.id != nextId && nextId != 0) {
+                    break;
+                }
+                // Get the next id of the program so we can check in
+                // the next iteration if this program is the last one.
+                nextId = p.nextId;
             }
-            // Get the next id of the program so we can check in
-            // the next iteration if this program is the last one.
-            nextId = p.nextId;
         }
 
         if (p == null) {

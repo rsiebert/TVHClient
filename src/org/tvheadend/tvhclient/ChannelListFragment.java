@@ -219,9 +219,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         Program program = null;
         Channel channel = adapter.getItem(info.position);
         if (channel != null) {
-            Iterator<Program> it = channel.epg.iterator();
-            if (channel.isTransmitting && it.hasNext()) {
-                program = it.next();
+            synchronized(channel.epg) {
+                Iterator<Program> it = channel.epg.iterator();
+                if (channel.isTransmitting && it.hasNext()) {
+                    program = it.next();
+                }
             }
         }
 
@@ -281,9 +283,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         Program program = null;
         Channel channel = adapter.getItem(info.position);
         if (channel != null) {
-            Iterator<Program> it = channel.epg.iterator();
-            if (channel.isTransmitting && it.hasNext()) {
-                program = it.next();
+            synchronized(channel.epg) {
+                Iterator<Program> it = channel.epg.iterator();
+                if (channel.isTransmitting && it.hasNext()) {
+                    program = it.next();
+                }
             }
         }
         if (program != null) {
