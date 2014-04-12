@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">TVHGuide</string>
+    <string name="app_name">TVHClient</string>
 
     <string name="menu_settings">Settings</string>
     <string name="menu_refresh">Refresh</string>
