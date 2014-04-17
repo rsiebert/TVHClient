@@ -1,3 +1,10 @@
+$ 1.2.1
+  % VERSION 1.2.1
+  _ 17.04.2014
+    * Updated Swedish translation
+    * Updated Polish translation
+    * Fixed icons not displaying in the recording screens
+    * Small bug fixes
 $ 1.2.0
   % VERSION 1.2.0
   _ 11.04.2014
