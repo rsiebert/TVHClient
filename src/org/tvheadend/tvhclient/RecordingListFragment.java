@@ -153,6 +153,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         // the menu items depending on the recording state
         menu.setHeaderTitle(rec.title);
         Utils.setRecordingMenu(menu, rec);
+        Utils.setRecordingMenuIcons(activity, menu, rec);
     }
 
     @Override

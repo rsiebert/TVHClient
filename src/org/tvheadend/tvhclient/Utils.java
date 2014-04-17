@@ -346,6 +346,15 @@ public class Utils {
         }
     }
 
+    public static void setRecordingMenuIcons(final Context context, final Menu menu, final Recording rec) {
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean lightTheme = prefs.getBoolean("lightThemePref", true);
+        recordCancelMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        recordRemoveMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+    }
+
     /**
      * Shows an icon for the state of the current recording. If no recording was
      * given, the icon will be hidden.

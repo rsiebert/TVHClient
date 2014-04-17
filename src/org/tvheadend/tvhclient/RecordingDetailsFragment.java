@@ -126,12 +126,8 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.program_context_menu, menu);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        // Show or hide the menu items depending on the recording state
         Utils.setRecordingMenu(menu, rec);
+        Utils.setRecordingMenuIcons(activity, menu, rec);
     }
 
     @Override
