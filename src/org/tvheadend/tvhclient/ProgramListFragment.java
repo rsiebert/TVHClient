@@ -175,6 +175,13 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         app.removeListener(this);
     }
 
+    @Override
+    public void onDetach() {
+        loadMoreProgramsInterface = null;
+        actionBarInterface = null;
+        super.onDetach();
+    }
+
     protected void showProgramDetails(int position) {
         Program p = adapter.getItem(position);
         Intent intent = new Intent(activity, ProgramDetailsActivity.class);

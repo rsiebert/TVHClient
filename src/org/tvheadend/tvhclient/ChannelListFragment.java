@@ -338,7 +338,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      * @param currentTag
      */
     public void updateItemCount(ChannelTag currentTag) {
-        if (actionBarInterface != null && adapter != null) {
+        if (actionBarInterface != null) {
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items), TAG);
             actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
         }
@@ -377,6 +377,14 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        programGuideInterface = null;
+        channelListListener = null;
+        actionBarInterface = null;
+        super.onDetach();
     }
 
     /**

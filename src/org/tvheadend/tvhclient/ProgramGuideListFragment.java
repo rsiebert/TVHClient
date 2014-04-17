@@ -348,6 +348,13 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         app.removeListener(this);
     }
 
+    @Override
+    public void onDetach() {
+        programGuideInterface = null;
+        actionBarInterface = null;
+        super.onDetach();
+    }
+
     /**
      * Show that either no connection (and no data) is available, the data is
      * loaded or calls the method to display it.

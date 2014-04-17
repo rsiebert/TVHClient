@@ -124,6 +124,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     }
 
     @Override
+    public void onDetach() {
+        actionBarInterface = null;
+        super.onDetach();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
