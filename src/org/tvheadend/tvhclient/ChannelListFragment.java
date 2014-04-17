@@ -101,6 +101,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         if (activity instanceof OnChannelListListener) {
             channelListListener = (OnChannelListListener) activity;
         }
@@ -110,12 +116,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         if (activity instanceof ProgramGuideInterface) {
             programGuideInterface = (ProgramGuideInterface) activity;
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
         if (activity instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
         }
@@ -338,7 +338,7 @@ public class ChannelListFragment extends Fragment implements HTSListener {
      * @param currentTag
      */
     public void updateItemCount(ChannelTag currentTag) {
-        if (actionBarInterface != null) {
+        if (actionBarInterface != null && adapter != null) {
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items), TAG);
             actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
         }

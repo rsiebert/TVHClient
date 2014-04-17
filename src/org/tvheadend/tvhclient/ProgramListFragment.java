@@ -94,18 +94,19 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (activity instanceof ProgramLoadingInterface) {
-            loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
-        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        if (activity instanceof ProgramLoadingInterface) {
+            loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
+        }
 
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
