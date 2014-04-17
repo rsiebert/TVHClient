@@ -93,7 +93,7 @@
     <string name="pref_program_guide">Programguide</string>
     <string name="pref_program_guide_sum">Konfigurera hur informationen i programguiden skall visas.</string>
     <string name="pref_epg_hours_visible">Synliga timmar</string>
-    <string name="pref_epg_hours_visible_sum">konfigurera hur många timmar som skall visas i programguiden. För många timmar kommer visa för många program och försämmrar läsbarheten.</string>
+    <string name="pref_epg_hours_visible_sum">Konfigurera hur många timmar som skall visas i programguiden. För många timmar kommer visa för många program och försämmrar läsbarheten.</string>
     <string name="pref_epg_max_days">Max antal dagar att visa</string>
     <string name="pref_epg_max_days_sum">Konfigurera max antal dagar att visa i programguiden.</string>
     <string name="pref_programs_to_load">Antal program att ladda</string>
