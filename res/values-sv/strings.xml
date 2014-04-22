@@ -14,7 +14,6 @@
     <string name="menu_record_remove">Ta bort inspelning</string>
     <string name="menu_search_imdb">Sök på IMDB</string>
     <string name="menu_search_epg">Sök i EPG</string>
-    <string name="menu_search_channel">Sök på denna kanal</string>
     <string name="menu_add">Lägg till</string>
     <string name="menu_save">Spara</string>
     <string name="menu_cancel">Avbryt</string>
@@ -96,8 +95,6 @@
     <string name="pref_epg_hours_visible_sum">Konfigurera hur många timmar som skall visas i programguiden. För många timmar kommer visa för många program och försämmrar läsbarheten.</string>
     <string name="pref_epg_max_days">Max antal dagar att visa</string>
     <string name="pref_epg_max_days_sum">Konfigurera max antal dagar att visa i programguiden.</string>
-    <string name="pref_programs_to_load">Antal program att ladda</string>
-    <string name="pref_programs_to_load_sum">Hur många program skall hämtas på en gång från servern. Högre nummer ger längre ladd och uppdateringstider.</string>
     <string name="pref_genre_colors">Aktivera genrefärger</string>
     <string name="pref_genre_colors_sum">Konfigurera vilka vyer som skall visa genrefärger.</string>
     <string name="pref_genre_colors_channels">Kanaler</string>
@@ -303,8 +300,6 @@
     <string name="select_timeframe">Visa programguide för valt datum och tid.</string>
 
     <string name="currently_recording">Pågående inspelning</string>
-    <string name="restart_application">Vänligen starta om applikationen för att aktivera det nya temat.</string>
-    
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="show_play_store">Vill du söka efter tillgängliga mediaspelare på Google Play Store?</string>
 </resources>
