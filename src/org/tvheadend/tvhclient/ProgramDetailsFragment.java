@@ -22,6 +22,7 @@ package org.tvheadend.tvhclient;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 
@@ -42,10 +43,10 @@ import android.widget.TextView;
 
 public class ProgramDetailsFragment extends Fragment implements HTSListener {
 
-    @SuppressWarnings("unused")
     private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
 
     private FragmentActivity activity;
+    private ActionBarInterface actionBarInterface;
     private Program program;
     private Channel channel;
 
@@ -128,6 +129,15 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
 
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+
+        // If the channel or program is null exit
+        if (channel == null || program == null) {
+            activity.finish();
+        }
+
         title.setText(program.title);
         channelName.setText(channel.name);
         Utils.setState(state, program.recording);
@@ -156,6 +166,11 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
+        
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(channel.name, TAG);
+            actionBarInterface.setActionBarIcon(channel, TAG);
+        }
     }
 
     @Override

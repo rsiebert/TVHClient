@@ -21,8 +21,10 @@ package org.tvheadend.tvhclient;
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.model.Channel;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -310,6 +312,18 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     public void setActionBarSubtitle(final String subtitle, final String tag) {
         if (actionBar != null) {
             actionBar.setSubtitle(subtitle);
+        }
+    }
+
+    @Override
+    public void setActionBarIcon(Channel channel, String tag) {
+        if (actionBar != null && channel != null) {
+            // Show or hide the channel icon if required
+            boolean showIcon = Utils.showChannelIcons(this);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
+            if (showIcon) {
+                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            }
         }
     }
 

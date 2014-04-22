@@ -19,6 +19,7 @@
  */
 package org.tvheadend.tvhclient;
 
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 
@@ -29,7 +30,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
-public class ProgramDetailsActivity extends ActionBarActivity {
+public class ProgramDetailsActivity extends ActionBarActivity implements ActionBarInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramDetailsActivity.class.getSimpleName();
@@ -68,14 +69,6 @@ public class ProgramDetailsActivity extends ActionBarActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(channel.name);
-
-        // Show or hide the channel icon if required
-        boolean showIcon = Utils.showChannelIcons(this);
-        actionBar.setDisplayUseLogoEnabled(showIcon);
-        if (showIcon) {
-            actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
-        }
 
     	// Show the fragment
         Bundle args = new Bundle();
@@ -94,6 +87,32 @@ public class ProgramDetailsActivity extends ActionBarActivity {
             return true;
         default:
             return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    @Override
+    public void setActionBarTitle(final String title, final String tag) {
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
+    }
+
+    @Override
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
+        if (actionBar != null) {
+            actionBar.setSubtitle(subtitle);
+        }
+    }
+
+    @Override
+    public void setActionBarIcon(Channel channel, String tag) {
+        if (actionBar != null && channel != null) {
+            // Show or hide the channel icon if required
+            boolean showIcon = Utils.showChannelIcons(this);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
+            if (showIcon) {
+                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            }
         }
     }
 }

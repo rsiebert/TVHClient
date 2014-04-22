@@ -108,6 +108,11 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
         }
 
+        // If the channel is null exit
+        if (channel == null) {
+            activity.finish();
+        }
+
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -157,14 +162,14 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         // a program to the schedule or has deleted one from it we need to
         // update the list to reflect these changes.
         prList.clear();
-        if (channel != null) {
-            prList.addAll(channel.epg);
-        }
+        prList.addAll(channel.epg);
         adapter.sort();
         adapter.notifyDataSetChanged();
         
         if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(channel.name, TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
+            actionBarInterface.setActionBarIcon(channel, TAG);
         }
     }
 
