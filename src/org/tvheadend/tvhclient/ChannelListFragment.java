@@ -40,15 +40,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -137,35 +136,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             }
         });
 
-        // Inform the parent activity about the state of scrolling. 
-        listView.setOnScrollListener(new OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    scrollingChanged();
-                    if (programGuideInterface != null) {
-                        programGuideInterface.onScrollStateIdle(TAG);
-                    }
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        // Inform the parent activity about the motion event state.
-        listView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    scrollingChanged();
-                }
-                return false;
-            }
-        });
-
+        setOnScrollListener();
+        
         // Create the dialog where the user can select the different tags
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.menu_tags);
@@ -186,13 +158,34 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         }
     }
 
-    private void scrollingChanged() {
-        int index = listView.getFirstVisiblePosition();
-        View v = listView.getChildAt(0);
-        int position = (v == null) ? 0 : v.getTop();
-        if (programGuideInterface != null) {
-            programGuideInterface.onScrollingChanged(index, position, TAG);
-        }
+    public void setOnScrollListener() {
+        Log.i(TAG, "setOnScrollListener");
+        // Inform the parent activity about the state of scrolling. 
+        listView.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE) {
+                    if (programGuideInterface != null) {
+                        programGuideInterface.onScrollStateIdle(TAG);
+                    }
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (programGuideInterface != null) {
+                    int index = view.getFirstVisiblePosition();
+                    View v = view.getChildAt(0);
+                    int position = (v == null) ? 0 : v.getTop();
+                    programGuideInterface.onScrollingChanged(index, position, TAG);
+                }
+            }
+        });
+    }
+
+    public void unsetOnScrollListener() {
+        Log.i(TAG, "unsetOnScrollListener");
+        listView.setOnScrollListener(null);
     }
 
     @Override

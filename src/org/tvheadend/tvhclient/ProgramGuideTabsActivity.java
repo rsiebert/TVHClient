@@ -543,18 +543,22 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
      */
     @Override
     public void onScrollStateIdle(final String tag) {
+        Log.i(TAG, "onScrollingIdle " + tag);
+
         // Scroll all program guide fragments to the desired position
         for (int i = 0; i < fragmentCount; ++i) {
             ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
                     "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
             if (f != null) {
                 f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
+                f.setOnScrollListener();
             }
         }
         // Scroll the channel list fragment so the program guide is aligned with the channels
         ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
         if (f != null) {
             f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
+            f.setOnScrollListener();
         }
     }
 
@@ -565,6 +569,8 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
      */
     @Override
     public void onScrollingChanged(final int index, final int pos, final String tag) {
+        Log.i(TAG, "onScrollingChanged " + tag);
+
         scrollingSelectionIndex = index;
         scrollingSelectionPosition = pos;
 
@@ -572,6 +578,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             // Scroll the list in the channel list fragment
             ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
             if (f != null) {
+                f.unsetOnScrollListener();
                 f.scrollListViewToPosition(index, pos);
             }
         } else if (tag.equals(ChannelListFragment.class.getSimpleName())) {
@@ -579,6 +586,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
                     "android:switcher:" + viewPager.getId() + ":0");
             if (f != null) {
+                f.unsetOnScrollListener();
                 f.scrollListViewToPosition(index, pos);
             }
         }
