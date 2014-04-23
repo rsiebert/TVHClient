@@ -101,6 +101,12 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         if (activity instanceof OnChannelListListener) {
             channelListListener = (OnChannelListListener) activity;
         }
@@ -110,12 +116,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         if (activity instanceof ProgramGuideInterface) {
             programGuideInterface = (ProgramGuideInterface) activity;
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
         if (activity instanceof ChannelListTabsActivity) {
             setHasOptionsMenu(true);
         }
@@ -219,9 +219,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         Program program = null;
         Channel channel = adapter.getItem(info.position);
         if (channel != null) {
-            Iterator<Program> it = channel.epg.iterator();
-            if (channel.isTransmitting && it.hasNext()) {
-                program = it.next();
+            synchronized(channel.epg) {
+                Iterator<Program> it = channel.epg.iterator();
+                if (channel.isTransmitting && it.hasNext()) {
+                    program = it.next();
+                }
             }
         }
 
@@ -281,9 +283,11 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         Program program = null;
         Channel channel = adapter.getItem(info.position);
         if (channel != null) {
-            Iterator<Program> it = channel.epg.iterator();
-            if (channel.isTransmitting && it.hasNext()) {
-                program = it.next();
+            synchronized(channel.epg) {
+                Iterator<Program> it = channel.epg.iterator();
+                if (channel.isTransmitting && it.hasNext()) {
+                    program = it.next();
+                }
             }
         }
         if (program != null) {
@@ -373,6 +377,14 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        programGuideInterface = null;
+        channelListListener = null;
+        actionBarInterface = null;
+        super.onDetach();
     }
 
     /**

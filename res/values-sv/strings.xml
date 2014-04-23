@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">TVHGuide</string>
+    <string name="app_name">TVHClient</string>
 
     <string name="menu_settings">Inställingar</string>
     <string name="menu_refresh">Uppdatera</string>
@@ -14,7 +14,6 @@
     <string name="menu_record_remove">Ta bort inspelning</string>
     <string name="menu_search_imdb">Sök på IMDB</string>
     <string name="menu_search_epg">Sök i programguide</string>
-    <string name="menu_search_channel">Sök på denna kanal</string>
     <string name="menu_add">Lägg till</string>
     <string name="menu_save">Spara</string>
     <string name="menu_cancel">Avbryt</string>
@@ -24,7 +23,7 @@
     <string name="menu_delete">Ta bort</string>
     <string name="menu_connections">Anslutningar</string>
     <string name="menu_timeframe">Tidsram</string>
-    <string name="menu_genre_color_info">Förklara genre färger</string>
+    <string name="menu_genre_color_info">Förklara genrefärger</string>
 
     <string name="pref_manage_connections">Hantera anslutningar</string>
     <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
@@ -32,7 +31,7 @@
     <string name="add_connection">Lägg till anslutning</string>
     <string name="no_connections">Ingen anslutning tillgänglig</string>
     <string name="create_new_connections">Vill du skapa en anslutning nu?</string>
-    <string name="connection_options">Options for connection \'%s\'</string>
+    <string name="connection_options">Val för anslutning \'%s\'</string>
     <string name="cancel_connection">Kassera värden? Alla ändringar kommer att försvinna.</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
     <string name="delete_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
@@ -40,11 +39,11 @@
 
     <string name="pref_connections">Anslutningar</string>
     <string name="pref_name">Anslutningsnamn</string>
-    <string name="pref_name_sum">Fyll i ett unikt name på anslutningen</string>
+    <string name="pref_name_sum">Fyll i ett unikt namn på anslutningen</string>
     <string name="pref_name_error_empty">Namnet får inte vara blankt.</string>
     <string name="pref_name_error_invalid">Namnet får endast innehålla bokstäver, siffror minus och understreck.</string>
     <string name="pref_selected">Standardanslutning</string>
-    <string name="pref_selected_sum">Välj för att göra denna anslutning till standard och använda den när applikationen startat.</string>
+    <string name="pref_selected_sum">Välj för att göra denna anslutning till standard och använda den när applikationen startar.</string>
     <string name="pref_host">Värdnamn</string>
     <string name="pref_host_sum">Fyll i serverns värdnamn</string>
     <string name="pref_host_error_empty">Serverns IP-address eller värdnamn får inte vara blankt.</string>
@@ -52,9 +51,9 @@
     <string name="pref_port">Port</string>
     <string name="pref_port_sum">Fyll i serverport</string>
     <string name="pref_port_error_empty">Portnummret får inte vara blankt.</string>
-    <string name="pref_port_error_invalid">Portnummret är inte giltigtT. Specificera ett värde mellan 1 och 65535.</string>
+    <string name="pref_port_error_invalid">Portnummret är inte giltigt. Specificera ett värde mellan 1 och 65535.</string>
     <string name="pref_streaming_port">Port för mediaström</string>
-    <string name="pref_streaming_port_sum">%d kommer användas för mediaström. Standardport är 9981 som normalt går att använda.</string>
+    <string name="pref_streaming_port_sum">%d kommer användas för mediaström. Standardport är 9981.</string>
     <string name="pref_user">Användarnamn</string>
     <string name="pref_user_sum">Fyll i användarnamn</string>
     <string name="pref_pass">Lösenord</string>
@@ -96,10 +95,8 @@
     <string name="pref_epg_hours_visible_sum">Definera hur många timmar som skall visas i programguiden på en skärm. För många timmar kommer visa för många program och försämmrar läsbarheten.</string>
     <string name="pref_epg_max_days">Max antal dagar att visa</string>
     <string name="pref_epg_max_days_sum">Definera max antal dagar av programguiden att visa.</string>
-    <string name="pref_programs_to_load">Antal program att ladda</string>
-    <string name="pref_programs_to_load_sum">Hur många program skall hämtas på en gång från servern. Högre nummer ger längre ladd och uppdateringstider.</string>
     <string name="pref_genre_colors">Aktivera genrefärger</string>
-    <string name="pref_genre_colors_sum">Specificera vilka skärmar som skall visa genre färger.</string>
+    <string name="pref_genre_colors_sum">Specificera vilka skärmar som skall visa genrefärger.</string>
     <string name="pref_genre_colors_channels">Kanaler</string>
     <string name="pref_genre_colors_channels_sum">Genrefärgen visas som en vertikal linje på vänster sida av kanallistvyn.</string>
     <string name="pref_genre_colors_programs">Program</string>
@@ -118,16 +115,16 @@
     
     <string-array name="pr_content_type0">
         <item>Film/Drama</item>
-        <item>Nyheter/Aktuellt</item>
+        <item>Nyheter/Aktualitet</item>
         <item>Show/Tävling</item>
         <item>Sport</item>
         <item>Barn/Ungdom</item>
-        <item>Musik/Ballett/Dans</item>
+        <item>Musik/Balett/Dans</item>
         <item>Konst/Kultur</item>
-        <item>Sammhälle/Politik/Ekonomi</item>
+        <item>Samhälle/Politik/Ekonomi</item>
         <item>Utbildning/Forskning/Fakta</item>
         <item>Fritidsintressen</item>
-        <item></item>
+        <item>Diverse</item>
     </string-array>
 
     <string-array name="pr_content_type1">
@@ -136,14 +133,14 @@
         <item>Äventyr/Västern/Krig</item>
         <item>Science Fiction/Fantasy/Skräck</item>
         <item>Komedi</item>
-        <item>Såpa/Melodrama/Folkloric</item>
+        <item>Såpa/Melodrama/folklorisk</item>
         <item>Romantik</item>
-        <item>Seriöst/Religion/Historia</item>
+        <item>Seriöst/Religion/Historisk</item>
         <item>Vuxenfilm/Drama</item>
     </string-array>
 
     <string-array name="pr_content_type2">
-        <item>Nyheter/Aktuellt</item>
+        <item>Nyheter/Aktualitet</item>
         <item>Nyheter/Väder</item>
         <item>Magasin</item>
         <item>Dokumentär</item>
@@ -152,7 +149,7 @@
 
     <string-array name="pr_content_type3">
         <item>Show/Tävling</item>
-        <item>Tävling/Frågesport/Match</item>
+        <item>Tävling/Frågesport</item>
         <item>Revy</item>
         <item>Pratshow</item>
     </string-array>
@@ -182,13 +179,13 @@
     </string-array>
     
     <string-array name="pr_content_type6">
-        <item>Musik/Ballett/Dans</item>
+        <item>Musik/Balett/Dans</item>
         <item>Rock/Pop</item>
         <item>Seriöst/Klassiskt</item>
         <item>Folkmusik/Traditionellt</item>
         <item>Jazz</item>
         <item>Musikal/Opera</item>
-        <item>Ballett</item>
+        <item>Balett</item>
     </string-array>
 
     <string-array name="pr_content_type7">
@@ -220,7 +217,7 @@
         <item>Teknik/Naturvetenskap</item>
         <item>Medicin/Fysik/Psykologi</item>
         <item>Utrikes/Expeditioner</item>
-        <item>Sammhälle/Andlighet</item>
+        <item>Samhälle/Andlighet</item>
         <item>Vidareutbildning</item>
         <item>Språk</item>
     </string-array>
@@ -237,8 +234,8 @@
     </string-array>
 
     <string-array name="pr_content_type11">
-        <item>Blandat</item>
-        <item>Svart och Vitt</item>
+        <item>Diverse</item>
+        <item>Svartvit</item>
         <item>Opublicerat</item>
         <item>Livesändning</item>
     </string-array>
@@ -247,7 +244,7 @@
     <string name="no_data">Programinformation ej tillgänglig</string>
     <string name="minutes">%d min</string>
     
-    <string name="search_hint">Sök i EPG</string>
+    <string name="search_hint">Sök i programguide</string>
     <string name="yesterday">Igår</string>
     <string name="today">Idag</string>
     <string name="tomorrow">Imorgon</string>
@@ -301,9 +298,7 @@
     <string name="available">Tillgänglig</string>
     <string name="unknown">Okänd</string>
     <string name="select_timeframe">Visa programguide för valt datum och tid.</string>
-
     <string name="currently_recording">Pågående inspelning</string>
-    <string name="restart_application">Vänligen starta om applikationen för att aktivera det nya temat.</string>
     
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="show_play_store">Vill du söka efter tillgängliga mediaspelare på Google Play Store?</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">TVHGuide</string>
+    <string name="app_name">TVHClient</string>
 
     <string name="menu_settings">Settings</string>
     <string name="menu_refresh">Refresh</string>
@@ -118,7 +118,7 @@
         <item>News/Current affairs</item>
         <item>Show/Game show</item>
         <item>Sports</item>
-        <item>Children\'s / Youth</item>
+        <item>Children\'s/Youth</item>
         <item>Music/Ballet/Dance</item>
         <item>Arts/Culture</item>
         <item>Social/Political issues/Economics</item>
@@ -170,7 +170,7 @@
     </string-array>
 
     <string-array name="pr_content_type5">
-        <item>Children\'s / Youth</item>
+        <item>Children\'s/Youth</item>
         <item>Pre-school</item>
         <item>Entertainment (6 to 14 year-olds)</item>
         <item>Entertainment (10 to 16 year-olds)</item>

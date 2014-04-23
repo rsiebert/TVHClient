@@ -80,15 +80,16 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
 
         recList = new ArrayList<Recording>();
         adapter = new RecordingListAdapter(activity, recList);
@@ -123,6 +124,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     }
 
     @Override
+    public void onDetach() {
+        actionBarInterface = null;
+        super.onDetach();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
@@ -152,6 +159,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         // the menu items depending on the recording state
         menu.setHeaderTitle(rec.title);
         Utils.setRecordingMenu(menu, rec);
+        Utils.setRecordingMenuIcons(activity, menu, rec);
     }
 
     @Override

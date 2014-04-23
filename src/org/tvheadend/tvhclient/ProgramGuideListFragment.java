@@ -122,18 +122,19 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (FragmentActivity) activity;
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (activity instanceof ProgramGuideInterface) {
-            programGuideInterface = (ProgramGuideInterface) activity;
-        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        if (activity instanceof ProgramGuideInterface) {
+            programGuideInterface = (ProgramGuideInterface) activity;
+        }
 
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
@@ -345,6 +346,13 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        programGuideInterface = null;
+        actionBarInterface = null;
+        super.onDetach();
     }
 
     /**

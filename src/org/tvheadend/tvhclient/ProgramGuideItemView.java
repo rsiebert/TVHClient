@@ -125,35 +125,37 @@ public class ProgramGuideItemView extends LinearLayout {
         
         try {
             // Go through all programs and add them to the view
-            Iterator<Program> it = channel.epg.iterator();
-            Program p = null;
-            while (it.hasNext()) {
-                p = it.next();
-
-                // Get the type of the program and add it to the view
-                programType = getProgramType(p);
-                addCurrentProgram(p, programType, programsAddedCounter);
-
-				// Check if the program has been added. Required further down to
-				// check if it was the last one added 
-                programAdded = (programType != PROGRAM_OUTSIDE_OF_TIMESLOT);
-                
-				// Increase the counter which is required to fill in placeholder
-				// programs in case the first program in the guide data is
-				// already within the time slot and not one that moves into one.
-                if (programAdded) {
-                	programsAddedCounter += 1;
-                }
-                // Check if there is more guide data available
-                lastProgramFound = !it.hasNext();
-                
-				// Stop adding more programs if the last program is within the 
-				// time slot and no more data is available or the program added 
-				// is the last one that fits into or overlaps the time slot.
-                if ((programType == PROGRAM_IS_WITHIN_TIMESLOT && lastProgramFound) ||
-	                programType == PROGRAM_MOVES_OUT_OF_TIMESLOT || 
-                    programType == PROGRAM_OVERLAPS_TIMESLOT) {
-                    break;
+            synchronized(channel.epg) {
+                Iterator<Program> it = channel.epg.iterator();
+                Program p = null;
+                while (it.hasNext()) {
+                    p = it.next();
+    
+                    // Get the type of the program and add it to the view
+                    programType = getProgramType(p);
+                    addCurrentProgram(p, programType, programsAddedCounter);
+    
+    				// Check if the program has been added. Required further down to
+    				// check if it was the last one added 
+                    programAdded = (programType != PROGRAM_OUTSIDE_OF_TIMESLOT);
+                    
+    				// Increase the counter which is required to fill in placeholder
+    				// programs in case the first program in the guide data is
+    				// already within the time slot and not one that moves into one.
+                    if (programAdded) {
+                    	programsAddedCounter += 1;
+                    }
+                    // Check if there is more guide data available
+                    lastProgramFound = !it.hasNext();
+                    
+    				// Stop adding more programs if the last program is within the 
+    				// time slot and no more data is available or the program added 
+    				// is the last one that fits into or overlaps the time slot.
+                    if ((programType == PROGRAM_IS_WITHIN_TIMESLOT && lastProgramFound) ||
+    	                programType == PROGRAM_MOVES_OUT_OF_TIMESLOT || 
+                        programType == PROGRAM_OVERLAPS_TIMESLOT) {
+                        break;
+                    }
                 }
             }
         }

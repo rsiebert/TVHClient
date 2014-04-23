@@ -275,7 +275,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
                     Utils.connect(this, true);
                 }
             }
-        } else if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
+        } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
             if (resultCode == RESULT_OK) {
                 // Reload all data from the server
                 if (data.getBooleanExtra("reconnect", false)) {
