@@ -16,6 +16,7 @@ import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramGuideScrollingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
@@ -31,7 +32,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,7 +50,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class ProgramGuideListFragment extends Fragment implements HTSListener, ProgramContextMenuInterface {
+public class ProgramGuideListFragment extends Fragment implements HTSListener, ProgramContextMenuInterface, ProgramGuideScrollingInterface {
 
     private final static String TAG = ProgramGuideListFragment.class.getSimpleName();
 
@@ -68,6 +68,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     private ImageView currentTimeIndication;
     private Bundle bundle;
     private Program selectedProgram = null;
+
+    private boolean enableScrolling = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -138,7 +140,30 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
 
-        setOnScrollListener();
+        // When the user has scrolled the program guide data list, inform the
+        // activity about it so it can also scroll the channel list 
+        listView.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    enableScrolling = true;
+                } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
+                    if (programGuideInterface != null) {
+                        enableScrolling = false;
+                        programGuideInterface.onScrollStateIdle(TAG);
+                    }
+                }
+            }
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (programGuideInterface != null && enableScrolling) {
+                    int index = view.getFirstVisiblePosition();
+                    View v = view.getChildAt(0);
+                    int position = (v == null) ? 0 : v.getTop();
+                    programGuideInterface.onScrollingChanged(index, position, TAG);
+                }
+            }
+        });
 
         // Allow the selection of the items within the list
         listView.setItemsCanFocus(true);
@@ -183,49 +208,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             }
         };
         timer.schedule(doAsynchronousTask, 0, 60000);
-    }
-
-    public void setOnScrollListener() {
-        Log.i(TAG, "setOnScrollListener");
-        // When the user has scrolled the program guide data list, inform the
-        // activity about it so it can also scroll the channel list 
-        listView.setOnScrollListener(new OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    if (programGuideInterface != null) {
-                        programGuideInterface.onScrollStateIdle(TAG);
-                    }
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (programGuideInterface != null) {
-                    int index = view.getFirstVisiblePosition();
-                    View v = view.getChildAt(0);
-                    int position = (v == null) ? 0 : v.getTop();
-                    programGuideInterface.onScrollingChanged(index, position, TAG);
-                }
-            }
-        });
-    }
-
-    public void unsetOnScrollListener() {
-        Log.i(TAG, "unsetOnScrollListener");
-        listView.setOnScrollListener(null);
-    }
-
-    public void scrollListViewTo(int index) {
-        if (listView != null) {
-            listView.setSelection(index);
-        }
-    }
-
-    public void scrollListViewToPosition(int index, int pos) {
-        if (listView != null) {
-            listView.setSelectionFromTop(index, pos);
-        }
     }
 
     @Override
@@ -491,5 +473,19 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     public void setMenuSelection(MenuItem item) {
         onContextItemSelected(item);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void scrollListViewTo(int index) {
+        if (listView != null) {
+            listView.setSelection(index);
+        }
+    }
+
+    @Override
+    public void scrollListViewToPosition(int index, int pos) {
+        if (listView != null) {
+            listView.setSelectionFromTop(index, pos);
+        }
     }
 }

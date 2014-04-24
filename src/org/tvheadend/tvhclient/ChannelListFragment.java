@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramGuideScrollingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
@@ -40,7 +41,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -56,7 +56,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class ChannelListFragment extends Fragment implements HTSListener {
+public class ChannelListFragment extends Fragment implements HTSListener, ProgramGuideScrollingInterface {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
@@ -75,6 +75,8 @@ public class ChannelListFragment extends Fragment implements HTSListener {
     // program guide where only the channel icon is relevant.
     private int viewLayout = R.layout.list_layout;
     private int adapterLayout = R.layout.channel_list_widget;
+
+    private boolean enableScrolling = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -136,8 +138,30 @@ public class ChannelListFragment extends Fragment implements HTSListener {
             }
         });
 
-        setOnScrollListener();
-        
+        // Inform the parent activity about the state of scrolling. 
+        listView.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    enableScrolling = true;
+                } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
+                    if (programGuideInterface != null) {
+                        enableScrolling = false;
+                        programGuideInterface.onScrollStateIdle(TAG);
+                    }
+                }
+            }
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (programGuideInterface != null && enableScrolling) {
+                    int index = view.getFirstVisiblePosition();
+                    View v = view.getChildAt(0);
+                    int position = (v == null) ? 0 : v.getTop();
+                    programGuideInterface.onScrollingChanged(index, position, TAG);
+                }
+            }
+        });
+
         // Create the dialog where the user can select the different tags
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.menu_tags);
@@ -156,36 +180,6 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         if (activity instanceof ChannelListTabsActivity) {
             registerForContextMenu(listView);
         }
-    }
-
-    public void setOnScrollListener() {
-        Log.i(TAG, "setOnScrollListener");
-        // Inform the parent activity about the state of scrolling. 
-        listView.setOnScrollListener(new OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    if (programGuideInterface != null) {
-                        programGuideInterface.onScrollStateIdle(TAG);
-                    }
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (programGuideInterface != null) {
-                    int index = view.getFirstVisiblePosition();
-                    View v = view.getChildAt(0);
-                    int position = (v == null) ? 0 : v.getTop();
-                    programGuideInterface.onScrollingChanged(index, position, TAG);
-                }
-            }
-        });
-    }
-
-    public void unsetOnScrollListener() {
-        Log.i(TAG, "unsetOnScrollListener");
-        listView.setOnScrollListener(null);
     }
 
     @Override
@@ -503,29 +497,13 @@ public class ChannelListFragment extends Fragment implements HTSListener {
         }
     }
 
-    /**
-     * Scrolls the channel list to the given position. The scrolling is not per
-     * pixel but only per row. This is used when the program guide screen is
-     * visible. The channel list is scrolled parallel with the program guide
-     * view.
-     * 
-     * @param index The index (starting at 0) of the channel item to be selected
-     */
+    @Override
     public void scrollListViewTo(int index) {
         if (listView != null)
             listView.setSelection(index);
     }
 
-    /**
-     * Scrolls the channel list to the given pixel position. The scrolling is
-     * accurate because the pixel value is used. This method is also used when
-     * the program guide screen is visible. The channel list is scrolled
-     * parallel with the program guide.
-     * 
-     * @param index The index (starting at 0) of the channel item to be selected
-     * @param pos The distance from the top edge of the channel list that the
-     *            item will be positioned.
-     */
+    @Override
     public void scrollListViewToPosition(int index, int pos) {
         if (listView != null) {
             listView.setSelectionFromTop(index, pos);
