@@ -539,7 +539,8 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
 
     @Override
     public void onScrollStateIdle(final String tag) {
-        // Scroll all program guide fragments to the desired position
+        // Scroll all program guide fragments in the current view pager to the
+        // same position.
         for (int i = 0; i < fragmentCount; ++i) {
             ProgramGuideScrollingInterface f = (ProgramGuideScrollingInterface) getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
             if (f != null) {
@@ -550,20 +551,21 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
 
     @Override
     public void onScrollingChanged(final int index, final int pos, final String tag) {
-
+        // Save the values globally so these values can be reused after an
+        // orientation change.
         scrollingSelectionIndex = index;
         scrollingSelectionPosition = pos;
 
         if (tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
-            
-            // Disable channel list scrolling
+            // Keep the channel list in sync by scrolling it to the same position
             ProgramGuideScrollingInterface c = (ProgramGuideScrollingInterface) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
             if (c != null) {
                 c.scrollListViewToPosition(index, pos);
             }
         }
         else if (tag.equals(ChannelListFragment.class.getSimpleName())) {
-            // Scroll the list in the currently visible program guide fragment
+            // Keep the currently visible program guide list in sync by
+            // scrolling it to the same position
             ProgramGuideScrollingInterface p = (ProgramGuideScrollingInterface) getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":0");
             if (p != null) {
                 p.scrollListViewToPosition(index, pos);
@@ -571,22 +573,11 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
-    /**
-     * Returns the index of of the first list item that is visible. The method
-     * used is listView.getFirstVisiblePosition(). This can be used to jump to
-     * certain positions in the list. No smooth scrolling is possible with this.
-     * 
-     * @return
-     */
     @Override
     public int getScrollingSelectionIndex() {
         return scrollingSelectionIndex;
     }
 
-    /**
-     * 
-     * @return
-     */
     @Override
     public int getScrollingSelectionPosition() {
         return scrollingSelectionPosition;

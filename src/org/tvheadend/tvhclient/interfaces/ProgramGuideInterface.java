@@ -25,8 +25,23 @@ public interface ProgramGuideInterface {
      */
     public void onScrollStateIdle(final String tag);
 
+    /**
+     * Returns the index of the first list item that is visible. This can be
+     * used to scroll the list view to that position after an orientation
+     * change.
+     * 
+     * @return index of the first visible item in the list
+     */
     public int getScrollingSelectionIndex();
 
+    /**
+     * Returns the position offset of the first list item that is visible from
+     * the top. This can be used to scroll to a certain position after an
+     * orientation change. This value is in pixels so scrolling to the middle of
+     * a list can be done.
+     * 
+     * @return position offset in pixels of the first visible item from the top
+     */
     public int getScrollingSelectionPosition();
 
     boolean isChannelLoadingListEmpty();
