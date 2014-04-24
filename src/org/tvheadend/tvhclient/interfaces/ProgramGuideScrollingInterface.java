@@ -4,10 +4,9 @@ public interface ProgramGuideScrollingInterface {
 
     /**
      * Scrolls the list to the given position. The scrolling is not per pixel
-     * but only per row. This is used when the program guide screen is visible.
-     * The channel list is scrolled parallel with the program guide view.
+     * but only per row.
      * 
-     * @param index The index (starting at 0) of the list item to be selected
+     * @param index The id (starting from 0) of the list item to be selected
      */
     public void scrollListViewTo(int index);
 

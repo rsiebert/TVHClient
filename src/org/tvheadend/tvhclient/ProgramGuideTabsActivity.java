@@ -537,12 +537,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
-    /**
-     * When the user has scrolled within one fragment, the other available
-     * fragments in the view pager must be scrolled to the same position. Scroll
-     * the list view in every fragment that the view pager contains to the same
-     * position this fragment has.
-     */
     @Override
     public void onScrollStateIdle(final String tag) {
         // Scroll all program guide fragments to the desired position
@@ -554,11 +548,6 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
-    /**
-     * 
-     * @param index
-     * @param pos
-     */
     @Override
     public void onScrollingChanged(final int index, final int pos, final String tag) {
 

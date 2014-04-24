@@ -138,10 +138,13 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
             }
         });
 
-        // Inform the parent activity about the state of scrolling. 
+        // Create a scroll listener to inform the parent activity about
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // Enables scrolling when the user has touch the screen and
+                // starts scrolling. When the user is done, scrolling will be
+                // disabled to prevent unwanted calls to the interface. 
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
                     enableScrolling = true;
                 } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {

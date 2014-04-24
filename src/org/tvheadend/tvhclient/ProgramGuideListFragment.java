@@ -140,11 +140,13 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
 
-        // When the user has scrolled the program guide data list, inform the
-        // activity about it so it can also scroll the channel list 
+        // Create a scroll listener to inform the parent activity about
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // Enables scrolling when the user has touch the screen and
+                // starts scrolling. When the user is done, scrolling will be
+                // disabled to prevent unwanted calls to the interface.
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
                     enableScrolling = true;
                 } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
