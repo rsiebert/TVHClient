@@ -147,7 +147,9 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         MenuItem item = menu.findItem(R.id.menu_refresh);
         if (item != null) {
             TVHClientApplication app = (TVHClientApplication) getApplication();
-            item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
+            if (app != null && DatabaseHelper.getInstance() != null) { 
+                item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
+            }
         }
         return true;
     }
