@@ -1,6 +1,6 @@
 $ 1.2.1
   % VERSION 1.2.1
-  _ 23.04.2014
+  _ 01.05.2014
     * Updated Swedish translation
     * Updated Polish translation
     * Fixed channel icons not displaying in certain screens
