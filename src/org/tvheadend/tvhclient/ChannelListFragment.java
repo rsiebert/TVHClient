@@ -316,7 +316,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
         // class is used in the program guide where the channels are shown on
         // the the left side and shall scroll with the guide data.
         if (programGuideInterface != null) {
-            listView.setSelection(programGuideInterface.getScrollingSelectionIndex());
+            listView.setSelectionFromTop(
+                    programGuideInterface.getScrollingSelectionIndex(),
+                    programGuideInterface.getScrollingSelectionPosition());
         }
     }
 

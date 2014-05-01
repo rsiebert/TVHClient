@@ -247,7 +247,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         
         // Set the scroll position of the list view
         if (programGuideInterface != null) {
-            listView.setSelection(programGuideInterface.getScrollingSelectionIndex());
+            listView.setSelectionFromTop(
+                    programGuideInterface.getScrollingSelectionIndex(), 
+                    programGuideInterface.getScrollingSelectionPosition());
         } else {
             listView.setSelection(0);
         }
