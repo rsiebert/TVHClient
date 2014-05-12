@@ -110,7 +110,11 @@
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
-    
+
+    <string name="recording_file_missing">Recording is missing</string>
+    <string name="recording_time_missed">Scheduled recording was missed</string>
+    <string name="recording_file_invalid">Recording is invalid</string>
+
     <string-array name="pr_content_type0">
         <item>Movie/Drama</item>
         <item>News/Current affairs</item>
