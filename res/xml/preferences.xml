@@ -93,13 +93,6 @@
 	        android:key="pref_program_playback"
 	        android:title="@string/programs"
 	        android:summary="@string/pref_playback_programs_sum" >
-            <EditTextPreference
-                android:id="@+id/pref_host"
-                android:name="@string/pref_host"
-                android:summary="@string/pref_host_sum"
-                android:defaultValue="localhost"
-                android:title="@string/pref_host"
-                android:key="progServerHostPref" />
 	        <ListPreference
 	            android:name="@string/pref_container"
 	            android:summary="@string/pref_container_sum"
@@ -169,13 +162,6 @@
             android:key="pref_playback_recordings"
             android:title="@string/recordings"
             android:summary="@string/pref_playback_recordings_sum" >
-	        <EditTextPreference
-                android:id="@+id/pref_host"
-                android:name="@string/pref_host"
-                android:summary="@string/pref_host_sum"
-                android:defaultValue="localhost"
-                android:title="@string/pref_host"
-                android:key="recServerHostPref" />
             <ListPreference
                 android:name="@string/pref_container"
                 android:defaultValue="matroska"
