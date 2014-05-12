@@ -109,7 +109,9 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         }
 
         title.setText(rec.title);
-        channelName.setText(rec.channel.name);
+        if (rec.channel != null) {
+            channelName.setText(rec.channel.name);
+        }
         Utils.setState(state, rec);
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
