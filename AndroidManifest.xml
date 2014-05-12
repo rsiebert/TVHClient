@@ -36,7 +36,6 @@
         <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhclient.PlaybackSelectionActivity" />
         <activity android:name="org.tvheadend.tvhclient.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
-        <activity android:name="org.tvheadend.tvhclient.PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name="org.tvheadend.tvhclient.htsp.HTSService" android:enabled="true"/>
     </application>
 </manifest>
