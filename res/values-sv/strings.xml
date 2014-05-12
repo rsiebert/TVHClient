@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">TVHGuide</string>
 
-    <string name="menu_settings">Inställingar</string>
+    <string name="menu_settings">Inställningar</string>
     <string name="menu_refresh">Uppdatera</string>
     <string name="menu_tags">Taggar</string>
     <string name="menu_recordings">Inspelningar</string>
