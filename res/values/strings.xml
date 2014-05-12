@@ -83,8 +83,6 @@
     <string name="pref_playback_recordings_sum">Configure playback options for your recorded programs.</string>
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
-    <string name="pref_external">Prefer external player</string>
-    <string name="pref_external_sum">Use an external player (like BSPlayer or MXPlayer) for the program or recording.</string>
 
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Changelog</string>

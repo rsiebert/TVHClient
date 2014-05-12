@@ -83,8 +83,6 @@
     <string name="pref_playback_recordings_sum">Konfigurera uppspelningsval för inspelningar.</string>
     <string name="pref_transcode">Transkodera ström</string>
     <string name="pref_transcode_sum">Konvertera Live-TV eller inspelning till ett annat format under uppspelning. (Stöd för detta i TVHeadend-servern krävs)</string>
-    <string name="pref_external">Föredra extern mediaspelare</string>
-    <string name="pref_external_sum">Använd extern mediaspelare (exmpelvis BSPlayer eller MXPlayer) för Live-TV eller inspelningar.</string>
 
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Ändringslogg</string>

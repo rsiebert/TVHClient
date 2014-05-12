@@ -103,13 +103,6 @@
 	            android:entries="@array/pref_container_list_display"
 	            android:entryValues="@array/pref_container_list" />
 	        <CheckBoxPreference 
-	            android:id="@+id/pref_external"
-	            android:name="@string/pref_external"
-	            android:summary="@string/pref_external_sum"
-	            android:defaultValue="true"
-	            android:title="@string/pref_external"
-	            android:key="progExternalPref" />
-	        <CheckBoxPreference 
 	            android:id="@+id/pref_transcode"
 	            android:name="@string/pref_transcode"
 	            android:summary="@string/pref_transcode_sum"
@@ -171,13 +164,6 @@
                 android:key="recContainerPref"
                 android:summary="@string/pref_container_sum"
                 android:title="@string/pref_container" />
-            <CheckBoxPreference
-                android:id="@+id/pref_external"
-                android:name="@string/pref_external"
-                android:defaultValue="true"
-                android:key="recExternalPref"
-                android:summary="@string/pref_external_sum"
-                android:title="@string/pref_external" />
 	        <CheckBoxPreference 
 	            android:id="@+id/pref_transcode"
 	            android:name="@string/pref_transcode"
