@@ -78,82 +78,82 @@
     <string name="pref_container">Conteneur de média</string>
     <string name="pref_container_sum">Definir le conteneur de média qui devrait etre utilisé pour le transport des flux audio et vidéo. Matroshka est habituellement le meilleur choix.</string>
     
-    <string name="pref_playback">Playback</string>
-    <string name="pref_playback_programs_sum">Configure playback options for the Live-TV programs.</string>
-    <string name="pref_playback_recordings_sum">Configure playback options for your recorded programs.</string>
-    <string name="pref_transcode">Transcode stream</string>
-    <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
+    <string name="pref_playback">Lecture</string>
+    <string name="pref_playback_programs_sum">Configure les options de lecture pour les  programmes en direct.</string>
+    <string name="pref_playback_recordings_sum">Configure les options de lecture pour les  programmes enregistrés.</string>
+    <string name="pref_transcode">Transcodage des flux</string>
+    <string name="pref_transcode_sum">Convertir les emmissions ou enregistrements dans un autre format durant la lectue. (Cela doit etre supporté par le serveur TVHeadend)</string>
 
     <string name="pref_information">Information</string>
-    <string name="pref_changelog">Changelog</string>
-    <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
-    <string name="pref_program_guide">Program guide</string>
-    <string name="pref_program_guide_sum">Configure the program guide screen and how the data shall be displayed.</string>
-    <string name="pref_epg_hours_visible">Hours visible</string>
-    <string name="pref_epg_hours_visible_sum">Define how many hours of the program guide shall be shown on one screen. Too many hours will display too many programs and thus clutters the screen and decrease the readability.</string>
-    <string name="pref_epg_max_days">Maximum days to show</string>
-    <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
-    <string name="pref_genre_colors">Genre colors</string>
-    <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
-    <string name="pref_genre_colors_channels">Channels</string>
-    <string name="pref_genre_colors_channels_sum">The genre color will be shown as a vertical line on the left side of the channel list screen.</string>
-    <string name="pref_genre_colors_programs">Programs</string>
-    <string name="pref_genre_colors_programs_sum">The genre color will be shown as a vertical line on the left side of the program lists and the program details screen.</string>
-    <string name="pref_genre_colors_epg">Program guide</string>
-    <string name="pref_genre_colors_epg_sum">Shows the genre color in the background of each program guide item.</string>
-    <string name="pref_genre_colors_search_results">Search results</string>
-    <string name="pref_genre_colors_search_results_sum">The genre color will be shown as a vertical line on the left side of the search result list.</string>
-    <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
-    <string name="pref_genre_colors_visibility">Genre color visibility</string>
+    <string name="pref_changelog">Versions</string>
+    <string name="pref_changelog_sum">Montre la liste des changements et nouveautés des differentes versions de l\'application.</string>
+    <string name="pref_program_guide">Guide des programmes</string>
+    <string name="pref_program_guide_sum">Configure le guide des programmes et l\'apparence des données.</string>
+    <string name="pref_epg_hours_visible">Heures visible</string>
+    <string name="pref_epg_hours_visible_sum">Défini le nombre d\’heure de la plage horaire. Un temps trop grand montrera trop de programmes et baissera la lisibilité de la grille.</string>
+    <string name="pref_epg_max_days">Nombre de jours a presenter</string>
+    <string name="pref_epg_max_days_sum">Defini le nombre maximum de jour que dois presenter le guide des programmes.</string>
+    <string name="pref_genre_colors">Couleurs des types d\'emssions</string>
+    <string name="pref_genre_colors_sum">Specifie la couleurs des types d\'emssions.</string>
+    <string name="pref_genre_colors_channels">Chaines</string>
+    <string name="pref_genre_colors_channels_sum">La couleur sera montrée par une ligne verticale sur la gauche de l\'ecran de la liste des chaines.</string>
+    <string name="pref_genre_colors_programs">Programmes</string>
+    <string name="pref_genre_colors_programs_sum">La couleur sera montrée par une ligne verticale sur la gauche de la liste des programmes et de l\'ecran de details des programmes.</string>
+    <string name="pref_genre_colors_epg">Guide des programmes</string>
+    <string name="pref_genre_colors_epg_sum">La couleur sera montrée en fond de chaque elements du guide de programme.</string>
+    <string name="pref_genre_colors_search_results">Resultats de la recherche</string>
+    <string name="pref_genre_colors_search_results_sum">La couleur sera montrée par une ligne verticale sur la gauche de la liste des resultats.</string>
+    <string name="pref_genre_colors_visibility_message">Parametre la visibilité des couleurs. Plus la valeur est grande, plus la couleur sera foncée.</string>
+    <string name="pref_genre_colors_visibility">visibilité des couleurs de genre</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
 
-    <string name="err_auth">Access denied</string>
-    <string name="err_connect">Can\'t connect to server</string>
-    <string name="err_con_lost">Lost connection to server</string>
+    <string name="err_auth">Acces refusé</string>
+    <string name="err_connect">Impossible de se connecter au serveur</string>
+    <string name="err_con_lost">Connexion au serveur perdue</string>
 
-    <string name="recording_file_missing">Recording is missing</string>
-    <string name="recording_time_missed">Scheduled recording was missed</string>
-    <string name="recording_file_invalid">Recording is invalid</string>
+    <string name="recording_file_missing">L\'enregistrement est manquant</string>
+    <string name="recording_time_missed">L\'heure programmée est dépassée</string>
+    <string name="recording_file_invalid">Le fichier esst defectueux</string>
 
     <string-array name="pr_content_type0">
-        <item>Movie/Drama</item>
-        <item>News/Current affairs</item>
-        <item>Show/Game show</item>
+        <item>Film/Theatre</item>
+        <item>Journal/Actualité</item>
+        <item>Emission/Jeu</item>
         <item>Sports</item>
-        <item>Children\'s/Youth</item>
-        <item>Music/Ballet/Dance</item>
+        <item>Enfant/Jeunesse</item>
+        <item>Musique/Ballet/Dance</item>
         <item>Arts/Culture</item>
-        <item>Social/Political issues/Economics</item>
-        <item>Education/Science/Factual</item>
-        <item>Leisure hobbies</item>
-        <item>Misc</item>
+        <item>Social/Politique/Economie</item>
+        <item>Education/Science/Fait</item>
+        <item>Loisir</item>
+        <item>Divers</item>
     </string-array>
 
     <string-array name="pr_content_type1">
-        <item>Movie/Drama</item>
-        <item>Detective/Thriller</item>
-        <item>Adventure/Western/War</item>
-        <item>Science Fiction/Fantasy/Horror</item>
-        <item>Comedy</item>
-        <item>Soap/Melodrama/Folkloric</item>
+        <item>Film/Théâtre</item>
+        <item>Detective/Suspence</item>
+        <item>Aventure/Western/Guerre</item>
+        <item>Science Fiction/Fantastique/Horreur</item>
+        <item>Comedie</item>
+        <item>Feuilleton/Mélodrame/Folklore</item>
         <item>Romance</item>
-        <item>Serious/ClassicalReligion/Historical</item>
-        <item>Adult Movie/Drama</item>
+        <item>Sérieux/Religieux/Histoire</item>
+        <item>Pour Adult/Théâtre</item>
     </string-array>
 
     <string-array name="pr_content_type2">
-        <item>News/Current affairs</item>
-        <item>News/Weather Report</item>
-        <item>Magazine</item>
-        <item>Documentary</item>
-        <item>Discussion/Interview/Debate</item>
+        <item>Journal/Actualité</item>
+        <item>Journal/Météo</item>
+        <item>Magasine</item>
+        <item>Documentaire</item>
+        <item>Discussion/Interview/Débat</item>
     </string-array>
 
     <string-array name="pr_content_type3">
-        <item>Show/Game show</item>
-        <item>Game show/Quiz/Contest</item>
-        <item>Variety</item>
-        <item>Talk</item>
+        <item>Emission/Jeu</item>
+        <item>Jeu/Quiz/Concour</item>
+        <item>Variété</item>
+        <item>Débat</item>
     </string-array>
     
     <string-array name="pr_content_type4">
