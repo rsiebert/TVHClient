@@ -158,150 +158,150 @@
     
     <string-array name="pr_content_type4">
         <item>Sports</item>
-        <item>Special Event</item>
-        <item>Magazine</item>
-        <item>Football/Soccer</item>
+        <item>Evenement special</item>
+        <item>Magasine</item>
+        <item>Football</item>
         <item>Tennis/Squash</item>
-        <item>Team sports</item>
-        <item>Athletics</item>
-        <item>Motor Sport</item>
-        <item>Water Sport</item>
-        <item>Winter Sports</item>
-        <item>Equestrian</item>
-        <item>Martial sports</item>
+        <item>Sports d\'equipe</item>
+        <item>Athletisme</item>
+        <item>Sport Motorisé</item>
+        <item>Sport nautique</item>
+        <item>Sports d\'hivers</item>
+        <item>Sports Equestres</item>
+        <item>Arts Martiaux</item>
     </string-array>
 
     <string-array name="pr_content_type5">
-        <item>Children\'s/Youth</item>
-        <item>Pre-school</item>
-        <item>Entertainment (6 to 14 year-olds)</item>
-        <item>Entertainment (10 to 16 year-olds)</item>
-        <item>Informational/Educational/Schools</item>
-        <item>Cartoons/Puppets</item>
+        <item>Enfants/Jeunesse</item>
+        <item>Préscolaire</item>
+        <item>Divertissement (de 6 a 14 ans)</item>
+        <item>Divertissement (de 10 a 16 ans)</item>
+        <item>Information/Education/Ecoles</item>
+        <item>Dessins animés/Marionnettes</item>
     </string-array>
     
     <string-array name="pr_content_type6">
-        <item>Music/Ballet/Dance</item>
+        <item>Musique/Ballet/Dance</item>
         <item>Rock/Pop</item>
-        <item>Serious music/Classical Music</item>
-        <item>Folk/Traditional music</item>
+        <item>Musique classique</item>
+        <item>Folk/Musique Traditionelle</item>
         <item>Jazz</item>
-        <item>Musical/Opera</item>
+        <item>Comédie Musicale/Opéra</item>
         <item>Ballet</item>
     </string-array>
 
     <string-array name="pr_content_type7">
         <item>Arts/Culture</item>
-        <item>Performing Arts</item>
-        <item>Fine Arts</item>
+        <item>Arts du spectacle</item>
+        <item>Beaux-Arts</item>
         <item>Religion</item>
-        <item>Popular Culture/Tradital Arts</item>
+        <item>Culture populaire/Arts traditionnels</item>
         <item>Literature</item>
-        <item>Film/Cinema</item>
-        <item>Experimental Film/Video</item>
-        <item>Broadcasting/Press</item>
-        <item>New Media</item>
-        <item>Magazine</item>
-        <item>Fashion</item>
+        <item>Film/Cinéma</item>
+        <item>Film Experimental/Vidéo</item>
+        <item>Emissions/Presse</item>
+        <item>Média d\'information</item>
+        <item>Magasine</item>
+        <item>Mode</item>
     </string-array>
 
     <string-array name="pr_content_type8">
-        <item>Social/Political issues/Economics</item>
-        <item>Magazine/Report/Domentary</item>
-        <item>Economics/Social Advisory</item>
-        <item>Remarkable People</item>
+        <item>Social/Questions Politiques/Economies</item>
+        <item>Magasine/Reportage/Domentaire</item>
+        <item>Economies/Emission Sociale</item>
+        <item>Celebrités</item>
     </string-array>
 
     
     <string-array name="pr_content_type9">
-        <item>Education/Science/Factual</item>        
-        <item>Nature/Animals/Environment</item>
-        <item>Technology/Natural sciences</item>
-        <item>Medicine/Physiology/Psychology</item>
-        <item>Foreign Countries/Expeditions</item>
-        <item>Social/Spiritual Sciences</item>
-        <item>Further Education</item>
-        <item>Languages</item>
+        <item>Education/Science/Factuel</item>        
+        <item>Nature/Animaux/Environement</item>
+        <item>Technologie/Sciences naturelles</item>
+        <item>Medecine/Physiologie/Psychologie</item>
+        <item>Pays etrangers/Expéditions</item>
+        <item>Social/Sciences spirituelles</item>
+        <item>Education (autre)</item>
+        <item>Langues etrangeres</item>
     </string-array>
 
     <string-array name="pr_content_type10">
-        <item>Leisure hobbies</item>
-        <item>Tourism/Travel</item>
-        <item>Handicraft</item>
-        <item>Motoring</item>
-        <item>Fitness and Health</item>
-        <item>Cooking</item>
-        <item>Advertisement/Shopping</item>
-        <item>Gardening</item>
+        <item>Passions/Loisirs</item>
+        <item>Tourisme/Voyage</item>
+        <item>Travail artisanal</item>
+        <item>Voiture</item>
+        <item>Sport et santé</item>
+        <item>Cuisine</item>
+        <item>Publicité/Shopping</item>
+        <item>Jardinage</item>
     </string-array>
 
     <string-array name="pr_content_type11">
-        <item>Misc</item>
-        <item>Black and White</item>
-        <item>Unpublished</item>
-        <item>Live Broadcast</item>
+        <item>Divers</item>
+        <item>Noir et blanc</item>
+        <item>Inédit</item>
+        <item>Emission en direct</item>
     </string-array>
 
-    <string name="no_transmission">No transmission</string>
-    <string name="no_data">No program data available</string>
+    <string name="no_transmission">Aucune transmission</string>
+    <string name="no_data">Auncun programme disponible</string>
     <string name="minutes">%d min</string>
     
-    <string name="search_hint">Search the EPG</string>
-    <string name="yesterday">Yesterday</string>
-    <string name="today">Today</string>
-    <string name="tomorrow">Tomorrow</string>
-    <string name="in_2_days">In 2 days</string>
-    <string name="monday">Monday</string>
-    <string name="tuesday">Tuesday</string>
-    <string name="wednesday">Wednesday</string>
-    <string name="thursday">Thursday</string>
-    <string name="friday">Friday</string>
-    <string name="saturday">Saturday</string>
-    <string name="sunday">Sunday</string>
+    <string name="search_hint">Recherche de l\'EPG</string>
+    <string name="yesterday">Hier</string>
+    <string name="today">Aujourd'\hui</string>
+    <string name="tomorrow">Demain</string>
+    <string name="in_2_days">dans 2 jours</string>
+    <string name="monday">Lundi</string>
+    <string name="tuesday">Mardi</string>
+    <string name="wednesday">Mercredi</string>
+    <string name="thursday">Jeudi</string>
+    <string name="friday">Vendredi</string>
+    <string name="saturday">Samedi</string>
+    <string name="sunday">Dimanche</string>
 
-    <string name="programs">Programs</string>
-    <string name="completed">Completed</string>
-    <string name="upcoming">Upcoming</string>
-    <string name="failed">Failed</string>
+    <string name="programs">Programmes</string>
+    <string name="completed">Fini</string>
+    <string name="upcoming">A venir</string>
+    <string name="failed">Echec</string>
     
-    <string name="channels">Channels</string>
-    <string name="recordings">Recordings</string>
-    <string name="program_guide">Program guide</string>
-    <string name="status">Status</string>
-    <string name="items">Items</string>
-    <string name="results">Results</string>
+    <string name="channels">Chaines</string>
+    <string name="recordings">Enregistrements</string>
+    <string name="program_guide">guide des programmes</string>
+    <string name="status">Etat</string>
+    <string name="items">Elements</string>
+    <string name="results">Résultats</string>
     
-    <string name="channel_icon">Channel icon</string>
-    <string name="status_icon">Status icon</string>
-    <string name="title">Title</string>
-    <string name="channel">Channel</string>
-    <string name="time">Time</string>
+    <string name="channel_icon">Logo de la chaine</string>
+    <string name="status_icon">Icone d\'état</string>
+    <string name="title">Titre</string>
+    <string name="channel">Chaîne</string>
+    <string name="time">Heure</string>
     <string name="date">Date</string>
-    <string name="shown_on_channel">on</string>
-    <string name="summary">Summary</string>
+    <string name="shown_on_channel">On</string>
+    <string name="summary">Résumé</string>
     <string name="description">Description</string>
-    <string name="duration">Duration</string>
-    <string name="airing">Airing</string>
-    <string name="rating">Rating</string>
-    <string name="content_type">Content type</string>
-    <string name="series_information">Series information</string>
-    <string name="genre_color_list">List of genre colors and their meaning.</string>
+    <string name="duration">Durée</string>
+    <string name="airing">Diffusion</string>
+    <string name="rating">Notation</string>
+    <string name="content_type">Contenu</string>
+    <string name="series_information">Informations</string>
+    <string name="genre_color_list">Liste des couleurs de genre et leurs significations.</string>
 
-    <string name="nothing">Nothing</string>
-    <string name="loading">Loading&#8230;</string>
-    <string name="all_channels">All channels</string>    
-    <string name="season">Season</string>
+    <string name="nothing">Rien</string>
+    <string name="loading">Chargement&#8230;</string>
+    <string name="all_channels">Toutes les chaines</string>    
+    <string name="season">Saison</string>
     <string name="episode">Episode</string>
-    <string name="part">Part</string>
-    <string name="progress">%1$d%% of the show already shown</string>
+    <string name="part">Partie</string>
+    <string name="progress">%1$d%% du programme déjà diffusé</string>
     
-    <string name="disc_space">Disc space</string>
+    <string name="disc_space">Espace disque</string>
     <string name="total">Total</string>
-    <string name="available">Available</string>
-    <string name="unknown">Unknown</string>
-    <string name="select_timeframe">Show the program guide for the selected date and time.</string>
-    <string name="currently_recording">Currently recording</string>
+    <string name="available">Disponible</string>
+    <string name="unknown">Inconnu</string>
+    <string name="select_timeframe">Guide des programmes pour la date et l\'heure séléctionnée.</string>
+    <string name="currently_recording">En cours d\'enregistrement</string>
     
-    <string name="no_media_player">No media player found</string>
-    <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
+    <string name="no_media_player">Pas de lecteur trouvé</string>
+    <string name="show_play_store">Voulez-vous aller dans le Store Google Play et rechercher les lecteurs disponibles?</string>
 </resources>
