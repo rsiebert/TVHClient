@@ -38,6 +38,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -65,6 +66,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     private ListView listView;
     private Channel channel;
     private boolean isLoading = false;
+    private boolean isDualPane = false;
 
     private static int newProgramsLoadedCounter = 0;
 
@@ -81,6 +83,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (bundle != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             channel = app.getChannel(bundle.getLong("channelId", 0));
+            isDualPane  = bundle.getBoolean("dual_pane", false);
         }
 
         // Add a listener to check if the program list has been scrolled.
@@ -128,6 +131,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                     }
                     isLoading = true;
                     if (loadMoreProgramsInterface != null) {
+                        Log.i(TAG, "loadMorePrograms " + channel.name);
                         loadMoreProgramsInterface.loadMorePrograms(channel);
                     }
                 }
@@ -274,7 +278,10 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.program_menu, menu);
+        // Do not show the context menu if dual pane is active
+        if (!isDualPane) {
+            inflater.inflate(R.menu.program_menu, menu);
+        }
     }
 
     @Override
@@ -316,7 +323,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHClientApplication.ACTION_PROGRAMME_ADD)) {
-            
+            Log.i(TAG, "onMessage " + action);
             // Increase the counter that will allow loading more programs.
             if (++newProgramsLoadedCounter >= Constants.PREF_PROGRAMS_TO_LOAD) {
                 isLoading  = false;
@@ -326,6 +333,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 public void run() {
                     Program p = (Program) obj;
                     if (channel != null && p.channel.id == channel.id) {
+                        Log.i(TAG, "channel != null");
                         adapter.add(p);
                         adapter.notifyDataSetChanged();
                         adapter.sort();

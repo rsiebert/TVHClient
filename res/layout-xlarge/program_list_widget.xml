@@ -118,7 +118,7 @@
 	        android:id="@+id/description"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:maxLines="4"
+	        android:maxLines="8"
 	        android:paddingLeft="6dp"
 	        android:paddingRight="6dp"
 	        android:text="@string/description" />
