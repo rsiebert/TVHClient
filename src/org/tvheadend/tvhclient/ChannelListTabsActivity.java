@@ -335,20 +335,24 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
      * called that shows the program list.
      */
 	@Override
-	public void onChannelSelected(int position, long channelId) {
+	public void onChannelSelected(int position, Channel channel) {
 	    selectedChannelListPosition = position;
+        
+	    if (channel == null) {
+	        return;
+	    }
 
 		if (!isDualPane) {
 		    // Start the activity
 			Intent intent = new Intent(this, ProgramListActivity.class);
-			intent.putExtra("channelId", channelId);
+			intent.putExtra("channelId", channel.id);
 			startActivity(intent);
 		} else {
 			// Recreate the fragment with the new channel id
 		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		    Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
 			Bundle args = new Bundle();
-            args.putLong("channelId", channelId);
+            args.putLong("channelId", channel.id);
             args.putBoolean("dual_pane", isDualPane);
 			fragment.setArguments(args);
 

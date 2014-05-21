@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -129,11 +130,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Channel ch = (Channel) adapter.getItem(position);
-                if (ch.epg.isEmpty()) {
-                    return;
-                }
                 if (channelListListener != null) {
-                    channelListListener.onChannelSelected(position, ch.id);
+                    channelListListener.onChannelSelected(position, ch);
                 }
             }
         });
@@ -522,14 +520,15 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
      * @param position
      */
     public void setSelectedItem(int position) {
+        Log.i(TAG, "setSelectedItem");
         if (listView.getCount() > position && adapter.getCount() > position) {
             listView.setSelection(position);
-            channelListListener.onChannelSelected(position, adapter.getItem(position).id);
+            channelListListener.onChannelSelected(position, adapter.getItem(position));
         }
     }
 
     public interface OnChannelListListener {
-        public void onChannelSelected(int position, long id);
+        public void onChannelSelected(int position, Channel channel);
         public void onChannelListPopulated();
     }
 }
