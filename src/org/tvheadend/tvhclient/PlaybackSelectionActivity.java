@@ -27,7 +27,7 @@ public class PlaybackSelectionActivity extends Activity {
         // none of the two is existing then do nothing an exit
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = null;
-        if (ch != null) {            
+        if (ch != null) {
             // Check if an external player shall be used
             intent = new Intent(this, ExternalPlaybackActivity.class);
 
