@@ -38,7 +38,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -131,7 +130,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                     }
                     isLoading = true;
                     if (loadMoreProgramsInterface != null) {
-                        Log.i(TAG, "loadMorePrograms " + channel.name);
                         loadMoreProgramsInterface.loadMorePrograms(channel);
                     }
                 }
@@ -323,7 +321,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHClientApplication.ACTION_PROGRAMME_ADD)) {
-            Log.i(TAG, "onMessage " + action);
             // Increase the counter that will allow loading more programs.
             if (++newProgramsLoadedCounter >= Constants.PREF_PROGRAMS_TO_LOAD) {
                 isLoading  = false;
@@ -333,7 +330,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 public void run() {
                     Program p = (Program) obj;
                     if (channel != null && p.channel.id == channel.id) {
-                        Log.i(TAG, "channel != null");
                         adapter.add(p);
                         adapter.notifyDataSetChanged();
                         adapter.sort();

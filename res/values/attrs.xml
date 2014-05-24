@@ -27,8 +27,6 @@
     <attr name="TimelineItemLayoutStyle" format="reference" />
     <attr name="TimelineHeaderLayoutStyle" format="reference" />
     <attr name="TimelineListLayoutStyle" format="reference" />
-    <attr name="DualPaneLeftLayoutStyle" format="reference" />
-    <attr name="DualPaneRightLayoutStyle" format="reference" />
 
     <attr name="minimumValue" format="integer"/>
     <attr name="maximumValue" format="integer"/>

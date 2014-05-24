@@ -102,8 +102,6 @@
         <item name="TimelineItemLayoutStyle">@drawable/timeline_item_dark</item>
         <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_dark</item>
         <item name="TimelineListLayoutStyle">@drawable/timeline_list_dark</item>
-        <item name="DualPaneLeftLayoutStyle">@drawable/dual_pane_left_dark</item>
-        <item name="DualPaneRightLayoutStyle">@drawable/dual_pane_right_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -132,8 +130,6 @@
         <item name="TimelineItemLayoutStyle">@drawable/timeline_item_light</item>
         <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_light</item>
         <item name="TimelineListLayoutStyle">@drawable/timeline_list_light</item>
-        <item name="DualPaneLeftLayoutStyle">@drawable/dual_pane_left_light</item>
-        <item name="DualPaneRightLayoutStyle">@drawable/dual_pane_right_light</item>
     </style>
 
 </resources>
