@@ -640,7 +640,7 @@ public class Utils {
      * @param view
      * @param contentType
      */
-    public static void setGenreColor(final Context context, View view, final int contentType) {
+    public static void setGenreColor(final Context context, View view, final int contentType, final String tag) {
     	if (view == null) {
             return;
         }
@@ -649,13 +649,13 @@ public class Utils {
         int offset = 0;
 
     	// Check which class is calling and get the setting
-        if (context instanceof ChannelListTabsActivity) {
+        if (tag.equals("ChannelListAdapter")) {
             showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
-        } else if (context instanceof ProgramListActivity) {
+        } else if (tag.equals("ProgramListAdapter")) {
             showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
-        } else if (context instanceof SearchResultActivity) {
+        } else if (tag.equals("SearchResultAdapter")) {
             showGenre = prefs.getBoolean("showGenreColorsSearchPref", false);
-        } else if (context instanceof ProgramGuideTabsActivity) {
+        } else if (tag.equals("ProgramGuideItemView")) {
         	showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
         	offset = GENRE_COLOR_ALPHA_EPG_OFFSET;
         }

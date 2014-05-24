@@ -42,6 +42,8 @@ import android.widget.TextView;
 
 public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
+    private final static String TAG = ChannelListAdapter.class.getSimpleName();
+
     private Activity context;
     private List<Channel> list;
     private int layout;
@@ -202,7 +204,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
                 Utils.setProgress(holder.progress, p.start, p.stop);
-                Utils.setGenreColor(context, holder.genre, p.contentType);
+                Utils.setGenreColor(context, holder.genre, p.contentType, TAG);
             }
             else {
                 // The channel does not provide program data. Hide the progress
