@@ -128,11 +128,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                adapter.setPosition(position);
                 Channel ch = (Channel) adapter.getItem(position);
                 if (channelListListener != null) {
                     channelListListener.onChannelSelected(position, ch);
                 }
+                adapter.setPosition(position);
+                adapter.notifyDataSetChanged();
             }
         });
         
