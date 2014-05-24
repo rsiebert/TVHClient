@@ -133,7 +133,6 @@
         android:id="@+id/dual_pane_list_item_selection"
         android:layout_width="16dp"
         android:layout_height="fill_parent"
-        android:layout_marginRight="2dp"
         android:contentDescription="@string/unknown"
         android:scaleType="fitXY" />
 
