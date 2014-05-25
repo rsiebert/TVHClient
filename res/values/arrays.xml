@@ -65,6 +65,7 @@
         <item>fr</item>
         <item>pl</item>
         <item>sv</item>
+        <item>nl</item>
     </string-array>
     
     <string-array name="pref_language_list_display">
@@ -74,6 +75,7 @@
         <item>French</item>
         <item>Polski</item>
         <item>Swedish</item>
+       <item>Dutch</item>
     </string-array>
 
 </resources>
