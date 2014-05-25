@@ -23,6 +23,7 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -51,7 +52,6 @@ public class ProgramListActivity extends ActionBarActivity implements ActionBarI
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(channel.name);
         
         // Show the fragment
         Bundle args = new Bundle();
@@ -74,9 +74,10 @@ public class ProgramListActivity extends ActionBarActivity implements ActionBarI
     }
 
     @Override
-    public void setActionBarTitle(final String string, final String tag) {
-        // TODO Auto-generated method stub
-        
+    public void setActionBarTitle(final String title, final String tag) {
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
     }
 
     @Override
@@ -89,5 +90,17 @@ public class ProgramListActivity extends ActionBarActivity implements ActionBarI
     @Override
     public void loadMorePrograms(Channel channel) {
         Utils.loadMorePrograms(this, channel);
+    }
+
+    @Override
+    public void setActionBarIcon(Channel channel, String tag) {
+        if (actionBar != null && channel != null) {
+            // Show or hide the channel icon if required
+            boolean showIcon = Utils.showChannelIcons(this);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
+            if (showIcon) {
+                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            }
+        }
     }
 }

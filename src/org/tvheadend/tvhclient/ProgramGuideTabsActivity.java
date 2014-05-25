@@ -11,6 +11,7 @@ import java.util.Locale;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramGuideScrollingInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -20,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -355,6 +357,18 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         }
     }
 
+    @Override
+    public void setActionBarIcon(Channel channel, String tag) {
+        if (actionBar != null && channel != null) {
+            // Show or hide the channel icon if required
+            boolean showIcon = Utils.showChannelIcons(this);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
+            if (showIcon) {
+                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            }
+        }
+    }
+
     /**
      * This activity does not know how many items are in the channel list and
      * which are selected by the given channel tag. Use the channel list
@@ -522,71 +536,48 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
             return view;
         }
     }
-    /**
-     * When the user has scrolled within one fragment, the other available
-     * fragments in the view pager must be scrolled to the same position. Scroll
-     * the list view in every fragment that the view pager contains to the same
-     * position this fragment has.
-     */
+
     @Override
     public void onScrollStateIdle(final String tag) {
-        // Scroll all program guide fragments to the desired position
+        // Scroll all program guide fragments in the current view pager to the
+        // same position.
         for (int i = 0; i < fragmentCount; ++i) {
-            ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
-                    "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
+            ProgramGuideScrollingInterface f = (ProgramGuideScrollingInterface) getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
             if (f != null) {
                 f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
             }
         }
-        // Scroll the channel list fragment so the program guide is aligned with the channels
-        ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
-        if (f != null) {
-            f.scrollListViewToPosition(scrollingSelectionIndex, scrollingSelectionPosition);
-        }
     }
 
-    /**
-     * 
-     * @param index
-     * @param pos
-     */
     @Override
     public void onScrollingChanged(final int index, final int pos, final String tag) {
+        // Save the values globally so these values can be reused after an
+        // orientation change.
         scrollingSelectionIndex = index;
         scrollingSelectionPosition = pos;
 
         if (tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
-            // Scroll the list in the channel list fragment
-            ChannelListFragment f = (ChannelListFragment) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
-            if (f != null) {
-                f.scrollListViewToPosition(index, pos);
+            // Keep the channel list in sync by scrolling it to the same position
+            ProgramGuideScrollingInterface c = (ProgramGuideScrollingInterface) getSupportFragmentManager().findFragmentByTag("channel_icon_list");
+            if (c != null) {
+                c.scrollListViewToPosition(index, pos);
             }
-        } else if (tag.equals(ChannelListFragment.class.getSimpleName())) {
-            // Scroll the list in the currently visible program guide fragment
-            ProgramGuideListFragment f = (ProgramGuideListFragment) getSupportFragmentManager().findFragmentByTag(
-                    "android:switcher:" + viewPager.getId() + ":0");
-            if (f != null) {
-                f.scrollListViewToPosition(index, pos);
+        }
+        else if (tag.equals(ChannelListFragment.class.getSimpleName())) {
+            // Keep the currently visible program guide list in sync by
+            // scrolling it to the same position
+            ProgramGuideScrollingInterface p = (ProgramGuideScrollingInterface) getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":0");
+            if (p != null) {
+                p.scrollListViewToPosition(index, pos);
             }
         }
     }
 
-    /**
-     * Returns the index of of the first list item that is visible. The method
-     * used is listView.getFirstVisiblePosition(). This can be used to jump to
-     * certain positions in the list. No smooth scrolling is possible with this.
-     * 
-     * @return
-     */
     @Override
     public int getScrollingSelectionIndex() {
         return scrollingSelectionIndex;
     }
 
-    /**
-     * 
-     * @return
-     */
     @Override
     public int getScrollingSelectionPosition() {
         return scrollingSelectionPosition;

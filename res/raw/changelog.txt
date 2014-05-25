@@ -1,9 +1,20 @@
+$ 1.3.0
+  % VERSION 1.3.0
+  _ 24.05.2014
+    * Added French translation
+    * Updated Swedish translation
+    * Show the reason why a recording failed
+    * Added dual pane layout in the channel list view for tablets
+    * Don't show a blank screen when the external player has finished
+    * Removed the internal player (it was disabled as a default and did not play all streams)
+    * Small bug fixes
 $ 1.2.1
   % VERSION 1.2.1
-  _ 17.04.2014
+  _ 01.05.2014
     * Updated Swedish translation
     * Updated Polish translation
-    * Fixed icons not displaying in the recording screens
+    * Fixed channel icons not displaying in certain screens
+    * Scrolling improvements in the program guide
     * Small bug fixes
 $ 1.2.0
   % VERSION 1.2.0

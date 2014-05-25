@@ -16,6 +16,7 @@ import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramGuideScrollingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
@@ -35,9 +36,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -51,7 +50,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class ProgramGuideListFragment extends Fragment implements HTSListener, ProgramContextMenuInterface {
+public class ProgramGuideListFragment extends Fragment implements HTSListener, ProgramContextMenuInterface, ProgramGuideScrollingInterface {
 
     private final static String TAG = ProgramGuideListFragment.class.getSimpleName();
 
@@ -69,6 +68,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     private ImageView currentTimeIndication;
     private Bundle bundle;
     private Program selectedProgram = null;
+
+    private boolean enableScrolling = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -139,35 +140,33 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
 
-        // When the user has scrolled the program guide data list, inform the
-        // activity about it so it can also scroll the channel list 
+        // Create a scroll listener to inform the parent activity about
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    scrollingChanged();
+                // Enables scrolling when the user has touch the screen and
+                // starts scrolling. When the user is done, scrolling will be
+                // disabled to prevent unwanted calls to the interface.
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    enableScrolling = true;
+                } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
                     if (programGuideInterface != null) {
+                        enableScrolling = false;
                         programGuideInterface.onScrollStateIdle(TAG);
                     }
                 }
             }
-
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                // TODO Auto-generated method stub
+                if (programGuideInterface != null && enableScrolling) {
+                    int index = view.getFirstVisiblePosition();
+                    View v = view.getChildAt(0);
+                    int position = (v == null) ? 0 : v.getTop();
+                    programGuideInterface.onScrollingChanged(index, position, TAG);
+                }
             }
         });
 
-        listView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    scrollingChanged();
-                }
-                return false;
-            }
-        });
-        
         // Allow the selection of the items within the list
         listView.setItemsCanFocus(true);
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -213,27 +212,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         timer.schedule(doAsynchronousTask, 0, 60000);
     }
 
-    private void scrollingChanged() {
-        int index = listView.getFirstVisiblePosition();
-        View v = listView.getChildAt(0);
-        int position = (v == null) ? 0 : v.getTop();
-        if (programGuideInterface != null) {
-            programGuideInterface.onScrollingChanged(index, position, TAG);
-        }
-    }
-
-    public void scrollListViewTo(int index) {
-        if (listView != null) {
-            listView.setSelection(index);
-        }
-    }
-
-    public void scrollListViewToPosition(int index, int pos) {
-        if (listView != null) {
-            listView.setSelectionFromTop(index, pos);
-        }
-    }
-
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu item of not required
@@ -269,7 +247,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
         
         // Set the scroll position of the list view
         if (programGuideInterface != null) {
-            listView.setSelection(programGuideInterface.getScrollingSelectionIndex());
+            listView.setSelectionFromTop(
+                    programGuideInterface.getScrollingSelectionIndex(), 
+                    programGuideInterface.getScrollingSelectionPosition());
         } else {
             listView.setSelection(0);
         }
@@ -497,5 +477,19 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     public void setMenuSelection(MenuItem item) {
         onContextItemSelected(item);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void scrollListViewTo(int index) {
+        if (listView != null) {
+            listView.setSelection(index);
+        }
+    }
+
+    @Override
+    public void scrollListViewToPosition(int index, int pos) {
+        if (listView != null) {
+            listView.setSelectionFromTop(index, pos);
+        }
     }
 }

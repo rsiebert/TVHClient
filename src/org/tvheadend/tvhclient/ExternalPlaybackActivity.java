@@ -35,6 +35,8 @@ import android.util.Log;
 
 public class ExternalPlaybackActivity extends Activity implements HTSListener {
 
+    private final static String TAG = ExternalPlaybackActivity.class.getSimpleName();
+
     private Context context;
     
     @Override
@@ -105,15 +107,16 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
 
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
         playbackIntent.setDataAndType(Uri.parse(url), mime);
-        Log.d("TVHGuide", "Playing URL " + url);
+        Log.d(TAG, "Playing URL " + url);
 
         // Start playing the video now in the UI thread
         this.runOnUiThread(new Runnable() {
             public void run() {
                 try {
-                    startActivity(playbackIntent);
+                    Log.d(TAG, "Starting external player");
+                    startActivityForResult(playbackIntent, Constants.RESULT_CODE_START_PLAYER);
                 } catch (Throwable t) {
-                    Log.e("TVHGuide", "Can't execute external media player", t);
+                    Log.e(TAG, "Can't execute external media player", t);
 
                     // Show a confirmation dialog before deleting the recording
                     new AlertDialog.Builder(context)
@@ -122,11 +125,12 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             try {
+                                Log.d(TAG, "Starting play store to download external players");
                                 Intent installIntent = new Intent(Intent.ACTION_VIEW);
                                 installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
                                 startActivity(installIntent);
                             } catch (Throwable t2) {
-                                Log.e("TVHGuide", "Can't query market", t2);
+                                Log.e(TAG, "Could not start google play store", t2);
                             } finally {
                                 finish();
                             }
@@ -139,6 +143,19 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
                 }
             }
         });
+    }
+
+    /**
+     * Called when an activity was closed and this one is active again
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult " + requestCode + ", " + resultCode);
+        if (requestCode == Constants.RESULT_CODE_START_PLAYER) {
+            if (resultCode == RESULT_OK) {
+                finish();
+            }
+        }
     }
 
     /**

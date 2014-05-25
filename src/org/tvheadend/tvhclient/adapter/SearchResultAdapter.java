@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 public class SearchResultAdapter extends ArrayAdapter<Program> {
 
+    private final static String TAG = SearchResultAdapter.class.getSimpleName();
     Activity context;
     List<Program> list;
 
@@ -104,7 +105,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);
-            Utils.setGenreColor(context, holder.genre, p.contentType);
+            Utils.setGenreColor(context, holder.genre, p.contentType, TAG);
         }
         return view;
     }

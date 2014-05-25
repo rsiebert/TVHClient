@@ -72,6 +72,16 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <style name="DualPaneRightLayoutStyle.Dark" parent="CustomTheme">
+        <item name="android:background">#FF333333</item>
+        <item name="android:padding">50dp</item>
+    </style>
+
+    <style name="DualPaneRightLayoutStyle.Light" parent="CustomTheme.Light">
+        <item name="android:background">#FF333333</item>
+        <item name="android:padding">50dp</item>
+    </style>
+
     <!-- Styles that will be used for the dark holo theme -->
     <style name="CustomTheme" parent="Theme.AppCompat">
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>

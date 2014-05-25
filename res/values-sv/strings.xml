@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">TVHClient</string>
+    <string name="app_name">TVHGuide</string>
 
-    <string name="menu_settings">Inställingar</string>
+    <string name="menu_settings">Inställningar</string>
     <string name="menu_refresh">Uppdatera</string>
     <string name="menu_tags">Taggar</string>
     <string name="menu_recordings">Inspelningar</string>
@@ -13,7 +13,7 @@
     <string name="menu_record_cancel">Avbryt inspelning</string>
     <string name="menu_record_remove">Ta bort inspelning</string>
     <string name="menu_search_imdb">Sök på IMDB</string>
-    <string name="menu_search_epg">Sök i programguide</string>
+    <string name="menu_search_epg">Sök i EPG</string>
     <string name="menu_add">Lägg till</string>
     <string name="menu_save">Spara</string>
     <string name="menu_cancel">Avbryt</string>
@@ -52,8 +52,8 @@
     <string name="pref_port_sum">Fyll i serverport</string>
     <string name="pref_port_error_empty">Portnummret får inte vara blankt.</string>
     <string name="pref_port_error_invalid">Portnummret är inte giltigt. Specificera ett värde mellan 1 och 65535.</string>
-    <string name="pref_streaming_port">Port för mediaström</string>
-    <string name="pref_streaming_port_sum">%d kommer användas för mediaström. Standardport är 9981.</string>
+    <string name="pref_streaming_port">Port för medieström</string>
+    <string name="pref_streaming_port_sum">%d är standardport för medieström.</string>
     <string name="pref_user">Användarnamn</string>
     <string name="pref_user_sum">Fyll i användarnamn</string>
     <string name="pref_pass">Lösenord</string>
@@ -83,20 +83,18 @@
     <string name="pref_playback_recordings_sum">Konfigurera uppspelningsval för inspelningar.</string>
     <string name="pref_transcode">Transkodera ström</string>
     <string name="pref_transcode_sum">Konvertera Live-TV eller inspelning till ett annat format under uppspelning. (Stöd för detta i TVHeadend-servern krävs)</string>
-    <string name="pref_external">Föredra extern mediaspelare</string>
-    <string name="pref_external_sum">Använd extern mediaspelare (exmpelvis BSPlayer eller MXPlayer) för Live-TV eller inspelningar.</string>
 
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Ändringslogg</string>
     <string name="pref_changelog_sum">Visa en lista på funktioner och ändringar i de olika versionerna av applikationen.</string>
     <string name="pref_program_guide">Programguide</string>
-    <string name="pref_program_guide_sum">Konfigurera programguidesskärmen och hur informationen skall visas.</string>
+    <string name="pref_program_guide_sum">Konfigurera hur informationen i programguiden skall visas.</string>
     <string name="pref_epg_hours_visible">Synliga timmar</string>
-    <string name="pref_epg_hours_visible_sum">Definera hur många timmar som skall visas i programguiden på en skärm. För många timmar kommer visa för många program och försämmrar läsbarheten.</string>
+    <string name="pref_epg_hours_visible_sum">Konfigurera hur många timmar som skall visas i programguiden. För många timmar kommer visa för många program och försämmrar läsbarheten.</string>
     <string name="pref_epg_max_days">Max antal dagar att visa</string>
-    <string name="pref_epg_max_days_sum">Definera max antal dagar av programguiden att visa.</string>
+    <string name="pref_epg_max_days_sum">Konfigurera max antal dagar att visa i programguiden.</string>
     <string name="pref_genre_colors">Aktivera genrefärger</string>
-    <string name="pref_genre_colors_sum">Specificera vilka skärmar som skall visa genrefärger.</string>
+    <string name="pref_genre_colors_sum">Konfigurera vilka vyer som skall visa genrefärger.</string>
     <string name="pref_genre_colors_channels">Kanaler</string>
     <string name="pref_genre_colors_channels_sum">Genrefärgen visas som en vertikal linje på vänster sida av kanallistvyn.</string>
     <string name="pref_genre_colors_programs">Program</string>
@@ -276,16 +274,16 @@
     <string name="time">Tid</string>
     <string name="date">Datum</string>
     <string name="shown_on_channel">på</string>
-    <string name="summary">Summa</string>
+    <string name="summary">Sammandrag</string>
     <string name="description">Beskrivning</string>
     <string name="duration">Längd</string>
-    <string name="airing">Visas</string>
+    <string name="airing">Visad</string>
     <string name="rating">Betyg</string>
-    <string name="content_type">innehållstyp</string>
+    <string name="content_type">Genre</string>
     <string name="series_information">Serieinformation</string>
     <string name="genre_color_list">Lista på genrefärger och deras betydelser.</string>
 
-    <string name="nothing">Ingenting</string>
+    <string name="nothing">Ingen</string>
     <string name="loading">Laddar&#8230;</string>
     <string name="all_channels">Alla Kanaler</string>
     <string name="season">Säsong</string>
@@ -294,14 +292,12 @@
     <string name="progress">%1$d%% av serien redan visad</string>
     
     <string name="disc_space">Diskyta</string>
-    <string name="total">Total</string>
-    <string name="available">Tillgänglig</string>
+    <string name="total">Totalt</string>
+    <string name="available">Tillgängligt</string>
     <string name="unknown">Okänd</string>
     <string name="select_timeframe">Visa programguide för valt datum och tid.</string>
+
     <string name="currently_recording">Pågående inspelning</string>
-    
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="show_play_store">Vill du söka efter tillgängliga mediaspelare på Google Play Store?</string>
 </resources>
-
-

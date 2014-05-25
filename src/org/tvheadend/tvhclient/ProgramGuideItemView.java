@@ -358,7 +358,7 @@ public class ProgramGuideItemView extends LinearLayout {
         }
 
         if (p != null) {
-            Utils.setGenreColor(context, itemLayout, p.contentType);
+            Utils.setGenreColor(context, itemLayout, p.contentType, TAG);
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
 	        Utils.setState(state, p.recording);
@@ -386,7 +386,8 @@ public class ProgramGuideItemView extends LinearLayout {
                     // be called. Without this the context menu handler from the
                     // channel list fragment was called (not clear why) which 
 	                // resulted in a null pointer exception.
-	                for (int i = 0; i < menu.size(); ++i) {
+	                int size = menu.size();
+	                for (int i = 0; i < size; ++i) {
 	                    menu.getItem(i).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 	                        @Override
 	                        public boolean onMenuItemClick(MenuItem item) {

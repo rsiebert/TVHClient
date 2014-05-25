@@ -83,8 +83,6 @@
     <string name="pref_playback_recordings_sum">Einstellungen für die Wiedergabe der aufgenommenen Programme.</string>
     <string name="pref_transcode">Stream transkodieren</string>
     <string name="pref_transcode_sum">Konvertiere die Live-Wiedergabe oder das Program während der Übertragung in ein anderes Format. (Der TVHeadend Server muss dies unterstützen)</string>
-    <string name="pref_external">Verwende externen Videoplayer</string>
-    <string name="pref_external_sum">Soll ein externer Videoplayer (z.B. BSPlayer oder MXPlayer) benutzt werden?</string>
 
     <string name="pref_information">Informationen</string>
     <string name="pref_changelog">Änderungshistorie</string>

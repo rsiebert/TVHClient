@@ -21,8 +21,10 @@ package org.tvheadend.tvhclient;
 import java.lang.reflect.Field;
 
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.model.Channel;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -145,7 +147,9 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         MenuItem item = menu.findItem(R.id.menu_refresh);
         if (item != null) {
             TVHClientApplication app = (TVHClientApplication) getApplication();
-            item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
+            if (app != null && DatabaseHelper.getInstance() != null) { 
+                item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
+            }
         }
         return true;
     }
@@ -286,6 +290,18 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
     public void setActionBarSubtitle(final String subtitle, final String tag) {
         if (actionBar != null) {
             actionBar.setSubtitle(subtitle);
+        }
+    }
+
+    @Override
+    public void setActionBarIcon(final Channel channel, String tag) {
+        if (actionBar != null && channel != null) {
+            // Show or hide the channel icon if required
+            boolean showIcon = Utils.showChannelIcons(this);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
+            if (showIcon) {
+                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            }
         }
     }
 }

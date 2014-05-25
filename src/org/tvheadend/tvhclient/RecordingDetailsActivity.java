@@ -20,6 +20,8 @@
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.graphics.drawable.BitmapDrawable;
@@ -29,7 +31,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
-public class RecordingDetailsActivity extends ActionBarActivity implements HTSListener {
+public class RecordingDetailsActivity extends ActionBarActivity implements HTSListener, ActionBarInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingDetailsActivity.class.getSimpleName();
@@ -54,17 +56,6 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-
-        if (rec.channel != null) {
-            actionBar.setTitle(rec.channel.name);
-
-            // Show or hide the channel icon if required 
-            boolean showIcon = Utils.showChannelIcons(this);
-            actionBar.setDisplayUseLogoEnabled(showIcon);
-            if (showIcon && rec.channel.iconBitmap != null) {
-                actionBar.setIcon(new BitmapDrawable(getResources(), rec.channel.iconBitmap));
-            }
-        }
 
         // Show the fragment
         Bundle args = new Bundle();
@@ -113,6 +104,32 @@ public class RecordingDetailsActivity extends ActionBarActivity implements HTSLi
                     finish();
                 }
             });
+        }
+    }
+
+    @Override
+    public void setActionBarTitle(final String title, final String tag) {
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
+    }
+
+    @Override
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
+        if (actionBar != null) {
+            actionBar.setSubtitle(subtitle);
+        }
+    }
+
+    @Override
+    public void setActionBarIcon(Channel channel, String tag) {
+        if (actionBar != null && channel != null) {
+            // Show or hide the channel icon if required
+            boolean showIcon = Utils.showChannelIcons(this);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
+            if (showIcon) {
+                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            }
         }
     }
 }

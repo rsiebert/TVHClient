@@ -65,6 +65,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     private ListView listView;
     private Channel channel;
     private boolean isLoading = false;
+    private boolean isDualPane = false;
 
     private static int newProgramsLoadedCounter = 0;
 
@@ -81,6 +82,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (bundle != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             channel = app.getChannel(bundle.getLong("channelId", 0));
+            isDualPane  = bundle.getBoolean("dual_pane", false);
         }
 
         // Add a listener to check if the program list has been scrolled.
@@ -106,6 +108,11 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         }
         if (activity instanceof ProgramLoadingInterface) {
             loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
+        }
+
+        // If the channel is null exit
+        if (channel == null) {
+            activity.finish();
         }
 
         listView.setOnScrollListener(new OnScrollListener() {
@@ -157,14 +164,14 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         // a program to the schedule or has deleted one from it we need to
         // update the list to reflect these changes.
         prList.clear();
-        if (channel != null) {
-            prList.addAll(channel.epg);
-        }
+        prList.addAll(channel.epg);
         adapter.sort();
         adapter.notifyDataSetChanged();
         
         if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(channel.name, TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
+            actionBarInterface.setActionBarIcon(channel, TAG);
         }
     }
 
@@ -269,7 +276,10 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.program_menu, menu);
+        // Do not show the context menu if dual pane is active
+        if (!isDualPane) {
+            inflater.inflate(R.menu.program_menu, menu);
+        }
     }
 
     @Override
@@ -311,7 +321,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(TVHClientApplication.ACTION_PROGRAMME_ADD)) {
-            
             // Increase the counter that will allow loading more programs.
             if (++newProgramsLoadedCounter >= Constants.PREF_PROGRAMS_TO_LOAD) {
                 isLoading  = false;

@@ -83,8 +83,6 @@
     <string name="pref_playback_recordings_sum">Configure playback options for your recorded programs.</string>
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
-    <string name="pref_external">Prefer external player</string>
-    <string name="pref_external_sum">Use an external player (like BSPlayer or MXPlayer) for the program or recording.</string>
 
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Changelog</string>
@@ -112,7 +110,11 @@
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
-    
+
+    <string name="recording_file_missing">Recording is missing</string>
+    <string name="recording_time_missed">Scheduled recording was missed</string>
+    <string name="recording_file_invalid">Recording is invalid</string>
+
     <string-array name="pr_content_type0">
         <item>Movie/Drama</item>
         <item>News/Current affairs</item>
@@ -302,4 +304,12 @@
     
     <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
+    
+    <!--  Strings for possible PreferenceActivity Back/Next buttons -->
+    <string name="back_button_label">Back</string>
+    <string name="next_button_label">Next</string>
+
+    <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
+    <string name="skip_button_label">Skip</string>
+
 </resources>

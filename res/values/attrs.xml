@@ -30,7 +30,7 @@
 
     <attr name="minimumValue" format="integer"/>
     <attr name="maximumValue" format="integer"/>
-    
+
     <declare-styleable name="SliderPreference">
         <attr name="android:summary" />
         <attr name="minimumValue" />

@@ -62,6 +62,7 @@
         <item>default</item>
         <item>en-us</item>
         <item>de</item>
+        <item>fr</item>
         <item>pl</item>
         <item>sv</item>
     </string-array>
@@ -70,6 +71,7 @@
         <item>Default</item>
         <item>English</item>
         <item>Deutsch</item>
+        <item>French</item>
         <item>Polski</item>
         <item>Swedish</item>
     </string-array>

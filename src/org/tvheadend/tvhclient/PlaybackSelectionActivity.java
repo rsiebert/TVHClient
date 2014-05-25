@@ -27,14 +27,10 @@ public class PlaybackSelectionActivity extends Activity {
         // none of the two is existing then do nothing an exit
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Intent intent = null;
-        if (ch != null) {            
+        if (ch != null) {
             // Check if an external player shall be used
-            if (prefs.getBoolean("progExternalPref", false)) {
-                intent = new Intent(this, ExternalPlaybackActivity.class);
-            } else {
-                intent = new Intent(this, PlaybackActivity.class);
-                intent.putExtra("title", ch.name);
-            }
+            intent = new Intent(this, ExternalPlaybackActivity.class);
+
             // Pass on the channel id and the other settings
             intent.putExtra("channelId", ch.id);
             intent.putExtra("serverHostPref", conn.address);
@@ -47,13 +43,8 @@ public class PlaybackSelectionActivity extends Activity {
             intent.putExtra("containerPref", prefs.getString("progContainerPref", "matroska"));
 
         } else if (rec != null) {
-            // Check if an external player shall be used
-            if (prefs.getBoolean("recExternalPref", false)) {
-                intent = new Intent(this, ExternalPlaybackActivity.class);
-            } else {
-                intent = new Intent(this, PlaybackActivity.class);
-                intent.putExtra("title", rec.title);
-            }
+            intent = new Intent(this, ExternalPlaybackActivity.class);
+
             // Pass on the recording id and the other settings
             intent.putExtra("dvrId", rec.id);
             intent.putExtra("serverHostPref", conn.address);

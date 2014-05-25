@@ -21,8 +21,11 @@ package org.tvheadend.tvhclient;
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
+import org.tvheadend.tvhclient.model.Channel;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -31,8 +34,9 @@ import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface, ProgramLoadingInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ChannelListTabsActivity.class.getSimpleName();
@@ -54,16 +58,9 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         Utils.setLanguage(this);
 
 		// Check if the layout supports showing the program list next to the
-		// channel list. This is usually available on tablets 
-        
-        /*
-         * TODO Deactivate the dual pane for now. If the program list fragment
-         * is shown, it updates the action bar title instead of the channel list
-         * fragment. Also the handling logic and how to show the recordings or
-         * the program details is not clear.
-         */
-//        View v = findViewById(R.id.program_fragment);
-//        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
+		// channel list. This is usually available on tablets
+        View v = findViewById(R.id.program_fragment);
+        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
         DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
@@ -314,6 +311,18 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     }
 
     @Override
+    public void setActionBarIcon(Channel channel, String tag) {
+        if (actionBar != null && channel != null) {
+            // Show or hide the channel icon if required
+            boolean showIcon = Utils.showChannelIcons(this);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
+            if (showIcon) {
+                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+            }
+        }
+    }
+
+    @Override
     public void dialogDismissed() {
         createTabListeners(null);
     }
@@ -326,28 +335,32 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
      * called that shows the program list.
      */
 	@Override
-	public void onChannelSelected(int position, long channelId) {
+	public void onChannelSelected(int position, Channel channel) {
 	    selectedChannelListPosition = position;
-	    
-	    // TODO Dual pane is disabled for now
-//		if (!isDualPane) {
+        
+	    if (channel == null) {
+	        return;
+	    }
+
+		if (!isDualPane) {
 		    // Start the activity
 			Intent intent = new Intent(this, ProgramListActivity.class);
-			intent.putExtra("channelId", channelId);
+			intent.putExtra("channelId", channel.id);
 			startActivity(intent);
-//		} else {
-//			// Recreate the fragment with the new channel id
-//		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//		    Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
-//			Bundle args = new Bundle();
-//            args.putLong("channelId", channelId);
-//			fragment.setArguments(args);
-//
-//			// Replace the previous fragment with the new one
-//			ft.replace(R.id.program_fragment, fragment, RIGHT_FRAGMENT_TAG);
-//			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//			ft.commit();
-//		}
+		} else {
+			// Recreate the fragment with the new channel id
+		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		    Fragment fragment = Fragment.instantiate(this, ProgramListFragment.class.getName());
+			Bundle args = new Bundle();
+            args.putLong("channelId", channel.id);
+            args.putBoolean("dual_pane", isDualPane);
+			fragment.setArguments(args);
+
+			// Replace the previous fragment with the new one
+			ft.replace(R.id.program_fragment, fragment, RIGHT_FRAGMENT_TAG);
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.commit();
+		}
 	}
 
     /**
@@ -362,5 +375,10 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         if (f != null && isDualPane) {
             ((ChannelListFragment) f).setSelectedItem(selectedChannelListPosition);
         }
+    }
+
+    @Override
+    public void loadMorePrograms(Channel channel) {
+        Utils.loadMorePrograms(this, channel);
     }
 }
