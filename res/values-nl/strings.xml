@@ -79,8 +79,8 @@
     <string name="pref_container_sum">Definieer de media container dat gebruikt zal worden voor het transport van geluid en video. Matroshka heeft meestal de voorkeur.</string>
     
     <string name="pref_playback">Afspelen</string>
-    <string name="pref_playback_programs_sum">Stel afspeel opties in voor Live-TV programma's.</string>
-    <string name="pref_playback_recordings_sum">Stel afspeel opties in voor je opgenomen programma's.</string>
+    <string name="pref_playback_programs_sum">Stel afspeel opties in voor Live-TV programma\'s.</string>
+    <string name="pref_playback_recordings_sum">Stel afspeel opties in voor je opgenomen programma\'s.</string>
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Converteer het programma of opnamen naar een ander formaat tijdens afspelen. (Dit moet wel ondersteund worden door de TVHeadend server)</string>
 
@@ -90,14 +90,14 @@
     <string name="pref_program_guide">Programmagids</string>
     <string name="pref_program_guide_sum">Configureer het programmagids scherm en hoe de data getoond moet worden.</string>
     <string name="pref_epg_hours_visible">Toon uren</string>
-    <string name="pref_epg_hours_visible_sum">Definieer hoeveel uur aan programmagids getoond zal worden op één scherm. Teveel uren zal tot gevolg hebben dat te veel programma's worden getoond wat tot gevolg heeft dat het scherm te vol staat en slecht te lezen zal zijn.</string>
+    <string name="pref_epg_hours_visible_sum">Definieer hoeveel uur aan programmagids getoond zal worden op één scherm. Teveel uren zal tot gevolg hebben dat te veel programma\'s worden getoond wat tot gevolg heeft dat het scherm te vol staat en slecht te lezen zal zijn.</string>
     <string name="pref_epg_max_days">Maximum aantal dagen tonen</string>
     <string name="pref_epg_max_days_sum">Definieer het maximum aantal programmagids dagen dat getoond moet worden.</string>
     <string name="pref_genre_colors">Genre kleuren</string>
     <string name="pref_genre_colors_sum">Specificeer op welke schermen genre kleuren getoond worden.</string>
     <string name="pref_genre_colors_channels">Kanalen</string>
     <string name="pref_genre_colors_channels_sum">De genre kleuren worden als een vertikale lijn getoond aan de linker kant van het kanalen scherm.</string>
-    <string name="pref_genre_colors_programs">Programma's</string>
+    <string name="pref_genre_colors_programs">Programma\'s</string>
     <string name="pref_genre_colors_programs_sum">De genre kleuren worden als een vertikale lijn getoond aan de linker kant van de programma lijst en het programma detail scherm.</string>
     <string name="pref_genre_colors_epg">Programmagids</string>
     <string name="pref_genre_colors_epg_sum">Toon de genre kleur als de achtergrond van ieder programma item.</string>
@@ -112,7 +112,7 @@
     <string name="err_con_lost">Verbinding met server verbroken</string>
 
     <string name="recording_file_missing">Opname ontbreekt</string>
-    <string name="recording_time_missed">Geplande opname was gemist</string>
+    <string name="recording_time_missed">Geplande opname gemist</string>
     <string name="recording_file_invalid">Opname is niet geldig</string>
 
     <string-array name="pr_content_type0">
@@ -238,7 +238,7 @@
     <string-array name="pr_content_type11">
         <item>Anders</item>
         <item>Zwart en Wit</item>
-        <item>Niet gepubliseerd</item>
+        <item>Niet gepubliceerd</item>
         <item>Live uitzending</item>
     </string-array>
 
@@ -259,13 +259,13 @@
     <string name="saturday">Zaterdag</string>
     <string name="sunday">Zondag</string>
 
-    <string name="programs">Programma's</string>
+    <string name="programs">Programma\'s</string>
     <string name="completed">Voltooid</string>
     <string name="upcoming">Toekomstig</string>
-    <string name="failed">Gefaald</string>
+    <string name="failed">Mislukt</string>
     
     <string name="channels">Kanalen</string>
-    <string name="recordings">Openames</string>
+    <string name="recordings">Opnames</string>
     <string name="program_guide">Programmagids</string>
     <string name="status">Status</string>
     <string name="items">Onderdelen</string>
@@ -277,13 +277,13 @@
     <string name="channel">Kanaal</string>
     <string name="time">Tijd</string>
     <string name="date">Datum</string>
-    <string name="shown_on_channel">on</string>
+    <string name="shown_on_channel">op</string>
     <string name="summary">Samenvatting</string>
     <string name="description">Omschrijving</string>
     <string name="duration">Duur</string>
-    <string name="airing">Uitzenden</string>
+    <string name="airing">Uitzending</string>
     <string name="rating">Waardering</string>
-    <string name="content_type">Content type</string>
+    <string name="content_type">Inhoud typering</string>
     <string name="series_information">Serie informatie</string>
     <string name="genre_color_list">Lijst van genre kleuren en hun betekenis.</string>
 
@@ -293,7 +293,7 @@
     <string name="season">Seizoen</string>
     <string name="episode">Aflevering</string>
     <string name="part">Deel</string>
-    <string name="progress">%1$d%% van de show al gezien</string>
+    <string name="progress">%1$d%% van de uitzending al voorbij</string>
     
     <string name="disc_space">Schijf ruimte</string>
     <string name="total">Totaal</string>
