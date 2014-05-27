@@ -20,7 +20,6 @@
 package org.tvheadend.tvhclient;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
@@ -54,7 +53,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     private OnRecordingListListener recordingListListener;
     private RecordingListAdapter adapter;
     private ListView listView;
-    private List<Recording> recList;
     private int tabIndex = 0;
 
     @Override
@@ -95,8 +93,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             recordingListListener = (OnRecordingListListener) activity;
         }
 
-        recList = new ArrayList<Recording>();
-        adapter = new RecordingListAdapter(activity, recList);
+        adapter = new RecordingListAdapter(activity, new ArrayList<Recording>());
         listView.setAdapter(adapter);
 
         registerForContextMenu(listView);
@@ -243,24 +240,24 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      */
     private void populateList() {
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        recList.clear();
+        adapter.clear();
         
         // Show only the recordings that belong to the tab
         for (Recording rec : app.getRecordings()) {
             if (tabIndex == 0 &&
                     rec.error == null &&
                     rec.state.equals("completed")) {
-                recList.add(rec);
+                adapter.add(rec);
             } else if (tabIndex == 1 &&
                     rec.error == null &&
                     (rec.state.equals("scheduled") || 
                      rec.state.equals("recording") ||
                      rec.state.equals("autorec"))) {
-                recList.add(rec);
+                adapter.add(rec);
             } else if (tabIndex == 2 &&
                     (rec.error != null ||
                     (rec.state.equals("missed") || rec.state.equals("invalid")))) {
-                recList.add(rec);
+                adapter.add(rec);
             }
         }
         adapter.sort();
@@ -272,7 +269,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             recordingListListener.onRecordingListPopulated();
         }
 
-        ((RecordingListTabsActivity)activity).updateTitle(tabIndex, recList.size());
+        ((RecordingListTabsActivity)activity).updateTitle(tabIndex, adapter.getCount());
     }
 
     /**
@@ -314,8 +311,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     }
 
     public int getRecordingCount() {
-        if (recList != null) {
-            return recList.size();
+        if (adapter != null) {
+            return adapter.getCount();
         }
         return 0;
     }
