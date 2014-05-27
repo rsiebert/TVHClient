@@ -18,8 +18,6 @@
  */
 package org.tvheadend.tvhclient;
 
-import java.lang.reflect.Field;
-
 import org.tvheadend.tvhclient.RecordingListFragment.OnRecordingListListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Channel;
@@ -39,7 +37,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
 
 public class RecordingListTabsActivity extends ActionBarActivity implements ActionBarInterface, OnRecordingListListener {
 
@@ -78,19 +75,6 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         if (viewPager != null) {
             adapter = new RecordingListPagerAdapter(getSupportFragmentManager());
             viewPager.setAdapter(adapter);
-        }
-
-        // Make the action bar collapse even when the hardware keys are present.
-        // This overrides the default behavior of the action bar.
-        try {
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception ex) {
-            // Ignore
         }
 
         // Create a tab listener that is called when the user changes tabs.
