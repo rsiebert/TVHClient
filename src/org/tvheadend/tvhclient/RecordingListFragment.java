@@ -51,11 +51,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
+    private OnRecordingListListener recordingListListener;
     private RecordingListAdapter adapter;
     private ListView listView;
     private List<Recording> recList;
     private int tabIndex = 0;
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -67,7 +68,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
-        
+
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -90,10 +91,14 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
+        if (activity instanceof OnRecordingListListener) {
+            recordingListListener = (OnRecordingListListener) activity;
+        }
 
         recList = new ArrayList<Recording>();
         adapter = new RecordingListAdapter(activity, recList);
         listView.setAdapter(adapter);
+
         registerForContextMenu(listView);
         // Set the listener to show the recording details activity when the user
         // has selected a recording
@@ -101,9 +106,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recording rec = (Recording) adapter.getItem(position);
-                Intent intent = new Intent(activity, RecordingDetailsActivity.class);
-                intent.putExtra("id", rec.id);
-                startActivity(intent);
+                if (recordingListListener != null) {
+                    recordingListListener.onRecordingSelected(position, rec);
+                }
+                adapter.setPosition(position);
+                adapter.notifyDataSetChanged();
             }
         });
     }
@@ -258,6 +265,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
         adapter.sort();
         adapter.notifyDataSetChanged();
+        
+        // Inform the listeners that the channel list is populated.
+        // They could then define the preselected list item.
+        if (recordingListListener != null) {
+            recordingListListener.onRecordingListPopulated();
+        }
+
         ((RecordingListTabsActivity)activity).updateTitle(tabIndex, recList.size());
     }
 
@@ -304,5 +318,23 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return recList.size();
         }
         return 0;
+    }
+
+    /**
+     * Sets the selected item in the list to the desired position. Any listener
+     * is then informed that a new recording item has been selected.
+     * 
+     * @param position
+     */
+    public void setSelectedItem(int position) {
+        if (listView.getCount() > position && adapter.getCount() > position) {
+            adapter.setPosition(position);
+            recordingListListener.onRecordingSelected(position, adapter.getItem(position));
+        }
+    }
+
+    public interface OnRecordingListListener {
+        public void onRecordingSelected(int position, Recording recording);
+        public void onRecordingListPopulated();
     }
 }

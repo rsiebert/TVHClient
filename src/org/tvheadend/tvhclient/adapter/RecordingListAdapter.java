@@ -26,6 +26,8 @@ import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -36,6 +38,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
     Activity context;
     List<Recording> list;
+    private int selectedPosition;
 
     public RecordingListAdapter(Activity context, List<Recording> list) {
         super(context, R.layout.recording_list_widget, list);
@@ -51,6 +54,10 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         });
     }
 
+    public void setPosition(int pos) {
+        selectedPosition = pos;
+    }
+
     static class ViewHolder {
         public ImageView icon;
         public TextView title;
@@ -58,8 +65,10 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         public TextView time;
         public TextView date;
         public TextView duration;
+        public TextView summary;
         public TextView description;
         public TextView failed_reason;
+        public ImageView dual_pane_list_item_selection;
     }
     
     @Override
@@ -76,11 +85,29 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.date = (TextView) view.findViewById(R.id.date);
             holder.duration = (TextView) view.findViewById(R.id.duration);
+            holder.summary = (TextView) view.findViewById(R.id.summary);
             holder.description = (TextView) view.findViewById(R.id.description);
             holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
+            holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
+        }
+
+        // Sets the correct indication when the dual pane mode is active
+        // If the item is selected the the arrow will be shown, otherwise
+        // only a vertical separation line is displayed.
+        if (holder.dual_pane_list_item_selection != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
+            
+            if (selectedPosition == position) {
+                final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
+                holder.dual_pane_list_item_selection.setBackgroundResource(icon);
+            } else {
+                final int icon = (lightTheme) ? R.drawable.dual_pane_selector_light : R.drawable.dual_pane_selector_dark;
+                holder.dual_pane_list_item_selection.setBackgroundResource(icon);
+            }
         }
 
         // Get the program and assign all the values
@@ -94,6 +121,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
+            Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
             
             // Display the reason why the recording has failed
