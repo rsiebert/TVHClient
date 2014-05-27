@@ -27,10 +27,7 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
@@ -44,8 +41,6 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
     private final static String TAG = RecordingListTabsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
-    private RecordingListPagerAdapter adapter = null;
-    private static ViewPager viewPager = null;
     private boolean restart = false;
     private boolean isDualPane = false;
     private int selectedRecordingListPosition = 0;
@@ -71,22 +66,10 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(R.string.menu_recordings);
 
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        if (viewPager != null) {
-            adapter = new RecordingListPagerAdapter(getSupportFragmentManager());
-            viewPager.setAdapter(adapter);
-        }
-
         // Create a tab listener that is called when the user changes tabs.
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                // When the tab is selected, switch to the
-                // corresponding page in the ViewPager.
-                if (viewPager != null) {
-                    viewPager.setCurrentItem(tab.getPosition());
-                } else {
-                    handleTabSelection(tab, ft);
-                }
+                handleTabSelection(tab, ft);
             }
 
             @Override
@@ -96,12 +79,10 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
 
             @Override
             public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-                if (viewPager == null) {
-                    // Detach the channel list fragment, because another will be attached
-                    Fragment prevFragment = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
-                    if (prevFragment != null) {
-                        ft.detach(prevFragment);
-                    }
+                // Detach the channel list fragment, because another will be attached
+                Fragment prevFragment = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
+                if (prevFragment != null) {
+                    ft.detach(prevFragment);
                 }
             }
         };
@@ -113,26 +94,6 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         actionBar.addTab(tab);
         tab = actionBar.newTab().setText(R.string.failed).setTabListener(tabListener);
         actionBar.addTab(tab);
-
-        // Select the corresponding tab when the user swipes between pages with
-        // a touch gesture.
-        if (viewPager != null) {
-            adapter.notifyDataSetChanged();
-            viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageSelected(int position) {
-                    actionBar.setSelectedNavigationItem(position);
-                    // Get the fragment of the current tabs. The default tag given by the 
-                    // FragmentPagerAdapater is "android:switcher:" + viewId + ":" + position;
-                    RecordingListFragment fragment = (RecordingListFragment) getSupportFragmentManager().findFragmentByTag(
-                                    "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
-                    // Update the action bar subtitle
-                    if (fragment != null) {
-                        updateTitle(position, fragment.getRecordingCount());
-                    }
-                }
-            });
-        }
 
         // Restore the previously selected tab. This is usually required when
         // the user has rotated the screen.
@@ -257,33 +218,6 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
                 actionBar.setSubtitle(count + " " + getString(R.string.failed));
                 break;
             }
-        }
-    }
-    
-    /**
-     * Adapter that manages and holds the fragments of the different recording
-     * types.
-     * 
-     * @author rsiebert
-     * 
-     */
-    private class RecordingListPagerAdapter extends FragmentPagerAdapter {
-        public RecordingListPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment fragment = new RecordingListFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt("tabIndex", position);
-            fragment.setArguments(bundle);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return actionBar.getTabCount();
         }
     }
 
