@@ -129,6 +129,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     @Override
     public void onDetach() {
+        recordingListListener = null;
         actionBarInterface = null;
         super.onDetach();
     }
