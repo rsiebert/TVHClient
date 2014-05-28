@@ -45,7 +45,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
     private ActionBar actionBar = null;
     private boolean restart = false;
     private boolean isDualPane = false;
-    private int selectedRecordingListPosition = 0;
+    private int[] selectedRecordingListPosition = { 0, 0, 0 };
 
     private static final String MAIN_FRAGMENT_TAG = "recording_list_fragment";
     private static final String RIGHT_FRAGMENT_TAG = "recording_details_fragment";
@@ -106,7 +106,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
             int index = savedInstanceState.getInt("selected_recording_tab_index", 0);
             actionBar.setSelectedNavigationItem(index);
             // Get the previously selected channel item position
-            selectedRecordingListPosition = savedInstanceState.getInt("selected_recording_list_position", 0);
+            selectedRecordingListPosition = savedInstanceState.getIntArray("selected_recording_list_position");
         }
     }
 
@@ -147,7 +147,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         int index = actionBar.getSelectedNavigationIndex();
         outState.putInt("selected_recording_tab_index", index);
         // Save the position of the selected channel list item
-        outState.putInt("selected_recording_list_position", selectedRecordingListPosition);
+        outState.putIntArray("selected_recording_list_position", selectedRecordingListPosition);
     }
 
     @Override
@@ -297,7 +297,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
      */
     @Override
     public void onRecordingSelected(int position, Recording recording) {
-        selectedRecordingListPosition = position;
+        selectedRecordingListPosition[actionBar.getSelectedNavigationIndex()] = position;
         
         if (recording == null) {
             return;
@@ -334,7 +334,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
     public void onRecordingListPopulated() {
         Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         if (f != null && isDualPane) {
-            ((RecordingListFragment) f).setSelectedItem(selectedRecordingListPosition);
+            ((RecordingListFragment) f).setSelectedItem(selectedRecordingListPosition[actionBar.getSelectedNavigationIndex()]);
         }
     }
 }
