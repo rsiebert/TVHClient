@@ -67,7 +67,6 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         public TextView time;
         public TextView date;
         public TextView duration;
-        public TextView summary;
         public TextView description;
         public TextView failed_reason;
         public ImageView dual_pane_list_item_selection;
@@ -87,7 +86,6 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.date = (TextView) view.findViewById(R.id.date);
             holder.duration = (TextView) view.findViewById(R.id.duration);
-            holder.summary = (TextView) view.findViewById(R.id.summary);
             holder.description = (TextView) view.findViewById(R.id.description);
             holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
@@ -123,7 +121,6 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
-            Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
 
             // Display the reason why the recording has failed
