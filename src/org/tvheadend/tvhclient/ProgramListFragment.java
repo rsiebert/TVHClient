@@ -115,6 +115,25 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             activity.finish();
         }
 
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showProgramDetails(position);
+            }
+        });
+        
+        prList = new ArrayList<Program>();
+        adapter = new ProgramListAdapter(activity, prList);
+        listView.setAdapter(adapter);
+        registerForContextMenu(listView);
+    }
+
+    /**
+     * Activated the scroll listener to more programs can be loaded when the end
+     * of the program list has been reached.
+     */
+    private void enableScrollListener() {
+        
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -140,18 +159,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 // TODO Auto-generated method stub
             }
         });
-
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showProgramDetails(position);
-            }
-        });
-        
-        prList = new ArrayList<Program>();
-        adapter = new ProgramListAdapter(activity, prList);
-        listView.setAdapter(adapter);
-        registerForContextMenu(listView);
     }
 
     @Override
@@ -175,6 +182,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 actionBarInterface.setActionBarIcon(channel, TAG);
             }
         }
+
+        enableScrollListener();
     }
 
     @Override
@@ -182,6 +191,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
+        listView.setOnScrollListener(null);
     }
 
     @Override
