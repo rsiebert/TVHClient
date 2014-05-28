@@ -184,6 +184,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.program_context_menu, menu);
+        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override

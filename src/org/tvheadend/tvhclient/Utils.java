@@ -346,7 +346,7 @@ public class Utils {
         }
     }
 
-    public static void setRecordingMenuIcons(final Context context, final Menu menu, final Recording rec) {
+    public static void setRecordingMenuIcons(final Context context, final Menu menu) {
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
