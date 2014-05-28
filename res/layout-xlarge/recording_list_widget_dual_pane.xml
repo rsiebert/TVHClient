@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.99"
         android:orientation="horizontal"
-        android:paddingBottom="12dp" >
+        android:paddingBottom="8dp" >
 
         <ImageView
             android:id="@+id/icon"
