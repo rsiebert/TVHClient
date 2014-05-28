@@ -288,9 +288,19 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        // Do not show the context menu if dual pane is active
-        if (!isDualPane) {
-            inflater.inflate(R.menu.program_menu, menu);
+        inflater.inflate(R.menu.program_menu, menu);
+
+        // Hide icons in dual pane mode which would be shown twice  
+        if (isDualPane) {
+            MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+            if (searchMenuItem != null) {
+                searchMenuItem.setVisible(false);
+            }
+            MenuItem genreColorMenuItem = menu.findItem(R.id.menu_genre_color_info);
+            if (genreColorMenuItem != null) {
+                genreColorMenuItem.setVisible(false);
+            }
+            
         }
     }
 
