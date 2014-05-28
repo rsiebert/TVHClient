@@ -9,6 +9,16 @@
         android:orientation="vertical"
         android:padding="6dp" >
 
+        <TextView
+            android:id="@+id/failed_reason"
+            style="?attr/ProgramGuideTitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:maxLines="1"
+            android:paddingBottom="6dp"
+            android:text="@string/description" />
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -17,14 +27,13 @@
             <TextView
                 android:id="@+id/title"
                 style="?attr/TitleFont"
-                android:ellipsize="none"
-                android:scrollHorizontally="false"
-                android:singleLine="false"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.9"
-                android:text="@string/title" >
-            </TextView>
+                android:ellipsize="none"
+                android:scrollHorizontally="false"
+                android:singleLine="false"
+                android:text="@string/title" />
 
             <ImageView
                 android:id="@+id/state"

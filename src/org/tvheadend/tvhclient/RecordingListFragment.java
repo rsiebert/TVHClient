@@ -55,6 +55,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     private ListView listView;
     private int tabIndex = 0;
 
+    // This is the default view for the channel list adapter. Other views can be
+    // passed to the adapter to show less information. This is used in the
+    // program guide where only the channel icon is relevant.
+    private int adapterLayout = R.layout.recording_list_widget;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -71,6 +76,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         Bundle bundle = getArguments();
         if (bundle != null) {
             tabIndex = bundle.getInt("tabIndex", 0);
+            adapterLayout = bundle.getInt("adapterLayout", R.layout.recording_list_widget);
         }
         return v;
     }
@@ -93,7 +99,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             recordingListListener = (OnRecordingListListener) activity;
         }
 
-        adapter = new RecordingListAdapter(activity, new ArrayList<Recording>());
+        adapter = new RecordingListAdapter(activity, new ArrayList<Recording>(), adapterLayout);
         listView.setAdapter(adapter);
 
         registerForContextMenu(listView);

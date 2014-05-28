@@ -24,8 +24,10 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -52,13 +54,20 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.recording_layout);
-        Utils.setLanguage(this);
 
-        // Check if the layout supports showing the recording details next to
+        // Only enable dual pane mode if the user wants it. If yes check
+        // if the layout supports showing the recording details next to
         // the recording list. This is usually available on tablets
-        View v = findViewById(R.id.details_fragment);
-        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("useDualPaneForRecordingsPref", false)) {
+            setContentView(R.layout.recording_layout_dual_pane);
+            View v = findViewById(R.id.details_fragment);
+            isDualPane = v != null && v.getVisibility() == View.VISIBLE;
+        } else {
+            setContentView(R.layout.recording_layout);
+        }
+
+        Utils.setLanguage(this);
 
         // setup action bar for tabs
         actionBar = getSupportActionBar();
@@ -79,11 +88,7 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
 
             @Override
             public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-                // Detach the channel list fragment, because another will be attached
-                Fragment prevFragment = getSupportFragmentManager().findFragmentByTag(tab.getText().toString());
-                if (prevFragment != null) {
-                    ft.detach(prevFragment);
-                }
+
             }
         };
 
@@ -115,6 +120,11 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         Fragment rlf = Fragment.instantiate(this, RecordingListFragment.class.getName());
         Bundle bundle = new Bundle();
         bundle.putInt("tabIndex", tab.getPosition());
+        if (isDualPane) {
+            bundle.putInt("adapterLayout", R.layout.recording_list_widget_dual_pane);
+        } else {
+            bundle.putInt("adapterLayout", R.layout.recording_list_widget);
+        }
         rlf.setArguments(bundle);
         ft.replace(R.id.main_fragment, rlf, MAIN_FRAGMENT_TAG);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

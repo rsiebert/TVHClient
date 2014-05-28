@@ -39,10 +39,12 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     Activity context;
     List<Recording> list;
     private int selectedPosition;
+    private int layout;
 
-    public RecordingListAdapter(Activity context, List<Recording> list) {
+    public RecordingListAdapter(Activity context, List<Recording> list, int layout) {
         super(context, R.layout.recording_list_widget, list);
         this.context = context;
+        this.layout = layout;
         this.list = list;
     }
 
@@ -77,7 +79,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         ViewHolder holder = null;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, null);
+            view = context.getLayoutInflater().inflate(layout, null);
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
@@ -94,13 +96,13 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder = (ViewHolder) view.getTag();
         }
 
-        // Sets the correct indication when the dual pane mode is active
-        // If the item is selected the the arrow will be shown, otherwise
-        // only a vertical separation line is displayed.
         if (holder.dual_pane_list_item_selection != null) {
+            // Set the correct indication when the dual pane mode is active
+            // If the item is selected the the arrow will be shown, otherwise
+            // only a vertical separation line is displayed.                
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-            
+
             if (selectedPosition == position) {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
@@ -123,7 +125,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDuration(holder.duration, rec.start, rec.stop);
             Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
-            
+
             // Display the reason why the recording has failed
             if (holder.failed_reason != null) {
                 if (rec.error != null || 

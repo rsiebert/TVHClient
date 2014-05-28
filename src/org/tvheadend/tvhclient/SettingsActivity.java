@@ -129,7 +129,7 @@ public class SettingsActivity extends ActionBarActivity {
             if (key.equals("lightThemePref") || key.equals("languagePref")) {
                 restart = true;
                 ((SettingsActivity) getActivity()).restartActivity();
-            } else if (key.equals("epgMaxDays") || key.equals("epgHoursVisible")) {
+            } else if (key.equals("epgMaxDays") || key.equals("epgHoursVisible") || key.equals("useDualPaneForRecordingsPref")) {
                 restart = true;
             }
             // Reload the data to fetch the channel icons. They are not loaded

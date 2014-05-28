@@ -106,6 +106,8 @@
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
     <string name="pref_genre_colors_visibility">Genre color visibility</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
+    <string name="pref_dual_pane_recordings">Use dual pane mode for the recording screen</string>
+    <string name="pref_dual_pane_recordings_sum">Show the recording details including the description next to the list of recordings. This is only available on 10in tablets and in landscape mode on 7in tablets.</string>
 
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
