@@ -171,7 +171,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(channel.name, TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
-            actionBarInterface.setActionBarIcon(channel, TAG);
+            if (!isDualPane) {
+                actionBarInterface.setActionBarIcon(channel, TAG);
+            }
         }
     }
 
