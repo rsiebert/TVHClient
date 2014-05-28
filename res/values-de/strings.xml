@@ -106,6 +106,8 @@
     <string name="pref_genre_colors_visibility_message">Definiere die Sichtbarkeit der Farben. Je höher der Wert, desto stärker wirken die Farben.</string>
     <string name="pref_genre_colors_visibility">Sichtbarkeit der Genrefarben</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
+    <string name="pref_dual_pane_recordings">Aktiviere Zwei-Fenster-Modus für Aufnahmen</string>
+    <string name="pref_dual_pane_recordings_sum">Zusätzlich zur Liste der Aufnahmen werden die Details der aktuell gewählten Aufnahme auf der rechten Hälfte des Bildschirms angezeigt. Diese Option ist nur auf großen Bildschirmen (z.B. 10 Zoll Tablets) und auf mittleren Bildschirmen (z.B. 7 Zoll Tablets) im Querformat verfügbar.</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
