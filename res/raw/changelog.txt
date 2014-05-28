@@ -11,7 +11,7 @@ $ 1.3.0
     * Don't show a blank screen when the external player has finished
     * Removed the internal player (it was disabled as a default and did not play all streams)
     * Removed the swiping in the recording list screen to allow dual pane mode
-    * Small bug fixes
+    * Bug fixes and small improvements
 $ 1.2.1
   % VERSION 1.2.1
   _ 01.05.2014
