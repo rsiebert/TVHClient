@@ -125,7 +125,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                     
                     // Do not load more programs if we are already doing it. This avoids
                     // calling the service for nothing and reduces the used bandwidth.
-                    if (isLoading || channel == null) {
+                    if (isLoading) {
                         return;
                     }
                     isLoading = true;
