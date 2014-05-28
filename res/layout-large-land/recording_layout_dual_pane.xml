@@ -9,12 +9,12 @@
         android:id="@+id/main_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" 
-        android:layout_weight="0.55" />
+        android:layout_weight="0.5" />
 
     <FrameLayout
         android:id="@+id/details_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.45" />
+        android:layout_weight="0.5" />
 
 </LinearLayout>
