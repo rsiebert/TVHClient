@@ -343,10 +343,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 	    }
 
 		if (!isDualPane) {
-		    // Start the activity
-			Intent intent = new Intent(this, ProgramListActivity.class);
-			intent.putExtra("channelId", channel.id);
-			startActivity(intent);
+		    if (!channel.epg.isEmpty()) {
+    		    // Show the program list when there is data available
+    			Intent intent = new Intent(this, ProgramListActivity.class);
+    			intent.putExtra("channelId", channel.id);
+    			startActivity(intent);
+		    }
 		} else {
 			// Recreate the fragment with the new channel id
 		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
