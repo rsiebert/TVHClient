@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -453,6 +454,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
      */
     @Override
     public void onMessage(String action, final Object obj) {
+        Log.i(TAG, "onMessage " + action);
         if (action.equals(TVHClientApplication.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
@@ -498,7 +500,17 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
             });
         } else if (action.equals(TVHClientApplication.ACTION_TAG_UPDATE)) {
             //NOP
-        }
+        } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)
+                || action.equals(TVHClientApplication.ACTION_PROGRAMME_DELETE)
+                || action.equals(TVHClientApplication.ACTION_DVR_ADD)
+                || action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
+            // An existing program has been updated
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        } 
     }
 
     @Override
