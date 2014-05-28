@@ -41,7 +41,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -454,7 +453,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        Log.i(TAG, "onMessage " + action);
         if (action.equals(TVHClientApplication.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
