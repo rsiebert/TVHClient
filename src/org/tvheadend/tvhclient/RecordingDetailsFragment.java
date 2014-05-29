@@ -124,24 +124,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         Utils.setDuration(duration, rec.start, rec.stop);
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
-        
-        // Display the reason why the recording has failed
-        if (failed_reason != null) {
-            if (rec.error != null || 
-                    (rec.state.equals("missed") || rec.state.equals("invalid"))) {
-                failed_reason.setVisibility(View.VISIBLE);
-                // Show the text why it failed
-                if (rec.error != null && rec.error.equals("File missing")) {
-                    failed_reason.setText(R.string.recording_file_missing);
-                } else if (rec.state.equals("missed")) {
-                    failed_reason.setText(R.string.recording_time_missed);
-                } else if (rec.state.equals("invalid")) {
-                    failed_reason.setText(R.string.recording_file_invalid);
-                }
-            } else {
-                failed_reason.setVisibility(View.GONE);
-            }
-        }
+        Utils.setFailedReason(failed_reason, rec);
     }
 
     @Override

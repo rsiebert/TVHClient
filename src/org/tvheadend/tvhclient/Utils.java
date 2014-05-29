@@ -581,6 +581,34 @@ public class Utils {
     }
 
     /**
+     * Shows the reason why a recording has failed. If the text is empty then
+     * the view will be hidden.
+     * 
+     * @param failed_reason
+     * @param rec
+     */
+    public static void setFailedReason(final TextView failed_reason, final Recording rec) {
+        if (failed_reason == null) {
+            return;
+        }
+
+        if (rec.error != null || 
+                (rec.state.equals("missed") || rec.state.equals("invalid"))) {
+            failed_reason.setVisibility(View.VISIBLE);
+            // Show the text why it failed
+            if (rec.error != null && rec.error.equals("File missing")) {
+                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
+            } else if (rec.state.equals("missed")) {
+                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_time_missed));
+            } else if (rec.state.equals("invalid")) {
+                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_invalid));
+            }
+        } else {
+            failed_reason.setVisibility(View.GONE);
+        }
+    }
+
+    /**
      * Shows the progress as a progress bar.
      * 
      * @param progress

@@ -125,24 +125,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDuration(holder.duration, rec.start, rec.stop);
             Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
-
-            // Display the reason why the recording has failed
-            if (holder.failed_reason != null) {
-                if (rec.error != null || 
-                        (rec.state.equals("missed") || rec.state.equals("invalid"))) {
-                    holder.failed_reason.setVisibility(View.VISIBLE);
-                    // Show the text why it failed
-                    if (rec.error != null && rec.error.equals("File missing")) {
-                        holder.failed_reason.setText(R.string.recording_file_missing);
-                    } else if (rec.state.equals("missed")) {
-                        holder.failed_reason.setText(R.string.recording_time_missed);
-                    } else if (rec.state.equals("invalid")) {
-                        holder.failed_reason.setText(R.string.recording_file_invalid);
-                    }
-                } else {
-                    holder.failed_reason.setVisibility(View.GONE);
-                }
-            }
+            Utils.setFailedReason(holder.failed_reason, rec);
         }
         return view;
     }
