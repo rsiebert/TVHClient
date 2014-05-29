@@ -268,6 +268,7 @@
     <string name="time">Zeit</string>
     <string name="date">Datum</string>
     <string name="shown_on_channel">auf</string>
+    <string name="shown_at_time">von</string>
     <string name="summary">Zusammenfassung</string>
     <string name="description">Beschreibung</string>
     <string name="duration">Dauer</string>
