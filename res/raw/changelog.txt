@@ -1,6 +1,6 @@
 $ 1.3.0
   % VERSION 1.3.0
-  _ 28.05.2014
+  _ 29.05.2014
     * Added Dutch translation
     * Added French translation
     * Updated Swedish translation
