@@ -249,6 +249,7 @@
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Search the EPG</string>
+    <string name="two_days_ago">Two days ago</string>
     <string name="yesterday">Yesterday</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>

@@ -485,6 +485,8 @@ public class Utils {
             date.setText(R.string.sunday);
         } else if (dateText.equals("yesterday")) {
             date.setText(R.string.yesterday);
+        } else if (dateText.equals("2 days ago")) {
+            date.setText(R.string.two_days_ago);
         } else {
             date.setText(dateText);
         }
