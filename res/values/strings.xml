@@ -280,7 +280,6 @@
     <string name="time">Time</string>
     <string name="date">Date</string>
     <string name="shown_on_channel">on</string>
-    <string name="shown_at_time">from</string>
     <string name="summary">Summary</string>
     <string name="description">Description</string>
     <string name="duration">Duration</string>
