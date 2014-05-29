@@ -102,7 +102,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         }
 
         // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.program_layout, container, false);
+        View v = inflater.inflate(R.layout.program_details_layout, container, false);
         title = (TextView) v.findViewById(R.id.title);
         state = (ImageView) v.findViewById(R.id.state);
         summaryLabel = (TextView) v.findViewById(R.id.summary_label);

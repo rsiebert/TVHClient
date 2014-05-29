@@ -122,6 +122,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
+        Utils.setProgressText(null, rec.start, rec.stop);
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
         Utils.setFailedReason(failed_reason, rec);
