@@ -87,6 +87,7 @@
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingRight="3dp"
                 android:singleLine="true"
                 android:text="@string/date" />
 
@@ -94,6 +95,7 @@
                 android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="3dp"
                 android:singleLine="true"
                 android:text="@string/time" />
         </LinearLayout>
