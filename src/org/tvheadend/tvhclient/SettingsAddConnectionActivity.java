@@ -116,6 +116,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         private EditTextPreference prefUsername;
         private EditTextPreference prefPassword;
         private CheckBoxPreference prefSelected;
+        private EditTextPreference prefWolAddress;
+        private EditTextPreference prefWolPort;
 
         @Override
         public void onCreate(final Bundle savedInstanceState) {
@@ -133,6 +135,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefUsername = (EditTextPreference) findPreference("pref_username");
             prefPassword = (EditTextPreference) findPreference("pref_password");
             prefSelected = (CheckBoxPreference) findPreference("pref_selected");
+            prefWolAddress = (EditTextPreference) findPreference("pref_wol_address");
+            prefWolPort = (EditTextPreference) findPreference("pref_wol_port");
 
             // If the connection is null then this activity has been started for
             // the first time. If the connection is not null then the screen has
@@ -153,6 +157,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                     conn.streaming_port = 9981;
                     conn.username = "";
                     conn.password = "";
+                    conn.wol_address = "";
+                    conn.wol_port = 9;
 
                     // If this is the first connection make it active
                     conn.selected = (DatabaseHelper.getInstance().getConnections().size() == 0) ? true : false;
@@ -167,6 +173,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefUsername.setText(conn.username);
             prefPassword.setText(conn.password);
             prefSelected.setChecked(conn.selected);
+            prefWolAddress.setText(conn.wol_address);
+            prefWolPort.setText(String.valueOf(conn.wol_port));
         }
 
         public void onResume() {
@@ -187,6 +195,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefUsername.setSummary(conn.username.length() == 0 ? getString(R.string.pref_user_sum) : conn.username);
             prefPassword.setSummary(conn.password.length() == 0 ? getString(R.string.pref_pass_sum)
                     : getString(R.string.pref_pass_set_sum));
+            prefWolAddress.setSummary(conn.wol_address.length() == 0 ? getString(R.string.pref_wol_address_sum) : conn.wol_address);
+            prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, conn.wol_port));
         }
 
         @Override
@@ -225,7 +235,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
             connectionChanged = true;
-            
+
             // Update the connection object with the new values
             conn.name = prefName.getText();
             conn.address = prefAddress.getText();
@@ -234,6 +244,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             conn.username = prefUsername.getText();
             conn.password = prefPassword.getText();
             conn.selected = prefSelected.isChecked();
+            conn.wol_address = prefWolAddress.getText();
+            conn.wol_port = Integer.parseInt(prefWolPort.getText());
             // Show the values from the connection object
             // in the summary text of the preferences
             showPreferenceSummary();
@@ -245,7 +257,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * updated.
          */
         private void save() {
-            if (!validateName() || !validatePort() || !validateAddress()) {
+            if (!validateName() || !validatePort() || !validateIpAddress() || !validateMacAddress()) {
                 return;
             }
             // If the current connection is set as selected
@@ -273,6 +285,30 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             returnIntent.putExtra("reconnect", connectionChanged);
             getActivity().setResult(RESULT_OK, returnIntent);
             getActivity().finish();
+        }
+
+        /**
+         * Checks if the MAC address syntax is correct.
+         * 
+         * @return
+         */
+        private boolean validateMacAddress() {
+            // Check if the MAC address contains 6 elements
+            String[] hex = conn.wol_address.split("(\\:|\\-)");
+            if (hex.length != 6) {
+                Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            try {
+                // Parse the MAC address elements to check if they are ok.
+                for (int i = 0; i < 6; i++) {
+                    Integer.parseInt(hex[i], 16);
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            return true;
         }
 
         /**
@@ -304,7 +340,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * 
          * @return
          */
-        private boolean validateAddress() {
+        private boolean validateIpAddress() {
             if (conn.address.length() == 0) {
                 Toast.makeText(getActivity(), getString(R.string.pref_host_error_empty), Toast.LENGTH_SHORT).show();
                 return false;

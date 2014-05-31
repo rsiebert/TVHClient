@@ -37,6 +37,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 public class SettingsManageConnectionsActivity extends ActionBarActivity implements ActionMode.Callback {
@@ -84,6 +85,27 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
                 return;
             }
         });
+
+        // Send out the wake on LAN package to wake up the selected connection
+        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Connection conn = adapter.getItem(position);
+                wakeUpServer(conn);
+                return true;
+            }
+        });
+    }
+
+    /**
+     * 
+     * @param conn
+     */
+    private void wakeUpServer(final Connection conn) {
+        if (conn != null) {
+            WakeOnLanTask task= new WakeOnLanTask(this, conn);
+            task.execute();
+        }    
     }
 
     @Override
