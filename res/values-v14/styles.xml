@@ -90,6 +90,7 @@
         <item name="ic_menu_delete">@drawable/ic_menu_delete_dark</item>
         <item name="ic_menu_edit">@drawable/ic_menu_edit_dark</item>
         <item name="ic_menu_timeframe">@drawable/ic_menu_timeframe_dark</item>
+        <item name="ic_menu_wol">@drawable/ic_menu_send_wol_dark</item>
         <item name="item_active">@drawable/item_active_dark</item>
         <item name="item_not_active">@drawable/item_not_active_dark</item>
         <item name="TitleFont">@style/TitleFont.Dark</item>
@@ -118,6 +119,7 @@
         <item name="ic_menu_delete">@drawable/ic_menu_delete_light</item>
         <item name="ic_menu_edit">@drawable/ic_menu_edit_light</item>
         <item name="ic_menu_timeframe">@drawable/ic_menu_timeframe_light</item>
+        <item name="ic_menu_wol">@drawable/ic_menu_send_wol_light</item>
         <item name="item_active">@drawable/item_active_light</item>
         <item name="item_not_active">@drawable/item_not_active_light</item>
         <item name="TitleFont">@style/TitleFont.Light</item>
