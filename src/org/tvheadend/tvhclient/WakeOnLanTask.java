@@ -112,12 +112,12 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if (result == WOL_SEND) {
-            Toast.makeText(context, context.getString(R.string.wol_send, conn.address), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getString(R.string.wol_send, conn.address), Toast.LENGTH_SHORT).show();
         } else if (result == WOL_INVALID_MAC) {
-            Toast.makeText(context, context.getString(R.string.wol_address_invalid), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getString(R.string.wol_address_invalid), Toast.LENGTH_SHORT).show();
         } else {
             final String msg = exception.getLocalizedMessage();
-            Toast.makeText(context, context.getString(R.string.wol_error, conn.address, msg), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getString(R.string.wol_error, conn.address, msg), Toast.LENGTH_SHORT).show();
         }
     }
 }
