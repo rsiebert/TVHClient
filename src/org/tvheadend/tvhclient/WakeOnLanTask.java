@@ -71,6 +71,9 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
      * @return True if the MAC address is correct, false otherwise
      */
     private boolean validateMacAddress(String macAddress) {
+        if (macAddress == null) {
+            return false;
+        }
         // Check if the MAC address contains 6 elements
         String[] hex = macAddress.split("(\\:|\\-)");
         if (hex.length != 6) {

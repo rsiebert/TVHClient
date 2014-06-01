@@ -195,7 +195,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefUsername.setSummary(conn.username.length() == 0 ? getString(R.string.pref_user_sum) : conn.username);
             prefPassword.setSummary(conn.password.length() == 0 ? getString(R.string.pref_pass_sum)
                     : getString(R.string.pref_pass_set_sum));
-            prefWolAddress.setSummary(conn.wol_address.length() == 0 ? getString(R.string.pref_wol_address_sum) : conn.wol_address);
+            prefWolAddress.setSummary((conn.wol_address != null && conn.wol_address.length() == 0) ? getString(R.string.pref_wol_address_sum) : conn.wol_address);
             prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, conn.wol_port));
         }
 
@@ -296,7 +296,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             // Check if the MAC address contains 6 elements
             String[] hex = conn.wol_address.split("(\\:|\\-)");
             if (hex.length != 6) {
-                Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_LONG).show();
                 return false;
             }
             try {
@@ -305,7 +305,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                     Integer.parseInt(hex[i], 16);
                 }
             } catch (NumberFormatException e) {
-                Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_LONG).show();
                 return false;
             }
             return true;
