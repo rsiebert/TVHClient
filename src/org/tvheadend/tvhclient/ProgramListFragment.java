@@ -44,6 +44,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -125,6 +126,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         prList = new ArrayList<Program>();
         adapter = new ProgramListAdapter(activity, prList);
         listView.setAdapter(adapter);
+
         registerForContextMenu(listView);
     }
 
@@ -133,7 +135,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
      * of the program list has been reached.
      */
     private void enableScrollListener() {
-        
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -141,7 +142,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                     if (actionBarInterface != null) {
                         actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
                     }
-                    
                     // Do not load more programs if we are already doing it. This avoids
                     // calling the service for nothing and reduces the used bandwidth.
                     if (isLoading) {
@@ -211,7 +211,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Program program = adapter.getItem(info.position);
@@ -272,6 +271,22 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (info.position == 0) {
             MenuItem playMenuItem = menu.findItem(R.id.menu_play);
             playMenuItem.setVisible(true);
+        }
+
+        // Set a separate listener to each menu item so the context menu will be
+        // executed correctly in dual pane mode
+        if (isDualPane) {
+            OnMenuItemClickListener listener = new OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    onContextItemSelected(item);
+                    return true;
+                }
+            };
+
+            for (int i = 0, n = menu.size(); i < n; i++) {
+                menu.getItem(i).setOnMenuItemClickListener(listener);
+            }
         }
     }
 
