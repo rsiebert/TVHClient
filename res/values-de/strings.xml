@@ -11,7 +11,7 @@
     <string name="menu_search">Suchen</string>
     <string name="menu_record">Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
-    <string name="menu_record_remove">Aufnahme entfernen</string>
+    <string name="menu_record_remove">Aufnahme löschen</string>
     <string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
     <string name="menu_search_epg">Suche im TV-Programm</string>
     <string name="menu_add">Hinzufügen</string>
@@ -36,7 +36,7 @@
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
-    <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich entfernt werden?</string>
+    <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
 
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
