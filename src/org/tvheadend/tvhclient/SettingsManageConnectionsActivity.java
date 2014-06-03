@@ -259,8 +259,10 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
         final Connection c = adapter.getItem(position);
 
         // Show or hide the wake on LAN menu item
-        if (c != null) {
+        if (c != null && c.wol_address != null) {
             menu.getItem(0).setVisible((c.wol_address.length() > 0));
+        } else {
+            menu.getItem(0).setVisible(false);
         }
 
         // Show or hide the activate / deactivate menu item
