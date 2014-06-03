@@ -293,6 +293,10 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * @return
          */
         private boolean validateMacAddress() {
+            // Allow an empty address
+            if (conn.wol_address.length() == 0) {
+                return true;
+            }
             // Check if the MAC address contains 6 elements
             String[] hex = conn.wol_address.split("(\\:|\\-)");
             if (hex.length != 6) {
