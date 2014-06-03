@@ -297,14 +297,17 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             if (conn.wol_address.length() == 0) {
                 return true;
             }
-            // Check if the MAC address contains 6 elements
-            String[] hex = conn.wol_address.split("(\\:|\\-)");
-            if (hex.length != 6) {
+            // Check if the MAC address is valid
+            Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
+            Matcher matcher = pattern.matcher(conn.wol_address);
+            if (!matcher.matches()) {
                 Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_LONG).show();
                 return false;
             }
+
             try {
                 // Parse the MAC address elements to check if they are ok.
+                String[] hex = conn.wol_address.split("(\\:|\\-)");
                 for (int i = 0; i < 6; i++) {
                     Integer.parseInt(hex[i], 16);
                 }

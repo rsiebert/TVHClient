@@ -3,6 +3,8 @@ package org.tvheadend.tvhclient;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.tvheadend.tvhclient.model.Connection;
 
@@ -70,17 +72,20 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
      * @param macAddress
      * @return True if the MAC address is correct, false otherwise
      */
-    private boolean validateMacAddress(String macAddress) {
+    private boolean validateMacAddress(final String macAddress) {
         if (macAddress == null) {
             return false;
         }
-        // Check if the MAC address contains 6 elements
-        String[] hex = macAddress.split("(\\:|\\-)");
-        if (hex.length != 6) {
+        // Check if the MAC address is valid
+        Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
+        Matcher matcher = pattern.matcher(macAddress);
+        if (!matcher.matches()) {
             return false;
         }
+
         try {
             // Parse the MAC address elements to check if they are ok.
+            String[] hex = macAddress.split("(\\:|\\-)");
             for (int i = 0; i < 6; i++) {
                 Integer.parseInt(hex[i], 16);
             }
