@@ -1,8 +1,10 @@
 $ 1.4.0
   % VERSION 1.4.0
-  _ 31.05.2014
+  _ 03.06.2014
     * Added Wake on LAN functionality
     * Added better icons for tablets
+    * Added high resolution launcher icons
+    * Fixed program list context menu in dual mode
 $ 1.3.0
   % VERSION 1.3.0
   _ 29.05.2014
