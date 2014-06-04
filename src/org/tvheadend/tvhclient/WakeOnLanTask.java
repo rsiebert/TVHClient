@@ -82,16 +82,6 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         if (!matcher.matches()) {
             return false;
         }
-
-        try {
-            // Parse the MAC address elements to check if they are ok.
-            String[] hex = macAddress.split("(\\:|\\-)");
-            for (int i = 0; i < 6; i++) {
-                Integer.parseInt(hex[i], 16);
-            }
-        } catch (NumberFormatException e) {
-            return false;
-        }
         return true;
     }
 

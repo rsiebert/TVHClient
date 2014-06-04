@@ -304,17 +304,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                 Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_LONG).show();
                 return false;
             }
-
-            try {
-                // Parse the MAC address elements to check if they are ok.
-                String[] hex = conn.wol_address.split("(\\:|\\-)");
-                for (int i = 0; i < 6; i++) {
-                    Integer.parseInt(hex[i], 16);
-                }
-            } catch (NumberFormatException e) {
-                Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_LONG).show();
-                return false;
-            }
             return true;
         }
 
