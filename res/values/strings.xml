@@ -63,8 +63,8 @@
     <string name="pref_wol_address">MAC address</string>
     <string name="pref_wol_address_sum">Enter the MAC address of the host (e.g. 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Wake on LAN Port</string>
-    <string name="pref_wol_port_sum">%d will be used to wake up the server. The default port is 9.</string>
-    <string name="pref_wol_address_invalid">The MAC-address is not valid. It must contain six groups of two hexadecimal digits (0\-9 and a\-f), separated by hyphens (\-) or colons (:). (e.g. 01\-24\-67\-9a\-cd\-ef or 01:24:67:9a:cd:ef)</string>
+    <string name="pref_wol_port_sum">Port %d will be used to wake up the server. The default is 9.</string>
+    <string name="pref_wol_address_invalid">The MAC address is invalid.\nIt must have the pattern \'01:24:67:9a:cd:ef\' and may only contain the hexadecimal digits 0\-9 and a\-f and the separators \':\' and \'\-\'.</string>
 
     <string name="pref_user_interface">User interface</string>
     <string name="pref_icons">Channel icons</string>
