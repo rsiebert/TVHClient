@@ -257,7 +257,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * updated.
          */
         private void save() {
-            if (!validateName() || !validatePort() || !validateIpAddress() || !validateMacAddress()) {
+            if (conn == null || !validateName() || !validatePort() || !validateIpAddress() || !validateMacAddress()) {
                 return;
             }
             // If the current connection is set as selected
@@ -293,6 +293,10 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * @return
          */
         private boolean validateMacAddress() {
+            // Initialize in case it's somehow null
+            if (conn.wol_address == null) {
+                conn.wol_address = "";
+            }
             // Allow an empty address
             if (conn.wol_address.length() == 0) {
                 return true;
@@ -314,6 +318,11 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * @return
          */
         private boolean validateName() {
+            // Initialize in case it's somehow null
+            if (conn.name == null) {
+                conn.name = "";
+            }
+            // Do not allow an empty address
             if (conn.name.length() == 0) {
                 Toast.makeText(getActivity(), getString(R.string.pref_name_error_empty), Toast.LENGTH_SHORT).show();
                 return false;
@@ -337,6 +346,11 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
          * @return
          */
         private boolean validateIpAddress() {
+            // Initialize in case it's somehow null
+            if (conn.address == null) {
+                conn.address = "";
+            }
+            // Do not allow an empty address
             if (conn.address.length() == 0) {
                 Toast.makeText(getActivity(), getString(R.string.pref_host_error_empty), Toast.LENGTH_SHORT).show();
                 return false;
