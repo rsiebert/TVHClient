@@ -423,6 +423,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
      * application when no connection is available.
      */
     private void showCreateConnectionDialog() {
+        // Don't do anything if the fragment is not attached to the activity
+        if (!this.isAdded()) {
+            return;
+        }
         // Show confirmation dialog to cancel 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(getString(R.string.create_new_connections));

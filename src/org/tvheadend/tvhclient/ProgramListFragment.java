@@ -174,8 +174,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         prList.addAll(channel.epg);
         adapter.sort();
         adapter.notifyDataSetChanged();
-        
-        if (actionBarInterface != null) {
+
+        if (actionBarInterface != null && channel != null) {
             actionBarInterface.setActionBarTitle(channel.name, TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
             if (!isDualPane) {

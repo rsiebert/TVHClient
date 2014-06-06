@@ -133,8 +133,8 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
-        
-        if (actionBarInterface != null && !isDualPane) {
+
+        if (actionBarInterface != null && rec != null && rec.channel != null && !isDualPane) {
             actionBarInterface.setActionBarTitle(rec.channel.name, TAG);
             actionBarInterface.setActionBarIcon(rec.channel, TAG);
         }

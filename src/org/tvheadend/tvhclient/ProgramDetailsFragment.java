@@ -167,7 +167,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         
-        if (actionBarInterface != null) {
+        if (actionBarInterface != null && channel != null) {
             actionBarInterface.setActionBarTitle(channel.name, TAG);
             actionBarInterface.setActionBarIcon(channel, TAG);
         }
