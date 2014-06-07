@@ -137,6 +137,15 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
      * @param ft
      */
     protected void handleTabSelection(Tab tab, FragmentTransaction ft) {
+        // Remove any previously active fragment on the right side. In case the
+        // connection can't be established the screen is blank.
+        if (isDualPane) {
+            Fragment plf = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+            if (plf != null) {
+                ft.remove(plf);
+            }
+        }
+
         switch (tab.getPosition()) {
         case 0:
             // Show the channel list fragment
@@ -159,15 +168,6 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
             Fragment sf = Fragment.instantiate(this, StatusFragment.class.getName());
             ft.replace(R.id.main_fragment, sf, MAIN_FRAGMENT_TAG);
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            
-			// Remove the program list fragment so it is not visible when the
-			// status screen is shown
-			if (isDualPane) {
-				Fragment plf = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
-				if (plf != null) {
-					ft.remove(plf);
-				}
-			}
             break;
         }
     }
@@ -343,10 +343,12 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 	    }
 
 		if (!isDualPane) {
-		    // Start the activity
-			Intent intent = new Intent(this, ProgramListActivity.class);
-			intent.putExtra("channelId", channel.id);
-			startActivity(intent);
+		    if (!channel.epg.isEmpty()) {
+    		    // Show the program list when there is data available
+    			Intent intent = new Intent(this, ProgramListActivity.class);
+    			intent.putExtra("channelId", channel.id);
+    			startActivity(intent);
+		    }
 		} else {
 			// Recreate the fragment with the new channel id
 		    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

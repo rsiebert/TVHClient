@@ -128,11 +128,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                adapter.setPosition(position);
                 Channel ch = (Channel) adapter.getItem(position);
                 if (channelListListener != null) {
                     channelListListener.onChannelSelected(position, ch);
                 }
+                adapter.setPosition(position);
+                adapter.notifyDataSetChanged();
             }
         });
         
@@ -422,6 +423,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
      * application when no connection is available.
      */
     private void showCreateConnectionDialog() {
+        // Don't do anything if the fragment is not attached to the activity
+        if (!this.isAdded()) {
+            return;
+        }
         // Show confirmation dialog to cancel 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(getString(R.string.create_new_connections));
@@ -497,7 +502,17 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
             });
         } else if (action.equals(TVHClientApplication.ACTION_TAG_UPDATE)) {
             //NOP
-        }
+        } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)
+                || action.equals(TVHClientApplication.ACTION_PROGRAMME_DELETE)
+                || action.equals(TVHClientApplication.ACTION_DVR_ADD)
+                || action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
+            // An existing program has been updated
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        } 
     }
 
     @Override

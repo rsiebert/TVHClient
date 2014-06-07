@@ -11,7 +11,7 @@
     <string name="menu_search">Suchen</string>
     <string name="menu_record">Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
-    <string name="menu_record_remove">Aufnahme entfernen</string>
+    <string name="menu_record_remove">Aufnahme löschen</string>
     <string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
     <string name="menu_search_epg">Suche im TV-Programm</string>
     <string name="menu_add">Hinzufügen</string>
@@ -24,6 +24,7 @@
     <string name="menu_connections">Verbindungen</string>
     <string name="menu_timeframe">Zeitraum</string>
     <string name="menu_genre_color_info">Bedeutung der Genrefarben</string>
+    <string name="menu_send_wol">Aufwecken</string>
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
@@ -35,7 +36,7 @@
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
-    <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich entfernt werden?</string>
+    <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
 
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
@@ -59,6 +60,11 @@
     <string name="pref_pass">Passwort</string>
     <string name="pref_pass_sum">Passwort eingeben</string>
     <string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
+    <string name="pref_wol_address">MAC-Adresse</string>
+    <string name="pref_wol_address_sum">MAC-Adresse des Servers (z.B: 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_port">Wake on LAN Port</string>
+    <string name="pref_wol_port_sum">Port %d wird zum Wecken des Servers verwendet. Der Standardport ist 9.</string>
+    <string name="pref_wol_address_invalid">Die MAC-Adresse ist ungültig.\nSie muss z.B. das Format \'01:24:67:9a:cd:ef\' haben und darf neben \':\' und \'\-\' nur 0\-9 und a\-z enthalten.</string>
 
     <string name="pref_user_interface">Benutzeroberfläche</string>
     <string name="pref_icons">Zeige Senderlogos</string>
@@ -106,11 +112,17 @@
     <string name="pref_genre_colors_visibility_message">Definiere die Sichtbarkeit der Farben. Je höher der Wert, desto stärker wirken die Farben.</string>
     <string name="pref_genre_colors_visibility">Sichtbarkeit der Genrefarben</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
+    <string name="pref_dual_pane_recordings">Zwei-Fenster-Modus für Aufnahmen</string>
+    <string name="pref_dual_pane_recordings_sum">Zeigt die Liste der Aufnahmen auf der linken und die Details der gewählten Aufnahme auf der rechten Bildschirmhälfte an. Nur für Tablets verfügbar.</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
-    
+
+    <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
+    <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
+    <string name="recording_file_invalid">Aufnahme ist ungültig bzw. fehlerhaft</string>
+
      <string-array name="pr_content_type0">
         <item>Film / Drama</item>
         <item>Nachrichten / Aktuelles</item>
@@ -231,6 +243,7 @@
     <string name="minutes">%d Min</string>
     
     <string name="search_hint">Suche im TV-Programm</string>
+    <string name="two_days_ago">Vor 2 Tagen</string>
     <string name="yesterday">Gestern</string>
     <string name="today">Heute</string>
     <string name="tomorrow">Morgen</string>

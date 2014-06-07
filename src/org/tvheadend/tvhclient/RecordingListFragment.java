@@ -20,7 +20,6 @@
 package org.tvheadend.tvhclient;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
@@ -51,11 +50,16 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
+    private OnRecordingListListener recordingListListener;
     private RecordingListAdapter adapter;
     private ListView listView;
-    private List<Recording> recList;
     private int tabIndex = 0;
-    
+
+    // This is the default view for the channel list adapter. Other views can be
+    // passed to the adapter to show less information. This is used in the
+    // program guide where only the channel icon is relevant.
+    private int adapterLayout = R.layout.recording_list_widget;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -67,11 +71,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         }
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
-        
+
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
         if (bundle != null) {
             tabIndex = bundle.getInt("tabIndex", 0);
+            adapterLayout = bundle.getInt("adapterLayout", R.layout.recording_list_widget);
         }
         return v;
     }
@@ -90,10 +95,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
+        if (activity instanceof OnRecordingListListener) {
+            recordingListListener = (OnRecordingListListener) activity;
+        }
 
-        recList = new ArrayList<Recording>();
-        adapter = new RecordingListAdapter(activity, recList);
+        adapter = new RecordingListAdapter(activity, new ArrayList<Recording>(), adapterLayout);
         listView.setAdapter(adapter);
+
         registerForContextMenu(listView);
         // Set the listener to show the recording details activity when the user
         // has selected a recording
@@ -101,9 +109,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recording rec = (Recording) adapter.getItem(position);
-                Intent intent = new Intent(activity, RecordingDetailsActivity.class);
-                intent.putExtra("id", rec.id);
-                startActivity(intent);
+                if (recordingListListener != null) {
+                    recordingListListener.onRecordingSelected(position, rec);
+                }
+                adapter.setPosition(position);
+                adapter.notifyDataSetChanged();
             }
         });
     }
@@ -125,6 +135,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     @Override
     public void onDetach() {
+        recordingListListener = null;
         actionBarInterface = null;
         super.onDetach();
     }
@@ -159,7 +170,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         // the menu items depending on the recording state
         menu.setHeaderTitle(rec.title);
         Utils.setRecordingMenu(menu, rec);
-        Utils.setRecordingMenuIcons(activity, menu, rec);
+        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override
@@ -236,29 +247,36 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      */
     private void populateList() {
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        recList.clear();
+        adapter.clear();
         
         // Show only the recordings that belong to the tab
         for (Recording rec : app.getRecordings()) {
             if (tabIndex == 0 &&
                     rec.error == null &&
                     rec.state.equals("completed")) {
-                recList.add(rec);
+                adapter.add(rec);
             } else if (tabIndex == 1 &&
                     rec.error == null &&
                     (rec.state.equals("scheduled") || 
                      rec.state.equals("recording") ||
                      rec.state.equals("autorec"))) {
-                recList.add(rec);
+                adapter.add(rec);
             } else if (tabIndex == 2 &&
                     (rec.error != null ||
                     (rec.state.equals("missed") || rec.state.equals("invalid")))) {
-                recList.add(rec);
+                adapter.add(rec);
             }
         }
         adapter.sort();
         adapter.notifyDataSetChanged();
-        ((RecordingListTabsActivity)activity).updateTitle(tabIndex, recList.size());
+        
+        // Inform the listeners that the channel list is populated.
+        // They could then define the preselected list item.
+        if (recordingListListener != null) {
+            recordingListListener.onRecordingListPopulated();
+        }
+
+        ((RecordingListTabsActivity)activity).updateTitle(tabIndex, adapter.getCount());
     }
 
     /**
@@ -300,9 +318,27 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     }
 
     public int getRecordingCount() {
-        if (recList != null) {
-            return recList.size();
+        if (adapter != null) {
+            return adapter.getCount();
         }
         return 0;
+    }
+
+    /**
+     * Sets the selected item in the list to the desired position. Any listener
+     * is then informed that a new recording item has been selected.
+     * 
+     * @param position
+     */
+    public void setSelectedItem(int position) {
+        if (listView.getCount() > position && adapter.getCount() > position) {
+            adapter.setPosition(position);
+            recordingListListener.onRecordingSelected(position, adapter.getItem(position));
+        }
+    }
+
+    public interface OnRecordingListListener {
+        public void onRecordingSelected(int position, Recording recording);
+        public void onRecordingListPopulated();
     }
 }

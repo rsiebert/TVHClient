@@ -10,4 +10,6 @@ public class Connection {
     public boolean selected;
     public int channelTag;
     public int streaming_port;
+    public String wol_address;
+    public int wol_port;
 }

@@ -43,6 +43,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
 
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
+    private boolean isDualPane = false;
     private FragmentActivity activity;
     private ActionBarInterface actionBarInterface;
     private Recording rec;
@@ -57,6 +58,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     private TextView date;
     private TextView time;
     private TextView duration;
+    private TextView failed_reason;
 
     @Override
     public void onAttach(Activity activity) {
@@ -77,10 +79,11 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         if (bundle != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             rec = app.getRecording(bundle.getLong("id", 0));
+            isDualPane  = bundle.getBoolean("dual_pane", false);
         }
 
         // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.recording_layout, container, false);
+        View v = inflater.inflate(R.layout.recording_details_layout, container, false);
         title = (TextView) v.findViewById(R.id.title);
         state = (ImageView) v.findViewById(R.id.state);
         summaryLabel = (TextView) v.findViewById(R.id.summary_label);
@@ -91,6 +94,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         date = (TextView) v.findViewById(R.id.date);
         time = (TextView) v.findViewById(R.id.time);
         duration = (TextView) v.findViewById(R.id.duration);
+        failed_reason = (TextView) v.findViewById(R.id.failed_reason);
         return v;
     }
 
@@ -108,7 +112,9 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
             activity.finish();
         }
 
-        title.setText(rec.title);
+        if (title != null) {
+            title.setText(rec.title);
+        }
         if (rec.channel != null) {
             channelName.setText(rec.channel.name);
         }
@@ -116,8 +122,10 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
+        Utils.setProgressText(null, rec.start, rec.stop);
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
+        Utils.setFailedReason(failed_reason, rec);
     }
 
     @Override
@@ -125,8 +133,8 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
-        
-        if (actionBarInterface != null) {
+
+        if (actionBarInterface != null && rec != null && rec.channel != null && !isDualPane) {
             actionBarInterface.setActionBarTitle(rec.channel.name, TAG);
             actionBarInterface.setActionBarIcon(rec.channel, TAG);
         }
@@ -144,7 +152,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.program_context_menu, menu);
         Utils.setRecordingMenu(menu, rec);
-        Utils.setRecordingMenuIcons(activity, menu, rec);
+        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override

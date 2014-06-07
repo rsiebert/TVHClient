@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
+        android:id="@+id/menu_send_wol"
+        android:icon="?attr/ic_menu_wol"
+        android:title="@string/menu_send_wol"
+        app:showAsAction="always|withText"/>
+    <item
         android:id="@+id/menu_set_active"
         android:icon="?attr/item_active"
         android:title="@string/menu_set_active"

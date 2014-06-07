@@ -58,6 +58,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         public TextView date;
         public TextView duration;
         public TextView progress;
+        public TextView summary;
         public TextView description;
         public TextView seriesInfo;
         public TextView contentType;
@@ -81,6 +82,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             holder.progress = (TextView) view.findViewById(R.id.progress);
             holder.seriesInfo = (TextView) view.findViewById(R.id.series_info);
             holder.contentType = (TextView) view.findViewById(R.id.content_type);
+            holder.summary = (TextView) view.findViewById(R.id.summary);
             holder.description = (TextView) view.findViewById(R.id.description);
             holder.genre = (TextView) view.findViewById(R.id.genre);
             view.setTag(holder);
@@ -97,6 +99,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             Utils.setTime(holder.time, p.start, p.stop);
             Utils.setDuration(holder.duration, p.start, p.stop);
             Utils.setProgressText(holder.progress, p.start, p.stop);
+            Utils.setDescription(null, holder.summary, p.summary);
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);

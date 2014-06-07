@@ -346,7 +346,7 @@ public class Utils {
         }
     }
 
-    public static void setRecordingMenuIcons(final Context context, final Menu menu, final Recording rec) {
+    public static void setRecordingMenuIcons(final Context context, final Menu menu) {
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -485,6 +485,8 @@ public class Utils {
             date.setText(R.string.sunday);
         } else if (dateText.equals("yesterday")) {
             date.setText(R.string.yesterday);
+        } else if (dateText.equals("2 days ago")) {
+            date.setText(R.string.two_days_ago);
         } else {
             date.setText(dateText);
         }
@@ -577,6 +579,34 @@ public class Utils {
         description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
         if (descriptionLabel != null) {
             descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    /**
+     * Shows the reason why a recording has failed. If the text is empty then
+     * the view will be hidden.
+     * 
+     * @param failed_reason
+     * @param rec
+     */
+    public static void setFailedReason(final TextView failed_reason, final Recording rec) {
+        if (failed_reason == null) {
+            return;
+        }
+
+        if (rec.error != null || 
+                (rec.state.equals("missed") || rec.state.equals("invalid"))) {
+            failed_reason.setVisibility(View.VISIBLE);
+            // Show the text why it failed
+            if (rec.error != null && rec.error.equals("File missing")) {
+                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
+            } else if (rec.state.equals("missed")) {
+                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_time_missed));
+            } else if (rec.state.equals("invalid")) {
+                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_invalid));
+            }
+        } else {
+            failed_reason.setVisibility(View.GONE);
         }
     }
 

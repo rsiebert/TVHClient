@@ -114,7 +114,8 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
             public void run() {
                 try {
                     Log.d(TAG, "Starting external player");
-                    startActivityForResult(playbackIntent, Constants.RESULT_CODE_START_PLAYER);
+                    startActivity(playbackIntent);
+                    finish();
                 } catch (Throwable t) {
                     Log.e(TAG, "Can't execute external media player", t);
 

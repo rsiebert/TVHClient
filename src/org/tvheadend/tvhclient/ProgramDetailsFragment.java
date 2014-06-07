@@ -102,7 +102,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         }
 
         // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.program_layout, container, false);
+        View v = inflater.inflate(R.layout.program_details_layout, container, false);
         title = (TextView) v.findViewById(R.id.title);
         state = (ImageView) v.findViewById(R.id.state);
         summaryLabel = (TextView) v.findViewById(R.id.summary_label);
@@ -167,7 +167,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         
-        if (actionBarInterface != null) {
+        if (actionBarInterface != null && channel != null) {
             actionBarInterface.setActionBarTitle(channel.name, TAG);
             actionBarInterface.setActionBarIcon(channel, TAG);
         }
@@ -184,6 +184,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.program_context_menu, menu);
+        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override

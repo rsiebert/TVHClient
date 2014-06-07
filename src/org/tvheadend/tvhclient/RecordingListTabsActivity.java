@@ -18,41 +18,55 @@
  */
 package org.tvheadend.tvhclient;
 
-import java.lang.reflect.Field;
-
+import org.tvheadend.tvhclient.RecordingListFragment.OnRecordingListListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Recording;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewConfiguration;
+import android.view.View;
 
-public class RecordingListTabsActivity extends ActionBarActivity implements ActionBarInterface {
+public class RecordingListTabsActivity extends ActionBarActivity implements ActionBarInterface, OnRecordingListListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingListTabsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
-    private RecordingListPagerAdapter adapter = null;
-    private static ViewPager viewPager = null;
     private boolean restart = false;
-    
+    private boolean isDualPane = false;
+    private int[] selectedRecordingListPosition = { 0, 0, 0 };
+
+    private static final String MAIN_FRAGMENT_TAG = "recording_list_fragment";
+    private static final String RIGHT_FRAGMENT_TAG = "recording_details_fragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.pager_layout);
+
+        // Only enable dual pane mode if the user wants it. If yes check
+        // if the layout supports showing the recording details next to
+        // the recording list. This is usually available on tablets
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("useDualPaneForRecordingsPref", false)) {
+            setContentView(R.layout.recording_layout_dual_pane);
+            View v = findViewById(R.id.details_fragment);
+            isDualPane = v != null && v.getVisibility() == View.VISIBLE;
+        } else {
+            setContentView(R.layout.recording_layout);
+        }
+
         Utils.setLanguage(this);
 
         // setup action bar for tabs
@@ -61,29 +75,10 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(R.string.menu_recordings);
 
-        adapter = new RecordingListPagerAdapter(getSupportFragmentManager());
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(adapter);
-
-        // Make the action bar collapse even when the hardware keys are present.
-        // This overrides the default behavior of the action bar.
-        try {
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception ex) {
-            // Ignore
-        }
-
         // Create a tab listener that is called when the user changes tabs.
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                // When the tab is selected, switch to the
-                // corresponding page in the ViewPager.
-                viewPager.setCurrentItem(tab.getPosition());
+                handleTabSelection(tab, ft);
             }
 
             @Override
@@ -105,39 +100,54 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
         tab = actionBar.newTab().setText(R.string.failed).setTabListener(tabListener);
         actionBar.addTab(tab);
 
-        adapter.notifyDataSetChanged();
-
-        // Select the corresponding tab when the user swipes between pages with
-        // a touch gesture.
-        viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-                // Get the fragment of the current tabs. The default tag given by the 
-                // FragmentPagerAdapater is "android:switcher:" + viewId + ":" + position;
-                RecordingListFragment fragment = (RecordingListFragment) getSupportFragmentManager().findFragmentByTag(
-                                "android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
-                // Update the action bar subtitle
-                if (fragment != null) {
-                    updateTitle(position, fragment.getRecordingCount());
-                }
-            }
-        });
-
         // Restore the previously selected tab. This is usually required when
         // the user has rotated the screen.
         if (savedInstanceState != null) {
             int index = savedInstanceState.getInt("selected_recording_tab_index", 0);
             actionBar.setSelectedNavigationItem(index);
+            // Get the previously selected channel item position
+            selectedRecordingListPosition = savedInstanceState.getIntArray("selected_recording_list_position");
         }
+    }
+
+    /**
+     * Depending on the selected tab, the recording list of the type is shown.
+     * 
+     * @param tab
+     * @param ft
+     */
+    protected void handleTabSelection(Tab tab, FragmentTransaction ft) {
+        Fragment rlf = Fragment.instantiate(this, RecordingListFragment.class.getName());
+        Bundle bundle = new Bundle();
+        bundle.putInt("tabIndex", tab.getPosition());
+        if (isDualPane) {
+            bundle.putInt("adapterLayout", R.layout.recording_list_widget_dual_pane);
+        } else {
+            bundle.putInt("adapterLayout", R.layout.recording_list_widget);
+        }
+        rlf.setArguments(bundle);
+        ft.replace(R.id.main_fragment, rlf, MAIN_FRAGMENT_TAG);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        // When the orientation changes from landscape to portrait the program
+        // list fragment would crash because the container is null. So we remove
+        // it entirely before the orientation change happens.
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment f = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+        if (f != null) {
+            ft.remove(f);
+            ft.commit();
+        }
+
         super.onSaveInstanceState(outState);
         // Save the currently selected tab
         int index = actionBar.getSelectedNavigationIndex();
         outState.putInt("selected_recording_tab_index", index);
+        // Save the position of the selected channel list item
+        outState.putIntArray("selected_recording_list_position", selectedRecordingListPosition);
     }
 
     @Override
@@ -220,33 +230,6 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
             }
         }
     }
-    
-    /**
-     * Adapter that manages and holds the fragments of the different recording
-     * types.
-     * 
-     * @author rsiebert
-     * 
-     */
-    private class RecordingListPagerAdapter extends FragmentPagerAdapter {
-        public RecordingListPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment fragment = new RecordingListFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt("tabIndex", position);
-            fragment.setArguments(bundle);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return actionBar.getTabCount();
-        }
-    }
 
     /**
      * Called when an activity was closed and this one is active again. Reloads
@@ -302,6 +285,56 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
             if (showIcon) {
                 actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
             }
+        }
+    }
+    
+    /**
+     * Provided by the channel list listener interface. This method is called
+     * when the user has selected an item from the channel list. In dual pane
+     * mode the program list on the right side will be recreated to show the new
+     * programs for the selected channel. In normal mode the activity will be
+     * called that shows the program list.
+     */
+    @Override
+    public void onRecordingSelected(int position, Recording recording) {
+        selectedRecordingListPosition[actionBar.getSelectedNavigationIndex()] = position;
+        
+        if (recording == null) {
+            return;
+        }
+
+        if (!isDualPane) {
+            // Start the activity
+            Intent intent = new Intent(this, RecordingDetailsActivity.class);
+            intent.putExtra("id", recording.id);
+            startActivity(intent);
+        } else {
+            // Recreate the fragment with the new channel id
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment fragment = Fragment.instantiate(this, RecordingDetailsFragment.class.getName());
+            Bundle args = new Bundle();
+            args.putLong("id", recording.id);
+            args.putBoolean("dual_pane", isDualPane);
+            fragment.setArguments(args);
+
+            // Replace the previous fragment with the new one
+            ft.replace(R.id.details_fragment, fragment, RIGHT_FRAGMENT_TAG);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            ft.commit();
+        }
+    }
+    
+    /**
+     * Provided by the recording list listener interface. This method called when
+     * the recording list has been fully populated. In a two pane layout a recording
+     * list item must be preselected so that the recording detail on the right side
+     * shows its contents from this very selected recording.
+     */
+    @Override
+    public void onRecordingListPopulated() {
+        Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        if (f != null && isDualPane) {
+            ((RecordingListFragment) f).setSelectedItem(selectedRecordingListPosition[actionBar.getSelectedNavigationIndex()]);
         }
     }
 }

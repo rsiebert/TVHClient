@@ -44,6 +44,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -115,6 +116,25 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             activity.finish();
         }
 
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showProgramDetails(position);
+            }
+        });
+        
+        prList = new ArrayList<Program>();
+        adapter = new ProgramListAdapter(activity, prList);
+        listView.setAdapter(adapter);
+
+        registerForContextMenu(listView);
+    }
+
+    /**
+     * Activated the scroll listener to more programs can be loaded when the end
+     * of the program list has been reached.
+     */
+    private void enableScrollListener() {
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -122,10 +142,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                     if (actionBarInterface != null) {
                         actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
                     }
-                    
                     // Do not load more programs if we are already doing it. This avoids
                     // calling the service for nothing and reduces the used bandwidth.
-                    if (isLoading || channel == null) {
+                    if (isLoading) {
                         return;
                     }
                     isLoading = true;
@@ -140,18 +159,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                 // TODO Auto-generated method stub
             }
         });
-
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showProgramDetails(position);
-            }
-        });
-        
-        prList = new ArrayList<Program>();
-        adapter = new ProgramListAdapter(activity, prList);
-        listView.setAdapter(adapter);
-        registerForContextMenu(listView);
     }
 
     @Override
@@ -167,12 +174,16 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         prList.addAll(channel.epg);
         adapter.sort();
         adapter.notifyDataSetChanged();
-        
-        if (actionBarInterface != null) {
+
+        if (actionBarInterface != null && channel != null) {
             actionBarInterface.setActionBarTitle(channel.name, TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
-            actionBarInterface.setActionBarIcon(channel, TAG);
+            if (!isDualPane) {
+                actionBarInterface.setActionBarIcon(channel, TAG);
+            }
         }
+
+        enableScrollListener();
     }
 
     @Override
@@ -180,6 +191,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
+        listView.setOnScrollListener(null);
     }
 
     @Override
@@ -199,7 +211,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        
         // Get the currently selected program from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Program program = adapter.getItem(info.position);
@@ -261,6 +272,22 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             MenuItem playMenuItem = menu.findItem(R.id.menu_play);
             playMenuItem.setVisible(true);
         }
+
+        // Set a separate listener to each menu item so the context menu will be
+        // executed correctly in dual pane mode
+        if (isDualPane) {
+            OnMenuItemClickListener listener = new OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    onContextItemSelected(item);
+                    return true;
+                }
+            };
+
+            for (int i = 0, n = menu.size(); i < n; i++) {
+                menu.getItem(i).setOnMenuItemClickListener(listener);
+            }
+        }
     }
 
     @Override
@@ -276,9 +303,10 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        // Do not show the context menu if dual pane is active
         if (!isDualPane) {
             inflater.inflate(R.menu.program_menu, menu);
+        } else {
+            inflater.inflate(R.menu.program_menu_dual_pane, menu);
         }
     }
 

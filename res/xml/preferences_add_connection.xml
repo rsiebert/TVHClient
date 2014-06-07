@@ -38,4 +38,15 @@
         android:key="pref_selected"
         android:summary="@string/pref_selected_sum"
         android:title="@string/pref_selected" />
+    <EditTextPreference
+        android:defaultValue=""
+        android:key="pref_wol_address"
+        android:summary="@string/pref_wol_address_sum"
+        android:title="@string/pref_wol_address" />
+    <EditTextPreference
+        android:defaultValue="9"
+        android:inputType="number"
+        android:key="pref_wol_port"
+        android:summary="@string/pref_wol_port_sum"
+        android:title="@string/pref_wol_port" />
 </PreferenceScreen>

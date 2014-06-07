@@ -26,6 +26,8 @@ import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -36,10 +38,13 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
     Activity context;
     List<Recording> list;
+    private int selectedPosition;
+    private int layout;
 
-    public RecordingListAdapter(Activity context, List<Recording> list) {
+    public RecordingListAdapter(Activity context, List<Recording> list, int layout) {
         super(context, R.layout.recording_list_widget, list);
         this.context = context;
+        this.layout = layout;
         this.list = list;
     }
 
@@ -51,6 +56,10 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         });
     }
 
+    public void setPosition(int pos) {
+        selectedPosition = pos;
+    }
+
     static class ViewHolder {
         public ImageView icon;
         public TextView title;
@@ -58,8 +67,10 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         public TextView time;
         public TextView date;
         public TextView duration;
+        public TextView summary;
         public TextView description;
         public TextView failed_reason;
+        public ImageView dual_pane_list_item_selection;
     }
     
     @Override
@@ -68,7 +79,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         ViewHolder holder = null;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, null);
+            view = context.getLayoutInflater().inflate(layout, null);
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
@@ -76,11 +87,29 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.date = (TextView) view.findViewById(R.id.date);
             holder.duration = (TextView) view.findViewById(R.id.duration);
+            holder.summary = (TextView) view.findViewById(R.id.summary);
             holder.description = (TextView) view.findViewById(R.id.description);
             holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
+            holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
+        }
+
+        if (holder.dual_pane_list_item_selection != null) {
+            // Set the correct indication when the dual pane mode is active
+            // If the item is selected the the arrow will be shown, otherwise
+            // only a vertical separation line is displayed.                
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
+
+            if (selectedPosition == position) {
+                final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
+                holder.dual_pane_list_item_selection.setBackgroundResource(icon);
+            } else {
+                final int icon = (lightTheme) ? R.drawable.dual_pane_selector_light : R.drawable.dual_pane_selector_dark;
+                holder.dual_pane_list_item_selection.setBackgroundResource(icon);
+            }
         }
 
         // Get the program and assign all the values
@@ -94,25 +123,9 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
+            Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
-            
-            // Display the reason why the recording has failed
-            if (holder.failed_reason != null) {
-                if (rec.error != null || 
-                        (rec.state.equals("missed") || rec.state.equals("invalid"))) {
-                    holder.failed_reason.setVisibility(View.VISIBLE);
-                    // Show the text why it failed
-                    if (rec.error != null && rec.error.equals("File missing")) {
-                        holder.failed_reason.setText(R.string.recording_file_missing);
-                    } else if (rec.state.equals("missed")) {
-                        holder.failed_reason.setText(R.string.recording_time_missed);
-                    } else if (rec.state.equals("invalid")) {
-                        holder.failed_reason.setText(R.string.recording_file_invalid);
-                    }
-                } else {
-                    holder.failed_reason.setVisibility(View.GONE);
-                }
-            }
+            Utils.setFailedReason(holder.failed_reason, rec);
         }
         return view;
     }
