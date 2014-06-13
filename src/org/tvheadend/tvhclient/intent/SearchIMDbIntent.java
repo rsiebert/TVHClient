@@ -41,7 +41,7 @@ public class SearchIMDbIntent extends Intent {
             setData(Uri.parse("imdb:///find?s=tt&q=" + url));
             PackageManager packageManager = ctx.getPackageManager();
             if (packageManager.queryIntentActivities(this, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
-                setData(Uri.parse("http://akas.imdb.org/find?s=tt&q=" + url));
+                setData(Uri.parse("http://www.imdb.org/find?s=tt&q=" + url));
             }
         } catch (UnsupportedEncodingException e) {
             Log.i("SearchIMDbIntent", e.getLocalizedMessage());
