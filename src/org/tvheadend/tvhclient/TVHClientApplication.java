@@ -82,6 +82,14 @@ public class TVHClientApplication extends Application {
         listeners.remove(l);
     }
 
+    /**
+     * Removes all registered listeners from the list. This can be used prior
+     * stopping the service before the application is closed.
+     */
+    public void removeListeners() {
+        listeners.clear();
+    }
+
     private void broadcastMessage(String action, Object obj) {
         synchronized (listeners) {
             for (HTSListener l : listeners) {
