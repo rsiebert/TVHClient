@@ -138,7 +138,9 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
             activity.finish();
         }
 
-        title.setText(program.title);
+        if (title != null) {
+            title.setText(program.title);
+        }
         channelName.setText(channel.name);
         Utils.setState(state, program.recording);
         Utils.setDate(date, program.start);
