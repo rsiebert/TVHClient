@@ -37,5 +37,9 @@
         <activity android:name="org.tvheadend.tvhclient.PlaybackSelectionActivity" />
         <activity android:name="org.tvheadend.tvhclient.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name="org.tvheadend.tvhclient.htsp.HTSService" android:enabled="true"/>
+        <provider 
+            android:name="org.tvheadend.tvhclient.SuggestionProvider" 
+            android:authorities="org.tvheadend.tvhclient.SuggestionProvider" 
+            android:exported="false" />
     </application>
 </manifest>

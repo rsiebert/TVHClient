@@ -116,6 +116,12 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
     <string name="pref_dual_pane_recordings">Zwei-Fenster-Modus für Aufnahmen</string>
     <string name="pref_dual_pane_recordings_sum">Zeigt die Liste der Aufnahmen auf der linken und die Details der gewählten Aufnahme auf der rechten Bildschirmhälfte an. Nur für Tablets verfügbar.</string>
+    <string name="pref_misc">Sonstiges</string>
+    <string name="pref_clear_search_history">Lösche Suchhistorie</string>
+
+    <string name="clear_search_history">Lösche Suchhistorie?</string>
+    <string name="clear_search_history_sum">Sind Sie sicher, dass sie alle Einträge aus der Historie löschen wollen?</string>
+    <string name="clear_search_history_done">Suchhistorie wurde gelöscht</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>

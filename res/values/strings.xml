@@ -116,7 +116,13 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_dual_pane_recordings">Dual pane mode for recordings</string>
     <string name="pref_dual_pane_recordings_sum">Show the list of recordings on the left and the details of the selected recording on the right half of the screen. Only available on tablets.</string>
+    <string name="pref_misc">Miscellaneous</string>
+    <string name="pref_clear_search_history">Clear search history</string>
 
+    <string name="clear_search_history">Clear search history?</string>
+    <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
+    <string name="clear_search_history_done">Search history cleared</string>
+    
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>

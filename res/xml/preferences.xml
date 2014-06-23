@@ -218,7 +218,13 @@
 	            android:entryValues="@array/pref_scodec_list" />
         </PreferenceScreen>
 	</PreferenceCategory>
-
+    <PreferenceCategory 
+        android:title="@string/pref_misc" >
+        <Preference
+            android:key="pref_clear_search_history"
+            android:title="@string/pref_clear_search_history" >
+        </Preference>
+    </PreferenceCategory>
     <PreferenceCategory 
         android:title="@string/pref_information" >
         <Preference

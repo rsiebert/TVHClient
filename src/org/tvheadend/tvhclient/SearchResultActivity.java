@@ -38,6 +38,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
@@ -87,6 +88,8 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             }
         });
         
+        
+        
         onNewIntent(getIntent());
     }
 
@@ -118,6 +121,12 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             intent.putExtra("channelId", channel.id);
         }
 
+        // Save the query so it can be shown again
+        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+                this, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+        suggestions.saveRecentQuery(query, null);
+
+        // Now call the service with the query to get results
         startService(intent);
 
         if (channel == null) {
