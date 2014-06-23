@@ -299,7 +299,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                     Recording rec = (Recording) obj;
                     for (Program p : adapter.getList()) {
                         if (rec == p.recording) {
-                            adapter.update((Program) obj);
+                            adapter.update(p);
                             adapter.notifyDataSetChanged();
                             return;
                         }
