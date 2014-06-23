@@ -63,7 +63,7 @@
     <string name="pref_wol_address_sum">Wpisz adres MAC hosta (np. 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Wake on LAN Port</string>
     <string name="pref_wol_port_sum">Port %d zostanie wykorzystany w celu obudzenia serwera. Domyślnie jest to 9.</string>
-    <string name="pref_wol_address_invalid">MAC adres jest nieprawidłowy.\nMusi mieć postać \'01:24:67:9a:cd:ef\' i może zawierać tylko znaki w systemie szesnastkowym '0\-9' i 'a\-f' i separatory \':\' lub \'-\'.</string>
+    <string name="pref_wol_address_invalid">MAC adres jest nieprawidłowy.\nMusi mieć postać \'01:24:67:9a:cd:ef\' i może zawierać tylko znaki w systemie szesnastkowym \'0\-9\' i \'a\-f\' i separatory \':\' lub \'-\'.</string>
 
     <string name="pref_user_interface">Interfejs użytkownika</string>
     <string name="pref_icons">Ikony kanałów</string>
