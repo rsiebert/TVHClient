@@ -82,13 +82,13 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         String mime = "application/octet-stream";
 
         // Set the correct MIME type. For 'pass' we assume MPEG-TS
-        if ("mpegps".equals(container)) {
+        if (container.equals("mpegps")) {
             mime = "video/mp2p";
-        } else if ("mpegts".equals(container)) {
+        } else if (container.equals("mpegts")) {
             mime = "video/mp4";
-        } else if ("matroska".equals(container)) {
+        } else if (container.equals("matroska")) {
             mime = "video/x-matroska";
-        } else if ("pass".equals(container)) {
+        } else if (container.equals("pass")) {
             mime = "video/mp2t";
         }
 
