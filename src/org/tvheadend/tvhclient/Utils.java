@@ -346,6 +346,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Shows or hides certain icons from the recording menu. This is required
+     * because the usual way does not seem to work.
+     * 
+     * @param context
+     * @param menu
+     */
     public static void setRecordingMenuIcons(final Context context, final Menu menu) {
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
