@@ -30,7 +30,9 @@ import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -144,6 +146,16 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
+
+        // Only show the remove all menu item if recordings can be removed. This
+        // is only available in the third action bar tab.
+        MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
+        if (recordRemoveAllMenuItem != null) {
+            recordRemoveAllMenuItem.setVisible(tabIndex == 2);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+            Boolean lightTheme = prefs.getBoolean("lightThemePref", true);
+            recordRemoveAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        }
     }
 
     @Override
@@ -152,6 +164,18 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         case R.id.menu_search:
             activity.onSearchRequested();
             return true;
+
+        case R.id.menu_record_remove_all:
+            // Get all failed recordings into a new list
+            ArrayList<Recording> list = new ArrayList<Recording>();
+            for (int i = 0; i < adapter.getCount(); ++i) {
+                list.add(adapter.getItem(i));
+            }
+            if (list.size() > 0) {
+                Utils.removePrograms(activity, list);
+            }
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -199,7 +223,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         case R.id.menu_search_epg:
             startActivity(new SearchEPGIntent(activity, rec.title));
             return true;
-            
+
         case R.id.menu_record_remove:
             Utils.removeProgram(activity, rec);
             return true;
