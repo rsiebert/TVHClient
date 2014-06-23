@@ -20,6 +20,7 @@ package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
@@ -185,6 +186,17 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
         }
 
         Utils.connect(this, false);
+    }
+
+    @Override
+    public void onDestroy() {
+        // Remove all listeners and stop the service when the application is closed
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        app.removeListeners();
+        Intent intent = new Intent(this, HTSService.class);
+        stopService(intent);
+
+        super.onDestroy();
     }
 
     @Override
