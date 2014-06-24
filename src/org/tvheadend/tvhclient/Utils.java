@@ -199,6 +199,42 @@ public class Utils {
     }
 
     /**
+     * Removes all failed programs from the server. A dialog is shown
+     * up front to confirm the deletion.
+     * 
+     * @param context
+     * @param list
+     */
+    public static void removePrograms(final Context context, final List<Recording> list) {
+        if (list == null) {
+            return;
+        }
+        final Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(HTSService.ACTION_DVR_DELETE);
+
+        // Show a confirmation dialog before deleting the recording
+        new AlertDialog.Builder(context)
+        .setTitle(R.string.menu_record_remove_all)
+        .setMessage(context.getString(R.string.delete_all_recordings))
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                
+                // Call the remove recording call for each failed recording
+                for (Recording rec : list) {
+                    if (rec != null) {
+                        intent.putExtra("id", rec.id);
+                        context.startService(intent);
+                    }
+                }
+            }
+        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // NOP
+            }
+        }).show();
+    }
+
+    /**
      * Tells the server to cancel the recording with the given id.
      * 
      * @param context
@@ -346,6 +382,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Shows or hides certain icons from the recording menu. This is required
+     * because the usual way does not seem to work.
+     * 
+     * @param context
+     * @param menu
+     */
     public static void setRecordingMenuIcons(final Context context, final Menu menu) {
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);

@@ -18,6 +18,8 @@
  */
 package org.tvheadend.tvhclient;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -25,9 +27,11 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
+import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class SettingsActivity extends ActionBarActivity {
 
@@ -102,6 +106,30 @@ public class SettingsActivity extends ActionBarActivity {
                 public boolean onPreferenceClick(Preference preference) {
                     final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
                     cld.getFullLogDialog().show();
+                    return false;
+                }
+            });
+            
+            // Add a listener to the clear search history preference so that it can be cleared.
+            Preference prefClearSearchHistory = findPreference("pref_clear_search_history");
+            prefClearSearchHistory.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // Show a confirmation dialog before deleting the recording
+                    new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.clear_search_history)
+                    .setMessage(getString(R.string.clear_search_history_sum))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+                            suggestions.clearHistory();
+                            Toast.makeText(getActivity(), getString(R.string.clear_search_history_done), Toast.LENGTH_SHORT).show();
+                        }
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // NOP
+                        }
+                    }).show();
                     return false;
                 }
             });

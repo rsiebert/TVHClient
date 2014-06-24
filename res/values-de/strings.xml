@@ -12,6 +12,7 @@
     <string name="menu_record">Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
     <string name="menu_record_remove">Aufnahme löschen</string>
+    <string name="menu_record_remove_all">Alle Aufnahmen löschen</string>
     <string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
     <string name="menu_search_epg">Suche im TV-Programm</string>
     <string name="menu_add">Hinzufügen</string>
@@ -36,6 +37,7 @@
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
+    <string name="delete_all_recordings">Sollen ALLE fehlerhaften Aufnahmen gelöscht werden?</string>
     <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
 
     <string name="pref_connections">Verbindungen</string>
@@ -114,6 +116,12 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
     <string name="pref_dual_pane_recordings">Zwei-Fenster-Modus für Aufnahmen</string>
     <string name="pref_dual_pane_recordings_sum">Zeigt die Liste der Aufnahmen auf der linken und die Details der gewählten Aufnahme auf der rechten Bildschirmhälfte an. Nur für Tablets verfügbar.</string>
+    <string name="pref_misc">Sonstiges</string>
+    <string name="pref_clear_search_history">Lösche Suchhistorie</string>
+
+    <string name="clear_search_history">Lösche Suchhistorie?</string>
+    <string name="clear_search_history_sum">Sind Sie sicher, dass sie alle Einträge aus der Historie löschen wollen?</string>
+    <string name="clear_search_history_done">Suchhistorie wurde gelöscht</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
