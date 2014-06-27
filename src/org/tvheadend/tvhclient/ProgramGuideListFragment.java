@@ -431,6 +431,16 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
                     adapter.notifyDataSetChanged();
                 }
             });
+        } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)
+                || action.equals(TVHClientApplication.ACTION_PROGRAMME_DELETE)
+                || action.equals(TVHClientApplication.ACTION_DVR_ADD)
+                || action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
+            // An existing program has been updated
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
         else if (action.equals(TVHClientApplication.ACTION_CHANNEL_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
