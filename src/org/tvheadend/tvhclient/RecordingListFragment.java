@@ -63,6 +63,10 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     // program guide where only the channel icon is relevant.
     private int adapterLayout = R.layout.recording_list_widget;
 
+    // Time to wait for the thread before the next service call is made when
+    // either all recorded or scheduled programs are being removed. 
+    private static final int THREAD_SLEEPING_TIME = 2000;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -177,10 +181,19 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             .setMessage(getString(R.string.delete_all_recordings))
             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    for (int i = 0; i < adapter.getCount(); ++i) {
-                        Log.i(TAG, "Removing program " + adapter.getItem(i).title);
-                        // Utils.removeProgram(activity, adapter.getItem(i));
-                    }
+                    new Thread() {
+                        public void run() {
+                            for (int i = 0; i < adapter.getCount(); ++i) {
+                                Log.i(TAG, "Removing recording " + adapter.getItem(i).title);
+                                Utils.removeProgram(activity, adapter.getItem(i));
+                                try {
+                                    sleep(THREAD_SLEEPING_TIME);
+                                } catch (InterruptedException e) {
+                                    Log.d(TAG, "Exception while removing all recordings. " + e.getLocalizedMessage());
+                                }
+                            }
+                        }
+                    }.start();
                 }
             }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
@@ -196,10 +209,19 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             .setMessage(getString(R.string.cancel_all_recordings))
             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    for (int i = 0; i < adapter.getCount(); ++i) {
-                        Log.i(TAG, "Canceling program " + adapter.getItem(i).title);
-                        // Utils.removeProgram(activity, adapter.getItem(i));
-                    }
+                    new Thread() {
+                        public void run() {
+                            for (int i = 0; i < adapter.getCount(); ++i) {
+                                Log.i(TAG, "Canceling program " + adapter.getItem(i).title);
+                                Utils.removeProgram(activity, adapter.getItem(i));
+                                try {
+                                    sleep(THREAD_SLEEPING_TIME);
+                                } catch (InterruptedException e) {
+                                    Log.d(TAG, "Exception while canceling all scheduled programs. " + e.getLocalizedMessage());
+                                }
+                            }
+                        }
+                    }.start();
                 }
             }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
