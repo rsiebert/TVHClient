@@ -157,7 +157,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         // Only show the remove all menu item if recordings can be canceled.
         MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
         if (recordCancelAllMenuItem != null) {
-            recordCancelAllMenuItem.setVisible(tabIndex != 1);
+            recordCancelAllMenuItem.setVisible(tabIndex == 1);
         }
     }
 
