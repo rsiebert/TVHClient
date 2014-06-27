@@ -29,11 +29,12 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -147,14 +148,16 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
 
-        // Only show the remove all menu item if recordings can be removed. This
-        // is only available in the third action bar tab.
+        // Only show the remove all menu item if recordings can be removed.
         MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
         if (recordRemoveAllMenuItem != null) {
-            recordRemoveAllMenuItem.setVisible(tabIndex == 2);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            Boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-            recordRemoveAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+            recordRemoveAllMenuItem.setVisible(tabIndex != 1);
+        }
+        
+        // Only show the remove all menu item if recordings can be canceled.
+        MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
+        if (recordCancelAllMenuItem != null) {
+            recordCancelAllMenuItem.setVisible(tabIndex != 1);
         }
     }
 
@@ -166,14 +169,41 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_record_remove_all:
-            // Get all failed recordings into a new list
-            ArrayList<Recording> list = new ArrayList<Recording>();
-            for (int i = 0; i < adapter.getCount(); ++i) {
-                list.add(adapter.getItem(i));
-            }
-            if (list.size() > 0) {
-                Utils.removePrograms(activity, list);
-            }
+            // Show a confirmation dialog before deleting all recordings
+            new AlertDialog.Builder(activity)
+            .setTitle(R.string.menu_record_remove_all)
+            .setMessage(getString(R.string.delete_all_recordings))
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    for (int i = 0; i < adapter.getCount(); ++i) {
+                        Log.i(TAG, "Removing program " + adapter.getItem(i).title);
+                        // Utils.removeProgram(activity, adapter.getItem(i));
+                    }
+                }
+            }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // NOP
+                }
+            }).show();
+            return true;
+
+        case R.id.menu_record_cancel_all:
+            // Show a confirmation dialog before canceling all recordings
+            new AlertDialog.Builder(activity)
+            .setTitle(R.string.menu_record_cancel_all)
+            .setMessage(getString(R.string.cancel_all_recordings))
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    for (int i = 0; i < adapter.getCount(); ++i) {
+                        Log.i(TAG, "Canceling program " + adapter.getItem(i).title);
+                        // Utils.removeProgram(activity, adapter.getItem(i));
+                    }
+                }
+            }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // NOP
+                }
+            }).show();
             return true;
 
         default:

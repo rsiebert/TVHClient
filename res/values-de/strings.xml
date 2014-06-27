@@ -11,6 +11,7 @@
     <string name="menu_search">Suchen</string>
     <string name="menu_record">Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
+    <string name="menu_record_cancel_all">Alle Aufnahmen abbrechen</string>
     <string name="menu_record_remove">Aufnahme löschen</string>
     <string name="menu_record_remove_all">Alle Aufnahmen löschen</string>
     <string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
@@ -39,6 +40,7 @@
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_all_recordings">Sollen ALLE fehlerhaften Aufnahmen gelöscht werden?</string>
     <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
+    <string name="cancel_all_recordings">Sollen ALLE geplanten Aufnahmen abgebrochen werden?</string>
 
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
