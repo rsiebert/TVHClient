@@ -175,6 +175,28 @@ public class Utils {
      * @param context
      * @param id
      */
+    public static void confirmRemoveProgram(final Context context, final Recording rec) {
+        // Show a confirmation dialog before deleting the recording
+        new AlertDialog.Builder(context)
+        .setTitle(R.string.menu_record_remove)
+        .setMessage(context.getString(R.string.delete_recording, rec.title))
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                removeProgram(context, rec);
+            }
+        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // NOP
+            }
+        }).show();
+    }
+
+    /**
+     * Removes the program with the given id from the server.
+     * 
+     * @param context
+     * @param id
+     */
     public static void removeProgram(final Context context, final Recording rec) {
         if (rec == null) {
             return;
@@ -182,20 +204,7 @@ public class Utils {
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(HTSService.ACTION_DVR_DELETE);
         intent.putExtra("id", rec.id);
-        
-        // Show a confirmation dialog before deleting the recording
-        new AlertDialog.Builder(context)
-        .setTitle(R.string.menu_record_remove)
-        .setMessage(context.getString(R.string.delete_recording, rec.title))
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                context.startService(intent);
-            }
-        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // NOP
-            }
-        }).show();
+        context.startService(intent);
     }
 
     /**
@@ -235,12 +244,13 @@ public class Utils {
     }
 
     /**
-     * Tells the server to cancel the recording with the given id.
+     * Notifies the server to cancel the recording with the given id. A dialog is shown
+     * up front to confirm the cancelation.
      * 
      * @param context
      * @param id
      */
-    public static void cancelProgram(final Context context, final Recording rec) {
+    public static void confirmCancelProgram(final Context context, final Recording rec) {
         if (rec == null) {
             return;
         }
@@ -254,13 +264,29 @@ public class Utils {
         .setMessage(context.getString(R.string.cancel_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                context.startService(intent);
+                cancelProgram(context, rec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // NOP
             }
         }).show();
+    }
+
+    /**
+     * Notifies the server to cancel the recording with the given id.
+     * 
+     * @param context
+     * @param id
+     */
+    public static void cancelProgram(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
+        final Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(HTSService.ACTION_DVR_CANCEL);
+        intent.putExtra("id", rec.id);
+        context.startService(intent);
     }
 
     /**
