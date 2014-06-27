@@ -293,13 +293,19 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
      * when the user has selected an item from the channel list. In dual pane
      * mode the program list on the right side will be recreated to show the new
      * programs for the selected channel. In normal mode the activity will be
-     * called that shows the program list.
+     * called that shows the program list. If the recording is null then the
+     * details fragment one the right side (in dual mode) will be removed.
      */
     @Override
     public void onRecordingSelected(int position, Recording recording) {
         selectedRecordingListPosition[actionBar.getSelectedNavigationIndex()] = position;
         
         if (recording == null) {
+            // Remove the old details fragment if no recording is selected.
+            Fragment f = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+            if (f != null && isDualPane) {
+                getSupportFragmentManager().beginTransaction().remove(f).commit();
+            }
             return;
         }
 

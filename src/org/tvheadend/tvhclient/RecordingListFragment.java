@@ -357,8 +357,12 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         } else if (action.equals(TVHClientApplication.ACTION_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
+                    // Get the position of the recording that has been deleted
+                    int previousPosition = adapter.getPosition((Recording) obj);
                     adapter.remove((Recording) obj);
                     adapter.notifyDataSetChanged();
+                    // Set the recording below the deleted one as selected
+                    setSelectedItem(previousPosition);
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
@@ -388,6 +392,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         if (listView.getCount() > position && adapter.getCount() > position) {
             adapter.setPosition(position);
             recordingListListener.onRecordingSelected(position, adapter.getItem(position));
+        } else {
+            recordingListListener.onRecordingSelected(position, null);
         }
     }
 
