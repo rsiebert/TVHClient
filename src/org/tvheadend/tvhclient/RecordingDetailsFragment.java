@@ -173,11 +173,11 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_record_remove:
-            Utils.removeProgram(activity, rec);
+            Utils.confirmRemoveProgram(activity, rec);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.cancelProgram(activity, rec);
+            Utils.confirmCancelProgram(activity, rec);
             return true;
 
         case R.id.menu_play:
