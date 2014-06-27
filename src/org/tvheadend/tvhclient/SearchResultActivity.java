@@ -87,9 +87,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                 showProgramDetails(position);
             }
         });
-        
-        
-        
+
         onNewIntent(getIntent());
     }
 
@@ -302,7 +300,9 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                     adapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
+        } else if (action.equals(TVHClientApplication.ACTION_DVR_ADD)
+                || action.equals(TVHClientApplication.ACTION_DVR_DELETE)
+                || action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Recording rec = (Recording) obj;
