@@ -148,16 +148,18 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
 
-        // Only show the remove all menu item if recordings can be removed.
+        // Only show the remove all recordings menu if the correct tab is
+        // selected and recordings are available that can be removed.
         MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
         if (recordRemoveAllMenuItem != null) {
-            recordRemoveAllMenuItem.setVisible(tabIndex != 1);
+            recordRemoveAllMenuItem.setVisible(tabIndex != 1 && adapter.getCount() > 0);
         }
         
-        // Only show the remove all menu item if recordings can be canceled.
+        // Only show the cancel all recordings menu if the correct tab is
+        // selected and recordings are available that can be canceled.
         MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
         if (recordCancelAllMenuItem != null) {
-            recordCancelAllMenuItem.setVisible(tabIndex == 1);
+            recordCancelAllMenuItem.setVisible(tabIndex == 1 && adapter.getCount() > 0);
         }
     }
 
@@ -389,7 +391,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * @param position
      */
     public void setSelectedItem(int position) {
-        if (listView.getCount() > position && adapter.getCount() > position) {
+        if (listView.getCount() > position && adapter.getCount() > position && position >= 0) {
             adapter.setPosition(position);
             recordingListListener.onRecordingSelected(position, adapter.getItem(position));
         } else {

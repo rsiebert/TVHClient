@@ -535,7 +535,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
      * @param position
      */
     public void setSelectedItem(int position) {
-        if (listView.getCount() > position && adapter.getCount() > position) {
+        if (listView.getCount() > position && adapter.getCount() > position && position >= 0) {
             adapter.setPosition(position);
             channelListListener.onChannelSelected(position, adapter.getItem(position));
         }
