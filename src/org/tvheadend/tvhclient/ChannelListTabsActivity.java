@@ -23,6 +23,7 @@ import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
+import org.tvheadend.tvhclient.interfaces.ListPositionInterface;
 import org.tvheadend.tvhclient.model.Channel;
 
 import android.content.Intent;
@@ -37,7 +38,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface, ProgramLoadingInterface {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface, ProgramLoadingInterface, ListPositionInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ChannelListTabsActivity.class.getSimpleName();
@@ -47,6 +48,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     private ChangeLogDialog changeLogDialog;
     private boolean isDualPane = false;
     private int selectedChannelListPosition = 0;
+    private int selectedProgramListPosition = 0;
 
     private static final String MAIN_FRAGMENT_TAG = "channel_list_fragment";
     private static final String RIGHT_FRAGMENT_TAG = "program_list_fragment";
@@ -349,7 +351,7 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
 	@Override
 	public void onChannelSelected(int position, Channel channel) {
 	    selectedChannelListPosition = position;
-        
+
 	    if (channel == null) {
 	        return;
 	    }
@@ -394,5 +396,15 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     @Override
     public void loadMorePrograms(Channel channel) {
         Utils.loadMorePrograms(this, channel);
+    }
+
+    @Override
+    public int getPreviousListPosition() {
+        return selectedProgramListPosition;
+    }
+
+    @Override
+    public void saveCurrentListPosition(int position) {
+        selectedProgramListPosition = position;
     }
 }

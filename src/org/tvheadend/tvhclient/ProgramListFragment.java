@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
+import org.tvheadend.tvhclient.interfaces.ListPositionInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
@@ -60,6 +61,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     private Activity activity;
     private ActionBarInterface actionBarInterface;
     private ProgramLoadingInterface loadMoreProgramsInterface;
+    private ListPositionInterface scrollPositionInterface;
 
     private ProgramListAdapter adapter;
     private List<Program> prList;
@@ -67,7 +69,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     private Channel channel;
     private boolean isLoading = false;
     private boolean isDualPane = false;
-
     private static int newProgramsLoadedCounter = 0;
 
     @Override
@@ -83,7 +84,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (bundle != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             channel = app.getChannel(bundle.getLong("channelId", 0));
-            isDualPane  = bundle.getBoolean("dual_pane", false);
+            isDualPane = bundle.getBoolean("dual_pane", false);
         }
 
         // Add a listener to check if the program list has been scrolled.
@@ -110,6 +111,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (activity instanceof ProgramLoadingInterface) {
             loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
         }
+        if (activity instanceof ListPositionInterface) {
+            scrollPositionInterface = (ListPositionInterface) activity;
+        }
 
         // If the channel is null exit
         if (channel == null) {
@@ -119,6 +123,9 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (scrollPositionInterface != null) {
+                    scrollPositionInterface.saveCurrentListPosition(position);
+                }
                 showProgramDetails(position);
             }
         });
@@ -183,6 +190,11 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             }
         }
 
+        // Get the last scrolling 
+        if (scrollPositionInterface != null) {
+            listView.setSelectionFromTop(scrollPositionInterface.getPreviousListPosition(), 0);
+            scrollPositionInterface.saveCurrentListPosition(0);
+        }
         enableScrollListener();
     }
 
@@ -198,6 +210,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     public void onDetach() {
         loadMoreProgramsInterface = null;
         actionBarInterface = null;
+        scrollPositionInterface = null;
         super.onDetach();
     }
 
