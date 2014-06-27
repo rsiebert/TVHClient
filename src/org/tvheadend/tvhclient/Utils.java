@@ -215,13 +215,6 @@ public class Utils {
      * @param id
      */
     public static void confirmCancelProgram(final Context context, final Recording rec) {
-        if (rec == null) {
-            return;
-        }
-        final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_CANCEL);
-        intent.putExtra("id", rec.id);
-
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_cancel)
