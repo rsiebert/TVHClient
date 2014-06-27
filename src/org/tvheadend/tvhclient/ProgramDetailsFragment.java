@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -237,8 +238,12 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
 
     @Override
     public void onMessage(String action, Object obj) {
+        Log.i("REC", action);
         // An existing program has been updated, this is valid for all menu options. 
-        if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)) {
+        if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)
+                || action.equals(TVHClientApplication.ACTION_DVR_ADD)
+                || action.equals(TVHClientApplication.ACTION_DVR_DELETE)
+                || action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Update the options menu and the status icon
