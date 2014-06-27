@@ -1,11 +1,12 @@
 $ 1.4.2
   % VERSION 1.4.2
-  _ 23.06.2014
+  _ 27.06.2014
     * Added search history (can be cleared in the settings)
-    * Added menu item to remove all failed recordings
+    * Added menu item to remove all available, scheduled or failed recordings
     * Updated Polish translation
     * Fixed IMDB link
     * Fixed crash in search result dialog
+    * Bug fixes and small improvements
 $ 1.4.1
   % VERSION 1.4.1
   _ 06.06.2014
