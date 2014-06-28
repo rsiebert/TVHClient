@@ -101,7 +101,6 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -126,6 +125,8 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
         Utils.setFailedReason(failed_reason, rec);
+        
+        setHasOptionsMenu(true);
     }
 
     @Override

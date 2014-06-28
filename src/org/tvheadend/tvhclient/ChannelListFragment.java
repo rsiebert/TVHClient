@@ -117,9 +117,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
         if (activity instanceof ProgramGuideInterface) {
             programGuideInterface = (ProgramGuideInterface) activity;
         }
-        if (activity instanceof ChannelListTabsActivity) {
-            setHasOptionsMenu(true);
-        }
 
         adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
         listView.setAdapter(adapter);
@@ -179,6 +176,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
         });
         tagDialog = builder.create();
 
+        if (activity instanceof ChannelListTabsActivity) {
+            setHasOptionsMenu(true);
+        }
         if (activity instanceof ChannelListTabsActivity) {
             registerForContextMenu(listView);
         }

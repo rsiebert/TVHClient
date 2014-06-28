@@ -97,7 +97,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -109,7 +108,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         adapter = new RecordingListAdapter(activity, new ArrayList<Recording>(), adapterLayout);
         listView.setAdapter(adapter);
 
-        registerForContextMenu(listView);
         // Set the listener to show the recording details activity when the user
         // has selected a recording
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -123,6 +121,9 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 adapter.notifyDataSetChanged();
             }
         });
+
+        setHasOptionsMenu(true);
+        registerForContextMenu(listView);
     }
     
     @Override
@@ -152,18 +153,21 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
 
+        boolean adapterContainsEntries = (adapter != null ? (adapter.getCount() > 0) : true);
+
         // Only show the remove all recordings menu if the correct tab is
         // selected and recordings are available that can be removed.
         MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
         if (recordRemoveAllMenuItem != null) {
-            recordRemoveAllMenuItem.setVisible(tabIndex != 1 && adapter.getCount() > 0);
+            recordRemoveAllMenuItem.setVisible(tabIndex != 1 && adapterContainsEntries);
         }
         
         // Only show the cancel all recordings menu if the correct tab is
         // selected and recordings are available that can be canceled.
         MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
         if (recordCancelAllMenuItem != null) {
-            recordCancelAllMenuItem.setVisible(tabIndex == 1 && adapter.getCount() > 0);
+            
+            recordCancelAllMenuItem.setVisible(tabIndex == 1 && adapterContainsEntries);
         }
     }
 

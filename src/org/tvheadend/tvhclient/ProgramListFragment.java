@@ -103,7 +103,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -134,6 +133,7 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         adapter = new ProgramListAdapter(activity, prList);
         listView.setAdapter(adapter);
 
+        setHasOptionsMenu(true);
         registerForContextMenu(listView);
     }
 

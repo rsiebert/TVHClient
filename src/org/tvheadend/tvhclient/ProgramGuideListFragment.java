@@ -128,7 +128,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -210,6 +209,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, P
             }
         };
         timer.schedule(doAsynchronousTask, 0, 60000);
+
+        setHasOptionsMenu(true);
     }
 
     @Override

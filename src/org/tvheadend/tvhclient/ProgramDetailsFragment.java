@@ -128,7 +128,6 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -162,6 +161,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
             ratingBar.setRating((float)program.starRating / 10.0f);
             ratingBarText.setText("(" + program.starRating + "/" + 100 + ")");
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
