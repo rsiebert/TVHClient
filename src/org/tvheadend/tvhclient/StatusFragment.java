@@ -62,11 +62,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         return v;
     }
 	
-	@Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-	}
-	
     @Override
     public void onResume() {
         super.onResume();
