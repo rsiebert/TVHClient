@@ -68,6 +68,8 @@
     <string name="pref_wol_address_sum">MAC-Adresse des Servers (z.B: 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Wake on LAN Port</string>
     <string name="pref_wol_port_sum">Port %d wird zum Wecken des Servers verwendet. Der Standardport ist 9.</string>
+    <string name="pref_wol_broadcast">Sende Broadcast</string>
+    <string name="pref_wol_broadcast_sum">Sende das WOL Paket als Broadcast. Einige Router blockieren dies Art von WOL.</string>
     <string name="pref_wol_address_invalid">Die MAC-Adresse ist ungültig.\nSie muss z.B. das Format \'01:24:67:9a:cd:ef\' haben und darf neben \':\' und \'\-\' nur 0\-9 und a\-z enthalten.</string>
 
     <string name="pref_user_interface">Benutzeroberfläche</string>

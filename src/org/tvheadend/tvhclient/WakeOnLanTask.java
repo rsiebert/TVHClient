@@ -20,7 +20,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private final static int WOL_SEND = 0;
     private final static int WOL_INVALID_MAC = 1;
     private final static int WOL_ERROR = 2;
-    
+
     private Connection conn;
     private Context context;
     private Exception exception;
@@ -51,7 +51,17 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         }
 
         try {
-            InetAddress address = InetAddress.getByName(conn.address);
+            InetAddress address = null;
+            if (conn.wol_broadcast) {
+                address = InetAddress.getByName(conn.address);
+                Log.d(TAG, "Sending WOL packet to " + address);
+            } else {
+                // Replace the last number by 255 to send the packet as a broadcast
+                byte[] ipAddress = InetAddress.getByName(conn.address).getAddress();
+                ipAddress[3] = (byte) 255;
+                address = InetAddress.getByAddress(ipAddress);
+                Log.d(TAG, "Sending WOL packet as broadcast to " + address);
+            }
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, conn.wol_port);
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);

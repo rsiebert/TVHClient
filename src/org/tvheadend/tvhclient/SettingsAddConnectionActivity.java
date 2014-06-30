@@ -34,13 +34,17 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 public class SettingsAddConnectionActivity extends ActionBarActivity {
+
+    private final static String TAG = SettingsAddConnectionActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
     private static boolean connectionChanged;
@@ -65,6 +69,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed");
         Intent returnIntent = new Intent();
         returnIntent.putExtra("reconnect", connectionChanged);
         setResult(RESULT_OK, returnIntent);
@@ -118,6 +123,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         private CheckBoxPreference prefSelected;
         private EditTextPreference prefWolAddress;
         private EditTextPreference prefWolPort;
+        private CheckBoxPreference prefWolBroadcast;
 
         @Override
         public void onCreate(final Bundle savedInstanceState) {
@@ -137,6 +143,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefSelected = (CheckBoxPreference) findPreference("pref_selected");
             prefWolAddress = (EditTextPreference) findPreference("pref_wol_address");
             prefWolPort = (EditTextPreference) findPreference("pref_wol_port");
+            prefWolBroadcast = (CheckBoxPreference) findPreference("pref_wol_broadcast");
 
             // If the connection is null then this activity has been started for
             // the first time. If the connection is not null then the screen has
@@ -159,6 +166,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
                     conn.password = "";
                     conn.wol_address = "";
                     conn.wol_port = 9;
+                    conn.wol_broadcast = false;
 
                     // If this is the first connection make it active
                     conn.selected = (DatabaseHelper.getInstance().getConnections().size() == 0) ? true : false;
@@ -175,6 +183,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefSelected.setChecked(conn.selected);
             prefWolAddress.setText(conn.wol_address);
             prefWolPort.setText(String.valueOf(conn.wol_port));
+            prefWolBroadcast.setChecked(conn.wol_broadcast);
         }
 
         public void onResume() {
@@ -182,6 +191,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             // Show the values from the connection object
             // in the summary text of the preferences
             showPreferenceSummary();
+
             // Now register for any changes
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             prefs.registerOnSharedPreferenceChangeListener(this);
@@ -234,6 +244,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
+            Log.d(TAG, "onSharedPreferenceChanged " + key);
             connectionChanged = true;
 
             // Update the connection object with the new values
@@ -246,6 +257,8 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             conn.selected = prefSelected.isChecked();
             conn.wol_address = prefWolAddress.getText();
             conn.wol_port = Integer.parseInt(prefWolPort.getText());
+            conn.wol_broadcast = prefWolBroadcast.isChecked();
+
             // Show the values from the connection object
             // in the summary text of the preferences
             showPreferenceSummary();
