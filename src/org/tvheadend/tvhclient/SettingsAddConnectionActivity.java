@@ -36,7 +36,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -50,7 +49,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
     private static boolean connectionChanged;
     // Contains the currently set connection values
     // and keeps them during orientation changes
-    static Connection conn = null;
+    private static Connection conn = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,15 +64,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
 
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsAddConnectionFragment()).commit();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            cancel();
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override
