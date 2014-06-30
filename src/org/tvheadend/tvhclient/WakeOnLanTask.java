@@ -18,8 +18,9 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private final static String TAG = WakeOnLanTask.class.getSimpleName();
 
     private final static int WOL_SEND = 0;
-    private final static int WOL_INVALID_MAC = 1;
-    private final static int WOL_ERROR = 2;
+    private final static int WOL_SEND_BROADCAST = 1;
+    private final static int WOL_INVALID_MAC = 2;
+    private final static int WOL_ERROR = 3;
 
     private Connection conn;
     private Context context;
@@ -52,7 +53,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
         try {
             InetAddress address = null;
-            if (conn.wol_broadcast) {
+            if (!conn.wol_broadcast) {
                 address = InetAddress.getByName(conn.address);
                 Log.d(TAG, "Sending WOL packet to " + address);
             } else {
@@ -67,8 +68,11 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
             socket.send(packet);
             socket.close();
             Log.d(TAG, "Datagram packet send");
-            return WOL_SEND;
-            
+            if (!conn.wol_broadcast) {
+                return WOL_SEND;
+            } else {
+                return WOL_SEND_BROADCAST;
+            }
         } catch (Exception e) {
             this.exception = e;
             Log.d(TAG, "Exception for address " + conn.address + ", Exception " + e.getLocalizedMessage());
@@ -121,6 +125,8 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     protected void onPostExecute(Integer result) {
         if (result == WOL_SEND) {
             Toast.makeText(context, context.getString(R.string.wol_send, conn.address), Toast.LENGTH_SHORT).show();
+        } else if (result == WOL_SEND_BROADCAST) {
+            Toast.makeText(context, context.getString(R.string.wol_send_broadcast, conn.address), Toast.LENGTH_SHORT).show();
         } else if (result == WOL_INVALID_MAC) {
             Toast.makeText(context, context.getString(R.string.wol_address_invalid), Toast.LENGTH_SHORT).show();
         } else {

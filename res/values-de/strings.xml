@@ -69,7 +69,7 @@
     <string name="pref_wol_port">Wake on LAN Port</string>
     <string name="pref_wol_port_sum">Port %d wird zum Wecken des Servers verwendet. Der Standardport ist 9.</string>
     <string name="pref_wol_broadcast">Sende Broadcast</string>
-    <string name="pref_wol_broadcast_sum">Sende das WOL Paket als Broadcast. Einige Router blockieren dies Art von WOL.</string>
+    <string name="pref_wol_broadcast_sum">Sende die Wake on LAN Information als Broadcast an alle Rechner. Einige Router blockieren diese Art von Wake on LAN.</string>
     <string name="pref_wol_address_invalid">Die MAC-Adresse ist ungültig.\nSie muss z.B. das Format \'01:24:67:9a:cd:ef\' haben und darf neben \':\' und \'\-\' nur 0\-9 und a\-z enthalten.</string>
 
     <string name="pref_user_interface">Benutzeroberfläche</string>
@@ -135,7 +135,12 @@
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
     <string name="recording_file_invalid">Aufnahme ist ungültig bzw. fehlerhaft</string>
 
-     <string-array name="pr_content_type0">
+    <string name="wol_send">Wake on LAN Paket erfolgreich an \'%s\' gesendet.</string>
+    <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
+    <string name="wol_address_invalid">Die MAC-Adresse ist nicht gültig. Bitte in den Einstellungen überprüfen.</string>
+    <string name="wol_error">Fehler beim Senden des Wake on LAN Pakets an \'%1$s\'.\n Fehlermeldung: %2$s</string>
+
+    <string-array name="pr_content_type0">
         <item>Film / Drama</item>
         <item>Nachrichten / Aktuelles</item>
         <item>Show / Spielshow</item>

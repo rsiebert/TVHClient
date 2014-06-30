@@ -136,6 +136,7 @@
     <string name="recording_file_invalid">Recording is invalid</string>
 
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
+    <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
     <string name="wol_address_invalid">The MAC-address is not valid. Please check your settings.</string>
     <string name="wol_error">Error sending wake on LAN packet to \'%1$s\'.\n Error message: %2$s</string>
 
