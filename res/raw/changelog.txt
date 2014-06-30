@@ -1,3 +1,8 @@
+$ 1.4.4
+  % VERSION 1.4.4
+  _ 30.06.2014
+    * Added Wake on LAN broadcast
+    * Small bug fixes
 $ 1.4.3
   % VERSION 1.4.3
   _ 29.06.2014
