@@ -68,8 +68,16 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            cancel();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed");
         Intent returnIntent = new Intent();
         returnIntent.putExtra("reconnect", connectionChanged);
         setResult(RESULT_OK, returnIntent);
@@ -81,7 +89,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
      * chosen the user can continue to add or edit the connection. Otherwise
      * the input will be discarded and the activity will be closed.
      */
-    private void cancel() {
+    public void cancel() {
         // Do not show the cancel dialog if nothing has changed
         if (!connectionChanged) {
             onBackPressed();
