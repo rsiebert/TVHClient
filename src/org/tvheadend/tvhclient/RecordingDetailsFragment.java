@@ -109,6 +109,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         // If the recording is null exit
         if (rec == null) {
             activity.finish();
+            return;
         }
 
         if (title != null) {

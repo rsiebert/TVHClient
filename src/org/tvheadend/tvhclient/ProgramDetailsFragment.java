@@ -136,6 +136,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         // If the channel or program is null exit
         if (channel == null || program == null) {
             activity.finish();
+            return;
         }
 
         if (title != null) {
