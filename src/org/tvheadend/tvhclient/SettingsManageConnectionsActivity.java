@@ -45,7 +45,6 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
     private ConnectionListAdapter adapter;
     private List<Connection> connList;
     private ListView listView;
-    protected int prevPosition;
     private boolean connectionChanged;
     private ActionMode actionMode;
 
