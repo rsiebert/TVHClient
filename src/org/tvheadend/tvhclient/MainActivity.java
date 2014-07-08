@@ -313,7 +313,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // Reload all data from the server because the connection or some
             // values of the existing connection has changed
             if (resultCode == RESULT_OK) {
-                if (data.getBooleanExtra("reconnect", false)) {
+                if (data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false)) {
                     Utils.connect(this, true);
                 }
             }
@@ -322,10 +322,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // values of the existing connection has changed. Also restart the
             // activity if certain settings have changed like the theme. 
             if (resultCode == RESULT_OK) {
-                if (data.getBooleanExtra("reconnect", false)) {
+                if (data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false)) {
                     Utils.connect(this, true);
                 }
-                if (data.getBooleanExtra("restart", false)) {
+                if (data.getBooleanExtra(Constants.BUNDLE_RESTART, false)) {
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);

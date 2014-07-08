@@ -70,7 +70,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("reconnect", connectionChanged);
+        returnIntent.putExtra(Constants.BUNDLE_RECONNECT, connectionChanged);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
@@ -306,7 +306,7 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             // the settings activity is called again.
             conn = null;
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("reconnect", connectionChanged);
+            returnIntent.putExtra(Constants.BUNDLE_RECONNECT, connectionChanged);
             getActivity().setResult(RESULT_OK, returnIntent);
             getActivity().finish();
         }

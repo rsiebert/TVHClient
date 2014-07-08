@@ -70,8 +70,8 @@ public class SettingsActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("restart", restart);
-        returnIntent.putExtra("reconnect", reconnect);
+        returnIntent.putExtra(Constants.BUNDLE_RESTART, restart);
+        returnIntent.putExtra(Constants.BUNDLE_RECONNECT, reconnect);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
@@ -171,7 +171,7 @@ public class SettingsActivity extends ActionBarActivity {
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             if (requestCode == Constants.RESULT_CODE_SETTINGS) {
                 if (resultCode == RESULT_OK) {
-                    reconnect = data.getBooleanExtra("reconnect", false);
+                    reconnect = data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false);
                 }
             }
         }
@@ -183,8 +183,8 @@ public class SettingsActivity extends ActionBarActivity {
      */
     private void restartActivity() {
         Intent intent = getIntent();
-        intent.putExtra("restart", restart);
-        intent.putExtra("reconnect", reconnect);
+        intent.putExtra(Constants.BUNDLE_RESTART, restart);
+        intent.putExtra(Constants.BUNDLE_RECONNECT, reconnect);
         setResult(RESULT_OK, intent);
         finish();
         startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);

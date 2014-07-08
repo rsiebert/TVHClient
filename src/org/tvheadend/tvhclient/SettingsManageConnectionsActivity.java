@@ -134,7 +134,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
     @Override
     public void onBackPressed() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("reconnect", connectionChanged);
+        returnIntent.putExtra(Constants.BUNDLE_RECONNECT, connectionChanged);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
@@ -166,7 +166,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
             if (resultCode == RESULT_OK) {
-                connectionChanged = data.getBooleanExtra("reconnect", false);
+                connectionChanged = data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false);
             }
         }
     }
