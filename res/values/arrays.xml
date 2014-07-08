@@ -78,4 +78,16 @@
         <item>Dutch</item>
     </string-array>
 
+    <string-array name="drawer_menu_names">
+        <item>Channels</item>
+        <item>Completed Recordings</item>
+        <item>Scheduled Recordings</item>
+        <item>Failed Recordings</item>
+        <item>Program Guide</item>
+        <item>Status</item>
+        <item>Settings</item>
+        <item>Connections</item>
+        <item>Reload</item>
+    </string-array>
+
 </resources>

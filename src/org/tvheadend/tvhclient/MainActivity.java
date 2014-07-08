@@ -1,12 +1,9 @@
 package org.tvheadend.tvhclient;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
-import org.tvheadend.tvhclient.adapter.DrawerListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.model.DrawerItem;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -26,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface {
@@ -34,8 +32,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     private ListView drawerList;
     private DrawerLayout drawerLayout;
-    private DrawerListAdapter drawerAdapter;
-    private List<DrawerItem> drawerItemList;
     private ActionBarDrawerToggle drawerToggle;
     private CharSequence drawerTitle;
     private CharSequence mainTitle;
@@ -113,10 +109,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 super.onDrawerOpened(drawerView);
                 actionBar.setTitle(drawerTitle);
                 supportInvalidateOptionsMenu();
-
-                // Disable the refresh menu if no connection is available or the
-                // loading process is active. This is handled in the adapter
-                drawerAdapter.notifyDataSetChanged();
             }
         };
         // Set the drawer toggle as the DrawerListener
@@ -124,9 +116,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         // Create the custom adapter for the menus in the navigation drawer.
         // Also set the listener to react to the user selection.
-        drawerItemList = getDrawerMenuItemList();
-        drawerAdapter = new DrawerListAdapter(this, drawerItemList, R.layout.drawer_list_item);
-        drawerList.setAdapter(drawerAdapter);
+        String[] drawerMenuArray = getResources().getStringArray(R.array.drawer_menu_names);
+        drawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, drawerMenuArray));
         drawerList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -139,19 +130,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // Get the previously selected channel item position
             selectedDrawerMenuPosition = savedInstanceState.getInt(SELECTED_DRAWER_MENU_POSITION, 0);
         }
-    }
-
-    /**
-     * Populates the navigation drawer item list with the names, icon resources
-     * and initial status and count information.
-     * 
-     * @return
-     */
-    private List<DrawerItem> getDrawerMenuItemList() {
-        Log.i(TAG, "getDrawerMenuItemList");
-
-        List<DrawerItem> list = new ArrayList<DrawerItem>();
-        return list;
     }
 
     @Override
@@ -295,6 +273,11 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             break;
         case MENU_STATUS:
             // Show the status
+            Fragment sf = Fragment.instantiate(this, StatusFragment.class.getName());
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment, sf, MAIN_FRAGMENT_TAG)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
             break;
         case MENU_SETTINGS:
             // Show the settings

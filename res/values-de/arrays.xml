@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="drawer_menu_names">
+        <item>Sender</item>
+        <item>Aufgenommene Sendungen</item>
+        <item>Geplante Aufnahmen</item>
+        <item>Fehlerhafte Aufnahmen</item>
+        <item>TV-Programm</item>
+        <item>Status</item>
+        <item>Einstellungen</item>
+        <item>Verbindungen</item>
+        <item>Aktualisieren</item>
+    </string-array>
+
+</resources>
