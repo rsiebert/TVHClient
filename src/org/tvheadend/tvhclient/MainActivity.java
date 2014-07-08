@@ -108,6 +108,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                mainTitle = actionBar.getTitle();
                 actionBar.setTitle(drawerTitle);
                 supportInvalidateOptionsMenu();
             }
@@ -280,12 +281,19 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commit();
             break;
+
         case MENU_SETTINGS:
             // Show the settings
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivityForResult(settingsIntent, Constants.RESULT_CODE_SETTINGS);
             break;
+
         case MENU_CONNECTIONS:
             // Show the connections
-            break;            
+            Intent connIntent = new Intent(this, SettingsManageConnectionsActivity.class);
+            startActivityForResult(connIntent, Constants.RESULT_CODE_CONNECTIONS);
+            break;
+
         case MENU_RELOAD:
             // Reload the data
             Utils.connect(this, true);
