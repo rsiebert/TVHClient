@@ -13,7 +13,7 @@
         <meta-data 
             android:name="android.app.default_searchable" 
             android:value=".SearchResultActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ChannelListTabsActivity">
+        <activity android:name="org.tvheadend.tvhclient.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -27,6 +27,7 @@
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
+        <activity android:name="org.tvheadend.tvhclient.ChannelListTabsActivity" />
         <activity android:name="org.tvheadend.tvhclient.SettingsManageConnectionsActivity" />
         <activity android:name="org.tvheadend.tvhclient.SettingsAddConnectionActivity" />
         <activity android:name="org.tvheadend.tvhclient.ProgramListActivity" />
