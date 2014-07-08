@@ -454,8 +454,29 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void onListItemSelected(int position, Channel channel, String tag) {
-        // TODO Auto-generated method stub
-        
+        Log.d(TAG, "onListItemSelected (channel), pos " + position + ", tag " + tag);
+
+        if (tag.equals(ChannelListFragment.class.getSimpleName())) {
+            if (channel != null) {
+                Fragment f = Fragment.instantiate(this, ProgramListFragment.class.getName());
+                Bundle bundle = new Bundle();
+                bundle.putLong(Constants.BUNDLE_CHANNEL_ID, channel.id);
+                bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+                f.setArguments(bundle);
+
+                // In dual pane mode show the list of programs on the right side
+                // otherwise use the entire screen
+                if (isDualPane) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.right_fragment, f, RIGHT_FRAGMENT_TAG)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                } else {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main_fragment, f, MAIN_FRAGMENT_TAG)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                }
+            }
+        }
     }
 
     @Override
