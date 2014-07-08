@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.adapter.DrawerListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.DrawerItem;
@@ -27,7 +28,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface {
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -373,5 +374,23 @@ public class MainActivity extends ActionBarActivity {
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+    
+    /**
+     * Called when the change log dialog is closed.
+     * Show the channel list as a default.
+     */
+    @Override
+    public void dialogDismissed() {
+        Log.d(TAG, "dialogDismissed");
+
+        if (DatabaseHelper.getInstance() != null
+                && DatabaseHelper.getInstance().getConnections().isEmpty()) {
+            actionBar.setSubtitle(getString(R.string.no_connections));
+            showCreateConnectionDialog(this);
+        } else {
+            Utils.connect(this, false);
+            handleItemSelection(MENU_STATUS);
+        }
     }
 }
