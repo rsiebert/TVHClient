@@ -87,7 +87,9 @@ public class StatusFragment extends Fragment implements HTSListener {
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
-        actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
+        }
     }
 
     @Override
