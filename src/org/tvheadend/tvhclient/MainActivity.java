@@ -263,6 +263,16 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         switch (position) {
         case MENU_CHANNELS:
             // Show the channel list
+            Fragment clf = Fragment.instantiate(this, ChannelListFragment.class.getName());
+            // Inform the channel list fragment if it shall be used in the
+            // program guide view
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constants.BUNDLE_SHOWS_ONLY_CHANNELS, false);
+            clf.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment, clf, MAIN_FRAGMENT_TAG)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
             break;
         case MENU_COMPLETED_RECORDINGS:
             // Show completed recordings
