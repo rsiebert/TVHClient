@@ -34,8 +34,8 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,6 +43,7 @@ import android.widget.Toast;
 
 public class SettingsAddConnectionActivity extends ActionBarActivity {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsAddConnectionActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
@@ -72,6 +73,17 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
         returnIntent.putExtra("reconnect", connectionChanged);
         setResult(RESULT_OK, returnIntent);
         finish();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // Intercept the hard back key from the device itself to avoid a leaking
+        // window from the confirmation dialog
+        switch (keyCode) {
+        case KeyEvent.KEYCODE_BACK:
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -147,7 +159,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             // the first time. If the connection is not null then the screen has
             // been rotated and we have to reuse the values.
             if (conn == null) {
-
                 // If an index is given then we want to edit this connection
                 // Otherwise create a new connection with default values.
                 long id = getActivity().getIntent().getLongExtra("id", 0);
@@ -182,6 +193,9 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
             prefWolAddress.setText(conn.wol_address);
             prefWolPort.setText(String.valueOf(conn.wol_port));
             prefWolBroadcast.setChecked(conn.wol_broadcast);
+
+            // Initially the connection has no been changed
+            connectionChanged = false;
         }
 
         public void onResume() {
@@ -242,7 +256,6 @@ public class SettingsAddConnectionActivity extends ActionBarActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-            Log.d(TAG, "onSharedPreferenceChanged " + key);
             connectionChanged = true;
 
             // Update the connection object with the new values
