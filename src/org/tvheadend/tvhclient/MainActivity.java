@@ -3,7 +3,10 @@ package org.tvheadend.tvhclient;
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,7 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface {
+public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface {
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -413,5 +416,65 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
             }
         }
+    }
+
+    @Override
+    public void onScrollingChanged(int position, int pos, String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onScrollStateIdle(String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void moreDataRequired(Channel channel, String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void noDataAvailable(Channel channel, String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onListItemSelected(int position, Channel channel, String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onListItemSelected(int position, Recording recording, String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onListItemSelected(int position, Program program, String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onListPopulated(String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setCurrentListItemPosition(int position, String tag) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int getPreviousListItemPosition(String tag) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }
