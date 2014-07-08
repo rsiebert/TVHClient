@@ -27,8 +27,8 @@ import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
-import org.tvheadend.tvhclient.interfaces.ProgramGuideScrollingInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
@@ -56,13 +56,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class ChannelListFragment extends Fragment implements HTSListener, ProgramGuideScrollingInterface {
+public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
     private Activity activity;
-    private ProgramGuideInterface programGuideInterface;
-	private OnChannelListListener channelListListener;
+    private FragmentStatusInterface fragmentStatusInterface;
 	private ActionBarInterface actionBarInterface;
 
     private ChannelListAdapter adapter;
@@ -77,6 +76,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
     private int adapterLayout = R.layout.channel_list_widget;
 
     private boolean enableScrolling = false;
+    
+    // Indication if the channel list shall be used in the program guide view.
+    // In this mode it will only show the channels.
+    private boolean showOnlyChannels = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,8 +92,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
         // Get the passed layout id. Only used in the program guide icon list.
         Bundle bundle = getArguments();
         if (bundle != null) {
-            viewLayout = bundle.getInt("viewLayout", R.layout.list_layout);
-            adapterLayout = bundle.getInt("adapterLayout", R.layout.channel_list_widget);
+            showOnlyChannels  = bundle.getBoolean(Constants.BUNDLE_SHOWS_ONLY_CHANNELS, false); 
+        }
+        // Set the correct adapter and view layouts
+        if (showOnlyChannels) {
+            viewLayout = R.layout.program_guide_pager;
+            adapterLayout = R.layout.program_guide_channel_item;
         }
 
         View v = inflater.inflate(viewLayout, container, false);
@@ -108,14 +115,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (activity instanceof OnChannelListListener) {
-            channelListListener = (OnChannelListListener) activity;
-        }
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
-        if (activity instanceof ProgramGuideInterface) {
-            programGuideInterface = (ProgramGuideInterface) activity;
+        if (activity instanceof FragmentStatusInterface) {
+            fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
         adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
@@ -126,8 +130,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Channel ch = (Channel) adapter.getItem(position);
-                if (channelListListener != null) {
-                    channelListListener.onChannelSelected(position, ch);
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.onListItemSelected(position, ch, TAG);
                 }
                 adapter.setPosition(position);
                 adapter.notifyDataSetChanged();
@@ -144,19 +148,19 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
                     enableScrolling = true;
                 } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
-                    if (programGuideInterface != null) {
+                    if (fragmentStatusInterface != null) {
                         enableScrolling = false;
-                        programGuideInterface.onScrollStateIdle(TAG);
+                        fragmentStatusInterface.onScrollStateIdle(TAG);
                     }
                 }
             }
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (programGuideInterface != null && enableScrolling) {
+                if (fragmentStatusInterface != null && enableScrolling) {
                     int index = view.getFirstVisiblePosition();
                     View v = view.getChildAt(0);
                     int position = (v == null) ? 0 : v.getTop();
-                    programGuideInterface.onScrollingChanged(index, position, TAG);
+                    fragmentStatusInterface.onScrollingChanged(index, position, TAG);
                 }
             }
         });
@@ -176,10 +180,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
         });
         tagDialog = builder.create();
 
-        if (activity instanceof ChannelListTabsActivity) {
+        // Enable the menu and context menu if this fragment is not part of the
+        // program guide
+        if (!showOnlyChannels) {
             setHasOptionsMenu(true);
-        }
-        if (activity instanceof ChannelListTabsActivity) {
             registerForContextMenu(listView);
         }
     }
@@ -217,12 +221,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
         }
 
         switch (item.getItemId()) {
-        case R.id.menu_search:
-            Bundle bundle = new Bundle();
-            bundle.putLong("channelId", program.channel.id);
-            activity.startSearch(null, false, bundle, false);
-            return true;
-
         case R.id.menu_search_imdb:
             startActivity(new SearchIMDbIntent(activity, program.title));
             return true;
@@ -307,17 +305,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
 
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
-        if (channelListListener != null) {
-            channelListListener.onChannelListPopulated();
-        }
-
-        // Set the scroll position of the list view. Only required when this
-        // class is used in the program guide where the channels are shown on
-        // the the left side and shall scroll with the guide data.
-        if (programGuideInterface != null) {
-            listView.setSelectionFromTop(
-                    programGuideInterface.getScrollingSelectionIndex(),
-                    programGuideInterface.getScrollingSelectionPosition());
+        if (fragmentStatusInterface != null) {
+            fragmentStatusInterface.onListPopulated(TAG);
         }
     }
 
@@ -338,10 +327,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_search:
-            activity.onSearchRequested();
-            return true;
-
         case R.id.menu_tags:
             tagDialog.show();
             return true;
@@ -372,8 +357,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
 
     @Override
     public void onDetach() {
-        programGuideInterface = null;
-        channelListListener = null;
+        fragmentStatusInterface = null;
         actionBarInterface = null;
         super.onDetach();
     }
@@ -516,33 +500,29 @@ public class ChannelListFragment extends Fragment implements HTSListener, Progra
     }
 
     @Override
-    public void scrollListViewTo(int index) {
-        if (listView != null)
-            listView.setSelection(index);
+    public void reloadData() {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override
-    public void scrollListViewToPosition(int index, int pos) {
-        if (listView != null) {
-            listView.setSelectionFromTop(index, pos);
-        }
-    }
-
-    /**
-     * Sets the selected item in the list to the desired position. Any listener
-     * is then informed that a new channel item has been selected.
-     * 
-     * @param position
-     */
-    public void setSelectedItem(int position) {
-        if (listView.getCount() > position && adapter.getCount() > position && position >= 0) {
+    public void setSelection(int position) {
+        if (listView != null 
+                && listView.getCount() > position 
+                && adapter.getCount() > position
+                && position >= 0) {
             adapter.setPosition(position);
-            channelListListener.onChannelSelected(position, adapter.getItem(position));
+            listView.setSelection(position);
         }
     }
 
-    public interface OnChannelListListener {
-        public void onChannelSelected(int position, Channel channel);
-        public void onChannelListPopulated();
+    @Override
+    public void setSelectionFromTop(int position, int index) {
+        if (listView != null 
+                && listView.getCount() > position 
+                && adapter.getCount() > position
+                && position >= 0) {
+            listView.setSelectionFromTop(position, index);
+        }
     }
 }
