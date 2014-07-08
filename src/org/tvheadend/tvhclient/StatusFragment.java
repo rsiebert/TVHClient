@@ -22,9 +22,12 @@ import java.util.Map;
 
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.R;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,6 +38,13 @@ import android.widget.TextView;
 
 public class StatusFragment extends Fragment implements HTSListener {
 
+    private final static String TAG = StatusFragment.class.getSimpleName();
+
+    private Activity activity;
+    private ActionBarInterface actionBarInterface;
+
+    private TextView connection;
+    private TextView status;
 	private TextView freediscspace;
 	private TextView totaldiscspace;
 	private TextView channels;
@@ -52,6 +62,8 @@ public class StatusFragment extends Fragment implements HTSListener {
             return null;
         }
         View v = inflater.inflate(R.layout.status_layout, container, false);
+        connection = (TextView) v.findViewById(R.id.connection);
+        status = (TextView) v.findViewById(R.id.status);
         freediscspace = (TextView) v.findViewById(R.id.free_discspace);
         totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
         channels = (TextView) v.findViewById(R.id.channels);
@@ -61,21 +73,29 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
         return v;
     }
-	
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = activity;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
         app.addListener(this);
-        
-        showChannelSatus();
-        showRecordingStatus();
-        
-        // Upon the first call no information is available about the disc space
-        // so call the server to get that information.
-        Intent intent = new Intent(getActivity(), HTSService.class);
-        intent.setAction(HTSService.ACTION_GET_DISC_STATUS);
-        getActivity().startService(intent);
+        showInitialStatus(app.isLoading());
     }
 
     @Override
@@ -85,9 +105,22 @@ public class StatusFragment extends Fragment implements HTSListener {
         app.removeListener(this);
     }
 
+    @Override
+    public void onDetach() {
+        actionBarInterface = null;
+        super.onDetach();
+    }
+
 	@Override
 	public void onMessage(final String action, final Object obj) {
-        if (action.equals(TVHClientApplication.ACTION_STATUS)) {
+	    if (action.equals(TVHClientApplication.ACTION_LOADING)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    boolean loading = (Boolean) obj;
+                    showInitialStatus(loading);
+                }
+            });
+        } else if (action.equals(TVHClientApplication.ACTION_STATUS)) {
             getActivity().runOnUiThread(new Runnable() {
                 @SuppressWarnings("unchecked")
                 public void run() {
@@ -96,6 +129,52 @@ public class StatusFragment extends Fragment implements HTSListener {
             });
         }
 	}
+
+    /**
+     * 
+     * 
+     * @param loading
+     */
+    protected void showInitialStatus(boolean loading) {
+
+        // Get the name of the current connection
+        Connection conn = null;
+        if (DatabaseHelper.getInstance() != null) {
+            conn = DatabaseHelper.getInstance().getSelectedConnection();
+        }
+
+        // We are not connected or loading, show the defaults
+        if (conn == null || loading) {
+            connection.setText(getString(R.string.unknown));
+            status.setText(getString(R.string.unknown));
+            freediscspace.setText(getString(R.string.unknown));
+            totaldiscspace.setText(getString(R.string.unknown));
+            channels.setText(getString(R.string.unknown));
+            currentlyRec.setText(getString(R.string.unknown));
+            completedRec.setText(getString(R.string.unknown));
+            upcomingRec.setText(getString(R.string.unknown));
+            failedRec.setText(getString(R.string.unknown));
+        } else {
+            // Show the connection name and the loading status
+            if (conn != null) {
+                connection.setText(conn.name + " (" + conn.address + ")");
+    
+                if (loading) {
+                    status.setText(getString(R.string.loading));
+                } else {
+                    status.setText(getString(R.string.ready));
+                    showChannelStatus();
+                    showRecordingStatus();
+        
+                    // Upon the first call no information is available about the disc space
+                    // so call the server to get that information.
+                    Intent intent = new Intent(getActivity(), HTSService.class);
+                    intent.setAction(HTSService.ACTION_GET_DISC_STATUS);
+                    getActivity().startService(intent);
+                }
+            }
+        }
+    }
 
     /**
      * Shows the available and total disc space either in MB or GB to avoid
@@ -131,7 +210,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     /**
      * Shows the information how many channels are available.
      */
-    private void showChannelSatus() {
+    private void showChannelStatus() {
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
         channels.setText(app.getChannels().size() + " " + getString(R.string.available));
     }

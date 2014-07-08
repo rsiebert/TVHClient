@@ -309,13 +309,16 @@
     <string name="part">Teil</string>
     <string name="progress">%1$d%% der Sendung bereits vorbei</string>
 
+    <string name="connection">Verbindung</string>
+    <string name="server_state">Server Status</string>
     <string name="disc_space">Speicherplatz</string>
     <string name="total">Total</string>
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>
+    <string name="ready">Bereit</string>
     <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
     <string name="currently_recording">Laufende Aufnahmen</string>
-    
+
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
     <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
 </resources>

@@ -9,6 +9,46 @@
         android:orientation="vertical" >
 
         <TextView
+            android:id="@+id/connection_label"
+            style="?attr/TitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="6dp"
+            android:text="@string/connection" />
+
+        <TextView
+            android:id="@+id/connection"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:singleLine="true"
+            android:text="@string/connection" />
+
+        <TextView
+            android:id="@+id/status_label"
+            style="?attr/TitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="6dp"
+            android:text="@string/status" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:singleLine="true"
+            android:text="@string/status" />
+
+        <TextView
             android:id="@+id/channel_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"

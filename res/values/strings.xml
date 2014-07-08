@@ -321,10 +321,13 @@
     <string name="part">Part</string>
     <string name="progress">%1$d%% of the show already shown</string>
     
+    <string name="connection">Connection</string>
+    <string name="server_state">Server State</string>
     <string name="disc_space">Disc space</string>
     <string name="total">Total</string>
     <string name="available">Available</string>
     <string name="unknown">Unknown</string>
+    <string name="ready">Ready</string>
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
     <string name="currently_recording">Currently recording</string>
     
