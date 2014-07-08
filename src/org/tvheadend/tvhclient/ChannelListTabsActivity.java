@@ -22,8 +22,8 @@ import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.interfaces.ListPositionInterface;
+import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
 import org.tvheadend.tvhclient.model.Channel;
 
 import android.content.Intent;
@@ -35,7 +35,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface, ProgramLoadingInterface, ListPositionInterface {
@@ -222,53 +221,10 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // Disable the refresh menu if no connection is 
-        // available or the loading process is active
-        MenuItem item = menu.findItem(R.id.menu_refresh);
-        if (item != null) {
-            TVHClientApplication app = (TVHClientApplication) getApplication();
-            item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
-        }
-        return true;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = null;
-        switch (item.getItemId()) {
-        case R.id.menu_settings:
-            // Save the current tab position so we show the previous tab
-            // again when we return from the settings menu.
-            prevTabPosition = actionBar.getSelectedNavigationIndex();
-            // Now start the settings activity
-            intent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
-            return true;
-
-        case R.id.menu_refresh:
-            Utils.connect(this, true);
-            return true;
-
-        case R.id.menu_connections:
-            // Save the current tab position so we show the previous tab
-            // again when we return from the settings menu. Then show
-            // the manage connections activity
-            prevTabPosition = actionBar.getSelectedNavigationIndex();
-            intent = new Intent(this, SettingsManageConnectionsActivity.class);
-            startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
-        }
     }
 
     /**

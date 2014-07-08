@@ -151,20 +151,6 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // Disable the refresh menu if no connection is 
-        // available or the loading process is already active
-        MenuItem item = menu.findItem(R.id.menu_refresh);
-        if (item != null) {
-            TVHClientApplication app = (TVHClientApplication) getApplication();
-            if (app != null && DatabaseHelper.getInstance() != null) { 
-                item.setVisible(DatabaseHelper.getInstance().getSelectedConnection() != null && !app.isLoading());
-            }
-        }
-        return true;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -173,27 +159,9 @@ public class RecordingListTabsActivity extends ActionBarActivity implements Acti
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = null;
         switch (item.getItemId()) {
         case android.R.id.home:
             onBackPressed();
-            return true;
-
-        case R.id.menu_settings:
-            // Start the settings activity 
-            intent = new Intent(this, SettingsActivity.class);
-            startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
-            return true;
-
-        case R.id.menu_refresh:
-            Utils.connect(this, true);
-            return true;
-
-        case R.id.menu_connections:
-            // Show the manage connections activity where 
-            // the user can choose a connection
-            intent = new Intent(this, SettingsManageConnectionsActivity.class);
-            startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
             return true;
 
         default:
