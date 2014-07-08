@@ -4,14 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tvheadend.tvhclient.adapter.DrawerListAdapter;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.DrawerItem;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -41,6 +51,19 @@ public class MainActivity extends ActionBarActivity {
     private int selectedDrawerMenuPosition = 0;
 
     private static final String SELECTED_DRAWER_MENU_POSITION = "selected_drawer_menu_position";
+    private static final String MAIN_FRAGMENT_TAG = "main_fragment";
+    private static final String RIGHT_FRAGMENT_TAG = "right_fragment";
+
+    // The index for the navigation drawer menus 
+    private static final int MENU_CHANNELS = 0;
+    private static final int MENU_COMPLETED_RECORDINGS = 1;
+    private static final int MENU_SCHEDULED_RECORDINGS = 2;
+    private static final int MENU_FAILED_RECORDINGS = 3;
+    private static final int MENU_PROGRAM_GUIDE = 4;
+    private static final int MENU_STATUS = 5;
+    private static final int MENU_SETTINGS = 6;
+    private static final int MENU_CONNECTIONS = 7;
+    private static final int MENU_RELOAD = 8;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,6 +153,111 @@ public class MainActivity extends ActionBarActivity {
         return list;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume");
+
+        // Show the change log once when the application was upgraded. Otherwise
+        // start normally by checking if a connection has been added. If not the
+        // show the dialog to add one or connect to the service and set the
+        // selected navigation drawer item. 
+        if (changeLogDialog.firstRun()) {
+            changeLogDialog.getLogDialog().show();
+        } else {
+            if (DatabaseHelper.getInstance() != null
+                    && DatabaseHelper.getInstance().getConnections().isEmpty()) {
+                actionBar.setSubtitle(getString(R.string.no_connections));
+                showCreateConnectionDialog(this);
+            } else {
+                Utils.connect(this, false);
+                handleItemSelection(MENU_STATUS);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "onDestroy");
+
+        // Remove all listeners so no one receives any status information
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        app.removeListeners();
+        // stop the service when the application is closed
+        Intent intent = new Intent(this, HTSService.class);
+        stopService(intent);
+
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // When the orientation changes from landscape to portrait the right
+        // fragment would crash because the container is null. So we remove
+        // it entirely before the orientation change happens.
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment f = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+        if (f != null) {
+            ft.remove(f);
+            ft.commit();
+        }
+
+        super.onSaveInstanceState(outState);
+        // Save the position of the selected menu item from the drawer
+        outState.putInt(SELECTED_DRAWER_MENU_POSITION, selectedDrawerMenuPosition);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the navigation drawer is open, hide certain action items related
+        // to the content view
+        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
+        // Hide certain menu items when the drawer is open
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        if (searchMenuItem != null) {
+            searchMenuItem.setVisible(!drawerOpen);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+        switch (item.getItemId()) {
+        case R.id.menu_search:
+            onSearchRequested();
+            return true;
+
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
     /**
      * Loads and shows the correct fragment depending on the selected navigation
      * menu item.
@@ -139,8 +267,111 @@ public class MainActivity extends ActionBarActivity {
     private void handleItemSelection(int position) {
         Log.i(TAG, "handleItemSelection " + position);
 
+        // Remove any previously active fragment on the right side. In case the
+        // connection can't be established the screen is blank.
+        if (isDualPane) {
+            Fragment f = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
+            if (f != null) {
+                getSupportFragmentManager().beginTransaction().remove(f).commit();
+            }
+        }
+
+        switch (position) {
+        case MENU_CHANNELS:
+            // Show the channel list
+            break;
+        case MENU_COMPLETED_RECORDINGS:
+            // Show completed recordings
+            break;
+        case MENU_SCHEDULED_RECORDINGS:
+            // Show scheduled recordings
+            break;
+        case MENU_FAILED_RECORDINGS:
+            // Show failed recordings
+            break;
+        case MENU_PROGRAM_GUIDE:
+            // Show the program guide
+            break;
+        case MENU_STATUS:
+            // Show the status
+            break;
+        case MENU_SETTINGS:
+            // Show the settings
+            break;
+        case MENU_CONNECTIONS:
+            // Show the connections
+            break;            
+        case MENU_RELOAD:
+            // Reload the data
+            Utils.connect(this, true);
+            break;
+        }
+
         // Highlight the selected item and close the drawer
         drawerList.setItemChecked(position, true);
         drawerLayout.closeDrawer(drawerList);
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult " + requestCode + ", " + resultCode);
+
+        if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
+            // Reload all data from the server because the connection or some
+            // values of the existing connection has changed
+            if (resultCode == RESULT_OK) {
+                if (data.getBooleanExtra("reconnect", false)) {
+                    Utils.connect(this, true);
+                }
+            }
+        } else if (requestCode == Constants.RESULT_CODE_SETTINGS) {
+            // Reload all data from the server because the connection or some
+            // values of the existing connection has changed. Also restart the
+            // activity if certain settings have changed like the theme. 
+            if (resultCode == RESULT_OK) {
+                if (data.getBooleanExtra("reconnect", false)) {
+                    Utils.connect(this, true);
+                }
+                if (data.getBooleanExtra("restart", false)) {
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+            }
+        }
+    }
+
+    /**
+     * Shows a dialog to the user where he can choose to go directly to the
+     * connection screen. This dialog is only shown after the start of the
+     * application when no connection is available.
+     */
+    private void showCreateConnectionDialog(final Context ctx) {
+        Log.d(TAG, "showCreateConnectionDialog");
+
+        // Show confirmation dialog to cancel
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.create_new_connections));
+        builder.setTitle(getString(R.string.no_connections));
+
+        // Define the action of the yes button
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Log.d(TAG, "onClick yes");
+                // Show the manage connections activity where
+                // the user can choose a connection
+                Intent intent = new Intent(ctx, SettingsAddConnectionActivity.class);
+                startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
+            }
+        });
+        // Define the action of the no button
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Log.d(TAG, "onClick no");
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }
