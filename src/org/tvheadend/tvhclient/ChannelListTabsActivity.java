@@ -19,7 +19,6 @@
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
-import org.tvheadend.tvhclient.ChannelListFragment.OnChannelListListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ListPositionInterface;
@@ -37,7 +36,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.View;
 
-public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, OnChannelListListener, ActionBarInterface, ProgramLoadingInterface, ListPositionInterface {
+public class ChannelListTabsActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface, ProgramLoadingInterface, ListPositionInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ChannelListTabsActivity.class.getSimpleName();
@@ -304,7 +303,6 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
      * programs for the selected channel. In normal mode the activity will be
      * called that shows the program list.
      */
-	@Override
 	public void onChannelSelected(int position, Channel channel) {
 	    selectedChannelListPosition = position;
 
@@ -341,12 +339,11 @@ public class ChannelListTabsActivity extends ActionBarActivity implements Change
      * list item must be preselected so that the program list on the right side
      * shows its list with programs from this very selected channel.
      */
-    @Override
     public void onChannelListPopulated() {
         Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-        if (f != null && isDualPane) {
-            ((ChannelListFragment) f).setSelectedItem(selectedChannelListPosition);
-        }
+//        if (f != null && isDualPane) {
+//            ((ChannelListFragment) f).setSelectedItem(selectedChannelListPosition);
+//        }
     }
 
     @Override
