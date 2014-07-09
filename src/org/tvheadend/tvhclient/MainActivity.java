@@ -40,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private ActionBarDrawerToggle drawerToggle;
     private CharSequence drawerTitle;
     private CharSequence mainTitle;
+    private CharSequence mainSubTitle;
 
     private ActionBar actionBar = null;
     private ChangeLogDialog changeLogDialog;
@@ -91,6 +92,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         // Save the current title of the action bar
         mainTitle = drawerTitle = getTitle();
+        mainSubTitle = "";
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -106,6 +109,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 actionBar.setTitle(mainTitle);
+                actionBar.setSubtitle(mainSubTitle);
                 supportInvalidateOptionsMenu();
             }
 
@@ -113,7 +117,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 mainTitle = actionBar.getTitle();
+                mainSubTitle = actionBar.getSubtitle();
                 actionBar.setTitle(drawerTitle);
+                actionBar.setSubtitle("");
                 supportInvalidateOptionsMenu();
             }
         };
@@ -402,6 +408,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void setActionBarTitle(final String title, final String tag) {
+        mainTitle = title;
+
         // TODO differentiate according to the tags
         if (actionBar != null) {
             actionBar.setTitle(title);
@@ -410,6 +418,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void setActionBarSubtitle(final String subtitle, final String tag) {
+        mainSubTitle = subtitle;
+
         // TODO differentiate according to the tags
         if (actionBar != null) {
             actionBar.setSubtitle(subtitle);
