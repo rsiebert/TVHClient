@@ -396,6 +396,14 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void setSelection(int position) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelection(position);
+
+            if (adapter != null && adapter.getCount() > position) {
+                // Simulate a click in the list item to inform the activity
+                Program p = (Program) adapter.getItem(position);
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.onListItemSelected(position, p, TAG);
+                }
+            }
         }
     }
 

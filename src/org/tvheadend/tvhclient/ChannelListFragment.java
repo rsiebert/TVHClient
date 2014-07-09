@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -206,7 +207,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        
         // Get the currently selected channel from the list
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Program program = null;
@@ -288,7 +288,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
      * are part of the selected tag are shown.
      */
     public void populateList() {
-        
+
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         ChannelTag currentTag = Utils.getChannelTag(app);
         adapter.clear();
@@ -369,6 +369,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
      * @param loading
      */
     private void setLoading(boolean loading) {
+        Log.d(TAG, "setLoading " + loading);
+
         if (DatabaseHelper.getInstance() != null && 
                 DatabaseHelper.getInstance().getSelectedConnection() == null) {
             adapter.clear();
@@ -507,21 +509,26 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public void setSelection(int position) {
-        if (listView != null 
-                && listView.getCount() > position 
-                && adapter.getCount() > position
-                && position >= 0) {
-            adapter.setPosition(position);
+        if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelection(position);
+
+            // Set the position in the adapter so that we can show the selected
+            // channel in the theme with the arrow.
+            if (adapter != null && adapter.getCount() > position) {
+                adapter.setPosition(position);
+
+                // Simulate a click in the list item to inform the activity
+                Channel ch = (Channel) adapter.getItem(position);
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.onListItemSelected(position, ch, TAG);
+                }
+            }
         }
     }
 
     @Override
     public void setSelectionFromTop(int position, int index) {
-        if (listView != null 
-                && listView.getCount() > position 
-                && adapter.getCount() > position
-                && position >= 0) {
+        if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, index);
         }
     }
