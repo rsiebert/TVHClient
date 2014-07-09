@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient;
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
@@ -442,8 +443,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void moreDataRequired(Channel channel, String tag) {
-        // TODO Auto-generated method stub
-        
+        Utils.loadMorePrograms(this, channel);
     }
 
     @Override
@@ -469,11 +469,15 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 if (isDualPane) {
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.right_fragment, f, RIGHT_FRAGMENT_TAG)
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                            .addToBackStack(null)
+                            .commit();
                 } else {
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.main_fragment, f, MAIN_FRAGMENT_TAG)
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                            .addToBackStack(null)
+                            .commit();
                 }
             }
         }
@@ -487,14 +491,40 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void onListItemSelected(int position, Program program, String tag) {
-        // TODO Auto-generated method stub
+        Log.d(TAG, "onListItemSelected (program), pos " + position + ", tag " + tag);
         
+        if (tag.equals(ProgramListFragment.class.getSimpleName())) {
+            if (program != null) {
+                Fragment f = Fragment.instantiate(this, ProgramDetailsFragment.class.getName());
+                Bundle bundle = new Bundle();
+                bundle.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                bundle.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
+                f.setArguments(bundle);
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_fragment, f, MAIN_FRAGMENT_TAG)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        }
     }
 
     @Override
     public void onListPopulated(String tag) {
-        // TODO Auto-generated method stub
+        Log.d(TAG, "onListPopulated, tag " + tag);
         
+        if (tag.equals(ChannelListFragment.class.getSimpleName())) {
+            // When the channel list fragment is done loading the data for the
+            // first time we need to select the a channel in the list so that
+            // the program list will be loaded for that channel 
+            if (isDualPane) {
+                Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+                if (f instanceof FragmentControlInterface) {
+                    ((ChannelListFragment) f).setSelection(0);
+                }
+            }
+        }
     }
 
     @Override
