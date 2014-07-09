@@ -87,14 +87,14 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            // Get the channel of the program 
+            // Get the channel of the program
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            channel = app.getChannel(bundle.getLong("channelId", 0));
-            long eventId = bundle.getLong("eventId", 0);
+            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
+            long programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
             if (channel != null) {
                 // Find the program with the given id within this channel
                 for (Program p : channel.epg) {
-                    if (p != null && p.id == eventId) {
+                    if (p != null && p.id == programId) {
                         program = p;
                         break;
                     }
@@ -228,7 +228,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
             Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-            intent.putExtra("channelId", program.channel.id);
+            intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
             startActivity(intent);
             return true;
 
