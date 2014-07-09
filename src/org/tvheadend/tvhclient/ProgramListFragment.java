@@ -120,9 +120,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.setCurrentListItemPosition(position, TAG);
-                }
-                if (!isDualPane) {
-                    showProgramDetails(position);
+                    fragmentStatusInterface.onListItemSelected(position, adapter.getItem(position), TAG);
                 }
             }
         });
@@ -209,14 +207,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         fragmentStatusInterface = null;
         actionBarInterface = null;
         super.onDetach();
-    }
-
-    protected void showProgramDetails(int position) {
-        Program p = adapter.getItem(position);
-        Intent intent = new Intent(activity, ProgramDetailsActivity.class);
-        intent.putExtra("eventId", p.id);
-        intent.putExtra("channelId", p.channel.id);
-        startActivity(intent);
     }
 
     @Override
@@ -340,6 +330,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
      */
     @Override
     public void onMessage(String action, final Object obj) {
+        
         if (action.equals(TVHClientApplication.ACTION_PROGRAMME_ADD)) {
             // Increase the counter that will allow loading more programs.
             if (++newProgramsLoadedCounter >= Constants.PREF_PROGRAMS_TO_LOAD) {
