@@ -63,7 +63,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private FragmentStatusInterface fragmentStatusInterface;
 
     private ProgramListAdapter adapter;
-    private List<Program> prList;
+    private List<Program> list;
     private ListView listView;
     private Channel channel;
     private boolean isLoading = false;
@@ -125,8 +125,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             }
         });
         
-        prList = new ArrayList<Program>();
-        adapter = new ProgramListAdapter(activity, prList);
+        list = new ArrayList<Program>();
+        adapter = new ProgramListAdapter(activity, list);
         listView.setAdapter(adapter);
 
         setHasOptionsMenu(true);
@@ -173,8 +173,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // In case we return from the program details screen and the user added
         // a program to the schedule or has deleted one from it we need to
         // update the list to reflect these changes.
-        prList.clear();
-        prList.addAll(channel.epg);
+        list.clear();
+        list.addAll(channel.epg);
         adapter.sort();
         adapter.notifyDataSetChanged();
 
