@@ -27,8 +27,8 @@ import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
-import org.tvheadend.tvhclient.interfaces.ListPositionInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
@@ -54,14 +54,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class ProgramListFragment extends Fragment implements HTSListener {
+public class ProgramListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     private final static String TAG = ProgramListFragment.class.getSimpleName();
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
-    private ProgramLoadingInterface loadMoreProgramsInterface;
-    private ListPositionInterface scrollPositionInterface;
+    private FragmentStatusInterface fragmentStatusInterface;
 
     private ProgramListAdapter adapter;
     private List<Program> prList;
@@ -83,8 +82,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         Bundle bundle = getArguments();
         if (bundle != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            channel = app.getChannel(bundle.getLong("channelId", 0));
-            isDualPane = bundle.getBoolean("dual_pane", false);
+            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
+            isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
         // Add a listener to check if the program list has been scrolled.
@@ -107,11 +106,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
-        if (activity instanceof ProgramLoadingInterface) {
-            loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
-        }
-        if (activity instanceof ListPositionInterface) {
-            scrollPositionInterface = (ListPositionInterface) activity;
+        if (activity instanceof FragmentStatusInterface) {
+            fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
         // If the channel is null exit
@@ -122,10 +118,12 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (scrollPositionInterface != null) {
-                    scrollPositionInterface.saveCurrentListPosition(position);
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.setCurrentListItemPosition(position, TAG);
                 }
-                showProgramDetails(position);
+                if (!isDualPane) {
+                    showProgramDetails(position);
+                }
             }
         });
         
@@ -155,8 +153,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                         return;
                     }
                     isLoading = true;
-                    if (loadMoreProgramsInterface != null) {
-                        loadMoreProgramsInterface.loadMorePrograms(channel);
+                    if (fragmentStatusInterface != null) {
+                        fragmentStatusInterface.moreDataRequired(channel, TAG);
                     }
                 }
             }
@@ -190,10 +188,10 @@ public class ProgramListFragment extends Fragment implements HTSListener {
             }
         }
 
-        // Get the last scrolling 
-        if (scrollPositionInterface != null) {
-            listView.setSelectionFromTop(scrollPositionInterface.getPreviousListPosition(), 0);
-            scrollPositionInterface.saveCurrentListPosition(0);
+        // Get the last scrolling position
+        if (fragmentStatusInterface != null) {
+            listView.setSelectionFromTop(fragmentStatusInterface.getPreviousListItemPosition(TAG), 0);
+            fragmentStatusInterface.setCurrentListItemPosition(0, TAG);
         }
         enableScrollListener();
     }
@@ -208,9 +206,8 @@ public class ProgramListFragment extends Fragment implements HTSListener {
 
     @Override
     public void onDetach() {
-        loadMoreProgramsInterface = null;
+        fragmentStatusInterface = null;
         actionBarInterface = null;
-        scrollPositionInterface = null;
         super.onDetach();
     }
 
@@ -229,11 +226,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         Program program = adapter.getItem(info.position);
         
         switch (item.getItemId()) {
-        case R.id.menu_search:
-            // Show the search text input in the action bar
-            onSearchRequested();
-            return true;
-
         case R.id.menu_search_imdb:
             startActivity(new SearchIMDbIntent(activity, program.title));
             return true;
@@ -326,15 +318,11 @@ public class ProgramListFragment extends Fragment implements HTSListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_search:
-            // Show the search text input in the action bar
-            onSearchRequested();
-            return true;
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
             Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
             if (channel != null) {
-                intent.putExtra("channelId", channel.id);
+                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
             }
             startActivity(intent);
             return true;
@@ -344,15 +332,6 @@ public class ProgramListFragment extends Fragment implements HTSListener {
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    public boolean onSearchRequested() {
-        Bundle bundle = new Bundle();
-        if (channel != null) {
-            bundle.putLong("channelId", channel.id);
-        }
-        activity.startSearch(null, false, bundle, false);
-        return true;
     }
 
     /**
@@ -413,6 +392,26 @@ public class ProgramListFragment extends Fragment implements HTSListener {
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    public void reloadData() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSelection(int position) {
+        if (listView != null && listView.getCount() > position && position >= 0) {
+            listView.setSelection(position);
+        }
+    }
+
+    @Override
+    public void setSelectionFromTop(int position, int index) {
+        if (listView != null && listView.getCount() > position && position >= 0) {
+            listView.setSelectionFromTop(position, index);
         }
     }
 }
