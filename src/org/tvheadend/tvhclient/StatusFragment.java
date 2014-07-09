@@ -97,7 +97,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
         app.addListener(this);
-        showInitialStatus(app.isLoading());
+        showStatus(app.isLoading());
     }
 
     @Override
@@ -119,7 +119,7 @@ public class StatusFragment extends Fragment implements HTSListener {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
-                    showInitialStatus(loading);
+                    showStatus(loading);
                 }
             });
         } else if (action.equals(TVHClientApplication.ACTION_STATUS)) {
@@ -133,12 +133,16 @@ public class StatusFragment extends Fragment implements HTSListener {
 	}
 
     /**
-     * 
+     * Shows the status depending if a connection is available and the status of
+     * that connection.
      * 
      * @param loading
      */
-    protected void showInitialStatus(boolean loading) {
+    protected void showStatus(boolean loading) {
 
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
+        }
         // Get the name of the current connection
         Connection conn = null;
         if (DatabaseHelper.getInstance() != null) {
