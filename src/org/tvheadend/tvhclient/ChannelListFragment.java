@@ -371,70 +371,24 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private void setLoading(boolean loading) {
         Log.d(TAG, "setLoading " + loading);
 
-        if (DatabaseHelper.getInstance() != null && 
-                DatabaseHelper.getInstance().getSelectedConnection() == null) {
+        if (loading) {
             adapter.clear();
             adapter.notifyDataSetChanged();
             // Only update the header when the channels are shown. Do not do
             // this when this class is used by the program guide.
             if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections), TAG);
+                actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
             }
-            showCreateConnectionDialog();
         } else {
-            if (loading) {
-                adapter.clear();
-                adapter.notifyDataSetChanged();
-                // Only update the header when the channels are shown. Do not do
-                // this when this class is used by the program guide.
-                if (actionBarInterface != null) {
-                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
-                }
-            } else {
-                // Fill the tag adapter with the available tags
-                TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                tagAdapter.clear();
-                for (ChannelTag t : app.getChannelTags()) {
-                    tagAdapter.add(t);
-                }
-                // Update the list with the new channel data
-                populateList();
+            // Fill the tag adapter with the available tags
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            tagAdapter.clear();
+            for (ChannelTag t : app.getChannelTags()) {
+                tagAdapter.add(t);
             }
+            // Update the list with the new channel data
+            populateList();
         }
-    }
-
-    /**
-     * Shows a dialog to the user where he can choose to go directly to the
-     * connection screen. This dialog is only shown after the start of the
-     * application when no connection is available.
-     */
-    private void showCreateConnectionDialog() {
-        // Don't do anything if the fragment is not attached to the activity
-        if (!this.isAdded()) {
-            return;
-        }
-        // Show confirmation dialog to cancel 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(getString(R.string.create_new_connections));
-        builder.setTitle(getString(R.string.no_connections));
-
-        // Define the action of the yes button
-        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // Show the manage connections activity where
-                // the user can choose a connection
-                Intent intent = new Intent(activity, SettingsAddConnectionActivity.class);
-                startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
-            }
-        });
-        // Define the action of the no button
-        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
     /**
