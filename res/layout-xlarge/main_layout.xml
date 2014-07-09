@@ -4,19 +4,28 @@
     android:layout_height="match_parent" >
 
     <!-- The main content view -->
-    <FrameLayout
-        android:id="@+id/main_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" 
-        android:layout_weight="0.6" />
 
-    <FrameLayout
-        android:id="@+id/right_fragment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.4" />
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <FrameLayout
+            android:id="@+id/main_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6" />
+
+        <FrameLayout
+            android:id="@+id/right_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4" />
+    </LinearLayout>
 
     <!-- The navigation drawer -->
+
     <ListView
         android:id="@+id/left_drawer"
         android:layout_width="240dp"
