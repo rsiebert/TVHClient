@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.tvheadend.tvhclient.fragments.ChannelListFragment;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ProgramGuideInterface;
@@ -21,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -323,13 +325,13 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     }
 
     @Override
-    public void setActionBarIcon(Channel channel, String tag) {
-        if (actionBar != null && channel != null) {
+    public void setActionBarIcon(Bitmap bitmap, String tag) {
+        if (actionBar != null) {
             // Show or hide the channel icon if required
             boolean showIcon = Utils.showChannelIcons(this);
             actionBar.setDisplayUseLogoEnabled(showIcon);
             if (showIcon) {
-                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+                actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
             }
         }
     }
@@ -345,7 +347,7 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
         if (channelFrag != null) {
             TVHClientApplication app = (TVHClientApplication) getApplication();
             ChannelTag currentTag = Utils.getChannelTag(app);
-            channelFrag.updateItemCount(currentTag);
+//            channelFrag.updateItemCount(currentTag);
         }
     }
 
@@ -551,5 +553,11 @@ public class ProgramGuideTabsActivity extends ActionBarActivity implements HTSLi
     @Override
     public boolean isChannelLoadingListEmpty() {
         return channelLoadingList.isEmpty();
+    }
+
+    @Override
+    public void setActionBarIcon(int resource, String tag) {
+        // TODO Auto-generated method stub
+        
     }
 }

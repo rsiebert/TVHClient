@@ -9,6 +9,15 @@ public interface FragmentControlInterface {
     void reloadData();
 
     /**
+     * Sets the initial selected item in the list view of the fragment. Useful
+     * if the list view of a fragment has been loaded for the first time and
+     * another one shall be shown then.
+     * 
+     * @param position
+     */
+    void setInitialSelection(final int position);
+
+    /**
      * Sets the currently selected item in the list view of the fragment. Useful
      * if the list views of two fragments shall be synchronized.
      * 

@@ -17,11 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.PlaybackSelectionActivity;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
@@ -68,6 +73,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private Channel channel;
     private boolean isLoading = false;
     private boolean isDualPane = false;
+    private int prevListPosition = 0;
     private static int newProgramsLoadedCounter = 0;
 
     @Override
@@ -84,6 +90,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
             isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+            prevListPosition = bundle.getInt(Constants.BUNDLE_LIST_POSITION, 0);
         }
 
         // Add a listener to check if the program list has been scrolled.
@@ -119,7 +126,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.setCurrentListItemPosition(position, TAG);
                     fragmentStatusInterface.onListItemSelected(position, adapter.getItem(position), TAG);
                 }
             }
@@ -182,14 +188,13 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             actionBarInterface.setActionBarTitle(channel.name, TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
             if (!isDualPane) {
-                actionBarInterface.setActionBarIcon(channel, TAG);
+                actionBarInterface.setActionBarIcon(channel.iconBitmap, TAG);
             }
         }
 
         // Get the last scrolling position
         if (fragmentStatusInterface != null) {
-            listView.setSelectionFromTop(fragmentStatusInterface.getPreviousListItemPosition(TAG), 0);
-            fragmentStatusInterface.setCurrentListItemPosition(0, TAG);
+            listView.setSelectionFromTop(prevListPosition, 0);
         }
         enableScrollListener();
     }
@@ -396,14 +401,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void setSelection(int position) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelection(position);
-
-            if (adapter != null && adapter.getCount() > position) {
-                // Simulate a click in the list item to inform the activity
-                Program p = (Program) adapter.getItem(position);
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, p, TAG);
-                }
-            }
         }
     }
 
@@ -411,6 +408,19 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void setSelectionFromTop(int position, int index) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, index);
+        }
+    }
+
+    @Override
+    public void setInitialSelection(int position) {
+        setSelection(position);
+
+        // Simulate a click in the list item to inform the activity
+        if (adapter != null && adapter.getCount() > position) {
+            Program p = (Program) adapter.getItem(position);
+            if (fragmentStatusInterface != null) {
+                fragmentStatusInterface.onListItemSelected(position, p, TAG);
+            }
         }
     }
 }

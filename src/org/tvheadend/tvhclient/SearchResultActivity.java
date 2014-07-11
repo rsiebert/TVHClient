@@ -76,8 +76,8 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         listView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(listView);
         
-        List<Program> srList = new ArrayList<Program>();
-        adapter = new SearchResultAdapter(this, srList);
+        List<Program> list = new ArrayList<Program>();
+        adapter = new SearchResultAdapter(this, list);
         adapter.sort();
         listView.setAdapter(adapter);
 
@@ -176,12 +176,12 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
 
     protected void showProgramDetails(int position) {
         Program p = (Program) adapter.getItem(position);
-        if (p != null) {
-            Intent intent = new Intent(this, ProgramDetailsActivity.class);
-            intent.putExtra("eventId", p.id);
-            intent.putExtra("channelId", p.channel.id);
-            startActivity(intent);
-        }
+//        if (p != null) {
+//            Intent intent = new Intent(this, ProgramDetailsActivity.class);
+//            intent.putExtra("eventId", p.id);
+//            intent.putExtra("channelId", p.channel.id);
+//            startActivity(intent);
+//        }
     }
 
     @Override

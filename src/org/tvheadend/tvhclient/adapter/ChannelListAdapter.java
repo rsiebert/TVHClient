@@ -22,16 +22,16 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.tvheadend.tvhclient.ProgramListActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -82,7 +82,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ViewHolder holder = null;
 
@@ -141,17 +141,18 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.icon_text.setText(c.name);
                     holder.icon_text.setVisibility(ImageView.VISIBLE);
                     
-                    // Add the listener to the icon so that a 
+                    // Add the listener to the icon text so that a 
                     // click calls the program list of this channel
                     holder.icon_text.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            Log.i(TAG, "onClick");
                             if (c.epg.isEmpty()) {
                                 return;
                             }
-                            Intent intent = new Intent(context, ProgramListActivity.class);
-                            intent.putExtra("channelId", c.id);
-                            context.startActivity(intent);
+                            if (context instanceof FragmentStatusInterface) {
+                                ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
+                            }
                         }
                     });
                 }
@@ -163,12 +164,13 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 holder.icon.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Log.i(TAG, "onClick");
                         if (c.epg.isEmpty()) {
                             return;
                         }
-                        Intent intent = new Intent(context, ProgramListActivity.class);
-                        intent.putExtra("channelId", c.id);
-                        context.startActivity(intent);
+                        if (context instanceof FragmentStatusInterface) {
+                            ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
+                        }
                     }
                 });
             }

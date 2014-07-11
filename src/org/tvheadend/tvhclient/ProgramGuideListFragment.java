@@ -11,6 +11,7 @@ import java.util.TimerTask;
 import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter;
 import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter.ViewHolder;
+import org.tvheadend.tvhclient.fragments.ChannelListFragment;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;

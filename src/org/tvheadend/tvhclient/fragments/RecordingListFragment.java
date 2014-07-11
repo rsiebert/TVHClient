@@ -17,15 +17,22 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.PlaybackSelectionActivity;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
@@ -38,8 +45,6 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,21 +52,22 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class RecordingListFragment extends Fragment implements HTSListener {
+public class RecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
-    private final static String TAG = RecordingListFragment.class.getSimpleName();
+    public static String TAG = RecordingListFragment.class.getSimpleName();
 
-    private Activity activity;
-    private ActionBarInterface actionBarInterface;
-    private OnRecordingListListener recordingListListener;
-    private RecordingListAdapter adapter;
+    protected Activity activity;
+    protected ActionBarInterface actionBarInterface;
+    protected FragmentStatusInterface fragmentStatusInterface;
+    protected RecordingListAdapter adapter;
     private ListView listView;
-    private int tabIndex = 0;
 
     // This is the default view for the channel list adapter. Other views can be
     // passed to the adapter to show less information. This is used in the
     // program guide where only the channel icon is relevant.
     private int adapterLayout = R.layout.recording_list_widget;
+
+    private boolean isDualPane;
 
     // Time to wait for the thread before the next service call is made when
     // either all recorded or scheduled programs are being removed. 
@@ -82,8 +88,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
         if (bundle != null) {
-            tabIndex = bundle.getInt("tabIndex", 0);
-            adapterLayout = bundle.getInt("adapterLayout", R.layout.recording_list_widget);
+            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+        }
+        
+        if (isDualPane) {
+            adapterLayout = R.layout.recording_list_widget_dual_pane;
         }
         return v;
     }
@@ -101,8 +110,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
-        if (activity instanceof OnRecordingListListener) {
-            recordingListListener = (OnRecordingListListener) activity;
+        if (activity instanceof FragmentStatusInterface) {
+            fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
         adapter = new RecordingListAdapter(activity, new ArrayList<Recording>(), adapterLayout);
@@ -114,8 +123,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recording rec = (Recording) adapter.getItem(position);
-                if (recordingListListener != null) {
-                    recordingListListener.onRecordingSelected(position, rec);
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.onListItemSelected(position, rec, TAG);
                 }
                 adapter.setPosition(position);
                 adapter.notifyDataSetChanged();
@@ -125,59 +134,17 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         setHasOptionsMenu(true);
         registerForContextMenu(listView);
     }
-    
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        app.addListener(this);
-        setLoading(app.isLoading());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        app.removeListener(this);
-    }
 
     @Override
     public void onDetach() {
-        recordingListListener = null;
+        fragmentStatusInterface = null;
         actionBarInterface = null;
         super.onDetach();
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_menu, menu);
-
-        boolean adapterContainsEntries = (adapter != null ? (adapter.getCount() > 0) : true);
-
-        // Only show the remove all recordings menu if the correct tab is
-        // selected and recordings are available that can be removed.
-        MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
-        if (recordRemoveAllMenuItem != null) {
-            recordRemoveAllMenuItem.setVisible(tabIndex != 1 && adapterContainsEntries);
-        }
-        
-        // Only show the cancel all recordings menu if the correct tab is
-        // selected and recordings are available that can be canceled.
-        MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
-        if (recordCancelAllMenuItem != null) {
-            
-            recordCancelAllMenuItem.setVisible(tabIndex == 1 && adapterContainsEntries);
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_search:
-            activity.onSearchRequested();
-            return true;
-
         case R.id.menu_record_remove_all:
             // Show a confirmation dialog before deleting all recordings
             new AlertDialog.Builder(activity)
@@ -270,7 +237,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         switch (item.getItemId()) {
         case R.id.menu_play:
             Intent pi = new Intent(activity, PlaybackSelectionActivity.class);
-            pi.putExtra("dvrId", rec.id);
+            pi.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
             startActivity(pi);
             return true;
 
@@ -296,85 +263,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     }
 
     /**
-     * Show that either no connection (and no data) is available, the data is
-     * loaded or calls the method to display it.
-     * 
-     * @param loading
-     */
-    private void setLoading(boolean loading) {
-        if (DatabaseHelper.getInstance() != null && 
-                DatabaseHelper.getInstance().getSelectedConnection() == null) {
-            // Clear any channels in the list and 
-            // show that we have no connection
-            adapter.clear();
-            adapter.notifyDataSetChanged();
-            if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(getString(R.string.no_connections), TAG);
-            }
-        } else {
-            if (loading) {
-                adapter.clear();
-                adapter.notifyDataSetChanged();
-                if (actionBarInterface != null) {
-                    actionBarInterface.setActionBarSubtitle(getString(R.string.loading), TAG);
-                }
-            } else {
-                populateList();
-            }
-        }
-    }
-
-    /**
-     * Fills the list with the available recordings.
-     */
-    private void populateList() {
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        adapter.clear();
-        
-        // Show only the recordings that belong to the tab
-        for (Recording rec : app.getRecordings()) {
-            if (tabIndex == 0 &&
-                    rec.error == null &&
-                    rec.state.equals("completed")) {
-                adapter.add(rec);
-            } else if (tabIndex == 1 &&
-                    rec.error == null &&
-                    (rec.state.equals("scheduled") || 
-                     rec.state.equals("recording") ||
-                     rec.state.equals("autorec"))) {
-                adapter.add(rec);
-            } else if (tabIndex == 2 &&
-                    (rec.error != null ||
-                    (rec.state.equals("missed") || rec.state.equals("invalid")))) {
-                adapter.add(rec);
-            }
-        }
-        adapter.sort();
-        adapter.notifyDataSetChanged();
-        
-        // Inform the listeners that the channel list is populated.
-        // They could then define the preselected list item.
-        if (recordingListListener != null) {
-            recordingListListener.onRecordingListPopulated();
-        }
-
-        ((RecordingListTabsActivity)activity).updateTitle(tabIndex, adapter.getCount());
-    }
-
-    /**
      * This method is part of the HTSListener interface. Whenever the HTSService
      * sends a new message the correct action will then be executed here.
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(TVHClientApplication.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    setLoading(loading);
-                }
-            });
-        } else if (action.equals(TVHClientApplication.ACTION_DVR_ADD)) {
+        Log.d(TAG, "onMessage, action " + action);
+        if (action.equals(TVHClientApplication.ACTION_DVR_ADD)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((Recording) obj);
@@ -419,14 +314,44 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     public void setSelectedItem(int position) {
         if (listView.getCount() > position && adapter.getCount() > position && position >= 0) {
             adapter.setPosition(position);
-            recordingListListener.onRecordingSelected(position, adapter.getItem(position));
-        } else {
-            recordingListListener.onRecordingSelected(position, null);
+            fragmentStatusInterface.onListItemSelected(position, adapter.getItem(position), TAG);
         }
     }
 
-    public interface OnRecordingListListener {
-        public void onRecordingSelected(int position, Recording recording);
-        public void onRecordingListPopulated();
+    @Override
+    public void reloadData() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSelection(int position) {
+        if (listView != null && listView.getCount() > position && position >= 0) {
+            listView.setSelection(position);
+        }
+    }
+
+    @Override
+    public void setSelectionFromTop(int position, int index) {
+        if (listView != null && listView.getCount() > position && position >= 0) {
+            listView.setSelectionFromTop(position, index);
+        }
+    }
+    
+    @Override
+    public void setInitialSelection(int position) {
+        setSelection(position);
+
+        // Set the position in the adapter so that we can show the selected
+        // recording in the theme with the arrow.
+        if (adapter != null && adapter.getCount() > position) {
+            adapter.setPosition(position);
+            
+            // Simulate a click in the list item to inform the activity
+            Recording recording = (Recording) adapter.getItem(position);
+            if (fragmentStatusInterface != null) {
+                fragmentStatusInterface.onListItemSelected(position, recording, TAG);
+            }
+        }
     }
 }

@@ -17,21 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.fragments;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.PlaybackSelectionActivity;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,17 +42,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class ProgramDetailsFragment extends Fragment implements HTSListener {
+public class RecordingDetailsFragment extends Fragment implements HTSListener {
 
-    private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
+    private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
+    private boolean isDualPane = false;
     private FragmentActivity activity;
     private ActionBarInterface actionBarInterface;
-    private Program program;
-    private Channel channel;
+    private Recording rec;
 
     private TextView title;
     private ImageView state;
@@ -61,21 +63,14 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     private TextView date;
     private TextView time;
     private TextView duration;
-    private TextView progress;
-    private TextView contentTypeLabel;
-    private TextView contentType;
-    private TextView seriesInfoLabel;
-    private TextView seriesInfo;
-    private TextView ratingBarLabel;
-    private TextView ratingBarText;
-    private RatingBar ratingBar;
+    private TextView failed_reason;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (FragmentActivity) activity;
     }
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -87,23 +82,13 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            // Get the channel of the program
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
-            long programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
-            if (channel != null) {
-                // Find the program with the given id within this channel
-                for (Program p : channel.epg) {
-                    if (p != null && p.id == programId) {
-                        program = p;
-                        break;
-                    }
-                }
-            }
+            rec = app.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0));
+            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
         // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.program_details_layout, container, false);
+        View v = inflater.inflate(R.layout.recording_details_layout, container, false);
         title = (TextView) v.findViewById(R.id.title);
         state = (ImageView) v.findViewById(R.id.state);
         summaryLabel = (TextView) v.findViewById(R.id.summary_label);
@@ -114,14 +99,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         date = (TextView) v.findViewById(R.id.date);
         time = (TextView) v.findViewById(R.id.time);
         duration = (TextView) v.findViewById(R.id.duration);
-        progress = (TextView) v.findViewById(R.id.progress);
-        contentTypeLabel = (TextView) v.findViewById(R.id.content_type_label);
-        contentType = (TextView) v.findViewById(R.id.content_type);
-        seriesInfoLabel = (TextView) v.findViewById(R.id.series_info_label);
-        seriesInfo = (TextView) v.findViewById(R.id.series_info);
-        ratingBarLabel = (TextView) v.findViewById(R.id.star_rating_label);
-        ratingBarText = (TextView) v.findViewById(R.id.star_rating_text);
-        ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
+        failed_reason = (TextView) v.findViewById(R.id.failed_reason);
         return v;
     }
 
@@ -132,36 +110,28 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
-
-        // If the channel or program is null exit
-        if (channel == null || program == null) {
+        
+        // If the recording is null exit
+        if (rec == null) {
             activity.finish();
             return;
         }
 
         if (title != null) {
-            title.setText(program.title);
+            title.setText(rec.title);
         }
-        channelName.setText(channel.name);
-        Utils.setState(state, program.recording);
-        Utils.setDate(date, program.start);
-        Utils.setTime(time, program.start, program.stop);
-        Utils.setDuration(duration, program.start, program.stop);
-        Utils.setProgressText(progress, program.start, program.stop);
-        Utils.setDescription(summaryLabel, summary, program.summary);
-        Utils.setDescription(descLabel, desc, program.description);
-        Utils.setSeriesInfo(seriesInfoLabel, seriesInfo, program.seriesInfo);
-        Utils.setContentType(contentTypeLabel, contentType, program.contentType);
+        if (rec.channel != null) {
+            channelName.setText(rec.channel.name);
+        }
+        Utils.setState(state, rec);
+        Utils.setDate(date, rec.start);
+        Utils.setTime(time, rec.start, rec.stop);
+        Utils.setDuration(duration, rec.start, rec.stop);
+        Utils.setProgressText(null, rec.start, rec.stop);
+        Utils.setDescription(summaryLabel, summary, rec.summary);
+        Utils.setDescription(descLabel, desc, rec.description);
+        Utils.setFailedReason(failed_reason, rec);
         
-        // Show the rating information as starts
-        if (program.starRating < 0) {
-            ratingBarLabel.setVisibility(View.GONE);
-            ratingBarText.setVisibility(View.GONE);
-            ratingBar.setVisibility(View.GONE);
-        } else {
-            ratingBar.setRating((float)program.starRating / 10.0f);
-            ratingBarText.setText("(" + program.starRating + "/" + 100 + ")");
-        }
         setHasOptionsMenu(true);
     }
 
@@ -170,10 +140,10 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
-        
-        if (actionBarInterface != null && channel != null) {
-            actionBarInterface.setActionBarTitle(channel.name, TAG);
-            actionBarInterface.setActionBarIcon(channel, TAG);
+
+        if (actionBarInterface != null && rec != null && rec.channel != null && !isDualPane) {
+            actionBarInterface.setActionBarTitle(rec.channel.name, TAG);
+            actionBarInterface.setActionBarIcon(rec.channel.iconBitmap, TAG);
         }
     }
 
@@ -183,53 +153,44 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
-    
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.program_context_menu, menu);
+        Utils.setRecordingMenu(menu, rec);
         Utils.setRecordingMenuIcons(activity, menu);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        // Show or hide the menu items depending on the program state
-        Utils.setProgramMenu(menu, program);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
         case R.id.menu_search:
             // Show the search text input in the action bar
             activity.onSearchRequested();
             return true;
 
         case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(activity, program.title));
+            startActivity(new SearchIMDbIntent(activity, rec.title));
             return true;
 
         case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(activity, program.title));
+            startActivity(new SearchEPGIntent(activity, rec.title));
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveProgram(activity, program.recording);
+            Utils.confirmRemoveProgram(activity, rec);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.confirmCancelProgram(activity, program.recording);
-            return true;
-
-        case R.id.menu_record:
-            Utils.recordProgram(activity, program.id, program.channel.id);
+            Utils.confirmCancelProgram(activity, rec);
             return true;
 
         case R.id.menu_play:
-            // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-            intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-            startActivity(intent);
+            Intent pi = new Intent(activity, PlaybackSelectionActivity.class);
+            pi.putExtra("dvrId", rec.id);
+            startActivity(pi);
             return true;
 
         default:
@@ -237,21 +198,17 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         }
     }
 
+    /**
+     * This method is part of the HTSListener interface. Whenever the HTSService
+     * sends a new message the correct action will then be executed here.
+     */
     @Override
     public void onMessage(String action, Object obj) {
-        Log.i("REC", action);
         // An existing program has been updated, this is valid for all menu options. 
-        if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)
-                || action.equals(TVHClientApplication.ACTION_DVR_ADD)
-                || action.equals(TVHClientApplication.ACTION_DVR_DELETE)
-                || action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    // Update the options menu and the status icon
-                    activity.supportInvalidateOptionsMenu();
-                    Utils.setState(state, program.recording);
-                }
-            });
+        if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)) {
+            getActivity().supportInvalidateOptionsMenu();
+            // Update the status icon
+            Utils.setState(state, rec);
         }
     }
 }

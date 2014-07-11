@@ -1,6 +1,12 @@
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
+import org.tvheadend.tvhclient.fragments.ChannelListFragment;
+import org.tvheadend.tvhclient.fragments.CompletedRecordingListFragment;
+import org.tvheadend.tvhclient.fragments.FailedRecordingListFragment;
+import org.tvheadend.tvhclient.fragments.ProgramListFragment;
+import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
+import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
@@ -14,6 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -30,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface {
 
@@ -38,9 +46,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private ListView drawerList;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private CharSequence drawerTitle;
-    private CharSequence mainTitle;
-    private CharSequence mainSubTitle;
 
     private ActionBar actionBar = null;
     private ChangeLogDialog changeLogDialog;
@@ -49,13 +54,18 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     // only available on tablets.
     private boolean isDualPane = false;
 
-    // Saves the selected navigation drawer menu position so it can be
-    // reselected when the orientation has changed.
-    private int selectedDrawerMenuPosition = 0;
+    // Default navigation drawer menu position and the list positions
+    private int selectedDrawerMenuPosition = MENU_CHANNELS;
+    private int selectedChannelListPosition = 0;
+    private int selectedProgramListPosition = 0;
+    private int[] selectedRecordingListPosition = { 0, 0, 0 };
 
+    // Strings that determine the navigation drawer menu position and the list
+    // positions so it can be applied when the orientation has changed.
     private static final String SELECTED_DRAWER_MENU_POSITION = "selected_drawer_menu_position";
-    private static final String MAIN_FRAGMENT_TAG = "main_fragment";
-    private static final String RIGHT_FRAGMENT_TAG = "right_fragment";
+    private static final String SELECTED_CHANNEL_LIST_POSITION = "selected_channel_list_position";
+    private static final String SELECTED_PROGRAM_LIST_POSITION = "selected_program_list_position";
+    private static final String SELECTED_RECORDING_LIST_POSITION = "selected_recording_list_position";
 
     // The index for the navigation drawer menus 
     private static final int MENU_CHANNELS = 0;
@@ -90,10 +100,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
 
-        // Save the current title of the action bar
-        mainTitle = drawerTitle = getTitle();
-        mainSubTitle = "";
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -108,18 +114,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             @Override
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                actionBar.setTitle(mainTitle);
-                actionBar.setSubtitle(mainSubTitle);
                 supportInvalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                mainTitle = actionBar.getTitle();
-                mainSubTitle = actionBar.getSubtitle();
-                actionBar.setTitle(drawerTitle);
-                actionBar.setSubtitle("");
                 supportInvalidateOptionsMenu();
             }
         };
@@ -133,15 +133,24 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         drawerList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                handleItemSelection(position);
+                Log.i(TAG, "onItemClick " + position + ", " + selectedDrawerMenuPosition);
+                if (selectedDrawerMenuPosition != position) {
+                    handleItemSelection(position);
+                }
             }
         });
 
         // Get any saved values from the bundle
         if (savedInstanceState != null) {
-            // Get the previously selected channel item position
+            Log.d(TAG, "savedInstanceState != null");
+            // Get the previously selected list item positions
             selectedDrawerMenuPosition = savedInstanceState.getInt(SELECTED_DRAWER_MENU_POSITION, 0);
+            selectedChannelListPosition = savedInstanceState.getInt(SELECTED_CHANNEL_LIST_POSITION, 0);
+            selectedProgramListPosition = savedInstanceState.getInt(SELECTED_PROGRAM_LIST_POSITION, 0);
+            selectedRecordingListPosition = savedInstanceState.getIntArray(SELECTED_RECORDING_LIST_POSITION);
         }
+        
+        Log.d(TAG, "savedInstanceState getting channel " + selectedChannelListPosition);
     }
 
     @Override
@@ -162,7 +171,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 showCreateConnectionDialog(this);
             } else {
                 Utils.connect(this, false);
-                handleItemSelection(MENU_STATUS);
+                handleItemSelection(selectedDrawerMenuPosition);
             }
         }
     }
@@ -196,19 +205,15 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        // When the orientation changes from landscape to portrait the right
-        // fragment would crash because the container is null. So we remove
-        // it entirely before the orientation change happens.
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment f = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
-        if (f != null) {
-            ft.remove(f);
-            ft.commit();
-        }
+        Log.d(TAG, "onSaveInstanceState");
 
-        super.onSaveInstanceState(outState);
         // Save the position of the selected menu item from the drawer
         outState.putInt(SELECTED_DRAWER_MENU_POSITION, selectedDrawerMenuPosition);
+        outState.putInt(SELECTED_CHANNEL_LIST_POSITION, selectedChannelListPosition);
+        outState.putInt(SELECTED_PROGRAM_LIST_POSITION, selectedProgramListPosition);
+        outState.putIntArray(SELECTED_RECORDING_LIST_POSITION, selectedRecordingListPosition);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -257,59 +262,112 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
      */
     private void handleItemSelection(int position) {
         Log.i(TAG, "handleItemSelection " + position);
-
+        selectedDrawerMenuPosition = position;
+        
         // Remove any previously active fragment on the right side. In case the
-        // connection can't be established the screen is blank.
+        // connection can't be established the screen is blank. The main
+        // fragment does not need to be removed, because it will be replaced
+        // with a fragment from the selected menu.
         if (isDualPane) {
-            Fragment f = getSupportFragmentManager().findFragmentByTag(RIGHT_FRAGMENT_TAG);
-            if (f != null) {
-                getSupportFragmentManager().beginTransaction().remove(f).commit();
+            Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+            if (rf != null) {
+                getSupportFragmentManager().beginTransaction().remove(rf).commit();
             }
         }
 
+        Bundle bundle = new Bundle();
+        Fragment f = null;
+
         switch (position) {
         case MENU_CHANNELS:
-            // Show the channel list
-            Fragment clf = Fragment.instantiate(this, ChannelListFragment.class.getName());
-            // Inform the channel list fragment if it shall be used in the
-            // program guide view
-            Bundle bundle = new Bundle();
+            // Show the channel list fragment. In this case it shall not be used
+            // in the program guide, so pass over that information
+            f = Fragment.instantiate(this, ChannelListFragment.class.getName());
             bundle.putBoolean(Constants.BUNDLE_SHOWS_ONLY_CHANNELS, false);
-            clf.setArguments(bundle);
-
+            f.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment, clf, MAIN_FRAGMENT_TAG)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                    .replace(R.id.main_fragment, f)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
+            
+            if (isDualPane) {
+                f = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+                if (f != null) {
+                    Log.d(TAG, "remove right fragment");
+                    getSupportFragmentManager().beginTransaction().remove(f).commit();
+                }
+            }
+            
             break;
+
         case MENU_COMPLETED_RECORDINGS:
             // Show completed recordings
+            f = Fragment.instantiate(this, CompletedRecordingListFragment.class.getName());
+            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            f.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment, f)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
             break;
+
         case MENU_SCHEDULED_RECORDINGS:
             // Show scheduled recordings
+            f = Fragment.instantiate(this, ScheduledRecordingListFragment.class.getName());
+            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            f.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment, f)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
             break;
+
         case MENU_FAILED_RECORDINGS:
             // Show failed recordings
+            f = Fragment.instantiate(this, FailedRecordingListFragment.class.getName());
+            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            f.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment, f)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
             break;
+
         case MENU_PROGRAM_GUIDE:
             // Show the program guide
+            // Show the channel list on the left side
+            f = Fragment.instantiate(this, ChannelListFragment.class.getName());
+            bundle.putBoolean(Constants.BUNDLE_SHOWS_ONLY_CHANNELS, true);
+            f.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment, f)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
+            
+            // Show the program list on the right side
+            
+            
             break;
+
         case MENU_STATUS:
-            // Show the status
+            // Show the status fragment
             Fragment sf = Fragment.instantiate(this, StatusFragment.class.getName());
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment, sf, MAIN_FRAGMENT_TAG)
+                    .replace(R.id.main_fragment, sf)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commit();
             break;
 
         case MENU_SETTINGS:
             // Show the settings
+            selectedDrawerMenuPosition = MENU_CHANNELS;
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, Constants.RESULT_CODE_SETTINGS);
             break;
 
         case MENU_CONNECTIONS:
             // Show the connections
+            selectedDrawerMenuPosition = MENU_CHANNELS;
             Intent connIntent = new Intent(this, SettingsManageConnectionsActivity.class);
             startActivityForResult(connIntent, Constants.RESULT_CODE_CONNECTIONS);
             break;
@@ -387,7 +445,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         AlertDialog alert = builder.create();
         alert.show();
     }
-    
+
     /**
      * Called when the change log dialog is closed.
      * Show the channel list as a default.
@@ -408,9 +466,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void setActionBarTitle(final String title, final String tag) {
-        mainTitle = title;
-
-        // TODO differentiate according to the tags
         if (actionBar != null) {
             actionBar.setTitle(title);
         }
@@ -418,23 +473,29 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void setActionBarSubtitle(final String subtitle, final String tag) {
-        mainSubTitle = subtitle;
-
-        // TODO differentiate according to the tags
         if (actionBar != null) {
             actionBar.setSubtitle(subtitle);
         }
     }
 
     @Override
-    public void setActionBarIcon(final Channel channel, final String tag) {
-        // TODO differentiate according to the tags
-        if (actionBar != null && channel != null) {
-            // Show or hide the channel icon if required
+    public void setActionBarIcon(final Bitmap bitmap, final String tag) {
+        if (actionBar != null) {
             boolean showIcon = Utils.showChannelIcons(this);
             actionBar.setDisplayUseLogoEnabled(showIcon);
             if (showIcon) {
-                actionBar.setIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
+                actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
+            }
+        }
+    }
+
+    @Override
+    public void setActionBarIcon(int resource, String tag) {
+        if (actionBar != null) {
+            boolean showIcon = Utils.showChannelIcons(this);
+            actionBar.setDisplayUseLogoEnabled(showIcon);
+            if (showIcon) {
+                actionBar.setIcon(resource);
             }
         }
     }
@@ -467,26 +528,28 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         Log.d(TAG, "onListItemSelected (channel), pos " + position + ", tag " + tag);
 
         if (tag.equals(ChannelListFragment.class.getSimpleName())) {
+            selectedChannelListPosition = position;
             if (channel != null) {
+                // Create the program list fragment with the required information
                 Fragment f = Fragment.instantiate(this, ProgramListFragment.class.getName());
                 Bundle bundle = new Bundle();
                 bundle.putLong(Constants.BUNDLE_CHANNEL_ID, channel.id);
                 bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
                 f.setArguments(bundle);
 
-                // In dual pane mode show the list of programs on the right side
-                // otherwise use the entire screen
+                // When a channel has been selected we need to show the list of
+                // programs that belong to that channel. In single view mode we
+                // replace the channel list fragment with the program list. But
+                // in dual pane mode we show it on the right side.
                 if (isDualPane) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.right_fragment, f, RIGHT_FRAGMENT_TAG)
+                            .replace(R.id.right_fragment, f)
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                            .addToBackStack(null)
                             .commit();
                 } else {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_fragment, f, MAIN_FRAGMENT_TAG)
+                            .replace(R.id.main_fragment, f)
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                            .addToBackStack(null)
                             .commit();
                 }
             }
@@ -495,8 +558,37 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void onListItemSelected(int position, Recording recording, String tag) {
-        // TODO Auto-generated method stub
-        
+        Log.d(TAG, "onListItemSelected (recording), pos " + position + ", tag " + tag);
+
+        if (tag.equals(CompletedRecordingListFragment.class.getSimpleName())) {
+            selectedRecordingListPosition[0] = position;
+        } else if (tag.equals(ScheduledRecordingListFragment.class.getSimpleName())) {
+            selectedRecordingListPosition[1] = position;
+        } else if (tag.equals(FailedRecordingListFragment.class.getSimpleName())) {
+            selectedRecordingListPosition[2] = position;
+        } 
+
+        if (recording != null) {
+            // Create the recording detail fragment with the required
+            // information
+            Fragment f = Fragment.instantiate(this, RecordingDetailsFragment.class.getName());
+            Bundle args = new Bundle();
+            args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
+            args.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            f.setArguments(args);
+
+            // When a recording has been selected we need to show the
+            // details of that selected recording. In single view mode we
+            // replace the recording list fragment with the recording
+            // details. But in dual pane mode we show it on the right side.
+            if (isDualPane) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.right_fragment, f)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, f)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+            }
+        }
     }
 
     @Override
@@ -504,18 +596,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         Log.d(TAG, "onListItemSelected (program), pos " + position + ", tag " + tag);
         
         if (tag.equals(ProgramListFragment.class.getSimpleName())) {
-            if (program != null) {
-                Fragment f = Fragment.instantiate(this, ProgramDetailsFragment.class.getName());
-                Bundle bundle = new Bundle();
-                bundle.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-                bundle.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
-                f.setArguments(bundle);
-
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_fragment, f, MAIN_FRAGMENT_TAG)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .addToBackStack(null)
-                        .commit();
+            selectedProgramListPosition = position;
+            if (program != null) {             
+                // When a program was selected we need to show the details.
+                Toast.makeText(this, "Showing Program Details", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -525,27 +609,35 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         Log.d(TAG, "onListPopulated, tag " + tag);
         
         if (tag.equals(ChannelListFragment.class.getSimpleName())) {
-            // When the channel list fragment is done loading the data for the
-            // first time we need to select the a channel in the list so that
-            // the program list will be loaded for that channel 
+            // When the channel list fragment is done loading for the first time
+            // and we show the program list next to it (dual pane mode) we need
+            // to select a channel from the list so that the program list on the
+            // right will be loaded for that channel.
             if (isDualPane) {
-                Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+                Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof FragmentControlInterface) {
-                    ((ChannelListFragment) f).setSelection(0);
+                    Log.d(TAG, "setInitialSelection, pos " + selectedChannelListPosition);
+                    ((FragmentControlInterface) f).setInitialSelection(selectedChannelListPosition);
+                }
+            }
+        } else {
+            // When the recording list fragment is done loading for the first
+            // time and we show the recording details next to it (dual pane mode
+            // and wanted) we need to select a recording from the list so that
+            // the recording details on the right will be loaded for that
+            // recording.
+            if (isDualPane) {
+                Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f instanceof FragmentControlInterface) {
+                    if (tag.equals(CompletedRecordingListFragment.class.getSimpleName())) {
+                        ((FragmentControlInterface) f).setInitialSelection(selectedRecordingListPosition[0]);
+                    } else if (tag.equals(ScheduledRecordingListFragment.class.getSimpleName())) {
+                        ((FragmentControlInterface) f).setInitialSelection(selectedRecordingListPosition[1]);
+                    } else if (tag.equals(FailedRecordingListFragment.class.getSimpleName())) {
+                        ((FragmentControlInterface) f).setInitialSelection(selectedRecordingListPosition[2]);
+                    }
                 }
             }
         }
-    }
-
-    @Override
-    public void setCurrentListItemPosition(int position, String tag) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public int getPreviousListItemPosition(String tag) {
-        // TODO Auto-generated method stub
-        return 0;
     }
 }

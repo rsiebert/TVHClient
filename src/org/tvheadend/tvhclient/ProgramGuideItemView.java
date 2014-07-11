@@ -405,10 +405,10 @@ public class ProgramGuideItemView extends LinearLayout {
 	            @Override
 	            public void onClick(View v) {
 	                long id = (Long) v.getTag();
-	                Intent intent = new Intent(context, ProgramDetailsActivity.class);
-	                intent.putExtra("eventId", id);
-	                intent.putExtra("channelId", channel.id);
-	                context.startActivity(intent);
+//	                Intent intent = new Intent(context, ProgramDetailsActivity.class);
+//	                intent.putExtra("eventId", id);
+//	                intent.putExtra("channelId", channel.id);
+//	                context.startActivity(intent);
 	            }
 	        });
         }

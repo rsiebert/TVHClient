@@ -17,11 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.PlaybackSelectionActivity;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
@@ -130,6 +135,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "onItemClick");
                 Channel ch = (Channel) adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, ch, TAG);
@@ -138,7 +144,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 adapter.notifyDataSetChanged();
             }
         });
-        
+
         // Create a scroll listener to inform the parent activity about
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
@@ -300,27 +306,18 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         adapter.sort();
         adapter.notifyDataSetChanged();
 
-        // Show the number of channels that are in the selected tag
-        updateItemCount(currentTag);
+        // Shows the currently visible number of the channels that are in the
+        // selected channel tag. This method is also called from the program guide
+        // activity to remove the loading indication and show the numbers again.  
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items), TAG);
+            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
+        }
 
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.onListPopulated(TAG);
-        }
-    }
-
-    /**
-     * Shows the currently visible number of the channels that are in the
-     * selected channel tag. This method is also called from the program guide
-     * activity to remove the loading indication and show the numbers again.  
-     * 
-     * @param currentTag
-     */
-    public void updateItemCount(ChannelTag currentTag) {
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items), TAG);
-            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
         }
     }
     
@@ -371,6 +368,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private void setLoading(boolean loading) {
         Log.d(TAG, "setLoading " + loading);
 
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.channels), TAG);
+            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
+        }
+        
         if (loading) {
             adapter.clear();
             adapter.notifyDataSetChanged();
@@ -389,6 +391,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             // Update the list with the new channel data
             populateList();
         }
+    }
+
+    private void listItemSelected() {
+        
     }
 
     /**
@@ -465,18 +471,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void setSelection(int position) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelection(position);
-
-            // Set the position in the adapter so that we can show the selected
-            // channel in the theme with the arrow.
-            if (adapter != null && adapter.getCount() > position) {
-                adapter.setPosition(position);
-
-                // Simulate a click in the list item to inform the activity
-                Channel ch = (Channel) adapter.getItem(position);
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, ch, TAG);
-                }
-            }
         }
     }
 
@@ -484,6 +478,23 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void setSelectionFromTop(int position, int index) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, index);
+        }
+    }
+
+    @Override
+    public void setInitialSelection(int position) {
+        setSelection(position);
+
+        // Set the position in the adapter so that we can show the selected
+        // channel in the theme with the arrow.
+        if (adapter != null && adapter.getCount() > position) {
+            adapter.setPosition(position);
+
+            // Simulate a click in the list item to inform the activity
+            Channel ch = (Channel) adapter.getItem(position);
+            if (fragmentStatusInterface != null) {
+                fragmentStatusInterface.onListItemSelected(position, ch, TAG);
+            }
         }
     }
 }

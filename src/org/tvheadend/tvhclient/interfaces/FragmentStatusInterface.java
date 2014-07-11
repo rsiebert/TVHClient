@@ -89,10 +89,4 @@ public interface FragmentStatusInterface {
      * @param tag
      */
     public void onListPopulated(final String tag);
-
-    public void setCurrentListItemPosition(int position, String tag);
-
-    public int getPreviousListItemPosition(String tag);
-
-    
 }
