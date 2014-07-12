@@ -24,8 +24,8 @@
     <string name="menu_edit">Modifica</string>
     <string name="menu_delete">Cancella</string>
     <string name="menu_connections">Connessioni</string>
-    <!--string name="menu_timeframe">Timeframe</string-->
-    <!--string name="menu_genre_color_info">Explain genre colors</string-->
+    <string name="menu_timeframe">Linea temporale</string>
+    <string name="menu_genre_color_info">Illustra colori dei generi</string>
     <string name="menu_send_wol">Risveglia</string>
 
     <string name="pref_manage_connections">Gestisci connessioni</string>
@@ -48,11 +48,11 @@
     <string name="pref_name_error_empty">Il nome non può rimanere vuoto.</string>
     <string name="pref_name_error_invalid">Il nome può contenere solo lettere, numeri e simboli di meno e sottolineature.</string>
     <string name="pref_selected">Connessione predefinita</string>
-    <string name="pref_selected_sum">Selezione per rendere predefinita questa connessione e per usarla all'avvio dell'applicazione.</string>
+    <string name="pref_selected_sum">Selezione per rendere predefinita questa connessione e per usarla all\'avvio dell\'applicazione.</string>
     <string name="pref_host">Nome della macchina</string>
     <string name="pref_host_sum">Inserisci il nome del server</string>
-    <string name="pref_host_error_empty">L'indirizzo IP o il nome della macchina non può rimanere vuoto.</string>
-    <string name="pref_host_error_invalid">L'indirizzo IP non è valido.</string>
+    <string name="pref_host_error_empty">L\'indirizzo IP o il nome della macchina non può rimanere vuoto.</string>
+    <string name="pref_host_error_invalid">L\'indirizzo IP non è valido.</string>
     <string name="pref_port">Porta</string>
     <string name="pref_port_sum">Inserisci la porta sul server</string>
     <string name="pref_port_error_empty">Il numero di porta non può rimanere vuoto.</string>
@@ -60,25 +60,25 @@
     <string name="pref_streaming_port">Porta per lo streaming multimediale</string>
     <string name="pref_streaming_port_sum">%d sarà usato per lo streaming multimediale. La porta predefinita 9981 va in genere bene.</string>
     <string name="pref_user">Nome utente</string>
-    <string name="pref_user_sum">Inserisci il nome dell'utente</string>
+    <string name="pref_user_sum">Inserisci il nome dell\'utente</string>
     <string name="pref_pass">Password</string>
     <string name="pref_pass_sum">Inserisci la password</string>
     <string name="pref_pass_set_sum">Password è impostata ma non è mostrata.</string>
     <string name="pref_wol_address">indirizzo MAC</string>
-    <string name="pref_wol_address_sum">Inserisci l'indirizzo MAC della macchina (per esempio, 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_address_sum">Inserisci l\'indirizzo MAC della macchina (per esempio, 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Porta Wake on LAN</string>
     <string name="pref_wol_port_sum">La porta %d sarà usata per risvegliare il server. Il valore predefinito è 9.</string>
     <string name="pref_wol_broadcast">Utilizza Broadcast</string>
     <string name="pref_wol_broadcast_sum">Invia il pacchetto WOL in broadcast. Alcuni router non permettono questo tipo di WOL.</string>
-    <string name="pref_wol_address_invalid">L'indirizzo MAC non è valido.\nEsso deve essere nella forma \'01:24:67:9a:cd:ef\' e può contenere solo cifre esadecimali 0\-9 e a\-f e separatori \':\' e \'\-\'.</string>
+    <string name="pref_wol_address_invalid">L\'indirizzo MAC non è valido.\nEsso deve essere nella forma \'01:24:67:9a:cd:ef\' e può contenere solo cifre esadecimali 0\-9 e a\-f e separatori \':\' e \'\-\'.</string>
     
     <string name="pref_user_interface">Interfaccia utente</string>
-    <string name="pref_icons">Iconee canali</string>
-    <string name="pref_icons_sum">Mostrare le iconee canali?</string>
+    <string name="pref_icons">Icone canali</string>
+    <string name="pref_icons_sum">Mostrare le icone canali?</string>
     <string name="pref_theme">Tema chiaro</string>
     <string name="pref_theme_sum">Usa un tema dai colori chiari</string>
     <string name="pref_language">Lingua</string>
-    <string name="pref_language_sum">Scegli la lingua che utilizzerà l'applicazione.</string>
+    <string name="pref_language_sum">Scegli la lingua che utilizzerà l\'applicazione.</string>
     <string name="pref_res">Risoluzione</string>
     <string name="pref_res_sum">Specifica la massima risoluzione che il convertitore utilizzerà.</string>
     <string name="pref_acodec">Codifica audio</string>
@@ -98,7 +98,7 @@
 
     <string name="pref_information">Informazioni</string>
     <string name="pref_changelog">Registro delle modifiche</string>
-    <string name="pref_changelog_sum">Mostra la lista delle funzionalità e cambiamenti delle diverse versioni dell'applicazione.</string>
+    <string name="pref_changelog_sum">Mostra la lista delle funzionalità e cambiamenti delle diverse versioni dell\'applicazione.</string>
     <string name="pref_program_guide">Guida programmi</string>
     <string name="pref_program_guide_sum">Configura la schermata della guida programmi e come i dati verranno mostrati.</string>
     <string name="pref_epg_hours_visible">Ore visibili</string>
@@ -137,8 +137,8 @@
 
     <string name="wol_send">Inviato con successo un pacchetto wake on LAN packet a \'%s\'</string>
     <string name="wol_send_broadcast">Inviato con successo un pacchetto wake on LAN in broadcast a \'%s\'</string>
-    <string name="wol_address_invalid">L'indirizzo MAC non è valido. Per favore controlla le impostazioni.</string>
-    <string name="wol_error">Errore durante l'invio del pacchetto wake on LAN a \'%1$s\'.\n Messaggio d\'errore: %2$s</string>
+    <string name="wol_address_invalid">L\'indirizzo MAC non è valido. Per favore controlla le impostazioni.</string>
+    <string name="wol_error">Errore durante l\'invio del pacchetto wake on LAN a \'%1$s\'.\n Messaggio d\'errore: %2$s</string>
 
     <!--string-array name="pr_content_type0">
         <item>Movie/Drama</item>
@@ -267,75 +267,75 @@
         <item>Live Broadcast</item>
     </string-array-->
 
-    <string name="no_transmission">No transmission</string>
-    <string name="no_data">No program data available</string>
-    <string name="minutes">%d min</string>
+    <string name="no_transmission">Nessuna trasmissione</string>
+    <string name="no_data">Programmazione non disponibile</string>
+    <string name="minutes">%d minuti</string>
     
-    <string name="search_hint">Search the EPG</string>
-    <string name="two_days_ago">Two days ago</string>
-    <string name="yesterday">Yesterday</string>
-    <string name="today">Today</string>
-    <string name="tomorrow">Tomorrow</string>
-    <string name="in_2_days">In 2 days</string>
-    <string name="monday">Monday</string>
-    <string name="tuesday">Tuesday</string>
-    <string name="wednesday">Wednesday</string>
-    <string name="thursday">Thursday</string>
-    <string name="friday">Friday</string>
-    <string name="saturday">Saturday</string>
-    <string name="sunday">Sunday</string>
+    <string name="search_hint">Cerca nella guida</string>
+    <string name="two_days_ago">Due giorni fa</string>
+    <string name="yesterday">Ieri</string>
+    <string name="today">Oggi</string>
+    <string name="tomorrow">Domani</string>
+    <string name="in_2_days">In 2 giorni</string>
+    <string name="monday">Lunedì</string>
+    <string name="tuesday">Martedì</string>
+    <string name="wednesday">Mercoledì</string>
+    <string name="thursday">Giovedì</string>
+    <string name="friday">Venerdì</string>
+    <string name="saturday">Sabato</string>
+    <string name="sunday">Domenica</string>
 
-    <string name="programs">Programs</string>
-    <string name="completed">Completed</string>
-    <string name="upcoming">Upcoming</string>
-    <string name="failed">Failed</string>
+    <string name="programs">Programmi</string>
+    <string name="completed">Completati</string>
+    <string name="upcoming">In arrivo</string>
+    <string name="failed">Falliti</string>
     
-    <string name="channels">Channels</string>
-    <string name="recordings">Recordings</string>
-    <string name="program_guide">Program guide</string>
-    <string name="status">Status</string>
-    <string name="items">Items</string>
-    <string name="results">Results</string>
+    <string name="channels">Canali</string>
+    <string name="recordings">Registrazioni</string>
+    <string name="program_guide">Guida programmi</string>
+    <string name="status">Stato</string>
+    <string name="items">Elementi</string>
+    <string name="results">Risultati</string>
     
-    <string name="channel_icon">Channel icon</string>
-    <string name="status_icon">Status icon</string>
-    <string name="title">Title</string>
-    <string name="channel">Channel</string>
-    <string name="time">Time</string>
-    <string name="date">Date</string>
-    <string name="shown_on_channel">on</string>
-    <string name="summary">Summary</string>
-    <string name="description">Description</string>
-    <string name="duration">Duration</string>
-    <string name="airing">Airing</string>
-    <string name="rating">Rating</string>
-    <string name="content_type">Content type</string>
-    <string name="series_information">Series information</string>
-    <string name="genre_color_list">List of genre colors and their meaning.</string>
+    <string name="channel_icon">Icona canale</string>
+    <string name="status_icon">Icona di stato</string>
+    <string name="title">Titolo</string>
+    <string name="channel">Canale</string>
+    <string name="time">Orario</string>
+    <string name="date">Data</string>
+    <string name="shown_on_channel">su</string>
+    <string name="summary">Riassunto</string>
+    <string name="description">Descrizione</string>
+    <string name="duration">Durata</string>
+    <string name="airing">Trasmissione</string>
+    <string name="rating">Valutazione</string>
+    <string name="content_type">Tipo di contenuto</string>
+    <string name="series_information">Informazione serie</string>
+    <string name="genre_color_list">Lista dei colori dei generi e loro significato.</string>
 
-    <string name="nothing">Nothing</string>
-    <string name="loading">Loading&#8230;</string>
-    <string name="all_channels">All channels</string>    
-    <string name="season">Season</string>
-    <string name="episode">Episode</string>
-    <string name="part">Part</string>
-    <string name="progress">%1$d%% of the show already shown</string>
+    <string name="nothing">Nulla</string>
+    <string name="loading">Caricamento&#8230;</string>
+    <string name="all_channels">Tutti i canali</string>    
+    <string name="season">Stagione</string>
+    <string name="episode">Episodio</string>
+    <string name="part">Parte</string>
+    <string name="progress">%1$d%% del programma già trasmesso</string>
     
-    <string name="disc_space">Disc space</string>
-    <string name="total">Total</string>
-    <string name="available">Available</string>
-    <string name="unknown">Unknown</string>
-    <string name="select_timeframe">Show the program guide for the selected date and time.</string>
-    <string name="currently_recording">Currently recording</string>
+    <string name="disc_space">Spazio su disco</string>
+    <string name="total">Totale</string>
+    <string name="available">Disponibile</string>
+    <string name="unknown">Sconosciuto</string>
+    <string name="select_timeframe">Mostra guida programmi per la data e l\'orario selezionato.</string>
+    <string name="currently_recording">Attualmente in registrazione</string>
     
-    <string name="no_media_player">No media player found</string>
-    <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
+    <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
+    <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>
     
     <!--  Strings for possible PreferenceActivity Back/Next buttons -->
-    <string name="back_button_label">Back</string>
-    <string name="next_button_label">Next</string>
+    <!--string name="back_button_label">Back</string>
+    <string name="next_button_label">Next</string-->
 
     <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
-    <string name="skip_button_label">Skip</string>
+    <!--string name="skip_button_label">Skip</string-->
 
 </resources>
