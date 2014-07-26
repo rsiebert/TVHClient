@@ -13,22 +13,22 @@
 
         <FrameLayout
             android:id="@+id/main_fragment"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.6" />
+            android:layout_weight="4" />
 
         <FrameLayout
             android:id="@+id/right_fragment"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.4" />
+            android:layout_weight="6" />
     </LinearLayout>
 
     <!-- The navigation drawer -->
 
     <ListView
         android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+        android:layout_width="320dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#111"

@@ -175,7 +175,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     }
 
     protected void showProgramDetails(int position) {
-        Program p = (Program) adapter.getItem(position);
+//        Program p = (Program) adapter.getItem(position);
 //        if (p != null) {
 //            Intent intent = new Intent(this, ProgramDetailsActivity.class);
 //            intent.putExtra("eventId", p.id);

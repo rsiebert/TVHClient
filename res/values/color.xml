@@ -28,4 +28,7 @@
 	<!-- other/unknown, dark grey -->
 	<color name="EPG_OTHER">#7f8185</color>
 
+	
+	<color name="menu_background_color_light">#ffffffff</color>
+	<color name="menu_background_color_dark">#ff000000</color>
 </resources>

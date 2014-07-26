@@ -90,6 +90,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        
         // Return if frame for this fragment doesn't
         // exist because the fragment will not be shown.
         if (container == null) {
@@ -102,7 +103,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         }
         // Set the correct adapter and view layouts
         if (showOnlyChannels) {
-            viewLayout = R.layout.program_guide_pager;
+            viewLayout = R.layout.program_guide_channel_list_layout;
             adapterLayout = R.layout.program_guide_channel_item;
         }
 
@@ -149,6 +150,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                Log.d(TAG, "onScrollStateChanged");
                 // Enables scrolling when the user has touch the screen and
                 // starts scrolling. When the user is done, scrolling will be
                 // disabled to prevent unwanted calls to the interface. 
@@ -163,11 +165,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             }
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                Log.d(TAG, "onScroll, enabled: " + enableScrolling);
                 if (fragmentStatusInterface != null && enableScrolling) {
-                    int index = view.getFirstVisiblePosition();
+                    int position = view.getFirstVisiblePosition();
                     View v = view.getChildAt(0);
-                    int position = (v == null) ? 0 : v.getTop();
-                    fragmentStatusInterface.onScrollingChanged(index, position, TAG);
+                    int offset = (v == null) ? 0 : v.getTop();
+                    fragmentStatusInterface.onScrollingChanged(position, offset, TAG);
                 }
             }
         });
@@ -182,15 +185,18 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
                 Utils.setChannelTagId(pos);
-                populateList();
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.channelTagChanged(TAG);
+                }
             }
         });
         tagDialog = builder.create();
 
+        setHasOptionsMenu(true);
+        
         // Enable the menu and context menu if this fragment is not part of the
         // program guide
         if (!showOnlyChannels) {
-            setHasOptionsMenu(true);
             registerForContextMenu(listView);
         }
     }
@@ -297,14 +303,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         ChannelTag currentTag = Utils.getChannelTag(app);
-        adapter.clear();
-        for (Channel ch : app.getChannels()) {
-            if (currentTag == null || ch.hasTag(currentTag.id)) {
-                adapter.add(ch);
-            }
-        }
-        adapter.sort();
-        adapter.notifyDataSetChanged();
+        reloadData();
 
         // Shows the currently visible number of the channels that are in the
         // selected channel tag. This method is also called from the program guide
@@ -393,10 +392,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         }
     }
 
-    private void listItemSelected() {
-        
-    }
-
     /**
      * This method is part of the HTSListener interface. Whenever the HTSService
      * sends a new message the correct action will then be executed here.
@@ -446,8 +441,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     tagAdapter.remove(tag);
                 }
             });
-        } else if (action.equals(TVHClientApplication.ACTION_TAG_UPDATE)) {
-            //NOP
         } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)
                 || action.equals(TVHClientApplication.ACTION_PROGRAMME_DELETE)
                 || action.equals(TVHClientApplication.ACTION_DVR_ADD)
@@ -463,26 +456,34 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public void reloadData() {
-        // TODO Auto-generated method stub
-        
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        ChannelTag currentTag = Utils.getChannelTag(app);
+        adapter.clear();
+        for (Channel ch : app.getChannels()) {
+            if (currentTag == null || ch.hasTag(currentTag.id)) {
+                adapter.add(ch);
+            }
+        }
+        adapter.sort();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void setSelection(int position) {
+    public void setSelection(final int position) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelection(position);
         }
     }
 
     @Override
-    public void setSelectionFromTop(int position, int index) {
+    public void setSelectionFromTop(final int position, final int offset) {
         if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelectionFromTop(position, index);
+            listView.setSelectionFromTop(position, offset);
         }
     }
 
     @Override
-    public void setInitialSelection(int position) {
+    public void setInitialSelection(final int position) {
         setSelection(position);
 
         // Set the position in the adapter so that we can show the selected

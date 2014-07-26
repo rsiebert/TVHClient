@@ -3,16 +3,14 @@ package org.tvheadend.tvhclient;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.tvheadend.tvhclient.interfaces.ProgramLoadingInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.R;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -28,7 +26,7 @@ public class ProgramGuideItemView extends LinearLayout {
     private final static String TAG = ProgramGuideItemView.class.getSimpleName();
 
     private LinearLayout layout;
-    private FragmentActivity context;
+    private Activity activity;
     private int tabIndex;
     private Channel channel;
     private int hoursToShow;
@@ -46,7 +44,7 @@ public class ProgramGuideItemView extends LinearLayout {
     // The ratio how many minutes a pixel represents on the screen.
     private float pixelsPerMinute;
 
-    private ProgramLoadingInterface loadMoreProgramsInterface;
+    private FragmentStatusInterface fragmentStatusInterface;
     private ProgramContextMenuInterface fragmentInterface;
 
     // Status variables that define where the program is located within the given time.
@@ -64,16 +62,14 @@ public class ProgramGuideItemView extends LinearLayout {
         super(context);
     }
 
-    public ProgramGuideItemView(FragmentActivity activity, Fragment fragment, final LinearLayout layout, Bundle bundle) {
+    public ProgramGuideItemView(Activity activity, Fragment fragment, final LinearLayout layout, Bundle bundle) {
         super(activity);
-        this.context = activity;
+        this.activity = activity;
         this.layout = layout;
 
         // Create the interface so we can talk to the fragment
-        try {
-            loadMoreProgramsInterface = (ProgramLoadingInterface) activity;
-        } catch (Exception e) {
-            
+        if (activity instanceof FragmentStatusInterface) {
+            fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
         fragmentInterface = (ProgramContextMenuInterface) fragment;
@@ -85,7 +81,7 @@ public class ProgramGuideItemView extends LinearLayout {
             endTime = bundle.getLong("endTime", 0);
         }
         
-        pixelsPerMinute = Utils.getPixelsPerMinute(context, tabIndex, hoursToShow);
+        pixelsPerMinute = Utils.getPixelsPerMinute(activity, tabIndex, hoursToShow);
         displayWidthRemaining = displayWidth;
     }
 
@@ -175,8 +171,8 @@ public class ProgramGuideItemView extends LinearLayout {
         // the last program in the guide then try to load more programs.
         // Also load programs when no program at all was added.
         if ((programAdded && lastProgramFound) || !programAdded) {
-            if (loadMoreProgramsInterface != null) {
-                loadMoreProgramsInterface.loadMorePrograms(channel);
+            if (fragmentStatusInterface != null) {
+                fragmentStatusInterface.moreDataRequired(channel, TAG);
             }
         }
     }
@@ -338,7 +334,7 @@ public class ProgramGuideItemView extends LinearLayout {
      */
     private void addCurrentProgramToView(final Program p, final int layoutWidth, final boolean expandLayout) {
 
-    	View v = context.getLayoutInflater().inflate(R.layout.program_guide_data_item, null);
+    	View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, null);
         final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
         final TextView title = (TextView) v.findViewById(R.id.title);
         final ImageView state = (ImageView) v.findViewById(R.id.state);
@@ -358,7 +354,7 @@ public class ProgramGuideItemView extends LinearLayout {
         }
 
         if (p != null) {
-            Utils.setGenreColor(context, itemLayout, p.contentType, TAG);
+            Utils.setGenreColor(activity, itemLayout, p.contentType, TAG);
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
 	        Utils.setState(state, p.recording);
@@ -374,7 +370,7 @@ public class ProgramGuideItemView extends LinearLayout {
 	        itemLayout.setOnCreateContextMenuListener((new OnCreateContextMenuListener() {
 	            @Override
 	            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-	                context.getMenuInflater().inflate(R.menu.program_context_menu, menu);
+	                activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
 	                // Set the title of the context menu and show or hide
 	                // the menu items depending on the program state
 	                fragmentInterface.setSelectedContextItem(p);
@@ -404,11 +400,24 @@ public class ProgramGuideItemView extends LinearLayout {
 	        itemLayout.setOnClickListener(new OnClickListener() {
 	            @Override
 	            public void onClick(View v) {
-	                long id = (Long) v.getTag();
-//	                Intent intent = new Intent(context, ProgramDetailsActivity.class);
-//	                intent.putExtra("eventId", id);
-//	                intent.putExtra("channelId", channel.id);
-//	                context.startActivity(intent);
+                    if (channel == null) {
+                        return;
+                    }
+                    // We only have saved the id of the program, so go through
+                    // all program in the current channel until we find the one.
+                    Program program = null;
+                    long id = (Long) v.getTag();
+                    for (Program p : channel.epg) {
+                        if (p.id == id) {
+                            program = p;
+                            break;
+                        }
+                    }
+
+                    if (fragmentStatusInterface != null && program != null) {
+                        fragmentStatusInterface.onListItemSelected(0, program, TAG);
+                    }
+
 	            }
 	        });
         }

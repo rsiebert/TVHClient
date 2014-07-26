@@ -13,8 +13,10 @@
 
         <FrameLayout
             android:id="@+id/main_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
     </LinearLayout>
 
     <!-- The navigation drawer -->

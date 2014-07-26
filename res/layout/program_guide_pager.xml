@@ -4,25 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
 
-    <RelativeLayout
-        android:layout_width="66dp"
-        android:layout_height="fill_parent" 
-        android:background="?attr/TimelineHeaderLayoutStyle" >
 
-        <TextView
-            android:id="@+id/channel_title_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:text="" />
-
-        <ListView
-            android:id="@+id/item_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/channel_title_date" />
-    </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"

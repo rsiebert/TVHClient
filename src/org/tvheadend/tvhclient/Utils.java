@@ -47,7 +47,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
@@ -883,7 +882,7 @@ public class Utils {
      * @param hoursToShow
      * @return
      */
-    public static float getPixelsPerMinute(final FragmentActivity context, final int tabIndex, final int hoursToShow) {
+    public static float getPixelsPerMinute(final Activity context, final int tabIndex, final int hoursToShow) {
         // Get the usable width. Subtract the icon width if its visible.
         DisplayMetrics displaymetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);

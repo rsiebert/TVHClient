@@ -14,10 +14,10 @@ public interface FragmentStatusInterface {
      * vice versa.
      * 
      * @param position The first visible position of the list
-     * @param pos The position in pixels from the top of the first item
+     * @param offset The position in pixels from the top of the first item
      * @param tag Identifier string to differentiate the caller
      */
-    public void onScrollingChanged(final int position, final int pos, final String tag);
+    public void onScrollingChanged(final int position, final int offset, final String tag);
 
     /**
      * When the user has scrolled the visible program guide fragment, the other
@@ -89,4 +89,11 @@ public interface FragmentStatusInterface {
      * @param tag
      */
     public void onListPopulated(final String tag);
+
+    /**
+     * Informs the activity that the user has changed the selected channel tag
+     * 
+     * @param tag
+     */
+    public void channelTagChanged(String tag);
 }

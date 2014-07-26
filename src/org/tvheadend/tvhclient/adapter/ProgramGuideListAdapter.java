@@ -4,12 +4,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.tvheadend.tvhclient.ProgramGuideItemView;
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.model.Channel;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideListAdapter.class.getSimpleName();
 
-    private final FragmentActivity activity;
+    private final Activity activity;
     private final List<Channel> list;
     public ViewHolder holder = null;
     private Bundle bundle;
@@ -31,7 +31,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     private Fragment fragment;
     // private HashMap<Channel, Set<Program>> channelProgramList = new HashMap<Channel, Set<Program>>();
     
-    public ProgramGuideListAdapter(FragmentActivity activity, Fragment fragment, List<Channel> list, Bundle bundle) {
+    public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel> list, Bundle bundle) {
         super(activity, R.layout.program_guide_list_item, list);
         this.activity = activity;
         this.fragment = fragment;

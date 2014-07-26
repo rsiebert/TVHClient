@@ -16,16 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.fragments;
 
 import java.util.Map;
 
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -56,12 +58,13 @@ public class StatusFragment extends Fragment implements HTSListener {
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        
         // Return if frame for this fragment doesn't
         // exist because the fragment will not be shown.
         if (container == null) {
             return null;
         }
-        View v = inflater.inflate(R.layout.status_layout, container, false);
+        View v = inflater.inflate(R.layout.status_fragment_layout, container, false);
         connection = (TextView) v.findViewById(R.id.connection);
         status = (TextView) v.findViewById(R.id.status);
         freediscspace = (TextView) v.findViewById(R.id.free_discspace);
