@@ -21,6 +21,7 @@ public class Constants {
     public static final String BUNDLE_RESTART = "reload";
     public static final String BUNDLE_LIST_POSITION = "prevListPosition";
     public static final String BUNDLE_MENU_POSITION = "menuPosition";
+    public static final String BUNDLE_SHOW_CONTROLS = "showControls";
 
     public static final String RECORDING_TYPE_COMPLETED = "recordingTypeCompleted";
     public static final String RECORDING_TYPE_SCHEDULED = "recordingTypeScheduled";

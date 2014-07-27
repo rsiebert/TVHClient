@@ -267,27 +267,27 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         menu.setHeaderTitle(program.title);
         Utils.setProgramMenu(menu, program);
         
-        // Allow playing the first item, its currently being shown
-        if (info.position == 0) {
-            MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-            playMenuItem.setVisible(true);
-        }
-
-        // Set a separate listener to each menu item so the context menu will be
-        // executed correctly in dual pane mode
-        if (isDualPane) {
-            OnMenuItemClickListener listener = new OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    onContextItemSelected(item);
-                    return true;
-                }
-            };
-
-            for (int i = 0, n = menu.size(); i < n; i++) {
-                menu.getItem(i).setOnMenuItemClickListener(listener);
-            }
-        }
+//        // Allow playing the first item, its currently being shown
+//        if (info.position == 0) {
+//            MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+//            playMenuItem.setVisible(true);
+//        }
+//
+//        // Set a separate listener to each menu item so the context menu will be
+//        // executed correctly in dual pane mode
+//        if (isDualPane) {
+//            OnMenuItemClickListener listener = new OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    onContextItemSelected(item);
+//                    return true;
+//                }
+//            };
+//
+//            for (int i = 0, n = menu.size(); i < n; i++) {
+//                menu.getItem(i).setOnMenuItemClickListener(listener);
+//            }
+//        }
     }
 
     @Override

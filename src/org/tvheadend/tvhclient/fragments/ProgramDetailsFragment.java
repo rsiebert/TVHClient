@@ -34,7 +34,7 @@ import org.tvheadend.tvhclient.model.Program;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,12 +46,12 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class ProgramDetailsFragment extends Fragment implements HTSListener {
+public class ProgramDetailsFragment extends DialogFragment implements HTSListener {
 
     private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
 
-    private FragmentActivity activity;
-    private ActionBarInterface actionBarInterface;
+    private Activity activity;
+//    private ActionBarInterface actionBarInterface;
     private Program program;
     private Channel channel;
 
@@ -74,34 +74,47 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     private TextView ratingBarText;
     private RatingBar ratingBar;
 
+    public static ProgramDetailsFragment newInstance(final long channelId, final long programId) {
+        ProgramDetailsFragment f = new ProgramDetailsFragment();
+        Bundle args = new Bundle();
+        args.putLong(Constants.BUNDLE_CHANNEL_ID, channelId);
+        args.putLong(Constants.BUNDLE_PROGRAM_ID, programId);
+        args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
+        f.setArguments(args);
+        return f;
+    }
+    
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = (Activity) activity;
     }
+    
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't
-        // exist because the fragment will not be shown.
-        if (container == null) {
-            return null;
-        }
+
+        long channelId = 0;
+        long programId = 0;
+        boolean showControls = false;
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            // Get the channel of the program
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
-            long programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
-            if (channel != null) {
-                // Find the program with the given id within this channel
-                for (Program p : channel.epg) {
-                    if (p != null && p.id == programId) {
-                        program = p;
-                        break;
-                    }
+            channelId = bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0);
+            programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
+            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+        }
+        
+        // Get the channel of the program
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        channel = app.getChannel(channelId);
+        if (channel != null) {
+            // Find the program with the given id within this channel
+            for (Program p : channel.epg) {
+                if (p != null && p.id == programId) {
+                    program = p;
+                    break;
                 }
             }
         }
@@ -133,13 +146,12 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
+//        if (activity instanceof ActionBarInterface) {
+//            actionBarInterface = (ActionBarInterface) activity;
+//        }
 
         // If the channel or program is null exit
         if (channel == null || program == null) {
-            activity.finish();
             return;
         }
 
@@ -166,7 +178,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
             ratingBar.setRating((float)program.starRating / 10.0f);
             ratingBarText.setText("(" + program.starRating + "/" + 100 + ")");
         }
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
     }
 
     @Override
@@ -175,11 +187,11 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         
-        if (actionBarInterface != null && channel != null) {
-            actionBarInterface.setActionBarTitle(channel.name, TAG);
-            actionBarInterface.setActionBarSubtitle(null, TAG);
-            actionBarInterface.setActionBarIcon(channel.iconBitmap, TAG);
-        }
+//        if (actionBarInterface != null && channel != null) {
+//            actionBarInterface.setActionBarTitle(channel.name, TAG);
+//            actionBarInterface.setActionBarSubtitle(null, TAG);
+//            actionBarInterface.setActionBarIcon(channel.iconBitmap, TAG);
+//        }
     }
 
     @Override
@@ -189,58 +201,58 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
         app.removeListener(this);
     }
     
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.program_context_menu, menu);
-        Utils.setRecordingMenuIcons(activity, menu);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.program_context_menu, menu);
+//        Utils.setRecordingMenuIcons(activity, menu);
+//    }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        // Show or hide the menu items depending on the program state
-        Utils.setProgramMenu(menu, program);
-    }
+//    @Override
+//    public void onPrepareOptionsMenu(Menu menu) {
+//        // Show or hide the menu items depending on the program state
+//        Utils.setProgramMenu(menu, program);
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.menu_search:
-            // Show the search text input in the action bar
-            activity.onSearchRequested();
-            return true;
-
-        case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(activity, program.title));
-            return true;
-
-        case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(activity, program.title));
-            return true;
-
-        case R.id.menu_record_remove:
-            Utils.confirmRemoveProgram(activity, program.recording);
-            return true;
-
-        case R.id.menu_record_cancel:
-            Utils.confirmCancelProgram(activity, program.recording);
-            return true;
-
-        case R.id.menu_record:
-            Utils.recordProgram(activity, program.id, program.channel.id);
-            return true;
-
-        case R.id.menu_play:
-            // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-            intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-            startActivity(intent);
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//        case R.id.menu_search:
+//            // Show the search text input in the action bar
+//            activity.onSearchRequested();
+//            return true;
+//
+//        case R.id.menu_search_imdb:
+//            startActivity(new SearchIMDbIntent(activity, program.title));
+//            return true;
+//
+//        case R.id.menu_search_epg:
+//            startActivity(new SearchEPGIntent(activity, program.title));
+//            return true;
+//
+//        case R.id.menu_record_remove:
+//            Utils.confirmRemoveProgram(activity, program.recording);
+//            return true;
+//
+//        case R.id.menu_record_cancel:
+//            Utils.confirmCancelProgram(activity, program.recording);
+//            return true;
+//
+//        case R.id.menu_record:
+//            Utils.recordProgram(activity, program.id, program.channel.id);
+//            return true;
+//
+//        case R.id.menu_play:
+//            // Open a new activity to stream the current program to this device
+//            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+//            intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+//            startActivity(intent);
+//            return true;
+//
+//        default:
+//            return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     @Override
     public void onMessage(String action, Object obj) {
@@ -252,7 +264,7 @@ public class ProgramDetailsFragment extends Fragment implements HTSListener {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Update the options menu and the status icon
-                    activity.supportInvalidateOptionsMenu();
+//                    activity.supportInvalidateOptionsMenu();
                     Utils.setState(state, program.recording);
                 }
             });

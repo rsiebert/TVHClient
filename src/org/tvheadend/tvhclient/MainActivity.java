@@ -7,6 +7,7 @@ import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
 import org.tvheadend.tvhclient.fragments.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.FailedRecordingListFragment;
+import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
@@ -32,6 +33,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -747,20 +749,18 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // it. In dual mode they are shown next to the recording list, otherwise
         // replace the recording list.
         if (recording != null) {
-            // Create the fragment with the required information
-            final Fragment f = Fragment.instantiate(this, RecordingDetailsFragment.class.getName());
-            Bundle args = new Bundle();
-            args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
-            args.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
-            f.setArguments(args);
-
-            // Show the fragment
             if (isDualPane) {
+                // Create the fragment with the required information
+                final Fragment f = Fragment.instantiate(this, RecordingDetailsFragment.class.getName());
+                Bundle args = new Bundle();
+                args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
+                f.setArguments(args);
                 getSupportFragmentManager().beginTransaction().replace(R.id.right_fragment, f)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
             } else {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, f)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
+                // Create the fragment and show it as a dialog.
+                DialogFragment newFragment = RecordingDetailsFragment.newInstance(recording.id);
+                newFragment.show(getSupportFragmentManager(), "dialog");
             }
         }
     }
@@ -772,7 +772,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // A program was selected, show its details.
         selectedProgramListPosition = position;
         if (program != null) {
-            Toast.makeText(this, "Showing Program Details for '" + program.title + "'", Toast.LENGTH_SHORT).show();
+            // Create the fragment and show it as a dialog.
+            DialogFragment newFragment = ProgramDetailsFragment.newInstance(program.channel.id, program.id);
+            newFragment.show(getSupportFragmentManager(), "dialog");
         }
     }
 

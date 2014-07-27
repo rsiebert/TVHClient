@@ -38,7 +38,7 @@
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
-    <string name="delete_all_recordings">Sollen ALLE fehlerhaften Aufnahmen gelöscht werden?</string>
+    <string name="delete_all_recordings">Sollen ALLE Aufnahmen gelöscht werden?</string>
     <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
     <string name="cancel_all_recordings">Sollen ALLE geplanten Aufnahmen abgebrochen werden?</string>
 

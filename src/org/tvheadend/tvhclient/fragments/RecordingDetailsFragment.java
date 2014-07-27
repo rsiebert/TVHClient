@@ -33,7 +33,7 @@ import org.tvheadend.tvhclient.model.Recording;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,13 +44,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class RecordingDetailsFragment extends Fragment implements HTSListener {
+public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
 
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
-    private boolean isDualPane = false;
-    private FragmentActivity activity;
-    private ActionBarInterface actionBarInterface;
+//    private boolean isDualPane = false;
+    private Activity activity;
+//    private ActionBarInterface actionBarInterface;
     private Recording rec;
 
     private TextView title;
@@ -65,27 +65,37 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     private TextView duration;
     private TextView failed_reason;
 
+    public static RecordingDetailsFragment newInstance(final long recId) {
+        RecordingDetailsFragment f = new RecordingDetailsFragment();
+        Bundle args = new Bundle();
+        args.putLong(Constants.BUNDLE_RECORDING_ID, recId);
+        args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
+        f.setArguments(args);
+        return f;
+    }
+    
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = (Activity) activity;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't
-        // exist because the fragment will not be shown.
-        if (container == null) {
-            return null;
-        }
+
+        long recId = 0;
+        boolean showControls = false;
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            rec = app.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0));
-            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+            recId = bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0);
+            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+//            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
+
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        rec = app.getRecording(recId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.recording_details_layout, container, false);
@@ -107,9 +117,9 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
+//        if (activity instanceof ActionBarInterface) {
+//            actionBarInterface = (ActionBarInterface) activity;
+//        }
         
         // If the recording is null exit
         if (rec == null) {
@@ -132,7 +142,7 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         Utils.setDescription(descLabel, desc, rec.description);
         Utils.setFailedReason(failed_reason, rec);
         
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
     }
 
     @Override
@@ -141,62 +151,62 @@ public class RecordingDetailsFragment extends Fragment implements HTSListener {
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
 
-        if (actionBarInterface != null && rec != null && rec.channel != null && !isDualPane) {
-            actionBarInterface.setActionBarTitle(rec.channel.name, TAG);
-            actionBarInterface.setActionBarIcon(rec.channel.iconBitmap, TAG);
-        }
+//        if (actionBarInterface != null && rec != null && rec.channel != null && !isDualPane) {
+//            actionBarInterface.setActionBarTitle(rec.channel.name, TAG);
+//            actionBarInterface.setActionBarIcon(rec.channel.iconBitmap, TAG);
+//        }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        app.removeListener(this);
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+//        app.removeListener(this);
+//    }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.program_context_menu, menu);
-        Utils.setRecordingMenu(menu, rec);
-        Utils.setRecordingMenuIcons(activity, menu);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.program_context_menu, menu);
+//        Utils.setRecordingMenu(menu, rec);
+//        Utils.setRecordingMenuIcons(activity, menu);
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-        case R.id.menu_search:
-            // Show the search text input in the action bar
-            activity.onSearchRequested();
-            return true;
-
-        case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(activity, rec.title));
-            return true;
-
-        case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(activity, rec.title));
-            return true;
-
-        case R.id.menu_record_remove:
-            Utils.confirmRemoveProgram(activity, rec);
-            return true;
-
-        case R.id.menu_record_cancel:
-            Utils.confirmCancelProgram(activity, rec);
-            return true;
-
-        case R.id.menu_play:
-            Intent pi = new Intent(activity, PlaybackSelectionActivity.class);
-            pi.putExtra("dvrId", rec.id);
-            startActivity(pi);
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//
+//        case R.id.menu_search:
+//            // Show the search text input in the action bar
+//            activity.onSearchRequested();
+//            return true;
+//
+//        case R.id.menu_search_imdb:
+//            startActivity(new SearchIMDbIntent(activity, rec.title));
+//            return true;
+//
+//        case R.id.menu_search_epg:
+//            startActivity(new SearchEPGIntent(activity, rec.title));
+//            return true;
+//
+//        case R.id.menu_record_remove:
+//            Utils.confirmRemoveProgram(activity, rec);
+//            return true;
+//
+//        case R.id.menu_record_cancel:
+//            Utils.confirmCancelProgram(activity, rec);
+//            return true;
+//
+//        case R.id.menu_play:
+//            Intent pi = new Intent(activity, PlaybackSelectionActivity.class);
+//            pi.putExtra("dvrId", rec.id);
+//            startActivity(pi);
+//            return true;
+//
+//        default:
+//            return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     /**
      * This method is part of the HTSListener interface. Whenever the HTSService
