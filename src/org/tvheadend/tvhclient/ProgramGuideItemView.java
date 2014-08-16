@@ -75,10 +75,10 @@ public class ProgramGuideItemView extends LinearLayout {
         fragmentInterface = (ProgramContextMenuInterface) fragment;
 
         if (bundle != null) {
-            hoursToShow = bundle.getInt("hoursToShow", 4);
-            tabIndex = bundle.getInt("tabIndex", 0);
-            startTime = bundle.getLong("startTime", 0);
-            endTime = bundle.getLong("endTime", 0);
+            hoursToShow = bundle.getInt(Constants.BUNDLE_EPG_HOURS_TO_SHOW, 4);
+            tabIndex = bundle.getInt(Constants.BUNDLE_EPG_INDEX, 0);
+            startTime = bundle.getLong(Constants.BUNDLE_EPG_START_TIME, 0);
+            endTime = bundle.getLong(Constants.BUNDLE_EPG_END_TIME, 0);
         }
         
         pixelsPerMinute = Utils.getPixelsPerMinute(activity, tabIndex, hoursToShow);

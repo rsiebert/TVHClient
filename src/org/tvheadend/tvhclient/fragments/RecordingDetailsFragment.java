@@ -24,56 +24,60 @@ import org.tvheadend.tvhclient.PlaybackSelectionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.htsp.HTSListener;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
-//    private boolean isDualPane = false;
     private Activity activity;
-//    private ActionBarInterface actionBarInterface;
+    private boolean showControls = false;
     private Recording rec;
 
-    private TextView title;
-    private ImageView state;
     private TextView summaryLabel;
     private TextView summary;
     private TextView descLabel;
     private TextView desc;
+    private TextView channelLabel;
     private TextView channelName;
     private TextView date;
     private TextView time;
     private TextView duration;
     private TextView failed_reason;
 
-    public static RecordingDetailsFragment newInstance(final long recId) {
+    private LinearLayout playerLayout;
+    private TextView play;
+    private TextView record;
+    private TextView recordCancel;
+    private TextView recordRemove;
+
+    public static RecordingDetailsFragment newInstance(Bundle args) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
-        Bundle args = new Bundle();
-        args.putLong(Constants.BUNDLE_RECORDING_ID, recId);
-        args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
         f.setArguments(args);
         return f;
     }
-    
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog() != null) {
+            getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -85,64 +89,125 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         super.onCreateView(inflater, container, savedInstanceState);
 
         long recId = 0;
-        boolean showControls = false;
-
         Bundle bundle = getArguments();
         if (bundle != null) {
             recId = bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0);
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
-//            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
+        // Get the recording so we can show its details 
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         rec = app.getRecording(recId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.recording_details_layout, container, false);
-        title = (TextView) v.findViewById(R.id.title);
-        state = (ImageView) v.findViewById(R.id.state);
         summaryLabel = (TextView) v.findViewById(R.id.summary_label);
         summary = (TextView) v.findViewById(R.id.summary);
         descLabel = (TextView) v.findViewById(R.id.description_label);
         desc = (TextView) v.findViewById(R.id.description);
+        channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         date = (TextView) v.findViewById(R.id.date);
         time = (TextView) v.findViewById(R.id.time);
         duration = (TextView) v.findViewById(R.id.duration);
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
+        
+        // Initialize the player layout
+        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
+        play = (TextView) v.findViewById(R.id.menu_play);
+        record = (TextView) v.findViewById(R.id.menu_record);
+        recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
+        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
+
         return v;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-//        if (activity instanceof ActionBarInterface) {
-//            actionBarInterface = (ActionBarInterface) activity;
-//        }
         
         // If the recording is null exit
         if (rec == null) {
-            activity.finish();
             return;
         }
 
-        if (title != null) {
-            title.setText(rec.title);
+        if (getDialog() != null) {
+            getDialog().setTitle(rec.title);
         }
-        if (rec.channel != null) {
-            channelName.setText(rec.channel.name);
+
+        // Show the player controls
+        if (showControls) {
+            addPlayerControlListeners();
         }
-        Utils.setState(state, rec);
+        showPlayerControls();
+
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
         Utils.setDuration(duration, rec.start, rec.stop);
         Utils.setProgressText(null, rec.start, rec.stop);
+        Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
         Utils.setFailedReason(failed_reason, rec);
-        
-//        setHasOptionsMenu(true);
+    }
+
+    /**
+     * 
+     */
+    private void showPlayerControls() {
+        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
+        play.setVisibility(View.GONE);
+        record.setVisibility(View.GONE);
+        recordCancel.setVisibility(View.GONE);
+        recordRemove.setVisibility(View.GONE);
+
+        // Show the play menu items
+        if (rec.error == null && rec.state.equals("completed")) {
+            // The recording is available, it can be played and removed
+            recordRemove.setVisibility(View.VISIBLE);
+            play.setVisibility(View.VISIBLE);
+        } else if (rec.isRecording() || rec.isScheduled()) {
+            // The recording is recording or scheduled, it can only be cancelled
+            recordCancel.setVisibility(View.VISIBLE);
+        } else if (rec.error != null || rec.state.equals("missed")) {
+            // The recording has failed or has been missed, allow removal
+            recordRemove.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * 
+     */
+    private void addPlayerControlListeners() {
+        play.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open a new activity that starts playing the program
+                if (rec != null && rec.channel != null) {
+                    Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, rec.channel.id);
+                    startActivity(intent);
+                }
+            }
+        });
+        record.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.recordProgram(activity, rec.id, rec.channel.id);
+            }
+        });
+        recordCancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.confirmCancelProgram(activity, rec);
+            }
+        });
+        recordRemove.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.confirmRemoveProgram(activity, rec);
+            }
+        });
     }
 
     @Override
@@ -150,63 +215,14 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
-
-//        if (actionBarInterface != null && rec != null && rec.channel != null && !isDualPane) {
-//            actionBarInterface.setActionBarTitle(rec.channel.name, TAG);
-//            actionBarInterface.setActionBarIcon(rec.channel.iconBitmap, TAG);
-//        }
     }
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-//        app.removeListener(this);
-//    }
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.program_context_menu, menu);
-//        Utils.setRecordingMenu(menu, rec);
-//        Utils.setRecordingMenuIcons(activity, menu);
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//
-//        case R.id.menu_search:
-//            // Show the search text input in the action bar
-//            activity.onSearchRequested();
-//            return true;
-//
-//        case R.id.menu_search_imdb:
-//            startActivity(new SearchIMDbIntent(activity, rec.title));
-//            return true;
-//
-//        case R.id.menu_search_epg:
-//            startActivity(new SearchEPGIntent(activity, rec.title));
-//            return true;
-//
-//        case R.id.menu_record_remove:
-//            Utils.confirmRemoveProgram(activity, rec);
-//            return true;
-//
-//        case R.id.menu_record_cancel:
-//            Utils.confirmCancelProgram(activity, rec);
-//            return true;
-//
-//        case R.id.menu_play:
-//            Intent pi = new Intent(activity, PlaybackSelectionActivity.class);
-//            pi.putExtra("dvrId", rec.id);
-//            startActivity(pi);
-//            return true;
-//
-//        default:
-//            return super.onOptionsItemSelected(item);
-//        }
-//    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        app.removeListener(this);
+    }
 
     /**
      * This method is part of the HTSListener interface. Whenever the HTSService
@@ -214,11 +230,18 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
      */
     @Override
     public void onMessage(String action, Object obj) {
-        // An existing program has been updated, this is valid for all menu options. 
-        if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)) {
-            getActivity().supportInvalidateOptionsMenu();
-            // Update the status icon
-            Utils.setState(state, rec);
+        // An existing recording has been updated, this is valid for all menu options
+        if (action.equals(Constants.ACTION_PROGRAMME_UPDATE)
+                || action.equals(Constants.ACTION_DVR_ADD)
+                || action.equals(Constants.ACTION_DVR_DELETE)
+                || action.equals(Constants.ACTION_DVR_UPDATE)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    if (showControls) {
+                        showPlayerControls();
+                    }
+                }
+            });
         }
     }
 }

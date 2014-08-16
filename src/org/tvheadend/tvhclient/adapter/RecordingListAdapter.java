@@ -21,9 +21,9 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.List;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -141,5 +141,9 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 break;
             }
         }
+    }
+    
+    public Recording getSelectedItem() {
+        return list.get(selectedPosition);
     }
 }

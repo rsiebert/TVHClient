@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.interfaces;
 
-
 public interface FragmentControlInterface {
 
     /**
@@ -35,4 +34,18 @@ public interface FragmentControlInterface {
      * @param index
      */
     void setSelectionFromTop(final int position, final int index);
+
+    /**
+     * Returns the currently selected item from the adapter
+     * 
+     * @return
+     */
+    Object getSelectedItem();
+
+    /**
+     * Returns the number of items in the adapter
+     * 
+     * @return
+     */
+    int getItemCount();
 }

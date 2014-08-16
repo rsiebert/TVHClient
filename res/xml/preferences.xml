@@ -33,11 +33,15 @@
             android:dialogTitle="@string/pref_language"
             android:entries="@array/pref_language_list_display"
             android:entryValues="@array/pref_language_list" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="useDualPaneForRecordingsPref"
-            android:summary="@string/pref_dual_pane_recordings_sum"
-            android:title="@string/pref_dual_pane_recordings" />
+        <ListPreference
+            android:name="@string/pref_default_menu"
+            android:summary="@string/pref_default_menu_sum"
+            android:defaultValue="1"
+            android:title="@string/pref_default_menu"
+            android:key="defaultMenuPosition"
+            android:dialogTitle="@string/pref_default_menu"
+            android:entries="@array/pref_menu_names"
+            android:entryValues="@array/pref_menu_ids" />
         <PreferenceScreen
             android:title="@string/pref_genre_colors" 
             android:summary="@string/pref_genre_colors_sum" >

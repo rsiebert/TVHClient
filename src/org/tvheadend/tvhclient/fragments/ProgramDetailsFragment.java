@@ -19,15 +19,14 @@
  */
 package org.tvheadend.tvhclient.fragments;
 
+import java.util.Date;
+
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.PlaybackSelectionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.htsp.HTSListener;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 
@@ -35,32 +34,31 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class ProgramDetailsFragment extends DialogFragment implements HTSListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
 
     private Activity activity;
-//    private ActionBarInterface actionBarInterface;
+    private boolean showControls = false;
     private Program program;
     private Channel channel;
 
-    private TextView title;
     private ImageView state;
     private TextView summaryLabel;
     private TextView summary;
     private TextView descLabel;
     private TextView desc;
+    private TextView channelLabel;
     private TextView channelName;
     private TextView date;
     private TextView time;
@@ -74,30 +72,38 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private TextView ratingBarText;
     private RatingBar ratingBar;
 
-    public static ProgramDetailsFragment newInstance(final long channelId, final long programId) {
+    private LinearLayout playerLayout;
+    private TextView play;
+    private TextView record;
+    private TextView recordCancel;
+    private TextView recordRemove;
+    
+    public static ProgramDetailsFragment newInstance(Bundle args) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
-        Bundle args = new Bundle();
-        args.putLong(Constants.BUNDLE_CHANNEL_ID, channelId);
-        args.putLong(Constants.BUNDLE_PROGRAM_ID, programId);
-        args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
         f.setArguments(args);
         return f;
     }
-    
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog() != null) {
+            getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (Activity) activity;
     }
-    
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
         long channelId = 0;
         long programId = 0;
-        boolean showControls = false;
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -110,7 +116,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         channel = app.getChannel(channelId);
         if (channel != null) {
-            // Find the program with the given id within this channel
+            // Find the program with the given id within this channel so we can
+            // show the program details
             for (Program p : channel.epg) {
                 if (p != null && p.id == programId) {
                     program = p;
@@ -121,12 +128,12 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.program_details_layout, container, false);
-        title = (TextView) v.findViewById(R.id.title);
         state = (ImageView) v.findViewById(R.id.state);
         summaryLabel = (TextView) v.findViewById(R.id.summary_label);
         summary = (TextView) v.findViewById(R.id.summary);
         descLabel = (TextView) v.findViewById(R.id.description_label);
         desc = (TextView) v.findViewById(R.id.description);
+        channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         date = (TextView) v.findViewById(R.id.date);
         time = (TextView) v.findViewById(R.id.time);
@@ -139,6 +146,14 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         ratingBarLabel = (TextView) v.findViewById(R.id.star_rating_label);
         ratingBarText = (TextView) v.findViewById(R.id.star_rating_text);
         ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
+        
+        // Initialize the player layout
+        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
+        play = (TextView) v.findViewById(R.id.menu_play);
+        record = (TextView) v.findViewById(R.id.menu_record);
+        recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
+        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
+
         return v;
     }
 
@@ -146,25 +161,30 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-//        if (activity instanceof ActionBarInterface) {
-//            actionBarInterface = (ActionBarInterface) activity;
-//        }
-
         // If the channel or program is null exit
         if (channel == null || program == null) {
             return;
         }
 
-        if (title != null) {
-            title.setText(program.title);
+        if (getDialog() != null) {
+            getDialog().setTitle(program.title);
         }
-        channelName.setText(channel.name);
+
+        // Show the player controls
+        if (showControls) {
+            addPlayerControlListeners();
+        }
+        showPlayerControls();
+        
+        // Show the program information        
         Utils.setState(state, program.recording);
         Utils.setDate(date, program.start);
         Utils.setTime(time, program.start, program.stop);
         Utils.setDuration(duration, program.start, program.stop);
         Utils.setProgressText(progress, program.start, program.stop);
+        Utils.setDescription(descLabel, desc, program.description);
         Utils.setDescription(summaryLabel, summary, program.summary);
+        Utils.setDescription(channelLabel, channelName, channel.name);
         Utils.setDescription(descLabel, desc, program.description);
         Utils.setSeriesInfo(seriesInfoLabel, seriesInfo, program.seriesInfo);
         Utils.setContentType(contentTypeLabel, contentType, program.contentType);
@@ -178,7 +198,82 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             ratingBar.setRating((float)program.starRating / 10.0f);
             ratingBarText.setText("(" + program.starRating + "/" + 100 + ")");
         }
-//        setHasOptionsMenu(true);
+    }
+
+    /**
+     * 
+     */
+    private void showPlayerControls() {
+
+        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
+        play.setVisibility(View.VISIBLE);
+        record.setVisibility(View.VISIBLE);
+        recordCancel.setVisibility(View.VISIBLE);
+        recordRemove.setVisibility(View.VISIBLE);
+        
+        // Show the play menu item when the current 
+        // time is between the program start and end time
+        long currentTime = new Date().getTime();
+        if (program.start != null && program.stop != null
+                && currentTime > program.start.getTime()
+                && currentTime < program.stop.getTime()) {
+            play.setVisibility(View.VISIBLE);
+        } else {
+            play.setVisibility(View.GONE);
+        }
+        
+        if (program.recording == null) {
+            // Show the record menu
+            recordCancel.setVisibility(View.GONE);
+            recordRemove.setVisibility(View.GONE);
+        } else if (program.isRecording()) {
+            // Show the cancel menu
+            record.setVisibility(View.GONE);
+            recordRemove.setVisibility(View.GONE);
+        } else if (program.isScheduled()) {
+            // Show the cancel and play menu
+            record.setVisibility(View.GONE);
+            recordRemove.setVisibility(View.GONE);
+        } else {
+            // Show the delete menu
+            record.setVisibility(View.GONE);
+            recordCancel.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 
+     */
+    private void addPlayerControlListeners() {
+        play.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open a new activity that starts playing the program
+                if (program != null && program.channel != null) {
+                    Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                    startActivity(intent);
+                }
+            }
+        });
+        record.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.recordProgram(activity, program.id, program.channel.id);
+            }
+        });
+        recordCancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.confirmCancelProgram(activity, program.recording);
+            }
+        });
+        recordRemove.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.confirmRemoveProgram(activity, program.recording);
+            }
+        });
     }
 
     @Override
@@ -186,12 +281,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
-        
-//        if (actionBarInterface != null && channel != null) {
-//            actionBarInterface.setActionBarTitle(channel.name, TAG);
-//            actionBarInterface.setActionBarSubtitle(null, TAG);
-//            actionBarInterface.setActionBarIcon(channel.iconBitmap, TAG);
-//        }
     }
 
     @Override
@@ -200,74 +289,21 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
-    
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.program_context_menu, menu);
-//        Utils.setRecordingMenuIcons(activity, menu);
-//    }
-
-//    @Override
-//    public void onPrepareOptionsMenu(Menu menu) {
-//        // Show or hide the menu items depending on the program state
-//        Utils.setProgramMenu(menu, program);
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//        case R.id.menu_search:
-//            // Show the search text input in the action bar
-//            activity.onSearchRequested();
-//            return true;
-//
-//        case R.id.menu_search_imdb:
-//            startActivity(new SearchIMDbIntent(activity, program.title));
-//            return true;
-//
-//        case R.id.menu_search_epg:
-//            startActivity(new SearchEPGIntent(activity, program.title));
-//            return true;
-//
-//        case R.id.menu_record_remove:
-//            Utils.confirmRemoveProgram(activity, program.recording);
-//            return true;
-//
-//        case R.id.menu_record_cancel:
-//            Utils.confirmCancelProgram(activity, program.recording);
-//            return true;
-//
-//        case R.id.menu_record:
-//            Utils.recordProgram(activity, program.id, program.channel.id);
-//            return true;
-//
-//        case R.id.menu_play:
-//            // Open a new activity to stream the current program to this device
-//            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-//            intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-//            startActivity(intent);
-//            return true;
-//
-//        default:
-//            return super.onOptionsItemSelected(item);
-//        }
-//    }
 
     @Override
     public void onMessage(String action, Object obj) {
         // An existing program has been updated, this is valid for all menu options. 
-        if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)
-                || action.equals(TVHClientApplication.ACTION_DVR_ADD)
-                || action.equals(TVHClientApplication.ACTION_DVR_DELETE)
-                || action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
+        if (action.equals(Constants.ACTION_PROGRAMME_UPDATE)
+                || action.equals(Constants.ACTION_DVR_ADD)
+                || action.equals(Constants.ACTION_DVR_DELETE)
+                || action.equals(Constants.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    // Update the options menu and the status icon
-//                    activity.supportInvalidateOptionsMenu();
-                    Utils.setState(state, program.recording);
+                    showPlayerControls();
                 }
             });
         }
     }
 }
+
+    

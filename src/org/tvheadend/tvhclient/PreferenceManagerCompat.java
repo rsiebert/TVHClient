@@ -31,9 +31,9 @@ import android.preference.PreferenceScreen;
 import android.util.Log;
 
 public class PreferenceManagerCompat {
-	
+
 	private static final String TAG = PreferenceManagerCompat.class.getSimpleName();
-	
+
     /**
      * Interface definition for a callback to be invoked when a
      * {@link Preference} in the hierarchy rooted at this {@link PreferenceScreen} is
@@ -51,7 +51,7 @@ public class PreferenceManagerCompat {
          */
         boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference);
     }
-    
+
 	static PreferenceManager newInstance(Activity activity, int firstRequestCode) {
 		try {
 			Constructor<PreferenceManager> c = PreferenceManager.class.getDeclaredConstructor(Activity.class, int.class);
@@ -62,7 +62,7 @@ public class PreferenceManagerCompat {
 		}
 		return null;
 	}
-	
+
 	/**
      * Sets the owning preference fragment
      */
@@ -87,7 +87,9 @@ public class PreferenceManagerCompat {
 						new InvocationHandler() {
 					public Object invoke(Object proxy, Method method, Object[] args) {
 						if (method.getName().equals("onPreferenceTreeClick")) {
-							return Boolean.valueOf(listener.onPreferenceTreeClick((PreferenceScreen) args[0], (Preference) args[1]));
+							return Boolean.valueOf(listener.onPreferenceTreeClick(
+							        (PreferenceScreen) args[0], 
+							        (Preference) args[1]));
 						} else {
 							return null;
 						}
@@ -101,7 +103,7 @@ public class PreferenceManagerCompat {
 			Log.w(TAG, "Couldn't set PreferenceManager.mOnPreferenceTreeClickListener by reflection", e);
 		}
 	}
-	
+
 	/**
      * Inflates a preference hierarchy from the preference hierarchies of
      * {@link Activity Activities} that match the given {@link Intent}. An
@@ -128,7 +130,7 @@ public class PreferenceManagerCompat {
 		}
 		return null;
 	}
-	
+
 	/**
      * Inflates a preference hierarchy from XML. If a preference hierarchy is
      * given, the new preference hierarchies will be merged in.
@@ -152,7 +154,7 @@ public class PreferenceManagerCompat {
 		}
 		return null;
 	}
-	
+
 	/**
      * Returns the root of the preference hierarchy managed by this class.
      *  
@@ -168,7 +170,7 @@ public class PreferenceManagerCompat {
 		}
 		return null;
 	}
-	
+
 	/**
      * Called by the {@link PreferenceManager} to dispatch a subactivity result.
      */
@@ -181,7 +183,7 @@ public class PreferenceManagerCompat {
 			Log.w(TAG, "Couldn't call PreferenceManager.dispatchActivityResult by reflection", e);
 		}
 	}
-	
+
 	/**
      * Called by the {@link PreferenceManager} to dispatch the activity stop
      * event.
@@ -195,7 +197,7 @@ public class PreferenceManagerCompat {
 			Log.w(TAG, "Couldn't call PreferenceManager.dispatchActivityStop by reflection", e);
 		}
 	}
-	
+
 	/**
      * Called by the {@link PreferenceManager} to dispatch the activity destroy
      * event.
@@ -226,5 +228,4 @@ public class PreferenceManagerCompat {
 		}
 		return false;
 	}
-	
 }

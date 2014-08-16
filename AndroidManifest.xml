@@ -19,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.RecordingListTabsActivity" />
         <activity android:name="org.tvheadend.tvhclient.SearchResultActivity" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -27,13 +26,8 @@
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.ChannelListTabsActivity" />
         <activity android:name="org.tvheadend.tvhclient.SettingsManageConnectionsActivity" />
         <activity android:name="org.tvheadend.tvhclient.SettingsAddConnectionActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ProgramListActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ProgramDetailsActivity" />
-        <activity android:name="org.tvheadend.tvhclient.RecordingDetailsActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ProgramGuideTabsActivity" />
         <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhclient.PlaybackSelectionActivity" />
         <activity android:name="org.tvheadend.tvhclient.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>

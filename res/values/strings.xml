@@ -5,7 +5,6 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_refresh">Refresh</string>
     <string name="menu_tags">Tags</string>
-    <string name="menu_recordings">Recordings</string>
 
     <string name="menu_play">Play</string>
     <string name="menu_search">Search</string>
@@ -32,9 +31,6 @@
     <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
     <string name="select_connection">Select connection</string>
     <string name="add_connection">Add connection</string>
-    <string name="no_connections">No connections available</string>
-    <string name="create_new_connections">Do you want to create a new connection now?</string>
-    <string name="connection_options">Options for connection \'%s\'</string>
     <string name="cancel_connection">Discard values? All changes will be lost.</string>
     <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
     <string name="delete_recording">Do you really want to delete the recording \'%s\'?</string>
@@ -79,6 +75,8 @@
     <string name="pref_theme_sum">Use a light theme</string>
     <string name="pref_language">Language</string>
     <string name="pref_language_sum">Choose the language that shall be used by the application.</string>
+    <string name="pref_default_menu">Startscreen</string>
+    <string name="pref_default_menu_sum">Choose the screen that will be shown when the application starts.</string>
     <string name="pref_res">Resolution</string>
     <string name="pref_res_sum">Specify the maximum resolution that the transcoder shall use.</string>
     <string name="pref_acodec">Audio codec</string>
@@ -118,8 +116,6 @@
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
     <string name="pref_genre_colors_visibility">Genre color visibility</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
-    <string name="pref_dual_pane_recordings">Dual pane mode for recordings</string>
-    <string name="pref_dual_pane_recordings_sum">Show the list of recordings on the left and the details of the selected recording on the right half of the screen. Only available on tablets.</string>
     <string name="pref_misc">Miscellaneous</string>
     <string name="pref_clear_search_history">Clear search history</string>
 
@@ -130,6 +126,7 @@
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
+    <string name="err_con_timeout">Connection timeout</string>
 
     <string name="recording_file_missing">Recorded file is missing</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>
@@ -292,7 +289,6 @@
     
     <string name="channels">Channels</string>
     <string name="recordings">Recordings</string>
-    <string name="program_guide">Program guide</string>
     <string name="status">Status</string>
     <string name="items">Items</string>
     <string name="results">Results</string>
@@ -303,7 +299,6 @@
     <string name="channel">Channel</string>
     <string name="time">Time</string>
     <string name="date">Date</string>
-    <string name="shown_on_channel">on</string>
     <string name="summary">Summary</string>
     <string name="description">Description</string>
     <string name="duration">Duration</string>
@@ -315,14 +310,15 @@
 
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>
-    <string name="all_channels">All channels</string>    
+    <string name="loading_channel">Loading channel %s</string>
+    <string name="updating">Updating&#8230;</string>
+    <string name="all_channels">All channels</string>
     <string name="season">Season</string>
     <string name="episode">Episode</string>
     <string name="part">Part</string>
     <string name="progress">%1$d%% of the show already shown</string>
     
     <string name="connection">Connection</string>
-    <string name="server_state">Server State</string>
     <string name="disc_space">Disc space</string>
     <string name="total">Total</string>
     <string name="available">Available</string>
@@ -331,15 +327,11 @@
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
     <string name="currently_recording">Currently recording</string>
     
+    <string name="no_connection_available">Still no connections are defined. You need to add at least one connection from the settings menu.</string>
+    <string name="no_connection_active">At least one connection is defined, but was not activated.</string>
+    
     <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
-    
-    <!--  Strings for possible PreferenceActivity Back/Next buttons -->
-    <string name="back_button_label">Back</string>
-    <string name="next_button_label">Next</string>
-
-    <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
-    <string name="skip_button_label">Skip</string>
 
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Open navigation drawer</string>

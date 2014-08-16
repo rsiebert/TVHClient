@@ -24,15 +24,14 @@ import java.util.ArrayList;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.PlaybackSelectionActivity;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
-import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
@@ -45,6 +44,8 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,24 +77,23 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        // Return if frame for this fragment doesn't
-        // exist because the fragment will not be shown.
+        // Return if frame for this fragment doesn't exist because the fragment
+        // will not be shown.
         if (container == null) {
             return null;
         }
-        View v = inflater.inflate(R.layout.list_layout, container, false);
-        listView = (ListView) v.findViewById(R.id.item_list);
 
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
         if (bundle != null) {
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
-        
         if (isDualPane) {
             adapterLayout = R.layout.recording_list_widget_dual_pane;
         }
+
+        View v = inflater.inflate(R.layout.list_layout, container, false);
+        listView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
 
@@ -145,60 +145,48 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case R.id.menu_play:
+            // Open a new activity that starts playing the selected recording
+            Recording rec = adapter.getSelectedItem();
+            if (rec != null) {
+                Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+                intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+                startActivity(intent);
+            }
+            return true;
+
         case R.id.menu_record_remove_all:
             // Show a confirmation dialog before deleting all recordings
             new AlertDialog.Builder(activity)
-            .setTitle(R.string.menu_record_remove_all)
-            .setMessage(getString(R.string.delete_all_recordings))
-            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    new Thread() {
-                        public void run() {
-                            for (int i = 0; i < adapter.getCount(); ++i) {
-                                Log.i(TAG, "Removing recording " + adapter.getItem(i).title);
-                                Utils.removeProgram(activity, adapter.getItem(i));
-                                try {
-                                    sleep(THREAD_SLEEPING_TIME);
-                                } catch (InterruptedException e) {
-                                    Log.d(TAG, "Exception while removing all recordings. " + e.getLocalizedMessage());
-                                }
-                            }
+                    .setTitle(R.string.menu_record_remove_all)
+                    .setMessage(getString(R.string.delete_all_recordings))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            removeOrCancelAllRecordings();
                         }
-                    }.start();
-                }
-            }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // NOP
-                }
-            }).show();
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // NOP
+                        }
+                    }).show();
             return true;
 
         case R.id.menu_record_cancel_all:
             // Show a confirmation dialog before canceling all recordings
             new AlertDialog.Builder(activity)
-            .setTitle(R.string.menu_record_cancel_all)
-            .setMessage(getString(R.string.cancel_all_recordings))
-            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    new Thread() {
-                        public void run() {
-                            for (int i = 0; i < adapter.getCount(); ++i) {
-                                Log.i(TAG, "Canceling program " + adapter.getItem(i).title);
-                                Utils.removeProgram(activity, adapter.getItem(i));
-                                try {
-                                    sleep(THREAD_SLEEPING_TIME);
-                                } catch (InterruptedException e) {
-                                    Log.d(TAG, "Exception while canceling all scheduled programs. " + e.getLocalizedMessage());
-                                }
-                            }
+                    .setTitle(R.string.menu_record_cancel_all)
+                    .setMessage(getString(R.string.cancel_all_recordings))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            removeOrCancelAllRecordings();
                         }
-                    }.start();
-                }
-            }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // NOP
-                }
-            }).show();
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // NOP
+                        }
+                    }).show();
             return true;
 
         default:
@@ -206,41 +194,62 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         }
     }
 
+    /**
+     * Calls the service to remove completed or failed recordings or to cancel
+     * scheduled ones. This depends on the adapter contents. The service calls
+     * are done with a certain pause to prevent too many calls to the interface.
+     */
+    private void removeOrCancelAllRecordings() {
+        new Thread() {
+            public void run() {
+                for (int i = 0; i < adapter.getCount(); ++i) {
+                    Utils.removeProgram(activity, adapter.getItem(i));
+                    try {
+                        sleep(THREAD_SLEEPING_TIME);
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, "Error removing all recordings, " + e.getLocalizedMessage());
+                    }
+                }
+            }
+        }.start();
+    }
+
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
-        
-        // Get the currently selected program from the list
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Recording rec = adapter.getItem(info.position);
-        
-        // Set the title of the context menu and show or hide 
-        // the menu items depending on the recording state
-        menu.setHeaderTitle(rec.title);
-        Utils.setRecordingMenu(menu, rec);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.recording_menu, menu);
         Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
+
+        // Get the currently selected program from the list where the context
+        // menu has been triggered
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        Recording rec = adapter.getItem(info.position);
+
+        // Set the title of the context menu and show or hide 
+        // the menu items depending on the recording state
+        menu.setHeaderTitle(rec.title);
+        Utils.setRecordingMenu(menu, rec);
+    }
+
+    @Override
     public boolean onContextItemSelected(MenuItem item) {
-     
-        // The context menu is triggered for all fragments in a fragment pager.
-        // Do nothing if this fragment is not visible.
+        // The context menu is triggered for all fragments that are in a
+        // fragment pager. Do nothing for invisible fragments.
         if (!getUserVisibleHint()) {
             return super.onContextItemSelected(item);
         }
-        // Get the currently selected program from the list
+        // Get the currently selected program from the list where the context
+        // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Recording rec = adapter.getItem(info.position);
-        
-        switch (item.getItemId()) {
-        case R.id.menu_play:
-            Intent pi = new Intent(activity, PlaybackSelectionActivity.class);
-            pi.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-            startActivity(pi);
-            return true;
 
+        switch (item.getItemId()) {
         case R.id.menu_search_imdb:
             startActivity(new SearchIMDbIntent(activity, rec.title));
             return true;
@@ -257,6 +266,12 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             Utils.confirmCancelProgram(activity, rec);
             return true;
 
+        case R.id.menu_play:
+            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+            intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+            startActivity(intent);
+            return true;
+
         default:
             return super.onContextItemSelected(item);
         }
@@ -264,12 +279,11 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
     /**
      * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the correct action will then be executed here.
+     * sends a new message the specified action will be executed here.
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        Log.d(TAG, "onMessage, action " + action);
-        if (action.equals(TVHClientApplication.ACTION_DVR_ADD)) {
+        if (action.equals(Constants.ACTION_DVR_ADD)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((Recording) obj);
@@ -277,7 +291,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     adapter.sort();
                 }
             });
-        } else if (action.equals(TVHClientApplication.ACTION_DVR_DELETE)) {
+        } else if (action.equals(Constants.ACTION_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Get the position of the recording that has been deleted
@@ -285,10 +299,10 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     adapter.remove((Recording) obj);
                     adapter.notifyDataSetChanged();
                     // Set the recording below the deleted one as selected
-                    setSelectedItem(previousPosition);
+                    setInitialSelection(previousPosition);
                 }
             });
-        } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
+        } else if (action.equals(Constants.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.update((Recording) obj);
@@ -298,30 +312,9 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         }
     }
 
-    public int getRecordingCount() {
-        if (adapter != null) {
-            return adapter.getCount();
-        }
-        return 0;
-    }
-
-    /**
-     * Sets the selected item in the list to the desired position. Any listener
-     * is then informed that a new recording item has been selected.
-     * 
-     * @param position
-     */
-    public void setSelectedItem(int position) {
-        if (listView.getCount() > position && adapter.getCount() > position && position >= 0) {
-            adapter.setPosition(position);
-            fragmentStatusInterface.onListItemSelected(position, adapter.getItem(position), TAG);
-        }
-    }
-
     @Override
     public void reloadData() {
-        // TODO Auto-generated method stub
-        
+        // NOP
     }
 
     @Override
@@ -353,5 +346,15 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 fragmentStatusInterface.onListItemSelected(position, recording, TAG);
             }
         }
+    }
+
+    @Override
+    public Object getSelectedItem() {
+        return adapter.getSelectedItem();
+    }
+
+    @Override
+    public int getItemCount() {
+        return adapter.getCount();
     }
 }

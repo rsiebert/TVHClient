@@ -20,12 +20,13 @@ package org.tvheadend.tvhclient.fragments;
 
 import java.util.Map;
 
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
 
@@ -33,6 +34,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,30 +49,46 @@ public class StatusFragment extends Fragment implements HTSListener {
 
     private TextView connection;
     private TextView status;
+    private TextView discspaceLabel;
 	private TextView freediscspace;
 	private TextView totaldiscspace;
+	private TextView channelLabel;
 	private TextView channels;
+	private TextView currentlyRecLabel;
 	private TextView currentlyRec;
+	private TextView recLabel;
 	private TextView completedRec;
 	private TextView upcomingRec;
 	private TextView failedRec;
+
+    private String connectionStatus = "";
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        
-        // Return if frame for this fragment doesn't
-        // exist because the fragment will not be shown.
+        // Return if frame for this fragment doesn't exist because the fragment
+        // will not be shown.
         if (container == null) {
             return null;
         }
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            connectionStatus  = bundle.getString(Constants.BUNDLE_CONNECTION_STATUS);
+            Log.d(TAG, "onCreateView " + connectionStatus);
+        }
+
         View v = inflater.inflate(R.layout.status_fragment_layout, container, false);
         connection = (TextView) v.findViewById(R.id.connection);
         status = (TextView) v.findViewById(R.id.status);
+        discspaceLabel = (TextView) v.findViewById(R.id.discspace_label);
         freediscspace = (TextView) v.findViewById(R.id.free_discspace);
         totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
+        channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channels = (TextView) v.findViewById(R.id.channels);
+        currentlyRecLabel = (TextView) v.findViewById(R.id.currently_recording_label);
         currentlyRec = (TextView) v.findViewById(R.id.currently_recording);
+        recLabel = (TextView) v.findViewById(R.id.recording_label);
         completedRec = (TextView) v.findViewById(R.id.completed_recordings);
         upcomingRec = (TextView) v.findViewById(R.id.upcoming_recordings);
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
@@ -118,14 +136,14 @@ public class StatusFragment extends Fragment implements HTSListener {
 
 	@Override
 	public void onMessage(final String action, final Object obj) {
-	    if (action.equals(TVHClientApplication.ACTION_LOADING)) {
+	    if (action.equals(Constants.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
                     showStatus(loading);
                 }
             });
-        } else if (action.equals(TVHClientApplication.ACTION_STATUS)) {
+        } else if (action.equals(Constants.ACTION_DISC_SPACE)) {
             getActivity().runOnUiThread(new Runnable() {
                 @SuppressWarnings("unchecked")
                 public void run() {
@@ -144,44 +162,73 @@ public class StatusFragment extends Fragment implements HTSListener {
     protected void showStatus(boolean loading) {
 
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
+            final String updating = (loading ? getString(R.string.updating) : "");
+            actionBarInterface.setActionBarSubtitle(updating, TAG);
         }
+
         // Get the name of the current connection
+        boolean noConnectionsDefined = false;
         Connection conn = null;
         if (DatabaseHelper.getInstance() != null) {
+            noConnectionsDefined = DatabaseHelper.getInstance().getConnections().isEmpty();
             conn = DatabaseHelper.getInstance().getSelectedConnection();
         }
 
-        // We are not connected or loading, show the defaults
-        if (conn == null || loading) {
-            connection.setText(getString(R.string.unknown));
-            status.setText(getString(R.string.unknown));
-            freediscspace.setText(getString(R.string.unknown));
-            totaldiscspace.setText(getString(R.string.unknown));
-            channels.setText(getString(R.string.unknown));
-            currentlyRec.setText(getString(R.string.unknown));
-            completedRec.setText(getString(R.string.unknown));
-            upcomingRec.setText(getString(R.string.unknown));
-            failedRec.setText(getString(R.string.unknown));
-        } else {
-            // Show the connection name and the loading status
-            if (conn != null) {
-                connection.setText(conn.name + " (" + conn.address + ")");
-    
-                if (loading) {
-                    status.setText(getString(R.string.loading));
-                } else {
-                    status.setText(getString(R.string.ready));
-                    showChannelStatus();
-                    showRecordingStatus();
-        
-                    // Upon the first call no information is available about the disc space
-                    // so call the server to get that information.
-                    Intent intent = new Intent(getActivity(), HTSService.class);
-                    intent.setAction(HTSService.ACTION_GET_DISC_STATUS);
-                    getActivity().startService(intent);
-                }
+        // Hide these if we have no connection or loading is in progress
+        int visible = (conn == null || loading) ? View.GONE : View.VISIBLE;
+        discspaceLabel.setVisibility(visible);
+        freediscspace.setVisibility(visible);
+        totaldiscspace.setVisibility(visible);
+        channelLabel.setVisibility(visible);
+        channels.setVisibility(visible);
+        currentlyRecLabel.setVisibility(visible);
+        currentlyRec.setVisibility(visible);
+        recLabel.setVisibility(visible);
+        completedRec.setVisibility(visible);
+        upcomingRec.setVisibility(visible);
+        failedRec.setVisibility(visible);
+
+        // Depending one the state set the correct values.
+        if (conn == null) {
+            if (noConnectionsDefined) {
+                // No connections are available
+                connection.setText(getString(R.string.no_connection_available));
+            } else {
+                // No connection is set as active
+                connection.setText(getString(R.string.no_connection_active));
             }
+            status.setText(getString(R.string.unknown));
+        } else if (loading) {
+            // A connection is active and data is loading 
+            connection.setText(conn.name + " (" + conn.address + ")");
+            status.setText(getString(R.string.loading));
+        } else {
+            // A connection is active and loading is not active. Show the state
+            // that is currently active
+            connection.setText(conn.name + " (" + conn.address + ")");
+            if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
+                status.setText(getString(R.string.ready));
+            } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
+                status.setText(R.string.err_con_lost);
+            } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
+                status.setText(R.string.err_con_timeout);
+            } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)) {
+                status.setText(R.string.err_connect);
+            } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
+                status.setText(R.string.err_auth);
+            }
+            
+            showChannelStatus();
+            showRecordingStatus();
+
+            // Upon the first call no information is available about the disc
+            // space so call the server to get that information.
+            freediscspace.setText(getString(R.string.loading));
+            totaldiscspace.setText(getString(R.string.loading));
+
+            Intent intent = new Intent(getActivity(), HTSService.class);
+            intent.setAction(Constants.ACTION_GET_DISC_STATUS);
+            getActivity().startService(intent);
         }
     }
 

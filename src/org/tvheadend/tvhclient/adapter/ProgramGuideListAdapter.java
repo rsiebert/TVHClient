@@ -60,8 +60,8 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-
         View view = convertView;
+
         if (view == null) {
             view = inflater.inflate(R.layout.program_guide_list_item, null);
             holder = new ViewHolder();
@@ -72,16 +72,15 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
             holder = (ViewHolder) view.getTag();
         }
 
-        // Adds the channel and shows the programs 
+        // TODO channel required?
+        // Adds the channel and shows the programs
         holder.item.addChannel(getItem(position));
         holder.item.addPrograms();
-
         return view;
     }
     
     public void update(Channel c) {
         int length = list.size();
-
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {

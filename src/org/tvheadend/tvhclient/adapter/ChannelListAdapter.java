@@ -31,7 +31,6 @@ import org.tvheadend.tvhclient.model.Program;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -146,7 +145,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.icon_text.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Log.i(TAG, "onClick");
                             if (c.epg.isEmpty()) {
                                 return;
                             }
@@ -164,7 +162,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 holder.icon.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.i(TAG, "onClick");
                         if (c.epg.isEmpty()) {
                             return;
                         }
@@ -231,7 +228,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     public void update(Channel c) {
         int length = list.size();
 
-        // Go through the list of programs and find the
+        // Go through the list of channels and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
             if (list.get(i).id == c.id) {
@@ -239,5 +236,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 break;
             }
         }
+    }
+
+    public Channel getSelectedItem() {
+        return list.get(selectedPosition);
     }
 }

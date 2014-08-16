@@ -34,6 +34,8 @@ import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
+
 public class HTSConnection extends Thread {
 
     public static final int TIMEOUT_ERROR = 1;
@@ -84,7 +86,7 @@ public class HTSConnection extends Thread {
         }
     }
 
-    //sychronized, blocking connect
+    // synchronized, blocking connect
     public void open(String hostname, int port) {
         if (running) {
             return;

@@ -1,71 +1,89 @@
-/*
- *  Copyright (C) 2013 Robert Siebert
- *
- * This file is part of TVHGuide.
- *
- * TVHGuide is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * TVHGuide is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
- */
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.WakeOnLanTask;
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class SettingsManageConnectionsActivity extends ActionBarActivity implements ActionMode.Callback {
+public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
 
-    private ActionBar actionBar = null;
+    private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();
+    
+    private ActionBarActivity activity;
+    private ActionBarInterface actionBarInterface;
+    private SettingsInterface settingsInterface;
+    
     private ConnectionListAdapter adapter;
-    private List<Connection> connList;
     private ListView listView;
-    private boolean connectionChanged;
+    private List<Connection> connList;
     private ActionMode actionMode;
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        // Return if frame for this fragment doesn't exist because the fragment
+        // will not be shown.
+        if (container == null) {
+            return null;
+        }
+     
+        View v = inflater.inflate(R.layout.list_layout, container, false);
+        listView = (ListView) v.findViewById(R.id.item_list);
+        return v;
+    }
+    
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (ActionBarActivity) activity;
+    }
 
     @Override
-    public void onCreate(Bundle icicle) {
-        setTheme(Utils.getThemeId(this));
-        super.onCreate(icicle);
-        setContentView(R.layout.list_layout);
+    public void onDetach() {
+        actionBarInterface = null;
+        settingsInterface = null;
+        super.onDetach();
+    }
+    
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         
-        // Setup the action bar and show the title
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(R.string.pref_manage_connections);
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        if (activity instanceof SettingsInterface) {
+            settingsInterface = (SettingsInterface) activity;
+        }
         
         connList = new ArrayList<Connection>();
-        adapter = new ConnectionListAdapter(this, connList);
-        listView = (ListView) findViewById(R.id.item_list);
+        adapter = new ConnectionListAdapter(activity, connList);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
+        
         // Show the available menu options when the user clicks on a connection.
         // The options are realized by using the action mode instead of a
         // regular context menu. 
@@ -78,11 +96,17 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
                 // Set the currently selected item as checked so we know which
                 // position the user has clicked
                 listView.setItemChecked(position, true);
-                actionMode = startSupportActionMode(SettingsManageConnectionsActivity.this);
+                startActionMode();
                 view.setSelected(true);
                 return;
             }
         });
+        
+        setHasOptionsMenu(true);
+    }
+
+    private void startActionMode() {
+        actionMode = activity.startSupportActionMode(this);
     }
 
     @Override
@@ -104,39 +128,28 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
         }
         adapter.sort();
         adapter.notifyDataSetChanged();
-        actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections));
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
+        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.preference_connections, menu);
-        return true;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.preference_connections, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
-            onBackPressed();
-            return true;
-
         case R.id.menu_add:
-            Intent intent = new Intent(this, SettingsAddConnectionActivity.class);
-            startActivityForResult(intent, Constants.RESULT_CODE_CONNECTIONS);
+            if (settingsInterface != null) {
+                settingsInterface.addConnection();
+            }
             return true;
-
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.BUNDLE_RECONNECT, connectionChanged);
-        setResult(RESULT_OK, returnIntent);
-        finish();
     }
 
     /**
@@ -146,7 +159,9 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
      * @param c
      */
     private void setConnectionActive(Connection c) {
-        connectionChanged = true;
+        if (settingsInterface != null) {
+            settingsInterface.reconnect();
+        }
 
         // Switch the selection status
         c.selected = (c.selected) ? false : true;
@@ -161,15 +176,6 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
         DatabaseHelper.getInstance().updateConnection(c);
         showConnections();
     }
-    
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.RESULT_CODE_CONNECTIONS) {
-            if (resultCode == RESULT_OK) {
-                connectionChanged = data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false);
-            }
-        }
-    }
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
@@ -179,11 +185,17 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
         
         switch (item.getItemId()) {
         case R.id.menu_set_active:
+            if (!c.selected && settingsInterface != null) {
+                settingsInterface.reconnect();
+            }
             setConnectionActive(c);
             mode.finish();
             return true;
 
         case R.id.menu_set_not_active:
+            if (c.selected && settingsInterface != null) {
+                settingsInterface.reconnect();
+            }
             c.selected = false;
             DatabaseHelper.getInstance().updateConnection(c);
             showConnections();
@@ -191,15 +203,15 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
             return true;
 
         case R.id.menu_edit:
-            Intent intent = new Intent(this, SettingsAddConnectionActivity.class);
-            intent.putExtra("id", c.id);
-            startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
+            if (settingsInterface != null) {
+                settingsInterface.editConnection(c.id);
+            }
             mode.finish();
             return true;
 
         case R.id.menu_send_wol:
             if (c != null) {
-                WakeOnLanTask task= new WakeOnLanTask(this, c);
+                WakeOnLanTask task= new WakeOnLanTask(activity, c);
                 task.execute();
             }
             mode.finish();
@@ -207,7 +219,7 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
 
         case R.id.menu_delete:
             // Show confirmation dialog to cancel 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setMessage(getString(R.string.delete_connection, c.name));
             builder.setTitle(getString(R.string.menu_delete));
             // Define the action of the yes button
@@ -217,8 +229,12 @@ public class SettingsManageConnectionsActivity extends ActionBarActivity impleme
                         adapter.remove(c);
                         adapter.notifyDataSetChanged();
                         adapter.sort();
-                        actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections));
-                        connectionChanged = true;
+                        if (actionBarInterface != null) {
+                            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
+                        }
+                        if (settingsInterface != null) {
+                            settingsInterface.reconnect();
+                        }
                     }
                 }
             });

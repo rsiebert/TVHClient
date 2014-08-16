@@ -154,7 +154,7 @@ public class Utils {
         if (conn != null) {
             // Create an intent and pass on the connection details
             intent = new Intent(context, HTSService.class);
-            intent.setAction(HTSService.ACTION_CONNECT);
+            intent.setAction(Constants.ACTION_CONNECT);
             intent.putExtra("hostname", conn.address);
             intent.putExtra("port", conn.port);
             intent.putExtra("username", conn.username);
@@ -201,7 +201,7 @@ public class Utils {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_DELETE);
+        intent.setAction(Constants.ACTION_DVR_DELETE);
         intent.putExtra("id", rec.id);
         context.startService(intent);
     }
@@ -240,7 +240,7 @@ public class Utils {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_CANCEL);
+        intent.setAction(Constants.ACTION_DVR_CANCEL);
         intent.putExtra("id", rec.id);
         context.startService(intent);
     }
@@ -254,7 +254,7 @@ public class Utils {
      */
     public static void recordProgram(final Context context, final long id, final long channelId) {
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_ADD);
+        intent.setAction(Constants.ACTION_DVR_ADD);
         intent.putExtra("eventId", id);
         intent.putExtra("channelId", channelId);
         context.startService(intent);
@@ -374,10 +374,23 @@ public class Utils {
     public static void setRecordingMenuIcons(final Context context, final Menu menu) {
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
+        MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
+        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-        recordCancelMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
-        recordRemoveMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        if (recordCancelMenuItem != null) {
+            recordCancelMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        }
+        if (recordRemoveMenuItem != null) {
+            recordRemoveMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        }
+        if (recordCancelAllMenuItem != null) {
+            recordCancelAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        }
+        if (recordRemoveAllMenuItem != null) {
+            recordRemoveAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        }
     }
 
     /**
@@ -865,7 +878,7 @@ public class Utils {
 
         // Set the required information and start the service command.
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_GET_EVENTS);
+        intent.setAction(Constants.ACTION_GET_EVENTS);
         intent.putExtra("eventId", nextId);
         intent.putExtra("channelId", channel.id);
         intent.putExtra("count", Constants.PREF_PROGRAMS_TO_LOAD);
