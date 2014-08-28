@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.fragments;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.PreferenceFragment;
@@ -10,12 +9,13 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -60,6 +60,12 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private static final String CONNECTION_WOL_BROADCAST = "conn_wol_broadcast";
     private static final String CONNECTION_CHANGED = "conn_changed";
 
+    private static final String IP_ADDRESS = 
+            "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+            "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+            "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+            "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+    
     Connection conn = null;
     private boolean connectionChanged;
     
@@ -439,6 +445,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * 
      * @return
      */
+    @SuppressLint("NewApi")
     private boolean validateIpAddress() {
         // Initialize in case it's somehow null
         if (conn.address == null) {
@@ -464,7 +471,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
         // Now validate the IP address
         if (matcher.matches()) {
-            pattern = Patterns.IP_ADDRESS;
+            pattern = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) ? Patterns.IP_ADDRESS : Pattern.compile(IP_ADDRESS);
             matcher = pattern.matcher(conn.address);
             if (!matcher.matches()) {
                 Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();

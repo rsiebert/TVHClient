@@ -25,8 +25,10 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -226,6 +228,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
      * This line is only visible in the first screen where the current time is
      * shown.
      */
+    @SuppressWarnings("deprecation")
+    @SuppressLint("InlinedApi")
     private void setCurrentTimeIndication() {
         if (bundle != null && currentTimeIndication != null && activity != null) {
             int tabIndex = bundle.getInt(Constants.BUNDLE_EPG_INDEX, -1);
@@ -250,7 +254,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                 titleLayout.getLocalVisibleRect(titleLayoutRect);
 
                 // Set the left and top margins of the time indication
-                RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(3, LayoutParams.MATCH_PARENT);
+                final int layout = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) ? LayoutParams.MATCH_PARENT : LayoutParams.FILL_PARENT;
+                RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(3, layout);
                 parms.setMargins(offset, titleLayoutRect.height(), 0, 0);
                 currentTimeIndication.setLayoutParams(parms);
             } else {
