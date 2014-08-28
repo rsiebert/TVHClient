@@ -31,11 +31,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
 public class SettingsActivity extends ActionBarActivity implements ActionBarInterface, SettingsInterface {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
@@ -60,8 +60,6 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
-        
         // When the orientation was changed the last visible fragment is
         // available from the manager. If this is the case get it and show it
         // again.
@@ -106,32 +104,25 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed bs count" + getSupportFragmentManager().getBackStackEntryCount());
-
-        if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
-            Log.d(TAG, "onBackPressed, SettingsFragment, calling finish");
+        if (getSupportFragmentManager().getBackStackEntryCount() <= 1 || manageConnections) {
             restartNow();
         } else {
-            Log.d(TAG, "onBackPressed pop stack");
             getSupportFragmentManager().popBackStack();
         }
     }
 
     @Override
     public void restart() {
-        Log.d(TAG, "restart");
         restart = true;
     }
 
     @Override
     public void reconnect() {
-        Log.d(TAG, "reconnect");
         reconnect = true;
     }
 
     @Override
     public void restartNow() {
-        Log.d(TAG, "restartNow");
         Intent intent = getIntent();
         intent.putExtra(Constants.BUNDLE_RESTART, restart);
         intent.putExtra(Constants.BUNDLE_RECONNECT, reconnect);
@@ -141,8 +132,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
     @Override
     public void manageConnections() {
-        Log.d(TAG, "manageConnections");
-        
+
         removePreviousFragment();
 
         getSupportFragmentManager().beginTransaction()
@@ -154,10 +144,9 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
     @Override
     public void addConnection() {
-        Log.d(TAG, "addConnection");
-        
+
         removePreviousFragment();
-        
+
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsManageConnectionFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -167,10 +156,9 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
     @Override
     public void editConnection(long id) {
-        Log.d(TAG, "editConnection " + id);
-        
+
         removePreviousFragment();
-        
+
         Bundle bundle = new Bundle();
         bundle.putLong(Constants.BUNDLE_CONNECTION_ID, id);
         Fragment f = Fragment.instantiate(this, SettingsManageConnectionFragment.class.getName());
