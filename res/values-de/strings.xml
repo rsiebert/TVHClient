@@ -77,6 +77,8 @@
     <string name="pref_language_sum">Wähle die Sprache, die verwendet werden soll.</string>
     <string name="pref_default_menu">Start-Ansicht</string>
     <string name="pref_default_menu_sum">Wähle die Ansicht bzw. die Aktion, die nach dem Start zuerst angezeigt werden soll.</string>
+    <string name="pref_sort_channels">Sender-Reihenfolge</string>
+    <string name="pref_sort_channels_sum">Legt fest in welcher Reihenfolge die Sender angezeigt werden.</string>
     <string name="pref_res">Auflösung</string>
     <string name="pref_res_sum">Maximale Auflösung, die der Transcoder verwenden soll.</string>
     <string name="pref_acodec">Audio-Codec</string>

@@ -31,7 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ProgramGuidePagerFragment  extends Fragment implements FragmentControlInterface {
+public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuidePagerFragment.class.getSimpleName();
@@ -259,23 +259,7 @@ public class ProgramGuidePagerFragment  extends Fragment implements FragmentCont
     }
 
     @Override
-    public void setSelection(final int position) {
-        // The main activity has only access to this fragment, but not the child
-        // fragments which this fragment is controlling. Forward the scrolling
-        // positions to all fragments in the pager and to the channel list
-        // fragment.
-        Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":0");
-        if (f instanceof ProgramGuideListFragment && f instanceof FragmentControlInterface) {
-            ((FragmentControlInterface) f).setSelection(position);
-        }
-        final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
-            ((FragmentControlInterface) cf).setSelection(position);
-        }
-    }
-
-    @Override
-    public void setSelectionFromTop(final int position, final int offset) {
+    public void setSelection(final int position, final int offset) {
         // The main activity has only access to this fragment, but not the child
         // fragments which this fragment is controlling. Forward the scrolling
         // positions and offsets to all fragments in the pager and to the
@@ -283,12 +267,12 @@ public class ProgramGuidePagerFragment  extends Fragment implements FragmentCont
         for (int i = 0; i < fragmentCount; ++i) {
             Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
             if (f instanceof ProgramGuideListFragment && f instanceof FragmentControlInterface) {
-                ((FragmentControlInterface) f).setSelectionFromTop(position, offset);
+                ((FragmentControlInterface) f).setSelection(position, offset);
             }
         }
         final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
         if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
-            ((FragmentControlInterface) cf).setSelectionFromTop(position, offset);
+            ((FragmentControlInterface) cf).setSelection(position, offset);
         }
     }
 

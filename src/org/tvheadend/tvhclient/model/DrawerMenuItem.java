@@ -1,9 +1,10 @@
 package org.tvheadend.tvhclient.model;
 
+
 public class DrawerMenuItem {
 
     // Default variables
-    public int id = 0;
+    public int id = -1;
     public int icon = 0;
     public String header = "";
     public String title = "";

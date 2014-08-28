@@ -203,7 +203,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeProgram(activity, adapter.getItem(i));
+                    Utils.removeRecording(activity, adapter.getItem(i));
                     try {
                         sleep(THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
@@ -259,11 +259,11 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveProgram(activity, rec);
+            Utils.confirmRemoveRecording(activity, rec);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.confirmCancelProgram(activity, rec);
+            Utils.confirmCancelRecording(activity, rec);
             return true;
 
         case R.id.menu_play:
@@ -318,14 +318,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     }
 
     @Override
-    public void setSelection(int position) {
-        if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelection(position);
-        }
-    }
-
-    @Override
-    public void setSelectionFromTop(int position, int index) {
+    public void setSelection(int position, int index) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, index);
         }
@@ -333,7 +326,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     
     @Override
     public void setInitialSelection(int position) {
-        setSelection(position);
+        setSelection(position, 0);
 
         // Set the position in the adapter so that we can show the selected
         // recording in the theme with the arrow.

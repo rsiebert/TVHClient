@@ -49,6 +49,26 @@ public class TVHClientApplication extends Application {
 
     private volatile boolean loading = false;
 
+    // Holds a list of channels that are not allowed to load because the EPG
+    // size did not change after the last loading call.
+    private List<Channel> channelBlockingList = new ArrayList<Channel>();
+
+    public void blockChannel(Channel channel) {
+        channelBlockingList.add(channel);
+    }
+    
+    public void unblockChannel(Channel channel) {
+        channelBlockingList.remove(channel);
+    }
+
+    public void unblockAllChannels() {
+        channelBlockingList.clear();
+    }
+
+    public Boolean isChannelBlocked(Channel channel) {
+        return channelBlockingList.contains(channel);
+    }
+
     /**
      * Adds a single listener to the list.
      * 
@@ -123,7 +143,9 @@ public class TVHClientApplication extends Application {
      * @param tag
      */
     public void addChannelTag(ChannelTag tag) {
-        tags.add(tag);
+        synchronized (tags) {
+            tags.add(tag);
+        }
         if (!loading) {
             broadcastMessage(Constants.ACTION_TAG_ADD, tag);
         }
@@ -136,7 +158,9 @@ public class TVHClientApplication extends Application {
      * @param tag
      */
     public void removeChannelTag(ChannelTag tag) {
-        tags.remove(tag);
+        synchronized (tags) {
+            tags.remove(tag);
+        }
         if (!loading) {
             broadcastMessage(Constants.ACTION_TAG_DELETE, tag);
         }
@@ -149,18 +173,22 @@ public class TVHClientApplication extends Application {
      * @param tag
      */
     public void removeChannelTag(long id) {
-        for (ChannelTag tag : getChannelTags()) {
-            if (tag.id == id) {
-                removeChannelTag(tag);
-                return;
+        synchronized (tags) {
+            for (ChannelTag tag : getChannelTags()) {
+                if (tag.id == id) {
+                    removeChannelTag(tag);
+                    return;
+                }
             }
         }
     }
 
     public ChannelTag getChannelTag(long id) {
-        for (ChannelTag tag : getChannelTags()) {
-            if (tag.id == id) {
-                return tag;
+        synchronized (tags) {
+            for (ChannelTag tag : getChannelTags()) {
+                if (tag.id == id) {
+                    return tag;
+                }
             }
         }
         return null;
@@ -173,7 +201,9 @@ public class TVHClientApplication extends Application {
     }
 
     public void addChannel(Channel channel) {
-        channels.add(channel);
+        synchronized (channels) {
+            channels.add(channel);
+        }
         if (!loading) {
             broadcastMessage(Constants.ACTION_CHANNEL_ADD, channel);
         }
@@ -184,26 +214,32 @@ public class TVHClientApplication extends Application {
     }
 
     public void removeChannel(Channel channel) {
-        channels.remove(channel);
+        synchronized (channels) {
+            channels.remove(channel);
+        }
         if (!loading) {
             broadcastMessage(Constants.ACTION_CHANNEL_DELETE, channel);
         }
     }
 
     public Channel getChannel(long id) {
-        for (Channel ch : getChannels()) {
-            if (ch.id == id) {
-                return ch;
+        synchronized (channels) {
+            for (Channel ch : getChannels()) {
+                if (ch.id == id) {
+                    return ch;
+                }
             }
         }
         return null;
     }
 
     public void removeChannel(long id) {
-        for (Channel ch : getChannels()) {
-            if (ch.id == id) {
-                removeChannel(ch);
-                return;
+        synchronized (channels) {
+            for (Channel ch : getChannels()) {
+                if (ch.id == id) {
+                    removeChannel(ch);
+                    return;
+                }
             }
         }
     }
@@ -214,26 +250,28 @@ public class TVHClientApplication extends Application {
         }
     }
 
-    public void addProgramme(Program p) {
+    public void addProgram(Program p) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_PROGRAMME_ADD, p);
         }
     }
 
-    public void removeProgramme(Program p) {
+    public void removeProgram(Program p) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_PROGRAMME_DELETE, p);
         }
     }
 
-    public void updateProgramme(Program p) {
+    public void updateProgram(Program p) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_PROGRAMME_UPDATE, p);
         }
     }
 
     public void addRecording(Recording rec) {
-        recordings.add(rec);
+        synchronized (recordings) {
+            recordings.add(rec);
+        }
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_ADD, rec);
         }
@@ -243,8 +281,58 @@ public class TVHClientApplication extends Application {
         return recordings;
     }
 
+    /**
+     * 
+     * @param type
+     * @return
+     */
+    public List<Recording> getRecordings(int type) {
+        List<Recording> recordings = new ArrayList<Recording>();
+
+        switch (type) {
+        case Constants.RECORDING_TYPE_COMPLETED:
+            for (Recording rec : getRecordings()) {
+                if (rec.error == null && rec.state.equals("completed")) {
+                    recordings.add(rec);
+                }
+            }
+            break;
+
+        case Constants.RECORDING_TYPE_SCHEDULED:
+            for (Recording rec : getRecordings()) {
+                if (rec.error == null
+                        && !rec.state.equals("autorec")
+                        && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                    recordings.add(rec);
+                }
+            }
+            break;
+
+        case Constants.RECORDING_TYPE_SERIES:
+            for (Recording rec : getRecordings()) {
+                if (rec.error == null
+                        && rec.state.equals("autorec")
+                        && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                    recordings.add(rec);
+                }
+            }
+            break;
+
+        case Constants.RECORDING_TYPE_FAILED:
+            for (Recording rec : getRecordings()) {
+                if ((rec.error != null || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
+                    recordings.add(rec);
+                }
+            }
+            break;
+        }
+        return recordings;
+    }
+
     public void removeRecording(Recording rec) {
-        recordings.remove(rec);
+        synchronized (recordings) {
+            recordings.remove(rec);
+        }
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_DELETE, rec);
         }

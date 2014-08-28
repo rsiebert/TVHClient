@@ -52,13 +52,8 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // Clear the list and add the recordings
         adapter.clear();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        for (Recording rec : app.getRecordings()) {
-            if (rec.error == null
-                    && (rec.state.equals("scheduled") 
-                            || rec.state.equals("recording") 
-                            || rec.state.equals("autorec"))) {
-                adapter.add(rec);
-            }
+        for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_SCHEDULED)) {
+            adapter.add(rec);
         }
         adapter.sort();
         adapter.notifyDataSetChanged();

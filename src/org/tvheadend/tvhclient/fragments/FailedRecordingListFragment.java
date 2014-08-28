@@ -52,10 +52,8 @@ public class FailedRecordingListFragment extends RecordingListFragment {
         // Clear the list and add the recordings
         adapter.clear();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        for (Recording rec : app.getRecordings()) {
-            if ((rec.error != null || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
-                adapter.add(rec);
-            }
+        for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_FAILED)) {
+            adapter.add(rec);
         }
         adapter.sort();
         adapter.notifyDataSetChanged();

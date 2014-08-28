@@ -5,7 +5,6 @@
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_refresh">Odśwież</string>
     <string name="menu_tags">Tagi</string>
-    <string name="menu_recordings">Nagrania</string>
 
     <string name="menu_play">Play</string>
     <string name="menu_search">Szukaj</string>
@@ -29,7 +28,6 @@
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
-    <string name="connection_options">Opcje dla połączenia \'%s\'</string>
     <string name="cancel_connection">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="delete_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>

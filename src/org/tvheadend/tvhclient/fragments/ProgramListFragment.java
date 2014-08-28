@@ -232,15 +232,15 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveProgram(activity, program.recording);
+            Utils.confirmRemoveRecording(activity, program.recording);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.confirmCancelProgram(activity, program.recording);
+            Utils.confirmCancelRecording(activity, program.recording);
             return true;
 
         case R.id.menu_record:
-            Utils.recordProgram(activity, program.id, program.channel.id);
+            Utils.recordProgram(activity, program);
             return true;
 
         case R.id.menu_play:
@@ -381,16 +381,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void reloadData() {
         // NOP
     }
-
     @Override
-    public void setSelection(int position) {
-        if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelection(position);
-        }
-    }
-
-    @Override
-    public void setSelectionFromTop(int position, int index) {
+    public void setSelection(int position, int index) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, index);
         }
@@ -398,7 +390,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public void setInitialSelection(int position) {
-        setSelection(position);
+        setSelection(position, 0);
         // Simulate a click in the list item to inform the activity
         if (adapter != null && adapter.getCount() > position) {
             Program p = (Program) adapter.getItem(position);

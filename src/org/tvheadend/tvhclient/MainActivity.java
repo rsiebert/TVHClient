@@ -2,7 +2,9 @@ package org.tvheadend.tvhclient;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.adapter.DrawerMenuAdapter;
@@ -15,6 +17,7 @@ import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
 import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
+import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
@@ -42,7 +45,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +56,7 @@ import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
     
+    @SuppressWarnings("unused")
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private ListView drawerList;
@@ -74,20 +77,25 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private int channelListPosition = 0;
     private int completedRecordingListPosition = 0;
     private int scheduledRecordingListPosition = 0;
+    private int seriesRecordingListPosition = 0;
     private int failedRecordingListPosition = 0;
     private int programGuideListPosition = 0;
     private int programGuideListPositionOffset = 0;
 
     // The index for the navigation drawer menus
-    private static final int MENU_UNKNOWN = 0;
-    private static final int MENU_CHANNELS = 1;
-    private static final int MENU_COMPLETED_RECORDINGS = 2;
-    private static final int MENU_SCHEDULED_RECORDINGS = 3;
+    private static final int MENU_UNKNOWN = -1;
+    private static final int MENU_CHANNELS = 0;
+    private static final int MENU_COMPLETED_RECORDINGS = 1;
+    private static final int MENU_SCHEDULED_RECORDINGS = 2;
+    private static final int MENU_SERIES_RECORDINGS = 3;
     private static final int MENU_FAILED_RECORDINGS = 4;
     private static final int MENU_PROGRAM_GUIDE = 5;
     private static final int MENU_STATUS = 6;
     private static final int MENU_SETTINGS = 7;
     private static final int MENU_CONNECTIONS = 8;
+
+    // Holds the stack of menu items
+    public ArrayList<Integer> menuStack = new ArrayList<Integer>();
 
     // Indicates that a loading channel data is in progress, the next channel
     // can only be loaded when this variable is false
@@ -95,6 +103,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     // Holds a list of channels that are currently being loaded
     public List<Channel> channelLoadingList = new ArrayList<Channel>();
+
+    // Holds the number of EPG entries for each channel
+    public Map<Long, Integer> channelEpgCountList = new HashMap<Long, Integer>();
 
     // If the saved instance is not null then we return from an orientation
     // change and we do not require to recreate the fragments
@@ -112,7 +123,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     
     // Contains the information about the current connection state.
     private String connectionStatus = Constants.ACTION_CONNECTION_STATE_OK;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
@@ -135,15 +146,15 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        defaultMenuPosition = Integer.parseInt(prefs.getString("defaultMenuPosition", String.valueOf(MENU_STATUS)));
+        defaultMenuPosition = Integer.parseInt(prefs.getString("defaultMenuPositionPref", String.valueOf(MENU_STATUS)));
         
         // The drawer does not support setting the background automatically from
         // the defined theme. This needs to be done manually. Set the correct
         // background depending on the used theme.
         final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
         drawerList.setBackgroundColor((lightTheme) ? 
-                getResources().getColor(R.color.menu_background_color_light) : 
-                    getResources().getColor(R.color.menu_background_color_dark));
+                getResources().getColor(R.color.drawer_background_light) : 
+                    getResources().getColor(R.color.drawer_background_dark));
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
@@ -223,10 +234,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 final DrawerMenuItem item = drawerAdapter.getItem(position);
                 // We can't just use the list position for the menu position
                 // because the list might contain separators. So we need to get
-                // the id if the list item which is the menu position.
-                if (item != null && item.id != MENU_UNKNOWN && menuPosition != item.id) {
-                    // TODO set the selected item in the menu adapter
-                    handleMenuSelection(item.id);
+                // the id if the list item which is the menu position. 
+                if (item != null) {
+                    if (item.id != MENU_UNKNOWN && menuPosition != item.id) {
+                        menuStack.add(menuPosition);
+                        handleMenuSelection(item.id);
+                    }
                 }
             }
         });
@@ -235,17 +248,35 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // change and we do not require to recreate the fragments
         orientationChangeOccurred  = (savedInstanceState != null);
 
+        if (orientationChangeOccurred) {
+            updateDrawerMenu();
+        }
+
         // Get any saved values from the bundle
         if (savedInstanceState != null) {
+            menuStack = savedInstanceState.getIntegerArrayList(Constants.MENU_STACK);
             menuPosition = savedInstanceState.getInt(Constants.MENU_POSITION, MENU_UNKNOWN);
             channelListPosition = savedInstanceState.getInt(Constants.CHANNEL_LIST_POSITION, 0);
             completedRecordingListPosition = savedInstanceState.getInt(Constants.COMPLETED_RECORDING_LIST_POSITION, 0);
             scheduledRecordingListPosition = savedInstanceState.getInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, 0);
+            seriesRecordingListPosition = savedInstanceState.getInt(Constants.SERIES_RECORDING_LIST_POSITION, 0);
             failedRecordingListPosition = savedInstanceState.getInt(Constants.FAILED_RECORDING_LIST_POSITION, 0);
             connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
-            
-            Log.d(TAG, "onCreate connectionStatus '" + connectionStatus + "'");
         }
+    }
+
+    /**
+     * 
+     */
+    private void updateDrawerMenu() {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).count = 
+                app.getRecordings(Constants.RECORDING_TYPE_COMPLETED).size();
+        drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).count = 
+                app.getRecordings(Constants.RECORDING_TYPE_SCHEDULED).size();
+        drawerAdapter.getItem(MENU_FAILED_RECORDINGS).count = 
+                app.getRecordings(Constants.RECORDING_TYPE_FAILED).size();
+        drawerAdapter.notifyDataSetChanged();        
     }
 
     /**
@@ -267,19 +298,22 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         list.add(new DrawerMenuItem(MENU_SCHEDULED_RECORDINGS, menuItems[2],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[3],
+//        list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
+//                (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
+//                        : R.drawable.ic_menu_scheduled_recordings_dark));
+        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[4],
                 (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
                         : R.drawable.ic_menu_failed_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[4],
+        list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[5],
                 (lightTheme) ? R.drawable.ic_menu_program_guide_light
                         : R.drawable.ic_menu_program_guide_dark));
-        list.add(new DrawerMenuItem(MENU_STATUS, menuItems[5],
+        list.add(new DrawerMenuItem(MENU_STATUS, menuItems[6],
                 (lightTheme) ? R.drawable.ic_menu_status_light : R.drawable.ic_menu_status_dark));
 
         list.add(new DrawerMenuItem());
-        list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[6],
+        list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[7],
                 (lightTheme) ? R.drawable.ic_menu_settings_light : R.drawable.ic_menu_settings_dark));
-        list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[7],
+        list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[8],
                 (lightTheme) ? R.drawable.ic_menu_connections_light
                         : R.drawable.ic_menu_connections_dark));
 
@@ -288,25 +322,21 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed");
-        if (!isDualPane) {
-            Log.d(TAG, "onBackPressed bs count" + getSupportFragmentManager().getBackStackEntryCount());
-            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f == null) {
-                Log.d(TAG, "onBackPressed, null, calling super");
-                super.onBackPressed();
-            } 
-            else if (f instanceof ChannelListFragment && getSupportFragmentManager().getBackStackEntryCount() <= 1) {
-                Log.d(TAG, "onBackPressed, channel list fragment, calling super");
-                super.onBackPressed();
-                finish();
-            }
-            else {
-                Log.d(TAG, "onBackPressed pop stack");
-                getSupportFragmentManager().popBackStack();
-            }
+        // Get the current fragment and check if it is a program list fragment.
+        // If yes then we need to pop the stack so we can see the channel list
+        // fragment again.
+        final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+
+        if (!isDualPane && (f instanceof ProgramListFragment)) {
+            getSupportFragmentManager().popBackStack();
         } else {
-            super.onBackPressed();
+            if (menuStack.size() > 0) {
+                // Show the previous menu item and the this as the new current
+                // menu back to the stack
+                handleMenuSelection(menuStack.remove(menuStack.size() - 1));
+            } else {
+                super.onBackPressed();
+            }
         }
     }
     
@@ -338,8 +368,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
      * not reload all data.
      */
     private void reconnectAndResume() {
-        Log.d(TAG, "reconnectAndResume");
-
         if (DatabaseHelper.getInstance() != null
                 && (DatabaseHelper.getInstance().getConnections().isEmpty() 
                         || DatabaseHelper.getInstance().getSelectedConnection() == null)) {
@@ -360,7 +388,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // If the connection status is fine go to the previous selected
             // connection or the default. If it contains a state then show
             // the status fragment.
-            Log.d(TAG, "reconnectAndResume, connectionStatus '" + connectionStatus + "'");
             handleMenuSelection((connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) ? pos : MENU_STATUS);
         }
     }
@@ -376,7 +403,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.LAST_CONNECTION_STATE, connectionStatus);
         editor.commit();
-        Log.d(TAG, "onPause connectionStatus '" + connectionStatus + "'");
     }
 
 //    @Override
@@ -409,12 +435,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState connectionStatus '" + connectionStatus + "'");
-        // Save the position of the selected menu item from the drawer
+        outState.putIntegerArrayList(Constants.MENU_STACK, menuStack);
         outState.putInt(Constants.MENU_POSITION, menuPosition);
         outState.putInt(Constants.CHANNEL_LIST_POSITION, channelListPosition);
         outState.putInt(Constants.COMPLETED_RECORDING_LIST_POSITION, completedRecordingListPosition);
         outState.putInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, scheduledRecordingListPosition);
+        outState.putInt(Constants.SERIES_RECORDING_LIST_POSITION, seriesRecordingListPosition);
         outState.putInt(Constants.FAILED_RECORDING_LIST_POSITION, failedRecordingListPosition);
         outState.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
         super.onSaveInstanceState(outState);
@@ -458,6 +484,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             return true;
 
         case R.id.menu_refresh:
+            // Clear all EPG counters and blocking entries
+            channelLoadingList.clear();
+            channelEpgCountList.clear();
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            app.unblockAllChannels();
+
             // Reconnect to the server and reload all data
             connectionStatus = Constants.ACTION_CONNECTION_STATE_OK;
             Utils.connect(this, true);
@@ -490,30 +522,40 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     /**
      * Creates the fragment with the given name and shows it on the given
-     * layout. If a bundle was given, it will be passed to the fragment. In case
-     * dual pane mode is not active the fragments will be added to the back
-     * stack so the user can navigate backwards using the back key.
+     * layout. If a bundle was given, it will be passed to the fragment.
      * 
      * @param name
      * @param layout
-     * @param bundle
+     * @param args
+     * @param addToBackStack
      */
-    private void showFragment(String name, int layout, Bundle args) {
+    private void showFragment(String name, int layout, Bundle args, boolean addToBackStack) {
         Fragment f = Fragment.instantiate(this, name);
         if (args != null) {
             f.setArguments(args);
         }
-
-        if (isDualPane) {
-            getSupportFragmentManager().beginTransaction().replace(layout, f)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit();
-        } else {
+        if (addToBackStack) {
             getSupportFragmentManager().beginTransaction().replace(layout, f)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(null)
                     .commit();
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(layout, f)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
         }
+    }
+
+    /**
+     * Creates the fragment with the given name and shows it on the given
+     * layout. If a bundle was given, it will be passed to the fragment.
+     * 
+     * @param name
+     * @param layout
+     * @param args
+     */
+    private void showFragment(String name, int layout, Bundle args) {
+        showFragment(name, layout, args, false);
     }
 
     /**
@@ -523,8 +565,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
      * @param position
      */
     private void preHandleMenuSelection(int position) {
-        // Save the menu position so we know was is selected
-        menuPosition = position;
         // Set the correct weights of the main layouts
         setLayoutWeights(position);
 
@@ -567,8 +607,14 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
      * @param position
      */
     private void handleMenuSelection(int position) {
-        Log.d(TAG, "handleMenuSelection " + position);
         preHandleMenuSelection(position);
+
+        // Save the menu position so we know which one was selected
+        menuPosition = position;
+
+        // Update the drawer menu so the correct item gets highlighted
+        drawerAdapter.setPosition(menuPosition);
+        drawerAdapter.notifyDataSetChanged();
 
         Bundle bundle = new Bundle();
 
@@ -590,6 +636,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // Show scheduled recordings
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             showFragment(ScheduledRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+            break;
+
+        case MENU_SERIES_RECORDINGS:
+            // Show series recordings
+            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            showFragment(SeriesRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_FAILED_RECORDINGS:
@@ -650,6 +702,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         case MENU_COMPLETED_RECORDINGS:
         case MENU_SCHEDULED_RECORDINGS:
+        case MENU_SERIES_RECORDINGS:
         case MENU_FAILED_RECORDINGS:
             if (isDualPane) {
                 mainLayoutWeight = 6;
@@ -721,7 +774,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     @Override
     public void onMessage(final String action, final Object obj) {
         if (action.equals(Constants.ACTION_LOADING)) {
-            Log.d(TAG, "onMessage " + action);
             runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
@@ -739,6 +791,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                                 getSupportFragmentManager().beginTransaction().remove(rf).commit();
                             }
                         }
+                    } else {
+                        updateDrawerMenu();
                     }
                 }
             });
@@ -748,8 +802,27 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // next one.
             runOnUiThread(new Runnable() {
                 public void run() {
-                    final Channel channel = (Channel) obj;
-                    channelLoadingList.remove(channel);
+                    final Channel ch = (Channel) obj;
+
+                    // Check that the number of EPG entries has changed
+                    if (ch != null && ch.epg != null) {
+                        if (channelEpgCountList.containsKey(ch.id)) {
+                            // If the EPG count has not changed, block the
+                            // channel. Otherwise unblock it
+                            if (ch.epg.size() == channelEpgCountList.get(ch.id)) {
+                                TVHClientApplication app = (TVHClientApplication) getApplication();
+                                app.blockChannel(ch);
+                            } else {
+                                channelEpgCountList.put(ch.id, ch.epg.size());
+                                TVHClientApplication app = (TVHClientApplication) getApplication();
+                                app.unblockChannel(ch);
+                            }
+                        } else {
+                            channelEpgCountList.put(ch.id, ch.epg.size());
+                        }
+                    }
+
+                    channelLoadingList.remove(ch);
                     isLoadingChannels = false;
 
                     if (!channelLoadingList.isEmpty()) {
@@ -780,6 +853,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     }
                 });
             }
+        } else if (action.equals(Constants.ACTION_DVR_ADD)
+                || action.equals(Constants.ACTION_DVR_UPDATE)
+                || action.equals(Constants.ACTION_DVR_DELETE)) {
+            updateDrawerMenu();
         }
     }
 
@@ -835,7 +912,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // the currently visible program guide list in sync by scrolling it to the same position
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
             if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
-                ((FragmentControlInterface) f).setSelectionFromTop(position, offset);
+                ((FragmentControlInterface) f).setSelection(position, offset);
             }
         }
     }
@@ -849,7 +926,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // view pager to the same position.
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
             if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
-                ((FragmentControlInterface) f).setSelectionFromTop(
+                ((FragmentControlInterface) f).setSelection(
                         programGuideListPosition,
                         programGuideListPositionOffset);
             }
@@ -881,11 +958,14 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // already being loaded
         if (!channelLoadingList.isEmpty() && !isLoadingChannels) {
             final Channel ch = channelLoadingList.get(0);
-            isLoadingChannels = true;
-            if (actionBar != null) {
-                actionBar.setSubtitle(getString(R.string.loading_channel, ch.name));
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            if (!app.isChannelBlocked(ch)) {
+                isLoadingChannels = true;
+                if (actionBar != null) {
+                    actionBar.setSubtitle(getString(R.string.loading_channel, ch.name));
+                }
+                Utils.loadMorePrograms(this, ch);
             }
-            Utils.loadMorePrograms(this, ch);
         }
     }
 
@@ -909,7 +989,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 if (isDualPane) {
                     showFragment(ProgramListFragment.class.getName(), R.id.right_fragment, bundle);
                 } else {
-                    showFragment(ProgramListFragment.class.getName(), R.id.main_fragment, bundle);
+                    showFragment(ProgramListFragment.class.getName(), R.id.main_fragment, bundle, true);
                 }
             }
             break;
@@ -926,6 +1006,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             break;
         case MENU_SCHEDULED_RECORDINGS:
             scheduledRecordingListPosition = position;
+            break;
+        case MENU_SERIES_RECORDINGS:
+            seriesRecordingListPosition = position;
             break;
         case MENU_FAILED_RECORDINGS:
             failedRecordingListPosition = position;
@@ -1004,7 +1087,19 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 }
             }
             break;
-                
+
+        case MENU_SERIES_RECORDINGS:
+            // When the recording list fragment is done loading and dual pane is
+            // active, preselect a recording from the list to show the details
+            // of this recording on the right side.
+            if (isDualPane) {
+                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f instanceof SeriesRecordingListFragment && f instanceof FragmentControlInterface) {
+                    ((FragmentControlInterface) f).setInitialSelection(seriesRecordingListPosition);
+                }
+            }
+            break;
+
         case MENU_FAILED_RECORDINGS:
             // When the recording list fragment is done loading and dual pane is
             // active, preselect a recording from the list to show the details
@@ -1023,8 +1118,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // fragment will inform us via the scrolling interface methods where
             // the channel list shall be scrolled to.
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f instanceof ProgramGuideListFragment && f instanceof FragmentControlInterface) {
-                ((FragmentControlInterface) f).setInitialSelection(channelListPosition);
+            if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+                ((FragmentControlInterface) f).setSelection(programGuideListPosition,
+                        programGuideListPositionOffset);
             }
             break;
         }

@@ -53,7 +53,9 @@ public class ProgramGuideItemView extends LinearLayout {
     private final static int PROGRAM_IS_WITHIN_TIMESLOT = 2;
     private final static int PROGRAM_OVERLAPS_TIMESLOT = 3;
     private final static int PROGRAM_MOVES_OUT_OF_TIMESLOT = 4;
-    private final static int PROGRAM_OUTSIDE_OF_TIMESLOT = 5;
+    private final static int PROGRAM_BEFORE_TIMESLOT = 5;
+    private final static int PROGRAM_AFTER_TIMESLOT = 6;
+    private final static int PROGRAM_UNKNOWN_TIMESLOT = 7;
 
     private long startTime;
     private long endTime;
@@ -112,9 +114,11 @@ public class ProgramGuideItemView extends LinearLayout {
 
         // Indicates that at least one program has been added
         boolean programAdded = false;
+
         // Indicated that the last program in the list has 
         // been found. More program need to be loaded.
         boolean lastProgramFound = false;
+
         // Defaults
         int programType = PROGRAM_TIMESLOT_ERROR;
         int programsAddedCounter = 0;
@@ -131,9 +135,12 @@ public class ProgramGuideItemView extends LinearLayout {
                     programType = getProgramType(p);
                     addCurrentProgram(p, programType, programsAddedCounter);
     
-    				// Check if the program has been added. Required further down to
-    				// check if it was the last one added 
-                    programAdded = (programType != PROGRAM_OUTSIDE_OF_TIMESLOT);
+                    // The program is only considered as added when it was
+                    // somehow within the timeslot. Required further down to
+                    // check if it was the last one added 
+                    programAdded = ((programType != PROGRAM_BEFORE_TIMESLOT)
+                            || (programType != PROGRAM_AFTER_TIMESLOT) 
+                            || (programType != PROGRAM_UNKNOWN_TIMESLOT));
                     
     				// Increase the counter which is required to fill in placeholder
     				// programs in case the first program in the guide data is
@@ -147,9 +154,9 @@ public class ProgramGuideItemView extends LinearLayout {
     				// Stop adding more programs if the last program is within the 
     				// time slot and no more data is available or the program added 
     				// is the last one that fits into or overlaps the time slot.
-                    if ((programType == PROGRAM_IS_WITHIN_TIMESLOT && lastProgramFound) ||
-    	                programType == PROGRAM_MOVES_OUT_OF_TIMESLOT || 
-                        programType == PROGRAM_OVERLAPS_TIMESLOT) {
+                    if ((programType == PROGRAM_IS_WITHIN_TIMESLOT && lastProgramFound)
+                            || programType == PROGRAM_MOVES_OUT_OF_TIMESLOT
+                            || programType == PROGRAM_OVERLAPS_TIMESLOT) {
                         break;
                     }
                 }
@@ -159,18 +166,23 @@ public class ProgramGuideItemView extends LinearLayout {
             Log.e(TAG, "The selected channel contains no programs.");
         }
 
-        // Add the loading indication
-        if (lastProgramFound && 
-                (programType == PROGRAM_MOVES_INTO_TIMESLOT ||
-                 programType == PROGRAM_IS_WITHIN_TIMESLOT || 
-                 programType == PROGRAM_OUTSIDE_OF_TIMESLOT)) {
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+
+        // Add the loading indication only when the channel is not blocked and
+        // the program is the last one and overlaps the timeslot somehow. 
+        // Otherwise show that no program data is available.
+        if (!app.isChannelBlocked(channel)
+                && lastProgramFound
+                && (programType == PROGRAM_MOVES_INTO_TIMESLOT || programType == PROGRAM_IS_WITHIN_TIMESLOT)) {
             addLoadingIndication();
+        } else {
+            addEmptyProgramToView();
         }
 
         // If the program that was last added was added in the view and it was
         // the last program in the guide then try to load more programs.
         // Also load programs when no program at all was added.
-        if ((programAdded && lastProgramFound) || !programAdded) {
+        if (!app.isChannelBlocked(channel) && ((programAdded && lastProgramFound) || !programAdded)) {
             if (fragmentStatusInterface != null) {
                 fragmentStatusInterface.moreDataRequired(channel, TAG);
             }
@@ -205,9 +217,17 @@ public class ProgramGuideItemView extends LinearLayout {
         } else if (programStartTime < startTime && programEndTime > endTime) {
             // The program starts before and ends after the time slot times
             return PROGRAM_OVERLAPS_TIMESLOT;
+        } else if (programStartTime < startTime && programEndTime < startTime) {
+            // The program starts and ends before the timeslot and is therefore
+            // outside of it
+            return PROGRAM_BEFORE_TIMESLOT;
+        } else if (programStartTime > endTime && programEndTime > programStartTime) {
+            // The program start and ends after the timeslot and is therefore
+            // outside of it
+            return PROGRAM_AFTER_TIMESLOT;
         } else {
-            // The program start and ends times are not part of the time slot
-            return PROGRAM_OUTSIDE_OF_TIMESLOT;
+            // This should never happen
+            return PROGRAM_UNKNOWN_TIMESLOT;
         }
     }
 

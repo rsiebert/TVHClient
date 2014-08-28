@@ -50,10 +50,8 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         // Clear the list and add the recordings
         adapter.clear();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        for (Recording rec : app.getRecordings()) {
-            if (rec.error == null && rec.state.equals("completed")) {
-                adapter.add(rec);
-            }
+        for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_COMPLETED)) {
+            adapter.add(rec);
         }
         adapter.sort();
         adapter.notifyDataSetChanged();

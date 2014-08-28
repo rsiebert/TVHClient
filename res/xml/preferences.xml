@@ -36,12 +36,21 @@
         <ListPreference
             android:name="@string/pref_default_menu"
             android:summary="@string/pref_default_menu_sum"
-            android:defaultValue="1"
+            android:defaultValue="0"
             android:title="@string/pref_default_menu"
-            android:key="defaultMenuPosition"
+            android:key="defaultMenuPositionPref"
             android:dialogTitle="@string/pref_default_menu"
             android:entries="@array/pref_menu_names"
             android:entryValues="@array/pref_menu_ids" />
+        <ListPreference
+            android:name="@string/pref_sort_channels"
+            android:summary="@string/pref_sort_channels_sum"
+            android:defaultValue="0"
+            android:title="@string/pref_sort_channels"
+            android:key="sortChannelsPref"
+            android:dialogTitle="@string/pref_sort_channels"
+            android:entries="@array/pref_sort_channels_names"
+            android:entryValues="@array/pref_sort_channels_ids" />
         <PreferenceScreen
             android:title="@string/pref_genre_colors" 
             android:summary="@string/pref_genre_colors_sum" >

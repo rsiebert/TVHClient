@@ -21,7 +21,9 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -55,12 +57,36 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         this.list = list;
     }
 
-    public void sort() {
-        sort(new Comparator<Channel>() {
-            public int compare(Channel x, Channel y) {
-                return x.compareTo(y);
-            }
-        });
+    public void sort(final int type) {
+        switch (type) {
+        case Constants.CHANNEL_SORT_DEFAULT:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    return x.compareTo(y);
+                }
+            });
+            break;
+        case Constants.CHANNEL_SORT_BY_NAME:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    return x.name.toLowerCase(Locale.US).compareTo(y.name.toLowerCase(Locale.US));
+                }
+            });
+            break;
+        case Constants.CHANNEL_SORT_BY_NUMBER:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    if (x.number > y.number) {
+                        return 1;
+                    } else if (x.number < y.number) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            break;
+        }
     }
 
     public void setPosition(int pos) {
@@ -187,16 +213,21 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Get the iterator so we can check the channel status 
             Iterator<Program> it = c.epg.iterator();
             
+            // Get the program that is currently running
+            // and set all the available values
+            Program p = null;
+            if (it.hasNext()) {
+                p = it.next();
+            }
+
             // Check if the channel is actually transmitting
             // data and contains program data which can be shown.
-            if (!c.isTransmitting && it.hasNext()) {
+            if (!c.isTransmitting && p != null) {
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_transmission);
                 }
-            } else if (it.hasNext()) {
-                // Get the program that is currently running
-                // and set all the available values
-                Program p = it.next();
+                Utils.setGenreColor(context, holder.genre, p.contentType, TAG);
+            } else if (p != null) {
                 if (holder.title != null) {
                     holder.title.setText(p.title);
                 }
@@ -219,6 +250,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
                 if (holder.duration != null) {
                     holder.duration.setVisibility(View.GONE);
+                }
+                if (holder.genre != null) {
+                    holder.genre.setVisibility(View.GONE);
                 }
             }
         }

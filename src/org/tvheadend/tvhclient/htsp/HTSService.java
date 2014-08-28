@@ -308,7 +308,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         ch.epg.removeAll(tmp);
 
         for (Program p : tmp) {
-            app.removeProgramme(p);
+            app.removeProgram(p);
         }
 
         final long eventId = currEventId != 0 ? currEventId : nextEventId;
@@ -376,7 +376,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         for (Program p : rec.channel.epg) {
             if (p.recording == rec) {
                 p.recording = null;
-                app.updateProgramme(p);
+                app.updateProgram(p);
                 break;
             }
         }
@@ -679,7 +679,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     
                     p.channel = ch;
                     if (ch.epg.add(p)) {
-                        app.addProgramme(p);
+                        app.addProgram(p);
                     }
                 }
                 app.updateChannel(ch);
@@ -711,7 +711,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 p.channel = ch;
 
                 if (ch.epg.add(p)) {
-                    app.addProgramme(p);
+                    app.addProgram(p);
                     app.updateChannel(ch);
                 }
             }
@@ -787,7 +787,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                         if (p.id == eventId) {
                             TVHClientApplication app = (TVHClientApplication) getApplication();
                             p.recording = app.getRecording(response.getLong("id", 0));
-                            app.updateProgramme(p);
+                            app.updateProgram(p);
                             break;
                         }
                     }

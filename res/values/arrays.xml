@@ -66,6 +66,7 @@
         <item>pl</item>
         <item>sv</item>
         <item>nl</item>
+        <item>it</item>
     </string-array>
     
     <string-array name="pref_language_list_display">
@@ -76,9 +77,11 @@
         <item>Polski</item>
         <item>Swedish</item>
         <item>Dutch</item>
+        <item>Italian</item>
     </string-array>
 
     <string-array name="pref_menu_ids">
+        <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -93,6 +96,7 @@
         <item>Channels</item>
         <item>Completed Recordings</item>
         <item>Scheduled Recordings</item>
+        <item>Autorec Recordings</item>
         <item>Failed Recordings</item>
         <item>Program Guide</item>
         <item>Status</item>
@@ -100,4 +104,15 @@
         <item>Connections</item>
     </string-array>
 
+    <string-array name="pref_sort_channels_ids">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Default</item>
+        <item>By Name</item>
+        <item>By Number</item>
+    </string-array>
 </resources>

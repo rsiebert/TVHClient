@@ -60,7 +60,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
     private LinearLayout playerLayout;
     private TextView play;
-    private TextView record;
     private TextView recordCancel;
     private TextView recordRemove;
 
@@ -115,7 +114,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
         play = (TextView) v.findViewById(R.id.menu_play);
-        record = (TextView) v.findViewById(R.id.menu_record);
         recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
         recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
 
@@ -157,7 +155,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private void showPlayerControls() {
         playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
         play.setVisibility(View.GONE);
-        record.setVisibility(View.GONE);
         recordCancel.setVisibility(View.GONE);
         recordRemove.setVisibility(View.GONE);
 
@@ -190,22 +187,16 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 }
             }
         });
-        record.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.recordProgram(activity, rec.id, rec.channel.id);
-            }
-        });
         recordCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.confirmCancelProgram(activity, rec);
+                Utils.confirmCancelRecording(activity, rec);
             }
         });
         recordRemove.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.confirmRemoveProgram(activity, rec);
+                Utils.confirmRemoveRecording(activity, rec);
             }
         });
     }

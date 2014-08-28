@@ -204,6 +204,9 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
      * 
      */
     private void showPlayerControls() {
+        if (program == null) {
+            return;
+        }
 
         playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
         play.setVisibility(View.VISIBLE);
@@ -259,19 +262,19 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         record.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.recordProgram(activity, program.id, program.channel.id);
+                Utils.recordProgram(activity, program);
             }
         });
         recordCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.confirmCancelProgram(activity, program.recording);
+                Utils.confirmCancelRecording(activity, program.recording);
             }
         });
         recordRemove.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.confirmRemoveProgram(activity, program.recording);
+                Utils.confirmRemoveRecording(activity, program.recording);
             }
         });
     }

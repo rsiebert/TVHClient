@@ -29,24 +29,32 @@ public class Constants {
     public static final String BUNDLE_MANAGE_CONNECTIONS = "manageConnections";
 
     // Differentiates the different types of recordings
-    public static final String RECORDING_TYPE_COMPLETED = "recordingTypeCompleted";
-    public static final String RECORDING_TYPE_SCHEDULED = "recordingTypeScheduled";
-    public static final String RECORDING_TYPE_FAILED = "recordingTypeFailed";
+    public static final int RECORDING_TYPE_COMPLETED = 1;
+    public static final int RECORDING_TYPE_SCHEDULED = 2;
+    public static final int RECORDING_TYPE_SERIES = 3;
+    public static final int RECORDING_TYPE_FAILED = 4;
 
     // Strings that determine the navigation drawer menu position and the list
     // positions so it can be reselected after an orientation change.
+    public static final String MENU_STACK = "menu_stack";
     public static final String MENU_POSITION = "menu_position";
     public static final String CHANNEL_LIST_POSITION = "channel_list_position";
     public static final String PROGRAM_LIST_POSITION = "program_list_position";
     public static final String COMPLETED_RECORDING_LIST_POSITION = "completed_recording_list_position";
     public static final String SCHEDULED_RECORDING_LIST_POSITION = "scheduled_recording_list_position";
+    public static final String SERIES_RECORDING_LIST_POSITION = "series_recording_list_position";
     public static final String FAILED_RECORDING_LIST_POSITION = "failed_recording_list_position";
     public static final String LAST_CONNECTION_STATE = "last_connection_state";
 
     // Default values for the program guide
     public static final String EPG_DEFAULT_MAX_DAYS = "7";
     public static final String EPG_DEFAULT_HOURS_VISIBLE = "4";
-    
+
+    // Channel sorting order
+    public static final int CHANNEL_SORT_DEFAULT = 0;
+    public static final int CHANNEL_SORT_BY_NAME = 1;
+    public static final int CHANNEL_SORT_BY_NUMBER = 2;
+
     // HTSP connection status
     public static final String ACTION_CONNECTION_STATE_LOST = "action_connection_state_lost";
     public static final String ACTION_CONNECTION_STATE_TIMEOUT = "action_connection_state_timeout";
@@ -89,5 +97,4 @@ public class Constants {
     public static final String ACTION_FEEDBACK = "FEEDBACK";
     public static final String ACTION_GET_TICKET = "GET_TICKET";
     public static final String ACTION_GET_DISC_STATUS = "GET_DISC_STATUS";
-
 }

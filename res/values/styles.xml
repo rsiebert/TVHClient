@@ -121,6 +121,7 @@
         <item name="TimelineListLayoutStyle">@drawable/timeline_list_dark</item>
         <item name="MenuItemLayoutStyle">@drawable/menu_item_dark</item>
         <item name="MenuHeaderLayoutStyle">@drawable/menu_header_dark</item>
+        <item name="menu_text_selector">@drawable/menu_text_selector_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -155,6 +156,7 @@
         <item name="TimelineListLayoutStyle">@drawable/timeline_list_light</item>
         <item name="MenuItemLayoutStyle">@drawable/menu_item_light</item>
         <item name="MenuHeaderLayoutStyle">@drawable/menu_header_light</item>
+        <item name="menu_text_selector">@drawable/menu_text_selector_light</item>
     </style>
 
 </resources>

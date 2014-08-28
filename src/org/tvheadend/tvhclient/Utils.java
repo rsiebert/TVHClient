@@ -174,14 +174,14 @@ public class Utils {
      * @param context
      * @param id
      */
-    public static void confirmRemoveProgram(final Context context, final Recording rec) {
+    public static void confirmRemoveRecording(final Context context, final Recording rec) {
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_remove)
         .setMessage(context.getString(R.string.delete_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                removeProgram(context, rec);
+                removeRecording(context, rec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -196,7 +196,7 @@ public class Utils {
      * @param context
      * @param id
      */
-    public static void removeProgram(final Context context, final Recording rec) {
+    public static void removeRecording(final Context context, final Recording rec) {
         if (rec == null) {
             return;
         }
@@ -213,14 +213,14 @@ public class Utils {
      * @param context
      * @param id
      */
-    public static void confirmCancelProgram(final Context context, final Recording rec) {
+    public static void confirmCancelRecording(final Context context, final Recording rec) {
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_cancel)
         .setMessage(context.getString(R.string.cancel_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                cancelProgram(context, rec);
+                cancelRecording(context, rec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -235,7 +235,7 @@ public class Utils {
      * @param context
      * @param id
      */
-    public static void cancelProgram(final Context context, final Recording rec) {
+    public static void cancelRecording(final Context context, final Recording rec) {
         if (rec == null) {
             return;
         }
@@ -252,11 +252,14 @@ public class Utils {
      * @param id
      * @param channelId
      */
-    public static void recordProgram(final Context context, final long id, final long channelId) {
+    public static void recordProgram(final Context context, final Program program) {
+        if (program == null || program.channel == null) {
+            return;
+        }
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction(Constants.ACTION_DVR_ADD);
-        intent.putExtra("eventId", id);
-        intent.putExtra("channelId", channelId);
+        intent.putExtra("eventId", program.id);
+        intent.putExtra("channelId", program.channel.id);
         context.startService(intent);
     }
 
@@ -961,5 +964,17 @@ public class Utils {
 			config.locale = new Locale(locale);
 			context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
 		}
+	}
+
+    /**
+     * Returns the type how the channels are sorted in the adapter and in which
+     * order they will then be shown in the list.
+     * 
+     * @param context
+     * @return
+     */
+	public static int getChannelSortOrder(final Activity context) {
+	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.parseInt(prefs.getString("sortChannelsPref", String.valueOf(Constants.CHANNEL_SORT_DEFAULT)));
 	}
 }

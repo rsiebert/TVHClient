@@ -2,7 +2,9 @@ package org.tvheadend.tvhclient.adapter;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.ProgramGuideItemView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.model.Channel;
@@ -40,12 +42,36 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
         this.inflater = activity.getLayoutInflater();
     }
 
-    public void sort() {
-        sort(new Comparator<Channel>() {
-            public int compare(Channel x, Channel y) {
-                return x.compareTo(y);
-            }
-        });
+    public void sort(final int type) {
+        switch (type) {
+        case Constants.CHANNEL_SORT_DEFAULT:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    return x.compareTo(y);
+                }
+            });
+            break;
+        case Constants.CHANNEL_SORT_BY_NAME:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    return x.name.toLowerCase(Locale.US).compareTo(y.name.toLowerCase(Locale.US));
+                }
+            });
+            break;
+        case Constants.CHANNEL_SORT_BY_NUMBER:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    if (x.number > y.number) {
+                        return 1;
+                    } else if (x.number < y.number) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            break;
+        }
     }
 
     public static class ViewHolder {

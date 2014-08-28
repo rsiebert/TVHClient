@@ -281,15 +281,15 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
             
         case R.id.menu_record_remove:
-            Utils.confirmRemoveProgram(activity, program.recording);
+            Utils.confirmRemoveRecording(activity, program.recording);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.confirmCancelProgram(activity, program.recording);
+            Utils.confirmCancelRecording(activity, program.recording);
             return true;
 
         case R.id.menu_record:
-            Utils.recordProgram(activity, program.id, program.channel.id);
+            Utils.recordProgram(activity, program);
             return true;
 
         case R.id.menu_play:
@@ -342,7 +342,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 adapter.add(ch);
             }
         }
-        adapter.sort();
+        adapter.sort(Utils.getChannelSortOrder(activity));
         adapter.notifyDataSetChanged();
 
         // Fill the tag adapter with the available tags so the dialog can
@@ -414,8 +414,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((Channel) obj);
+                    adapter.sort(Utils.getChannelSortOrder(activity));
                     adapter.notifyDataSetChanged();
-                    adapter.sort();
                 }
             });
         } else if (action.equals(Constants.ACTION_CHANNEL_DELETE)) {
@@ -465,14 +465,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     }
 
     @Override
-    public void setSelection(final int position) {
-        if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelection(position);
-        }
-    }
-
-    @Override
-    public void setSelectionFromTop(final int position, final int offset) {
+    public void setSelection(final int position, final int offset) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, offset);
         }
@@ -480,7 +473,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public void setInitialSelection(final int position) {
-        setSelection(position);
+        setSelection(position, 0);
         // Set the position in the adapter so that we can show the selected
         // channel in the theme with the arrow.
         if (adapter != null && adapter.getCount() > position) {

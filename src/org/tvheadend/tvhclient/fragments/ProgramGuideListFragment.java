@@ -8,8 +8,8 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -201,7 +201,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                 adapter.add(ch);
             }
         }
-        adapter.sort();
+        adapter.sort(Utils.getChannelSortOrder(activity));
         adapter.notifyDataSetChanged();
 
         // Inform the listeners that the channel list is populated.
@@ -289,15 +289,15 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             return true;
 
         case R.id.menu_record_remove:
-            Utils.removeProgram(activity, selectedProgram.recording);
+            Utils.confirmRemoveRecording(activity, selectedProgram.recording);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.cancelProgram(activity, selectedProgram.recording);
+            Utils.confirmCancelRecording(activity, selectedProgram.recording);
             return true;
 
         case R.id.menu_record:
-            Utils.recordProgram(activity, selectedProgram.id, selectedProgram.channel.id);
+            Utils.recordProgram(activity, selectedProgram);
             return true;
 
         default:
@@ -327,7 +327,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                 public void run() {
                     adapter.add((Channel) obj);
                     adapter.notifyDataSetChanged();
-                    adapter.sort();
+                    adapter.sort(Utils.getChannelSortOrder(activity));
                 }
             });
         } else if (action.equals(Constants.ACTION_CHANNEL_DELETE)) {
@@ -351,8 +351,14 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         else if (action.equals(Constants.ACTION_CHANNEL_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    adapter.update((Channel) obj);
-                    adapter.notifyDataSetChanged();
+                    final Channel ch = (Channel) obj;
+                    adapter.update(ch);
+
+                    // Only update the channel if is not blocked
+                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+                    if (!app.isChannelBlocked(ch)) {
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             });
         }
@@ -376,18 +382,11 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
     @Override
     public void setInitialSelection(final int position) {
-        setSelection(position);
+        setSelection(position, 0);
     }
 
     @Override
-    public void setSelection(final int position) {
-        if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelection(position);
-        }
-    }
-
-    @Override
-    public void setSelectionFromTop(final int position, final int offset) {
+    public void setSelection(final int position, final int offset) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, offset);
         }

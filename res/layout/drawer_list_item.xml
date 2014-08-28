@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_layout"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <LinearLayout
         android:id="@+id/header_layout"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="?attr/MenuHeaderLayoutStyle"
         android:minHeight="2dp"
@@ -30,9 +31,8 @@
 
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="56dp"
+            android:layout_width="44dp"
             android:layout_height="fill_parent"
-            android:layout_weight="0.1"
             android:contentDescription="@string/channel_icon"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
@@ -42,9 +42,8 @@
         <TextView
             android:id="@+id/title"
             style="?attr/MenuFont"
-            android:layout_width="fill_parent"
+            android:layout_width="220dp"
             android:layout_height="fill_parent"
-            android:layout_weight="0.9"
             android:gravity="center_vertical"
             android:paddingRight="8dp"
             android:text="" />
@@ -54,10 +53,7 @@
             style="?attr/MenuFont"
             android:layout_width="56dp"
             android:layout_height="fill_parent"
-            android:layout_weight="0.1"
             android:gravity="center"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
             android:text="" />
     </LinearLayout>
 

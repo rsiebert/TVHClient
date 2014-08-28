@@ -29,8 +29,6 @@
     <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
     <string name="select_connection">Välj anslutning</string>
     <string name="add_connection">Lägg till anslutning</string>
-    <string name="no_connections">Ingen anslutning tillgänglig</string>
-    <string name="create_new_connections">Vill du skapa en anslutning nu?</string>
     <string name="connection_options">Val för anslutning \'%s\'</string>
     <string name="cancel_connection">Kassera värden? Alla ändringar kommer att försvinna.</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
@@ -262,7 +260,6 @@
     
     <string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>
-    <string name="program_guide">Programguide</string>
     <string name="status">Status</string>
     <string name="items">Objekt</string>
     <string name="results">Resultat</string>
@@ -273,7 +270,6 @@
     <string name="channel">Kanaler</string>
     <string name="time">Tid</string>
     <string name="date">Datum</string>
-    <string name="shown_on_channel">på</string>
     <string name="summary">Sammandrag</string>
     <string name="description">Beskrivning</string>
     <string name="duration">Längd</string>
