@@ -1,11 +1,11 @@
 $ 1.5.0
   % VERSION 1.5.0
-  _ 16.08.2014
+  _ 28.08.2014
     * Added new navigation drawer menu that slides in from the left
     * Restructured the internals of the application to allow much more flexibility. (New screens and menu items can now be added easier)
-    * (open) Channels can be sorted by name, number or id
-    * (open) Recordings can be sorted by name or time
-    * (open) Added Italian translation
+    * Channels can be sorted by name, number or id
+    * Added Italian translation
+    * Bug fixes
 $ 1.4.4
   % VERSION 1.4.4
   _ 30.06.2014
