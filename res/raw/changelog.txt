@@ -5,6 +5,7 @@ $ 1.5.0
     * Restructured the internals of the application to allow much more flexibility. (New screens and menu items can now be added easier)
     * Channels can be sorted by name, number or id
     * Added Italian translation
+    * Support for Android API 7
     * Bug fixes
 $ 1.4.4
   % VERSION 1.4.4
