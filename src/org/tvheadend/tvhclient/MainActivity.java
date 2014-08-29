@@ -276,7 +276,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 app.getRecordings(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).count = 
                 app.getRecordings(Constants.RECORDING_TYPE_FAILED).size();
-        drawerAdapter.notifyDataSetChanged();        
+        drawerAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -859,7 +859,11 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         } else if (action.equals(Constants.ACTION_DVR_ADD)
                 || action.equals(Constants.ACTION_DVR_UPDATE)
                 || action.equals(Constants.ACTION_DVR_DELETE)) {
-            updateDrawerMenu();
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    updateDrawerMenu();
+                }
+            });
         }
     }
 
