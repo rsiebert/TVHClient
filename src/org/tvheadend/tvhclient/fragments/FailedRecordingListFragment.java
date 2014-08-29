@@ -5,6 +5,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Recording;
 
+import android.util.Log;
 import android.view.Menu;
 
 public class FailedRecordingListFragment extends RecordingListFragment {
@@ -37,8 +38,12 @@ public class FailedRecordingListFragment extends RecordingListFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Only show the cancel all recordings menu if the correct tab is
-        // selected and recordings are available that can be canceled.
+        // Only show the cancel recording menu when in dual pane mode. Only
+        // there a recording is preselected. In single mode the first recording
+        // would always be preselected. 
+        if (!isDualPane) {
+            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+        }
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
         // Playing a failed recording is not possible
@@ -77,6 +82,7 @@ public class FailedRecordingListFragment extends RecordingListFragment {
      */
     @Override
     public void onMessage(String action, final Object obj) {
+        Log.d(TAG, "onMessage " + action);
         if (action.equals(Constants.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
@@ -87,6 +93,16 @@ public class FailedRecordingListFragment extends RecordingListFragment {
                     } else {
                         populateList();
                     }
+                }
+            });
+        } else if (action.equals(Constants.ACTION_DVR_ADD) 
+                || action.equals(Constants.ACTION_DVR_DELETE)
+                || action.equals(Constants.ACTION_DVR_UPDATE)
+                || action.equals(Constants.ACTION_PROGRAMME_DELETE)
+                || action.equals(Constants.ACTION_PROGRAMME_UPDATE)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.notifyDataSetChanged();
                 }
             });
         }

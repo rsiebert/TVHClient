@@ -68,7 +68,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     // program guide where only the channel icon is relevant.
     private int adapterLayout = R.layout.recording_list_widget;
 
-    private boolean isDualPane;
+    protected boolean isDualPane;
 
     // Time to wait for the thread before the next service call is made when
     // either all recorded or scheduled programs are being removed. 
@@ -295,7 +295,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((Recording) obj);
-                    adapter.notifyDataSetChanged();
                     adapter.sort();
                 }
             });
@@ -305,7 +304,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     // Get the position of the recording that has been deleted
                     int previousPosition = adapter.getPosition((Recording) obj);
                     adapter.remove((Recording) obj);
-                    adapter.notifyDataSetChanged();
                     // Set the recording below the deleted one as selected
                     setInitialSelection(previousPosition);
                 }
@@ -314,7 +312,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.update((Recording) obj);
-                    adapter.notifyDataSetChanged();
                 }
             });
         }

@@ -37,8 +37,12 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Only show the cancel all recordings menu if the correct tab is
-        // selected and recordings are available that can be canceled.
+        // Only show the remove recording menu when in dual pane mode. Only
+        // there a recording is preselected. In single mode the first recording
+        // would always be preselected. 
+        if (!isDualPane) {
+            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+        }
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
     }
@@ -85,6 +89,16 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
                     } else {
                         populateList();
                     }
+                }
+            });
+        } else if (action.equals(Constants.ACTION_DVR_ADD) 
+                || action.equals(Constants.ACTION_DVR_DELETE)
+                || action.equals(Constants.ACTION_DVR_UPDATE)
+                || action.equals(Constants.ACTION_PROGRAMME_DELETE)
+                || action.equals(Constants.ACTION_PROGRAMME_UPDATE)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.notifyDataSetChanged();
                 }
             });
         }
