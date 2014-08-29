@@ -14,7 +14,7 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Standard</item>
+        <item>Definiert durch Server</item>
         <item>Sendername</item>
         <item>Sendernummer</item>
     </string-array>

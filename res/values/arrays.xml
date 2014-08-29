@@ -111,8 +111,8 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Default</item>
-        <item>By Name</item>
-        <item>By Number</item>
+        <item>Defined by the server</item>
+        <item>Channel name</item>
+        <item>Channel number</item>
     </string-array>
 </resources>
