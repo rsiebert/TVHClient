@@ -112,6 +112,11 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
                 holder.count.setText(String.valueOf(m.count));
                 holder.count.setVisibility((m.count > 0) ? View.VISIBLE : View.GONE);
             }
+            
+            // TODO Hide the menu item series recording for now
+            if (holder.menuLayout != null && position == 3) {
+                holder.menuLayout.setVisibility(View.GONE);
+            }
         }
         return view;
     }

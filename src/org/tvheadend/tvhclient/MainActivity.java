@@ -298,9 +298,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         list.add(new DrawerMenuItem(MENU_SCHEDULED_RECORDINGS, menuItems[2],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
-//        list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
-//                (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
-//                        : R.drawable.ic_menu_scheduled_recordings_dark));
+        list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
+                (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
+                        : R.drawable.ic_menu_scheduled_recordings_dark));
         list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[4],
                 (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
                         : R.drawable.ic_menu_failed_recordings_dark));
@@ -760,6 +760,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     if (data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false)) {
                         connectionStatus = Constants.ACTION_CONNECTION_STATE_OK;
                         Utils.connect(this, true);
+                        Intent intent = getIntent();
+                        finish();
+                        startActivity(intent);
                     }
                 }
             }
