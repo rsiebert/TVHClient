@@ -446,8 +446,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     tagAdapter.remove(tag);
                 }
             });
-        } else if (action.equals(Constants.ACTION_PROGRAMME_UPDATE)
-                || action.equals(Constants.ACTION_PROGRAMME_DELETE)
+        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)
+                || action.equals(Constants.ACTION_PROGRAM_DELETE)
                 || action.equals(Constants.ACTION_DVR_ADD)
                 || action.equals(Constants.ACTION_DVR_UPDATE)) {
             // An existing program has been updated

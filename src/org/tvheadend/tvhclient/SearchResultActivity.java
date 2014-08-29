@@ -275,7 +275,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_PROGRAMME_ADD)) {
+        if (action.equals(Constants.ACTION_PROGRAM_ADD)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
@@ -289,7 +289,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                     }
                 }
             });
-        } else if (action.equals(Constants.ACTION_PROGRAMME_DELETE)) {
+        } else if (action.equals(Constants.ACTION_PROGRAM_DELETE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
@@ -297,7 +297,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                     adapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(Constants.ACTION_PROGRAMME_UPDATE)) {
+        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.update((Program) obj);

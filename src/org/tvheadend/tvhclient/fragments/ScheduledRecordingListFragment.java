@@ -95,12 +95,10 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
             });
         } else if (action.equals(Constants.ACTION_DVR_ADD) 
                 || action.equals(Constants.ACTION_DVR_DELETE)
-                || action.equals(Constants.ACTION_DVR_UPDATE)
-                || action.equals(Constants.ACTION_PROGRAMME_DELETE)
-                || action.equals(Constants.ACTION_PROGRAMME_UPDATE)) {
+                || action.equals(Constants.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    adapter.notifyDataSetChanged();
+                    populateList();
                 }
             });
         }

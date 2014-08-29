@@ -330,7 +330,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 }
             });
-        } else if (action.equals(Constants.ACTION_PROGRAMME_ADD)) {
+        } else if (action.equals(Constants.ACTION_PROGRAM_ADD)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
@@ -344,7 +344,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 }
             });
-        } else if (action.equals(Constants.ACTION_PROGRAMME_DELETE)) {
+        } else if (action.equals(Constants.ACTION_PROGRAM_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.remove((Program) obj);
@@ -354,7 +354,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 }
             });
-        } else if (action.equals(Constants.ACTION_PROGRAMME_UPDATE)) {
+        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.update((Program) obj);

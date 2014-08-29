@@ -4,8 +4,6 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Recording;
-
-import android.util.Log;
 import android.view.Menu;
 
 public class FailedRecordingListFragment extends RecordingListFragment {
@@ -82,7 +80,6 @@ public class FailedRecordingListFragment extends RecordingListFragment {
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        Log.d(TAG, "onMessage " + action);
         if (action.equals(Constants.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
@@ -97,12 +94,10 @@ public class FailedRecordingListFragment extends RecordingListFragment {
             });
         } else if (action.equals(Constants.ACTION_DVR_ADD) 
                 || action.equals(Constants.ACTION_DVR_DELETE)
-                || action.equals(Constants.ACTION_DVR_UPDATE)
-                || action.equals(Constants.ACTION_PROGRAMME_DELETE)
-                || action.equals(Constants.ACTION_PROGRAMME_UPDATE)) {
+                || action.equals(Constants.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    adapter.notifyDataSetChanged();
+                    populateList();
                 }
             });
         }

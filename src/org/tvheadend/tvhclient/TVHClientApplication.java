@@ -252,19 +252,19 @@ public class TVHClientApplication extends Application {
 
     public void addProgram(Program p) {
         if (!loading) {
-            broadcastMessage(Constants.ACTION_PROGRAMME_ADD, p);
+            broadcastMessage(Constants.ACTION_PROGRAM_ADD, p);
         }
     }
 
     public void removeProgram(Program p) {
         if (!loading) {
-            broadcastMessage(Constants.ACTION_PROGRAMME_DELETE, p);
+            broadcastMessage(Constants.ACTION_PROGRAM_DELETE, p);
         }
     }
 
     public void updateProgram(Program p) {
         if (!loading) {
-            broadcastMessage(Constants.ACTION_PROGRAMME_UPDATE, p);
+            broadcastMessage(Constants.ACTION_PROGRAM_UPDATE, p);
         }
     }
 

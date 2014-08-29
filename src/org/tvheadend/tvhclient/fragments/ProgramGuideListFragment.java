@@ -342,8 +342,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                     adapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(Constants.ACTION_PROGRAMME_UPDATE)
-                || action.equals(Constants.ACTION_PROGRAMME_DELETE)
+        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)
+                || action.equals(Constants.ACTION_PROGRAM_DELETE)
                 || action.equals(Constants.ACTION_DVR_ADD)
                 || action.equals(Constants.ACTION_DVR_UPDATE)) {
             // An existing program has been updated

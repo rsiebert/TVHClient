@@ -74,9 +74,9 @@ public class Constants {
     public static final String ACTION_DVR_DELETE = "DVR_DELETE";
     public static final String ACTION_DVR_UPDATE = "DVR_UPDATE";
     public static final String ACTION_DVR_CANCEL = "DVR_CANCEL";
-    public static final String ACTION_PROGRAMME_ADD = "PROGRAMME_ADD";
-    public static final String ACTION_PROGRAMME_DELETE = "PROGRAMME_DELETE";
-    public static final String ACTION_PROGRAMME_UPDATE = "PROGRAMME_UPDATE";
+    public static final String ACTION_PROGRAM_ADD = "PROGRAM_ADD";
+    public static final String ACTION_PROGRAM_DELETE = "PROGRAM_DELETE";
+    public static final String ACTION_PROGRAM_UPDATE = "PROGRAM_UPDATE";
     public static final String ACTION_SUBSCRIPTION_ADD = "SUBSCRIPTION_ADD";
     public static final String ACTION_SUBSCRIPTION_DELETE = "SUBSCRIPTION_DELETE";
     public static final String ACTION_SUBSCRIPTION_UPDATE = "SUBSCRIPTION_UPDATE";

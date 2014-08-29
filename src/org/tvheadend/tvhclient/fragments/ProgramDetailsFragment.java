@@ -296,7 +296,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     @Override
     public void onMessage(String action, Object obj) {
         // An existing program has been updated, this is valid for all menu options. 
-        if (action.equals(Constants.ACTION_PROGRAMME_UPDATE)
+        if (action.equals(Constants.ACTION_PROGRAM_UPDATE)
                 || action.equals(Constants.ACTION_DVR_ADD)
                 || action.equals(Constants.ACTION_DVR_DELETE)
                 || action.equals(Constants.ACTION_DVR_UPDATE)) {
