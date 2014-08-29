@@ -62,6 +62,17 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
+        
+        // Get any saved values from the bundle
+        if (savedInstanceState != null) {
+            currentSettingsMode = savedInstanceState.getInt(Constants.BUNDLE_SETTINGS_MODE);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(Constants.BUNDLE_SETTINGS_MODE, currentSettingsMode);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

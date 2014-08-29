@@ -27,6 +27,7 @@ public class Constants {
     public static final String BUNDLE_CONNECTION_STATUS = "connectionStatus";
     public static final String BUNDLE_CONNECTION_ID = "connectionId";
     public static final String BUNDLE_MANAGE_CONNECTIONS = "manageConnections";
+    public static final String BUNDLE_SETTINGS_MODE = "settingsMode";
 
     // Differentiates the different types of recordings
     public static final int RECORDING_TYPE_COMPLETED = 1;
