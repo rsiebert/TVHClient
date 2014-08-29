@@ -21,7 +21,6 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -105,7 +104,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated");
+
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
@@ -123,7 +122,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         // the first time. If the state is not null then the screen has
         // been rotated and we have to reuse the values.
         if (savedInstanceState == null) {
-            Log.d(TAG, "onAC savedInstanceState is null");
             
             // Check if an id has been passed
             long connId = 0;
@@ -131,8 +129,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             if (bundle != null) {
                 connId = bundle.getLong(Constants.BUNDLE_CONNECTION_ID, 0);
             }
-            
-            Log.d(TAG, "onAC conn id is " + connId);
 
             // If an index is given then we want to edit this connection
             // Otherwise create a new connection with default values.
@@ -142,7 +138,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 setPreferenceDefaults();
             }
         } else {
-            Log.d(TAG, "onAC savedInstanceState is not null, getting values");
 
             // Get the connection id and the object
             conn = new Connection();
@@ -163,10 +158,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState");
-
         outState.putLong(CONNECTION_ID, conn.id);
-        Log.d(TAG, "onSaveInstanceState id " + conn.id);
         outState.putString(CONNECTION_NAME, conn.name);
         outState.putString(CONNECTION_ADDRESS, conn.address);
         outState.putInt(CONNECTION_PORT, conn.port);
@@ -180,14 +172,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         super.onSaveInstanceState(outState);
     }
 
-    // TODO listen for the back key and call cancel otherwise nothing
-    
     /**
      * 
      */
     private void setPreferenceDefaults() {
-        Log.d(TAG, "setPreferenceDefaults");
-
         // Create a new connection with these defaults 
         conn = new Connection();
         conn.id = 0;
@@ -204,9 +192,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         conn.selected = (DatabaseHelper.getInstance().getConnections().size() == 0) ? true : false;
     }
 
+    @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
         showPreferenceValues();
         showPreferenceSummary();
 
@@ -226,7 +214,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * 
      */
     private void showPreferenceValues() {
-        Log.d(TAG, "showPreferenceValues");
         prefName.setText(conn.name);
         prefAddress.setText(conn.address);
         prefPort.setText(String.valueOf(conn.port));
@@ -243,7 +230,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * 
      */
     private void showPreferenceSummary() {
-        Log.d(TAG, "showPreferenceSummary");
         prefName.setSummary(conn.name.length() == 0 ? 
                 getString(R.string.pref_name_sum) : conn.name);
         prefAddress.setSummary(conn.address.length() == 0 ? 
@@ -314,11 +300,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * the input will be discarded and the activity will be closed.
      */
     public void cancel() {
-        Log.d(TAG, "cancel");
-
         // Do not show the cancel dialog if nothing has changed
         if (!connectionChanged) {
-            activity.getSupportFragmentManager().popBackStack();
+            settingsInterface.manageConnections();
             return;
         }
         // Show confirmation dialog to cancel
@@ -328,10 +312,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
         // Define the action of the yes button
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog, int id) {
                 // Delete the connection so that we start fresh when
                 // the settings activity is called again.
-                Log.d(TAG, "ok clicked, calling manage");
                 if (settingsInterface != null) {
                     settingsInterface.manageConnections();
                 }
@@ -339,6 +323,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         });
         // Define the action of the no button
         builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }

@@ -43,7 +43,14 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
     private static boolean restart = false;
     private static boolean reconnect = false;
-    private boolean manageConnections;
+    private boolean manageConnections = false;
+
+    private final static int MAIN_SETTINGS = 1;
+    private final static int MANAGE_CONNECTIONS = 2;
+    private final static int EDIT_CONNECTION = 3;
+    private final static int ADD_CONNECTION = 4;
+
+    private int currentSettingsMode = MAIN_SETTINGS; 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,17 +83,13 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
             if (manageConnections) {
                 manageConnections();
             } else {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(android.R.id.content, new SettingsFragment())
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .addToBackStack(null)
-                        .commit();
+                mainSettings();
             }
         } else {
             // Show the available fragment
-            getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment)
+            getSupportFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(null)
                     .commit();
         }
     }
@@ -104,10 +107,19 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() <= 1 || manageConnections) {
+        // Depending on the current mode either show the previous settings
+        // screen or exit the settings.
+        if (currentSettingsMode == MAIN_SETTINGS) {
             restartNow();
-        } else {
-            getSupportFragmentManager().popBackStack();
+        } else if (currentSettingsMode == MANAGE_CONNECTIONS) {
+            if (manageConnections) {
+                restartNow();
+            } else {
+                mainSettings();
+            }
+        } else if (currentSettingsMode == ADD_CONNECTION 
+                || currentSettingsMode == EDIT_CONNECTION) {
+            manageConnections();
         }
     }
 
@@ -130,33 +142,41 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         finish();
     }
 
+    private void mainSettings() {
+        currentSettingsMode = MAIN_SETTINGS;
+        removePreviousFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+    }
+
     @Override
     public void manageConnections() {
-
+        currentSettingsMode = MANAGE_CONNECTIONS;
         removePreviousFragment();
 
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsShowConnectionsFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(null)
                 .commit();
     }
 
     @Override
     public void addConnection() {
-
+        currentSettingsMode = ADD_CONNECTION;
         removePreviousFragment();
 
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsManageConnectionFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(null)
                 .commit();
     }
 
     @Override
     public void editConnection(long id) {
-
+        currentSettingsMode = EDIT_CONNECTION;
         removePreviousFragment();
 
         Bundle bundle = new Bundle();
@@ -165,12 +185,12 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         f.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, f)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(null)
                 .commit();
     }
 
     /**
-     * 
+     * Removes the previous fragment from the view and back stack so that
+     * navigating back would not show the old fragment again.
      */
     private void removePreviousFragment() {
         Fragment f = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
