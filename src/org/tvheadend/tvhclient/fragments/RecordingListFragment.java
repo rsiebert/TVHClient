@@ -155,6 +155,10 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             }
             return true;
 
+        case R.id.menu_record_remove:
+            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
+            return true;
+
         case R.id.menu_record_remove_all:
             // Show a confirmation dialog before deleting all recordings
             new AlertDialog.Builder(activity)
@@ -170,6 +174,10 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                             // NOP
                         }
                     }).show();
+            return true;
+
+        case R.id.menu_record_cancel:
+            Utils.confirmCancelRecording(activity, adapter.getSelectedItem());
             return true;
 
         case R.id.menu_record_cancel_all:

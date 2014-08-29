@@ -39,6 +39,7 @@ public class FailedRecordingListFragment extends RecordingListFragment {
     public void onPrepareOptionsMenu(Menu menu) {
         // Only show the cancel all recordings menu if the correct tab is
         // selected and recordings are available that can be canceled.
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
         // Playing a failed recording is not possible
         (menu.findItem(R.id.menu_play)).setVisible(false);

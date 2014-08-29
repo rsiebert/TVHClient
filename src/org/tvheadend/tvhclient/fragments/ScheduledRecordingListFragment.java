@@ -39,6 +39,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     public void onPrepareOptionsMenu(Menu menu) {
         // Only show the cancel all recordings menu if the correct tab is
         // selected and recordings are available that can be canceled.
+        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         // Playing a scheduled recording is not possible 
         (menu.findItem(R.id.menu_play)).setVisible(false);
