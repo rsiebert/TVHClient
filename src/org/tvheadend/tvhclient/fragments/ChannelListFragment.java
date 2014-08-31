@@ -257,6 +257,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        if (getUserVisibleHint() == false) {
+            return false;
+        }
         // Get the currently selected channel. Also get the program that is
         // currently being transmitting by this channel.
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -269,6 +272,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     program = it.next();
                 }
             }
+        }
+
+        // Check if the context menu call came from the list in this fragment
+        // (needed for support for multiple fragments in one screen)
+        if (info.targetView.getParent() != getView().findViewById(R.id.item_list)) {
+            return super.onContextItemSelected(item);
         }
 
         switch (item.getItemId()) {

@@ -217,10 +217,19 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        if (getUserVisibleHint() == false) {
+            return false;
+        }
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Program program = adapter.getItem(info.position);
+
+        // Check if the context menu call came from the list in this fragment
+        // (needed for support for multiple fragments in one screen)
+        if (info.targetView.getParent() != getView().findViewById(R.id.item_list)) {
+            return super.onContextItemSelected(item);
+        }
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
