@@ -205,7 +205,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Only enable the context menu when the full fragment is shown and not
         // only the channels
         if (!showOnlyChannels) {
-            registerForContextMenu(listView);            
+            registerForContextMenu(listView);
         }
         // Enable the action bar menu. Even in the channel only mode the tags
         // shall be available to set
@@ -219,8 +219,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsChannelsPref", false);
         (menu.findItem(R.id.menu_genre_color_info_channels)).setVisible(!showOnlyChannels && showGenreColors);
-        // Playing a channel shall not be available in channel only mode
-        (menu.findItem(R.id.menu_play)).setVisible(!showOnlyChannels);
+
+        // Playing a channel shall not be available in channel only mode or in
+        // single pane mode, because no channel is preselected.
+        if (!showOnlyChannels || !isDualPane) {
+            (menu.findItem(R.id.menu_play)).setVisible(false);
+        }
     }
 
     @Override
