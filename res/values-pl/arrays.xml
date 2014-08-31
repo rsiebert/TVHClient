@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_res_list">
+    <!--string-array name="pref_res_list">
         <item>576</item>
         <item>480</item>
         <item>384</item>
@@ -67,7 +67,7 @@
         <item>sv</item>
         <item>nl</item>
         <item>it</item>
-    </string-array>
+    </string-array-->
     
     <string-array name="pref_language_list_display">
         <item>Domyślny</item>
@@ -80,7 +80,7 @@
         <item>Włoski</item>
     </string-array>
 
-    <string-array name="pref_menu_ids">
+    <!--string-array name="pref_menu_ids">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -90,7 +90,7 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
-    </string-array>
+    </string-array-->
 
     <string-array name="pref_menu_names">
         <item>Kanały</item>
@@ -104,11 +104,11 @@
         <item>Połączenia</item>
     </string-array>
 
-    <string-array name="pref_sort_channels_ids">
+    <!--string-array name="pref_sort_channels_ids">
         <item>0</item>
         <item>1</item>
         <item>2</item>
-    </string-array>
+    </string-array-->
 
     <string-array name="pref_sort_channels_names">
         <item>Zdefiniowane przez serwer</item>
