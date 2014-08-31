@@ -638,17 +638,18 @@ public class Utils {
             return;
         }
 
-        if (rec.error != null || 
-                (rec.state.equals("missed") || rec.state.equals("invalid"))) {
-            failed_reason.setVisibility(View.VISIBLE);
-            // Show the text why it failed
-            if (rec.error != null && rec.error.equals("File missing")) {
-                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
-            } else if (rec.state.equals("missed")) {
-                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_time_missed));
-            } else if (rec.state.equals("invalid")) {
-                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_invalid));
-            }
+        // Make the text field visible as a default
+        failed_reason.setVisibility(View.VISIBLE);
+
+        // Show the reason why it failed
+        if (rec.error != null && rec.error.equals("File missing")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
+        } else if (rec.error != null && rec.error.equals("Aborted by user")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_canceled));
+        } else if (rec.state != null && rec.state.equals("missed")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_time_missed));
+        } else if (rec.state != null && rec.state.equals("invalid")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_invalid));
         } else {
             failed_reason.setVisibility(View.GONE);
         }

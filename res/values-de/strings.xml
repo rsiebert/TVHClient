@@ -140,6 +140,7 @@
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
     <string name="recording_file_invalid">Aufnahme ist ungültig bzw. fehlerhaft</string>
+    <string name="recording_canceled">Aufnahmen wurde abgebrochen</string>
 
     <string name="wol_send">Wake on LAN Paket erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>

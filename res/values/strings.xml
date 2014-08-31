@@ -140,6 +140,7 @@
     <string name="recording_file_missing">Recorded file is missing</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>
     <string name="recording_file_invalid">Recording is invalid</string>
+    <string name="recording_canceled">Recording has been canceled</string>
 
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
