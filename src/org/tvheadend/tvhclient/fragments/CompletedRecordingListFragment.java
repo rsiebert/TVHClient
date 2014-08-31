@@ -5,6 +5,8 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Recording;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 
 public class CompletedRecordingListFragment extends RecordingListFragment {
@@ -43,6 +45,12 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         if (!isDualPane) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false)) {
+            (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+        }
+
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
     }
