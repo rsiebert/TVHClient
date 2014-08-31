@@ -13,7 +13,7 @@
     <string name="menu_record_remove">Cancella registrazione</string>
     <string name="menu_record_remove_all">Cancella tutte registrazioni</string>
     <string name="menu_search_imdb">Cerca su IMDB</string>
-    <string name="menu_search_epg">Cercaa nella guida programmi</string>
+    <string name="menu_search_epg">Cerca nella guida programmi</string>
     <string name="menu_add">Aggiungi</string>
     <string name="menu_save">Salva</string>
     <string name="menu_cancel">Annulla</string>
@@ -44,9 +44,9 @@
     <string name="pref_name_error_invalid">Il nome può contenere solo lettere, numeri e simboli di meno e sottolineature.</string>
     <string name="pref_selected">Connessione predefinita</string>
     <string name="pref_selected_sum">Selezione per rendere predefinita questa connessione e per usarla all\'avvio dell\'applicazione.</string>
-    <string name="pref_host">Nome della macchina</string>
+    <string name="pref_host">Nome host</string>
     <string name="pref_host_sum">Inserisci il nome del server</string>
-    <string name="pref_host_error_empty">L\'indirizzo IP o il nome della macchina non può rimanere vuoto.</string>
+    <string name="pref_host_error_empty">L\'indirizzo IP o il nome dell\'host non può rimanere vuoto.</string>
     <string name="pref_host_error_invalid">L\'indirizzo IP non è valido.</string>
     <string name="pref_port">Porta</string>
     <string name="pref_port_sum">Inserisci la porta sul server</string>
@@ -60,7 +60,7 @@
     <string name="pref_pass_sum">Inserisci la password</string>
     <string name="pref_pass_set_sum">Password è impostata ma non è mostrata.</string>
     <string name="pref_wol_address">indirizzo MAC</string>
-    <string name="pref_wol_address_sum">Inserisci l\'indirizzo MAC della macchina (per esempio, 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_address_sum">Inserisci l\'indirizzo MAC dell\'host (per esempio, 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Porta Wake on LAN</string>
     <string name="pref_wol_port_sum">La porta %d sarà usata per risvegliare il server. Il valore predefinito è 9.</string>
     <string name="pref_wol_broadcast">Utilizza Broadcast</string>
@@ -74,16 +74,20 @@
     <string name="pref_theme_sum">Usa un tema dai colori chiari</string>
     <string name="pref_language">Lingua</string>
     <string name="pref_language_sum">Scegli la lingua che utilizzerà l\'applicazione.</string>
+    <string name="pref_default_menu">Schermata di avvio</string>
+    <string name="pref_default_menu_sum">Scegli la schermata che sarà mostrata all\'avvio dell\'applicazione.</string>
+    <string name="pref_sort_channels">Ordine dei canali</string>
+    <string name="pref_sort_channels_sum">Scegli l\'ordine in cui verranno mostrati i canali.</string>
     <string name="pref_res">Risoluzione</string>
     <string name="pref_res_sum">Specifica la massima risoluzione che il convertitore utilizzerà.</string>
     <string name="pref_acodec">Codifica audio</string>
-    <string name="pref_acodec_sum">Definische che tipo di codifica audio il convertitore utilizzerà.</string>
+    <string name="pref_acodec_sum">Definisce che tipo di codifica audio il convertitore utilizzerà.</string>
     <string name="pref_vcodec">Codifica video</string>
     <string name="pref_vcodec_sum">Definisce il tipo di codifica video che il convertitore utilizzerà.</string>
     <string name="pref_scodec">Codifica sottotitoli</string>
     <string name="pref_scodec_sum">Definisce il tipo di sottotitoli che il convertitore utilizzerà.</string>
     <string name="pref_container">Contenitore multimediale</string>
-    <string name="pref_container_sum">Definisce il contenitore multimediare che sarà usato per trasportare i flussi audio e video. Matroska è generalmente la scelta preferita.</string>
+    <string name="pref_container_sum">Definisce il contenitore multimediale che sarà usato per trasportare i flussi audio e video. Matroska è generalmente la scelta preferita.</string>
     
     <string name="pref_playback">Riproduzione</string>
     <string name="pref_playback_programs_sum">Configura le opzioni di riproduzione per i programmi dal vivo.</string>
@@ -97,11 +101,11 @@
     <string name="pref_program_guide">Guida programmi</string>
     <string name="pref_program_guide_sum">Configura la schermata della guida programmi e come i dati verranno mostrati.</string>
     <string name="pref_epg_hours_visible">Ore visibili</string>
-    <string name="pref_epg_hours_visible_sum">Definisce quante ore della guida programmi saranno mostrati in una schermata. Mettere troppe ore mostrerebbe troppi programmi rendendo la schermata confusa e diminuendone la leggibilità.</string>
-    <string name="pref_epg_max_days">Numero massimo di giorni da mostrareMaximum days to show</string>
+    <string name="pref_epg_hours_visible_sum">Definisce quante ore della guida programmi saranno mostrate in una schermata. Mettere troppe ore mostrerebbe troppi programmi rendendo la schermata confusa e diminuendone la leggibilità.</string>
+    <string name="pref_epg_max_days">Numero massimo di giorni da mostrare</string>
     <string name="pref_epg_max_days_sum">Definisce il numero massimo di giorni della guida programmi che verranno visualizzati.</string>
     <string name="pref_genre_colors">Colori dei generi</string>
-    <string name="pref_genre_colors_sum">Spefifica in quali schermate il colore del genere sarà mostrato.</string>
+    <string name="pref_genre_colors_sum">Specifica in quali schermate il colore del genere sarà mostrato.</string>
     <string name="pref_genre_colors_channels">Canali</string>
     <string name="pref_genre_colors_channels_sum">Il colore del genere sarà mostrato come una linea verticale sul lato sinistro della schermata della lista canali.</string>
     <string name="pref_genre_colors_programs">Programmi</string>
@@ -110,7 +114,7 @@
     <string name="pref_genre_colors_epg_sum">Mostra il colore del genere come sfondo di ogni elemento della guida programmi.</string>
     <string name="pref_genre_colors_search_results">Risultati ricerca</string>
     <string name="pref_genre_colors_search_results_sum">Il colore del genere sarà mostrato come una linea verticale sul lato sinistro della lista dei risultati della ricerca.</string>
-    <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
+    <string name="pref_genre_colors_visibility_message">Imposta la visibilità dei colori. Valori più alti indicano colori più forti.</string>
     <string name="pref_genre_colors_visibility">Visibilità colore del genere</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visibile</string>
     <string name="pref_misc">Varie</string>
@@ -123,6 +127,7 @@
     <string name="err_auth">Accesso negato</string>
     <string name="err_connect">Impossibile connettersi al server</string>
     <string name="err_con_lost">Connessione con il server persa</string>
+    <string name="err_con_timeout">Connessione scaduta</string>
 
     <string name="recording_file_missing">File di registrazione mancante</string>
     <string name="recording_time_missed">Programmazione della registrazione mancata</string>
@@ -279,9 +284,9 @@
     <string name="sunday">Domenica</string>
 
     <string name="programs">Programmi</string>
-    <string name="completed">Completati</string>
+    <string name="completed">Completate</string>
     <string name="upcoming">In arrivo</string>
-    <string name="failed">Falliti</string>
+    <string name="failed">Fallite</string>
     
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>
@@ -306,7 +311,9 @@
 
     <string name="nothing">Nulla</string>
     <string name="loading">Caricamento&#8230;</string>
-    <string name="all_channels">Tutti i canali</string>    
+    <string name="loading_channel">Caricamento canale %s</string>
+    <string name="updating">Aggiornamento&#8230;</string>
+    <string name="all_channels">Tutti i canali</string>
     <string name="season">Stagione</string>
     <string name="episode">Episodio</string>
     <string name="part">Parte</string>
@@ -314,10 +321,13 @@
     
     <string name="disc_space">Spazio su disco</string>
     <string name="total">Totale</string>
-    <string name="available">Disponibile</string>
+    <string name="available">Disponibili</string>
     <string name="unknown">Sconosciuto</string>
     <string name="select_timeframe">Mostra guida programmi per la data e l\'orario selezionato.</string>
     <string name="currently_recording">Attualmente in registrazione</string>
+    
+    <string name="no_connection_available">Non ci sono ancora connessioni definite. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
+    <string name="no_connection_active">Almeno una connessione è definita, ma nessuna è attiva.</string>
     
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>
