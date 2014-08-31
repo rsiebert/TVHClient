@@ -5,12 +5,12 @@
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_refresh">Aktualisieren</string>
     <string name="menu_tags">Anzeige Filtern</string>
-    <string name="menu_recordings">Aufnahmen</string>
 
     <string name="menu_play">Abspielen</string>
     <string name="menu_search">Suchen</string>
     <string name="menu_record">Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
+    <string name="menu_record_cancel_all">Alle Aufnahmen abbrechen</string>
     <string name="menu_record_remove">Aufnahme löschen</string>
     <string name="menu_record_remove_all">Alle Aufnahmen löschen</string>
     <string name="menu_search_imdb">Suche auf der IMDB Webseite</string>
@@ -31,14 +31,12 @@
     <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
     <string name="select_connection">Verbindung wählen</string>
     <string name="add_connection">Verbindung hinzufügen</string>
-    <string name="no_connections">Keine Verbindungen vorhanden</string>
-    <string name="create_new_connections">Möchtest Du jetzt eine neue Verbindung zu einem Server erstellen?</string>
-    <string name="connection_options">Optionen für Verbindung \'%s\'</string>
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
-    <string name="delete_all_recordings">Sollen ALLE fehlerhaften Aufnahmen gelöscht werden?</string>
+    <string name="delete_all_recordings">Sollen ALLE Aufnahmen gelöscht werden?</string>
     <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
+    <string name="cancel_all_recordings">Sollen ALLE geplanten Aufnahmen abgebrochen werden?</string>
 
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
@@ -66,6 +64,8 @@
     <string name="pref_wol_address_sum">MAC-Adresse des Servers (z.B: 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Wake on LAN Port</string>
     <string name="pref_wol_port_sum">Port %d wird zum Wecken des Servers verwendet. Der Standardport ist 9.</string>
+    <string name="pref_wol_broadcast">Sende Broadcast</string>
+    <string name="pref_wol_broadcast_sum">Sende die Wake on LAN Information als Broadcast an alle Rechner. Einige Router blockieren diese Art von Wake on LAN.</string>
     <string name="pref_wol_address_invalid">Die MAC-Adresse ist ungültig.\nSie muss z.B. das Format \'01:24:67:9a:cd:ef\' haben und darf neben \':\' und \'\-\' nur 0\-9 und a\-z enthalten.</string>
 
     <string name="pref_user_interface">Benutzeroberfläche</string>
@@ -75,6 +75,10 @@
     <string name="pref_theme_sum">Verwendet die helleren Android Farben (Holo-Light Theme) für die Darstellung.</string>
     <string name="pref_language">Sprache</string>
     <string name="pref_language_sum">Wähle die Sprache, die verwendet werden soll.</string>
+    <string name="pref_default_menu">Start-Ansicht</string>
+    <string name="pref_default_menu_sum">Wähle die Ansicht bzw. die Aktion, die nach dem Start zuerst angezeigt werden soll.</string>
+    <string name="pref_sort_channels">Sender-Reihenfolge</string>
+    <string name="pref_sort_channels_sum">Legt fest in welcher Reihenfolge die Sender angezeigt werden.</string>
     <string name="pref_res">Auflösung</string>
     <string name="pref_res_sum">Maximale Auflösung, die der Transcoder verwenden soll.</string>
     <string name="pref_acodec">Audio-Codec</string>
@@ -114,8 +118,6 @@
     <string name="pref_genre_colors_visibility_message">Definiere die Sichtbarkeit der Farben. Je höher der Wert, desto stärker wirken die Farben.</string>
     <string name="pref_genre_colors_visibility">Sichtbarkeit der Genrefarben</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
-    <string name="pref_dual_pane_recordings">Zwei-Fenster-Modus für Aufnahmen</string>
-    <string name="pref_dual_pane_recordings_sum">Zeigt die Liste der Aufnahmen auf der linken und die Details der gewählten Aufnahme auf der rechten Bildschirmhälfte an. Nur für Tablets verfügbar.</string>
     <string name="pref_misc">Sonstiges</string>
     <string name="pref_clear_search_history">Lösche Suchhistorie</string>
 
@@ -126,12 +128,18 @@
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
+    <string name="err_con_timeout">Zeitüberschreitung beim Verbinden zum Server.</string>
 
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
     <string name="recording_file_invalid">Aufnahme ist ungültig bzw. fehlerhaft</string>
 
-     <string-array name="pr_content_type0">
+    <string name="wol_send">Wake on LAN Paket erfolgreich an \'%s\' gesendet.</string>
+    <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
+    <string name="wol_address_invalid">Die MAC-Adresse ist nicht gültig. Bitte in den Einstellungen überprüfen.</string>
+    <string name="wol_error">Fehler beim Senden des Wake on LAN Pakets an \'%1$s\'.\n Fehlermeldung: %2$s</string>
+
+    <string-array name="pr_content_type0">
         <item>Film / Drama</item>
         <item>Nachrichten / Aktuelles</item>
         <item>Show / Spielshow</item>
@@ -271,7 +279,6 @@
     
     <string name="channels">Sender</string>
     <string name="recordings">Aufnahmen</string>
-    <string name="program_guide">TV-Programm</string>
     <string name="status">Status</string>
     <string name="items">Elemente</string>
     <string name="results">Ergebnisse</string>
@@ -282,7 +289,6 @@
     <string name="channel">Sender</string>
     <string name="time">Zeit</string>
     <string name="date">Datum</string>
-    <string name="shown_on_channel">auf</string>
     <string name="summary">Zusammenfassung</string>
     <string name="description">Beschreibung</string>
     <string name="duration">Dauer</string>
@@ -294,19 +300,26 @@
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>
+    <string name="loading_channel">Lade Sender %s</string>
+    <string name="updating">Aktualisiere&#8230;</string>
     <string name="all_channels">Alle Sender</string>
     <string name="season">Staffel</string>
     <string name="episode">Folge</string>
     <string name="part">Teil</string>
     <string name="progress">%1$d%% der Sendung bereits vorbei</string>
 
+    <string name="connection">Verbindung</string>
     <string name="disc_space">Speicherplatz</string>
     <string name="total">Total</string>
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>
+    <string name="ready">Bereit</string>
     <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
     <string name="currently_recording">Laufende Aufnahmen</string>
-    
+
+    <string name="no_connection_available">Immer noch keine Verbindungen gefunden. Mindestens eine Verbindung muss vorhanden sein. In den Einstellungen kannst Du eine neue hinzufügen.</string>
+    <string name="no_connection_active">Mindestens eine Verbindung zu einem Server wurde gefunden, ist aber nicht aktiviert.</string>
+
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
     <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
 </resources>

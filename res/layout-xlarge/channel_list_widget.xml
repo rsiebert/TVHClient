@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="0dip"
         android:layout_height="wrap_content"
-        android:layout_weight="0.99"
+        android:layout_weight="0.999"
         android:orientation="horizontal"
         android:paddingBottom="12dp" >
 

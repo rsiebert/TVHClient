@@ -12,4 +12,5 @@ public class Connection {
     public int streaming_port;
     public String wol_address;
     public int wol_port;
+    public boolean wol_broadcast;
 }

@@ -5,7 +5,6 @@
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_refresh">Odśwież</string>
     <string name="menu_tags">Tagi</string>
-    <string name="menu_recordings">Nagrania</string>
 
     <string name="menu_play">Play</string>
     <string name="menu_search">Szukaj</string>
@@ -29,9 +28,6 @@
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
-    <string name="no_connections">Brak dostępnych połączeń</string>
-    <string name="create_new_connections">Chcesz utworzyć teraz nowe połączenie?</string>
-    <string name="connection_options">Opcje dla połączenia \'%s\'</string>
     <string name="cancel_connection">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="delete_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>
@@ -111,8 +107,6 @@
     <string name="pref_genre_colors_visibility_message">Ustaw widoczność kolorów. Wyższe wartości oznaczją mocniejsze kolory.</string>
     <string name="pref_genre_colors_visibility">Widoczność rodzaju koloru</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% widoczności</string>
-    <string name="pref_dual_pane_recordings">Tryb podwójnego panelu dla nagrań</string>
-    <string name="pref_dual_pane_recordings_sum">Pokaż listę nagrań na lewo i szczegóły wybranego nagrania na prawej poowie ekranu. Dostępne tylko dla tabletów.</string>
     <string name="pref_misc">Różne</string>
     <string name="pref_clear_search_history">Wyczyść historię wyszukiwania</string>
 
@@ -282,7 +276,6 @@
     
     <string name="channels">Kanały</string>
     <string name="recordings">Nagrania</string>
-    <string name="program_guide">Przewodnik programów</string>
     <string name="status">Status</string>
     <string name="items">Pozycja</string>
     <string name="results">Wyniki</string>
@@ -293,7 +286,6 @@
     <string name="channel">Kanał</string>
     <string name="time">Czas</string>
     <string name="date">Data</string>
-    <string name="shown_on_channel">na</string>
     <string name="summary">Podsumowanie</string>
     <string name="description">Opis</string>
     <string name="duration">Czas trwania</string>
@@ -305,7 +297,7 @@
 
     <string name="nothing">Brak</string>
     <string name="loading">Wczytywanie&#8230;</string>
-    <string name="all_channels">Wszystkie kanały</string>    
+    <string name="all_channels">Wszystkie kanały</string>
     <string name="season">Sezon</string>
     <string name="episode">Odcinek</string>
     <string name="part">Część</string>

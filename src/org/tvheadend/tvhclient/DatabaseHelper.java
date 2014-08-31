@@ -18,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "tvhclient";
     public static final String TABLE_NAME = "connections";
 
@@ -34,6 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_STREAMING_PORT = "streaming_port";
     public static final String KEY_WOL_ADDRESS = "wol_address";
     public static final String KEY_WOL_PORT = "wol_port";
+    public static final String KEY_WOL_BROADCAST = "wol_broadcast";
 
     // Defines a list of columns to retrieve from
     // the Cursor and load into an output row
@@ -49,6 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         KEY_STREAMING_PORT,
         KEY_WOL_ADDRESS,
         KEY_WOL_PORT,
+        KEY_WOL_BROADCAST,
     };
 
     public static DatabaseHelper instance = null;
@@ -86,7 +88,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_CHANNEL_TAG + " INT DEFAULT 0, "
                 + KEY_STREAMING_PORT + " INT DEFAULT 9981, "
                 + KEY_WOL_ADDRESS + " TEXT NULL, "
-                + KEY_WOL_PORT + " INT DEFAULT 9);";
+                + KEY_WOL_PORT + " INT DEFAULT 9, "
+                + KEY_WOL_BROADCAST + " INT DEFAULT 0);";
         db.execSQL(query);
     }
 
@@ -115,6 +118,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_WOL_PORT
                     + " INT DEFAULT 9;");
         }
+        if (oldVersion < newVersion && newVersion == 5) {
+            // Add the broadcast column for WOL.
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_WOL_BROADCAST
+                    + " INT DEFAULT 0;");
+        }
     }
 
     /**
@@ -134,6 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_STREAMING_PORT, conn.streaming_port);
         values.put(KEY_WOL_ADDRESS, conn.wol_address);
         values.put(KEY_WOL_PORT, conn.wol_port);
+        values.put(KEY_WOL_BROADCAST, conn.wol_broadcast);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long newId = db.insert(TABLE_NAME, null, values);
@@ -172,6 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_STREAMING_PORT, conn.streaming_port);
         values.put(KEY_WOL_ADDRESS, conn.wol_address);
         values.put(KEY_WOL_PORT, conn.wol_port);
+        values.put(KEY_WOL_BROADCAST, conn.wol_broadcast);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long rows = db.update(TABLE_NAME, values, KEY_ID + "=" + conn.id, null);
@@ -205,6 +215,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
             conn.wol_address = c.getString(c.getColumnIndex(KEY_WOL_ADDRESS));
             conn.wol_port = c.getInt(c.getColumnIndex(KEY_WOL_PORT));
+            conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_WOL_BROADCAST)) > 0);
         }
         c.close();
         return conn;
@@ -234,6 +245,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
             conn.wol_address = c.getString(c.getColumnIndex(KEY_WOL_ADDRESS));
             conn.wol_port = c.getInt(c.getColumnIndex(KEY_WOL_PORT));
+            conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_WOL_BROADCAST)) > 0);
         }
         c.close();
         return conn;
@@ -263,6 +275,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
                 conn.wol_address = c.getString(c.getColumnIndex(KEY_WOL_ADDRESS));
                 conn.wol_port = c.getInt(c.getColumnIndex(KEY_WOL_PORT));
+                conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_WOL_BROADCAST)) > 0);
 
                 // Add book to books
                 connList.add(conn);

@@ -6,22 +6,22 @@
         android:id="@+id/menu_send_wol"
         android:icon="?attr/ic_menu_wol"
         android:title="@string/menu_send_wol"
-        app:showAsAction="always|withText"/>
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_set_active"
         android:icon="?attr/item_active"
         android:title="@string/menu_set_active"
-        app:showAsAction="always|withText"/>
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_set_not_active"
         android:icon="?attr/item_not_active"
         android:title="@string/menu_set_not_active"
-        app:showAsAction="always|withText"/>
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_edit"
         android:icon="?attr/ic_menu_edit"
         android:title="@string/menu_edit"
-        app:showAsAction="always|withText"/>
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_delete"
         android:icon="?attr/ic_menu_delete"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_menu_names">
+        <item>TV-Sender</item>
+        <item>Fertige Aufnahmen</item>
+        <item>Geplante Aufnahmen</item>
+        <item>Serien-Aufnahmen</item>
+        <item>Fehlerhafte Aufnahmen</item>
+        <item>TV-Programm</item>
+        <item>Status</item>
+        <item>Einstellungen</item>
+        <item>Verbindungen</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Definiert durch Server</item>
+        <item>Sendername</item>
+        <item>Sendernummer</item>
+    </string-array>
+
+</resources>

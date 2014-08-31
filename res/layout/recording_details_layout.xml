@@ -13,28 +13,54 @@
         android:paddingTop="6dp" >
 
         <LinearLayout
+            android:id="@+id/player_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:paddingBottom="12dp">
 
             <TextView
-                android:id="@+id/title"
-                style="?attr/TitleFont"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.9"
-                android:ellipsize="none"
-                android:scrollHorizontally="false"
-                android:singleLine="false"
-                android:text="@string/title" />
+                android:id="@+id/menu_play"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_play"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:layout_marginRight="12dp"
+                android:text="@string/menu_play" />
 
-            <ImageView
-                android:id="@+id/state"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:contentDescription="@string/status_icon"
-                android:padding="3dp"
-                android:scaleType="fitCenter" />
+            <TextView
+                android:id="@+id/menu_record_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_record_cancel"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/menu_record_cancel"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/menu_record_remove"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_record_remove"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/menu_record_remove"
+                android:visibility="gone" />
         </LinearLayout>
 
         <TextView
@@ -42,7 +68,6 @@
             style="?attr/HeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="12dp"
             android:text="@string/summary" />
 
         <TextView
@@ -50,6 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:paddingBottom="12dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="@string/summary"
@@ -60,13 +86,13 @@
             style="?attr/HeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="12dp"
             android:text="@string/description" />
 
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
             android:text="@string/description"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -75,13 +101,13 @@
             style="?attr/HeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="12dp"
             android:text="@string/airing" />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:paddingBottom="12dp" >
 
             <TextView
                 android:id="@+id/date"
@@ -105,13 +131,13 @@
             style="?attr/HeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="12dp"
             android:text="@string/duration" />
 
         <TextView
             android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
             android:text="@string/duration"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -120,13 +146,13 @@
             style="?attr/HeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="12dp"
             android:text="@string/channel" />
 
         <TextView
             android:id="@+id/channel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
             android:text="@string/channel"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>

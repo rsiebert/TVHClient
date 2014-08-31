@@ -3,16 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/menu_search"
-        android:icon="?attr/ic_menu_search"
-        android:title="@android:string/search_go"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/menu_play"
+        android:icon="?attr/ic_menu_play"
+        android:orderInCategory="2"
+        android:title="@string/menu_play"
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_tags"
         android:icon="?attr/ic_menu_tags"
-        android:title="@string/menu_tags"/>
+        android:orderInCategory="5"
+        android:title="@string/menu_tags"
+        app:showAsAction="ifRoom|withText"/>
     <item
-        android:id="@+id/menu_genre_color_info"
+        android:id="@+id/menu_genre_color_info_channels"
+        android:orderInCategory="6"
         android:title="@string/menu_genre_color_info"/>
 
 </menu>

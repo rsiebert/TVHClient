@@ -172,7 +172,7 @@ public class ChangeLogDialog {
                     public void onClick(DialogInterface dialog, int which) {
                         updateVersionInPreferences();
                         if (di != null) {
-                        	di.dialogDismissed();
+                        	di.changeLogDialogDismissed();
                         }
                     }
                 });
@@ -323,8 +323,12 @@ public class ChangeLogDialog {
     public void dontuseSetLastVersion(String lastVersion) {
         this.lastVersion = lastVersion;
     }
-    
+
     public interface ChangeLogDialogInterface {
-        public void dialogDismissed();
+        /**
+         * This method is used to inform the user that the change log dialog has
+         * been closed.
+         */
+        public void changeLogDialogDismissed();
     }
 }

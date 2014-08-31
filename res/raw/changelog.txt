@@ -1,11 +1,31 @@
+$ 1.5.0
+  % VERSION 1.5.0
+  _ 28.08.2014
+    * Added new navigation drawer menu that slides in from the left
+    * Restructured the internals of the application to allow much more flexibility. (New screens and menu items can now be added easier)
+    * Channels can be sorted by name, number or id
+    * Added Italian translation
+    * Support for Android API 7
+    * Bug fixes
+$ 1.4.4
+  % VERSION 1.4.4
+  _ 30.06.2014
+    * Added Wake on LAN broadcast
+    * Small bug fixes
+$ 1.4.3
+  % VERSION 1.4.3
+  _ 29.06.2014
+    * Fixed crash in the recording list screen
+    * Updated Polish translation
 $ 1.4.2
   % VERSION 1.4.2
-  _ 23.06.2014
+  _ 28.06.2014
     * Added search history (can be cleared in the settings)
-    * Added menu item to remove all failed recordings
+    * Added menu item to remove all available, scheduled or failed recordings
     * Updated Polish translation
     * Fixed IMDB link
     * Fixed crash in search result dialog
+    * Bug fixes small improvements
 $ 1.4.1
   % VERSION 1.4.1
   _ 06.06.2014

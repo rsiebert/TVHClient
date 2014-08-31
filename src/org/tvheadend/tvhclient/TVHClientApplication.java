@@ -19,18 +19,13 @@
  */
 package org.tvheadend.tvhclient;
 
-import android.app.Application;
-import android.content.Context;
-import android.os.Handler;
-import android.util.SparseArray;
-import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.HttpTicket;
@@ -38,31 +33,12 @@ import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Subscription;
-import org.tvheadend.tvhclient.R;
+
+import android.app.Application;
+import android.content.Context;
+import android.util.SparseArray;
 
 public class TVHClientApplication extends Application {
-
-    public static final String ACTION_CHANNEL_ADD = "org.me.tvhguide.CHANNEL_ADD";
-    public static final String ACTION_CHANNEL_DELETE = "org.me.tvhguide.CHANNEL_DELETE";
-    public static final String ACTION_CHANNEL_UPDATE = "org.me.tvhguide.CHANNEL_UPDATE";
-    public static final String ACTION_TAG_ADD = "org.me.tvhguide.TAG_ADD";
-    public static final String ACTION_TAG_DELETE = "org.me.tvhguide.TAG_DELETE";
-    public static final String ACTION_TAG_UPDATE = "org.me.tvhguide.TAG_UPDATE";
-    public static final String ACTION_DVR_ADD = "org.me.tvhguide.DVR_ADD";
-    public static final String ACTION_DVR_DELETE = "org.me.tvhguide.DVR_DELETE";
-    public static final String ACTION_DVR_UPDATE = "org.me.tvhguide.DVR_UPDATE";
-    public static final String ACTION_PROGRAMME_ADD = "org.me.tvhguide.PROGRAMME_ADD";
-    public static final String ACTION_PROGRAMME_DELETE = "org.me.tvhguide.PROGRAMME_DELETE";
-    public static final String ACTION_PROGRAMME_UPDATE = "org.me.tvhguide.PROGRAMME_UPDATE";
-    public static final String ACTION_SUBSCRIPTION_ADD = "org.me.tvhguide.SUBSCRIPTION_ADD";
-    public static final String ACTION_SUBSCRIPTION_DELETE = "org.me.tvhguide.SUBSCRIPTION_DELETE";
-    public static final String ACTION_SUBSCRIPTION_UPDATE = "org.me.tvhguide.SUBSCRIPTION_UPDATE";
-    public static final String ACTION_SIGNAL_STATUS = "org.me.tvhguide.SIGNAL_STATUS";
-    public static final String ACTION_PLAYBACK_PACKET = "org.me.tvhguide.PLAYBACK_PACKET";
-    public static final String ACTION_LOADING = "org.me.tvhguide.LOADING";
-    public static final String ACTION_TICKET_ADD = "org.me.tvhguide.TICKET";
-    public static final String ACTION_ERROR = "org.me.tvhguide.ERROR";
-    public static final String ACTION_STATUS = "org.me.tvhguide.STATUS";
 
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
@@ -72,14 +48,43 @@ public class TVHClientApplication extends Application {
     private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
 
     private volatile boolean loading = false;
-    private Handler handler = new Handler();
 
-    public void addListener(HTSListener l) {
-        listeners.add(l);
+    // Holds a list of channels that are not allowed to load because the EPG
+    // size did not change after the last loading call.
+    private List<Channel> channelBlockingList = new ArrayList<Channel>();
+
+    public void blockChannel(Channel channel) {
+        channelBlockingList.add(channel);
+    }
+    
+    public void unblockChannel(Channel channel) {
+        channelBlockingList.remove(channel);
     }
 
-    public void removeListener(HTSListener l) {
-        listeners.remove(l);
+    public void unblockAllChannels() {
+        channelBlockingList.clear();
+    }
+
+    public Boolean isChannelBlocked(Channel channel) {
+        return channelBlockingList.contains(channel);
+    }
+
+    /**
+     * Adds a single listener to the list.
+     * 
+     * @param listener
+     */
+    public void addListener(HTSListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a single listener from the list.
+     * 
+     * @param listener
+     */
+    public void removeListener(HTSListener listener) {
+        listeners.remove(listener);
     }
 
     /**
@@ -90,7 +95,14 @@ public class TVHClientApplication extends Application {
         listeners.clear();
     }
 
-    private void broadcastMessage(String action, Object obj) {
+    /**
+     * Sends the given action and possible object with the data to all
+     * registered listeners.
+     * 
+     * @param action
+     * @param obj
+     */
+    private void broadcastMessage(final String action, final Object obj) {
         synchronized (listeners) {
             for (HTSListener l : listeners) {
                 l.onMessage(action, obj);
@@ -98,64 +110,85 @@ public class TVHClientApplication extends Application {
         }
     }
 
-    public void broadcastError(final String error) {
-        //Don't show error if no views are open
-        synchronized (listeners) {
-            if (listeners.isEmpty()) {
-                return;
-            }
-        }
-        handler.post(new Runnable() {
-
-            public void run() {
-
-                try {
-                    Toast toast = Toast.makeText(TVHClientApplication.this, error, Toast.LENGTH_LONG);
-                    toast.show();
-                } catch (Throwable ex) {
-                }
-            }
-        });
-        broadcastMessage(ACTION_ERROR, error);
+    /**
+     * Informs all listeners about the current connection state.
+     */
+    public void setConnectionState(final String state) {
+        broadcastMessage(state, null);
     }
 
+    /**
+     * Sends the given packet object for video playback to all registered
+     * listeners
+     * 
+     * @param p
+     */
     public void broadcastPacket(Packet p) {
-        broadcastMessage(ACTION_PLAYBACK_PACKET, p);
+        broadcastMessage(Constants.ACTION_PLAYBACK_PACKET, p);
     }
 
+    /**
+     * Returns the list of available channel tags
+     * 
+     * @return
+     */
     public List<ChannelTag> getChannelTags() {
         return tags;
     }
 
+    /**
+     * Adds the new channel tag to the list. If loading is not in progress all
+     * registered listeners will be informed.
+     * 
+     * @param tag
+     */
     public void addChannelTag(ChannelTag tag) {
-        tags.add(tag);
-
+        synchronized (tags) {
+            tags.add(tag);
+        }
         if (!loading) {
-            broadcastMessage(ACTION_TAG_ADD, tag);
+            broadcastMessage(Constants.ACTION_TAG_ADD, tag);
         }
     }
 
+    /**
+     * Removes the given channel tag from the list. If loading is not in progress
+     * all registered listeners will be informed.
+     * 
+     * @param tag
+     */
     public void removeChannelTag(ChannelTag tag) {
-        tags.remove(tag);
-
+        synchronized (tags) {
+            tags.remove(tag);
+        }
         if (!loading) {
-            broadcastMessage(ACTION_TAG_DELETE, tag);
+            broadcastMessage(Constants.ACTION_TAG_DELETE, tag);
         }
     }
-
+    
+    /**
+     * Removes the channel tag (given by the id) from the list. If loading is
+     * not in progress all registered listeners will be informed.
+     * 
+     * @param tag
+     */
     public void removeChannelTag(long id) {
-        for (ChannelTag tag : getChannelTags()) {
-            if (tag.id == id) {
-                removeChannelTag(tag);
-                return;
+        synchronized (tags) {
+            for (ChannelTag tag : getChannelTags()) {
+                if (tag.id == id) {
+                    removeChannelTag(tag);
+                    return;
+                }
             }
         }
     }
 
     public ChannelTag getChannelTag(long id) {
-        for (ChannelTag tag : getChannelTags()) {
-            if (tag.id == id) {
-                return tag;
+        synchronized (tags) {
+            for (ChannelTag tag : getChannelTags()) {
+                if (tag.id == id) {
+                    return tag;
+                }
             }
         }
         return null;
@@ -163,15 +196,16 @@ public class TVHClientApplication extends Application {
 
     public void updateChannelTag(ChannelTag tag) {
         if (!loading) {
-            broadcastMessage(ACTION_TAG_UPDATE, tag);
+            broadcastMessage(Constants.ACTION_TAG_UPDATE, tag);
         }
     }
 
     public void addChannel(Channel channel) {
-        channels.add(channel);
-
+        synchronized (channels) {
+            channels.add(channel);
+        }
         if (!loading) {
-            broadcastMessage(ACTION_CHANNEL_ADD, channel);
+            broadcastMessage(Constants.ACTION_CHANNEL_ADD, channel);
         }
     }
 
@@ -180,60 +214,66 @@ public class TVHClientApplication extends Application {
     }
 
     public void removeChannel(Channel channel) {
-        channels.remove(channel);
-
+        synchronized (channels) {
+            channels.remove(channel);
+        }
         if (!loading) {
-            broadcastMessage(ACTION_CHANNEL_DELETE, channel);
+            broadcastMessage(Constants.ACTION_CHANNEL_DELETE, channel);
         }
     }
 
     public Channel getChannel(long id) {
-        for (Channel ch : getChannels()) {
-            if (ch.id == id) {
-                return ch;
+        synchronized (channels) {
+            for (Channel ch : getChannels()) {
+                if (ch.id == id) {
+                    return ch;
+                }
             }
         }
         return null;
     }
 
     public void removeChannel(long id) {
-        for (Channel ch : getChannels()) {
-            if (ch.id == id) {
-                removeChannel(ch);
-                return;
+        synchronized (channels) {
+            for (Channel ch : getChannels()) {
+                if (ch.id == id) {
+                    removeChannel(ch);
+                    return;
+                }
             }
         }
     }
 
     public void updateChannel(Channel ch) {
         if (!loading) {
-            broadcastMessage(ACTION_CHANNEL_UPDATE, ch);
+            broadcastMessage(Constants.ACTION_CHANNEL_UPDATE, ch);
         }
     }
 
-    public void addProgramme(Program p) {
+    public void addProgram(Program p) {
         if (!loading) {
-            broadcastMessage(ACTION_PROGRAMME_ADD, p);
+            broadcastMessage(Constants.ACTION_PROGRAM_ADD, p);
         }
     }
 
-    public void removeProgramme(Program p) {
+    public void removeProgram(Program p) {
         if (!loading) {
-            broadcastMessage(ACTION_PROGRAMME_DELETE, p);
+            broadcastMessage(Constants.ACTION_PROGRAM_DELETE, p);
         }
     }
 
-    public void updateProgramme(Program p) {
+    public void updateProgram(Program p) {
         if (!loading) {
-            broadcastMessage(ACTION_PROGRAMME_UPDATE, p);
+            broadcastMessage(Constants.ACTION_PROGRAM_UPDATE, p);
         }
     }
 
     public void addRecording(Recording rec) {
-        recordings.add(rec);
-
+        synchronized (recordings) {
+            recordings.add(rec);
+        }
         if (!loading) {
-            broadcastMessage(ACTION_DVR_ADD, rec);
+            broadcastMessage(Constants.ACTION_DVR_ADD, rec);
         }
     }
 
@@ -241,11 +281,60 @@ public class TVHClientApplication extends Application {
         return recordings;
     }
 
-    public void removeRecording(Recording rec) {
-        recordings.remove(rec);
+    /**
+     * 
+     * @param type
+     * @return
+     */
+    public List<Recording> getRecordings(int type) {
+        List<Recording> recordings = new ArrayList<Recording>();
 
+        switch (type) {
+        case Constants.RECORDING_TYPE_COMPLETED:
+            for (Recording rec : getRecordings()) {
+                if (rec.error == null && rec.state.equals("completed")) {
+                    recordings.add(rec);
+                }
+            }
+            break;
+
+        case Constants.RECORDING_TYPE_SCHEDULED:
+            for (Recording rec : getRecordings()) {
+                if (rec.error == null
+                        && !rec.state.equals("autorec")
+                        && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                    recordings.add(rec);
+                }
+            }
+            break;
+
+        case Constants.RECORDING_TYPE_SERIES:
+            for (Recording rec : getRecordings()) {
+                if (rec.error == null
+                        && rec.state.equals("autorec")
+                        && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                    recordings.add(rec);
+                }
+            }
+            break;
+
+        case Constants.RECORDING_TYPE_FAILED:
+            for (Recording rec : getRecordings()) {
+                if ((rec.error != null || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
+                    recordings.add(rec);
+                }
+            }
+            break;
+        }
+        return recordings;
+    }
+
+    public void removeRecording(Recording rec) {
+        synchronized (recordings) {
+            recordings.remove(rec);
+        }
         if (!loading) {
-            broadcastMessage(ACTION_DVR_DELETE, rec);
+            broadcastMessage(Constants.ACTION_DVR_DELETE, rec);
         }
     }
 
@@ -269,17 +358,20 @@ public class TVHClientApplication extends Application {
 
     public void updateRecording(Recording rec) {
         if (!loading) {
-            broadcastMessage(ACTION_DVR_UPDATE, rec);
+            broadcastMessage(Constants.ACTION_DVR_UPDATE, rec);
         }
     }
 
     public void setLoading(boolean b) {
         if (loading != b) {
-            broadcastMessage(ACTION_LOADING, b);
+            broadcastMessage(Constants.ACTION_LOADING, b);
         }
         loading = b;
     }
 
+    /**
+     * Clears all channels, tags and recordings and sets the tag default value.
+     */
     public void clearAll() {
         tags.clear();
         recordings.clear();
@@ -303,9 +395,8 @@ public class TVHClientApplication extends Application {
 
     public void addSubscription(Subscription s) {
         subscriptions.add(s);
-
         if (!loading) {
-            broadcastMessage(ACTION_SUBSCRIPTION_ADD, s);
+            broadcastMessage(Constants.ACTION_SUBSCRIPTION_ADD, s);
         }
     }
 
@@ -316,9 +407,8 @@ public class TVHClientApplication extends Application {
     public void removeSubscription(Subscription s) {
         s.streams.clear();
         subscriptions.remove(s);
-
         if (!loading) {
-            broadcastMessage(ACTION_SUBSCRIPTION_DELETE, s);
+            broadcastMessage(Constants.ACTION_SUBSCRIPTION_DELETE, s);
         }
     }
 
@@ -342,89 +432,88 @@ public class TVHClientApplication extends Application {
 
     public void updateSubscription(Subscription s) {
         if (!loading) {
-            broadcastMessage(ACTION_SUBSCRIPTION_UPDATE, s);
-        }
-    }
-    
-   
-    public void addTicket(HttpTicket t) {
-        broadcastMessage(ACTION_TICKET_ADD, t);
-    }
-    
-    public boolean isLoading() {
-        return loading;
-    }
-    
-    public void updateStatus(Map<String, String> list) {
-    	status.putAll(list);
-    	if (!loading) {
-            broadcastMessage(ACTION_STATUS, status);
+            broadcastMessage(Constants.ACTION_SUBSCRIPTION_UPDATE, s);
         }
     }
 
-	public static SparseArray<String> getContentTypes(Context ctx) {
-		SparseArray<String> ret = new SparseArray<String>();
-		
-		String[] s = ctx.getResources().getStringArray(R.array.pr_content_type0);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x00 + i, s[i]);
+    public void addTicket(HttpTicket t) {
+        broadcastMessage(Constants.ACTION_TICKET_ADD, t);
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
+
+    public void updateDiscSpace(Map<String, String> list) {
+        status.putAll(list);
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_DISC_SPACE, status);
         }
-        
+    }
+
+    public static SparseArray<String> getContentTypes(Context ctx) {
+        SparseArray<String> ret = new SparseArray<String>();
+
+        String[] s = ctx.getResources().getStringArray(R.array.pr_content_type0);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x00 + i, s[i]);
+        }
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type1);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x10 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x10 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type2);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x20 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x20 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type3);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x30 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x30 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type4);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x40 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x40 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type5);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x50 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x50 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type6);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x60 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x60 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type7);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x70 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x70 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type8);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x80 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x80 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type9);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0x90 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x90 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type10);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0xa0 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0xa0 + i, s[i]);
         }
-        
+
         s = ctx.getResources().getStringArray(R.array.pr_content_type11);
-        for(int i=0; i<s.length; i++) {
-        	ret.append(0xb0 + i, s[i]);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0xb0 + i, s[i]);
         }
-        
-		return ret;
-	}
+
+        return ret;
+    }
 }

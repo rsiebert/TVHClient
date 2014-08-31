@@ -9,8 +9,19 @@
         <item name="android:textColor">#999999</item>
     </style>
 
+    
     <style name="TitleFont.Dark" parent="TitleFont.Light">
         <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <!-- Font for the subtitles in various screens -->
+    <style name="SubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">#888888</item>
+    </style>
+
+    <style name="SubtitleFont.Dark" parent="SubtitleFont.Light">
+        <item name="android:textColor">#DDDDDD</item>
     </style>
 
     <!-- Font for the header texts in the details screens -->
@@ -20,6 +31,26 @@
 
     <style name="HeaderFont.Dark" parent="HeaderFont.Light">
         <item name="android:textColor">#DDDDDD</item>
+    </style>
+
+    <!-- Font for the menu texts in the navigation drawer -->
+    <style name="MenuFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#444444</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="MenuFont.Dark" parent="MenuFont.Light">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <!-- Font for the menu header texts in the navigation drawer -->
+    <style name="MenuHeaderFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#999999</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="MenuHeaderFont.Dark" parent="MenuHeaderFont.Light">
+        <item name="android:textColor">#AAAAAA</item>
     </style>
 
     <!-- Font for the program title in the program guide screen -->
@@ -35,11 +66,11 @@
     <!-- Font for the program title in the program guide screen -->
     <style name="ProgramGuideTitleFont.Light" parent="@android:style/TextAppearance.Small">
         <item name="android:ellipsize">end</item>
-        <item name="android:textColor">#888888</item>
+        <item name="android:textColor">#999999</item>
     </style>
 
     <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light">
-        <item name="android:textColor">#DDDDDD</item>
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 
     <!-- Font for the additional information in the program guide screen -->
@@ -53,33 +84,9 @@
         <item name="android:textColor">#DDDDDD</item>
     </style>
 
-    <!-- Font for the actionbar title texts in the program guide screen -->
-    <style name="ActionBarTab_TitleFont.Light" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">#666666</item>
-    </style>
-
-    <style name="ActionBarTab_TitleFont.Dark" parent="ActionBarTab_TitleFont.Light">
-        <item name="android:textColor">#DDDDDD</item>
-    </style>
-
-    <!-- Font for the actionbar title texts in the program guide screen -->
-    <style name="ActionBarTab_SubtitleFont.Light" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">#444444</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="ActionBarTab_SubtitleFont.Dark" parent="ActionBarTab_SubtitleFont.Light">
-        <item name="android:textColor">#FFFFFF</item>
-    </style>
-
-    <style name="DualPaneRightLayoutStyle.Dark" parent="CustomTheme">
-        <item name="android:background">#FF333333</item>
-        <item name="android:padding">50dp</item>
-    </style>
-
-    <style name="DualPaneRightLayoutStyle.Light" parent="CustomTheme.Light">
-        <item name="android:background">#FF333333</item>
-        <item name="android:padding">50dp</item>
+    <style name="dialog_animation_fade">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
@@ -102,15 +109,19 @@
         <item name="item_active">@drawable/item_active_dark</item>
         <item name="item_not_active">@drawable/item_not_active_dark</item>
         <item name="TitleFont">@style/TitleFont.Dark</item>
+        <item name="SubtitleFont">@style/SubtitleFont.Dark</item>
+        <item name="MenuFont">@style/MenuFont.Dark</item>
+        <item name="MenuHeaderFont">@style/MenuHeaderFont.Dark</item>
         <item name="HeaderFont">@style/HeaderFont.Dark</item>
         <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Dark</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
         <item name="ProgramGuideFont">@style/ProgramGuideFont.Dark</item>
-        <item name="ActionBarTab_TitleFont">@style/ActionBarTab_TitleFont.Dark</item>
-        <item name="ActionBarTab_SubtitleFont">@style/ActionBarTab_SubtitleFont.Dark</item>
         <item name="TimelineItemLayoutStyle">@drawable/timeline_item_dark</item>
         <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_dark</item>
         <item name="TimelineListLayoutStyle">@drawable/timeline_list_dark</item>
+        <item name="MenuItemLayoutStyle">@drawable/menu_item_dark</item>
+        <item name="MenuHeaderLayoutStyle">@drawable/menu_header_dark</item>
+        <item name="menu_text_selector">@drawable/menu_text_selector_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -133,15 +144,19 @@
         <item name="item_active">@drawable/item_active_light</item>
         <item name="item_not_active">@drawable/item_not_active_light</item>
         <item name="TitleFont">@style/TitleFont.Light</item>
+        <item name="SubtitleFont">@style/SubtitleFont.Light</item>
+        <item name="MenuFont">@style/MenuFont.Light</item>
+        <item name="MenuHeaderFont">@style/MenuHeaderFont.Light</item>
         <item name="HeaderFont">@style/HeaderFont.Light</item>
         <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Light</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
         <item name="ProgramGuideFont">@style/ProgramGuideFont.Light</item>
-        <item name="ActionBarTab_TitleFont">@style/ActionBarTab_TitleFont.Light</item>
-        <item name="ActionBarTab_SubtitleFont">@style/ActionBarTab_SubtitleFont.Light</item>
         <item name="TimelineItemLayoutStyle">@drawable/timeline_item_light</item>
         <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_light</item>
         <item name="TimelineListLayoutStyle">@drawable/timeline_list_light</item>
+        <item name="MenuItemLayoutStyle">@drawable/menu_item_light</item>
+        <item name="MenuHeaderLayoutStyle">@drawable/menu_header_light</item>
+        <item name="menu_text_selector">@drawable/menu_text_selector_light</item>
     </style>
 
 </resources>

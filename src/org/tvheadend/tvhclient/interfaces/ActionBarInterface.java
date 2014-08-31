@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.interfaces;
 
-import org.tvheadend.tvhclient.model.Channel;
+import android.graphics.Bitmap;
 
 public interface ActionBarInterface {
 
@@ -8,5 +8,7 @@ public interface ActionBarInterface {
 
     void setActionBarSubtitle(final String subtitle, final String tag);
 
-    void setActionBarIcon(final Channel channel, final String tag);
+    void setActionBarIcon(final Bitmap bitmap, final String tag);
+    
+    void setActionBarIcon(final int resource, final String tag);
 }

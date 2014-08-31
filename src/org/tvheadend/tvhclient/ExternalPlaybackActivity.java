@@ -19,8 +19,8 @@
  */
 package org.tvheadend.tvhclient;
 
-import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.R;
 
@@ -44,7 +44,7 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         super.onCreate(savedInstanceState);
         this.context = this;
         Intent intent = new Intent(ExternalPlaybackActivity.this, HTSService.class);
-        intent.setAction(HTSService.ACTION_GET_TICKET);
+        intent.setAction(Constants.ACTION_GET_TICKET);
         intent.putExtras(getIntent().getExtras());
         this.startService(intent);
     }
@@ -165,7 +165,7 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(TVHClientApplication.ACTION_TICKET_ADD)) {
+        if (action.equals(Constants.ACTION_TICKET_ADD)) {
             HttpTicket t = (HttpTicket) obj;
             startPlayback(t.path, t.ticket);
         }

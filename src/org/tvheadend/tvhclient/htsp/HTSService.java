@@ -18,17 +18,6 @@
  */
 package org.tvheadend.tvhclient.htsp;
 
-import android.app.Service;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Binder;
-import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,7 +37,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.HttpTicket;
@@ -58,7 +49,18 @@ import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
 import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
-import org.tvheadend.tvhclient.R;
+
+import android.app.Service;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Binder;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  *
@@ -66,26 +68,13 @@ import org.tvheadend.tvhclient.R;
  */
 public class HTSService extends Service implements HTSConnectionListener {
 
-    public static final String ACTION_CONNECT = "org.me.tvhguide.htsp.CONNECT";
-    public static final String ACTION_DISCONNECT = "org.me.tvhguide.htsp.DISCONNECT";
-    public static final String ACTION_EPG_QUERY = "org.me.tvhguide.htsp.EPG_QUERY";
-    public static final String ACTION_GET_EVENT = "org.me.tvhguide.htsp.GET_EVENT";
-    public static final String ACTION_GET_EVENTS = "org.me.tvhguide.htsp.GET_EVENTS";
-    public static final String ACTION_DVR_ADD = "org.me.tvhguide.htsp.DVR_ADD";
-    public static final String ACTION_DVR_DELETE = "org.me.tvhguide.htsp.DVR_DELETE";
-    public static final String ACTION_DVR_CANCEL = "org.me.tvhguide.htsp.DVR_CANCEL";
-    public static final String ACTION_SUBSCRIBE = "org.me.tvhguide.htsp.SUBSCRIBE";
-    public static final String ACTION_UNSUBSCRIBE = "org.me.tvhguide.htsp.UNSUBSCRIBE";
-    public static final String ACTION_FEEDBACK = "org.me.tvhguide.htsp.FEEDBACK";
-    public static final String ACTION_GET_TICKET = "org.me.tvhguide.htsp.GET_TICKET";
-    public static final String ACTION_GET_DISC_STATUS = "org.me.tvhguide.htsp.GET_DISC_STATUS";
     private static final String TAG = "HTSService";
+    
     private ScheduledExecutorService execService;
     private HTSConnection connection;
     PackageInfo packInfo;
 
     public class LocalBinder extends Binder {
-
         HTSService getService() {
             return HTSService.this;
         }
@@ -103,7 +92,9 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (ACTION_CONNECT.equals(intent.getAction())) {
+        final String action = intent.getAction();
+        if (action.equals(Constants.ACTION_CONNECT)) {
+
             boolean force = intent.getBooleanExtra("force", false);
             final String hostname = intent.getStringExtra("hostname");
             final int port = intent.getIntExtra("port", 9982);
@@ -113,16 +104,14 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (connection != null && force) {
                 connection.close();
             }
-
             if (connection == null || !connection.isConnected()) {
                 final TVHClientApplication app = (TVHClientApplication) getApplication();
                 app.clearAll();
                 app.setLoading(true);
                 connection = new HTSConnection(this, packInfo.packageName, packInfo.versionName);
 
-                //Since this is blocking, spawn to a new thread
+                // Since this is blocking, spawn to a new thread
                 execService.execute(new Runnable() {
-
                     public void run() {
                         connection.open(hostname, port);
                         connection.authenticate(username, password);
@@ -130,44 +119,51 @@ public class HTSService extends Service implements HTSConnectionListener {
                 });
             }
         } else if (connection == null || !connection.isConnected()) {
-            Log.e(TAG, "No connection to perform " + intent.getAction());
-        } else if (ACTION_DISCONNECT.equals(intent.getAction())) {
+            
+            Log.e(TAG, "No connection to perform " + action);
+        } else if (action.equals(Constants.ACTION_DISCONNECT)) {
+            
             connection.close();
-        } else if (ACTION_GET_EVENT.equals(intent.getAction())) {
+        } else if (action.equals(Constants.ACTION_GET_EVENT)) {
+            
             getEvent(intent.getLongExtra("eventId", 0));
-        } else if (ACTION_GET_EVENTS.equals(intent.getAction())) {
+        } else if (action.equals(Constants.ACTION_GET_EVENTS)) {
+            
             TVHClientApplication app = (TVHClientApplication) getApplication();
-            Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
-            getEvents(ch,
-                    intent.getLongExtra("eventId", 0),
-                    intent.getIntExtra("count", 10));
-        } else if (ACTION_DVR_ADD.equals(intent.getAction())) {
+            final Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
+            getEvents(ch, intent.getLongExtra("eventId", 0), intent.getIntExtra("count", 10));
+        } else if (action.equals(Constants.ACTION_DVR_ADD)) {
+            
             TVHClientApplication app = (TVHClientApplication) getApplication();
             Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
             addDvrEntry(ch, intent.getLongExtra("eventId", 0));
-        } else if (ACTION_DVR_DELETE.equals(intent.getAction())) {
+        } else if (action.equals(Constants.ACTION_DVR_DELETE)) {
+            
             deleteDvrEntry(intent.getLongExtra("id", 0));
-        } else if (ACTION_DVR_CANCEL.equals(intent.getAction())) {
+        } else if (action.equals(Constants.ACTION_DVR_CANCEL)) {
+            
             cancelDvrEntry(intent.getLongExtra("id", 0));
-        } else if (ACTION_EPG_QUERY.equals(intent.getAction())) {
+        } else if (action.equals(Constants.ACTION_EPG_QUERY)) {
+            
             TVHClientApplication app = (TVHClientApplication) getApplication();
             Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
-            epgQuery(ch,
-                    intent.getStringExtra("query"),
-                    intent.getLongExtra("tagId", 0));
-        } else if (ACTION_SUBSCRIBE.equals(intent.getAction())) {
+            epgQuery(ch, intent.getStringExtra("query"), intent.getLongExtra("tagId", 0));
+        } else if (action.equals(Constants.ACTION_SUBSCRIBE)) {
+            
             subscribe(intent.getLongExtra("channelId", 0),
                     intent.getLongExtra("subscriptionId", 0),
                     intent.getIntExtra("maxWidth", 0),
                     intent.getIntExtra("maxHeight", 0),
                     intent.getStringExtra("audioCodec"),
                     intent.getStringExtra("videoCodec"));
-        } else if (ACTION_UNSUBSCRIBE.equals(intent.getAction())) {
+        } else if (action.equals(Constants.ACTION_UNSUBSCRIBE)) {
+            
             unsubscribe(intent.getLongExtra("subscriptionId", 0));
-        } else if (ACTION_FEEDBACK.equals(intent.getAction())) {
-            feedback(intent.getLongExtra("subscriptionId", 0),
-                    intent.getIntExtra("speed", 0));
-        } else if (ACTION_GET_TICKET.equals(intent.getAction())) {
+        } else if (action.equals(Constants.ACTION_FEEDBACK)) {
+            
+            feedback(intent.getLongExtra("subscriptionId", 0), intent.getIntExtra("speed", 0));
+        } else if (action.equals(Constants.ACTION_GET_TICKET)) {
+            
             TVHClientApplication app = (TVHClientApplication) getApplication();
             Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
             Recording rec = app.getRecording(intent.getLongExtra("dvrId", 0));
@@ -176,10 +172,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             } else if (rec != null) {
                 getTicket(rec);
             }
-        } else if (ACTION_GET_DISC_STATUS.equals(intent.getAction())) {
+        } else if (action.equals(Constants.ACTION_GET_DISC_STATUS)) {
+            
         	getDiscSpace();
         }
-
         return START_NOT_STICKY;
     }
 
@@ -191,39 +187,16 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void showError(final String error) {
-        if (error == null || error.length() < 0) {
-            return;
-        }
-
+    @Override
+    public void onConnectionState(final String state) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         app.setLoading(false);
-        app.broadcastError(error);
+        app.setConnectionState(state);
     }
 
-    private void showError(int recourceId) {
-        showError(getString(recourceId));
-    }
-
-    public void onError(int errorCode) {
-        switch (errorCode) {
-            case HTSConnection.CONNECTION_LOST_ERROR:
-                showError(R.string.err_con_lost);
-                break;
-            case HTSConnection.TIMEOUT_ERROR:
-                showError("Connection timeout");
-                break;
-            case HTSConnection.CONNECTION_REFUSED_ERROR:
-                showError(R.string.err_connect);
-                break;
-            case HTSConnection.HTS_AUTH_ERROR:
-                showError(R.string.err_auth);
-                break;
-        }
-    }
-
-    public void onError(Exception ex) {
-        showError(ex.getLocalizedMessage());
+    public void onError(final int errorCode) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        app.setLoading(false);
     }
 
     @Override
@@ -238,7 +211,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         tag.id = msg.getLong("tagId");
         tag.name = msg.getString("tagName", null);
         tag.icon = msg.getString("tagIcon", null);
-        //tag.members = response.getIntList("members");
         app.addChannelTag(tag);
         if (tag.icon != null) {
             getChannelTagIcon(tag);
@@ -288,7 +260,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         long currEventId = msg.getLong("eventId", 0);
         long nextEventId = msg.getLong("nextEventId", 0);
 
-        ch.isTransmitting = currEventId != 0;
+        ch.isTransmitting = (currEventId != 0);
 
         if (currEventId > 0) {
             getEvents(ch, currEventId, 5);
@@ -299,7 +271,6 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void onChannelUpdate(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
-
         final Channel ch = app.getChannel(msg.getLong("channelId"));
         if (ch == null) {
             return;
@@ -317,7 +288,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             ch.icon = icon;
             getChannelIcon(ch);
         }
-        //Remove programmes that have ended
+        // Remove programs that have ended
         long currEventId = msg.getLong("eventId", 0);
         long nextEventId = msg.getLong("nextEventId", 0);
 
@@ -337,7 +308,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         ch.epg.removeAll(tmp);
 
         for (Program p : tmp) {
-            app.removeProgramme(p);
+            app.removeProgram(p);
         }
 
         final long eventId = currEventId != 0 ? currEventId : nextEventId;
@@ -405,7 +376,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         for (Program p : rec.channel.epg) {
             if (p.recording == rec) {
                 p.recording = null;
-                app.updateProgramme(p);
+                app.updateProgram(p);
                 break;
             }
         }
@@ -571,7 +542,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         InputStream is;
         
-        if(url.startsWith("http")) {
+        if (url.startsWith("http")) {
         	is = new BufferedInputStream(new URL(url).openStream());
         } else if (connection.getProtocolVersion() > 9){
         	is = new HTSFileInputStream(connection, url);
@@ -594,8 +565,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
-        }
-        else if (connection.getProtocolVersion() > 9) {
+        } else if (connection.getProtocolVersion() > 9) {
             is = new HTSFileInputStream(connection, url);
         }
 
@@ -709,7 +679,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     
                     p.channel = ch;
                     if (ch.epg.add(p)) {
-                        app.addProgramme(p);
+                        app.addProgram(p);
                     }
                 }
                 app.updateChannel(ch);
@@ -723,7 +693,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("eventId", eventId);
 
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 TVHClientApplication app = (TVHClientApplication) getApplication();
                 Channel ch = app.getChannel(response.getLong("channelId"));
@@ -739,11 +708,10 @@ public class HTSService extends Service implements HTSConnectionListener {
                 p.stop = response.getDate("stop");
                 p.seriesInfo = buildSeriesInfo(response);
                 p.starRating = response.getInt("starRating", -1);
-                
                 p.channel = ch;
 
                 if (ch.epg.add(p)) {
-                    app.addProgramme(p);
+                    app.addProgram(p);
                     app.updateChannel(ch);
                 }
             }
@@ -752,7 +720,6 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private SeriesInfo buildSeriesInfo(HTSMessage msg) {
         SeriesInfo info = new SeriesInfo();
-		
         info.episodeCount = msg.getInt("episodeCount", 0);
         info.episodeNumber = msg.getInt("episodeNumber", 0);
         info.onScreen = msg.getString("onScreen", "");
@@ -760,7 +727,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         info.partNumber = msg.getInt("partNumber", 0);
         info.seasonCount = msg.getInt("seasonCount", 0);
         info.seasonNumber = msg.getInt("seasonNumber", 0);
-
         return info;
     }
 	
@@ -775,13 +741,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("tagId", tagId);
         }
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
-
                 if (!response.containsKey("eventIds")) {
                     return;
                 }
-
                 for (Long id : response.getLongList("eventIds")) {
                     getEvent(id);
                 }
@@ -794,7 +757,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("cancelDvrEntry");
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
@@ -807,7 +769,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("deleteDvrEntry");
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
@@ -820,14 +781,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("addDvrEntry");
         request.putField("eventId", eventId);
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 if (response.getInt("success", 0) == 1) {
                     for (Program p : ch.epg) {
                         if (p.id == eventId) {
                             TVHClientApplication app = (TVHClientApplication) getApplication();
                             p.recording = app.getRecording(response.getLong("id", 0));
-                            app.updateProgramme(p);
+                            app.updateProgram(p);
                             break;
                         }
                     }
@@ -855,7 +815,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("videoCodec", vCodec);
         request.putField("subscriptionId", subscriptionId);
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
@@ -870,7 +829,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("unsubscribe");
         request.putField("subscriptionId", subscriptionId);
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
@@ -883,7 +841,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("subscriptionId", subscriptionId);
         request.putField("speed", speed);
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
@@ -895,12 +852,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("getTicket");
         request.putField("channelId", ch.id);
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
                 String ticket = response.getString("ticket", null);
                 String webroot = connection.getWebRoot();
-                
+
                 if (path != null && ticket != null) {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.addTicket(new HttpTicket(webroot + path, ticket));
@@ -914,7 +870,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("getTicket");
         request.putField("dvrId", rec.id);
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
                 String ticket = response.getString("ticket", null);
@@ -931,14 +886,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         HTSMessage request = new HTSMessage();
         request.setMethod("getDiskSpace");
         connection.sendMessage(request, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
             	Map<String, String> list = new HashMap<String, String>();
             	list.put("freediskspace", response.getString("freediskspace", null));
                 list.put("totaldiskspace", response.getString("totaldiskspace", null));
-                
+
                 TVHClientApplication app = (TVHClientApplication) getApplication();
-                app.updateStatus(list);
+                app.updateDiscSpace(list);
             }
         });
     }

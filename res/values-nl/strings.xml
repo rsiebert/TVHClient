@@ -5,7 +5,6 @@
     <string name="menu_settings">Instellingen</string>
     <string name="menu_refresh">Ververs</string>
     <string name="menu_tags">Tags</string>
-    <string name="menu_recordings">Opnames</string>
 
     <string name="menu_play">Afspelen</string>
     <string name="menu_search">Zoek</string>
@@ -29,9 +28,6 @@
     <string name="pref_manage_connections_sum">Selecteer een actieve connectie naar een TVHeadend server of maak, wijzig of verwijder connecties.</string>
     <string name="select_connection">Selecteer connectie</string>
     <string name="add_connection">Connectie toevoegen</string>
-    <string name="no_connections">Geen connecties beschikbaar</string>
-    <string name="create_new_connections">Wil je nu een nieuwe connectie maken?</string>
-    <string name="connection_options">Opties voor connectie \'%s\'</string>
     <string name="cancel_connection">Vergeet waarden? Alle wijzigen zullen verloren gaan.</string>
     <string name="delete_connection">Weet je zeker dat je connectie \'%s\' wilt verwijderen?</string>
     <string name="delete_recording">Weet je zeker dat je opname \'%s\' wilt verwijderen?</string>
@@ -266,7 +262,6 @@
     
     <string name="channels">Kanalen</string>
     <string name="recordings">Opnames</string>
-    <string name="program_guide">Programmagids</string>
     <string name="status">Status</string>
     <string name="items">Onderdelen</string>
     <string name="results">Resultaten</string>
@@ -277,7 +272,6 @@
     <string name="channel">Kanaal</string>
     <string name="time">Tijd</string>
     <string name="date">Datum</string>
-    <string name="shown_on_channel">op</string>
     <string name="summary">Samenvatting</string>
     <string name="description">Omschrijving</string>
     <string name="duration">Duur</string>
@@ -289,7 +283,7 @@
 
     <string name="nothing">Niets</string>
     <string name="loading">Laden&#8230;</string>
-    <string name="all_channels">Alle kanalen</string>    
+    <string name="all_channels">Alle kanalen</string>
     <string name="season">Seizoen</string>
     <string name="episode">Aflevering</string>
     <string name="part">Deel</string>
@@ -304,12 +298,5 @@
     
     <string name="no_media_player">Geen media speler gevonden</string>
     <string name="show_play_store">Wil je naar de Google Play Store gaan en zoeken naar beschikbare media spelers?</string>
-    
-    <!--  Strings for possible PreferenceActivity Back/Next buttons -->
-    <string name="back_button_label">Terug</string>
-    <string name="next_button_label">Volgende</string>
-
-    <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
-    <string name="skip_button_label">Stap over</string>
 
 </resources>

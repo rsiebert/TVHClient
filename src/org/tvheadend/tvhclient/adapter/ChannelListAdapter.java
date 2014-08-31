@@ -21,15 +21,16 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
-import org.tvheadend.tvhclient.ProgramListActivity;
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -56,12 +57,36 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         this.list = list;
     }
 
-    public void sort() {
-        sort(new Comparator<Channel>() {
-            public int compare(Channel x, Channel y) {
-                return x.compareTo(y);
-            }
-        });
+    public void sort(final int type) {
+        switch (type) {
+        case Constants.CHANNEL_SORT_DEFAULT:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    return x.compareTo(y);
+                }
+            });
+            break;
+        case Constants.CHANNEL_SORT_BY_NAME:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    return x.name.toLowerCase(Locale.US).compareTo(y.name.toLowerCase(Locale.US));
+                }
+            });
+            break;
+        case Constants.CHANNEL_SORT_BY_NUMBER:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    if (x.number > y.number) {
+                        return 1;
+                    } else if (x.number < y.number) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            break;
+        }
     }
 
     public void setPosition(int pos) {
@@ -82,7 +107,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ViewHolder holder = null;
 
@@ -141,7 +166,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.icon_text.setText(c.name);
                     holder.icon_text.setVisibility(ImageView.VISIBLE);
                     
-                    // Add the listener to the icon so that a 
+                    // Add the listener to the icon text so that a 
                     // click calls the program list of this channel
                     holder.icon_text.setOnClickListener(new OnClickListener() {
                         @Override
@@ -149,9 +174,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                             if (c.epg.isEmpty()) {
                                 return;
                             }
-                            Intent intent = new Intent(context, ProgramListActivity.class);
-                            intent.putExtra("channelId", c.id);
-                            context.startActivity(intent);
+                            if (context instanceof FragmentStatusInterface) {
+                                ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
+                            }
                         }
                     });
                 }
@@ -166,9 +191,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                         if (c.epg.isEmpty()) {
                             return;
                         }
-                        Intent intent = new Intent(context, ProgramListActivity.class);
-                        intent.putExtra("channelId", c.id);
-                        context.startActivity(intent);
+                        if (context instanceof FragmentStatusInterface) {
+                            ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
+                        }
                     }
                 });
             }
@@ -188,16 +213,21 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Get the iterator so we can check the channel status 
             Iterator<Program> it = c.epg.iterator();
             
+            // Get the program that is currently running
+            // and set all the available values
+            Program p = null;
+            if (it.hasNext()) {
+                p = it.next();
+            }
+
             // Check if the channel is actually transmitting
             // data and contains program data which can be shown.
-            if (!c.isTransmitting && it.hasNext()) {
+            if (!c.isTransmitting && p != null) {
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_transmission);
                 }
-            } else if (it.hasNext()) {
-                // Get the program that is currently running
-                // and set all the available values
-                Program p = it.next();
+                Utils.setGenreColor(context, holder.genre, p.contentType, TAG);
+            } else if (p != null) {
                 if (holder.title != null) {
                     holder.title.setText(p.title);
                 }
@@ -221,6 +251,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (holder.duration != null) {
                     holder.duration.setVisibility(View.GONE);
                 }
+                if (holder.genre != null) {
+                    holder.genre.setVisibility(View.GONE);
+                }
             }
         }
         return view;
@@ -229,7 +262,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     public void update(Channel c) {
         int length = list.size();
 
-        // Go through the list of programs and find the
+        // Go through the list of channels and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
             if (list.get(i).id == c.id) {
@@ -237,5 +270,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 break;
             }
         }
+    }
+
+    public Channel getSelectedItem() {
+        return list.get(selectedPosition);
     }
 }

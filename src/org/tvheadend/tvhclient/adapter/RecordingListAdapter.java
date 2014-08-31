@@ -21,9 +21,9 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.List;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -63,6 +63,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     static class ViewHolder {
         public ImageView icon;
         public TextView title;
+        public ImageView state;
         public TextView channel;
         public TextView time;
         public TextView date;
@@ -83,6 +84,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
+            holder.state = (ImageView) view.findViewById(R.id.state);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.date = (TextView) view.findViewById(R.id.date);
@@ -126,6 +128,16 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
             Utils.setFailedReason(holder.failed_reason, rec);
+            
+            // Show only the recording icon
+            if (holder.state != null) {
+                if (rec.state.equals("recording")) {
+                    holder.state.setImageResource(R.drawable.ic_rec_small);
+                    holder.state.setVisibility(ImageView.VISIBLE);
+                } else {
+                    holder.state.setVisibility(ImageView.GONE);
+                }
+            }
         }
         return view;
     }
@@ -141,5 +153,9 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 break;
             }
         }
+    }
+    
+    public Recording getSelectedItem() {
+        return list.get(selectedPosition);
     }
 }

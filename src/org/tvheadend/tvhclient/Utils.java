@@ -47,7 +47,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
@@ -155,7 +154,7 @@ public class Utils {
         if (conn != null) {
             // Create an intent and pass on the connection details
             intent = new Intent(context, HTSService.class);
-            intent.setAction(HTSService.ACTION_CONNECT);
+            intent.setAction(Constants.ACTION_CONNECT);
             intent.putExtra("hostname", conn.address);
             intent.putExtra("port", conn.port);
             intent.putExtra("username", conn.username);
@@ -175,21 +174,14 @@ public class Utils {
      * @param context
      * @param id
      */
-    public static void removeProgram(final Context context, final Recording rec) {
-        if (rec == null) {
-            return;
-        }
-        final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_DELETE);
-        intent.putExtra("id", rec.id);
-        
+    public static void confirmRemoveRecording(final Context context, final Recording rec) {
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_remove)
         .setMessage(context.getString(R.string.delete_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                context.startService(intent);
+                removeRecording(context, rec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -199,68 +191,58 @@ public class Utils {
     }
 
     /**
-     * Removes all failed programs from the server. A dialog is shown
-     * up front to confirm the deletion.
-     * 
-     * @param context
-     * @param list
-     */
-    public static void removePrograms(final Context context, final List<Recording> list) {
-        if (list == null) {
-            return;
-        }
-        final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_DELETE);
-
-        // Show a confirmation dialog before deleting the recording
-        new AlertDialog.Builder(context)
-        .setTitle(R.string.menu_record_remove_all)
-        .setMessage(context.getString(R.string.delete_all_recordings))
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                
-                // Call the remove recording call for each failed recording
-                for (Recording rec : list) {
-                    if (rec != null) {
-                        intent.putExtra("id", rec.id);
-                        context.startService(intent);
-                    }
-                }
-            }
-        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // NOP
-            }
-        }).show();
-    }
-
-    /**
-     * Tells the server to cancel the recording with the given id.
+     * Removes the program with the given id from the server.
      * 
      * @param context
      * @param id
      */
-    public static void cancelProgram(final Context context, final Recording rec) {
+    public static void removeRecording(final Context context, final Recording rec) {
         if (rec == null) {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_CANCEL);
+        intent.setAction(Constants.ACTION_DVR_DELETE);
         intent.putExtra("id", rec.id);
+        context.startService(intent);
+    }
 
+    /**
+     * Notifies the server to cancel the recording with the given id. A dialog is shown
+     * up front to confirm the cancellation.
+     * 
+     * @param context
+     * @param id
+     */
+    public static void confirmCancelRecording(final Context context, final Recording rec) {
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_cancel)
         .setMessage(context.getString(R.string.cancel_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                context.startService(intent);
+                cancelRecording(context, rec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // NOP
             }
         }).show();
+    }
+
+    /**
+     * Notifies the server to cancel the recording with the given id.
+     * 
+     * @param context
+     * @param id
+     */
+    public static void cancelRecording(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
+        final Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(Constants.ACTION_DVR_CANCEL);
+        intent.putExtra("id", rec.id);
+        context.startService(intent);
     }
 
     /**
@@ -270,11 +252,14 @@ public class Utils {
      * @param id
      * @param channelId
      */
-    public static void recordProgram(final Context context, final long id, final long channelId) {
+    public static void recordProgram(final Context context, final Program program) {
+        if (program == null || program.channel == null) {
+            return;
+        }
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_ADD);
-        intent.putExtra("eventId", id);
-        intent.putExtra("channelId", channelId);
+        intent.setAction(Constants.ACTION_DVR_ADD);
+        intent.putExtra("eventId", program.id);
+        intent.putExtra("channelId", program.channel.id);
         context.startService(intent);
     }
 
@@ -392,10 +377,23 @@ public class Utils {
     public static void setRecordingMenuIcons(final Context context, final Menu menu) {
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
+        MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
+        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-        recordCancelMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
-        recordRemoveMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        if (recordCancelMenuItem != null) {
+            recordCancelMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        }
+        if (recordRemoveMenuItem != null) {
+            recordRemoveMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        }
+        if (recordCancelAllMenuItem != null) {
+            recordCancelAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        }
+        if (recordRemoveAllMenuItem != null) {
+            recordRemoveAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        }
     }
 
     /**
@@ -883,7 +881,7 @@ public class Utils {
 
         // Set the required information and start the service command.
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_GET_EVENTS);
+        intent.setAction(Constants.ACTION_GET_EVENTS);
         intent.putExtra("eventId", nextId);
         intent.putExtra("channelId", channel.id);
         intent.putExtra("count", Constants.PREF_PROGRAMS_TO_LOAD);
@@ -900,7 +898,7 @@ public class Utils {
      * @param hoursToShow
      * @return
      */
-    public static float getPixelsPerMinute(final FragmentActivity context, final int tabIndex, final int hoursToShow) {
+    public static float getPixelsPerMinute(final Activity context, final int tabIndex, final int hoursToShow) {
         // Get the usable width. Subtract the icon width if its visible.
         DisplayMetrics displaymetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -966,5 +964,17 @@ public class Utils {
 			config.locale = new Locale(locale);
 			context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
 		}
+	}
+
+    /**
+     * Returns the type how the channels are sorted in the adapter and in which
+     * order they will then be shown in the list.
+     * 
+     * @param context
+     * @return
+     */
+	public static int getChannelSortOrder(final Activity context) {
+	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.parseInt(prefs.getString("sortChannelsPref", String.valueOf(Constants.CHANNEL_SORT_DEFAULT)));
 	}
 }
