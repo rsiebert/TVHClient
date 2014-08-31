@@ -9,8 +9,10 @@
     <string name="menu_play">Play</string>
     <string name="menu_search">Szukaj</string>
     <string name="menu_record">Nagraj</string>
-    <string name="menu_record_cancel">Anuluj nagranie</string>
+    <string name="menu_record_cancel">Anuluj nagrywanie</string>
+    <string name="menu_record_cancel_all">Anuluj wszystkie nagrywania</string>
     <string name="menu_record_remove">Usuń nagranie</string>
+    <string name="menu_record_remove_all">Usuń wszystkie nagrania</string>
     <string name="menu_search_imdb">Szukaj na IMDB</string>
     <string name="menu_search_epg">Szukaj w przewodniku programów</string>
     <string name="menu_add">Dodaj</string>
@@ -23,6 +25,7 @@
     <string name="menu_connections">Połączenia</string>
     <string name="menu_timeframe">Ramy czasowe</string>
     <string name="menu_genre_color_info">Objaśnienie rodzaju kolorów</string>
+    <string name="menu_send_wol">Wybudzenie</string>
     
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
@@ -31,7 +34,9 @@
     <string name="cancel_connection">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="delete_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>
+    <string name="delete_all_recordings">Jesteś pewny że chcesz usunąć wszystkie nagrania?</string>
     <string name="cancel_recording">Jesteś pewny że chcesz anulować zaplanowane nagrywanie \'%s\'?</string>
+    <string name="cancel_all_recordings">Jesteś pewny że chcesz anulować wszystkie nagrywania?</string>
 
     <string name="pref_connections">Połączenia</string>
     <string name="pref_name">Nazwa połączenia</string>
@@ -57,8 +62,10 @@
     <string name="pref_pass_set_sum">Hasło jest ustawione ale nie jest wyświetlane.</string>
     <string name="pref_wol_address">MAC adres</string>
     <string name="pref_wol_address_sum">Wpisz adres MAC hosta (np. 00:ef:aa:dc:09:45)</string>
-    <string name="pref_wol_port">Wake on LAN Port</string>
+    <string name="pref_wol_port">Port wybudzenia w LAN</string>
     <string name="pref_wol_port_sum">Port %d zostanie wykorzystany w celu obudzenia serwera. Domyślnie jest to 9.</string>
+    <string name="pref_wol_broadcast">Użyj rozgłaszania</string>
+    <string name="pref_wol_broadcast_sum">Wyślij pakiet WOL w transmisji. Niektóre routery nie pozwalają na transmisję WOL.</string>
     <string name="pref_wol_address_invalid">MAC adres jest nieprawidłowy.\nMusi mieć postać \'01:24:67:9a:cd:ef\' i może zawierać tylko znaki w systemie szesnastkowym \'0\-9\' i \'a\-f\' i separatory \':\' lub \'-\'.</string>
 
     <string name="pref_user_interface">Interfejs użytkownika</string>
@@ -68,6 +75,10 @@
     <string name="pref_theme_sum">Użyj lekkiego motywu</string>
     <string name="pref_language">Język</string>
     <string name="pref_language_sum">Wybierz język, który będzie używany przez aplikację.</string>
+    <string name="pref_default_menu">Ekran startowy</string>
+    <string name="pref_default_menu_sum">Wybierz ekran który ma zostać wyświetlony po uruchomieniu aplikacji.</string>
+    <string name="pref_sort_channels">Kolejność kanałów</string>
+    <string name="pref_sort_channels_sum">Wybierz w jakiej kolejności mają być wyświetlane kanały.</string>
     <string name="pref_res">Rozdzielczość</string>
     <string name="pref_res_sum">Określa maksymalną rozdzielczość z jakiej transkoder powinien korzystać.</string>
     <string name="pref_acodec">Kodek audio</string>
@@ -86,7 +97,7 @@
     <string name="pref_transcode_sum">Konwersja programu lub nagrania na inny format podczas odtwarzania. (Opcja musi być obsługiwana przez serwer TVHeadend)</string>
 
     <string name="pref_information">Informacja</string>
-    <string name="pref_changelog">Changelog</string>
+    <string name="pref_changelog">Historia zmian</string>
     <string name="pref_changelog_sum">Pokaż listę funkcji i zmian poszczególnych wersji aplikacji.</string>
     <string name="pref_program_guide">Przewodnik programów</string>
     <string name="pref_program_guide_sum">Konfiguracja wyświetlania przewodnika programów i danych jakie powinny być wyświetlane.</string>
@@ -117,12 +128,14 @@
     <string name="err_auth">Odmowa dostępu</string>
     <string name="err_connect">Nie można połączyć się z serweram</string>
     <string name="err_con_lost">Utracono połączenie z serwerem</string>
+    <string name="err_con_timeout">Limit czasu połączenia</string>
     
     <string name="recording_file_missing">Nagrywany plik jest utracony</string>
     <string name="recording_time_missed">Zaplanowane nagranie zostało utracone</string>
     <string name="recording_file_invalid">Nagranie jest nieważne</string>
 
     <string name="wol_send">Pomyślnie wysłano pakiet Wake On LAN do \'%s\'</string>
+    <string name="wol_send_broadcast">Pomyślnie wysłano Wake On LAN jako pakiet transmisji do \'%s\'</string>
     <string name="wol_address_invalid">MAC adres jest nieprawidłowy. Proszę sprawdzić ustawienia.</string>
     <string name="wol_error">Błąd wysyłania pakietu Wake On LAN do \'%1$s\'.\n Komunikat o błędzie: %2$s</string>
 
@@ -257,6 +270,7 @@
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Szukaj w EPG</string>
+    <string name="two_days_ago">Dwa dni temu</string>
     <string name="yesterday">Wczoraj</string>
     <string name="today">Dzisiaj</string>
     <string name="tomorrow">Jutro</string>
@@ -293,23 +307,35 @@
     <string name="rating">Ocena</string>
     <string name="content_type">Kategoria</string>
     <string name="series_information">Część</string>
-	<string name="genre_color_list">Lista rodzaju kolorów i ich znaczenie.</string>
+    <string name="genre_color_list">Lista rodzaju kolorów i ich znaczenie.</string>
 
     <string name="nothing">Brak</string>
     <string name="loading">Wczytywanie&#8230;</string>
+    <string name="loading_channel">Wczytywanie kanału %s</string>
+    <string name="updating">Uaktualnianie&#8230;</string>
     <string name="all_channels">Wszystkie kanały</string>
     <string name="season">Sezon</string>
     <string name="episode">Odcinek</string>
     <string name="part">Część</string>
     <string name="progress">%1$d%% z transmisji zostało pokazane</string>
 
+    <string name="connection">Połączenie</string>
     <string name="disc_space">Przestrzeń dysku</string>
     <string name="total">Całość</string>
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>
+    <string name="ready">Gotowy</string>
     <string name="select_timeframe">Pokaż przewodnik po programach dla wybranej daty i czasu.</string>
     <string name="currently_recording">Aktualnie nagrywane</string>
     
+    <string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
+    <string name="no_connection_active">Co najmniej jedno połaczenie jest zdefioniowane, ale nie jest aktywowane.</string>
+    
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
     <string name="show_play_store">Czy chcesz przejść do sklepu Google Play i poszukać dostępnych odtwarzaczy?</string>
+    
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Otwórz szufladę nawigacji</string>
+    <string name="drawer_close">Zamknij szufladę nawigacji</string>
+    
 </resources>
