@@ -39,9 +39,9 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Only show the cancel recording menu when in dual pane mode. Only
-        // there a recording is preselected. In single mode the first recording
-        // would always be preselected. 
+        // Do not show the remove menu in single pane mode. No recording is
+        // preselected so the behavior is undefined. In dual pane mode one
+        // recording is also selected which is fine.
         if (!isDualPane) {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         }
