@@ -44,9 +44,9 @@
     <string name="pref_name_error_invalid">Il nome può contenere solo lettere, numeri e simboli di meno e sottolineature.</string>
     <string name="pref_selected">Connessione predefinita</string>
     <string name="pref_selected_sum">Selezione per rendere predefinita questa connessione e per usarla all\'avvio dell\'applicazione.</string>
-    <string name="pref_host">Nome della macchina</string>
+    <string name="pref_host">Nome host</string>
     <string name="pref_host_sum">Inserisci il nome del server</string>
-    <string name="pref_host_error_empty">L\'indirizzo IP o il nome della macchina non può rimanere vuoto.</string>
+    <string name="pref_host_error_empty">L\'indirizzo IP o il nome dell\'host non può rimanere vuoto.</string>
     <string name="pref_host_error_invalid">L\'indirizzo IP non è valido.</string>
     <string name="pref_port">Porta</string>
     <string name="pref_port_sum">Inserisci la porta sul server</string>
@@ -60,7 +60,7 @@
     <string name="pref_pass_sum">Inserisci la password</string>
     <string name="pref_pass_set_sum">Password è impostata ma non è mostrata.</string>
     <string name="pref_wol_address">indirizzo MAC</string>
-    <string name="pref_wol_address_sum">Inserisci l\'indirizzo MAC della macchina (per esempio, 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_address_sum">Inserisci l\'indirizzo MAC dell\'host (per esempio, 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Porta Wake on LAN</string>
     <string name="pref_wol_port_sum">La porta %d sarà usata per risvegliare il server. Il valore predefinito è 9.</string>
     <string name="pref_wol_broadcast">Utilizza Broadcast</string>
@@ -81,7 +81,7 @@
     <string name="pref_res">Risoluzione</string>
     <string name="pref_res_sum">Specifica la massima risoluzione che il convertitore utilizzerà.</string>
     <string name="pref_acodec">Codifica audio</string>
-    <string name="pref_acodec_sum">Definische che tipo di codifica audio il convertitore utilizzerà.</string>
+    <string name="pref_acodec_sum">Definisce che tipo di codifica audio il convertitore utilizzerà.</string>
     <string name="pref_vcodec">Codifica video</string>
     <string name="pref_vcodec_sum">Definisce il tipo di codifica video che il convertitore utilizzerà.</string>
     <string name="pref_scodec">Codifica sottotitoli</string>
@@ -101,7 +101,7 @@
     <string name="pref_program_guide">Guida programmi</string>
     <string name="pref_program_guide_sum">Configura la schermata della guida programmi e come i dati verranno mostrati.</string>
     <string name="pref_epg_hours_visible">Ore visibili</string>
-    <string name="pref_epg_hours_visible_sum">Definisce quante ore della guida programmi saranno mostrati in una schermata. Mettere troppe ore mostrerebbe troppi programmi rendendo la schermata confusa e diminuendone la leggibilità.</string>
+    <string name="pref_epg_hours_visible_sum">Definisce quante ore della guida programmi saranno mostrate in una schermata. Mettere troppe ore mostrerebbe troppi programmi rendendo la schermata confusa e diminuendone la leggibilità.</string>
     <string name="pref_epg_max_days">Numero massimo di giorni da mostrare</string>
     <string name="pref_epg_max_days_sum">Definisce il numero massimo di giorni della guida programmi che verranno visualizzati.</string>
     <string name="pref_genre_colors">Colori dei generi</string>
@@ -114,7 +114,7 @@
     <string name="pref_genre_colors_epg_sum">Mostra il colore del genere come sfondo di ogni elemento della guida programmi.</string>
     <string name="pref_genre_colors_search_results">Risultati ricerca</string>
     <string name="pref_genre_colors_search_results_sum">Il colore del genere sarà mostrato come una linea verticale sul lato sinistro della lista dei risultati della ricerca.</string>
-    <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
+    <string name="pref_genre_colors_visibility_message">Imposta la visibilità dei colori. Valori più alti indicano colori più forti.</string>
     <string name="pref_genre_colors_visibility">Visibilità colore del genere</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visibile</string>
     <string name="pref_misc">Varie</string>
