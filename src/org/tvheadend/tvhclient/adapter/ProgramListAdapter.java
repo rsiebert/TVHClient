@@ -103,7 +103,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);
-            Utils.setGenreColor(context, holder.genre, p.contentType, TAG);
+            Utils.setGenreColor(context, holder.genre, p, TAG);
         }
         return view;
     }
