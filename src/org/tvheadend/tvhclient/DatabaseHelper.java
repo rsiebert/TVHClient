@@ -9,9 +9,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -55,10 +57,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static DatabaseHelper instance = null;
 
+    private static Context context;
+
     public static DatabaseHelper init(Context ctx) {
         if (instance == null) {
             instance = new DatabaseHelper(ctx);
         }
+        context = ctx;
         return instance;
     }
 
@@ -256,12 +261,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public List<Connection> getConnections() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(TABLE_NAME, COLUMNS, null, null, null, null, KEY_NAME);
-
         List<Connection> connList = new ArrayList<Connection>();
+        Cursor c = null;
+
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            c = db.query(TABLE_NAME, COLUMNS, null, null, null, null, KEY_NAME);
+        } catch (SQLiteException ex) {
+            Log.d(TAG, "getConnections, exception " + ex.getLocalizedMessage());
+            if (context != null) {
+                Toast.makeText(context,
+                        "An error occurred while getting the list of available connections!\n"
+                                + "There was probably an issue while updating the app.\n" 
+                                + "Please uninstall and reinstall the app again to fix this.\n" 
+                                + "Thank you!",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
         Connection conn = null;
-        if (c.moveToFirst()) {
+        if (c != null && c.moveToFirst()) {
             do {
                 conn = new Connection();
                 conn.id = c.getInt(c.getColumnIndex(KEY_ID));
@@ -276,12 +295,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 conn.wol_address = c.getString(c.getColumnIndex(KEY_WOL_ADDRESS));
                 conn.wol_port = c.getInt(c.getColumnIndex(KEY_WOL_PORT));
                 conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_WOL_BROADCAST)) > 0);
-
-                // Add book to books
                 connList.add(conn);
             } while (c.moveToNext());
         }
-        c.close();
+        if (c != null) {
+            c.close();
+        }
         return connList;
     }
 }
