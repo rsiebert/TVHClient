@@ -1,3 +1,9 @@
+$ 1.5.2
+  % VERSION 1.5.2
+  _ 01.09.2014
+    * Updated Polish translation
+    * Updated Italian translation
+    * Fixed wrong display of play menus
 $ 1.5.1
   % VERSION 1.5.1
   _ 31.08.2014
