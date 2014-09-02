@@ -374,7 +374,7 @@ public class ProgramGuideItemView extends LinearLayout {
         }
 
         if (p != null) {
-            Utils.setGenreColor(activity, itemLayout, p.contentType, TAG);
+            Utils.setGenreColor(activity, itemLayout, p, TAG);
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
 	        Utils.setState(state, p.recording);

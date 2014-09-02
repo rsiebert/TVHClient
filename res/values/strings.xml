@@ -121,6 +121,13 @@
     <string name="pref_misc">Miscellaneous</string>
     <string name="pref_clear_search_history">Clear search history</string>
 
+    <string name="pref_menu_visibility">Menu visibility</string>
+    <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Hide the \'Delete all recordings\' menu</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
+    
     <string name="clear_search_history">Clear search history?</string>
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
     <string name="clear_search_history_done">Search history cleared</string>
@@ -133,6 +140,7 @@
     <string name="recording_file_missing">Recorded file is missing</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>
     <string name="recording_file_invalid">Recording is invalid</string>
+    <string name="recording_canceled">Recording has been canceled</string>
 
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>

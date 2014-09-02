@@ -66,7 +66,7 @@ public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTime
             final SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm", Locale.US);
             holder.time.setText(sdf1.format(startDate) + " - " + sdf1.format(endDate));
 
-            final SimpleDateFormat sdf2 = new SimpleDateFormat("dd:MM:yyyy", Locale.US);
+            final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
             Utils.setDate(holder.date1, startDate);
             holder.date2.setText(sdf2.format(startDate));
             

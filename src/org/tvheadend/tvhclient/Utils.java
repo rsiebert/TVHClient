@@ -214,6 +214,9 @@ public class Utils {
      * @param id
      */
     public static void confirmCancelRecording(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_cancel)
@@ -635,17 +638,18 @@ public class Utils {
             return;
         }
 
-        if (rec.error != null || 
-                (rec.state.equals("missed") || rec.state.equals("invalid"))) {
-            failed_reason.setVisibility(View.VISIBLE);
-            // Show the text why it failed
-            if (rec.error != null && rec.error.equals("File missing")) {
-                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
-            } else if (rec.state.equals("missed")) {
-                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_time_missed));
-            } else if (rec.state.equals("invalid")) {
-                failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_invalid));
-            }
+        // Make the text field visible as a default
+        failed_reason.setVisibility(View.VISIBLE);
+
+        // Show the reason why it failed
+        if (rec.error != null && rec.error.equals("File missing")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
+        } else if (rec.error != null && rec.error.equals("Aborted by user")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_canceled));
+        } else if (rec.state != null && rec.state.equals("missed")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_time_missed));
+        } else if (rec.state != null && rec.state.equals("invalid")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_invalid));
         } else {
             failed_reason.setVisibility(View.GONE);
         }
@@ -709,9 +713,9 @@ public class Utils {
      * 
      * @param context
      * @param view
-     * @param contentType
+     * @param program
      */
-    public static void setGenreColor(final Context context, View view, final int contentType, final String tag) {
+    public static void setGenreColor(final Context context, View view, final Program program, final String tag) {
     	if (view == null) {
             return;
         }
@@ -731,10 +735,19 @@ public class Utils {
         	offset = GENRE_COLOR_ALPHA_EPG_OFFSET;
         }
         
+        // As a default we show a transparent color. If we have a program then
+        // use the provided genre color. If genre colors shall not be shown we 
+        // also show the transparent color. This is used in the EPG where the 
+        // background is used as the genre indicator. 
+        int color = context.getResources().getColor(android.R.color.transparent);
+        if (program != null && showGenre) {
+            color = getGenreColor(context, program.contentType, offset);
+        }
+
         if (view instanceof TextView) {
         	if (showGenre) {
-        		view.setBackgroundColor(getGenreColor(context, contentType, offset));
-        		view.setVisibility(View.VISIBLE);
+        	    view.setBackgroundColor(color);
+        	    view.setVisibility(View.VISIBLE);
         	} else {
         		view.setVisibility(View.GONE);
         	}
@@ -742,11 +755,7 @@ public class Utils {
         	// Get the shape where the background color will be set 
 	        LayerDrawable layers = (LayerDrawable) view.getBackground();
 	        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
-	        if (showGenre) {    
-		        shape.setColor(getGenreColor(context, contentType, offset));
-        	} else {
-        	    shape.setColor(context.getResources().getColor(android.R.color.transparent));
-        	}
+	        shape.setColor(color);
         }
     }
 

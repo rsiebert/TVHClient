@@ -1,3 +1,15 @@
+$ 1.5.2
+  % VERSION 1.5.2
+  _ 01.09.2014
+    * Updated Polish translation
+    * Updated Italian translation
+    * Fixed wrong display of play menus
+$ 1.5.1
+  % VERSION 1.5.1
+  _ 31.08.2014
+    * Fixed bug where the wrong program could have been recorded
+    * Fixed a possible crash when canceling a program
+    * Added option to hide the delete and cancel all recording menu
 $ 1.5.0
   % VERSION 1.5.0
   _ 28.08.2014

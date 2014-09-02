@@ -226,7 +226,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_transmission);
                 }
-                Utils.setGenreColor(context, holder.genre, p.contentType, TAG);
             } else if (p != null) {
                 if (holder.title != null) {
                     holder.title.setText(p.title);
@@ -234,7 +233,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
                 Utils.setProgress(holder.progress, p.start, p.stop);
-                Utils.setGenreColor(context, holder.genre, p.contentType, TAG);
             }
             else {
                 // The channel does not provide program data. Hide the progress
@@ -255,6 +253,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.genre.setVisibility(View.GONE);
                 }
             }
+            Utils.setGenreColor(context, holder.genre, p, TAG);
         }
         return view;
     }

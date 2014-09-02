@@ -205,7 +205,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Only enable the context menu when the full fragment is shown and not
         // only the channels
         if (!showOnlyChannels) {
-            registerForContextMenu(listView);            
+            registerForContextMenu(listView);
         }
         // Enable the action bar menu. Even in the channel only mode the tags
         // shall be available to set
@@ -219,8 +219,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsChannelsPref", false);
         (menu.findItem(R.id.menu_genre_color_info_channels)).setVisible(!showOnlyChannels && showGenreColors);
-        // Playing a channel shall not be available in channel only mode
-        (menu.findItem(R.id.menu_play)).setVisible(!showOnlyChannels);
+
+        // Playing a channel shall not be available in channel only mode or in
+        // single pane mode, because no channel is preselected.
+        if (!showOnlyChannels || !isDualPane) {
+            (menu.findItem(R.id.menu_play)).setVisible(false);
+        }
     }
 
     @Override
@@ -257,6 +261,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        if (getUserVisibleHint() == false) {
+            return false;
+        }
         // Get the currently selected channel. Also get the program that is
         // currently being transmitting by this channel.
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -269,6 +276,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     program = it.next();
                 }
             }
+        }
+
+        // Check if the context menu call came from the list in this fragment
+        // (needed for support for multiple fragments in one screen)
+        if (info.targetView.getParent() != getView().findViewById(R.id.item_list)) {
+            return super.onContextItemSelected(item);
         }
 
         switch (item.getItemId()) {
