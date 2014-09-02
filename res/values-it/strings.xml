@@ -141,7 +141,6 @@
     <string name="recording_file_invalid">Registrazione non valida</string>
     <string name="recording_canceled">Registrazione annullata</string>
 
-
     <string name="wol_send">Inviato con successo un pacchetto wake on LAN packet a \'%s\'</string>
     <string name="wol_send_broadcast">Inviato con successo un pacchetto wake on LAN in broadcast a \'%s\'</string>
     <string name="wol_address_invalid">L\'indirizzo MAC non è valido. Per favore controlla le impostazioni.</string>
@@ -340,5 +339,4 @@
     
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>
-
 </resources>
