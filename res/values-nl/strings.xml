@@ -121,7 +121,7 @@
     <string name="pref_misc">Diversen</string>
     <string name="pref_clear_search_history">Verwijder zoek historie</string>
 
-    <string name="pref_menu_visibility">Menu visibility</string>
+    <string name="pref_menu_visibility">Zichtbare menu\'s</string>
     <string name="pref_menu_visibility_sum">Verberg of toon verschillende menu items.</string>
     <string name="pref_hide_menu_delete_all_recordings">Verberg het \'Verwijder alle opnames\' menu</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Verberg dit menu om te voorkomen dat per ongeluk alle opnames worden verwijderd.</string>
