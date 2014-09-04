@@ -10,7 +10,9 @@
     <string name="menu_search">Zoek</string>
     <string name="menu_record">Opnemen</string>
     <string name="menu_record_cancel">Stop opname</string>
+    <string name="menu_record_cancel_all">Annuleer alle opnames</string>
     <string name="menu_record_remove">Verwijder opname</string>
+    <string name="menu_record_remove_all">Verwijder alle opnames</string>
     <string name="menu_search_imdb">Zoek op IMDB</string>
     <string name="menu_search_epg">Zoek in programma gids</string>
     <string name="menu_add">Toevoegen</string>
@@ -23,7 +25,8 @@
     <string name="menu_connections">Connecties</string>
     <string name="menu_timeframe">Periode</string>
     <string name="menu_genre_color_info">Genre kleuren uitleg</string>
-
+    <string name="menu_send_wol">Wake On Lan</string>
+    
     <string name="pref_manage_connections">Beheer connecties</string>
     <string name="pref_manage_connections_sum">Selecteer een actieve connectie naar een TVHeadend server of maak, wijzig of verwijder connecties.</string>
     <string name="select_connection">Selecteer connectie</string>
@@ -31,8 +34,10 @@
     <string name="cancel_connection">Vergeet waarden? Alle wijzigen zullen verloren gaan.</string>
     <string name="delete_connection">Weet je zeker dat je connectie \'%s\' wilt verwijderen?</string>
     <string name="delete_recording">Weet je zeker dat je opname \'%s\' wilt verwijderen?</string>
+    <string name="delete_all_recordings">Weet je zeker dat je ALLE opnames wilt verwijderen?</string>
     <string name="cancel_recording">Weet je zeker dat je geplande opname \'%s\' wilt annuleren?</string>
-
+	<string name="cancel_all_recordings">Weet je zeker dat je ALLE geplande opnames wilt annuleren?</string>
+	
     <string name="pref_connections">Connecties</string>
     <string name="pref_name">Connectienaam</string>
     <string name="pref_name_sum">Type de unieke naam voor de connectie in</string>
@@ -55,6 +60,13 @@
     <string name="pref_pass">Wachtwoord</string>
     <string name="pref_pass_sum">Type wachtwoord</string>
     <string name="pref_pass_set_sum">Wachtwoord is ingesteld maar wordt niet getoond.</string>
+    <string name="pref_wol_address">MAC adres</string>
+    <string name="pref_wol_address_sum">Voer het MAC adres van de host in (bijvoorbeeld: 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_port">Wake on LAN Poort</string>
+    <string name="pref_wol_port_sum">Poort %d zal worden gebruikt on de server wakker te maken. De standaard poort is 9.</string>
+    <string name="pref_wol_broadcast">Gebruik Broadcast</string>
+    <string name="pref_wol_broadcast_sum">Verstuur het WOL pakket als een broadcast. Sommige routers staan dit type WOL niet toe.</string>
+    <string name="pref_wol_address_invalid">Het MAC adres is niet juist.\nHet moet het volgende formaat hebben \'01:24:67:9a:cd:ef\' en het mag alleen de hexadecimal cijfers 0\-9 en a\-f en het scheidingsteken \':\' en \'\-\' bevatten.</string>
     
     <string name="pref_user_interface">Gerbuikers interface</string>
     <string name="pref_icons">Kanaal iconen</string>
@@ -63,6 +75,10 @@
     <string name="pref_theme_sum">Gebruik een licht thema</string>
     <string name="pref_language">Taal</string>
     <string name="pref_language_sum">Kies de taal die door het programma gebruikt zal worden.</string>
+    <string name="pref_default_menu">Startscherm</string>
+    <string name="pref_default_menu_sum">Kies het scherm dat wordt getoond wanneer de applicatie wordt gestart.</string>
+    <string name="pref_sort_channels">Kanaal sortering</string>
+    <string name="pref_sort_channels_sum">Kies hoe de kanalen worden gesorteerd.</string>
     <string name="pref_res">Resolutie</string>
     <string name="pref_res_sum">Specificeer de maximum resolutie die de transcoder zal gebruiken.</string>
     <string name="pref_acodec">Geluid codec</string>
@@ -102,15 +118,35 @@
     <string name="pref_genre_colors_visibility_message">Stel de zichtbaarheid in van de kleuren. Hogere waarden betekend sterkere kleuren.</string>
     <string name="pref_genre_colors_visibility">Zichtbaarheid van genre kleur</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% zichtbaar</string>
+    <string name="pref_misc">Diversen</string>
+    <string name="pref_clear_search_history">Verwijder zoek historie</string>
 
+    <string name="pref_menu_visibility">Menu visibility</string>
+    <string name="pref_menu_visibility_sum">Verberg of toon verschillende menu items.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Verberg het \'Verwijder alle opnames\' menu</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Verberg dit menu om te voorkomen dat per ongeluk alle opnames worden verwijderd.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Verberg het \'Annuleer alle opnames\' menu</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Verberg dit menu om te voorkomen dat per ongeluk alle geplande opnames worden geannuleerd.</string>
+    
+    <string name="clear_search_history">Verwijder zoek historie?</string>
+    <string name="clear_search_history_sum">Weet je zeker dat je de lijst met zoek historie wilt verwijderen?</string>
+    <string name="clear_search_history_done">Zoek history verwijderd</string>
+    
     <string name="err_auth">Toegang geweigerd</string>
     <string name="err_connect">Kan niet verbinden met server</string>
     <string name="err_con_lost">Verbinding met server verbroken</string>
+    <string name="err_con_timeout">Connectie timeout</string>
 
     <string name="recording_file_missing">Opname ontbreekt</string>
     <string name="recording_time_missed">Geplande opname gemist</string>
     <string name="recording_file_invalid">Opname is niet geldig</string>
+	<string name="recording_canceled">Opname is geannuleerd</string>
 
+    <string name="wol_send">Wake On LAN pakket is met success verstuurd naar \'%s\'</string>
+    <string name="wol_send_broadcast">Wake On LAN pakket is met success verstuurd als broadcast naar \'%s\'</string>
+    <string name="wol_address_invalid">Het MAC-adres is niet juist. Controleer je instellingen a.u.b.</string>
+    <string name="wol_error">Fout tijdens het versturen van het Wake On LAN pakket naar \'%1$s\'.\n Fout melding: %2$s</string>
+	
     <string-array name="pr_content_type0">
         <item>Film/Drama</item>
         <item>Nieuws/Actuele items</item>
@@ -283,20 +319,32 @@
 
     <string name="nothing">Niets</string>
     <string name="loading">Laden&#8230;</string>
+    <string name="loading_channel">Kanaal %s laden</string>
+    <string name="updating">Bijwerken&#8230;</string>
     <string name="all_channels">Alle kanalen</string>
+    
     <string name="season">Seizoen</string>
     <string name="episode">Aflevering</string>
     <string name="part">Deel</string>
     <string name="progress">%1$d%% van de uitzending al voorbij</string>
     
+    <string name="connection">Connectie</string>
     <string name="disc_space">Schijf ruimte</string>
     <string name="total">Totaal</string>
     <string name="available">Beschikbaar</string>
     <string name="unknown">Onbekend</string>
+    <string name="ready">Klaar</string>
     <string name="select_timeframe">Toon de programmagids voor de geselecteerde datum en tijd.</string>
     <string name="currently_recording">Huidige opname</string>
+    
+    <string name="no_connection_available">Nog steeds geen connectie gedefinieerd. Je moet minimaal één connectie toevoegen via het instellingen menu.</string>
+    <string name="no_connection_active">In ieder geval één connectie is gedefinieerd maar niet geactiveerd.</string>
     
     <string name="no_media_player">Geen media speler gevonden</string>
     <string name="show_play_store">Wil je naar de Google Play Store gaan en zoeken naar beschikbare media spelers?</string>
 
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Open naviatie paneel</string>
+    <string name="drawer_close">Sluit navigatie paneel</string>
+    
 </resources>
