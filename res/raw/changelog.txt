@@ -1,3 +1,12 @@
+$ 1.5.3
+  % VERSION 1.5.3
+  _ 05.09.2014
+    * Updated Polish translation
+    * Updated Italian translation
+    * Updated Dutch translation
+    * Added an URL scheme so that other apps can open TVHClient
+    * Play the recording in the recording details screen, not the channel
+    * Small bug fixes
 $ 1.5.2
   % VERSION 1.5.2
   _ 01.09.2014
