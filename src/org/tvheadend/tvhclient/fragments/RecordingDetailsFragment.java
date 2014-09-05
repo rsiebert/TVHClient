@@ -180,9 +180,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             @Override
             public void onClick(View v) {
                 // Open a new activity that starts playing the program
-                if (rec != null && rec.channel != null) {
+                if (rec != null) {
                     Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, rec.channel.id);
+                    intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
                     startActivity(intent);
                 }
             }
