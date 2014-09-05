@@ -1,3 +1,7 @@
+$ 1.5.4
+  % VERSION 1.5.4
+  _ 06.09.2014
+    * Fixed bug where the app icon disappeared 
 $ 1.5.3
   % VERSION 1.5.3
   _ 05.09.2014
