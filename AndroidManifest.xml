@@ -17,6 +17,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <data android:scheme="tvhclient"/>
             </intent-filter>
         </activity>
         <activity android:name="org.tvheadend.tvhclient.SearchResultActivity" android:launchMode="singleTop">
