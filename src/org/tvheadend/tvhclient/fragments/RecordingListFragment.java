@@ -166,7 +166,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     .setMessage(getString(R.string.delete_all_recordings))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            removeOrCancelAllRecordings();
+                            removeAllRecordings();
                         }
                     })
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -187,7 +187,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     .setMessage(getString(R.string.cancel_all_recordings))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            removeOrCancelAllRecordings();
+                            cancelAllRecordings();
                         }
                     })
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -203,11 +203,29 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     }
 
     /**
-     * Calls the service to remove completed or failed recordings or to cancel
-     * scheduled ones. This depends on the adapter contents. The service calls
-     * are done with a certain pause to prevent too many calls to the interface.
+     * Calls the service to cancel the scheduled recordings. The service is
+     * called in a certain interval to prevent too many calls to the interface.
      */
-    private void removeOrCancelAllRecordings() {
+    private void cancelAllRecordings() {
+        new Thread() {
+            public void run() {
+                for (int i = 0; i < adapter.getCount(); ++i) {
+                    Utils.cancelRecording(activity, adapter.getItem(i));
+                    try {
+                        sleep(THREAD_SLEEPING_TIME);
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, "Error cancelling all recordings, " + e.getLocalizedMessage());
+                    }
+                }
+            }
+        }.start();
+    }
+
+    /**
+     * Calls the service to remove the scheduled recordings. The service is
+     * called in a certain interval to prevent too many calls to the interface.
+     */
+    private void removeAllRecordings() {
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
