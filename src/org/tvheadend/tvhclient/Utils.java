@@ -175,6 +175,9 @@ public class Utils {
      * @param id
      */
     public static void confirmRemoveRecording(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_remove)
