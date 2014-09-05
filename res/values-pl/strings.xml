@@ -120,6 +120,13 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% widoczności</string>
     <string name="pref_misc">Różne</string>
     <string name="pref_clear_search_history">Wyczyść historię wyszukiwania</string>
+    
+    <string name="pref_menu_visibility">Widoczność menu</string>
+    <string name="pref_menu_visibility_sum">Ukryj lub pokaż niektóre elementy.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Ukryj w menu \'Usuń wszystkie nagrania\'</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Nie pokazuj tego menu, aby zapobiec przypadkowemu usunięciu wszystkich nagranych programów.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Ukryj w menu \'Anuluj wszystkie nagrania\'</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Nie pokazuj tego menu, aby zapobiec przypadkowemu anulowaniu wszystkich zaplanowanych nagrań programów.</string>
 
     <string name="clear_search_history">Wyczyścić historię wyszukiwania?</string>
     <string name="clear_search_history_sum">Jesteś pewny, że chcesz usunąć wszystkie wpisy z historii wyszukiwania?</string>
@@ -133,6 +140,7 @@
     <string name="recording_file_missing">Nagrywany plik jest utracony</string>
     <string name="recording_time_missed">Zaplanowane nagranie zostało utracone</string>
     <string name="recording_file_invalid">Nagranie jest nieważne</string>
+    <string name="recording_canceled">Nagrywanie zostało anulowane</string>
 
     <string name="wol_send">Pomyślnie wysłano pakiet Wake On LAN do \'%s\'</string>
     <string name="wol_send_broadcast">Pomyślnie wysłano Wake On LAN jako pakiet transmisji do \'%s\'</string>

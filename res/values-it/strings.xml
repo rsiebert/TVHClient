@@ -120,6 +120,13 @@
     <string name="pref_misc">Varie</string>
     <string name="pref_clear_search_history">Pulire cronologia ricerche</string>
 
+    <string name="pref_menu_visibility">Visibilità menu</string>
+    <string name="pref_menu_visibility_sum">Nasconde o mostra alcuni elementi dei menu.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Nascondi voce \`Cancella tutte registrazioni\`</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Non mostra questa voce per prevenire l\'accidentale cancellazione di tutte le registrazioni.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Nascondi voce \`Annulla tutte registrazioni\`</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Non mostra questa voce per prevenire l\'accidentale annullamento di tutte le registrazioni programmate.</string>
+
     <string name="clear_search_history">Pulire cronologia ricerche?</string>
     <string name="clear_search_history_sum">Sei sicuro di voler rimuovere tutte le voci della cronologia delle ricerche?</string>
     <string name="clear_search_history_done">Cronologia ricerca ripulita</string>
@@ -132,6 +139,7 @@
     <string name="recording_file_missing">File di registrazione mancante</string>
     <string name="recording_time_missed">Programmazione della registrazione mancata</string>
     <string name="recording_file_invalid">Registrazione non valida</string>
+    <string name="recording_canceled">Registrazione annullata</string>
 
     <string name="wol_send">Inviato con successo un pacchetto wake on LAN packet a \'%s\'</string>
     <string name="wol_send_broadcast">Inviato con successo un pacchetto wake on LAN in broadcast a \'%s\'</string>
@@ -331,5 +339,4 @@
     
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>
-
 </resources>
