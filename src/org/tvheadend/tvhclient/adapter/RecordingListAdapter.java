@@ -38,7 +38,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
     Activity context;
     List<Recording> list;
-    private int selectedPosition;
+    private int selectedPosition = 0;
     private int layout;
 
     public RecordingListAdapter(Activity context, List<Recording> list, int layout) {
@@ -156,6 +156,9 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     }
     
     public Recording getSelectedItem() {
-        return list.get(selectedPosition);
+        if (list.size() > selectedPosition) {
+            return list.get(selectedPosition);
+        }
+        return null;
     }
 }

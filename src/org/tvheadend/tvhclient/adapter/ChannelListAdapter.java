@@ -48,7 +48,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     private Activity context;
     private List<Channel> list;
     private int layout;
-    private int selectedPosition;
+    private int selectedPosition = 0;
 
     public ChannelListAdapter(Activity context, List<Channel> list, int layout) {
         super(context, layout, list);
@@ -272,6 +272,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     }
 
     public Channel getSelectedItem() {
-        return list.get(selectedPosition);
+        if (list.size() > selectedPosition) {
+            return list.get(selectedPosition);
+        }
+        return null;
     }
 }
