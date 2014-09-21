@@ -32,7 +32,6 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.R;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -116,7 +115,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
 
         // Get the possible channel
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
+        Bundle bundle = intent.getExtras();
         if (bundle != null) {
             channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
         } else {
@@ -132,7 +131,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         if (channel != null) {
             intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
         }
-
+        
         // Save the query so it can be shown again
         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                 SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
