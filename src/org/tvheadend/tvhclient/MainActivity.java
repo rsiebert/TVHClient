@@ -506,10 +506,13 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     @Override
     public boolean onSearchRequested() {
         Bundle bundle = new Bundle();
-        if (menuPosition == MENU_CHANNELS) {
-            // Get the selected channel, to limit the search to this channel
+        if (!isDualPane) {
+            // If dual pane is not active and the program list is only shown,
+            // search only the current channel, otherwise if the channel list is
+            // shown search all channels
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f instanceof ChannelListFragment && f instanceof FragmentControlInterface) {
+            if (f instanceof ProgramListFragment && f instanceof FragmentControlInterface) {
+                // Get the selected channel, to limit the search to this channel
                 Object o = ((FragmentControlInterface) f).getSelectedItem();
                 if (o instanceof Channel) {
                     bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ((Channel) o).id);
