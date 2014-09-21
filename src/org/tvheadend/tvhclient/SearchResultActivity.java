@@ -155,6 +155,8 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                             // Check if the program name matches the search pattern
                             if (pattern.matcher(p.title).find()) {
                                 adapter.add(p);
+                                adapter.sort();
+                                adapter.notifyDataSetChanged();
                             }
                         }
                     }
@@ -167,6 +169,8 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                         // Check if the program name matches the search pattern
                         if (pattern.matcher(p.title).find()) {
                             adapter.add(p);
+                            adapter.sort();
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 }
