@@ -290,7 +290,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(activity, program.title));
+            startActivity(new SearchEPGIntent(activity, channel, program.title));
             return true;
             
         case R.id.menu_record_remove:
