@@ -411,7 +411,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public Object getSelectedItem() {
-        return null;
+        return channel;
     }
 
     @Override
