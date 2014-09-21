@@ -21,9 +21,9 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.List;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.view.View;
@@ -47,7 +47,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
     public void sort() {
         sort(new Comparator<Program>() {
             public int compare(Program x, Program y) {
-                return x.compareTo(y);
+                return (x.start.compareTo(y.start));
             }
         });
     }
