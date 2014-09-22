@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_res_list">
+        <item>576</item>
+        <item>480</item>
+        <item>384</item>
+        <item>288</item>
+        <item>192</item>
+    </string-array>
+    <string-array name="pref_res_list_display">
+        <item>576p</item>
+        <item>480p</item>
+        <item>384p</item>
+        <item>288p</item>
+        <item>192p</item>
+    </string-array>
+    
+    <string-array name="pref_acodec_list">
+        <item>AAC</item>
+        <item>MPEG2AUDIO</item>
+    </string-array>
+    <string-array name="pref_acodec_list_display">
+        <item>Advanced Audio Codec (AAC)</item>
+        <item>MPEG-2 Audio Layer II (MP2)</item>
+    </string-array>
+    
+    <string-array name="pref_vcodec_list">
+        <item>H264</item>
+        <item>MPEG4VIDEO</item>
+        <item>VP8</item>
+    </string-array>
+    <string-array name="pref_vcodec_list_display">
+        <item>MPEG-4 AVC (H.264)</item>
+        <item>MPEG-4 Part 2</item>
+        <item>VP8</item>
+    </string-array>
+    
+    <string-array name="pref_scodec_list">
+        <item>PASS</item>
+        <item>AUCUN</item>
+    </string-array>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>Aucun</item>
+    </string-array>
+    
+    <string-array name="pref_container_list">
+        <item>matroska</item>
+        <item>mpegts</item>
+        <item>mpegps</item>
+        <item>pass</item>
+    </string-array>
+    
+    <string-array name="pref_container_list_display">
+        <item>Matroska</item>
+        <item>MPEG-TS</item>
+        <item>MPEG-PS</item>
+        <item>Pass-through</item>
+    </string-array>
+
+    <string-array name="pref_language_list">
+        <item>default</item>
+        <item>en-us</item>
+        <item>de</item>
+        <item>fr</item>
+        <item>pl</item>
+        <item>sv</item>
+        <item>nl</item>
+        <item>it</item>
+    </string-array>
+    
+    <string-array name="pref_language_list_display">
+        <item>Défaut</item>
+        <item>Anglais</item>
+        <item>Allemand</item>
+        <item>Français</item>
+        <item>Polonais</item>
+        <item>Suédois</item>
+        <item>Néerlandais</item>
+        <item>Italien</item>
+    </string-array>
+
+    <string-array name="pref_menu_ids">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="pref_menu_names">
+        <item>Chaines</item>
+        <item>Enregistrements terminés</item>
+        <item>Enregistrements programmés</item>
+        <item>Autorec Recordings</item>
+        <item>Enregistrements en erreur</item>
+        <item>Guide des programmes</item>
+        <item>Etat</item>
+        <item>Paramétres</item>
+        <item>Connexions</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_ids">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Défini par le serveur</item>
+        <item>Nom de la chaine</item>
+        <item>Numero de la chaine</item>
+    </string-array>
+</resources>
