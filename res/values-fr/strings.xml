@@ -75,8 +75,8 @@
     <string name="pref_theme_sum">Utiliser le light thème</string>
     <string name="pref_language">Langue</string>
     <string name="pref_language_sum">Choisir la langue que devra utiliser l\'application.</string>
-     <string name="pref_default_menu">Ecran de démarrage</string>
-    <string name="pref_default_menu_sum">Choisir l'écran de démarrage.</string>
+    <string name="pref_default_menu">Ecran de démarrage</string>
+    <string name="pref_default_menu_sum">Choisir l\'écran de démarrage.</string>
     <string name="pref_sort_channels">Ordre des chaines.</string>
     <string name="pref_sort_channels_sum">Choisir l\'ordre des chaînes à afficher.</string>
     <string name="pref_res">Résolution</string>
@@ -118,10 +118,10 @@
     <string name="pref_genre_colors_visibility_message">Paramètre la visibilité des couleurs. Plus la valeur est grande, plus la couleur sera foncée.</string>
     <string name="pref_genre_colors_visibility">visibilité des couleurs de genre</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
-     <string name="pref_misc">Divers</string>
+    <string name="pref_misc">Divers</string>
     <string name="pref_clear_search_history">Effacer l\'historique de recherche</string>
     
-     <string name="pref_menu_visibility">Visibilité du menu</string>
+    <string name="pref_menu_visibility">Visibilité du menu</string>
     <string name="pref_menu_visibility_sum">Cache ou montre certains objets du menu.</string>
     <string name="pref_hide_menu_delete_all_recordings">Cacher \'Effacer tous les enregistrements\'</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Ne pas montrer cette option pour prevenir l\'effacement accidentel de tous les enregistrements.</string>
@@ -135,12 +135,12 @@
     <string name="err_auth">Accès refusé</string>
     <string name="err_connect">Impossible de se connecter au serveur</string>
     <string name="err_con_lost">Connexion au serveur perdue</string>
-     <string name="err_con_timeout">Connection en erreur</string>
+    <string name="err_con_timeout">Connection en erreur</string>
 
     <string name="recording_file_missing">L\'enregistrement est manquant</string>
     <string name="recording_time_missed">L\'heure programmée est dépassée</string>
     <string name="recording_file_invalid">Le fichier est défectueux</string>
-     <string name="recording_canceled">L\'enregistrement a été effacé</string>
+    <string name="recording_canceled">L\'enregistrement a été effacé</string>
 
     <string name="wol_send">Packet de WoL envoyé avec succés à \'%s\'</string>
     <string name="wol_send_broadcast">Packet de WoL en broadcast envoyé avec succés à \'%s\'</string>
@@ -279,7 +279,7 @@
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Recherche de l\'EPG</string>
-     <string name="two_days_ago">Il y a deux jours</string>
+    <string name="two_days_ago">Il y a deux jours</string>
     <string name="yesterday">Hier</string>
     <string name="today">Aujourd\'hui</string>
     <string name="tomorrow">Demain</string>
@@ -321,7 +321,7 @@
     <string name="nothing">Rien</string>
     <string name="loading">Chargement&#8230;</string>
     <string name="loading_channel">Chargement de la chaine %s</string>
-     <string name="updating">Mise à jour&#8230;</string>
+    <string name="updating">Mise à jour&#8230;</string>
     <string name="all_channels">Toutes les chaines</string>
     <string name="season">Saison</string>
     <string name="episode">Episode</string>
@@ -347,4 +347,3 @@
     <string name="drawer_close">Fermer le dessinateur de navigation</string>
 
 </resources>
-
