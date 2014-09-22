@@ -886,27 +886,15 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void setActionBarIcon(final Bitmap bitmap, final String tag) {
-        if (actionBar != null) {
-            boolean showIcon = Utils.showChannelIcons(this);
-            actionBar.setDisplayUseLogoEnabled(showIcon);
-            if (showIcon && bitmap != null) {
-                actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
-            } else {
-                actionBar.setIcon(R.drawable.ic_launcher);
-            }
+        if (actionBar != null && bitmap != null) {
+            actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
         }
     }
 
     @Override
     public void setActionBarIcon(final int resource, final String tag) {
         if (actionBar != null) {
-            boolean showIcon = Utils.showChannelIcons(this);
-            actionBar.setDisplayUseLogoEnabled(showIcon);
-            if (showIcon) {
-                actionBar.setIcon(resource);
-            } else {
-                actionBar.setIcon(R.drawable.ic_launcher);
-            }
+            actionBar.setIcon(resource);
         }
     }
 
