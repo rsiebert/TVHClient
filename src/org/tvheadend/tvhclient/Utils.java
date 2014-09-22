@@ -97,7 +97,19 @@ public class Utils {
         Boolean showIcons = prefs.getBoolean("showIconPref", true);
         return showIcons;
     }
-    
+
+    /**
+     * Returns the information if channels shall be shown or not
+     * 
+     * @param context
+     * @return
+     */
+    public static boolean showChannelTagIcon(final Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean showIcons = prefs.getBoolean("showTagIconPref", false);
+        return showIcons;
+    }
+
     /**
      * Combines the episode and series values into a single string
      * @param info
