@@ -70,7 +70,9 @@
     
     <string name="pref_user_interface">User interface</string>
     <string name="pref_icons">Channel icons</string>
-    <string name="pref_icons_sum">Show channel icons?</string>
+    <string name="pref_icons_sum">Show the channel icons.</string>
+    <string name="pref_tag_icon">Channel tag icon</string>
+    <string name="pref_tag_icon_sum">Show the icon for a channel tag instead of the application logo.</string>
     <string name="pref_theme">Light theme</string>
     <string name="pref_theme_sum">Use a light theme</string>
     <string name="pref_language">Language</string>

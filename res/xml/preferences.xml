@@ -24,6 +24,12 @@
             android:key="showIconPref"
             android:summary="@string/pref_icons_sum"
             android:title="@string/pref_icons" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showTagIconPref"
+            android:summary="@string/pref_tag_icon_sum"
+            android:dependency="showIconPref"
+            android:title="@string/pref_tag_icon" />
         <ListPreference
             android:name="@string/pref_language"
             android:summary="@string/pref_language_sum"
