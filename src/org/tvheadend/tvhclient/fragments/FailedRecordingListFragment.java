@@ -66,6 +66,7 @@ public class FailedRecordingListFragment extends RecordingListFragment {
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.recordings), TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.failed), TAG);
+            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
