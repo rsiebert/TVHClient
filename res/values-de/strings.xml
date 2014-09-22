@@ -71,8 +71,8 @@
     <string name="pref_user_interface">Benutzeroberfläche</string>
     <string name="pref_icons">Zeige Senderlogos</string>
     <string name="pref_icons_sum">Zu jedem Sender wird (falls verfügbar) das dazugehörige Logo angezeigt.</string>
-    <string name="pref_tag_icon">Log für Sendergruppen</string>
-    <string name="pref_tag_icon_sum">Zeige für die gewählte Sendergruppe (falls gesetzt) das dazugehörige Logo, anstatt das Logo der Applikation zu zeigen.</string>
+    <string name="pref_tag_icon">Logo für Sendergruppen</string>
+    <string name="pref_tag_icon_sum">Zeige für die gewählte Sendergruppe (falls gesetzt) das dazugehörige Logo, anstatt das der Applikation.</string>
     <string name="pref_theme">Zeige ein helles Theme</string>
     <string name="pref_theme_sum">Verwendet die helleren Android Farben (Holo-Light Theme) für die Darstellung.</string>
     <string name="pref_language">Sprache</string>
