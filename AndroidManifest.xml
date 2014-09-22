@@ -19,7 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <data android:scheme="tvhclient"/>
+                <data android:scheme="tvhclient" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name="org.tvheadend.tvhclient.SearchResultActivity" android:launchMode="singleTop">
