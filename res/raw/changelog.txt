@@ -1,3 +1,11 @@
+$ 1.5.5
+  % VERSION 1.5.5
+  _ 22.09.2014
+    * Fixed the search behavior
+    * Search results are sorted now by time
+    * Updated French translation
+    * Added an URL scheme (round 2) so that other apps can open TVHClient
+    * Added option to show the channel tag icon
 $ 1.5.4
   % VERSION 1.5.4
   _ 06.09.2014
