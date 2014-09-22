@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.1" encoding="UTF-8"?>
 <resources>
     <string name="app_name">TVHClient</string>
 
@@ -10,7 +10,9 @@
     <string name="menu_search">Recherche</string>
     <string name="menu_record">Enregistrer</string>
     <string name="menu_record_cancel">Annuler un enregistrement</string>
+    <string name="menu_record_cancel_all">Annuler tous les enregistrements</string>
     <string name="menu_record_remove">Effacer un enregistrement</string>
+    <string name="menu_record_remove_all">Effacer tous les enregistrements</string>
     <string name="menu_search_imdb">Rechercher sur IMDB</string>
     <string name="menu_search_epg">Recherche dans le guide des programmes</string>
     <string name="menu_add">Ajouter</string>
@@ -23,6 +25,7 @@
     <string name="menu_connections">Connexions</string>
     <string name="menu_timeframe">Temps</string>
     <string name="menu_genre_color_info">Explication des couleurs</string>
+    <string name="menu_send_wol">Allume</string>
 
     <string name="pref_manage_connections">Gestions des connexions</string>
     <string name="pref_manage_connections_sum">Choisir votre connexion active au serveur TVHeadend ou ajouter, éditer ou effacer des connexions.</string>
@@ -31,7 +34,9 @@
     <string name="cancel_connection">Effacer les valeurs? Tous les changements vont etre perdu.</string>
     <string name="delete_connection">Voulez-vous vraiment effacer la connexion \'%s\'?</string>
     <string name="delete_recording">Voulez-vous vraiment effacer l\'enregistrement \'%s\'?</string>
+    <string name="delete_all_recordings">Voulez-vous vraiment effacer tous les enregistrements?</string>
     <string name="cancel_recording">Voulez-vous vraiment annuler l\'enregistrement \'%s\'?</string>
+    <string name="cancel_all_recordings">Voulez-vous vraiment annuler tous les enregistrements?</string>
 
     <string name="pref_connections">Connexions</string>
     <string name="pref_name">Nom de la connexion</string>
@@ -55,6 +60,13 @@
     <string name="pref_pass">Mot de passe</string>
     <string name="pref_pass_sum">Entrer un mot de passe</string>
     <string name="pref_pass_set_sum">Le mot de passe est défini mais pas affiché.</string>
+    <string name="pref_wol_address">Addresse MAC</string>
+    <string name="pref_wol_address_sum">Entrer l\'addresse MAC de l\'hôte (type 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_port">Port du WoL</string>
+    <string name="pref_wol_port_sum">Le port %d sera utilisé pour allumer le serveur, par défaut en 9.</string>
+    <string name="pref_wol_broadcast">Utilise le Broadcast</string>
+    <string name="pref_wol_broadcast_sum">Envois la commande de WOL en broadcast. Certains routeurs n\'accepte pas ce type de commande.</string>
+    <string name="pref_wol_address_invalid">L\'addresse MAC est invalide.\nElle doit etre de la forme \'01:24:67:9a:cd:ef\' et ne doit contenir que des valeurs hexadecimal 0\-9 and a\-f ainsi que les seéparateurs \':\' and \'\-\'.</string>
     
     <string name="pref_user_interface">Interface utilisateur</string>
     <string name="pref_icons">Logo des chaines</string>
@@ -63,6 +75,10 @@
     <string name="pref_theme_sum">Utiliser le light thème</string>
     <string name="pref_language">Langue</string>
     <string name="pref_language_sum">Choisir la langue que devra utiliser l\'application.</string>
+     <string name="pref_default_menu">Ecran de démarrage</string>
+    <string name="pref_default_menu_sum">Choisir l'écran de démarrage.</string>
+    <string name="pref_sort_channels">Ordre des chaines.</string>
+    <string name="pref_sort_channels_sum">Choisir l\'ordre des chaînes à afficher.</string>
     <string name="pref_res">Résolution</string>
     <string name="pref_res_sum">Spécifier la résolution maximum que le transcoder devrait utiliser.</string>
     <string name="pref_acodec">Codec audio</string>
@@ -102,14 +118,34 @@
     <string name="pref_genre_colors_visibility_message">Paramètre la visibilité des couleurs. Plus la valeur est grande, plus la couleur sera foncée.</string>
     <string name="pref_genre_colors_visibility">visibilité des couleurs de genre</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
+     <string name="pref_misc">Divers</string>
+    <string name="pref_clear_search_history">Effacer l\'historique de recherche</string>
+    
+     <string name="pref_menu_visibility">Visibilité du menu</string>
+    <string name="pref_menu_visibility_sum">Cache ou montre certains objets du menu.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Cacher \'Effacer tous les enregistrements\'</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Ne pas montrer cette option pour prevenir l\'effacement accidentel de tous les enregistrements.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Cacher \'Annuler tous les enregistrements\'</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Ne pas montrer cette option pour prevenir l\'annulation accidentel de tous les enregistrements programmés .</string>
+
+    <string name="clear_search_history">Effacer l\'historique de recherche?</string>
+    <string name="clear_search_history_sum">Etes vous sur de vouloir effacer l\'historique de recherche?</string>
+    <string name="clear_search_history_done">Historique de recherche effacé</string>
 
     <string name="err_auth">Accès refusé</string>
     <string name="err_connect">Impossible de se connecter au serveur</string>
     <string name="err_con_lost">Connexion au serveur perdue</string>
+     <string name="err_con_timeout">Connection en erreur</string>
 
     <string name="recording_file_missing">L\'enregistrement est manquant</string>
     <string name="recording_time_missed">L\'heure programmée est dépassée</string>
     <string name="recording_file_invalid">Le fichier est défectueux</string>
+     <string name="recording_canceled">L\'enregistrement a été effacé</string>
+
+    <string name="wol_send">Packet de WoL envoyé avec succés à \'%s\'</string>
+    <string name="wol_send_broadcast">Packet de WoL en broadcast envoyé avec succés à \'%s\'</string>
+    <string name="wol_address_invalid">L\'addresse MAC n\'est pas valide. Veuillez verifeir vos paramétres.</string>
+    <string name="wol_error">Erreur pour envoyer un packet WoL a \'%1$s\'.\n Message d\'erreur: %2$s</string>
 
     <string-array name="pr_content_type0">
         <item>Film/Théâtre</item>
@@ -243,6 +279,7 @@
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Recherche de l\'EPG</string>
+     <string name="two_days_ago">Il y a deux jours</string>
     <string name="yesterday">Hier</string>
     <string name="today">Aujourd\'hui</string>
     <string name="tomorrow">Demain</string>
@@ -256,7 +293,7 @@
     <string name="sunday">Dimanche</string>
 
     <string name="programs">Programmes</string>
-    <string name="completed">Fini</string>
+    <string name="completed">Terminé</string>
     <string name="upcoming">A venir</string>
     <string name="failed">Echec</string>
     
@@ -283,18 +320,31 @@
 
     <string name="nothing">Rien</string>
     <string name="loading">Chargement&#8230;</string>
+    <string name="loading_channel">Chargement de la chaine %s</string>
+     <string name="updating">Mise à jour&#8230;</string>
     <string name="all_channels">Toutes les chaines</string>
     <string name="season">Saison</string>
     <string name="episode">Episode</string>
     <string name="part">Partie</string>
     <string name="progress">%1$d%% du programme déjà diffusé</string>
     
+    <string name="connection">Connexion</string>
     <string name="disc_space">Espace disque</string>
     <string name="total">Total</string>
     <string name="available">Disponible</string>
     <string name="unknown">Inconnu</string>
     <string name="select_timeframe">Guide des programmes pour la date et l\'heure sélectionnée.</string>
     <string name="currently_recording">En cours d\'enregistrement</string>
+    
+    <string name="no_connection_available">Aucune connxion définie. Vous devez définir une connexion dans le menu de paramétrage.</string>
+    <string name="no_connection_active">Au moins une connexion est définie, mais n\'est pas activée.</string>
+
+    <string name="no_media_player">Aucun lecteur de média trouvé</string>
+    <string name="show_play_store">Voulez-vous utiliser Google Play Store pour trouver un lecteur de média?</string>
+
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Ouvrir le dessinateur de navigation</string>
+    <string name="drawer_close">Fermer le dessinateur de navigation</string>
 
 </resources>
 
