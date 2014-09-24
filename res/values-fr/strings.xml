@@ -70,7 +70,9 @@
     
     <string name="pref_user_interface">Interface utilisateur</string>
     <string name="pref_icons">Logo des chaines</string>
-    <string name="pref_icons_sum">Montrer le logo des chaines?</string>
+    <string name="pref_icons_sum">Monter l\icône des chaines.</string>
+    <string name="pref_tag_icon">Icone du tag de la chaine</string>
+    <string name="pref_tag_icon_sum">Montre l\icône de la chaine au lieu du logo de l\application.</string>
     <string name="pref_theme">Thème soft</string>
     <string name="pref_theme_sum">Utiliser le light thème</string>
     <string name="pref_language">Langue</string>
