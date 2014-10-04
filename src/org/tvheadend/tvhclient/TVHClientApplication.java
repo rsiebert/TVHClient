@@ -287,46 +287,54 @@ public class TVHClientApplication extends Application {
      * @return
      */
     public List<Recording> getRecordings(int type) {
-        List<Recording> recordings = new ArrayList<Recording>();
+        List<Recording> recs = new ArrayList<Recording>();
 
         switch (type) {
         case Constants.RECORDING_TYPE_COMPLETED:
-            for (Recording rec : getRecordings()) {
-                if (rec.error == null && rec.state.equals("completed")) {
-                    recordings.add(rec);
+            synchronized (recordings) {
+                for (Recording rec : recordings) {
+                    if (rec.error == null && rec.state.equals("completed")) {
+                        recs.add(rec);
+                    }
                 }
             }
             break;
 
         case Constants.RECORDING_TYPE_SCHEDULED:
-            for (Recording rec : getRecordings()) {
-                if (rec.error == null
-                        && !rec.state.equals("autorec")
-                        && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
-                    recordings.add(rec);
+            synchronized (recordings) {
+                for (Recording rec : recordings) {
+                    if (rec.error == null
+                            && !rec.state.equals("autorec")
+                            && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                        recs.add(rec);
+                    }
                 }
             }
             break;
 
         case Constants.RECORDING_TYPE_SERIES:
-            for (Recording rec : getRecordings()) {
-                if (rec.error == null
-                        && rec.state.equals("autorec")
-                        && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
-                    recordings.add(rec);
+            synchronized (recordings) {
+                for (Recording rec : recordings) {
+                    if (rec.error == null
+                            && rec.state.equals("autorec")
+                            && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                        recs.add(rec);
+                    }
                 }
             }
             break;
 
         case Constants.RECORDING_TYPE_FAILED:
-            for (Recording rec : getRecordings()) {
-                if ((rec.error != null || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
-                    recordings.add(rec);
+            synchronized (recordings) {
+                for (Recording rec : recordings) {
+                    if ((rec.error != null || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
+                        recs.add(rec);
+                    }
                 }
             }
             break;
         }
-        return recordings;
+        return recs;
     }
 
     public void removeRecording(Recording rec) {
