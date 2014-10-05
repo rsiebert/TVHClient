@@ -18,9 +18,6 @@
  */
 package org.tvheadend.tvhclient.htsp;
 
-import android.util.Log;
-import android.util.SparseArray;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -34,16 +31,15 @@ import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
+
+import android.util.Log;
+import android.util.SparseArray;
 
 public class HTSConnection extends Thread {
 
-    public static final int TIMEOUT_ERROR = 1;
-    public static final int CONNECTION_REFUSED_ERROR = 2;
-    public static final int CONNECTION_LOST_ERROR = 3;
-    public static final int HTS_AUTH_ERROR = 4;
-    public static final int HTS_MESSAGE_ERROR = 5;
-    private static final String TAG = "HTSPConnection";
+    private static final String TAG = HTSConnection.class.getSimpleName();
     private volatile boolean running;
     private Lock lock;
     private SocketChannel socketChannel;
@@ -108,7 +104,7 @@ public class HTSConnection extends Thread {
             start();
         } catch (Exception ex) {
             Log.e(TAG, "Can't open connection", ex);
-            listener.onError(CONNECTION_REFUSED_ERROR);
+            listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
             return;
         } finally {
             lock.unlock();
@@ -118,7 +114,7 @@ public class HTSConnection extends Thread {
             try {
                 signal.wait(5000);
                 if (socketChannel.isConnectionPending()) {
-                    listener.onError(TIMEOUT_ERROR);
+                    listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
                     close();
                 }
             } catch (InterruptedException ex) {
@@ -148,7 +144,7 @@ public class HTSConnection extends Thread {
             public void handleResponse(HTSMessage response) {
                 auth = response.getInt("noaccess", 0) != 1;
                 if (!auth) {
-                    listener.onError(HTS_AUTH_ERROR);
+                    listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
                 }
                 synchronized (authMessage) {
                     authMessage.notify();
@@ -186,7 +182,7 @@ public class HTSConnection extends Thread {
             try {
                 authMessage.wait(5000);
                 if (!auth) {
-                    listener.onError(TIMEOUT_ERROR);
+                    listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
                 }
                 return;
             } catch (InterruptedException ex) {
@@ -242,7 +238,7 @@ public class HTSConnection extends Thread {
                 selector.select(5000);
             } catch (IOException ex) {
                 Log.e(TAG, "Can't select socket", ex);
-                listener.onError(CONNECTION_LOST_ERROR);
+                listener.onError(Constants.ACTION_CONNECTION_STATE_LOST);
                 running = false;
                 continue;
             }
@@ -288,6 +284,7 @@ public class HTSConnection extends Thread {
             SocketChannel sChannel = (SocketChannel) selKey.channel();
             int len = sChannel.read(inBuf);
             if (len < 0) {
+                listener.onError(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN);
                 throw new IOException("Server went down");
             }
 

@@ -18,6 +18,7 @@ public class Constants {
     public static final String BUNDLE_RECORDING_ID = "dvrId";
     public static final String BUNDLE_RECONNECT = "reconnect";
     public static final String BUNDLE_RESTART = "reload";
+    public static final String BUNDLE_COUNT = "count";
     public static final String BUNDLE_MENU_POSITION = "menuPosition";
     public static final String BUNDLE_SHOW_CONTROLS = "showControls";
     public static final String BUNDLE_EPG_START_TIME = "epgStartTime";
@@ -62,6 +63,7 @@ public class Constants {
     public static final String ACTION_CONNECTION_STATE_REFUSED = "action_connection_state_refused";
     public static final String ACTION_CONNECTION_STATE_AUTH = "action_connection_state_auth";
     public static final String ACTION_CONNECTION_STATE_OK = "action_connection_state_ok";
+    public static final String ACTION_CONNECTION_STATE_SERVER_DOWN = "action_connection_state_server_down";
     
     // HTSP actions
     public static final String ACTION_CHANNEL_ADD = "CHANNEL_ADD";
