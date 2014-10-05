@@ -21,15 +21,7 @@ public interface HTSConnectionListener {
      * This method is invoked by the HTSConnection class. Whenever the server
      * encounters an error or sends one the listeners will be informed.
      * 
-     * @param errorCode
+     * @param error
      */
-    public void onError(int errorCode);
-    
-    /**
-     * This method is invoked by the HTSConnection class. Whenever the server
-     * encounters a connection state change the listeners will be informed.
-     * 
-     * @param errorCode
-     */
-    public void onConnectionState(String state);
+    public void onError(String error);
 }
