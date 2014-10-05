@@ -119,6 +119,9 @@ public class StatusFragment extends Fragment implements HTSListener {
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
         app.addListener(this);
 
+        // Upon resume show the actual status. If the connection is OK show the
+        // full status or that stuff is loading, otherwise hide certain
+        // information and show the cause of the connection problem. 
         hideStatus();
         if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
             onMessage(Constants.ACTION_LOADING, app.isLoading());
@@ -194,9 +197,10 @@ public class StatusFragment extends Fragment implements HTSListener {
         }
 	}
 
-	/**
-	 * 
-	 */
+	    /**
+     * Hides all status fields. Each field will be made visible by other methods
+     * when it is required.
+     */
 	protected void hideStatus() {
 	    discspaceLabel.setVisibility(View.GONE);
         freediscspace.setVisibility(View.GONE);
@@ -212,10 +216,13 @@ public class StatusFragment extends Fragment implements HTSListener {
 	}
 
     /**
-     * 
+     * Shows the name and address of a connection, otherwise shows an
+     * information that no connection is selected or available. Additionally the
+     * current connection status is displayed, this can be authorization,
+     * timeouts or other errors.
      */
     protected void showConnectionStatus() {
-        // Get the name of the current connection
+        // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
         if (DatabaseHelper.getInstance() != null) {
@@ -254,7 +261,8 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     /**
-     * 
+     * Calls the service to get the free and total disc space. Additionally the
+     * loading indication for these fields are shown.
      */
     protected void getDiscSpaceStatus() {
         Intent intent = new Intent(getActivity(), HTSService.class);
@@ -269,10 +277,11 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     /**
-     * 
+     * Shows the available disc space if at least one of the two fields have an
+     * actual value. If both fields are empty, hide the indications and the free
+     * disc space description.
      */
     protected void showDiscSpaceStatus() {
-        // Additionally hide the free disc space label if the strings are empty.
         int visible = View.VISIBLE;
         if (freeDiscSpace.length() == 0 && totalDiscSpace.length() == 0) {
             visible = View.GONE;
