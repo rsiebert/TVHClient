@@ -906,9 +906,9 @@ public class Utils {
         // Set the required information and start the service command.
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction(Constants.ACTION_GET_EVENTS);
-        intent.putExtra("eventId", nextId);
-        intent.putExtra("channelId", channel.id);
-        intent.putExtra("count", Constants.PREF_PROGRAMS_TO_LOAD);
+        intent.putExtra(Constants.BUNDLE_PROGRAM_ID, nextId);
+        intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
+        intent.putExtra(Constants.BUNDLE_COUNT, Constants.PREF_PROGRAMS_TO_LOAD);
         context.startService(intent);
     }
 
