@@ -61,6 +61,8 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView failedRec;
 
     private String connectionStatus = "";
+    private String freeDiscSpace = "";
+    private String totalDiscSpace = "";
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -116,7 +118,13 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
         app.addListener(this);
-        showStatus(app.isLoading());
+
+        hideStatus();
+        if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
+            onMessage(Constants.ACTION_LOADING, app.isLoading());
+        } else {
+            onMessage(connectionStatus, false);
+        }
     }
 
     @Override
@@ -134,36 +142,79 @@ public class StatusFragment extends Fragment implements HTSListener {
 
 	@Override
 	public void onMessage(final String action, final Object obj) {
-	    if (action.equals(Constants.ACTION_LOADING)) {
+	    if (action.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
+	        activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    connectionStatus = action;
+                    showConnectionStatus();
+                    showChannelStatus();
+                    showRecordingStatus();
+                    getDiscSpaceStatus();
+                }
+            });
+	    } else if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
+	            || action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
+	        activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    connectionStatus = action;
+                    hideStatus();
+                    showConnectionStatus();
+                }
+            });
+        } else if (action.equals(Constants.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
-                    showStatus(loading);
+                    if (actionBarInterface != null) {
+                        final String updating = (loading ? getString(R.string.updating) : "");
+                        actionBarInterface.setActionBarSubtitle(updating, TAG);
+                    }
+
+                    if (loading) {
+                        status.setText(getString(R.string.loading));
+                    } else {
+                        showConnectionStatus();
+                        showChannelStatus();
+                        showRecordingStatus();
+                        getDiscSpaceStatus();
+                    }
                 }
             });
         } else if (action.equals(Constants.ACTION_DISC_SPACE)) {
             getActivity().runOnUiThread(new Runnable() {
                 @SuppressWarnings("unchecked")
                 public void run() {
-                	showDiscSpace((Map<String, String>) obj);
+                	calculateDiscSpace((Map<String, String>) obj);
+                	showDiscSpaceStatus();
                 }
             });
         }
 	}
 
+	/**
+	 * 
+	 */
+	protected void hideStatus() {
+	    discspaceLabel.setVisibility(View.GONE);
+        freediscspace.setVisibility(View.GONE);
+        totaldiscspace.setVisibility(View.GONE);
+        channelLabel.setVisibility(View.GONE);
+        channels.setVisibility(View.GONE);
+        currentlyRecLabel.setVisibility(View.GONE);
+        currentlyRec.setVisibility(View.GONE);
+        recLabel.setVisibility(View.GONE);
+        completedRec.setVisibility(View.GONE);
+        upcomingRec.setVisibility(View.GONE);
+        failedRec.setVisibility(View.GONE);
+	}
+
     /**
-     * Shows the status depending if a connection is available and the status of
-     * that connection.
      * 
-     * @param loading
      */
-    protected void showStatus(boolean loading) {
-
-        if (actionBarInterface != null) {
-            final String updating = (loading ? getString(R.string.updating) : "");
-            actionBarInterface.setActionBarSubtitle(updating, TAG);
-        }
-
+    protected void showConnectionStatus() {
         // Get the name of the current connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
@@ -172,62 +223,65 @@ public class StatusFragment extends Fragment implements HTSListener {
             conn = DatabaseHelper.getInstance().getSelectedConnection();
         }
 
-        // Hide these if we have no connection or loading is in progress
-        int visible = (conn == null || loading) ? View.GONE : View.VISIBLE;
-        discspaceLabel.setVisibility(visible);
-        freediscspace.setVisibility(visible);
-        totaldiscspace.setVisibility(visible);
-        channelLabel.setVisibility(visible);
-        channels.setVisibility(visible);
-        currentlyRecLabel.setVisibility(visible);
-        currentlyRec.setVisibility(visible);
-        recLabel.setVisibility(visible);
-        completedRec.setVisibility(visible);
-        upcomingRec.setVisibility(visible);
-        failedRec.setVisibility(visible);
-
-        // Depending one the state set the correct values.
+        // Show the details about the current connection or an information that
+        // none is selected or available
         if (conn == null) {
             if (noConnectionsDefined) {
-                // No connections are available
                 connection.setText(getString(R.string.no_connection_available));
             } else {
-                // No connection is set as active
                 connection.setText(getString(R.string.no_connection_active));
             }
             status.setText(getString(R.string.unknown));
-        } else if (loading) {
-            // A connection is active and data is loading 
-            connection.setText(conn.name + " (" + conn.address + ")");
-            status.setText(getString(R.string.loading));
         } else {
-            // A connection is active and loading is not active. Show the state
-            // that is currently active
-            connection.setText(conn.name + " (" + conn.address + ")");
-            if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-                status.setText(getString(R.string.ready));
-            } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
-                status.setText(R.string.err_con_lost);
-            } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
-                status.setText(R.string.err_con_timeout);
-            } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)) {
-                status.setText(R.string.err_connect);
-            } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
-                status.setText(R.string.err_auth);
+            if (conn != null) {
+                connection.setText(conn.name + " (" + conn.address + ")");
             }
-            
-            showChannelStatus();
-            showRecordingStatus();
-
-            // Upon the first call no information is available about the disc
-            // space so call the server to get that information.
-            freediscspace.setText(getString(R.string.loading));
-            totaldiscspace.setText(getString(R.string.loading));
-
-            Intent intent = new Intent(getActivity(), HTSService.class);
-            intent.setAction(Constants.ACTION_GET_DISC_STATUS);
-            getActivity().startService(intent);
         }
+
+        // Show a textual description about the connection state
+        if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
+            status.setText(getString(R.string.ready));
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)
+                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
+            status.setText(R.string.err_con_lost);
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
+            status.setText(R.string.err_con_timeout);
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)) {
+            status.setText(R.string.err_connect);
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
+            status.setText(R.string.err_auth);
+        }
+    }
+
+    /**
+     * 
+     */
+    protected void getDiscSpaceStatus() {
+        Intent intent = new Intent(getActivity(), HTSService.class);
+        intent.setAction(Constants.ACTION_GET_DISC_STATUS);
+        getActivity().startService(intent);
+
+        discspaceLabel.setVisibility(View.VISIBLE);
+        freediscspace.setVisibility(View.VISIBLE);
+        totaldiscspace.setVisibility(View.VISIBLE);
+        freediscspace.setText(getString(R.string.loading));
+        totaldiscspace.setText(getString(R.string.loading));
+    }
+
+    /**
+     * 
+     */
+    protected void showDiscSpaceStatus() {
+        // Additionally hide the free disc space label if the strings are empty.
+        int visible = View.VISIBLE;
+        if (freeDiscSpace.length() == 0 && totalDiscSpace.length() == 0) {
+            visible = View.GONE;
+        }
+        discspaceLabel.setVisibility(visible);
+        freediscspace.setVisibility(visible);
+        totaldiscspace.setVisibility(visible);
+        freediscspace.setText(freeDiscSpace);
+        totaldiscspace.setText(totalDiscSpace);
     }
 
     /**
@@ -236,7 +290,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * 
      * @param obj
      */
-    protected void showDiscSpace(Map<String, String> obj) {
+    protected void calculateDiscSpace(Map<String, String> obj) {
         Map<String, String> list = obj;
         try {
             // Get the disc space values and convert them to megabytes
@@ -245,16 +299,18 @@ public class StatusFragment extends Fragment implements HTSListener {
 
             // Show the free amount of disc space as GB or MB
             if (free > 1000) {
-                freediscspace.setText((free / 1000) + " GB " + getString(R.string.available));
+                freeDiscSpace = (free / 1000) + " GB " + getString(R.string.available);
             } else {
-                freediscspace.setText(free + " MB " + getString(R.string.available));
+                freeDiscSpace = free + " MB " + getString(R.string.available);
             }
             // Show the total amount of disc space as GB or MB
             if (total > 1000) {
-                totaldiscspace.setText((total / 1000) + " GB " + getString(R.string.total));
+                totalDiscSpace = (total / 1000) + " GB " + getString(R.string.total);
             } else {
-                totaldiscspace.setText(total + " MB " + getString(R.string.total));
+                totalDiscSpace = total + " MB " + getString(R.string.total);
             }
+            freediscspace.setText(freeDiscSpace);
+            totaldiscspace.setText(totalDiscSpace);
         } catch (Exception e) {
             freediscspace.setText(getString(R.string.unknown));
             totaldiscspace.setText(getString(R.string.unknown));
@@ -266,6 +322,8 @@ public class StatusFragment extends Fragment implements HTSListener {
      */
     private void showChannelStatus() {
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        channelLabel.setVisibility(View.VISIBLE);
+        channels.setVisibility(View.VISIBLE);
         channels.setText(app.getChannels().size() + " " + getString(R.string.available));
     }
 
@@ -274,26 +332,10 @@ public class StatusFragment extends Fragment implements HTSListener {
      * the available, scheduled and failed recordings.
      */
     private void showRecordingStatus() {
-        int completedRecCount = 0;
-        int upcomingRecCount = 0;
-        int failedRecCount = 0;
         String currentRecText = "";
-        
+
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
         for (Recording rec : app.getRecordings()) {
-            if (rec.error == null && rec.state.equals("completed")) {
-                ++completedRecCount;
-            } else if (rec.error == null &&
-                    (rec.state.equals("scheduled") || 
-                     rec.state.equals("recording") ||
-                     rec.state.equals("autorec"))) {
-                ++upcomingRecCount;
-            } else if ((rec.error != null || 
-                    (rec.state.equals("missed") || 
-                            rec.state.equals("invalid")))) {
-                ++failedRecCount;
-            }
-            
             // Add the information what is currently being recorded.
             if (rec.isRecording() == true) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
@@ -303,10 +345,17 @@ public class StatusFragment extends Fragment implements HTSListener {
             }
         }
 
+        currentlyRecLabel.setVisibility(View.VISIBLE);
+        currentlyRec.setVisibility(View.VISIBLE);
+        recLabel.setVisibility(View.VISIBLE);
+        completedRec.setVisibility(View.VISIBLE);
+        upcomingRec.setVisibility(View.VISIBLE);
+        failedRec.setVisibility(View.VISIBLE);
+
         // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
-        completedRec.setText(completedRecCount + " " + getString(R.string.completed));
-        upcomingRec.setText(upcomingRecCount + " " + getString(R.string.upcoming));
-        failedRec.setText(failedRecCount + " " + getString(R.string.failed));
+        completedRec.setText(app.getRecordings(Constants.RECORDING_TYPE_COMPLETED).size() + " " + getString(R.string.completed));
+        upcomingRec.setText(app.getRecordings(Constants.RECORDING_TYPE_SCHEDULED).size() + " " + getString(R.string.upcoming));
+        failedRec.setText(app.getRecordings(Constants.RECORDING_TYPE_FAILED).size() + " " + getString(R.string.failed));
     }
 }

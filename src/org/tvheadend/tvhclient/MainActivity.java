@@ -55,8 +55,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
-    
-    @SuppressWarnings("unused")
+
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private ListView drawerList;
@@ -219,6 +218,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 supportInvalidateOptionsMenu();
+                updateDrawerMenu();
             }
         };
         // Set the drawer toggle as the DrawerListener
@@ -484,14 +484,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             return true;
 
         case R.id.menu_refresh:
-            // Clear all EPG counters and blocking entries
             channelLoadingList.clear();
             channelEpgCountList.clear();
             TVHClientApplication app = (TVHClientApplication) getApplication();
             app.unblockAllChannels();
 
             // Reconnect to the server and reload all data
-            connectionStatus = Constants.ACTION_CONNECTION_STATE_OK;
             Utils.connect(this, true);
             return true;
         }
@@ -761,7 +759,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     // connection or some values of the existing one have
                     // changed.
                     if (data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false)) {
-                        connectionStatus = Constants.ACTION_CONNECTION_STATE_OK;
                         Utils.connect(this, true);
                         Intent intent = getIntent();
                         finish();
@@ -785,9 +782,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     boolean loading = (Boolean) obj;
                     if (loading) {
                         actionBar.setSubtitle(R.string.loading);
-                        // When loading we have a connection so set the
-                        // connection state to OK
-                        connectionStatus = Constants.ACTION_CONNECTION_STATE_OK;
                         // Remove any fragments on the right during update to
                         // prevent seeing old data. These fragments could be the
                         // program list or the recording details. 
@@ -846,7 +840,17 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     }
                 }
             });
-        } else if (action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
+        } else if (action.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    connectionStatus = action;
+                    // Enable the drawer again
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    actionBar.setHomeButtonEnabled(true);
+                }
+            });
+        } else if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
@@ -855,7 +859,11 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 runOnUiThread(new Runnable() {
                     public void run() {
                         connectionStatus = action;
+                        channelLoadingList.clear();
                         handleMenuSelection(MENU_STATUS);
+                        // Disable the drawer
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                        actionBar.setHomeButtonEnabled(false);
                     }
                 });
             }
@@ -940,7 +948,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     public void moreDataRequired(final Channel channel, final String tag) {
         // Do not load a channel when it is already being loaded to avoid
         // loading the same or too many data.
-        if (channel == null || channelLoadingList.contains(channel)) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        if (app.isLoading() || channel == null || channelLoadingList.contains(channel)) {
             return;
         }
         channelLoadingList.add(channel);
