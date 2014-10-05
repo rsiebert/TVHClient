@@ -56,6 +56,7 @@ import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private ListView drawerList;
@@ -245,15 +246,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         });
 
         // If the saved instance is not null then we return from an orientation
-        // change and we do not require to recreate the fragments
-        orientationChangeOccurred  = (savedInstanceState != null);
-
-        if (orientationChangeOccurred) {
-            updateDrawerMenu();
-        }
-
-        // Get any saved values from the bundle
+        // change. The drawer menu could be open, so update the recording
+        // counts. Also get any saved values from the bundle.
         if (savedInstanceState != null) {
+            updateDrawerMenu();
             menuStack = savedInstanceState.getIntegerArrayList(Constants.MENU_STACK);
             menuPosition = savedInstanceState.getInt(Constants.MENU_POSITION, MENU_UNKNOWN);
             channelListPosition = savedInstanceState.getInt(Constants.CHANNEL_LIST_POSITION, 0);
@@ -791,8 +787,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                                 getSupportFragmentManager().beginTransaction().remove(rf).commit();
                             }
                         }
-                    } else {
-                        updateDrawerMenu();
                     }
                 }
             });
@@ -867,14 +861,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     }
                 });
             }
-        } else if (action.equals(Constants.ACTION_DVR_ADD)
-                || action.equals(Constants.ACTION_DVR_UPDATE)
-                || action.equals(Constants.ACTION_DVR_DELETE)) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    updateDrawerMenu();
-                }
-            });
         }
     }
 
