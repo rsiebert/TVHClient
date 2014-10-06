@@ -19,8 +19,8 @@ public class PlaybackSelectionActivity extends Activity {
 
         // Get the information if we shall play a program or recording
         final TVHClientApplication app = (TVHClientApplication) getApplication();
-        final Channel ch = app.getChannel(getIntent().getLongExtra("channelId", 0));
-        final Recording rec = app.getRecording(getIntent().getLongExtra("dvrId", 0));
+        final Channel ch = app.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
+        final Recording rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
         final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
 
         // Set the required values of either the channel or the recording. If
