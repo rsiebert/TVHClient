@@ -339,11 +339,14 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     @Override
     public void onResume() {
         super.onResume();
-
         // Get the connection status
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, Constants.ACTION_CONNECTION_STATE_OK);
+    }
 
+    @Override
+    public void onPostResume() {
+        super.onPostResume();
         // Show the change log once when the application was upgraded. Otherwise
         // start normally. This is handled in the other method.
         if (changeLogDialog.firstRun() && !changeLogDialogShown) {
