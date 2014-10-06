@@ -10,6 +10,8 @@ public class DrawerMenuItem {
     public String title = "";
     public int count = 0;
     public boolean isMenu = false;
+    public boolean isEnabled = true;
+    public boolean isVisible = true;
 
     /**
      * Creates an header item with no text
