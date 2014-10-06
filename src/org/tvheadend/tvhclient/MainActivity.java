@@ -332,6 +332,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 handleMenuSelection(menuStack.remove(menuStack.size() - 1));
             } else {
                 super.onBackPressed();
+                finish();
             }
         }
     }
