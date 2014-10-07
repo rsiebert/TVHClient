@@ -25,7 +25,7 @@
             android:summary="@string/pref_icons_sum"
             android:title="@string/pref_icons" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="showTagIconPref"
             android:summary="@string/pref_tag_icon_sum"
             android:dependency="showIconPref"
