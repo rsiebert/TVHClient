@@ -373,7 +373,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items), TAG);
             // If activated show the the channel tag icon
             if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
-                    && currentTag != null) {
+                    && currentTag != null 
+                    && currentTag.id != 0) {
                 actionBarInterface.setActionBarIcon(currentTag.iconBitmap, TAG);
             } else {
                 actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
