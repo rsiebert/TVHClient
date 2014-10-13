@@ -326,7 +326,7 @@
     <string name="all_channels">Wszystkie kanały</string>
     <string name="season">Sezon</string>
     <string name="episode">Odcinek</string>
-    <string name="part">Część</string>
+    <string name="part">Odcinek</string>
     <string name="progress">%1$d%% z transmisji zostało pokazane</string>
 
     <string name="connection">Połączenie</string>
