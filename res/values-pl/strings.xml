@@ -276,7 +276,7 @@
     </string-array>
 
     <string name="no_transmission">Brak transmisji</string>
-    <string name="no_data">Brak dostępnych danych programu</string>
+    <string name="no_data">Brak dostępnych danych dla kanału</string>
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Szukaj w EPG</string>
@@ -326,7 +326,7 @@
     <string name="all_channels">Wszystkie kanały</string>
     <string name="season">Sezon</string>
     <string name="episode">Odcinek</string>
-    <string name="part">Część</string>
+    <string name="part">Odcinek</string>
     <string name="progress">%1$d%% z transmisji zostało pokazane</string>
 
     <string name="connection">Połączenie</string>
