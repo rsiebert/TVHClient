@@ -257,6 +257,10 @@
             android:key="pref_clear_search_history"
             android:title="@string/pref_clear_search_history" >
         </Preference>
+        <Preference
+            android:key="pref_clear_icon_cache"
+            android:title="@string/pref_clear_icon_cache" >
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory 
         android:title="@string/pref_information" >
