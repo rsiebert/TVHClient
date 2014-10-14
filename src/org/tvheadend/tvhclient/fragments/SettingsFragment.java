@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.fragments;
 
+import java.io.File;
+
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
@@ -75,6 +77,37 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                         suggestions.clearHistory();
                         Toast.makeText(getActivity(), getString(R.string.clear_search_history_done), Toast.LENGTH_SHORT).show();
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // NOP
+                    }
+                }).show();
+                return false;
+            }
+        });
+
+        // Add a listener to the clear icon cache preference so that it can be cleared.
+        Preference prefClearIconCache = findPreference("pref_clear_icon_cache");
+        prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                // Show a confirmation dialog before deleting the recording
+                new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.clear_icon_cache)
+                .setMessage(getString(R.string.clear_icon_cache_sum))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        File[] files = activity.getCacheDir().listFiles();
+                        for (File file : files) {
+                            if (file.toString().endsWith(".png")) {
+                                file.delete();
+                                if (settingsInterface != null) {
+                                    settingsInterface.reconnect();
+                                }
+                            }
+                        }
+                        Toast.makeText(getActivity(), getString(R.string.clear_icon_cache_done), Toast.LENGTH_SHORT).show();
                     }
                 }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
