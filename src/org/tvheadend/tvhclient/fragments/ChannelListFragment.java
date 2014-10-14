@@ -276,6 +276,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             }
         }
 
+        // Stop if the program is still null. this should't happen because the
+        // user has selected the context menu of an available program. 
+        if (program == null) {
+            return super.onContextItemSelected(item);
+        }
+
         // Check if the context menu call came from the list in this fragment
         // (needed for support for multiple fragments in one screen)
         if (info.targetView.getParent() != getView().findViewById(R.id.item_list)) {
