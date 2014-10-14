@@ -387,7 +387,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // Show the contents of the last selected menu position. In case it
             // is not set, use the the default one defined in the settings
             int pos = (menuPosition == MENU_UNKNOWN) ? defaultMenuPosition : menuPosition;
-            
+
             // If the connection status is fine go to the previous selected
             // connection or the default. If it contains a state then show
             // the status fragment.
@@ -516,7 +516,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 // Get the selected channel, to limit the search to this channel
                 Object o = ((FragmentControlInterface) f).getSelectedItem();
                 if (o instanceof Channel) {
-                    bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ((Channel) o).id);
+                    final Channel ch = (Channel) o;
+                    bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ch.id);
                 }
             }
         }
@@ -911,34 +912,48 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void onScrollingChanged(final int position, final int offset, final String tag) {
-        // Save the scroll values so they can be reused after an orientation change.
-        programGuideListPosition = position;
-        programGuideListPositionOffset = offset;
+        switch (menuPosition) {
+        case MENU_CHANNELS:
+            // Save the position of the selected channel so it can be restored
+            // after an orientation change
+            channelListPosition = position;
+            break;
 
-        if (tag.equals(ChannelListFragment.class.getSimpleName())
-                || tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
-            // Scrolling was initiated by the channel or program guide list fragment. Keep
-            // the currently visible program guide list in sync by scrolling it to the same position
-            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
-                ((FragmentControlInterface) f).setSelection(position, offset);
+        case MENU_PROGRAM_GUIDE:
+            // Save the scroll values so they can be reused after an orientation change.
+            programGuideListPosition = position;
+            programGuideListPositionOffset = offset;
+
+            if (tag.equals(ChannelListFragment.class.getSimpleName())
+                    || tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
+                // Scrolling was initiated by the channel or program guide list fragment. Keep
+                // the currently visible program guide list in sync by scrolling it to the same position
+                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+                    ((FragmentControlInterface) f).setSelection(position, offset);
+                }
             }
+            break;
         }
     }
 
     @Override
     public void onScrollStateIdle(final String tag) {
-        if (tag.equals(ProgramGuideListFragment.class.getSimpleName()) 
-                || tag.equals(ChannelListFragment.class.getSimpleName())) {
-            // Scrolling stopped by the program guide or the channel list
-            // fragment. Scroll all program guide fragments in the current
-            // view pager to the same position.
-            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
-                ((FragmentControlInterface) f).setSelection(
-                        programGuideListPosition,
-                        programGuideListPositionOffset);
+        switch (menuPosition) {
+        case MENU_PROGRAM_GUIDE:
+            if (tag.equals(ProgramGuideListFragment.class.getSimpleName()) 
+                    || tag.equals(ChannelListFragment.class.getSimpleName())) {
+                // Scrolling stopped by the program guide or the channel list
+                // fragment. Scroll all program guide fragments in the current
+                // view pager to the same position.
+                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+                    ((FragmentControlInterface) f).setSelection(
+                            programGuideListPosition,
+                            programGuideListPositionOffset);
+                }
             }
+            break;
         }
     }
 
@@ -1063,12 +1078,15 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         case MENU_CHANNELS:
             // When the channel list fragment is done loading and dual pane is 
             // active, preselect a channel so that the program list on the right
-            // will be shown for that channel.
-            if (isDualPane) {
-                if (tag.equals(ChannelListFragment.class.getSimpleName())) { 
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof ChannelListFragment && f instanceof FragmentControlInterface) {
+            // will be shown for that channel. If no dual pane is active scroll
+            // to the selected channel
+            if (tag.equals(ChannelListFragment.class.getSimpleName())) { 
+                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f instanceof ChannelListFragment && f instanceof FragmentControlInterface) {
+                    if (isDualPane) {
                         ((FragmentControlInterface) f).setInitialSelection(channelListPosition);
+                    } else {
+                        ((FragmentControlInterface) f).setSelection(channelListPosition, 0);
                     }
                 }
             }
