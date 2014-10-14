@@ -115,7 +115,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
 
         // Get the possible channel
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        Bundle bundle = intent.getExtras();
+        Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
             channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
         } else {
