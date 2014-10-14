@@ -122,6 +122,7 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_misc">Miscellaneous</string>
     <string name="pref_clear_search_history">Clear search history</string>
+    <string name="pref_clear_icon_cache">Clear channel icon cache</string>
 
     <string name="pref_menu_visibility">Menu visibility</string>
     <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>
@@ -133,7 +134,11 @@
     <string name="clear_search_history">Clear search history?</string>
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
     <string name="clear_search_history_done">Search history cleared</string>
-    
+
+    <string name="clear_icon_cache">Clear channel icon cache?</string>
+    <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You can do this to fetch updated icons from the server.</string>
+    <string name="clear_icon_cache_done">Channel icon cache cleared</string>
+
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
