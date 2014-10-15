@@ -93,6 +93,23 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
+            android:id="@+id/series_info_label"
+            style="?attr/HeaderFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/series_information" />
+
+        <TextView
+            android:id="@+id/series_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingBottom="12dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="@string/series_information" />
+
+        <TextView
             android:id="@+id/description_label"
             style="?attr/HeaderFont"
             android:layout_width="wrap_content"
@@ -191,23 +208,6 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="@string/content_type" />
-
-        <TextView
-            android:id="@+id/series_info_label"
-            style="?attr/HeaderFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/series_information" />
-
-        <TextView
-            android:id="@+id/series_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:paddingBottom="12dp"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@string/series_information" />
 
         <TextView
             android:id="@+id/star_rating_label"
