@@ -68,7 +68,8 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_SCHEDULED)) {
             adapter.add(rec);
         }
-        adapter.sort();
+        // Show the newest scheduled recordings first 
+        adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
         
         // Shows the currently visible number of recordings of the type  

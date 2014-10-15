@@ -57,6 +57,10 @@ public class Constants {
     public static final int CHANNEL_SORT_BY_NAME = 1;
     public static final int CHANNEL_SORT_BY_NUMBER = 2;
 
+    // Recording sorting order
+    public static final int RECORDING_SORT_ASCENDING = 0;
+    public static final int RECORDING_SORT_DESCENDING = 1;
+
     // HTSP connection status
     public static final String ACTION_CONNECTION_STATE_LOST = "action_connection_state_lost";
     public static final String ACTION_CONNECTION_STATE_TIMEOUT = "action_connection_state_timeout";

@@ -69,7 +69,7 @@ public class SeriesRecordingListFragment extends RecordingListFragment {
         for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_SERIES)) {
             adapter.add(rec);
         }
-        adapter.sort();
+        adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
         
         // Shows the currently visible number of recordings of the type  

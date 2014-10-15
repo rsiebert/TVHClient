@@ -59,7 +59,8 @@ public class FailedRecordingListFragment extends RecordingListFragment {
         for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_FAILED)) {
             adapter.add(rec);
         }
-        adapter.sort();
+        // Show the newest failed recordings first
+        adapter.sort(Constants.RECORDING_SORT_ASCENDING);
         adapter.notifyDataSetChanged();
         
         // Shows the currently visible number of recordings of the type  

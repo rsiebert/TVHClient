@@ -21,6 +21,7 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.List;
 
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.Recording;
@@ -48,12 +49,23 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         this.list = list;
     }
 
-    public void sort() {
-        sort(new Comparator<Recording>() {
-            public int compare(Recording x, Recording y) {
-                return x.compareTo(y);
-            }
-        });
+    public void sort(final int type) {
+        switch (type) {
+        case Constants.RECORDING_SORT_ASCENDING:
+            sort(new Comparator<Recording>() {
+                public int compare(Recording x, Recording y) {
+                    return (y.start.compareTo(x.start));
+                }
+            });
+        break;
+        case Constants.RECORDING_SORT_DESCENDING:
+            sort(new Comparator<Recording>() {
+                public int compare(Recording x, Recording y) {
+                    return (x.start.compareTo(y.start));
+                }
+            });
+            break;
+        }
     }
 
     public void setPosition(int pos) {
