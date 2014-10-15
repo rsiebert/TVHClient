@@ -313,7 +313,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((Recording) obj);
-                    adapter.sort();
                 }
             });
         } else if (action.equals(Constants.ACTION_DVR_DELETE)) {

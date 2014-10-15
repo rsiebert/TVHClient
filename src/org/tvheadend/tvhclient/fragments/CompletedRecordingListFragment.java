@@ -66,7 +66,8 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_COMPLETED)) {
             adapter.add(rec);
         }
-        adapter.sort();
+        // Show the newest completed recordings first
+        adapter.sort(Constants.RECORDING_SORT_ASCENDING);
         adapter.notifyDataSetChanged();
         
         // Shows the currently visible number of recordings of the type  
