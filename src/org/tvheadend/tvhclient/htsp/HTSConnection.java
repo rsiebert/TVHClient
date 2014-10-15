@@ -118,6 +118,7 @@ public class HTSConnection extends Thread {
                     close();
                 }
             } catch (InterruptedException ex) {
+                Log.e(TAG, "Exception during waiting for pending connection", ex);
             }
         }
     }
@@ -129,7 +130,7 @@ public class HTSConnection extends Thread {
                 && running;
     }
 
-    //sycnronized, blocking auth
+    // synchronized, blocking auth
     public void authenticate(String username, final String password) {
         if (auth || !running) {
             return;
