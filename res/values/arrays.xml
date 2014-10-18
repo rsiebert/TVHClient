@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_res_list">
+    <string-array name="pref_res_list" translatable="false">
         <item>576</item>
         <item>480</item>
         <item>384</item>
@@ -15,7 +15,7 @@
         <item>192p</item>
     </string-array>
     
-    <string-array name="pref_acodec_list">
+    <string-array name="pref_acodec_list" translatable="false">
         <item>AAC</item>
         <item>MPEG2AUDIO</item>
     </string-array>
@@ -24,7 +24,7 @@
         <item>MPEG-2 Audio Layer II (MP2)</item>
     </string-array>
     
-    <string-array name="pref_vcodec_list">
+    <string-array name="pref_vcodec_list" translatable="false">
         <item>H264</item>
         <item>MPEG4VIDEO</item>
         <item>VP8</item>
@@ -35,7 +35,7 @@
         <item>VP8</item>
     </string-array>
     
-    <string-array name="pref_scodec_list">
+    <string-array name="pref_scodec_list" translatable="false">
         <item>PASS</item>
         <item>NONE</item>
     </string-array>
@@ -44,7 +44,7 @@
         <item>None</item>
     </string-array>
     
-    <string-array name="pref_container_list">
+    <string-array name="pref_container_list" translatable="false">
         <item>matroska</item>
         <item>mpegts</item>
         <item>mpegps</item>
@@ -58,7 +58,7 @@
         <item>Pass-through</item>
     </string-array>
 
-    <string-array name="pref_language_list">
+    <string-array name="pref_language_list" translatable="false">
         <item>default</item>
         <item>en-us</item>
         <item>de</item>
@@ -69,7 +69,7 @@
         <item>it</item>
     </string-array>
     
-    <string-array name="pref_language_list_display">
+    <string-array name="pref_language_list_display" translatable="false">
         <item>Default</item>
         <item>English</item>
         <item>Deutsch</item>
@@ -80,7 +80,7 @@
         <item>Italian</item>
     </string-array>
 
-    <string-array name="pref_menu_ids">
+    <string-array name="pref_menu_ids" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -104,7 +104,7 @@
         <item>Connections</item>
     </string-array>
 
-    <string-array name="pref_sort_channels_ids">
+    <string-array name="pref_sort_channels_ids" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
