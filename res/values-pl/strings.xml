@@ -122,6 +122,7 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% widoczności</string>
     <string name="pref_misc">Różne</string>
     <string name="pref_clear_search_history">Wyczyść historię wyszukiwania</string>
+	<string name="pref_clear_icon_cache">Wyczyść cache ikon kanałów</string>
     
     <string name="pref_menu_visibility">Widoczność menu</string>
     <string name="pref_menu_visibility_sum">Ukryj lub pokaż niektóre elementy.</string>
@@ -134,7 +135,11 @@
     <string name="clear_search_history_sum">Jesteś pewny, że chcesz usunąć wszystkie wpisy z historii wyszukiwania?</string>
     <string name="clear_search_history_done">Historia wyszukiwania wyczyszczona</string>
 
-    <string name="err_auth">Odmowa dostępu</string>
+    <string name="clear_icon_cache">Wyczyścić cache ikon kanałów?</string>
+    <string name="clear_icon_cache_sum">Jesteś pewny, że chcesz usunąć wszystkie ikony kanałów? Możesz to zrobić aby pobrać zaktualizowane ikony kanałów z serwera.</string>
+    <string name="clear_icon_cache_done">Cache ikon kanałów wyczyszczony</string>
+	
+	<string name="err_auth">Odmowa dostępu</string>
     <string name="err_connect">Nie można połączyć się z serweram</string>
     <string name="err_con_lost">Utracono połączenie z serwerem</string>
     <string name="err_con_timeout">Limit czasu połączenia</string>
