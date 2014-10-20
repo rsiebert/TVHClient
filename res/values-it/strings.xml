@@ -67,7 +67,7 @@
     <string name="pref_wol_broadcast">Utilizza Broadcast</string>
     <string name="pref_wol_broadcast_sum">Invia il pacchetto WOL in broadcast. Alcuni router non permettono questo tipo di WOL.</string>
     <string name="pref_wol_address_invalid">L\'indirizzo MAC non è valido.\nEsso deve essere nella forma \'01:24:67:9a:cd:ef\' e può contenere solo cifre esadecimali 0\-9 e a\-f e separatori \':\' e \'\-\'.</string>
-    
+
     <string name="pref_user_interface">Interfaccia utente</string>
     <string name="pref_icons">Icone canali</string>
     <string name="pref_icons_sum">Mostrare le icone canali?</string>
@@ -91,7 +91,7 @@
     <string name="pref_scodec_sum">Definisce il tipo di sottotitoli che il convertitore utilizzerà.</string>
     <string name="pref_container">Contenitore multimediale</string>
     <string name="pref_container_sum">Definisce il contenitore multimediale che sarà usato per trasportare i flussi audio e video. Matroska è generalmente la scelta preferita.</string>
-    
+
     <string name="pref_playback">Riproduzione</string>
     <string name="pref_playback_programs_sum">Configura le opzioni di riproduzione per i programmi dal vivo.</string>
     <string name="pref_playback_recordings_sum">Configura le opzione di riproduzione per i tuoi programmi registrati.</string>
@@ -194,7 +194,7 @@
         <item>Varietà</item>
         <item>Talk show</item>
     </string-array>
-    
+
     <string-array name="pr_content_type4">
         <item>Sports</item>
         <item>Evento Speciale</item>
@@ -204,7 +204,7 @@
         <item>Sport di squadra</item>
         <item>Atletica</item>
         <item>Sport Motori</item>
-	<item>Sport Acquatici</item>
+        <item>Sport Acquatici</item>
         <item>Sport Invernali</item>
         <item>Equestre</item>
         <item>Arti Marziali</item>
@@ -218,7 +218,7 @@
         <item>Informativo/Educativo/Scuola</item>
         <item>Cartoni Animati/Pupazzi</item>
     </string-array>
-    
+
     <string-array name="pr_content_type6">
         <item>Musica/Balletto/Danza</item>
         <item>Rock/Pop</item>
@@ -234,7 +234,7 @@
         <item>Performing Arts</item>
         <item>Belle Arti</item>
         <item>Religione</item>
-	<item>Cultura Popolare/Arte Tradizionale</item>
+        <item>Cultura Popolare/Arte Tradizionale</item>
         <item>Letteratura</item>
         <item>Film/Cinema</item>
         <item>Film Sperimentale/Video</item>
@@ -283,7 +283,7 @@
     <string name="no_transmission">Nessuna trasmissione</string>
     <string name="no_data">Programmazione non disponibile</string>
     <string name="minutes">%d minuti</string>
-    
+
     <string name="search_hint">Cerca nella guida</string>
     <string name="two_days_ago">Due giorni fa</string>
     <string name="yesterday">Ieri</string>
@@ -302,13 +302,13 @@
     <string name="completed">Completate</string>
     <string name="upcoming">In arrivo</string>
     <string name="failed">Fallite</string>
-    
+
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>
     <string name="status">Stato</string>
     <string name="items">Elementi</string>
     <string name="results">Risultati</string>
-    
+
     <string name="channel_icon">Icona canale</string>
     <string name="status_icon">Icona di stato</string>
     <string name="title">Titolo</string>
@@ -334,7 +334,7 @@
     <string name="part">Parte</string>
     <string name="progress">%1$d%% del programma già trasmesso</string>
 
-    <string name="connection">Connessione</string>    
+    <string name="connection">Connessione</string>
     <string name="disc_space">Spazio su disco</string>
     <string name="total">Totale</string>
     <string name="available">Disponibili</string>
@@ -345,7 +345,7 @@
 
     <string name="no_connection_available">Non ci sono ancora connessioni definite. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
     <string name="no_connection_active">Almeno una connessione è definita, ma nessuna è attiva.</string>
-    
+
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>
 
