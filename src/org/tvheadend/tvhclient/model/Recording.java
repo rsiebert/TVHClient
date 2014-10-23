@@ -31,6 +31,13 @@ public class Recording implements Comparable<Recording> {
     public Channel channel;
     public String state;
     public String error;
+    public long eventId;
+    public String autorecId;
+    public Date startExtra;
+    public Date stopExtra;
+    public long retention;
+    public long priority;
+    public long contentType;
 
     @Override
     public int compareTo(Recording that) {
