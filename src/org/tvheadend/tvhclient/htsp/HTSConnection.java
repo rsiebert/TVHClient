@@ -165,6 +165,7 @@ public class HTSConnection extends Thread {
             	
             	protocolVersion = response.getInt("htspversion");
             	webRoot = response.getString("webroot", "");
+            	Log.d(TAG, "HTSP protocol version is " + protocolVersion);
             	
                 MessageDigest md;
                 try {
