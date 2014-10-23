@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="app_name">TVHClient</string>
 
@@ -66,10 +67,12 @@
     <string name="pref_wol_broadcast">Utilizza Broadcast</string>
     <string name="pref_wol_broadcast_sum">Invia il pacchetto WOL in broadcast. Alcuni router non permettono questo tipo di WOL.</string>
     <string name="pref_wol_address_invalid">L\'indirizzo MAC non è valido.\nEsso deve essere nella forma \'01:24:67:9a:cd:ef\' e può contenere solo cifre esadecimali 0\-9 e a\-f e separatori \':\' e \'\-\'.</string>
-    
+
     <string name="pref_user_interface">Interfaccia utente</string>
     <string name="pref_icons">Icone canali</string>
     <string name="pref_icons_sum">Mostrare le icone canali?</string>
+    <string name="pref_tag_icon">Icone etichette canali</string>
+    <string name="pref_tag_icon_sum">Mostrare l\'icona dell\'etichetta del canale invece del logo dell\'applicazione?</string>
     <string name="pref_theme">Tema chiaro</string>
     <string name="pref_theme_sum">Usa un tema dai colori chiari</string>
     <string name="pref_language">Lingua</string>
@@ -88,7 +91,7 @@
     <string name="pref_scodec_sum">Definisce il tipo di sottotitoli che il convertitore utilizzerà.</string>
     <string name="pref_container">Contenitore multimediale</string>
     <string name="pref_container_sum">Definisce il contenitore multimediale che sarà usato per trasportare i flussi audio e video. Matroska è generalmente la scelta preferita.</string>
-    
+
     <string name="pref_playback">Riproduzione</string>
     <string name="pref_playback_programs_sum">Configura le opzioni di riproduzione per i programmi dal vivo.</string>
     <string name="pref_playback_recordings_sum">Configura le opzione di riproduzione per i tuoi programmi registrati.</string>
@@ -119,6 +122,7 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% visibile</string>
     <string name="pref_misc">Varie</string>
     <string name="pref_clear_search_history">Pulire cronologia ricerche</string>
+    <string name="pref_clear_icon_cache">Pulire cache icone canali</string>
 
     <string name="pref_menu_visibility">Visibilità menu</string>
     <string name="pref_menu_visibility_sum">Nasconde o mostra alcuni elementi dei menu.</string>
@@ -130,7 +134,11 @@
     <string name="clear_search_history">Pulire cronologia ricerche?</string>
     <string name="clear_search_history_sum">Sei sicuro di voler rimuovere tutte le voci della cronologia delle ricerche?</string>
     <string name="clear_search_history_done">Cronologia ricerca ripulita</string>
-    
+
+    <string name="clear_icon_cache">Pulire cache icone canali?</string>
+    <string name="clear_icon_cache_sum">Sei sicuro di voler rimuovere tutte le icone dei canali? Puoi farlo per ottenere icone aggiornate dal server.</string>
+    <string name="clear_icon_cache_done">Cache icone canali ripulita</string>
+
     <string name="err_auth">Accesso negato</string>
     <string name="err_connect">Impossibile connettersi al server</string>
     <string name="err_con_lost">Connessione con il server persa</string>
@@ -146,90 +154,90 @@
     <string name="wol_address_invalid">L\'indirizzo MAC non è valido. Per favore controlla le impostazioni.</string>
     <string name="wol_error">Errore durante l\'invio del pacchetto wake on LAN a \'%1$s\'.\n Messaggio d\'errore: %2$s</string>
 
-    <!--string-array name="pr_content_type0">
-        <item>Movie/Drama</item>
-        <item>News/Current affairs</item>
+    <string-array name="pr_content_type0">
+        <item>Film/Drama</item>
+        <item>Notizie/Attualità</item>
         <item>Show/Game show</item>
         <item>Sports</item>
-        <item>Children\'s/Youth</item>
-        <item>Music/Ballet/Dance</item>
-        <item>Arts/Culture</item>
-        <item>Social/Political issues/Economics</item>
-        <item>Education/Science/Factual</item>
-        <item>Leisure hobbies</item>
+        <item>Bambini/Giovani</item>
+        <item>Musica/Balletto/Danza</item>
+        <item>Arte/Cultura</item>
+        <item>Sociale/Politica/Economia</item>
+        <item>Educazione/Scienza</item>
+        <item>Hobby</item>
         <item>Misc</item>
     </string-array>
 
     <string-array name="pr_content_type1">
-        <item>Movie/Drama</item>
+        <item>Film/Drama</item>
         <item>Detective/Thriller</item>
-        <item>Adventure/Western/War</item>
-        <item>Science Fiction/Fantasy/Horror</item>
-        <item>Comedy</item>
-        <item>Soap/Melodrama/Folkloric</item>
-        <item>Romance</item>
-        <item>Serious/ClassicalReligion/Historical</item>
-        <item>Adult Movie/Drama</item>
+        <item>Avventura/Western/Guerra</item>
+        <item>Fantascientifico/Fantasy/Horror</item>
+        <item>Commedia</item>
+        <item>Telenovela/Melodramma/Folcloristico</item>
+        <item>Romantico</item>
+        <item>Religioso/Storico</item>
+        <item>Film per adulti/Drama</item>
     </string-array>
 
     <string-array name="pr_content_type2">
-        <item>News/Current affairs</item>
-        <item>News/Weather Report</item>
+        <item>Notizie/Attualità</item>
+        <item>Notizie/Meteo</item>
         <item>Magazine</item>
-        <item>Documentary</item>
-        <item>Discussion/Interview/Debate</item>
+        <item>Documentario</item>
+        <item>Intervista/Dibattito</item>
     </string-array>
 
     <string-array name="pr_content_type3">
         <item>Show/Game show</item>
         <item>Game show/Quiz/Contest</item>
-        <item>Variety</item>
-        <item>Talk</item>
+        <item>Varietà</item>
+        <item>Talk show</item>
     </string-array>
-    
+
     <string-array name="pr_content_type4">
         <item>Sports</item>
-        <item>Special Event</item>
+        <item>Evento Speciale</item>
         <item>Magazine</item>
-        <item>Football/Soccer</item>
+        <item>Football/Calcio</item>
         <item>Tennis/Squash</item>
-        <item>Team sports</item>
-        <item>Athletics</item>
-        <item>Motor Sport</item>
-        <item>Water Sport</item>
-        <item>Winter Sports</item>
-        <item>Equestrian</item>
-        <item>Martial sports</item>
+        <item>Sport di squadra</item>
+        <item>Atletica</item>
+        <item>Sport Motori</item>
+        <item>Sport Acquatici</item>
+        <item>Sport Invernali</item>
+        <item>Equestre</item>
+        <item>Arti Marziali</item>
     </string-array>
 
     <string-array name="pr_content_type5">
-        <item>Children\'s/Youth</item>
-        <item>Pre-school</item>
-        <item>Entertainment (6 to 14 year-olds)</item>
-        <item>Entertainment (10 to 16 year-olds)</item>
-        <item>Informational/Educational/Schools</item>
-        <item>Cartoons/Puppets</item>
+        <item>Bambini/Giovani</item>
+        <item>Pre-scuola</item>
+        <item>Intrattenimento (6 - 14 anni)</item>
+        <item>Intrattenimento (10 - 16 anni)</item>
+        <item>Informativo/Educativo/Scuola</item>
+        <item>Cartoni Animati/Pupazzi</item>
     </string-array>
-    
+
     <string-array name="pr_content_type6">
-        <item>Music/Ballet/Dance</item>
+        <item>Musica/Balletto/Danza</item>
         <item>Rock/Pop</item>
-        <item>Serious music/Classical Music</item>
-        <item>Folk/Traditional music</item>
+        <item>Musica Classica</item>
+        <item>Folk/Musica Tradizionale</item>
         <item>Jazz</item>
         <item>Musical/Opera</item>
-        <item>Ballet</item>
+        <item>Balletto</item>
     </string-array>
 
     <string-array name="pr_content_type7">
-        <item>Arts/Culture</item>
+        <item>Arte/Cultura</item>
         <item>Performing Arts</item>
-        <item>Fine Arts</item>
-        <item>Religion</item>
-        <item>Popular Culture/Tradital Arts</item>
-        <item>Literature</item>
+        <item>Belle Arti</item>
+        <item>Religione</item>
+        <item>Cultura Popolare/Arte Tradizionale</item>
+        <item>Letteratura</item>
         <item>Film/Cinema</item>
-        <item>Experimental Film/Video</item>
+        <item>Film Sperimentale/Video</item>
         <item>Broadcasting/Press</item>
         <item>New Media</item>
         <item>Magazine</item>
@@ -237,46 +245,45 @@
     </string-array>
 
     <string-array name="pr_content_type8">
-        <item>Social/Political issues/Economics</item>
-        <item>Magazine/Report/Domentary</item>
-        <item>Economics/Social Advisory</item>
-        <item>Remarkable People</item>
+        <item>Sociale/Politica/Economia</item>
+        <item>Magazine/Report/Documentario</item>
+        <item>Economia/Avviso Sociale</item>
+        <item>Persone Famose</item>
     </string-array>
 
-    
     <string-array name="pr_content_type9">
-        <item>Education/Science/Factual</item>        
-        <item>Nature/Animals/Environment</item>
-        <item>Technology/Natural sciences</item>
-        <item>Medicine/Physiology/Psychology</item>
-        <item>Foreign Countries/Expeditions</item>
-        <item>Social/Spiritual Sciences</item>
-        <item>Further Education</item>
-        <item>Languages</item>
+        <item>Educazione/Scienza</item>
+        <item>Natura/Animali/Ambiente</item>
+        <item>Tecnologia/Scienze Naturali</item>
+        <item>Medicina/Fisiologia/Psicologia</item>
+        <item>Paesi Stranieri/Spedizioni</item>
+        <item>Sociale/Scienze Spirituali</item>
+        <item>Educazione Avanzata</item>
+        <item>Lingue</item>
     </string-array>
 
     <string-array name="pr_content_type10">
-        <item>Leisure hobbies</item>
-        <item>Tourism/Travel</item>
-        <item>Handicraft</item>
-        <item>Motoring</item>
-        <item>Fitness and Health</item>
-        <item>Cooking</item>
-        <item>Advertisement/Shopping</item>
-        <item>Gardening</item>
+        <item>Hobby</item>
+        <item>Turismo/Viaggi</item>
+        <item>Faidate</item>
+        <item>Motori</item>
+        <item>Fitness e Benessere</item>
+        <item>Cucina</item>
+        <item>Televendite/Shopping</item>
+        <item>Giardinaggio</item>
     </string-array>
 
     <string-array name="pr_content_type11">
         <item>Misc</item>
-        <item>Black and White</item>
-        <item>Unpublished</item>
-        <item>Live Broadcast</item>
-    </string-array-->
+        <item>Bianco e Nero</item>
+        <item>Non Pubblicati</item>
+        <item>Dirette TV</item>
+    </string-array>
 
     <string name="no_transmission">Nessuna trasmissione</string>
     <string name="no_data">Programmazione non disponibile</string>
     <string name="minutes">%d minuti</string>
-    
+
     <string name="search_hint">Cerca nella guida</string>
     <string name="two_days_ago">Due giorni fa</string>
     <string name="yesterday">Ieri</string>
@@ -295,13 +302,13 @@
     <string name="completed">Completate</string>
     <string name="upcoming">In arrivo</string>
     <string name="failed">Fallite</string>
-    
+
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>
     <string name="status">Stato</string>
     <string name="items">Elementi</string>
     <string name="results">Risultati</string>
-    
+
     <string name="channel_icon">Icona canale</string>
     <string name="status_icon">Icona di stato</string>
     <string name="title">Titolo</string>
@@ -326,17 +333,24 @@
     <string name="episode">Episodio</string>
     <string name="part">Parte</string>
     <string name="progress">%1$d%% del programma già trasmesso</string>
-    
+
+    <string name="connection">Connessione</string>
     <string name="disc_space">Spazio su disco</string>
     <string name="total">Totale</string>
     <string name="available">Disponibili</string>
     <string name="unknown">Sconosciuto</string>
+    <string name="ready">Pronto</string>
     <string name="select_timeframe">Mostra guida programmi per la data e l\'orario selezionato.</string>
     <string name="currently_recording">Attualmente in registrazione</string>
-    
+
     <string name="no_connection_available">Non ci sono ancora connessioni definite. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
     <string name="no_connection_active">Almeno una connessione è definita, ma nessuna è attiva.</string>
-    
+
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>
+
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Apri navigation drawer</string>
+    <string name="drawer_close">Chiudi navigation drawer</string>
+
 </resources>
