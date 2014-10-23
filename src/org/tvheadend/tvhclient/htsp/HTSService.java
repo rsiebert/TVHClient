@@ -175,6 +175,27 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (action.equals(Constants.ACTION_GET_DISC_STATUS)) {
             
         	getDiscSpace();
+        } else if (action.equals(Constants.ACTION_GET_DVR_CONFIG)) {
+            // TODO Auto-generated method stub
+            
+        } else if (action.equals(Constants.ACTION_GET_PROFILES)) {
+            // TODO Auto-generated method stub
+            
+        } else if (action.equals(Constants.ACTION_GET_CHANNEL)) {
+            // TODO Auto-generated method stub
+            
+        } else if (action.equals(Constants.ACTION_SUBSCRIBE_FILTER_STREAM)) {
+            // TODO Auto-generated method stub
+            
+        } else if (action.equals(Constants.ACTION_GET_DVR_CUTPOINTS)) {
+            // TODO Auto-generated method stub
+            
+        } else if (action.equals(Constants.ACTION_ADD_AUTOREC)) {
+            // TODO Auto-generated method stub
+            
+        } else if (action.equals(Constants.ACTION_DELETE_AUTOREC)) {
+            // TODO Auto-generated method stub
+            
         }
         return START_NOT_STICKY;
     }
@@ -476,6 +497,26 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.updateSubscription(sub);
     }
 
+    private void onSignalStatus(HTSMessage msg) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void onAutorecEntryDelete(HTSMessage msg) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void onAutorecEntryUpdate(HTSMessage msg) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void onAutorecEntryAdd(HTSMessage msg) {
+        // TODO Auto-generated method stub
+        
+    }
+
     public void onMessage(HTSMessage msg) {
         String method = msg.getMethod();
         if (method.equals("tagAdd")) {
@@ -508,6 +549,14 @@ public class HTSService extends Service implements HTSConnectionListener {
             onMuxPacket(msg);
         } else if (method.equals("queueStatus")) {
             onQueueStatus(msg);
+        } else if (method.equals("autorecEntryAdd")) {
+            onAutorecEntryAdd(msg);
+        } else if (method.equals("autorecEntryUpdate")) {
+            onAutorecEntryUpdate(msg);
+        } else if (method.equals("autorecEntryDelete")) {
+            onAutorecEntryDelete(msg);
+        } else if (method.equals("signalStatus")) {
+            onSignalStatus(msg);
         } else {
             Log.d(TAG, method.toString());
         }
@@ -890,5 +939,40 @@ public class HTSService extends Service implements HTSConnectionListener {
                 app.updateDiscSpace(list);
             }
         });
+    }
+    
+    private void getDvrConfigs() {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    private void deleteAutorecEntry(final Recording rec) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void addAutorecEntry(final Recording rec) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void getDvrCutpoints(final Recording rec) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void subscriptionFilterStream() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void getChannel(final Channel ch) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void getProfiles() {
+        // TODO Auto-generated method stub
+        
     }
 }

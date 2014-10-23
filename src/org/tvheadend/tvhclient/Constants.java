@@ -104,4 +104,11 @@ public class Constants {
     public static final String ACTION_FEEDBACK = "FEEDBACK";
     public static final String ACTION_GET_TICKET = "GET_TICKET";
     public static final String ACTION_GET_DISC_STATUS = "GET_DISC_STATUS";
+    public static final String ACTION_GET_DVR_CONFIG = "GET_DVR_CONFIG";
+    public static final String ACTION_GET_DVR_CUTPOINTS = "GET_DVR_CUTPOINTS";
+    public static final String ACTION_SUBSCRIBE_FILTER_STREAM = "SUBSCRIBE_FILTER_STREAM";
+    public static final String ACTION_GET_PROFILES = "GET_PROFILES";
+    public static final String ACTION_GET_CHANNEL = "GET_CHANNEL";
+    public static final String ACTION_ADD_AUTOREC = "ADD_AUTOREC";
+    public static final String ACTION_DELETE_AUTOREC = "DELETE_AUTOREC";
 }
