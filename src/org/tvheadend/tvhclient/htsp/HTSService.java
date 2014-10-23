@@ -176,26 +176,39 @@ public class HTSService extends Service implements HTSConnectionListener {
             
         	getDiscSpace();
         } else if (action.equals(Constants.ACTION_GET_DVR_CONFIG)) {
-            // TODO Auto-generated method stub
+            getDvrConfigs();
             
         } else if (action.equals(Constants.ACTION_GET_PROFILES)) {
-            // TODO Auto-generated method stub
+            getProfiles();
             
         } else if (action.equals(Constants.ACTION_GET_CHANNEL)) {
-            // TODO Auto-generated method stub
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
+            if (ch != null) {
+                getChannel(ch);
+            }
             
         } else if (action.equals(Constants.ACTION_SUBSCRIBE_FILTER_STREAM)) {
-            // TODO Auto-generated method stub
+            subscriptionFilterStream();
             
         } else if (action.equals(Constants.ACTION_GET_DVR_CUTPOINTS)) {
-            // TODO Auto-generated method stub
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            Recording rec = app.getRecording(intent.getLongExtra("dvrId", 0));
+            if (rec != null) {
+                getDvrCutpoints(rec);
+            }
             
         } else if (action.equals(Constants.ACTION_ADD_AUTOREC)) {
-            // TODO Auto-generated method stub
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            Recording rec = app.getRecording(intent.getLongExtra("dvrId", 0));
+            addAutorecEntry(rec);
             
         } else if (action.equals(Constants.ACTION_DELETE_AUTOREC)) {
-            // TODO Auto-generated method stub
-            
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            Recording rec = app.getRecording(intent.getLongExtra("dvrId", 0));
+            if (rec != null) {
+                deleteAutorecEntry(rec);
+            }
         }
         return START_NOT_STICKY;
     }
