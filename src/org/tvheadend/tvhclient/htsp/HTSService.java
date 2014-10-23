@@ -800,6 +800,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         HTSMessage request = new HTSMessage();
         request.setMethod("epgQuery");
         request.putField("query", query);
+        request.putField("minduration", 0);
+        request.putField("maxduration", Integer.MAX_VALUE);
         if (ch != null) {
             request.putField("channelId", ch.id);
         }
