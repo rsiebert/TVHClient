@@ -276,7 +276,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         ch.id = msg.getLong("channelId");
         ch.name = msg.getString("channelName", null);
         ch.number = msg.getInt("channelNumber", 0);
+
+        // The default values will be set in case a server with a htsp API
+        // version 12 or lower is used
         ch.numberMinor = msg.getInt("channelNumberMinor", 0);
+
         ch.icon = msg.getString("channelIcon", null);
         ch.tags = msg.getIntList("tags", ch.tags);
 
@@ -309,7 +313,11 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         ch.name = msg.getString("channelName", ch.name);
         ch.number = msg.getInt("channelNumber", ch.number);
+
+        // The default values will be set in case a server with a htsp API
+        // version 12 or lower is used
         ch.numberMinor = msg.getInt("channelNumberMinor", 0);
+
         String icon = msg.getString("channelIcon", ch.icon);
         ch.tags = msg.getIntList("tags", ch.tags);
 
@@ -375,13 +383,18 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (rec.channel != null) {
             rec.channel.recordings.add(rec);
         }
-        rec.eventId = msg.getLong("eventId");
-        rec.autorecId = msg.getString("autorecId");
-        rec.startExtra = msg.getDate("startExtra");
-        rec.stopExtra = msg.getDate("stopExtra");
-        rec.retention = msg.getLong("retention");
-        rec.priority = msg.getLong("priority");
-        rec.contentType = msg.getLong("contentType");
+
+        // Not all fields can be set with default values, so check if the server
+        // provides a supported htsp API version
+        if (connection.getProtocolVersion() > 12) {
+            rec.eventId = msg.getLong("eventId", 0);
+            rec.autorecId = msg.getString("autorecId");
+            rec.startExtra = msg.getDate("startExtra");
+            rec.stopExtra = msg.getDate("stopExtra");
+            rec.retention = msg.getLong("retention");
+            rec.priority = msg.getLong("priority");
+            rec.contentType = msg.getLong("contentType");
+        }
         app.addRecording(rec);
     }
 
@@ -399,13 +412,18 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.state = msg.getString("state", rec.state);
         rec.stop = msg.getDate("stop");
         rec.title = msg.getString("title", rec.title);
-        rec.eventId = msg.getLong("eventId");
-        rec.autorecId = msg.getString("autorecId");
-        rec.startExtra = msg.getDate("startExtra");
-        rec.stopExtra = msg.getDate("stopExtra");
-        rec.retention = msg.getLong("retention");
-        rec.priority = msg.getLong("priority");
-        rec.contentType = msg.getLong("contentType");
+
+        // Not all fields can be set with default values, so check if the server
+        // provides a supported htsp API version
+        if (connection.getProtocolVersion() > 12) {
+            rec.eventId = msg.getLong("eventId", 0);
+            rec.autorecId = msg.getString("autorecId");
+            rec.startExtra = msg.getDate("startExtra");
+            rec.stopExtra = msg.getDate("stopExtra");
+            rec.retention = msg.getLong("retention");
+            rec.priority = msg.getLong("priority");
+            rec.contentType = msg.getLong("contentType");
+        }
         app.updateRecording(rec);
     }
 
@@ -800,8 +818,12 @@ public class HTSService extends Service implements HTSConnectionListener {
         HTSMessage request = new HTSMessage();
         request.setMethod("epgQuery");
         request.putField("query", query);
+
+        // The default values will be set in case a server with a htsp API
+        // version 12 or lower is used
         request.putField("minduration", 0);
         request.putField("maxduration", Integer.MAX_VALUE);
+
         if (ch != null) {
             request.putField("channelId", ch.id);
         }
