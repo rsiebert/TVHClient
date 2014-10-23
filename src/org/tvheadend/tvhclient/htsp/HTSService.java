@@ -276,6 +276,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         ch.id = msg.getLong("channelId");
         ch.name = msg.getString("channelName", null);
         ch.number = msg.getInt("channelNumber", 0);
+        ch.numberMinor = msg.getInt("channelNumberMinor", 0);
         ch.icon = msg.getString("channelIcon", null);
         ch.tags = msg.getIntList("tags", ch.tags);
 
@@ -308,6 +309,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         ch.name = msg.getString("channelName", ch.name);
         ch.number = msg.getInt("channelNumber", ch.number);
+        ch.numberMinor = msg.getInt("channelNumberMinor", 0);
         String icon = msg.getString("channelIcon", ch.icon);
         ch.tags = msg.getIntList("tags", ch.tags);
 
