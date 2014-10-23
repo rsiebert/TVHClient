@@ -266,7 +266,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // currently being transmitting by this channel.
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Program program = null;
-        final Channel channel = adapter.getItem(info.position);
+        Channel channel = null;
+        if (adapter.getCount() > info.position) {
+            channel = adapter.getItem(info.position);
+        }
         if (channel != null) {
             synchronized(channel.epg) {
                 Iterator<Program> it = channel.epg.iterator();
