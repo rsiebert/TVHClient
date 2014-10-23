@@ -168,7 +168,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     }
     
     public Recording getSelectedItem() {
-        if (list.size() > selectedPosition) {
+        if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }
         return null;
