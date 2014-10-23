@@ -967,8 +967,16 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
     
     private void getDvrConfigs() {
-        // TODO Auto-generated method stub
-        
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getDvrConfigs");
+        connection.sendMessage(request, new HTSResponseHandler() {
+            public void handleResponse(HTSMessage response) {
+                if (!response.containsKey("dvrconfigs")) {
+                    return;
+                }
+                // TODO
+            }
+        });
     }
     
     private void deleteAutorecEntry(final Recording rec) {
@@ -982,8 +990,17 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getDvrCutpoints(final Recording rec) {
-        // TODO Auto-generated method stub
-        
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getDvrCutpoints");
+        request.putField("id", rec.id);
+        connection.sendMessage(request, new HTSResponseHandler() {
+            public void handleResponse(HTSMessage response) {
+                if (!response.containsKey("cutpoints")) {
+                    return;
+                }
+                // TODO
+            }
+        });
     }
 
     private void subscriptionFilterStream() {
@@ -992,8 +1009,15 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getChannel(final Channel ch) {
-        // TODO Auto-generated method stub
-        
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getChannel");
+        request.putField("channelId", ch.id);
+        connection.sendMessage(request, new HTSResponseHandler() {
+            public void handleResponse(HTSMessage response) {
+                // TODO
+                
+            }
+        });
     }
 
     private void getProfiles() {
