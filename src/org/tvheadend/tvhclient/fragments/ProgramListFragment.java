@@ -179,9 +179,13 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
      */
     public void populateList() {
         // This is required because addAll is only available in API 11 and higher
-        for (Iterator<Program> iterator = channel.epg.iterator(); iterator.hasNext();) {
-            Program p = iterator.next();
-            adapter.add(p);
+        if (channel != null) {
+            synchronized (channel.epg) {
+                for (Iterator<Program> iterator = channel.epg.iterator(); iterator.hasNext();) {
+                    Program p = iterator.next();
+                    adapter.add(p);
+                }
+            }
         }
         adapter.notifyDataSetChanged();
 
