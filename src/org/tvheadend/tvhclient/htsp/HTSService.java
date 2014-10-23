@@ -846,6 +846,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
         request.putField("eventId", eventId);
+        request.putField("retention", 0);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (response.getInt("success", 0) == 1) {
