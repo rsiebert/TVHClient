@@ -1,8 +1,16 @@
-$ 1.5.6
-  % VERSION 1.5.6
-  _ 07.10.2014
-    * Show the app icon again when no channel tag is selected
-    * Do not show the channel tag icon as a default  
+$ 1.6.0
+  % VERSION 1.6.0
+  _ 23.10.2014
+    * Show the app icon when no channel tag is selected
+    * As a default show the app icon, not the channel tag icon
+    * When the program list is visible search only within that channel
+    * Remember the scroll position in the channel list
+    * Added option to clear the channel icon cache to fetch updated icons from the server
+    * Moved the series information before the description in the program details screen
+    * Show the newest recordings first
+    * Italian translation update
+    * Updated Polish translation
+    * Small bug fixes
 $ 1.5.5
   % VERSION 1.5.5
   _ 06.10.2014
