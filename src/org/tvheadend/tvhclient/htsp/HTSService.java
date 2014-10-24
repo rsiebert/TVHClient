@@ -500,6 +500,19 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.removeSubscription(s);
     }
 
+    private void onSubscriptionGrace(HTSMessage msg) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        Subscription s = app.getSubscription(msg.getLong("subscriptionId"));
+        if (s == null) {
+            return;
+        }
+        long gt = msg.getLong("graceTimeout", 0);
+        if (s.graceTimeout != gt) {
+            s.graceTimeout = gt;
+            app.updateSubscription(s);
+        }
+    }
+
     private void onMuxPacket(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         Subscription sub = app.getSubscription(msg.getLong("subscriptionId"));
@@ -591,6 +604,8 @@ public class HTSService extends Service implements HTSConnectionListener {
             onSubscriptionStatus(msg);
         } else if (method.equals("subscriptionStop")) {
             onSubscriptionStop(msg);
+        } else if (method.equals("subscriptionGrace")) {
+            onSubscriptionGrace(msg);
         } else if (method.equals("muxpkt")) {
             onMuxPacket(msg);
         } else if (method.equals("queueStatus")) {

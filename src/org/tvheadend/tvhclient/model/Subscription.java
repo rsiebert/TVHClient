@@ -33,4 +33,5 @@ public class Subscription {
     public long droppedBFrames;
     public long droppedIFrames;
     public long droppedPFrames;
+    public long graceTimeout;
 }
