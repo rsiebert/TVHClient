@@ -452,7 +452,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
     }
 
-    private void onStartSubscription(HTSMessage msg) {
+    private void onSubscriptionStart(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         Subscription subscription = app.getSubscription(msg.getLong("subscriptionId"));
         if (subscription == null) {
@@ -599,7 +599,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (method.equals("dvrEntryDelete")) {
             onDvrEntryDelete(msg);
         } else if (method.equals("subscriptionStart")) {
-            onStartSubscription(msg);
+            onSubscriptionStart(msg);
         } else if (method.equals("subscriptionStatus")) {
             onSubscriptionStatus(msg);
         } else if (method.equals("subscriptionStop")) {
