@@ -149,13 +149,15 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         if (channel == null) {
             for (Channel ch : app.getChannels()) {
                 if (ch != null) {
-                    for (Program p : ch.epg) {
-                        if (p != null && p.title != null && p.title.length() > 0) {
-                            // Check if the program name matches the search pattern
-                            if (pattern.matcher(p.title).find()) {
-                                adapter.add(p);
-                                adapter.sort();
-                                adapter.notifyDataSetChanged();
+                    synchronized(ch.epg) {
+                        for (Program p : ch.epg) {
+                            if (p != null && p.title != null && p.title.length() > 0) {
+                                // Check if the program name matches the search pattern
+                                if (pattern.matcher(p.title).find()) {
+                                    adapter.add(p);
+                                    adapter.sort();
+                                    adapter.notifyDataSetChanged();
+                                }
                             }
                         }
                     }
@@ -163,13 +165,15 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             }
         } else {
             if (channel.epg != null) {
-                for (Program p : channel.epg) {
-                    if (p != null && p.title != null && p.title.length() > 0) {
-                        // Check if the program name matches the search pattern
-                        if (pattern.matcher(p.title).find()) {
-                            adapter.add(p);
-                            adapter.sort();
-                            adapter.notifyDataSetChanged();
+                synchronized(channel.epg) {
+                    for (Program p : channel.epg) {
+                        if (p != null && p.title != null && p.title.length() > 0) {
+                            // Check if the program name matches the search pattern
+                            if (pattern.matcher(p.title).find()) {
+                                adapter.add(p);
+                                adapter.sort();
+                                adapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 }
