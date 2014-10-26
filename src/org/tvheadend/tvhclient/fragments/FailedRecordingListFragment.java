@@ -56,7 +56,7 @@ public class FailedRecordingListFragment extends RecordingListFragment {
         // Clear the list and add the recordings
         adapter.clear();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_FAILED)) {
+        for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED)) {
             adapter.add(rec);
         }
         // Show the newest failed recordings first

@@ -267,11 +267,11 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private void updateDrawerMenu() {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).count = 
-                app.getRecordings(Constants.RECORDING_TYPE_COMPLETED).size();
+                app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
         drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).count = 
-                app.getRecordings(Constants.RECORDING_TYPE_SCHEDULED).size();
+                app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).count = 
-                app.getRecordings(Constants.RECORDING_TYPE_FAILED).size();
+                app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         drawerAdapter.notifyDataSetChanged();
     }
 

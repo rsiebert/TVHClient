@@ -288,7 +288,7 @@ public class TVHClientApplication extends Application {
      * @param type
      * @return
      */
-    public List<Recording> getRecordings(int type) {
+    public List<Recording> getRecordingsByType(int type) {
         List<Recording> recs = new ArrayList<Recording>();
 
         switch (type) {

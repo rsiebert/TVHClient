@@ -363,8 +363,8 @@ public class StatusFragment extends Fragment implements HTSListener {
 
         // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
-        completedRec.setText(app.getRecordings(Constants.RECORDING_TYPE_COMPLETED).size() + " " + getString(R.string.completed));
-        upcomingRec.setText(app.getRecordings(Constants.RECORDING_TYPE_SCHEDULED).size() + " " + getString(R.string.upcoming));
-        failedRec.setText(app.getRecordings(Constants.RECORDING_TYPE_FAILED).size() + " " + getString(R.string.failed));
+        completedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() + " " + getString(R.string.completed));
+        upcomingRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size() + " " + getString(R.string.upcoming));
+        failedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size() + " " + getString(R.string.failed));
     }
 }
