@@ -32,6 +32,7 @@ import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.Subscription;
 
 import android.app.Application;
@@ -44,6 +45,7 @@ public class TVHClientApplication extends Application {
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
     private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
+    private final List<SeriesRecording> seriesRecordings = Collections.synchronizedList(new ArrayList<SeriesRecording>());
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
 
@@ -373,6 +375,52 @@ public class TVHClientApplication extends Application {
     public void updateRecording(Recording rec) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_UPDATE, rec);
+        }
+    }
+
+    public void addSeriesRecording(SeriesRecording srec) {
+        synchronized (seriesRecordings) {
+            seriesRecordings.add(srec);
+        }
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_SERIES_DVR_ADD, srec);
+        }
+    }
+
+    public void removeSeriesRecording(SeriesRecording srec) {
+        synchronized (seriesRecordings) {
+            seriesRecordings.remove(srec);
+        }
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_SERIES_DVR_DELETE, srec);
+        }
+    }
+
+    public List<SeriesRecording> getSeriesRecordings() {
+        return seriesRecordings;
+    }
+
+    public SeriesRecording getSeriesRecording(String id) {
+        for (SeriesRecording srec : getSeriesRecordings()) {
+            if (srec.id == id) {
+                return srec;
+            }
+        }
+        return null;
+    }
+
+    public void removeSeriesRecording(String id) {
+        for (SeriesRecording srec : getSeriesRecordings()) {
+            if (srec.id == id) {
+                removeSeriesRecording(srec);
+                return;
+            }
+        }
+    }
+
+    public void updateSeriesRecording(SeriesRecording srec) {
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_SERIES_DVR_UPDATE, srec);
         }
     }
 
