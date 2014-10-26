@@ -293,6 +293,8 @@ public class TVHClientApplication extends Application {
         case Constants.RECORDING_TYPE_COMPLETED:
             synchronized (recordings) {
                 for (Recording rec : recordings) {
+                    // Include all recordings that are marked as completed, also
+                    // include recordings marked as auto recorded
                     if (rec.error == null && rec.state.equals("completed")) {
                         recs.add(rec);
                     }
@@ -303,8 +305,9 @@ public class TVHClientApplication extends Application {
         case Constants.RECORDING_TYPE_SCHEDULED:
             synchronized (recordings) {
                 for (Recording rec : recordings) {
+                    // Include all scheduled recordings in the list, also
+                    // include recordings marked as auto recorded
                     if (rec.error == null
-                            && !rec.state.equals("autorec")
                             && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
                         recs.add(rec);
                     }
@@ -315,8 +318,10 @@ public class TVHClientApplication extends Application {
         case Constants.RECORDING_TYPE_SERIES:
             synchronized (recordings) {
                 for (Recording rec : recordings) {
+                    // Include all these recordings in the list that are marked
+                    // as auto recordings
                     if (rec.error == null
-                            && rec.state.equals("autorec")
+                            && rec.autorecId != null
                             && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
                         recs.add(rec);
                     }
@@ -327,6 +332,7 @@ public class TVHClientApplication extends Application {
         case Constants.RECORDING_TYPE_FAILED:
             synchronized (recordings) {
                 for (Recording rec : recordings) {
+                    // Include all failed recordings in the list
                     if ((rec.error != null || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
                         recs.add(rec);
                     }
