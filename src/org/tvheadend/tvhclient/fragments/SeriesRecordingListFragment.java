@@ -1,24 +1,12 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
 
-import android.os.AsyncTask;
-import android.util.Log;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 
 public class SeriesRecordingListFragment extends RecordingListFragment {
@@ -51,8 +39,19 @@ public class SeriesRecordingListFragment extends RecordingListFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Only show the cancel all recordings menu if the correct tab is
-        // selected and recordings are available that can be canceled.
+        // Do not show the remove menu in single pane mode. No recording is
+        // preselected so the behavior is undefined. In dual pane mode one
+        // recording is also selected which is fine.
+        if (!isDualPane) {
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false)) {
+            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+        }
+
+        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         // Playing a scheduled recording is not possible 
         (menu.findItem(R.id.menu_play)).setVisible(false);
@@ -66,7 +65,7 @@ public class SeriesRecordingListFragment extends RecordingListFragment {
         // Clear the list and add the recordings
         adapter.clear();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        for (Recording rec : app.getRecordings(Constants.RECORDING_TYPE_SERIES)) {
+        for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_SERIES)) {
             adapter.add(rec);
         }
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
@@ -75,7 +74,7 @@ public class SeriesRecordingListFragment extends RecordingListFragment {
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.recordings), TAG);
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.upcoming), TAG);
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.upcoming_series_recordings), TAG);
             actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
         }
         // Inform the listeners that the channel list is populated.
@@ -83,81 +82,8 @@ public class SeriesRecordingListFragment extends RecordingListFragment {
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.onListPopulated(TAG);
         }
-        
-        // just testing http stuff here
-        Authenticator.setDefault(new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                String user = null;
-                char[] pass = null;
-                Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-                if (conn != null) {
-                    Log.d(TAG, "Got credentials for the password authenticator");
-                    user = conn.username;
-                    pass = conn.password.toCharArray();
-                }
-                Log.d(TAG, "Returning password authenticator");
-                return new PasswordAuthentication(user, pass);
-            }
-        });
-        
-        URL url = null;
-        try {
-            Log.d(TAG, "Creating url");
-            Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-            if (conn != null) {
-                String s = "http://" + conn.address + ":" + conn.streaming_port;
-                Log.d(TAG, "Url is " + s);
-                url = new URL(s);
-                new MyTask().execute(url);
-            }
-        } catch (MalformedURLException e) {
-            Log.d(TAG, "Exception creating url");
-            e.printStackTrace();
-        }
-        
     }
 
-    private class MyTask extends AsyncTask<URL, Void, Void> {
-        
-        @Override
-        protected Void doInBackground(URL... urls) {
-            Log.d(TAG, "doInBackground");
-            
-            HttpURLConnection urlConnection = null;
-            try {
-                Log.d(TAG, "Opening url");
-                urlConnection = (HttpURLConnection) urls[0].openConnection();
-            } catch (IOException e) {
-                Log.d(TAG, "Exception opening url");
-                e.printStackTrace();
-            }
-            urlConnection.setRequestProperty("Authorization", "Basic");
-
-            BufferedInputStream content = null;
-            try {
-                Log.d(TAG, "Getting input from server");
-                content = new BufferedInputStream(urlConnection.getInputStream());
-            } catch (IOException e) {
-                Log.d(TAG, "Exception getting input from server");
-                e.printStackTrace();
-            }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-            String line;
-
-            try {
-                Log.d(TAG, "Reading contents");
-                while ((line = reader.readLine()) != null) {
-                    Log.d(TAG, line);
-                }
-            } catch (IOException e) {
-                Log.d(TAG, "Exception reading contents");
-                e.printStackTrace();
-            }
-            
-            return null;
-        }
-    }
-    
     /**
      * This method is part of the HTSListener interface. Whenever the HTSService
      * sends a new message the correct action will then be executed here.
@@ -174,6 +100,14 @@ public class SeriesRecordingListFragment extends RecordingListFragment {
                     } else {
                         populateList();
                     }
+                }
+            });
+        } else if (action.equals(Constants.ACTION_SERIES_DVR_ADD) 
+                || action.equals(Constants.ACTION_SERIES_DVR_DELETE)
+                || action.equals(Constants.ACTION_SERIES_DVR_UPDATE)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    populateList();
                 }
             });
         }
