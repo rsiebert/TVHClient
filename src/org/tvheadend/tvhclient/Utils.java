@@ -282,6 +282,25 @@ public class Utils {
     }
 
     /**
+     * Tells the server to repeatedly record the program with the given id. This
+     * is a series recording.
+     * 
+     * @param context
+     * @param id
+     * @param channelId
+     */
+    public static void recordSeriesProgram(final Context context, final Program program) {
+        if (program == null || program.channel == null) {
+            return;
+        }
+        Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(Constants.ACTION_ADD_AUTOREC);
+        intent.putExtra("title", program.title);
+        intent.putExtra("channelId", program.channel.id);
+        context.startService(intent);
+    }
+
+    /**
      * Shows or hides certain items from the program menu. This depends on the
      * current state of the program.
      *
