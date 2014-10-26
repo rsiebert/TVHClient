@@ -270,6 +270,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
         drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
+        drawerAdapter.getItem(MENU_SERIES_RECORDINGS).count = 
+                app.getSeriesRecordings().size();
         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         drawerAdapter.notifyDataSetChanged();
@@ -312,9 +314,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[8],
                 (lightTheme) ? R.drawable.ic_menu_connections_light
                         : R.drawable.ic_menu_connections_dark));
-
-        // Hide the series recording menu item
-        list.get(MENU_SERIES_RECORDINGS).isVisible = false;
 
         return list;
     }
