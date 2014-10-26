@@ -85,7 +85,7 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:singleLine="true"
-            android:text="@string/completed" />
+            android:text="@string/completed_recordings" />
 
         <TextView
             android:id="@+id/upcoming_recordings"
@@ -94,7 +94,17 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:singleLine="true"
-            android:text="@string/upcoming" />
+            android:text="@string/upcoming_recordings" />
+
+        <TextView
+            android:id="@+id/upcoming_series_recordings"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:singleLine="true"
+            android:text="@string/upcoming_series_recordings" />
 
         <TextView
             android:id="@+id/failed_recordings"
@@ -104,7 +114,7 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:singleLine="true"
-            android:text="@string/failed" />
+            android:text="@string/failed_recordings" />
 
         <TextView
             android:id="@+id/currently_recording_label"

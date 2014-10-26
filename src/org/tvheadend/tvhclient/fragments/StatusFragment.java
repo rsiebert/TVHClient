@@ -58,6 +58,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView recLabel;
 	private TextView completedRec;
 	private TextView upcomingRec;
+	private TextView upcomingSeriesRec;
 	private TextView failedRec;
 
     private String connectionStatus = "";
@@ -91,6 +92,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         recLabel = (TextView) v.findViewById(R.id.recording_label);
         completedRec = (TextView) v.findViewById(R.id.completed_recordings);
         upcomingRec = (TextView) v.findViewById(R.id.upcoming_recordings);
+        upcomingSeriesRec = (TextView) v.findViewById(R.id.upcoming_series_recordings);
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
         return v;
     }
@@ -212,6 +214,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         recLabel.setVisibility(View.GONE);
         completedRec.setVisibility(View.GONE);
         upcomingRec.setVisibility(View.GONE);
+        upcomingSeriesRec.setVisibility(View.GONE);
         failedRec.setVisibility(View.GONE);
 	}
 
@@ -359,12 +362,14 @@ public class StatusFragment extends Fragment implements HTSListener {
         recLabel.setVisibility(View.VISIBLE);
         completedRec.setVisibility(View.VISIBLE);
         upcomingRec.setVisibility(View.VISIBLE);
+        upcomingSeriesRec.setVisibility(View.VISIBLE);
         failedRec.setVisibility(View.VISIBLE);
 
         // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
-        completedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() + " " + getString(R.string.completed));
-        upcomingRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size() + " " + getString(R.string.upcoming));
-        failedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size() + " " + getString(R.string.failed));
+        completedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() + " " + getString(R.string.completed_recordings));
+        upcomingRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size() + " " + getString(R.string.upcoming_recordings));
+        upcomingSeriesRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_SERIES).size() + " " + getString(R.string.upcoming_series_recordings));
+        failedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size() + " " + getString(R.string.failed_recordings));
     }
 }
