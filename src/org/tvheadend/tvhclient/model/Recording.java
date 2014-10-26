@@ -32,7 +32,7 @@ public class Recording implements Comparable<Recording> {
     public String state;
     public String error;
     public long eventId;
-    public String autorecId;
+    public String autorecId = null;
     public Date startExtra;
     public Date stopExtra;
     public long retention;
