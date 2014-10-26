@@ -299,9 +299,10 @@
     <string name="sunday">Sunday</string>
 
     <string name="programs">Programs</string>
-    <string name="completed">Completed</string>
-    <string name="upcoming">Upcoming</string>
-    <string name="failed">Failed</string>
+    <string name="completed_recordings">Completed</string>
+    <string name="upcoming_recordings">Upcoming</string>
+    <string name="upcoming_series_recordings">Upcoming (Autorec)</string>
+    <string name="failed_recordings">Failed</string>
     
     <string name="channels">Channels</string>
     <string name="recordings">Recordings</string>

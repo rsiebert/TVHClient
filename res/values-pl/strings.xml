@@ -299,9 +299,10 @@
     <string name="sunday">Niedziela</string>
     
     <string name="programs">Programy</string>
-    <string name="completed">Zakończone</string>
-    <string name="upcoming">Zaplanowane</string>
-    <string name="failed">Utracone / Nieprawidłowe</string>
+    <string name="completed_recordings">Zakończone</string>
+    <string name="upcoming_recordings">Zaplanowane</string>
+    <string name="upcoming_series_recordings">Zaplanowane (Autorec)</string>
+    <string name="failed_recordings">Utracone / Nieprawidłowe</string>
     
     <string name="channels">Kanały</string>
     <string name="recordings">Nagrania</string>

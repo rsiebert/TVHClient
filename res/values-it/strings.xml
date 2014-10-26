@@ -299,9 +299,10 @@
     <string name="sunday">Domenica</string>
 
     <string name="programs">Programmi</string>
-    <string name="completed">Completate</string>
-    <string name="upcoming">In arrivo</string>
-    <string name="failed">Fallite</string>
+    <string name="completed_recordings">Completate</string>
+    <string name="upcoming_recordings">In arrivo</string>
+    <string name="upcoming_series_recordings">In arrivo (Autorec)</string>
+    <string name="failed_recordings">Fallite</string>
 
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>

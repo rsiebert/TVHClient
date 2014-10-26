@@ -252,9 +252,10 @@
     <string name="sunday">Söndag</string>
 
     <string name="programs">Program</string>
-    <string name="completed">Färdiga</string>
-    <string name="upcoming">Kommande</string>
-    <string name="failed">Misslyckade</string>
+    <string name="completed_recordings">Färdiga</string>
+    <string name="upcoming_recordings">Kommande</string>
+    <string name="upcoming_series_recordings">Kommande (Autorec)</string>
+    <string name="failed_recordings">Misslyckade</string>
     
     <string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>

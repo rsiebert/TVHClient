@@ -292,9 +292,10 @@
     <string name="sunday">Zondag</string>
 
     <string name="programs">Programma\'s</string>
-    <string name="completed">Voltooid</string>
-    <string name="upcoming">Toekomstig</string>
-    <string name="failed">Mislukt</string>
+    <string name="completed_recordings">Voltooid</string>
+    <string name="upcoming_recordings">Toekomstig</string>
+    <string name="upcoming_series_recordings">Toekomstig (Autorec)</string>
+    <string name="failed_recordings">Mislukt</string>
     
     <string name="channels">Kanalen</string>
     <string name="recordings">Opnames</string>

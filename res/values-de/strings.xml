@@ -283,9 +283,10 @@
     <string name="sunday">Sonntag</string>
 
     <string name="programs">Programme</string>
-    <string name="completed">Aufgenommen</string>
-    <string name="upcoming">Geplant</string>
-    <string name="failed">Fehlerhaft</string>
+    <string name="completed_recordings">Aufgenommen</string>
+    <string name="upcoming_recordings">Geplant</string>
+    <string name="upcoming_series_recordings">Geplant (Autorec)</string>
+    <string name="failed_recordings">Fehlerhaft</string>
     
     <string name="channels">Sender</string>
     <string name="recordings">Aufnahmen</string>
