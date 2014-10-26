@@ -9,6 +9,7 @@
     <string name="menu_play">Play</string>
     <string name="menu_search">Search</string>
     <string name="menu_record">Record</string>
+    <string name="menu_record_series">Record (Autorec)</string>
     <string name="menu_record_cancel">Cancel recording</string>
     <string name="menu_record_cancel_all">Cancel all recordings</string>
     <string name="menu_record_remove">Delete recording</string>
