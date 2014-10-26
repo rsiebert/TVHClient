@@ -47,6 +47,7 @@ import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
 
@@ -567,13 +568,42 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onAutorecEntryUpdate(HTSMessage msg) {
-        // TODO Auto-generated method stub
-        
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        SeriesRecording srec = app.getSeriesRecording(msg.getString("id"));
+        if (srec == null) {
+            return;
+        }
+        srec.description = msg.getString("description", srec.description);
+        srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        srec.maxDuration = msg.getLong("maxDuration");
+        srec.minDuration = msg.getLong("minDuration");
+        srec.retention = msg.getLong("retention");
+        srec.daysOfWeek = msg.getLong("daysOfWeek");
+        srec.approxTime = msg.getLong("approxTime");
+        srec.priority = msg.getLong("priority");
+        srec.startExtra = msg.getDate("startExtra");
+        srec.stopExtra = msg.getDate("stopExtra");
+        srec.title = msg.getString("title", srec.title);
+        app.updateSeriesRecording(srec);
     }
 
     private void onAutorecEntryAdd(HTSMessage msg) {
-        // TODO Auto-generated method stub
-        
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        SeriesRecording srec = new SeriesRecording();
+        srec.id = msg.getString("id");
+        srec.description = msg.getString("description", "");
+        srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        srec.maxDuration = msg.getLong("maxDuration");
+        srec.minDuration = msg.getLong("minDuration");
+        srec.retention = msg.getLong("retention");
+        srec.daysOfWeek = msg.getLong("daysOfWeek");
+        srec.approxTime = msg.getLong("approxTime");
+        srec.priority = msg.getLong("priority");
+        srec.startExtra = msg.getDate("startExtra");
+        srec.stopExtra = msg.getDate("stopExtra");
+        srec.title = msg.getString("title");
+        srec.channel = app.getChannel(msg.getLong("channel", 0));
+        app.addSeriesRecording(srec);
     }
 
     public void onMessage(HTSMessage msg) {
