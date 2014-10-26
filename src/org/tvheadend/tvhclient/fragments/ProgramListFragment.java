@@ -260,6 +260,10 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             Utils.recordProgram(activity, program);
             return true;
 
+        case R.id.menu_record_series:
+            Utils.recordSeriesProgram(activity, program);
+            return true;
+
         case R.id.menu_play:
             // Open a new activity that starts playing the program
             if (program != null && program.channel != null) {
