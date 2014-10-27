@@ -61,23 +61,23 @@
     <string-array name="pref_language_list">
         <item>default</item>
         <item>en-us</item>
-        <item>de</item>
         <item>fr</item>
+		<item>nl</item>
+		<item>de</item>
         <item>pl</item>
         <item>sv</item>
-        <item>nl</item>
-        <item>it</item>
+		<item>it</item>
     </string-array-->
     
     <string-array name="pref_language_list_display">
         <item>Domyślny</item>
-        <item>Angielski</item>
-        <item>Niemiecki</item>
-        <item>Francuzki</item>
-        <item>Polski</item>
-        <item>Szwedzki</item>
-        <item>Holenderski</item>
-        <item>Włoski</item>
+		<item>Angielski</item>
+		<item>Francuzki</item>
+		<item>Holenderski</item>
+		<item>Niemiecki</item>
+		<item>Polski</item>
+		<item>Szwedzki</item>
+		<item>Włoski</item>  
     </string-array>
 
     <!--string-array name="pref_menu_ids">
