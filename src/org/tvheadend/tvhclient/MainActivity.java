@@ -271,7 +271,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItem(MENU_SERIES_RECORDINGS).count = 
-                app.getSeriesRecordings().size();
+                app.getRecordingsByType(Constants.RECORDING_TYPE_SERIES).size();
         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         drawerAdapter.notifyDataSetChanged();

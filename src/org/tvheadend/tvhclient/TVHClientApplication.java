@@ -319,13 +319,16 @@ public class TVHClientApplication extends Application {
 
         case Constants.RECORDING_TYPE_SERIES:
             synchronized (recordings) {
+                String autorecId = "";
                 for (Recording rec : recordings) {
                     // Include all these recordings in the list that are marked
-                    // as auto recordings
+                    // as auto recordings. Do not include duplicate id's.
                     if (rec.error == null
                             && rec.autorecId != null
+                            && rec.autorecId.compareTo(autorecId) != 0
                             && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
                         recs.add(rec);
+                        autorecId = rec.autorecId;
                     }
                 }
             }
