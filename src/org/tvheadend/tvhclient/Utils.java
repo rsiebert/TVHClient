@@ -355,6 +355,7 @@ public class Utils {
         // Get the menu items so they can be shown 
         // or hidden depending on the recording state
         MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
@@ -363,6 +364,7 @@ public class Utils {
 
         // Disable these menus as a default
         recordMenuItem.setVisible(false);
+        recordSeriesMenuItem.setVisible(false);
         recordCancelMenuItem.setVisible(false);
         recordRemoveMenuItem.setVisible(false);
         playMenuItem.setVisible(false);
