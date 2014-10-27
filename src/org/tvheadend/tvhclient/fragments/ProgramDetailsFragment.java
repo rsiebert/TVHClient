@@ -268,13 +268,13 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         record.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.recordProgram(activity, program);
+                Utils.recordProgram(activity, program, false);
             }
         });
         recordSeries.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.recordSeriesProgram(activity, program);
+                Utils.recordProgram(activity, program, true);
             }
         });
         recordCancel.setOnClickListener(new OnClickListener() {

@@ -264,38 +264,25 @@ public class Utils {
     }
 
     /**
-     * Tells the server to record the program with the given id.
+     * Tells the server to record the program with the given id. If the autoRec
+     * parameter is set than a series recording will created.
      * 
      * @param context
-     * @param id
-     * @param channelId
+     * @param program
+     * @param autoRec
      */
-    public static void recordProgram(final Context context, final Program program) {
+    public static void recordProgram(final Context context, final Program program, boolean autoRec) {
         if (program == null || program.channel == null) {
             return;
         }
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_DVR_ADD);
-        intent.putExtra("eventId", program.id);
-        intent.putExtra("channelId", program.channel.id);
-        context.startService(intent);
-    }
-
-    /**
-     * Tells the server to repeatedly record the program with the given id. This
-     * is a series recording.
-     * 
-     * @param context
-     * @param id
-     * @param channelId
-     */
-    public static void recordSeriesProgram(final Context context, final Program program) {
-        if (program == null || program.channel == null) {
-            return;
+        if (!autoRec) {
+            intent.setAction(Constants.ACTION_DVR_ADD);
+            intent.putExtra("eventId", program.id);
+        } else {
+            intent.setAction(Constants.ACTION_ADD_AUTOREC);
+            intent.putExtra("title", program.title);
         }
-        Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_ADD_AUTOREC);
-        intent.putExtra("title", program.title);
         intent.putExtra("channelId", program.channel.id);
         context.startService(intent);
     }

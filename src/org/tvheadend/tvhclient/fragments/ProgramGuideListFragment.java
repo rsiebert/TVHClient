@@ -302,7 +302,11 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             return true;
 
         case R.id.menu_record:
-            Utils.recordProgram(activity, selectedProgram);
+            Utils.recordProgram(activity, selectedProgram, false);
+            return true;
+
+        case R.id.menu_record_series:
+            Utils.recordProgram(activity, selectedProgram, true);
             return true;
 
         default:

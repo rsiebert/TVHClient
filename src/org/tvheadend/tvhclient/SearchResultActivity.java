@@ -253,7 +253,11 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             return true;
 
         case R.id.menu_record:
-            Utils.recordProgram(this, program);
+            Utils.recordProgram(this, program, false);
+            return true;
+
+        case R.id.menu_record_series:
+            Utils.recordProgram(this, program, true);
             return true;
 
         default:
