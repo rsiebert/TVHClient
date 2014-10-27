@@ -9,6 +9,7 @@
     <string name="menu_play">Riproduci</string>
     <string name="menu_search">Ricerca</string>
     <string name="menu_record">Registra</string>
+    <string name="menu_record_series">Registra (Autorec)</string>
     <string name="menu_record_cancel">Annulla registrazione</string>
     <string name="menu_record_cancel_all">Annulla tutte registrazioni</string>
     <string name="menu_record_remove">Cancella registrazione</string>
