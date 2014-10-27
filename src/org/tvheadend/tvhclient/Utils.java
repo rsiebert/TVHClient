@@ -238,7 +238,7 @@ public class Utils {
         .setMessage(context.getString(R.string.cancel_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                cancelRecording(context, rec);
+                cancelRecording(context, rec, false);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -248,18 +248,25 @@ public class Utils {
     }
 
     /**
-     * Notifies the server to cancel the recording with the given id.
+     * Notifies the server to cancel the recording with the given id. If autoRec
+     * was set the series recordings will be canceled
      * 
      * @param context
-     * @param id
+     * @param rec
+     * @param autoRec
      */
-    public static void cancelRecording(final Context context, final Recording rec) {
+    public static void cancelRecording(final Context context, final Recording rec, boolean autoRec) {
         if (rec == null) {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_DVR_CANCEL);
-        intent.putExtra("id", rec.id);
+        if (!autoRec) {
+            intent.setAction(Constants.ACTION_DVR_CANCEL);
+            intent.putExtra("id", rec.id);
+        } else {
+            intent.setAction(Constants.ACTION_SERIES_DVR_CANCEL);
+            intent.putExtra("id", rec.autorecId);
+        }
         context.startService(intent);
     }
 
@@ -280,7 +287,7 @@ public class Utils {
             intent.setAction(Constants.ACTION_DVR_ADD);
             intent.putExtra("eventId", program.id);
         } else {
-            intent.setAction(Constants.ACTION_ADD_AUTOREC);
+            intent.setAction(Constants.ACTION_SERIES_DVR_ADD);
             intent.putExtra("title", program.title);
         }
         intent.putExtra("channelId", program.channel.id);

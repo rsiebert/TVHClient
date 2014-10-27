@@ -103,7 +103,7 @@ public class SeriesRecordingListFragment extends RecordingListFragment {
                 }
             });
         } else if (action.equals(Constants.ACTION_SERIES_DVR_ADD) 
-                || action.equals(Constants.ACTION_SERIES_DVR_DELETE)
+                || action.equals(Constants.ACTION_SERIES_DVR_CANCEL)
                 || action.equals(Constants.ACTION_SERIES_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {

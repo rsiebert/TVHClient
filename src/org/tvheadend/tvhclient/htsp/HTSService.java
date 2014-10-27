@@ -201,12 +201,12 @@ public class HTSService extends Service implements HTSConnectionListener {
                 getDvrCutpoints(rec);
             }
             
-        } else if (action.equals(Constants.ACTION_ADD_AUTOREC)) {
+        } else if (action.equals(Constants.ACTION_SERIES_DVR_ADD)) {
             String title = intent.getStringExtra("title");
             long channelId = intent.getLongExtra("channelId", 0);
             addAutorecEntry(title, channelId);
 
-        } else if (action.equals(Constants.ACTION_DELETE_AUTOREC)) {
+        } else if (action.equals(Constants.ACTION_SERIES_DVR_CANCEL)) {
             TVHClientApplication app = (TVHClientApplication) getApplication();
             Recording rec = app.getRecording(intent.getLongExtra("dvrId", 0));
             if (rec != null) {
@@ -1047,8 +1047,15 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
     
     private void deleteAutorecEntry(final Recording rec) {
-        // TODO Auto-generated method stub
-        
+        HTSMessage request = new HTSMessage();
+        request.setMethod("deleteAutorecEntry");
+        request.putField("id", rec.autorecId);
+        connection.sendMessage(request, new HTSResponseHandler() {
+            public void handleResponse(HTSMessage response) {
+                boolean success = response.getInt("success", 0) == 1;
+                Log.d(TAG, "deleteAutorecEntry success " + success);
+            }
+        });
     }
 
     private void addAutorecEntry(final String title, final long channelId) {

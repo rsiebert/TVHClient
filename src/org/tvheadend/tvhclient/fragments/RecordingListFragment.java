@@ -210,7 +210,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.cancelRecording(activity, adapter.getItem(i));
+                    Utils.cancelRecording(activity, adapter.getItem(i), false);
                     try {
                         sleep(THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {

@@ -81,7 +81,7 @@ public class Constants {
     public static final String ACTION_DVR_UPDATE = "DVR_UPDATE";
     public static final String ACTION_DVR_CANCEL = "DVR_CANCEL";
     public static final String ACTION_SERIES_DVR_ADD = "SERIES_DVR_ADD";
-    public static final String ACTION_SERIES_DVR_DELETE = "SERIES_DVR_DELETE";
+    public static final String ACTION_SERIES_DVR_CANCEL = "SERIES_DVR_CANCEL";
     public static final String ACTION_SERIES_DVR_UPDATE = "SERIES_DVR_UPDATE";
     public static final String ACTION_PROGRAM_ADD = "PROGRAM_ADD";
     public static final String ACTION_PROGRAM_DELETE = "PROGRAM_DELETE";
@@ -112,6 +112,4 @@ public class Constants {
     public static final String ACTION_SUBSCRIBE_FILTER_STREAM = "SUBSCRIBE_FILTER_STREAM";
     public static final String ACTION_GET_PROFILES = "GET_PROFILES";
     public static final String ACTION_GET_CHANNEL = "GET_CHANNEL";
-    public static final String ACTION_ADD_AUTOREC = "ADD_AUTOREC";
-    public static final String ACTION_DELETE_AUTOREC = "DELETE_AUTOREC";
 }

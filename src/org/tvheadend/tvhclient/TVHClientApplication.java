@@ -395,7 +395,7 @@ public class TVHClientApplication extends Application {
             seriesRecordings.remove(srec);
         }
         if (!loading) {
-            broadcastMessage(Constants.ACTION_SERIES_DVR_DELETE, srec);
+            broadcastMessage(Constants.ACTION_SERIES_DVR_CANCEL, srec);
         }
     }
 
