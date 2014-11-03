@@ -82,12 +82,12 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         public TextView description;
         public ImageView dual_pane_list_item_selection;
     }
-    
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ViewHolder holder = null;
-        
+
         if (view == null) {
             view = context.getLayoutInflater().inflate(layout, null);
             holder = new ViewHolder();
@@ -130,13 +130,13 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             Utils.setChannelIcon(holder.icon, null, srec.channel);
             Utils.setDescription(null, holder.description, srec.description);
 
-            // TODO
+            // Hide this for now
             if (holder.daysOfWeek != null) {
-                holder.daysOfWeek.setText(String.valueOf(srec.daysOfWeek));
+                holder.daysOfWeek.setVisibility(View.GONE);
             }
-            // TODO
+            // Hide this for now
             if (holder.approxTime != null) {
-                holder.approxTime.setText(String.valueOf(srec.approxTime));
+                holder.approxTime.setVisibility(View.GONE);
             }
 
             // Show only the recording icon
@@ -163,7 +163,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             }
         }
     }
-    
+
     public SeriesRecording getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
