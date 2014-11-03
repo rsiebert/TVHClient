@@ -461,7 +461,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         if (menuPosition == MENU_STATUS 
                 || menuPosition == MENU_COMPLETED_RECORDINGS 
                 || menuPosition == MENU_SCHEDULED_RECORDINGS
-                || menuPosition == MENU_FAILED_RECORDINGS ) {
+                || menuPosition == MENU_FAILED_RECORDINGS
+                || menuPosition == MENU_SERIES_RECORDINGS ) {
             (menu.findItem(R.id.menu_search)).setVisible(false);
         }
         return super.onPrepareOptionsMenu(menu);
