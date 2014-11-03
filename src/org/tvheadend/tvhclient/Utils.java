@@ -210,9 +210,11 @@ public class Utils {
         if (rec == null && srec == null) {
             return;
         }
-        // As a default assume we want to remove a regular recording 
-        String message = context.getString(R.string.delete_recording, rec.title);
-        if (srec != null) {
+
+        String message = "";
+        if (rec != null) {
+            context.getString(R.string.delete_recording, rec.title);
+        } else if (srec != null) {
             message = context.getString(R.string.delete_series_recording, srec.title);
         }
 
@@ -244,11 +246,11 @@ public class Utils {
         }
         final Intent intent = new Intent(context, HTSService.class);
         if (rec != null) {
-            intent.setAction(Constants.ACTION_DVR_DELETE);
+            intent.setAction(Constants.ACTION_DELETE_DVR_ENTRY);
             intent.putExtra("id", rec.id);
         }
         if (srec != null) {
-            intent.setAction(Constants.ACTION_SERIES_DVR_DELETE);
+            intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
             intent.putExtra("id", srec.id);
         }
         context.startService(intent);
@@ -291,7 +293,7 @@ public class Utils {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_DVR_CANCEL);
+        intent.setAction(Constants.ACTION_CANCEL_DVR_ENTRY);
         intent.putExtra("id", rec.id);
         context.startService(intent);
     }
@@ -311,10 +313,10 @@ public class Utils {
         }
         Intent intent = new Intent(context, HTSService.class);
         if (!useSeriesRecording) {
-            intent.setAction(Constants.ACTION_DVR_ADD);
+            intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
             intent.putExtra("eventId", program.id);
         } else {
-            intent.setAction(Constants.ACTION_SERIES_DVR_ADD);
+            intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
             intent.putExtra("title", program.title);
         }
         intent.putExtra("channelId", program.channel.id);
