@@ -64,6 +64,14 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/is_series_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/is_series_recordings"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
             android:id="@+id/summary_label"
             style="?attr/HeaderFont"
             android:layout_width="wrap_content"
@@ -155,6 +163,7 @@
             android:paddingBottom="12dp"
             android:text="@string/channel"
             android:textAppearance="?android:attr/textAppearanceSmall" />
+
     </LinearLayout>
 
 </ScrollView>

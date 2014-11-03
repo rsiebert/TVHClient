@@ -18,7 +18,9 @@
  */
 package org.tvheadend.tvhclient.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Recording implements Comparable<Recording> {
 
@@ -38,6 +40,7 @@ public class Recording implements Comparable<Recording> {
     public long retention;
     public long priority;
     public long contentType;
+    public List<DvrCutpoint> dvrCutPoints = new ArrayList<DvrCutpoint>();
 
     @Override
     public int compareTo(Recording that) {

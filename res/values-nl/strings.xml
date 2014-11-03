@@ -8,7 +8,7 @@
 
     <string name="menu_play">Afspelen</string>
     <string name="menu_search">Zoek</string>
-    <string name="menu_record">Opnemen</string>
+    <string name="menu_record_once">Opnemen</string>
     <string name="menu_record_cancel">Stop opname</string>
     <string name="menu_record_cancel_all">Annuleer alle opnames</string>
     <string name="menu_record_remove">Verwijder opname</string>

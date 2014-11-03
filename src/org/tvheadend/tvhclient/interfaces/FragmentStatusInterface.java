@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.interfaces;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 
 
 public interface FragmentStatusInterface {
@@ -48,6 +49,17 @@ public interface FragmentStatusInterface {
      * @param tag
      */
     public void onListItemSelected(final int position, final Recording recording, final String tag);
+
+    /**
+     * Informs the activity that user has selected a certain series recording
+     * from the list of series recordings. The item position within the list is
+     * also passed.
+     * 
+     * @param position
+     * @param seriesRecording
+     * @param tag
+     */
+    public void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag);
 
     /**
      * Informs the activity that user has selected a certain program from the

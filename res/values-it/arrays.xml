@@ -1,34 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_res_list_display">
-        <item>576p</item>
-        <item>480p</item>
-        <item>384p</item>
-        <item>288p</item>
-        <item>192p</item>
-    </string-array>
-
-    <string-array name="pref_acodec_list_display">
-        <item>Advanced Audio Codec (AAC)</item>
-        <item>MPEG-2 Audio Layer II (MP2)</item>
-    </string-array>
-
-    <string-array name="pref_vcodec_list_display">
-        <item>MPEG-4 AVC (H.264)</item>
-        <item>MPEG-4 Part 2</item>
-        <item>VP8</item>
-    </string-array>
-
     <string-array name="pref_scodec_list_display">
         <item>Pass-through</item>
         <item>None</item>
-    </string-array>
-
-    <string-array name="pref_container_list_display">
-        <item>Matroska</item>
-        <item>MPEG-TS</item>
-        <item>MPEG-PS (DVD)</item>
-        <item>Pass-through</item>
     </string-array>
 
     <!--string-array name="pref_language_list_display">

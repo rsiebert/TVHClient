@@ -35,6 +35,7 @@ import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -180,23 +181,48 @@ public class Utils {
     }
 
     /**
-     * Removes the program with the given id from the server. A dialog is shown
-     * up front to confirm the deletion.
      * 
      * @param context
-     * @param id
+     * @param rec
      */
     public static void confirmRemoveRecording(final Context context, final Recording rec) {
-        if (rec == null) {
+        confirmRemoveRecording(context, rec, null);
+    }
+
+    /**
+     * 
+     * @param context
+     * @param srec
+     */
+    public static void confirmRemoveRecording(final Context context, final SeriesRecording srec) {
+        confirmRemoveRecording(context, srec);
+    }
+
+    /**
+     * Removes either the recording or the series recording with the given id
+     * from the server. A dialog is shown up front to confirm the deletion.
+     * 
+     * @param context
+     * @param rec
+     * @param srec
+     */
+    public static void confirmRemoveRecording(final Context context, final Recording rec, final SeriesRecording srec) {
+        if (rec == null && srec == null) {
             return;
         }
+        // As a default assume we want to remove a regular recording 
+        String message = context.getString(R.string.delete_recording, rec.title);
+        if (srec != null) {
+            message = context.getString(R.string.delete_series_recording, srec.title);
+        }
+
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_remove)
-        .setMessage(context.getString(R.string.delete_recording, rec.title))
+        .setMessage(message)
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                removeRecording(context, rec);
+                removeRecording(context, rec, srec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -206,18 +232,25 @@ public class Utils {
     }
 
     /**
-     * Removes the program with the given id from the server.
+     * Removes either the recording or the series recording with the given id
+     * from the server.
      * 
      * @param context
-     * @param id
+     * @param rec
      */
-    public static void removeRecording(final Context context, final Recording rec) {
-        if (rec == null) {
+    public static void removeRecording(final Context context, final Recording rec, final SeriesRecording srec) {
+        if (rec == null && srec == null) {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_DVR_DELETE);
-        intent.putExtra("id", rec.id);
+        if (rec != null) {
+            intent.setAction(Constants.ACTION_DVR_DELETE);
+            intent.putExtra("id", rec.id);
+        }
+        if (srec != null) {
+            intent.setAction(Constants.ACTION_SERIES_DVR_DELETE);
+            intent.putExtra("id", srec.id);
+        }
         context.startService(intent);
     }
 
@@ -226,7 +259,7 @@ public class Utils {
      * up front to confirm the cancellation.
      * 
      * @param context
-     * @param id
+     * @param rec
      */
     public static void confirmCancelRecording(final Context context, final Recording rec) {
         if (rec == null) {
@@ -238,7 +271,7 @@ public class Utils {
         .setMessage(context.getString(R.string.cancel_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                cancelRecording(context, rec, false);
+                cancelRecording(context, rec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -248,42 +281,36 @@ public class Utils {
     }
 
     /**
-     * Notifies the server to cancel the recording with the given id. If autoRec
-     * was set the series recordings will be canceled
+     * Notifies the server to cancel the recording with the given id.
      * 
      * @param context
      * @param rec
-     * @param autoRec
      */
-    public static void cancelRecording(final Context context, final Recording rec, boolean autoRec) {
+    public static void cancelRecording(final Context context, final Recording rec) {
         if (rec == null) {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        if (!autoRec) {
-            intent.setAction(Constants.ACTION_DVR_CANCEL);
-            intent.putExtra("id", rec.id);
-        } else {
-            intent.setAction(Constants.ACTION_SERIES_DVR_CANCEL);
-            intent.putExtra("id", rec.autorecId);
-        }
+        intent.setAction(Constants.ACTION_DVR_CANCEL);
+        intent.putExtra("id", rec.id);
         context.startService(intent);
     }
 
     /**
-     * Tells the server to record the program with the given id. If the autoRec
-     * parameter is set than a series recording will created.
+     * Tells the server to record the program with the given id. If the
+     * useSeriesRecording is set then a series recording rule will be created to
+     * record that program repeatedly.
      * 
      * @param context
      * @param program
-     * @param autoRec
+     * @param useSeriesRecording
      */
-    public static void recordProgram(final Context context, final Program program, boolean autoRec) {
+    public static void recordProgram(final Context context, final Program program, final boolean useSeriesRecording) {
         if (program == null || program.channel == null) {
             return;
         }
         Intent intent = new Intent(context, HTSService.class);
-        if (!autoRec) {
+        if (!useSeriesRecording) {
             intent.setAction(Constants.ACTION_DVR_ADD);
             intent.putExtra("eventId", program.id);
         } else {
@@ -302,23 +329,30 @@ public class Utils {
      * @param program
      */
     public static void setProgramMenu(final Menu menu, final Program program) {
-        
-        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
+        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
         MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
         MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
 
-        // Disable all menus if the program is not valid
+        // Disable these menus as a default
+        recordOnceMenuItem.setVisible(false);
+        recordSeriesMenuItem.setVisible(false);
+        recordCancelMenuItem.setVisible(false);
+        recordRemoveMenuItem.setVisible(false);
+        searchMenuItemEpg.setVisible(false);
+        searchMenuItemImdb.setVisible(false);
+
+        // Exit if the recording is not valid
         if (program == null) {
-            recordMenuItem.setVisible(false);
-            recordCancelMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
-            searchMenuItemEpg.setVisible(false);
-            searchMenuItemImdb.setVisible(false);
             return;
-        } 
+        }
+
+        // Allow searching the program
+        searchMenuItemEpg.setVisible(true);
+        searchMenuItemImdb.setVisible(true);
 
         // Show the play menu item when the current 
         // time is between the program start and end time
@@ -330,23 +364,21 @@ public class Utils {
         } else {
             playMenuItem.setVisible(false);
         }
-        
+
         if (program.recording == null) {
             // Show the record menu
-            recordCancelMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
+            recordOnceMenuItem.setVisible(true);
+            recordSeriesMenuItem.setVisible(true);
         } else if (program.isRecording()) {
             // Show the cancel menu
-            recordMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(true);
         } else if (program.isScheduled()) {
             // Show the cancel and play menu
-            recordMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
+            playMenuItem.setVisible(true);
+            recordCancelMenuItem.setVisible(true);
         } else {
             // Show the delete menu
-            recordMenuItem.setVisible(false);
-            recordCancelMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(true);
         }
     }
 
@@ -358,11 +390,8 @@ public class Utils {
      * @param rec
      */
     public static void setRecordingMenu(final Menu menu, final Recording rec) {
-
         // Get the menu items so they can be shown 
         // or hidden depending on the recording state
-        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
-        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
@@ -370,15 +399,13 @@ public class Utils {
         MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
 
         // Disable these menus as a default
-        recordMenuItem.setVisible(false);
-        recordSeriesMenuItem.setVisible(false);
         recordCancelMenuItem.setVisible(false);
         recordRemoveMenuItem.setVisible(false);
         playMenuItem.setVisible(false);
         searchMenuItemEpg.setVisible(false);
         searchMenuItemImdb.setVisible(false);
 
-        // Disable all menus if the recording is not valid
+        // Exit if the recording is not valid
         if (rec == null) {
             return;
         }

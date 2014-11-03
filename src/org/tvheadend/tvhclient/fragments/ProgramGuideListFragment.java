@@ -301,7 +301,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             Utils.confirmCancelRecording(activity, selectedProgram.recording);
             return true;
 
-        case R.id.menu_record:
+        case R.id.menu_record_once:
             Utils.recordProgram(activity, selectedProgram, false);
             return true;
 

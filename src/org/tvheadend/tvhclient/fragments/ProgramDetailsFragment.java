@@ -74,7 +74,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
     private LinearLayout playerLayout;
     private TextView play;
-    private TextView record;
+    private TextView recordOnce;
     private TextView recordSeries;
     private TextView recordCancel;
     private TextView recordRemove;
@@ -151,7 +151,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
         play = (TextView) v.findViewById(R.id.menu_play);
-        record = (TextView) v.findViewById(R.id.menu_record);
+        recordOnce = (TextView) v.findViewById(R.id.menu_record_once);
         recordSeries = (TextView) v.findViewById(R.id.menu_record_series);
         recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
         recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
@@ -212,7 +212,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
         play.setVisibility(View.VISIBLE);
-        record.setVisibility(View.VISIBLE);
+        recordOnce.setVisibility(View.VISIBLE);
         recordSeries.setVisibility(View.VISIBLE);
         recordCancel.setVisibility(View.VISIBLE);
         recordRemove.setVisibility(View.VISIBLE);
@@ -234,17 +234,17 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordRemove.setVisibility(View.GONE);
         } else if (program.isRecording()) {
             // Show the cancel menu
-            record.setVisibility(View.GONE);
+            recordOnce.setVisibility(View.GONE);
             recordSeries.setVisibility(View.GONE);
             recordRemove.setVisibility(View.GONE);
         } else if (program.isScheduled()) {
             // Show the cancel and play menu
-            record.setVisibility(View.GONE);
+            recordOnce.setVisibility(View.GONE);
             recordSeries.setVisibility(View.GONE);
             recordRemove.setVisibility(View.GONE);
         } else {
             // Show the delete menu
-            record.setVisibility(View.GONE);
+            recordOnce.setVisibility(View.GONE);
             recordSeries.setVisibility(View.GONE);
             recordCancel.setVisibility(View.GONE);
         }
@@ -265,7 +265,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
                 }
             }
         });
-        record.setOnClickListener(new OnClickListener() {
+        recordOnce.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utils.recordProgram(activity, program, false);

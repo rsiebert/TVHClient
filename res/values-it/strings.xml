@@ -8,7 +8,7 @@
 
     <string name="menu_play">Riproduci</string>
     <string name="menu_search">Ricerca</string>
-    <string name="menu_record">Registra</string>
+    <string name="menu_record_once">Registra</string>
     <string name="menu_record_cancel">Annulla registrazione</string>
     <string name="menu_record_cancel_all">Annulla tutte registrazioni</string>
     <string name="menu_record_remove">Cancella registrazione</string>
@@ -213,8 +213,8 @@
     <string-array name="pr_content_type5">
         <item>Bambini/Giovani</item>
         <item>Pre-scuola</item>
-        <item>Intrattenimento (6 - 14 anni)</item>
-        <item>Intrattenimento (10 - 16 anni)</item>
+        <item>Intrattenimento (6 &#8211; 14 anni)</item>
+        <item>Intrattenimento (10 &#8211; 16 anni)</item>
         <item>Informativo/Educativo/Scuola</item>
         <item>Cartoni Animati/Pupazzi</item>
     </string-array>
@@ -301,7 +301,6 @@
     <string name="programs">Programmi</string>
     <string name="completed_recordings">Completate</string>
     <string name="upcoming_recordings">In arrivo</string>
-    <string name="upcoming_series_recordings">In arrivo (Autorec)</string>
     <string name="failed_recordings">Fallite</string>
 
     <string name="channels">Canali</string>

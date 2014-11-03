@@ -8,7 +8,7 @@
 
     <string name="menu_play">Play</string>
     <string name="menu_search">Szukaj</string>
-    <string name="menu_record">Nagraj</string>
+    <string name="menu_record_once">Nagraj</string>
     <string name="menu_record_cancel">Anuluj nagrywanie</string>
     <string name="menu_record_cancel_all">Anuluj wszystkie nagrywania</string>
     <string name="menu_record_remove">Usuń nagranie</string>
@@ -301,7 +301,6 @@
     <string name="programs">Programy</string>
     <string name="completed_recordings">Zakończone</string>
     <string name="upcoming_recordings">Zaplanowane</string>
-    <string name="upcoming_series_recordings">Zaplanowane (Autorec)</string>
     <string name="failed_recordings">Utracone / Nieprawidłowe</string>
     
     <string name="channels">Kanały</string>

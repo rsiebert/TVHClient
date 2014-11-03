@@ -8,7 +8,7 @@
 
     <string name="menu_play">Lancer</string>
     <string name="menu_search">Recherche</string>
-    <string name="menu_record">Enregistrer</string>
+    <string name="menu_record_once">Enregistrer</string>
     <string name="menu_record_cancel">Annuler un enregistrement</string>
     <string name="menu_record_cancel_all">Annuler tous les enregistrements</string>
     <string name="menu_record_remove">Effacer un enregistrement</string>

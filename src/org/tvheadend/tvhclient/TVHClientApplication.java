@@ -50,6 +50,7 @@ public class TVHClientApplication extends Application {
     private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
 
     private volatile boolean loading = false;
+    private int protocolVersion = 10;
 
     // Holds a list of channels that are not allowed to load because the EPG
     // size did not change after the last loading call.
@@ -105,10 +106,8 @@ public class TVHClientApplication extends Application {
      * @param obj
      */
     private void broadcastMessage(final String action, final Object obj) {
-        synchronized (listeners) {
-            for (HTSListener l : listeners) {
-                l.onMessage(action, obj);
-            }
+        for (HTSListener l : listeners) {
+            l.onMessage(action, obj);
         }
     }
 
@@ -117,6 +116,28 @@ public class TVHClientApplication extends Application {
      */
     public void setConnectionState(final String state) {
         broadcastMessage(state, null);
+    }
+
+    /**
+     * Sets the protocol version of the currently active connection. This is
+     * required to determine if the server supports series recordings and other
+     * stuff.
+     *
+     * @param version
+     */
+    public void setProtocolVersion(final int version) {
+        protocolVersion = version;
+    }
+
+    /**
+     * Returns the protocol version of the currently active connection. This is
+     * required to determine if the server supports series recordings and other
+     * stuff.
+     *
+     * @return
+     */
+    public int getProtocolVersion() {
+        return protocolVersion;
     }
 
     /**
@@ -185,6 +206,12 @@ public class TVHClientApplication extends Application {
         }
     }
 
+    /**
+     * Returns the channel tag that matches the given id.
+     * 
+     * @param id
+     * @return
+     */
     public ChannelTag getChannelTag(long id) {
         synchronized (tags) {
             for (ChannelTag tag : getChannelTags()) {
@@ -196,12 +223,23 @@ public class TVHClientApplication extends Application {
         return null;
     }
 
+    /**
+     * If loading has finished any listener will be informed that this channel
+     * tag has been updated.
+     * 
+     * @param tag
+     */
     public void updateChannelTag(ChannelTag tag) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_TAG_UPDATE, tag);
         }
     }
 
+    /**
+     * Adds the given channel to the list of available channels.
+     * 
+     * @param channel
+     */
     public void addChannel(Channel channel) {
         synchronized (channels) {
             channels.add(channel);
@@ -211,10 +249,22 @@ public class TVHClientApplication extends Application {
         }
     }
 
+    /**
+     * Returns the list of all available channels.
+     * 
+     * @return
+     */
     public List<Channel> getChannels() {
         return channels;
     }
 
+    /**
+     * Removes the given channel from the list of available channels. If loading
+     * has finished any listener will be informed that this channel has been
+     * removed.
+     * 
+     * @param channel
+     */
     public void removeChannel(Channel channel) {
         synchronized (channels) {
             channels.remove(channel);
@@ -224,6 +274,12 @@ public class TVHClientApplication extends Application {
         }
     }
 
+    /**
+     * Returns the channel that matches the given id.
+     * 
+     * @param id
+     * @return
+     */
     public Channel getChannel(long id) {
         synchronized (channels) {
             for (Channel ch : getChannels()) {
@@ -235,6 +291,12 @@ public class TVHClientApplication extends Application {
         return null;
     }
 
+    /**
+     * Removes the channel from the list of available channels that matches the
+     * given id. Any listener will be informed about that removal. 
+     * 
+     * @param id
+     */
     public void removeChannel(long id) {
         synchronized (channels) {
             for (Channel ch : getChannels()) {
@@ -246,30 +308,61 @@ public class TVHClientApplication extends Application {
         }
     }
 
+    /**
+     * If loading has finished any listener will be informed that the given
+     * channel has been updated.
+     *  
+     * @param ch
+     */
     public void updateChannel(Channel ch) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_CHANNEL_UPDATE, ch);
         }
     }
 
+    /**
+     * If loading has finished any listener will be informed that the given
+     * program has been added.
+     * 
+     * @param p
+     */
     public void addProgram(Program p) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_PROGRAM_ADD, p);
         }
     }
 
+    /**
+     * If loading has finished any listener will be informed that the given
+     * program has been deleted.
+     * 
+     * @param p
+     */
     public void removeProgram(Program p) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_PROGRAM_DELETE, p);
         }
     }
 
+    /**
+     * If loading has finished any listener will be informed that the given
+     * program has been updated.
+     * 
+     * @param p
+     */
     public void updateProgram(Program p) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_PROGRAM_UPDATE, p);
         }
     }
 
+    /**
+     * Adds the given recording to the list of available recordings. If loading
+     * has finished any listener will be informed that a recording has been
+     * added.
+     * 
+     * @param rec
+     */
     public void addRecording(Recording rec) {
         synchronized (recordings) {
             recordings.add(rec);
@@ -279,11 +372,36 @@ public class TVHClientApplication extends Application {
         }
     }
 
+    /**
+     * Returns the list of all available recordings.
+     * 
+     * @return
+     */
     public List<Recording> getRecordings() {
         return recordings;
     }
 
     /**
+     * Returns a single recording that matches the given id.
+     * 
+     * @param id
+     * @return
+     */
+    public Recording getRecording(long id) {
+        synchronized (recordings) {
+            for (Recording rec : getRecordings()) {
+                if (rec.id == id) {
+                    return rec;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a single recording that matches the given type. The type
+     * identifies if a recording is completed, scheduled for recording or failed
+     * due to some reason.
      * 
      * @param type
      * @return
@@ -317,23 +435,6 @@ public class TVHClientApplication extends Application {
             }
             break;
 
-        case Constants.RECORDING_TYPE_SERIES:
-            synchronized (recordings) {
-                String autorecId = "";
-                for (Recording rec : recordings) {
-                    // Include all these recordings in the list that are marked
-                    // as auto recordings. Do not include duplicate id's.
-                    if (rec.error == null
-                            && rec.autorecId != null
-                            && rec.autorecId.compareTo(autorecId) != 0
-                            && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
-                        recs.add(rec);
-                        autorecId = rec.autorecId;
-                    }
-                }
-            }
-            break;
-
         case Constants.RECORDING_TYPE_FAILED:
             synchronized (recordings) {
                 for (Recording rec : recordings) {
@@ -348,6 +449,13 @@ public class TVHClientApplication extends Application {
         return recs;
     }
 
+    /**
+     * Removes the given recording from the list of all available recordings. If
+     * loading has finished any listener will be informed that a recording has
+     * been removed.
+     * 
+     * @param rec
+     */
     public void removeRecording(Recording rec) {
         synchronized (recordings) {
             recordings.remove(rec);
@@ -357,30 +465,42 @@ public class TVHClientApplication extends Application {
         }
     }
 
-    public Recording getRecording(long id) {
-        for (Recording rec : getRecordings()) {
-            if (rec.id == id) {
-                return rec;
-            }
-        }
-        return null;
-    }
-
+    /**
+     * Removes the recording from the list of all available recordings that
+     * matches the given id.
+     * 
+     * @param id
+     */
     public void removeRecording(long id) {
-        for (Recording rec : getRecordings()) {
-            if (rec.id == id) {
-                removeRecording(rec);
-                return;
+        synchronized (recordings) {
+            for (Recording rec : getRecordings()) {
+                if (rec.id == id) {
+                    removeRecording(rec);
+                    return;
+                }
             }
         }
     }
 
+    /**
+     * If loading has finished any listener will be informed that a recording
+     * has been updated.
+     * 
+     * @param rec
+     */
     public void updateRecording(Recording rec) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_UPDATE, rec);
         }
     }
 
+    /**
+     * Returns the list of all available series recordings. If loading has
+     * finished any listener will be informed that a series recording has been
+     * added.
+     * 
+     * @param srec
+     */
     public void addSeriesRecording(SeriesRecording srec) {
         synchronized (seriesRecordings) {
             seriesRecordings.add(srec);
@@ -390,43 +510,83 @@ public class TVHClientApplication extends Application {
         }
     }
 
-    public void removeSeriesRecording(SeriesRecording srec) {
-        synchronized (seriesRecordings) {
-            seriesRecordings.remove(srec);
-        }
-        if (!loading) {
-            broadcastMessage(Constants.ACTION_SERIES_DVR_CANCEL, srec);
-        }
-    }
-
+    /**
+     * Adds the given series recording to the list of available series
+     * recordings
+     * 
+     * @return
+     */
     public List<SeriesRecording> getSeriesRecordings() {
         return seriesRecordings;
     }
 
+    /**
+     * Returns a single series recording that matches the given id.
+     * 
+     * @param id
+     * @return
+     */
     public SeriesRecording getSeriesRecording(String id) {
-        for (SeriesRecording srec : getSeriesRecordings()) {
-            if (srec.id == id) {
-                return srec;
+        synchronized (seriesRecordings) {
+            for (SeriesRecording srec : getSeriesRecordings()) {
+                if (srec.id == id) {
+                    return srec;
+                }
             }
         }
         return null;
     }
 
+    /**
+     * Removes the given series recording from the list of all available series
+     * recordings. If loading has finished any listener will be informed that a
+     * series recording has been removed.
+     * 
+     * @param srec
+     */
+    public void removeSeriesRecording(SeriesRecording srec) {
+        synchronized (seriesRecordings) {
+            seriesRecordings.remove(srec);
+        }
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_SERIES_DVR_DELETE, srec);
+        }
+    }
+
+    /**
+     * Removes the series recording from the list of all available series
+     * recordings that matches the given id.
+     * 
+     * @param id
+     */
     public void removeSeriesRecording(String id) {
-        for (SeriesRecording srec : getSeriesRecordings()) {
-            if (srec.id == id) {
-                removeSeriesRecording(srec);
-                return;
+        synchronized (seriesRecordings) {
+            for (SeriesRecording srec : getSeriesRecordings()) {
+                if (srec.id == id) {
+                    removeSeriesRecording(srec);
+                    return;
+                }
             }
         }
     }
 
+    /**
+     * If loading has finished any listener will be informed that a series
+     * recording has been updated.
+     * 
+     * @param srec
+     */
     public void updateSeriesRecording(SeriesRecording srec) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_SERIES_DVR_UPDATE, srec);
         }
     }
 
+    /**
+     * Informes all registered listeners about the loading status.
+     * 
+     * @param b
+     */
     public void setLoading(boolean b) {
         if (loading != b) {
             broadcastMessage(Constants.ACTION_LOADING, b);
@@ -435,11 +595,13 @@ public class TVHClientApplication extends Application {
     }
 
     /**
-     * Clears all channels, tags and recordings and sets the tag default value.
+     * Clears all channels, tags and recordings and series recordings from the
+     * lists and sub lists. For the channel tags the default value will be set.
      */
     public void clearAll() {
         tags.clear();
         recordings.clear();
+        seriesRecordings.clear();
 
         for (Channel ch : channels) {
             ch.epg.clear();
@@ -458,59 +620,113 @@ public class TVHClientApplication extends Application {
         tags.add(tag);
     }
 
+    /**
+     * Adds the given subscription to the list of available subscriptions. If
+     * loading has finished any listener will be informed that a subscription
+     * has been added.
+     * 
+     * @param s
+     */
     public void addSubscription(Subscription s) {
-        subscriptions.add(s);
+        synchronized (subscriptions) {
+            subscriptions.add(s);
+        }
         if (!loading) {
             broadcastMessage(Constants.ACTION_SUBSCRIPTION_ADD, s);
         }
     }
 
+    /**
+     * Returns a list of all available subscriptions.
+     * 
+     * @return
+     */
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }
 
+    /**
+     * Removes the given subscription from the list of available subscriptions.
+     * If loading has finished any listener will be informed that a subscription
+     * has been removed.
+     * 
+     * @param s
+     */
     public void removeSubscription(Subscription s) {
         s.streams.clear();
-        subscriptions.remove(s);
+        synchronized (subscriptions) {
+            subscriptions.remove(s);
+        }
         if (!loading) {
             broadcastMessage(Constants.ACTION_SUBSCRIPTION_DELETE, s);
         }
     }
 
+    /**
+     * Returns the subscription that matches the given id.
+     * 
+     * @param id
+     * @return
+     */
     public Subscription getSubscription(long id) {
-        for (Subscription s : getSubscriptions()) {
-            if (s.id == id) {
-                return s;
+        synchronized (subscriptions) {
+            for (Subscription s : getSubscriptions()) {
+                if (s.id == id) {
+                    return s;
+                }
             }
         }
         return null;
     }
 
+    /**
+     * Removes the subscription from the list of available subscriptions that
+     * matches the given id. If loading has finished any listener will be
+     * informed that a subscription has been removed.
+     * 
+     * @param id
+     */
     public void removeSubscription(long id) {
-        for (Subscription s : getSubscriptions()) {
-            if (s.id == id) {
-                removeSubscription(s);
-                return;
+        synchronized (subscriptions) {
+            for (Subscription s : getSubscriptions()) {
+                if (s.id == id) {
+                    removeSubscription(s);
+                    return;
+                }
             }
         }
     }
 
+    /**
+     * If loading has finished any listener will be informed that a subscription
+     * has been updated.
+     */
     public void updateSubscription(Subscription s) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_SUBSCRIPTION_UPDATE, s);
         }
     }
 
+    /**
+     * Informs all listeners that the given ticket has been added.
+     * 
+     * @param t
+     */
     public void addTicket(HttpTicket t) {
         broadcastMessage(Constants.ACTION_TICKET_ADD, t);
     }
 
+    /**
+     * Returns weather the application is still loading data or not.
+     *  
+     * @return
+     */
     public boolean isLoading() {
         return loading;
     }
 
-    public void updateDiscSpace(Map<String, String> list) {
-        status.putAll(list);
+    public void updateStatus(String key, String value) {
+        status.put(key, value);
         if (!loading) {
             broadcastMessage(Constants.ACTION_DISC_SPACE, status);
         }

@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>None</item>
+    </string-array>
+
+    <string-array name="pref_language_list_display">
+        <item>Standard</item>
+        <item>Englisch</item>
+        <item>Deutsch</item>
+        <item>Französisch</item>
+        <item>Polnisch</item>
+        <item>Swedisch</item>
+        <item>Nierländisch</item>
+        <item>Italienisch</item>
+    </string-array>
 
     <string-array name="pref_menu_names">
         <item>TV-Sender</item>
@@ -18,5 +33,4 @@
         <item>Sendername</item>
         <item>Sendernummer</item>
     </string-array>
-
 </resources>

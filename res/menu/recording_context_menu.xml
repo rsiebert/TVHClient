@@ -8,16 +8,6 @@
         android:title="@string/menu_play"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/menu_record_once"
-        android:icon="?attr/ic_menu_record_once"
-        android:title="@string/menu_record_once"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/menu_record_series"
-        android:icon="?attr/ic_menu_record_series"
-        android:title="@string/menu_record_series"
-        app:showAsAction="ifRoom"/>
-    <item
         android:id="@+id/menu_record_cancel"
         android:icon="?attr/ic_menu_record_cancel"
         android:title="@string/menu_record_cancel"

@@ -7,7 +7,7 @@
         <item>288</item>
         <item>192</item>
     </string-array>
-    <string-array name="pref_res_list_display">
+    <string-array name="pref_res_list_display" translatable="false">
         <item>576p</item>
         <item>480p</item>
         <item>384p</item>
@@ -19,7 +19,7 @@
         <item>AAC</item>
         <item>MPEG2AUDIO</item>
     </string-array>
-    <string-array name="pref_acodec_list_display">
+    <string-array name="pref_acodec_list_display" translatable="false">
         <item>Advanced Audio Codec (AAC)</item>
         <item>MPEG-2 Audio Layer II (MP2)</item>
     </string-array>
@@ -29,7 +29,7 @@
         <item>MPEG4VIDEO</item>
         <item>VP8</item>
     </string-array>
-    <string-array name="pref_vcodec_list_display">
+    <string-array name="pref_vcodec_list_display" translatable="false">
         <item>MPEG-4 AVC (H.264)</item>
         <item>MPEG-4 Part 2</item>
         <item>VP8</item>
@@ -50,8 +50,7 @@
         <item>mpegps</item>
         <item>pass</item>
     </string-array>
-    
-    <string-array name="pref_container_list_display">
+    <string-array name="pref_container_list_display" translatable="false">
         <item>Matroska</item>
         <item>MPEG-TS</item>
         <item>MPEG-PS</item>
@@ -68,8 +67,7 @@
         <item>nl</item>
         <item>it</item>
     </string-array>
-    
-    <string-array name="pref_language_list_display" translatable="false">
+    <string-array name="pref_language_list_display">
         <item>Default</item>
         <item>English</item>
         <item>Deutsch</item>

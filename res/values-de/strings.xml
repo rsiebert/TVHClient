@@ -8,7 +8,8 @@
 
     <string name="menu_play">Abspielen</string>
     <string name="menu_search">Suchen</string>
-    <string name="menu_record">Aufnehmen</string>
+    <string name="menu_record_once">Aufnehmen</string>
+    <string name="menu_record_series">Autom. Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
     <string name="menu_record_cancel_all">Alle Aufnahmen abbrechen</string>
     <string name="menu_record_remove">Aufnahme löschen</string>
@@ -34,6 +35,7 @@
     <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
+    <string name="delete_series_recording">Soll die Serienaufnahme \'%s\' wirklich gelöscht werden?\n\nAlle damit verbundenen geplanten Aufnahmen werden entfernt.</string>
     <string name="delete_all_recordings">Sollen ALLE Aufnahmen gelöscht werden?</string>
     <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
     <string name="cancel_all_recordings">Sollen ALLE geplanten Aufnahmen abgebrochen werden?</string>
@@ -122,6 +124,7 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
     <string name="pref_misc">Sonstiges</string>
     <string name="pref_clear_search_history">Lösche Suchhistorie</string>
+    <string name="pref_clear_icon_cache">Lösche Senderlogos</string>
 
     <string name="pref_menu_visibility">Menü Sichtbarkeit</string>
     <string name="pref_menu_visibility_sum">Anzeigen oder Ausblenden bestimmter Menüeinträge.</string>
@@ -133,6 +136,10 @@
     <string name="clear_search_history">Lösche Suchhistorie?</string>
     <string name="clear_search_history_sum">Sind Sie sicher, dass sie alle Einträge aus der Historie löschen wollen?</string>
     <string name="clear_search_history_done">Suchhistorie wurde gelöscht</string>
+
+    <string name="clear_icon_cache">Senderlogos löschen?</string>
+    <string name="clear_icon_cache_sum">Sollen wirklich alle Senderlogos gelöscht werden? Dies ist sinnvoll, damit aktualisierte Logos vom Server geladen werden können.</string>
+    <string name="clear_icon_cache_done">Gespeicherte Senderlogos wurden gelöscht</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
@@ -285,9 +292,10 @@
     <string name="programs">Programme</string>
     <string name="completed_recordings">Aufgenommen</string>
     <string name="upcoming_recordings">Geplant</string>
-    <string name="upcoming_series_recordings">Geplant (Autorec)</string>
     <string name="failed_recordings">Fehlerhaft</string>
-    
+    <string name="series_recordings">Serienaufnahmen</string>
+    <string name="is_series_recordings">Diese Aufnahme ist Teil einer Serienaufnahme</string>
+
     <string name="channels">Sender</string>
     <string name="recordings">Aufnahmen</string>
     <string name="status">Status</string>
@@ -333,4 +341,9 @@
 
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
     <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
+
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Navigationsmenü öffnen</string>
+    <string name="drawer_close">Navigationsmenü schließen</string>
+
 </resources>

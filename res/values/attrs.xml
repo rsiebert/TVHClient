@@ -10,7 +10,8 @@
     <attr name="item_active" format="reference" />
     <attr name="item_not_active" format="reference" />
     <attr name="ic_menu_tags" format="reference" />
-    <attr name="ic_menu_record" format="reference" />
+    <attr name="ic_menu_record_once" format="reference" />
+    <attr name="ic_menu_record_series" format="reference" />
     <attr name="ic_menu_record_cancel" format="reference" />
     <attr name="ic_menu_record_remove" format="reference" />
     <attr name="ic_menu_refresh" format="reference" />

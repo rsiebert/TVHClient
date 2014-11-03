@@ -31,7 +31,7 @@
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:orientation="horizontal" >
-	        
+
 	            <TextView
 	                android:id="@+id/title"
 	                style="?attr/TitleFont"
@@ -42,7 +42,7 @@
 	                android:paddingRight="6dp"
 	                android:paddingTop="3dp"
 	                android:text="@string/title" />
-	            
+
 	            <ImageView
 	                android:id="@+id/state"
 	                android:layout_width="32dp"
@@ -54,6 +54,16 @@
 	                android:paddingTop="3dp"
 	                android:scaleType="fitCenter" />
 	        </LinearLayout>
+        
+	        <TextView
+	            android:id="@+id/series_recording"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:maxLines="1"
+	            android:paddingLeft="6dp"
+	            android:paddingRight="6dp"
+	            android:paddingBottom="3dp"
+	            android:text="@string/is_series_recordings" />
 
 	        <TextView
 	            android:id="@+id/summary"

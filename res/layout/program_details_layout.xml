@@ -31,25 +31,25 @@
                 android:text="@string/menu_play" />
 
             <TextView
-                android:id="@+id/menu_record"
+                android:id="@+id/menu_record_once"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:background="?attr/menu_text_selector"
-                android:drawableLeft="?attr/ic_menu_record"
+                android:drawableLeft="?attr/ic_menu_record_once"
                 android:gravity="center_vertical"
                 android:paddingBottom="10dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
                 android:layout_marginRight="12dp"
-                android:text="@string/menu_record" />
+                android:text="@string/menu_record_once" />
 
             <TextView
                 android:id="@+id/menu_record_series"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:background="?attr/menu_text_selector"
-                android:drawableLeft="?attr/ic_menu_record"
+                android:drawableLeft="?attr/ic_menu_record_series"
                 android:gravity="center_vertical"
                 android:paddingBottom="10dp"
                 android:paddingLeft="5dp"

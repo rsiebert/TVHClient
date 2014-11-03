@@ -35,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -57,6 +58,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView time;
     private TextView duration;
     private TextView failed_reason;
+    private TextView is_series_recording;
 
     private LinearLayout playerLayout;
     private TextView play;
@@ -110,6 +112,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         time = (TextView) v.findViewById(R.id.time);
         duration = (TextView) v.findViewById(R.id.duration);
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
+        is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
@@ -147,6 +150,15 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
         Utils.setFailedReason(failed_reason, rec);
+
+        // Show the information if the recording belongs to a series recording
+        if (is_series_recording != null) {
+            if (rec.autorecId != null) {
+                is_series_recording.setVisibility(ImageView.VISIBLE);
+            } else {
+                is_series_recording.setVisibility(ImageView.GONE);
+            }
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
 import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
+import org.tvheadend.tvhclient.fragments.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -28,6 +29,7 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.DrawerMenuItem;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -87,8 +89,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private static final int MENU_CHANNELS = 0;
     private static final int MENU_COMPLETED_RECORDINGS = 1;
     private static final int MENU_SCHEDULED_RECORDINGS = 2;
-    private static final int MENU_SERIES_RECORDINGS = 3;
-    private static final int MENU_FAILED_RECORDINGS = 4;
+    private static final int MENU_FAILED_RECORDINGS = 3;
+    private static final int MENU_SERIES_RECORDINGS = 4;
     private static final int MENU_PROGRAM_GUIDE = 5;
     private static final int MENU_STATUS = 6;
     private static final int MENU_SETTINGS = 7;
@@ -271,7 +273,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItem(MENU_SERIES_RECORDINGS).count = 
-                app.getRecordingsByType(Constants.RECORDING_TYPE_SERIES).size();
+                app.getSeriesRecordings().size();
         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         drawerAdapter.notifyDataSetChanged();
@@ -296,12 +298,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         list.add(new DrawerMenuItem(MENU_SCHEDULED_RECORDINGS, menuItems[2],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
-                (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
-                        : R.drawable.ic_menu_scheduled_recordings_dark));
         list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[4],
                 (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
                         : R.drawable.ic_menu_failed_recordings_dark));
+        list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
+                (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
+                        : R.drawable.ic_menu_scheduled_recordings_dark));
         list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[5],
                 (lightTheme) ? R.drawable.ic_menu_program_guide_light
                         : R.drawable.ic_menu_program_guide_dark));
@@ -850,6 +852,11 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).isVisible = true;
                     drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).isVisible = true;
                     drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = true;
+
+                    // Only show the series recording entry when the server supports it
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = (app.getProtocolVersion() > 12);
+
                     drawerAdapter.getItem(MENU_PROGRAM_GUIDE).isVisible = true;
                     drawerAdapter.notifyDataSetChanged();
                 }
@@ -871,6 +878,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                         drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = false;
+                        drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_PROGRAM_GUIDE).isVisible = false;
                         drawerAdapter.notifyDataSetChanged();
 
@@ -1031,9 +1039,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         case MENU_SCHEDULED_RECORDINGS:
             scheduledRecordingListPosition = position;
             break;
-        case MENU_SERIES_RECORDINGS:
-            seriesRecordingListPosition = position;
-            break;
         case MENU_FAILED_RECORDINGS:
             failedRecordingListPosition = position;
             break;
@@ -1053,6 +1058,35 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             } else {
                 // Create the fragment and show it as a dialog.
                 DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
+                newFragment.show(getSupportFragmentManager(), "dialog");
+            }
+        }
+    }
+
+    @Override
+    public void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag) {
+        // Save the position of the selected recording type so it can be
+        // restored after an orientation change
+        switch (menuPosition) {
+        case MENU_SERIES_RECORDINGS:
+            seriesRecordingListPosition = position;
+            break;
+        }
+        // When a series recording has been selected from the recording list fragment,
+        // show its details. In dual mode they are shown as a separate fragment
+        // to the right of the series recording list, otherwise replace the recording
+        // list with the details fragment.
+        if (seriesRecording != null) {
+            Bundle args = new Bundle();
+            args.putString(Constants.BUNDLE_SERIES_RECORDING_ID, seriesRecording.id);
+            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
+
+            if (isDualPane) {
+                // Create and show the fragment
+                showFragment(SeriesRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
+            } else {
+                // Create the fragment and show it as a dialog.
+                DialogFragment newFragment = SeriesRecordingDetailsFragment.newInstance(args);
                 newFragment.show(getSupportFragmentManager(), "dialog");
             }
         }

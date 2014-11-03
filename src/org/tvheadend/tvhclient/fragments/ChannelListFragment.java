@@ -308,7 +308,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             Utils.confirmCancelRecording(activity, program.recording);
             return true;
 
-        case R.id.menu_record:
+        case R.id.menu_record_once:
             Utils.recordProgram(activity, program, false);
             return true;
 

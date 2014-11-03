@@ -97,16 +97,6 @@
             android:text="@string/upcoming_recordings" />
 
         <TextView
-            android:id="@+id/upcoming_series_recordings"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
-            android:text="@string/upcoming_series_recordings" />
-
-        <TextView
             android:id="@+id/failed_recordings"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -115,6 +105,26 @@
             android:paddingRight="12dp"
             android:singleLine="true"
             android:text="@string/failed_recordings" />
+
+        <TextView
+            android:id="@+id/series_recording_label"
+            style="?attr/TitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="6dp"
+            android:text="@string/series_recordings" />
+
+        <TextView
+            android:id="@+id/series_recordings"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:singleLine="true"
+            android:text="@string/series_recordings" />
 
         <TextView
             android:id="@+id/currently_recording_label"

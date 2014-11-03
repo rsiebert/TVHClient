@@ -156,7 +156,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
+            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem(), null);
             return true;
 
         case R.id.menu_record_remove_all:
@@ -210,7 +210,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.cancelRecording(activity, adapter.getItem(i), false);
+                    Utils.cancelRecording(activity, adapter.getItem(i));
                     try {
                         sleep(THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
@@ -229,7 +229,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeRecording(activity, adapter.getItem(i));
+                    Utils.removeRecording(activity, adapter.getItem(i), null);
                     try {
                         sleep(THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
@@ -250,7 +250,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.recording_context_menu, menu);
 
         // Get the currently selected program from the list where the context
         // menu has been triggered
