@@ -562,7 +562,7 @@ public class TVHClientApplication extends Application {
     public void removeSeriesRecording(String id) {
         synchronized (seriesRecordings) {
             for (SeriesRecording srec : getSeriesRecordings()) {
-                if (srec.id == id) {
+                if (srec.id.equals(id)) {
                     removeSeriesRecording(srec);
                     return;
                 }
