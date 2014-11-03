@@ -318,7 +318,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             listView.setSelectionFromTop(position, index);
         }
     }
-    
+
     @Override
     public void setInitialSelection(int position) {
         setSelection(position, 0);

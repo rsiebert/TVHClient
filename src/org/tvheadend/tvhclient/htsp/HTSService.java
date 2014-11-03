@@ -482,7 +482,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
             Log.d(TAG, "onSubscriptionStart, added stream " + s.index);
         }
-        
+
         if (msg.containsField("sourceinfo")) {
             Object obj = msg.get("sourceinfo");
             HTSMessage sub = (HTSMessage) obj;
@@ -1082,7 +1082,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 TVHClientApplication app = (TVHClientApplication) getApplication();
                 app.updateStatus("time", response.getString("time", null));
-                app.updateStatus("timezone", response.getString("timezone", null));                
+                app.updateStatus("timezone", response.getString("timezone", null));
             }
         });
     }
@@ -1101,42 +1101,26 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void deleteAutorecEntry(final String id) {
-        Log.d(TAG, "deleteAutorecEntry, id " + id);
-
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteAutorecEntry");
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
+                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
-                String deletedId = response.getString("id", "");
-
-                Log.d(TAG, "deleteAutorecEntry success " + success);
-
-                // Update all recording and remove the id where it was set
-                TVHClientApplication app = (TVHClientApplication) getApplication();
-                for (Recording rec : app.getRecordings()) {
-                    if (rec.autorecId != null && rec.autorecId.equals(deletedId)) {
-                        rec.autorecId = null;
-                    }
-                }
             }
         });
     }
 
     private void addAutorecEntry(final String title, final long channelId) {
-        Log.d(TAG, "addAutorecEntry, title " + title);
-
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
         request.putField("title", title);
         request.putField("channelId", channelId);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
+                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
-                String id = response.getString("id", "");
-
-                Log.d(TAG, "addAutorecEntry success " + success + " for id " + id);
             }
         });
     }
@@ -1162,7 +1146,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     dc.end = sub.getInt("end");
                     dc.type = sub.getInt("type");
                     rec.dvrCutPoints.add(dc);
-                    
+
                     Log.d(TAG, "getDvrCutpoints, added cut point for rec " + rec.title);
                 }
             }
