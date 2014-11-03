@@ -152,8 +152,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         Utils.setFailedReason(failed_reason, rec);
 
         // Show the information if the recording belongs to a series recording
+        // only when no dual pane is active (the controls shall be shown)
         if (is_series_recording != null) {
-            if (rec.autorecId != null) {
+            if (rec.autorecId != null && showControls) {
                 is_series_recording.setVisibility(ImageView.VISIBLE);
             } else {
                 is_series_recording.setVisibility(ImageView.GONE);
