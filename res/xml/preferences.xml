@@ -24,6 +24,12 @@
             android:key="showIconPref"
             android:summary="@string/pref_icons_sum"
             android:title="@string/pref_icons" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="showTagIconPref"
+            android:summary="@string/pref_tag_icon_sum"
+            android:dependency="showIconPref"
+            android:title="@string/pref_tag_icon" />
         <ListPreference
             android:name="@string/pref_language"
             android:summary="@string/pref_language_sum"
@@ -33,6 +39,24 @@
             android:dialogTitle="@string/pref_language"
             android:entries="@array/pref_language_list_display"
             android:entryValues="@array/pref_language_list" />
+        <ListPreference
+            android:name="@string/pref_default_menu"
+            android:summary="@string/pref_default_menu_sum"
+            android:defaultValue="0"
+            android:title="@string/pref_default_menu"
+            android:key="defaultMenuPositionPref"
+            android:dialogTitle="@string/pref_default_menu"
+            android:entries="@array/pref_menu_names"
+            android:entryValues="@array/pref_menu_ids" />
+        <ListPreference
+            android:name="@string/pref_sort_channels"
+            android:summary="@string/pref_sort_channels_sum"
+            android:defaultValue="0"
+            android:title="@string/pref_sort_channels"
+            android:key="sortChannelsPref"
+            android:dialogTitle="@string/pref_sort_channels"
+            android:entries="@array/pref_sort_channels_names"
+            android:entryValues="@array/pref_sort_channels_ids" />
         <PreferenceScreen
             android:title="@string/pref_genre_colors" 
             android:summary="@string/pref_genre_colors_sum" >
@@ -84,15 +108,21 @@
 	            android:numeric="integer"
 	            android:summary="@string/pref_epg_max_days_sum"
 	            android:title="@string/pref_epg_max_days" />
-	        <EditTextPreference
-	            android:id="@+id/pref_programs_to_load"
-	            android:name="@string/pref_programs_to_load"
-	            android:defaultValue="10"
-	            android:key="programsToLoad"
-	            android:numeric="integer"
-	            android:summary="@string/pref_programs_to_load_sum"
-	            android:title="@string/pref_programs_to_load" />
 	    </PreferenceScreen>
+	    <PreferenceScreen
+            android:title="@string/pref_menu_visibility"
+            android:summary="@string/pref_menu_visibility_sum" >
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="hideMenuDeleteAllRecordingsPref"
+                android:summary="@string/pref_hide_menu_delete_all_recordings_sum"
+                android:title="@string/pref_hide_menu_delete_all_recordings" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="hideMenuCancelAllRecordingsPref"
+                android:summary="@string/pref_hide_menu_cancel_all_recordings_sum"
+                android:title="@string/pref_hide_menu_cancel_all_recordings" />
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -101,13 +131,6 @@
 	        android:key="pref_program_playback"
 	        android:title="@string/programs"
 	        android:summary="@string/pref_playback_programs_sum" >
-            <EditTextPreference
-                android:id="@+id/pref_host"
-                android:name="@string/pref_host"
-                android:summary="@string/pref_host_sum"
-                android:defaultValue="localhost"
-                android:title="@string/pref_host"
-                android:key="progServerHostPref" />
 	        <ListPreference
 	            android:name="@string/pref_container"
 	            android:summary="@string/pref_container_sum"
@@ -117,13 +140,6 @@
 	            android:dialogTitle="@string/pref_container"
 	            android:entries="@array/pref_container_list_display"
 	            android:entryValues="@array/pref_container_list" />
-	        <CheckBoxPreference 
-	            android:id="@+id/pref_external"
-	            android:name="@string/pref_external"
-	            android:summary="@string/pref_external_sum"
-	            android:defaultValue="true"
-	            android:title="@string/pref_external"
-	            android:key="progExternalPref" />
 	        <CheckBoxPreference 
 	            android:id="@+id/pref_transcode"
 	            android:name="@string/pref_transcode"
@@ -177,13 +193,6 @@
             android:key="pref_playback_recordings"
             android:title="@string/recordings"
             android:summary="@string/pref_playback_recordings_sum" >
-	        <EditTextPreference
-                android:id="@+id/pref_host"
-                android:name="@string/pref_host"
-                android:summary="@string/pref_host_sum"
-                android:defaultValue="localhost"
-                android:title="@string/pref_host"
-                android:key="recServerHostPref" />
             <ListPreference
                 android:name="@string/pref_container"
                 android:defaultValue="matroska"
@@ -193,13 +202,6 @@
                 android:key="recContainerPref"
                 android:summary="@string/pref_container_sum"
                 android:title="@string/pref_container" />
-            <CheckBoxPreference
-                android:id="@+id/pref_external"
-                android:name="@string/pref_external"
-                android:defaultValue="true"
-                android:key="recExternalPref"
-                android:summary="@string/pref_external_sum"
-                android:title="@string/pref_external" />
 	        <CheckBoxPreference 
 	            android:id="@+id/pref_transcode"
 	            android:name="@string/pref_transcode"
@@ -249,7 +251,17 @@
 	            android:entryValues="@array/pref_scodec_list" />
         </PreferenceScreen>
 	</PreferenceCategory>
-
+    <PreferenceCategory 
+        android:title="@string/pref_misc" >
+        <Preference
+            android:key="pref_clear_search_history"
+            android:title="@string/pref_clear_search_history" >
+        </Preference>
+        <Preference
+            android:key="pref_clear_icon_cache"
+            android:title="@string/pref_clear_icon_cache" >
+        </Preference>
+    </PreferenceCategory>
     <PreferenceCategory 
         android:title="@string/pref_information" >
         <Preference

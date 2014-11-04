@@ -35,6 +35,7 @@ import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -47,7 +48,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
@@ -76,7 +76,7 @@ public class Utils {
     private final static int GENRE_COLOR_ALPHA_EPG_OFFSET = 50;
 
     /**
-     * Returns the id of the chosen theme to allow calling setTheme(...).
+     * Returns the id of the theme that is currently set in the settings.
      * 
      * @param context
      * @return
@@ -98,7 +98,19 @@ public class Utils {
         Boolean showIcons = prefs.getBoolean("showIconPref", true);
         return showIcons;
     }
-    
+
+    /**
+     * Returns the information if channels shall be shown or not
+     * 
+     * @param context
+     * @return
+     */
+    public static boolean showChannelTagIcon(final Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean showIcons = prefs.getBoolean("showTagIconPref", false);
+        return showIcons;
+    }
+
     /**
      * Combines the episode and series values into a single string
      * @param info
@@ -155,7 +167,7 @@ public class Utils {
         if (conn != null) {
             // Create an intent and pass on the connection details
             intent = new Intent(context, HTSService.class);
-            intent.setAction(HTSService.ACTION_CONNECT);
+            intent.setAction(Constants.ACTION_CONNECT);
             intent.putExtra("hostname", conn.address);
             intent.putExtra("port", conn.port);
             intent.putExtra("username", conn.username);
@@ -169,27 +181,50 @@ public class Utils {
     }
 
     /**
-     * Removes the program with the given id from the server. A dialog is shown
-     * up front to confirm the deletion.
      * 
      * @param context
-     * @param id
+     * @param rec
      */
-    public static void removeProgram(final Context context, final Recording rec) {
-        if (rec == null) {
+    public static void confirmRemoveRecording(final Context context, final Recording rec) {
+        confirmRemoveRecording(context, rec, null);
+    }
+
+    /**
+     * 
+     * @param context
+     * @param srec
+     */
+    public static void confirmRemoveRecording(final Context context, final SeriesRecording srec) {
+        confirmRemoveRecording(context, srec);
+    }
+
+    /**
+     * Removes either the recording or the series recording with the given id
+     * from the server. A dialog is shown up front to confirm the deletion.
+     * 
+     * @param context
+     * @param rec
+     * @param srec
+     */
+    public static void confirmRemoveRecording(final Context context, final Recording rec, final SeriesRecording srec) {
+        if (rec == null && srec == null) {
             return;
         }
-        final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_DELETE);
-        intent.putExtra("id", rec.id);
-        
+
+        String message = "";
+        if (rec != null) {
+            context.getString(R.string.delete_recording, rec.title);
+        } else if (srec != null) {
+            message = context.getString(R.string.delete_series_recording, srec.title);
+        }
+
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_remove)
-        .setMessage(context.getString(R.string.delete_recording, rec.title))
+        .setMessage(message)
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                context.startService(intent);
+                removeRecording(context, rec, srec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -199,26 +234,46 @@ public class Utils {
     }
 
     /**
-     * Tells the server to cancel the recording with the given id.
+     * Removes either the recording or the series recording with the given id
+     * from the server.
      * 
      * @param context
-     * @param id
+     * @param rec
      */
-    public static void cancelProgram(final Context context, final Recording rec) {
-        if (rec == null) {
+    public static void removeRecording(final Context context, final Recording rec, final SeriesRecording srec) {
+        if (rec == null && srec == null) {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_CANCEL);
-        intent.putExtra("id", rec.id);
+        if (rec != null) {
+            intent.setAction(Constants.ACTION_DELETE_DVR_ENTRY);
+            intent.putExtra("id", rec.id);
+        }
+        if (srec != null) {
+            intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
+            intent.putExtra("id", srec.id);
+        }
+        context.startService(intent);
+    }
 
+    /**
+     * Notifies the server to cancel the recording with the given id. A dialog is shown
+     * up front to confirm the cancellation.
+     * 
+     * @param context
+     * @param rec
+     */
+    public static void confirmCancelRecording(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_cancel)
         .setMessage(context.getString(R.string.cancel_recording, rec.title))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                context.startService(intent);
+                cancelRecording(context, rec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -228,17 +283,43 @@ public class Utils {
     }
 
     /**
-     * Tells the server to record the program with the given id.
+     * Notifies the server to cancel the recording with the given id.
      * 
      * @param context
-     * @param id
-     * @param channelId
+     * @param rec
      */
-    public static void recordProgram(final Context context, final long id, final long channelId) {
+    public static void cancelRecording(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
+        final Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(Constants.ACTION_CANCEL_DVR_ENTRY);
+        intent.putExtra("id", rec.id);
+        context.startService(intent);
+    }
+
+    /**
+     * Tells the server to record the program with the given id. If the
+     * useSeriesRecording is set then a series recording rule will be created to
+     * record that program repeatedly.
+     * 
+     * @param context
+     * @param program
+     * @param useSeriesRecording
+     */
+    public static void recordProgram(final Context context, final Program program, final boolean useSeriesRecording) {
+        if (program == null || program.channel == null) {
+            return;
+        }
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_DVR_ADD);
-        intent.putExtra("eventId", id);
-        intent.putExtra("channelId", channelId);
+        if (!useSeriesRecording) {
+            intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+            intent.putExtra("eventId", program.id);
+        } else {
+            intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
+            intent.putExtra("title", program.title);
+        }
+        intent.putExtra("channelId", program.channel.id);
         context.startService(intent);
     }
 
@@ -250,23 +331,30 @@ public class Utils {
      * @param program
      */
     public static void setProgramMenu(final Menu menu, final Program program) {
-        
-        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
+        MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
+        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
         MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
         MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
 
-        // Disable all menus if the program is not valid
+        // Disable these menus as a default
+        recordOnceMenuItem.setVisible(false);
+        recordSeriesMenuItem.setVisible(false);
+        recordCancelMenuItem.setVisible(false);
+        recordRemoveMenuItem.setVisible(false);
+        searchMenuItemEpg.setVisible(false);
+        searchMenuItemImdb.setVisible(false);
+
+        // Exit if the recording is not valid
         if (program == null) {
-            recordMenuItem.setVisible(false);
-            recordCancelMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
-            searchMenuItemEpg.setVisible(false);
-            searchMenuItemImdb.setVisible(false);
             return;
-        } 
+        }
+
+        // Allow searching the program
+        searchMenuItemEpg.setVisible(true);
+        searchMenuItemImdb.setVisible(true);
 
         // Show the play menu item when the current 
         // time is between the program start and end time
@@ -278,23 +366,21 @@ public class Utils {
         } else {
             playMenuItem.setVisible(false);
         }
-        
+
         if (program.recording == null) {
             // Show the record menu
-            recordCancelMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
+            recordOnceMenuItem.setVisible(true);
+            recordSeriesMenuItem.setVisible(true);
         } else if (program.isRecording()) {
             // Show the cancel menu
-            recordMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
+            recordCancelMenuItem.setVisible(true);
         } else if (program.isScheduled()) {
             // Show the cancel and play menu
-            recordMenuItem.setVisible(false);
-            recordRemoveMenuItem.setVisible(false);
+            playMenuItem.setVisible(true);
+            recordCancelMenuItem.setVisible(true);
         } else {
             // Show the delete menu
-            recordMenuItem.setVisible(false);
-            recordCancelMenuItem.setVisible(false);
+            recordRemoveMenuItem.setVisible(true);
         }
     }
 
@@ -306,10 +392,8 @@ public class Utils {
      * @param rec
      */
     public static void setRecordingMenu(final Menu menu, final Recording rec) {
-
         // Get the menu items so they can be shown 
         // or hidden depending on the recording state
-        MenuItem recordMenuItem = menu.findItem(R.id.menu_record);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
@@ -317,14 +401,13 @@ public class Utils {
         MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
 
         // Disable these menus as a default
-        recordMenuItem.setVisible(false);
         recordCancelMenuItem.setVisible(false);
         recordRemoveMenuItem.setVisible(false);
         playMenuItem.setVisible(false);
         searchMenuItemEpg.setVisible(false);
         searchMenuItemImdb.setVisible(false);
 
-        // Disable all menus if the recording is not valid
+        // Exit if the recording is not valid
         if (rec == null) {
             return;
         }
@@ -343,6 +426,35 @@ public class Utils {
         } else if (rec.error != null || rec.state.equals("missed")) {
         	// The recording has failed or has been missed, allow removal
         	recordRemoveMenuItem.setVisible(true);
+        }
+    }
+
+    /**
+     * Shows or hides certain icons from the recording menu. This is required
+     * because the usual way does not seem to work.
+     * 
+     * @param context
+     * @param menu
+     */
+    public static void setRecordingMenuIcons(final Context context, final Menu menu) {
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
+        MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean lightTheme = prefs.getBoolean("lightThemePref", true);
+        if (recordCancelMenuItem != null) {
+            recordCancelMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        }
+        if (recordRemoveMenuItem != null) {
+            recordRemoveMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        }
+        if (recordCancelAllMenuItem != null) {
+            recordCancelAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        }
+        if (recordRemoveAllMenuItem != null) {
+            recordRemoveAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
         }
     }
 
@@ -476,6 +588,8 @@ public class Utils {
             date.setText(R.string.sunday);
         } else if (dateText.equals("yesterday")) {
             date.setText(R.string.yesterday);
+        } else if (dateText.equals("2 days ago")) {
+            date.setText(R.string.two_days_ago);
         } else {
             date.setText(dateText);
         }
@@ -532,27 +646,23 @@ public class Utils {
      * @param channel
      * @param ch
      */
-    public static void setChannelIcon(ImageView icon, TextView iconText, TextView channel, final Channel ch) {
-
+    public static void setChannelIcon(ImageView icon, TextView iconText, final Channel ch) {
         if (icon != null && ch != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
             final boolean showIcons = prefs.getBoolean("showIconPref", true);
 
-            // Show the channel icon, if it is not available hide it            
-            icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
-            icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
-
-            // Show the icon text if the channel icon could not be shown
-            if (iconText != null) {
-                iconText.setVisibility((ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
-                iconText.setText(ch.name);
+            // Show the channels icon if available. If not hide the view. 
+            if (icon != null) {
+                icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
+                icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
             }
-        }
-
-        // Show the channel name
-        if (channel != null) {
-            channel.setText((ch != null) ? ch.name : "");
+            
+            // If the channel icon is not available show the channel name as a placeholder.
+            if (iconText != null) {
+                iconText.setText(ch.name);
+                iconText.setVisibility((showIcons && ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
+            }
         }
     }
 
@@ -576,24 +686,31 @@ public class Utils {
     }
 
     /**
-     * This method is only used when the startActivityForResult is called. It
-     * returns a smaller integer instead of the passed one to avoid a
-     * segmentation fault. This only happens on android versions before 4.X.X
+     * Shows the reason why a recording has failed. If the text is empty then
+     * the view will be hidden.
      * 
-     * @param code
-     * @return
+     * @param failed_reason
+     * @param rec
      */
-    public static int getResultCode(final int code) {
-        // When the startActivityForResult method is called with the regular
-        // integer then the java.lang.IllegalArgumentException: Can only use
-        // lower 16 bits for resultCode The code value must be lower than
-        // 0xffff.
-        if (code == R.id.menu_settings) {
-            return 219;
-        } else if (code == R.id.menu_connections) {
-            return 221;
+    public static void setFailedReason(final TextView failed_reason, final Recording rec) {
+        if (failed_reason == null) {
+            return;
+        }
+
+        // Make the text field visible as a default
+        failed_reason.setVisibility(View.VISIBLE);
+
+        // Show the reason why it failed
+        if (rec.error != null && rec.error.equals("File missing")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
+        } else if (rec.error != null && rec.error.equals("Aborted by user")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_canceled));
+        } else if (rec.state != null && rec.state.equals("missed")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_time_missed));
+        } else if (rec.state != null && rec.state.equals("invalid")) {
+            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_invalid));
         } else {
-            return 0;
+            failed_reason.setVisibility(View.GONE);
         }
     }
 
@@ -655,9 +772,9 @@ public class Utils {
      * 
      * @param context
      * @param view
-     * @param contentType
+     * @param program
      */
-    public static void setGenreColor(final Context context, View view, final int contentType) {
+    public static void setGenreColor(final Context context, View view, final Program program, final String tag) {
     	if (view == null) {
             return;
         }
@@ -666,21 +783,30 @@ public class Utils {
         int offset = 0;
 
     	// Check which class is calling and get the setting
-        if (context instanceof ChannelListTabsActivity) {
+        if (tag.equals("ChannelListAdapter")) {
             showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
-        } else if (context instanceof ProgramListActivity) {
+        } else if (tag.equals("ProgramListAdapter")) {
             showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
-        } else if (context instanceof SearchResultActivity) {
+        } else if (tag.equals("SearchResultAdapter")) {
             showGenre = prefs.getBoolean("showGenreColorsSearchPref", false);
-        } else if (context instanceof ProgramGuideTabsActivity) {
+        } else if (tag.equals("ProgramGuideItemView")) {
         	showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
         	offset = GENRE_COLOR_ALPHA_EPG_OFFSET;
         }
         
+        // As a default we show a transparent color. If we have a program then
+        // use the provided genre color. If genre colors shall not be shown we 
+        // also show the transparent color. This is used in the EPG where the 
+        // background is used as the genre indicator. 
+        int color = context.getResources().getColor(android.R.color.transparent);
+        if (program != null && showGenre) {
+            color = getGenreColor(context, program.contentType, offset);
+        }
+
         if (view instanceof TextView) {
         	if (showGenre) {
-        		view.setBackgroundColor(getGenreColor(context, contentType, offset));
-        		view.setVisibility(View.VISIBLE);
+        	    view.setBackgroundColor(color);
+        	    view.setVisibility(View.VISIBLE);
         	} else {
         		view.setVisibility(View.GONE);
         	}
@@ -688,11 +814,7 @@ public class Utils {
         	// Get the shape where the background color will be set 
 	        LayerDrawable layers = (LayerDrawable) view.getBackground();
 	        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
-	        if (showGenre) {    
-		        shape.setColor(getGenreColor(context, contentType, offset));
-        	} else {
-        	    shape.setColor(context.getResources().getColor(android.R.color.transparent));
-        	}
+	        shape.setColor(color);
         }
     }
 
@@ -789,27 +911,28 @@ public class Utils {
      * the server where to continue loading programs.
      * 
      * @param context
-     * @param numberOfProgramsToLoad
      * @param channel
      */
-    public static void loadMorePrograms(final Context context, final int numberOfProgramsToLoad, final Channel channel) {
+    public static void loadMorePrograms(final Context context, final Channel channel) {
         if (channel == null) {
             return;
         }
-        Iterator<Program> it = channel.epg.iterator();
+
         Program p = null;
         long nextId = 0;
-
-        while (it.hasNext()) {
-            p = it.next();
-            // Check if there is a next program available or if the current
-            // program has an id for the next one
-            if (p.id != nextId && nextId != 0) {
-                break;
+        synchronized(channel.epg) {
+            Iterator<Program> it = channel.epg.iterator();
+            while (it.hasNext()) {
+                p = it.next();
+                // Check if there is a next program available or if the current
+                // program has an id for the next one
+                if (p.id != nextId && nextId != 0) {
+                    break;
+                }
+                // Get the next id of the program so we can check in
+                // the next iteration if this program is the last one.
+                nextId = p.nextId;
             }
-            // Get the next id of the program so we can check in
-            // the next iteration if this program is the last one.
-            nextId = p.nextId;
         }
 
         if (p == null) {
@@ -826,10 +949,10 @@ public class Utils {
 
         // Set the required information and start the service command.
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(HTSService.ACTION_GET_EVENTS);
-        intent.putExtra("eventId", nextId);
-        intent.putExtra("channelId", channel.id);
-        intent.putExtra("count", numberOfProgramsToLoad);
+        intent.setAction(Constants.ACTION_GET_EVENTS);
+        intent.putExtra(Constants.BUNDLE_PROGRAM_ID, nextId);
+        intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
+        intent.putExtra(Constants.BUNDLE_COUNT, Constants.PREF_PROGRAMS_TO_LOAD);
         context.startService(intent);
     }
 
@@ -843,7 +966,7 @@ public class Utils {
      * @param hoursToShow
      * @return
      */
-    public static float getPixelsPerMinute(final FragmentActivity context, final int tabIndex, final int hoursToShow) {
+    public static float getPixelsPerMinute(final Activity context, final int tabIndex, final int hoursToShow) {
         // Get the usable width. Subtract the icon width if its visible.
         DisplayMetrics displaymetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -909,5 +1032,17 @@ public class Utils {
 			config.locale = new Locale(locale);
 			context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
 		}
+	}
+
+    /**
+     * Returns the type how the channels are sorted in the adapter and in which
+     * order they will then be shown in the list.
+     * 
+     * @param context
+     * @return
+     */
+	public static int getChannelSortOrder(final Activity context) {
+	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.parseInt(prefs.getString("sortChannelsPref", String.valueOf(Constants.CHANNEL_SORT_DEFAULT)));
 	}
 }

@@ -8,20 +8,25 @@
         android:title="@string/menu_play"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/menu_record"
-        android:icon="?attr/ic_menu_record"
-        android:title="@string/menu_record"
-        app:showAsAction="ifRoom|withText"/>
+        android:id="@+id/menu_record_once"
+        android:icon="?attr/ic_menu_record_once"
+        android:title="@string/menu_record_once"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_record_series"
+        android:icon="?attr/ic_menu_record_series"
+        android:title="@string/menu_record_series"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_record_cancel"
         android:icon="?attr/ic_menu_record_cancel"
         android:title="@string/menu_record_cancel"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:title="@string/menu_record_remove"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_search_imdb"
         android:icon="?attr/ic_menu_search"

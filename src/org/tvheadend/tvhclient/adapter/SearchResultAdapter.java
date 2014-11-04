@@ -21,9 +21,9 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.List;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.view.View;
@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 public class SearchResultAdapter extends ArrayAdapter<Program> {
 
+    private final static String TAG = SearchResultAdapter.class.getSimpleName();
     Activity context;
     List<Program> list;
 
@@ -46,7 +47,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
     public void sort() {
         sort(new Comparator<Program>() {
             public int compare(Program x, Program y) {
-                return x.compareTo(y);
+                return (x.start.compareTo(y.start));
             }
         });
     }
@@ -93,7 +94,10 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
         Program p = getItem(position);
         if (p != null) {
             holder.title.setText(p.title);
-            Utils.setChannelIcon(holder.icon, null, holder.channel, p.channel);
+            if (holder.channel != null && p.channel != null) {
+                holder.channel.setText(p.channel.name);
+            }
+            Utils.setChannelIcon(holder.icon, null, p.channel);
             Utils.setState(holder.state, p.recording);
             Utils.setDate(holder.date, p.start);
             Utils.setTime(holder.time, p.start, p.stop);
@@ -101,7 +105,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);
-            Utils.setGenreColor(context, holder.genre, p.contentType);
+            Utils.setGenreColor(context, holder.genre, p, TAG);
         }
         return view;
     }

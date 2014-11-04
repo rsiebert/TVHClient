@@ -32,4 +32,10 @@ public class Stream {
     public String language;
     public int height;
     public int width;
+    public int duration;
+    public int aspectNum;
+    public int aspectDen;
+    public int autioType;
+    public int channels;
+    public int rate;
 }

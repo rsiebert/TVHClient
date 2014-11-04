@@ -9,16 +9,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "tvhclient";
     public static final String TABLE_NAME = "connections";
 
@@ -32,6 +34,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_SELECTED = "selected";
     public static final String KEY_CHANNEL_TAG = "channel_tag";
     public static final String KEY_STREAMING_PORT = "streaming_port";
+    public static final String KEY_WOL_ADDRESS = "wol_address";
+    public static final String KEY_WOL_PORT = "wol_port";
+    public static final String KEY_WOL_BROADCAST = "wol_broadcast";
 
     // Defines a list of columns to retrieve from
     // the Cursor and load into an output row
@@ -44,15 +49,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         KEY_PASSWORD,
         KEY_SELECTED, 
         KEY_CHANNEL_TAG,
-        KEY_STREAMING_PORT
+        KEY_STREAMING_PORT,
+        KEY_WOL_ADDRESS,
+        KEY_WOL_PORT,
+        KEY_WOL_BROADCAST,
     };
 
     public static DatabaseHelper instance = null;
+
+    private static Context context;
 
     public static DatabaseHelper init(Context ctx) {
         if (instance == null) {
             instance = new DatabaseHelper(ctx);
         }
+        context = ctx;
         return instance;
     }
 
@@ -80,7 +91,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_PASSWORD + " TEXT NULL, "
                 + KEY_SELECTED + " INT NOT NULL, "
                 + KEY_CHANNEL_TAG + " INT DEFAULT 0, "
-                + KEY_STREAMING_PORT + " INT DEFAULT 9981);";
+                + KEY_STREAMING_PORT + " INT DEFAULT 9981, "
+                + KEY_WOL_ADDRESS + " TEXT NULL, "
+                + KEY_WOL_PORT + " INT DEFAULT 9, "
+                + KEY_WOL_BROADCAST + " INT DEFAULT 0);";
         db.execSQL(query);
     }
 
@@ -101,6 +115,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_STREAMING_PORT
                     + " INT DEFAULT 9981;");
         }
+        if (oldVersion < newVersion && newVersion == 4) {
+            // Add the required columns for WOL. sqlite does only support single
+            // alterations of the table
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_WOL_ADDRESS
+                    + " TEXT NULL;");
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_WOL_PORT
+                    + " INT DEFAULT 9;");
+        }
+        if (oldVersion < newVersion && newVersion == 5) {
+            // Add the broadcast column for WOL.
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_WOL_BROADCAST
+                    + " INT DEFAULT 0;");
+        }
     }
 
     /**
@@ -118,6 +145,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SELECTED, (conn.selected) ? "1" : "0");
         values.put(KEY_CHANNEL_TAG, conn.channelTag);
         values.put(KEY_STREAMING_PORT, conn.streaming_port);
+        values.put(KEY_WOL_ADDRESS, conn.wol_address);
+        values.put(KEY_WOL_PORT, conn.wol_port);
+        values.put(KEY_WOL_BROADCAST, conn.wol_broadcast);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long newId = db.insert(TABLE_NAME, null, values);
@@ -154,6 +184,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SELECTED, (conn.selected) ? "1" : "0");
         values.put(KEY_CHANNEL_TAG, conn.channelTag);
         values.put(KEY_STREAMING_PORT, conn.streaming_port);
+        values.put(KEY_WOL_ADDRESS, conn.wol_address);
+        values.put(KEY_WOL_PORT, conn.wol_port);
+        values.put(KEY_WOL_BROADCAST, conn.wol_broadcast);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long rows = db.update(TABLE_NAME, values, KEY_ID + "=" + conn.id, null);
@@ -185,6 +218,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
             conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
             conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
+            conn.wol_address = c.getString(c.getColumnIndex(KEY_WOL_ADDRESS));
+            conn.wol_port = c.getInt(c.getColumnIndex(KEY_WOL_PORT));
+            conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_WOL_BROADCAST)) > 0);
         }
         c.close();
         return conn;
@@ -212,6 +248,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
             conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
             conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
+            conn.wol_address = c.getString(c.getColumnIndex(KEY_WOL_ADDRESS));
+            conn.wol_port = c.getInt(c.getColumnIndex(KEY_WOL_PORT));
+            conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_WOL_BROADCAST)) > 0);
         }
         c.close();
         return conn;
@@ -222,12 +261,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public List<Connection> getConnections() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(TABLE_NAME, COLUMNS, null, null, null, null, KEY_NAME);
-
         List<Connection> connList = new ArrayList<Connection>();
+        Cursor c = null;
+
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            c = db.query(TABLE_NAME, COLUMNS, null, null, null, null, KEY_NAME);
+        } catch (SQLiteException ex) {
+            Log.d(TAG, "getConnections, exception " + ex.getLocalizedMessage());
+            if (context != null) {
+                Toast.makeText(context,
+                        "An error occurred while getting the list of available connections!\n"
+                                + "There was probably an issue while updating the app.\n" 
+                                + "Please uninstall and reinstall the app again to fix this.\n" 
+                                + "Thank you!",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
         Connection conn = null;
-        if (c.moveToFirst()) {
+        if (c != null && c.moveToFirst()) {
             do {
                 conn = new Connection();
                 conn.id = c.getInt(c.getColumnIndex(KEY_ID));
@@ -239,12 +292,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 conn.selected = (c.getInt(c.getColumnIndex(KEY_SELECTED)) > 0);
                 conn.channelTag = c.getInt(c.getColumnIndex(KEY_CHANNEL_TAG));
                 conn.streaming_port = c.getInt(c.getColumnIndex(KEY_STREAMING_PORT));
-
-                // Add book to books
+                conn.wol_address = c.getString(c.getColumnIndex(KEY_WOL_ADDRESS));
+                conn.wol_port = c.getInt(c.getColumnIndex(KEY_WOL_PORT));
+                conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_WOL_BROADCAST)) > 0);
                 connList.add(conn);
             } while (c.moveToNext());
         }
-        c.close();
+        if (c != null) {
+            c.close();
+        }
         return connList;
     }
 }

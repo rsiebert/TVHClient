@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>Aucun</item>
+    </string-array>
+
+    <string-array name="pref_language_list_display">
+        <item>Défaut</item>
+        <item>Anglais</item>
+        <item>Allemand</item>
+        <item>Français</item>
+        <item>Polonais</item>
+        <item>Suédois</item>
+        <item>Néerlandais</item>
+        <item>Italien</item>
+    </string-array>
+
+    <string-array name="pref_menu_names">
+        <item>Chaines</item>
+        <item>Enregistrements terminés</item>
+        <item>Enregistrements programmés</item>
+        <item>Autorec Recordings</item>
+        <item>Enregistrements en erreur</item>
+        <item>Guide des programmes</item>
+        <item>Etat</item>
+        <item>Paramétres</item>
+        <item>Connexions</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Défini par le serveur</item>
+        <item>Nom de la chaine</item>
+        <item>Numero de la chaine</item>
+    </string-array>
+</resources>

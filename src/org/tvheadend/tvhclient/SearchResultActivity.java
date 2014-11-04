@@ -24,20 +24,22 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
-import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.R;
 
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.SearchRecentSuggestions;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
@@ -52,8 +54,8 @@ import android.widget.ListView;
 public class SearchResultActivity extends ActionBarActivity implements HTSListener {
 
     private ActionBar actionBar = null;
-    private SearchResultAdapter srAdapter;
-    private ListView searchListView;
+    private SearchResultAdapter adapter;
+    private ListView listView;
     private Pattern pattern;
     private Channel channel;
     // The currently selected program
@@ -69,24 +71,35 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle("Searching");
+        actionBar.setTitle(R.string.menu_search);
         actionBar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
 
-        searchListView = (ListView) findViewById(R.id.item_list);
-        registerForContextMenu(searchListView);
+        listView = (ListView) findViewById(R.id.item_list);
+        registerForContextMenu(listView);
         
-        List<Program> srList = new ArrayList<Program>();
-        srAdapter = new SearchResultAdapter(this, srList);
-        srAdapter.sort();
-        searchListView.setAdapter(srAdapter);
+        List<Program> list = new ArrayList<Program>();
+        adapter = new SearchResultAdapter(this, list);
+        adapter.sort();
+        listView.setAdapter(adapter);
 
-        searchListView.setOnItemClickListener(new OnItemClickListener() {
+        // Show the details of the program when the user has selected one
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showProgramDetails(position);
+                program = adapter.getItem(position);
+                if (program != null) {
+                    Bundle args = new Bundle();
+                    args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
+                    args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                    args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
+                    args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
+                    // Create the fragment and show it as a dialog.
+                    DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
+                    newFragment.show(getSupportFragmentManager(), "dialog");
+                }
             }
         });
-        
+
         onNewIntent(getIntent());
     }
 
@@ -94,47 +107,80 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (!Intent.ACTION_SEARCH.equals(intent.getAction()) || !intent.hasExtra(SearchManager.QUERY)) {
+        // Quit if the search mode is not active
+        if (!Intent.ACTION_SEARCH.equals(intent.getAction())
+                || !intent.hasExtra(SearchManager.QUERY)) {
             return;
         }
 
+        // Get the possible channel
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        Bundle appData = intent.getBundleExtra(SearchManager.APP_DATA);
-        if (appData != null) {
-            channel = app.getChannel(appData.getLong("channelId"));
+        Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
+        if (bundle != null) {
+            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
         } else {
             channel = null;
         }
 
-        srAdapter.clear();
-
+        // Create the intent with the search options 
         String query = intent.getStringExtra(SearchManager.QUERY);
         pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
         intent = new Intent(SearchResultActivity.this, HTSService.class);
-        intent.setAction(HTSService.ACTION_EPG_QUERY);
+        intent.setAction(Constants.ACTION_EPG_QUERY);
         intent.putExtra("query", query);
         if (channel != null) {
-            intent.putExtra("channelId", channel.id);
+            intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
         }
+        
+        // Save the query so it can be shown again
+        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+        suggestions.saveRecentQuery(query, null);
 
+        // Now call the service with the query to get results
         startService(intent);
 
+        // Clear the previous results before adding new ones
+        adapter.clear();
+
+        // If no channel is given go through the list of programs in all
+        // channels and search if the desired program exists. If a channel was
+        // given search through the list of programs in the given channel. 
         if (channel == null) {
             for (Channel ch : app.getChannels()) {
-                for (Program p : ch.epg) {
-                    if (pattern.matcher(p.title).find()) {
-                        srAdapter.add(p);
+                if (ch != null) {
+                    synchronized(ch.epg) {
+                        for (Program p : ch.epg) {
+                            if (p != null && p.title != null && p.title.length() > 0) {
+                                // Check if the program name matches the search pattern
+                                if (pattern.matcher(p.title).find()) {
+                                    adapter.add(p);
+                                    adapter.sort();
+                                    adapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
                     }
                 }
             }
         } else {
-            for (Program p : channel.epg) {
-                if (pattern.matcher(p.title).find()) {
-                    srAdapter.add(p);
+            if (channel.epg != null) {
+                synchronized(channel.epg) {
+                    for (Program p : channel.epg) {
+                        if (p != null && p.title != null && p.title.length() > 0) {
+                            // Check if the program name matches the search pattern
+                            if (pattern.matcher(p.title).find()) {
+                                adapter.add(p);
+                                adapter.sort();
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
                 }
             }
         }
 
+        // TODO rename string
         actionBar.setTitle(android.R.string.search_go);
     }
 
@@ -152,23 +198,13 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         app.removeListener(this);
     }
 
-    protected void showProgramDetails(int position) {
-        Program p = (Program) srAdapter.getItem(position);
-        Intent intent = new Intent(this, ProgramDetailsActivity.class);
-        intent.putExtra("eventId", p.id);
-        intent.putExtra("channelId", p.channel.id);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // Hide the genre color menu item of not required
-        MenuItem genreItem = menu.findItem(R.id.menu_genre_color_info);
-        if (genreItem != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            genreItem.setVisible(prefs.getBoolean("showGenreColorsSearchPref", false));
-        }
-        return true;
+        // Hide the genre color menu if no genre colors shall be shown
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final boolean showGenreColors = prefs.getBoolean("showGenreColorsSearchPref", false);
+        (menu.findItem(R.id.menu_genre_color_info)).setVisible(showGenreColors);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -176,20 +212,22 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         getMenuInflater().inflate(R.menu.search_menu, menu);
         return true;
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
             onBackPressed();
             return true;
+
         case R.id.menu_search:
-            // Show the search text input in the action bar
             onSearchRequested();
             return true;
+
         case R.id.menu_genre_color_info:
             Utils.showGenreColorDialog(this);
             return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -207,15 +245,19 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             return true;
             
         case R.id.menu_record_remove:
-            Utils.removeProgram(this, program.recording);
+            Utils.confirmRemoveRecording(this, program.recording);
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.cancelProgram(this, program.recording);
+            Utils.confirmCancelRecording(this, program.recording);
             return true;
 
-        case R.id.menu_record:
-            Utils.recordProgram(this, program.id, program.channel.id);
+        case R.id.menu_record_once:
+            Utils.recordProgram(this, program, false);
+            return true;
+
+        case R.id.menu_record_series:
+            Utils.recordProgram(this, program, true);
             return true;
 
         default:
@@ -228,11 +270,13 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.program_context_menu, menu);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        program = srAdapter.getItem(info.position);
+        program = adapter.getItem(info.position);
 
-        // Set the title of the context menu and show or hide 
-        // the menu items depending on the program state
-        menu.setHeaderTitle(program.title);
+        // Set the title of the context menu
+        if (program != null) {
+            menu.setHeaderTitle(program.title);
+        }
+        //  Show or hide the menu items depending on the program state
         Utils.setProgramMenu(menu, program);
     }
 
@@ -242,42 +286,45 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(TVHClientApplication.ACTION_PROGRAMME_ADD)) {
+        if (action.equals(Constants.ACTION_PROGRAM_ADD)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
-                    if (pattern != null && pattern.matcher(p.title).find()) {
-                        srAdapter.add(p);
-                        srAdapter.notifyDataSetChanged();
-                        srAdapter.sort();
-                        
-                        actionBar.setSubtitle(srAdapter.getCount() + " " + getString(R.string.results));
+                    if (p != null && p.title != null && p.title.length() > 0) {
+                        if (pattern != null && pattern.matcher(p.title).find()) {
+                            adapter.add(p);
+                            adapter.sort();
+                            adapter.notifyDataSetChanged();
+                            actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
+                        }
                     }
                 }
             });
-        } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_DELETE)) {
+        } else if (action.equals(Constants.ACTION_PROGRAM_DELETE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Program p = (Program) obj;
-                    srAdapter.remove(p);
-                    srAdapter.notifyDataSetChanged();
+                    adapter.remove(p);
+                    adapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(TVHClientApplication.ACTION_PROGRAMME_UPDATE)) {
+        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    srAdapter.update((Program) obj);
-                    srAdapter.notifyDataSetChanged();
+                    adapter.update((Program) obj);
+                    adapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(TVHClientApplication.ACTION_DVR_UPDATE)) {
+        } else if (action.equals(Constants.ACTION_DVR_ADD)
+                || action.equals(Constants.ACTION_DVR_DELETE)
+                || action.equals(Constants.ACTION_DVR_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Program p : srAdapter.getList()) {
+                    for (Program p : adapter.getList()) {
                         if (rec == p.recording) {
-                            srAdapter.update((Program) obj);
-                            srAdapter.notifyDataSetChanged();
+                            adapter.update(p);
+                            adapter.notifyDataSetChanged();
                             return;
                         }
                     }

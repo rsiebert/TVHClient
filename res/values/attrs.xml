@@ -10,27 +10,33 @@
     <attr name="item_active" format="reference" />
     <attr name="item_not_active" format="reference" />
     <attr name="ic_menu_tags" format="reference" />
-    <attr name="ic_menu_record" format="reference" />
+    <attr name="ic_menu_record_once" format="reference" />
+    <attr name="ic_menu_record_series" format="reference" />
     <attr name="ic_menu_record_cancel" format="reference" />
     <attr name="ic_menu_record_remove" format="reference" />
     <attr name="ic_menu_refresh" format="reference" />
     <attr name="ic_menu_settings" format="reference" />
     <attr name="ic_menu_play" format="reference" />
     <attr name="ic_menu_timeframe" format="reference" />
+    <attr name="ic_menu_wol" format="reference" />
     <attr name="TitleFont" format="reference" />
+    <attr name="SubtitleFont" format="reference" />
+    <attr name="MenuFont" format="reference" />
+    <attr name="MenuHeaderFont" format="reference" />
     <attr name="HeaderFont" format="reference" />
     <attr name="ProgramGuideTimelineFont" format="reference" />
     <attr name="ProgramGuideTitleFont" format="reference" />
     <attr name="ProgramGuideFont" format="reference" />
-    <attr name="ActionBarTab_TitleFont" format="reference" />
-    <attr name="ActionBarTab_SubtitleFont" format="reference" />
     <attr name="TimelineItemLayoutStyle" format="reference" />
     <attr name="TimelineHeaderLayoutStyle" format="reference" />
     <attr name="TimelineListLayoutStyle" format="reference" />
+    <attr name="MenuItemLayoutStyle" format="reference" />
+    <attr name="MenuHeaderLayoutStyle" format="reference" />
+    <attr name="menu_text_selector" format="reference" />
 
     <attr name="minimumValue" format="integer"/>
     <attr name="maximumValue" format="integer"/>
-    
+        
     <declare-styleable name="SliderPreference">
         <attr name="android:summary" />
         <attr name="minimumValue" />

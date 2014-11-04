@@ -3,9 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/menu_search"
-        android:icon="?attr/ic_menu_search"
-        android:title="@android:string/search_go"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/menu_play"
+        android:icon="?attr/ic_menu_play"
+        android:orderInCategory="2"
+        android:title="@string/menu_play"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_record_remove"
+        android:icon="?attr/ic_menu_record_remove"
+        android:orderInCategory="4"
+        android:title="@string/menu_record_remove"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_record_remove_all"
+        android:icon="?attr/ic_menu_record_remove"
+        android:orderInCategory="5"
+        android:title="@string/menu_record_remove_all"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_record_cancel"
+        android:icon="?attr/ic_menu_record_cancel"
+        android:orderInCategory="6"
+        android:title="@string/menu_record_cancel"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_record_cancel_all"
+        android:icon="?attr/ic_menu_record_cancel"
+        android:orderInCategory="7"
+        android:title="@string/menu_record_cancel_all"
+        app:showAsAction="ifRoom|withText"/>
 
 </menu>

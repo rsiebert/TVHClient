@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">TVHGuide</string>
+    <string name="app_name">TVHClient</string>
 
     <string name="menu_settings">Settings</string>
     <string name="menu_refresh">Refresh</string>
     <string name="menu_tags">Tags</string>
-    <string name="menu_recordings">Recordings</string>
 
     <string name="menu_play">Play</string>
     <string name="menu_search">Search</string>
-    <string name="menu_record">Record</string>
+    <string name="menu_record_once">Record</string>
+    <string name="menu_record_series">Record (Autorec)</string>
     <string name="menu_record_cancel">Cancel recording</string>
-    <string name="menu_record_remove">Remove recording</string>
+    <string name="menu_record_cancel_all">Cancel all recordings</string>
+    <string name="menu_record_remove">Delete recording</string>
+    <string name="menu_record_remove_all">Delete all recordings</string>
     <string name="menu_search_imdb">Search on IMDB</string>
     <string name="menu_search_epg">Search the program guide</string>
-    <string name="menu_search_channel">Search this channel</string>
     <string name="menu_add">Add</string>
     <string name="menu_save">Save</string>
     <string name="menu_cancel">Cancel</string>
@@ -25,18 +26,19 @@
     <string name="menu_connections">Connections</string>
     <string name="menu_timeframe">Timeframe</string>
     <string name="menu_genre_color_info">Explain genre colors</string>
+    <string name="menu_send_wol">Wake up</string>
 
     <string name="pref_manage_connections">Manage connections</string>
     <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
     <string name="select_connection">Select connection</string>
     <string name="add_connection">Add connection</string>
-    <string name="no_connections">No connections available</string>
-    <string name="create_new_connections">Do you want to create a new connection now?</string>
-    <string name="connection_options">Options for connection \'%s\'</string>
     <string name="cancel_connection">Discard values? All changes will be lost.</string>
     <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
     <string name="delete_recording">Do you really want to delete the recording \'%s\'?</string>
+    <string name="delete_series_recording">Do you really want to delete the series recording \'%s\'?\n\nThis will remove all scheduled recordings that belong to that series recording rule.</string>
+    <string name="delete_all_recordings">Do you really want to delete ALL recordings?</string>
     <string name="cancel_recording">Do you really want to cancel the scheduled recording \'%s\'?</string>
+    <string name="cancel_all_recordings">Do you really want to cancel ALL scheduled recordings?</string>
 
     <string name="pref_connections">Connections</string>
     <string name="pref_name">Connection name</string>
@@ -60,14 +62,27 @@
     <string name="pref_pass">Password</string>
     <string name="pref_pass_sum">Enter password</string>
     <string name="pref_pass_set_sum">Password is set but is not displayed.</string>
+    <string name="pref_wol_address">MAC address</string>
+    <string name="pref_wol_address_sum">Enter the MAC address of the host (e.g. 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_port">Wake on LAN Port</string>
+    <string name="pref_wol_port_sum">Port %d will be used to wake up the server. The default is 9.</string>
+    <string name="pref_wol_broadcast">Use Broadcast</string>
+    <string name="pref_wol_broadcast_sum">Send the WOL packet as a broadcast. Some routers do not allow this kind of WOL.</string>
+    <string name="pref_wol_address_invalid">The MAC address is invalid.\nIt must have the pattern \'01:24:67:9a:cd:ef\' and may only contain the hexadecimal digits 0\-9 and a\-f and the separators \':\' and \'\-\'.</string>
     
     <string name="pref_user_interface">User interface</string>
     <string name="pref_icons">Channel icons</string>
-    <string name="pref_icons_sum">Show channel icons?</string>
+    <string name="pref_icons_sum">Show the channel icons.</string>
+    <string name="pref_tag_icon">Channel tag icon</string>
+    <string name="pref_tag_icon_sum">Show the icon for a channel tag instead of the application logo.</string>
     <string name="pref_theme">Light theme</string>
     <string name="pref_theme_sum">Use a light theme</string>
     <string name="pref_language">Language</string>
     <string name="pref_language_sum">Choose the language that shall be used by the application.</string>
+    <string name="pref_default_menu">Startscreen</string>
+    <string name="pref_default_menu_sum">Choose the screen that will be shown when the application starts.</string>
+    <string name="pref_sort_channels">Channel Order</string>
+    <string name="pref_sort_channels_sum">Choose in which order the channels will be displayed.</string>
     <string name="pref_res">Resolution</string>
     <string name="pref_res_sum">Specify the maximum resolution that the transcoder shall use.</string>
     <string name="pref_acodec">Audio codec</string>
@@ -84,8 +99,6 @@
     <string name="pref_playback_recordings_sum">Configure playback options for your recorded programs.</string>
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
-    <string name="pref_external">Prefer external player</string>
-    <string name="pref_external_sum">Use an external player (like BSPlayer or MXPlayer) for the program or recording.</string>
 
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Changelog</string>
@@ -96,9 +109,7 @@
     <string name="pref_epg_hours_visible_sum">Define how many hours of the program guide shall be shown on one screen. Too many hours will display too many programs and thus clutters the screen and decrease the readability.</string>
     <string name="pref_epg_max_days">Maximum days to show</string>
     <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
-    <string name="pref_programs_to_load">Number of programs to load</string>
-    <string name="pref_programs_to_load_sum">How many programs shall be fetched at once from the server. Higher numbers mean longer loading and updating time.</string>
-    <string name="pref_genre_colors">Enable genre colors</string>
+    <string name="pref_genre_colors">Genre colors</string>
     <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
     <string name="pref_genre_colors_channels">Channels</string>
     <string name="pref_genre_colors_channels_sum">The genre color will be shown as a vertical line on the left side of the channel list screen.</string>
@@ -111,11 +122,40 @@
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
     <string name="pref_genre_colors_visibility">Genre color visibility</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
+    <string name="pref_misc">Miscellaneous</string>
+    <string name="pref_clear_search_history">Clear search history</string>
+    <string name="pref_clear_icon_cache">Clear channel icon cache</string>
+
+    <string name="pref_menu_visibility">Menu visibility</string>
+    <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Hide the \'Delete all recordings\' menu</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
+    
+    <string name="clear_search_history">Clear search history?</string>
+    <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
+    <string name="clear_search_history_done">Search history cleared</string>
+
+    <string name="clear_icon_cache">Clear channel icon cache?</string>
+    <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You can do this to fetch updated icons from the server.</string>
+    <string name="clear_icon_cache_done">Channel icon cache cleared</string>
 
     <string name="err_auth">Access denied</string>
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
-    
+    <string name="err_con_timeout">Connection timeout</string>
+
+    <string name="recording_file_missing">Recorded file is missing</string>
+    <string name="recording_time_missed">Scheduled recording was missed</string>
+    <string name="recording_file_invalid">Recording is invalid</string>
+    <string name="recording_canceled">Recording has been canceled</string>
+
+    <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
+    <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
+    <string name="wol_address_invalid">The MAC-address is not valid. Please check your settings.</string>
+    <string name="wol_error">Error sending wake on LAN packet to \'%1$s\'.\n Error message: %2$s</string>
+
     <string-array name="pr_content_type0">
         <item>Movie/Drama</item>
         <item>News/Current affairs</item>
@@ -212,8 +252,7 @@
         <item>Economics/Social Advisory</item>
         <item>Remarkable People</item>
     </string-array>
-
-    
+ 
     <string-array name="pr_content_type9">
         <item>Education/Science/Factual</item>        
         <item>Nature/Animals/Environment</item>
@@ -248,6 +287,7 @@
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Search the EPG</string>
+    <string name="two_days_ago">Two days ago</string>
     <string name="yesterday">Yesterday</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
@@ -261,13 +301,14 @@
     <string name="sunday">Sunday</string>
 
     <string name="programs">Programs</string>
-    <string name="completed">Completed</string>
-    <string name="upcoming">Upcoming</string>
-    <string name="failed">Failed</string>
-    
+    <string name="completed_recordings">Completed</string>
+    <string name="upcoming_recordings">Upcoming</string>
+    <string name="failed_recordings">Failed</string>
+    <string name="series_recordings">Series recordings</string>
+    <string name="is_series_recordings">This recording is part of a series recording</string>
+
     <string name="channels">Channels</string>
     <string name="recordings">Recordings</string>
-    <string name="program_guide">Program guide</string>
     <string name="status">Status</string>
     <string name="items">Items</string>
     <string name="results">Results</string>
@@ -278,7 +319,6 @@
     <string name="channel">Channel</string>
     <string name="time">Time</string>
     <string name="date">Date</string>
-    <string name="shown_on_channel">on</string>
     <string name="summary">Summary</string>
     <string name="description">Description</string>
     <string name="duration">Duration</string>
@@ -290,21 +330,31 @@
 
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>
-    <string name="all_channels">All channels</string>    
+    <string name="loading_channel">Loading channel %s</string>
+    <string name="updating">Updating&#8230;</string>
+    <string name="all_channels">All channels</string>
     <string name="season">Season</string>
     <string name="episode">Episode</string>
     <string name="part">Part</string>
     <string name="progress">%1$d%% of the show already shown</string>
     
+    <string name="connection">Connection</string>
     <string name="disc_space">Disc space</string>
     <string name="total">Total</string>
     <string name="available">Available</string>
     <string name="unknown">Unknown</string>
+    <string name="ready">Ready</string>
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
-
     <string name="currently_recording">Currently recording</string>
-    <string name="restart_application">Please restart the application to activate the new theme.</string>
+    
+    <string name="no_connection_available">Still no connections are defined. You need to add at least one connection from the settings menu.</string>
+    <string name="no_connection_active">At least one connection is defined, but was not activated.</string>
     
     <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
+
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
 </resources>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.99"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp" >
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@string/channel_icon"
+            android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+	        <LinearLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal" >
+	        
+	            <TextView
+	                android:id="@+id/title"
+	                style="?attr/TitleFont"
+	                android:layout_width="0dip"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="0.9"
+	                android:paddingLeft="6dp"
+	                android:paddingRight="6dp"
+	                android:paddingTop="3dp"
+	                android:text="@string/title" />
+	            
+	            <ImageView
+	                android:id="@+id/state"
+	                android:layout_width="32dp"
+	                android:layout_height="32dp"
+	                android:contentDescription="@string/status_icon"
+	                android:paddingBottom="0dp"
+	                android:paddingLeft="6dp"
+	                android:paddingRight="6dp"
+	                android:paddingTop="3dp"
+	                android:scaleType="fitCenter" />
+	        </LinearLayout>
+
+            <TextView
+                android:id="@+id/channel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dp"
+                android:paddingRight="3dp"
+                android:singleLine="true"
+                android:text="@string/channel" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/daysOfWeek"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="3dp"
+                    android:singleLine="true"
+                    android:text="@string/date" />
+
+                <TextView
+                    android:id="@+id/approxTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="right"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:singleLine="true"
+                    android:text="@string/time" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/dual_pane_list_item_selection"
+        android:layout_width="16dp"
+        android:layout_height="fill_parent"
+        android:contentDescription="@string/unknown"
+        android:scaleType="fitXY" />
+
+</LinearLayout>

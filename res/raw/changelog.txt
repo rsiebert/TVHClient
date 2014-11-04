@@ -1,3 +1,121 @@
+$ 1.6.0
+  % VERSION 1.6.0
+  _ 23.10.2014
+    * Show the app icon when no channel tag is selected
+    * As a default show the app icon, not the channel tag icon
+    * When the program list is visible search only within that channel
+    * Remember the scroll position in the channel list
+    * Added option to clear the channel icon cache to fetch updated icons from the server
+    * Moved the series information before the description in the program details screen
+    * Show the newest recordings first
+    * Italian translation update
+    * Updated Polish translation
+    * Small bug fixes
+$ 1.5.5
+  % VERSION 1.5.5
+  _ 06.10.2014
+    * Fixed the search behavior
+    * Search results are sorted by time now
+    * Updated French translation
+    * Updated Polish translation
+    * Added an URL scheme (round 2) so that other apps can open TVHClient
+    * Added option in the settings to show the channel tag icon instead of the app icon
+    * Go to the status screen when the connection to the server is broken
+    * Bug fixes
+$ 1.5.4
+  % VERSION 1.5.4
+  _ 06.09.2014
+    * Fixed bug where the app icon disappeared 
+$ 1.5.3
+  % VERSION 1.5.3
+  _ 05.09.2014
+    * Updated Polish translation
+    * Updated Italian translation
+    * Updated Dutch translation
+    * Added an URL scheme so that other apps can open TVHClient
+    * Play the recording in the recording details screen, not the channel
+    * Small bug fixes
+$ 1.5.2
+  % VERSION 1.5.2
+  _ 01.09.2014
+    * Updated Polish translation
+    * Updated Italian translation
+    * Fixed wrong display of play menus
+$ 1.5.1
+  % VERSION 1.5.1
+  _ 31.08.2014
+    * Fixed bug where the wrong program could have been recorded
+    * Fixed a possible crash when canceling a program
+    * Added option to hide the delete and cancel all recording menu
+$ 1.5.0
+  % VERSION 1.5.0
+  _ 28.08.2014
+    * Added new navigation drawer menu that slides in from the left
+    * Restructured the internals of the application to allow much more flexibility. (New screens and menu items can now be added easier)
+    * Channels can be sorted by name, number or id
+    * Added Italian translation
+    * Support for Android API 7
+    * Bug fixes
+$ 1.4.4
+  % VERSION 1.4.4
+  _ 30.06.2014
+    * Added Wake on LAN broadcast
+    * Small bug fixes
+$ 1.4.3
+  % VERSION 1.4.3
+  _ 29.06.2014
+    * Fixed crash in the recording list screen
+    * Updated Polish translation
+$ 1.4.2
+  % VERSION 1.4.2
+  _ 28.06.2014
+    * Added search history (can be cleared in the settings)
+    * Added menu item to remove all available, scheduled or failed recordings
+    * Updated Polish translation
+    * Fixed IMDB link
+    * Fixed crash in search result dialog
+    * Bug fixes small improvements
+$ 1.4.1
+  % VERSION 1.4.1
+  _ 06.06.2014
+    * Small bug fixes and stability improvements
+$ 1.4.0
+  % VERSION 1.4.0
+  _ 05.06.2014
+    * Added Wake on LAN functionality (MAC address needs to be added in the connection settings) 
+    * Added high resolution icons for tablets
+    * Added high resolution launcher icons
+    * Fixed program list context menu in dual mode
+$ 1.3.0
+  % VERSION 1.3.0
+  _ 29.05.2014
+    * Added Dutch translation
+    * Added French translation
+    * Updated Swedish translation
+    * Show the reason why a recording failed
+    * Show the summary text below the title in the program list.
+    * Added dual pane layout in the channel list view for tablets
+    * Added an optional dual pane layout in the recording list view for tablets. It is disabled as a default and must be activated in the settings.
+    * Don't show a blank screen when the external player has finished
+    * Removed the internal player (it was disabled as a default and did not play all streams)
+    * Removed the swiping in the recording list screen to allow dual pane mode
+    * Bug fixes and small improvements
+$ 1.2.1
+  % VERSION 1.2.1
+  _ 01.05.2014
+    * Updated Swedish translation
+    * Updated Polish translation
+    * Fixed channel icons not displaying in certain screens
+    * Scrolling improvements in the program guide
+    * Small bug fixes
+$ 1.2.0
+  % VERSION 1.2.0
+  _ 11.04.2014
+    * Added Swedish translation
+    * New theme or language will be set immediately (no restart required)
+    * Only reload data when the connection values have actually changed
+    * Changed the UI of the connection options in the settings
+    * Small bug fixes
 $ 1.1.1
   % VERSION 1.1.1
   _ 06.04.2014
@@ -10,7 +128,7 @@ $ 1.1.0
     * Scrolling improvements in the program guide
     * Added menu items to cancel or remove a recording in all recording screens
     * Long pressing in the channel list shows the menu options for the current program
-    * Updated polish translation
+    * Updated Polish translation
     * Small bug fixes
 $ 1.0.0
   % VERSION 1.0.0

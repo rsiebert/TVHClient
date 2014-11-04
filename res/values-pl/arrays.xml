@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>None</item>
+    </string-array>
+
+    <string-array name="pref_language_list_display">
+        <item>Domyślny</item>
+        <item>Angielski</item>
+        <item>Niemiecki</item>
+        <item>Francuzki</item>
+        <item>Polski</item>
+        <item>Szwedzki</item>
+        <item>Holenderski</item>
+        <item>Włoski</item>
+    </string-array>
+
+    <string-array name="pref_menu_names">
+        <item>Kanały</item>
+        <item>Zakończone nagrania</item>
+        <item>Zaplanowane nagrania</item>
+        <item>Automatyczne nagrania</item>
+        <item>Nieudane nagrania</item>
+        <item>Przewodnik programów</item>
+        <item>Status</item>
+        <item>Ustawienia</item>
+        <item>Połączenia</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Zdefiniowane przez serwer</item>
+        <item>Nazwa kanału</item>
+        <item>Numer kanału</item>
+    </string-array>
+</resources>

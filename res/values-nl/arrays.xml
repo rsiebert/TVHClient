@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>Geen</item>
+    </string-array>
+
+    <string-array name="pref_language_list_display">
+        <item>Standaard</item>
+        <item>Engels</item>
+        <item>Duits</item>
+        <item>Frans</item>
+        <item>Pools</item>
+        <item>Zweeds</item>
+        <item>Nederlands</item>
+        <item>Italiaans</item>
+    </string-array>
+
+    <string-array name="pref_menu_names">
+        <item>Kanalen</item>
+        <item>Voltooide opnames</item>
+        <item>Geplande opnames</item>
+        <item>Automatische opnames</item>
+        <item>Gefaalde opnames</item>
+        <item>Programmagids</item>
+        <item>Status</item>
+        <item>Instellingen</item>
+        <item>Connecties</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Gedefinieerd door de server</item>
+        <item>Kanaal naam</item>
+        <item>Kanaal nummer</item>
+    </string-array>
+</resources>

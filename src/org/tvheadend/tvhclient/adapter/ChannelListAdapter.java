@@ -21,15 +21,18 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
-import org.tvheadend.tvhclient.ProgramListActivity;
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -40,9 +43,12 @@ import android.widget.TextView;
 
 public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
+    private final static String TAG = ChannelListAdapter.class.getSimpleName();
+
     private Activity context;
     private List<Channel> list;
     private int layout;
+    private int selectedPosition = 0;
 
     public ChannelListAdapter(Activity context, List<Channel> list, int layout) {
         super(context, layout, list);
@@ -51,12 +57,40 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         this.list = list;
     }
 
-    public void sort() {
-        sort(new Comparator<Channel>() {
-            public int compare(Channel x, Channel y) {
-                return x.compareTo(y);
-            }
-        });
+    public void sort(final int type) {
+        switch (type) {
+        case Constants.CHANNEL_SORT_DEFAULT:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    return x.compareTo(y);
+                }
+            });
+            break;
+        case Constants.CHANNEL_SORT_BY_NAME:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    return x.name.toLowerCase(Locale.US).compareTo(y.name.toLowerCase(Locale.US));
+                }
+            });
+            break;
+        case Constants.CHANNEL_SORT_BY_NUMBER:
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
+                    if (x.number > y.number) {
+                        return 1;
+                    } else if (x.number < y.number) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            break;
+        }
+    }
+
+    public void setPosition(int pos) {
+        selectedPosition = pos;
     }
 
     static class ViewHolder {
@@ -69,10 +103,11 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         public ProgressBar progress;
         public ImageView state;
         public TextView genre;
+        public ImageView dual_pane_list_item_selection;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ViewHolder holder = null;
 
@@ -88,9 +123,26 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             holder.duration = (TextView) view.findViewById(R.id.duration);
             holder.state = (ImageView) view.findViewById(R.id.state);
             holder.genre = (TextView) view.findViewById(R.id.genre);
+            holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
+        }
+
+        // Sets the correct indication when the dual pane mode is active
+        // If the item is selected the the arrow will be shown, otherwise
+        // only a vertical separation line is displayed.
+        if (holder.dual_pane_list_item_selection != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
+            
+            if (selectedPosition == position) {
+                final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
+                holder.dual_pane_list_item_selection.setBackgroundResource(icon);
+            } else {
+                final int icon = (lightTheme) ? R.drawable.dual_pane_selector_light : R.drawable.dual_pane_selector_dark;
+                holder.dual_pane_list_item_selection.setBackgroundResource(icon);
+            }
         }
 
         // Get the program and assign all the values
@@ -104,9 +156,33 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             if (holder.channel != null) {
                 holder.channel.setText(c.name);
             }
-            if (holder.icon != null) {
-                Utils.setChannelIcon(holder.icon, holder.icon_text, null, c);
 
+            Utils.setChannelIcon(holder.icon, holder.icon_text, c);
+            // Only show the channel text in the program guide when no icons shall be shown
+            if (holder.icon_text != null) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                final boolean showIcons = prefs.getBoolean("showIconPref", true);
+                if (!showIcons && layout == R.layout.program_guide_channel_item) {
+                    holder.icon_text.setText(c.name);
+                    holder.icon_text.setVisibility(ImageView.VISIBLE);
+                    
+                    // Add the listener to the icon text so that a 
+                    // click calls the program list of this channel
+                    holder.icon_text.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (c.epg.isEmpty()) {
+                                return;
+                            }
+                            if (context instanceof FragmentStatusInterface) {
+                                ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
+                            }
+                        }
+                    });
+                }
+            }
+
+            if (holder.icon != null) {
                 // Add the listener to the icon so that a 
                 // click calls the program list of this channel
                 holder.icon.setOnClickListener(new OnClickListener() {
@@ -115,9 +191,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                         if (c.epg.isEmpty()) {
                             return;
                         }
-                        Intent intent = new Intent(context, ProgramListActivity.class);
-                        intent.putExtra("channelId", c.id);
-                        context.startActivity(intent);
+                        if (context instanceof FragmentStatusInterface) {
+                            ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
+                        }
                     }
                 });
             }
@@ -137,23 +213,26 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Get the iterator so we can check the channel status 
             Iterator<Program> it = c.epg.iterator();
             
+            // Get the program that is currently running
+            // and set all the available values
+            Program p = null;
+            if (it.hasNext()) {
+                p = it.next();
+            }
+
             // Check if the channel is actually transmitting
             // data and contains program data which can be shown.
-            if (!c.isTransmitting && it.hasNext()) {
+            if (!c.isTransmitting && p != null) {
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_transmission);
                 }
-            } else if (it.hasNext()) {
-                // Get the program that is currently running
-                // and set all the available values
-                Program p = it.next();
+            } else if (p != null) {
                 if (holder.title != null) {
                     holder.title.setText(p.title);
                 }
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
                 Utils.setProgress(holder.progress, p.start, p.stop);
-                Utils.setGenreColor(context, holder.genre, p.contentType);
             }
             else {
                 // The channel does not provide program data. Hide the progress
@@ -170,7 +249,11 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (holder.duration != null) {
                     holder.duration.setVisibility(View.GONE);
                 }
+                if (holder.genre != null) {
+                    holder.genre.setVisibility(View.GONE);
+                }
             }
+            Utils.setGenreColor(context, holder.genre, p, TAG);
         }
         return view;
     }
@@ -178,7 +261,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     public void update(Channel c) {
         int length = list.size();
 
-        // Go through the list of programs and find the
+        // Go through the list of channels and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
             if (list.get(i).id == c.id) {
@@ -186,5 +269,12 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 break;
             }
         }
+    }
+
+    public Channel getSelectedItem() {
+        if (list.size() > 0 && list.size() > selectedPosition) {
+            return list.get(selectedPosition);
+        }
+        return null;
     }
 }

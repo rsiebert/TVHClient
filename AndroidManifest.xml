@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tvheadend.tvhclient"
-    android:versionCode="3"
-    android:versionName="1.1.1" >
+    android:versionCode="17"
+    android:versionName="1.6.0" >
     <uses-permission android:name="android.permission.INTERNET" />
     
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="21" />
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="21" />
     <application 
         android:allowBackup="true"
         android:name="org.tvheadend.tvhclient.TVHClientApplication" 
@@ -13,13 +13,18 @@
         <meta-data 
             android:name="android.app.default_searchable" 
             android:value=".SearchResultActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ChannelListTabsActivity">
+        <activity android:name="org.tvheadend.tvhclient.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <data android:scheme="tvhclient" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.RecordingListTabsActivity" />
         <activity android:name="org.tvheadend.tvhclient.SearchResultActivity" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -27,16 +32,13 @@
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.SettingsManageConnectionsActivity" />
-        <activity android:name="org.tvheadend.tvhclient.SettingsAddConnectionActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ProgramListActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ProgramDetailsActivity" />
-        <activity android:name="org.tvheadend.tvhclient.RecordingDetailsActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ProgramGuideTabsActivity" />
         <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhclient.PlaybackSelectionActivity" />
         <activity android:name="org.tvheadend.tvhclient.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
-        <activity android:name="org.tvheadend.tvhclient.PlaybackActivity" android:configChanges="orientation" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name="org.tvheadend.tvhclient.htsp.HTSService" android:enabled="true"/>
+        <provider 
+            android:name="org.tvheadend.tvhclient.SuggestionProvider" 
+            android:authorities="org.tvheadend.tvhclient.SuggestionProvider" 
+            android:exported="false" />
     </application>
 </manifest>

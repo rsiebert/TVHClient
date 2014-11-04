@@ -6,7 +6,10 @@
     android:orientation="horizontal"
     android:paddingBottom="4dp" >
 
-    <LinearLayout
+    <!-- The timeline layout is required to set the height of one row 
+         in the program guide. Without it the rows would be of 
+         different heights until all data has been filled in. -->
+    <LinearLayout
         android:id="@+id/timeline"
         android:layout_width="fill_parent"
         android:layout_height="66dp"
