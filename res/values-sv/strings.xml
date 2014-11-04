@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">TVHGuide</string>
+    <string name="app_name">TVHClient</string>
 
     <string name="menu_settings">Inställningar</string>
     <string name="menu_refresh">Uppdatera</string>
@@ -9,11 +9,13 @@
     <string name="menu_play">Spela</string>
     <string name="menu_search">Sök</string>
     <string name="menu_record_once">Spela in</string>
+    <string name="menu_record_series">Spela in (Autorec)</string>
     <string name="menu_record_cancel">Avbryt inspelning</string>
+    <string name="menu_record_cancel_all">Avbryt alla inspelningar</string>
     <string name="menu_record_remove">Ta bort inspelning</string>
+    <string name="menu_record_remove_all">Ta bort alla inspelningar</string>
     <string name="menu_search_imdb">Sök på IMDB</string>
     <string name="menu_search_epg">Sök i EPG</string>
-
     <string name="menu_add">Lägg till</string>
     <string name="menu_save">Spara</string>
     <string name="menu_cancel">Avbryt</string>
@@ -24,6 +26,7 @@
     <string name="menu_connections">Anslutningar</string>
     <string name="menu_timeframe">Tidsram</string>
     <string name="menu_genre_color_info">Förklara genrefärger</string>
+    <string name="menu_send_wol">Vakna upp</string>
 
     <string name="pref_manage_connections">Hantera anslutningar</string>
     <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
@@ -32,7 +35,10 @@
     <string name="cancel_connection">Kassera värden? Alla ändringar kommer att försvinna.</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
     <string name="delete_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
+    <string name="delete_series_recording">Vill du verkligen ta bort serieinspelningen \'%s\'?\n\nDetta kommer ta bort alla schemalagda inspelningar som tillhör denna serieinspelningsregel.</string>
+    <string name="delete_all_recordings">Vill du verkligen ta bort ALLA inspelningar?</string>
     <string name="cancel_recording">Vill du verkligen avbryta schemalagd inspelning \'%s\'?</string>
+    <string name="cancel_all_recordings">Vill du verkligen avbryta ALLA schemalagda inspelningar?</string>
 
     <string name="pref_connections">Anslutningar</string>
     <string name="pref_name">Anslutningsnamn</string>
@@ -43,8 +49,8 @@
     <string name="pref_selected_sum">Välj för att göra denna anslutning till standard och använda den när applikationen startar.</string>
     <string name="pref_host">Värdnamn</string>
     <string name="pref_host_sum">Fyll i serverns värdnamn</string>
-    <string name="pref_host_error_empty">Serverns IP-address eller värdnamn får inte vara blankt.</string>
-    <string name="pref_host_error_invalid">IP-addressen är inte giltig.</string>
+    <string name="pref_host_error_empty">Serverns IP-adress eller värdnamn får inte vara blankt.</string>
+    <string name="pref_host_error_invalid">IP-adressen är inte giltig.</string>
     <string name="pref_port">Port</string>
     <string name="pref_port_sum">Fyll i serverport</string>
     <string name="pref_port_error_empty">Portnummret får inte vara blankt.</string>
@@ -56,24 +62,37 @@
     <string name="pref_pass">Lösenord</string>
     <string name="pref_pass_sum">Fyll i lösenord</string>
     <string name="pref_pass_set_sum">Lösenordet är aktiverat men visas ej.</string>
-    
+    <string name="pref_wol_address">MAC adress</string>
+    <string name="pref_wol_address_sum">Fyll i MAC adress för värden (T.ex. 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_port">Wake on LAN Port</string>
+    <string name="pref_wol_port_sum">Port %d kommer användas för att väcka servern. Standard är port 9.</string>
+    <string name="pref_wol_broadcast">Använd Broadcast</string>
+    <string name="pref_wol_broadcast_sum">Skicka WOL paket som broadcast. Vissa routrar stödjer inte denna typ av WOL.</string>
+    <string name="pref_wol_address_invalid">MAC adressen är ogiltig.\nDen måste skrivas enligt mönster \'01:24:67:9a:cd:ef\' och får endast innehålla hexadecimala tecknen 0\-9 och a\-f samt separeras med \':\' eller \'\-\'.</string>
+
     <string name="pref_user_interface">Användargränssnitt</string>
     <string name="pref_icons">Kanalikoner</string>
     <string name="pref_icons_sum">Visa kanalikoner?</string>
+    <string name="pref_tag_icon">Kanaltaggikon</string>
+    <string name="pref_tag_icon_sum">Visa ikonen för en kanaltagg istället för applikationslogon.</string>
     <string name="pref_theme">Ljust tema</string>
     <string name="pref_theme_sum">Använd ett ljust tema</string>
     <string name="pref_language">Språk</string>
     <string name="pref_language_sum">Välj det språk applikationen skall använda.</string>
+    <string name="pref_default_menu">Startskärm</string>
+    <string name="pref_default_menu_sum">Välj skärm som skall visas när applikationen startas.</string>
+    <string name="pref_sort_channels">Kanalordning</string>
+    <string name="pref_sort_channels_sum">Välj i vilken ordning kanaler skall visas.</string>
     <string name="pref_res">Upplösning</string>
     <string name="pref_res_sum">Specificera högsta upplösning som transkoderingen skall använda.</string>
     <string name="pref_acodec">Ljudformat</string>
-    <string name="pref_acodec_sum">Definera ljudformat som transkoderingen skall använda.</string>
+    <string name="pref_acodec_sum">Definiera ljudformat som transkoderingen skall använda.</string>
     <string name="pref_vcodec">Videoformat</string>
-    <string name="pref_vcodec_sum">Definera videoformat som transkoderingen skall använda.</string>
+    <string name="pref_vcodec_sum">Definiera videoformat som transkoderingen skall använda.</string>
     <string name="pref_scodec">Undertextformat</string>
-    <string name="pref_scodec_sum">Definera undertextformat som transkoderingen skall använda.</string>
+    <string name="pref_scodec_sum">Definiera undertextformat som transkoderingen skall använda.</string>
     <string name="pref_container">Mediakontainer</string>
-    <string name="pref_container_sum">Definera mediakontainer som skall användas för ljud och videoströmmar. Matroska är normalt det föredragna alternativet.</string>
+    <string name="pref_container_sum">Definiera mediakontainer som skall användas för ljud och videoströmmar. Matroska är normalt det föredragna alternativet.</string>
     
     <string name="pref_playback">Uppspelning</string>
     <string name="pref_playback_programs_sum">Konfigurera uppspelningsval för Live-TV.</string>
@@ -87,10 +106,9 @@
     <string name="pref_program_guide">Programguide</string>
     <string name="pref_program_guide_sum">Konfigurera hur informationen i programguiden skall visas.</string>
     <string name="pref_epg_hours_visible">Synliga timmar</string>
-    <string name="pref_epg_hours_visible_sum">Konfigurera hur många timmar som skall visas i programguiden. För många timmar kommer visa för många program och försämmrar läsbarheten.</string>
+    <string name="pref_epg_hours_visible_sum">Konfigurera hur många timmar som skall visas i programguiden. För många timmar kommer visa för många program och försämrar läsbarheten.</string>
     <string name="pref_epg_max_days">Max antal dagar att visa</string>
     <string name="pref_epg_max_days_sum">Konfigurera max antal dagar att visa i programguiden.</string>
-
     <string name="pref_genre_colors">Aktivera genrefärger</string>
     <string name="pref_genre_colors_sum">Konfigurera vilka vyer som skall visa genrefärger.</string>
     <string name="pref_genre_colors_channels">Kanaler</string>
@@ -104,11 +122,40 @@
     <string name="pref_genre_colors_visibility_message">Konfigurera färgernas synlighet. Högre värden ger starkare färg.</string>
     <string name="pref_genre_colors_visibility">Genrefärgstyrka</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% styrka</string>
+    <string name="pref_misc">Diverse</string>
+    <string name="pref_clear_search_history">Rensa sökhistorik</string>
+    <string name="pref_clear_icon_cache">Rensa kanalikon cache</string>
+
+    <string name="pref_menu_visibility">Menysynlighet</string>
+    <string name="pref_menu_visibility_sum">Göm eller visa vissa menyposter.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Göm \'Ta bort alla inspelningar\' menyn</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Visa inte denna meny för att undvika att alla inspelade program tas bort av misstag.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Göm \'Avbryt alla inspelningar\' menyn</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Visa inte denna meny för att undvika att avbryta alla schemalagda inspelningar.</string>
+    
+    <string name="clear_search_history">Rensa sökhistorik?</string>
+    <string name="clear_search_history_sum">Är du säker på att du vill ta bort all sökhistorik?</string>
+    <string name="clear_search_history_done">Sökhistorik rensad</string>
+
+    <string name="clear_icon_cache">Rensa kanalikon cache?</string>
+    <string name="clear_icon_cache_sum">Är du säker på att du vill ta bort alla kanalikoner? Du kan göra detta för att uppdatera ikonerna från servern.</string>
+    <string name="clear_icon_cache_done">Kanalikon cache rensad</string>
 
     <string name="err_auth">Åtkomst nekad</string>
     <string name="err_connect">Kan ej ansluta till server</string>
     <string name="err_con_lost">Anslutning till server tappad</string>
-    
+    <string name="err_con_timeout">Anslutningstimeout</string>
+
+    <string name="recording_file_missing">Inspelad fil saknas</string>
+    <string name="recording_time_missed">Schemalagd inspelning missades</string>
+    <string name="recording_file_invalid">Inspelningen är ogiltig</string>
+    <string name="recording_canceled">Inspelningen har avbrutits</string>
+
+    <string name="wol_send">Lyckades skicka wake on LAN paket till \'%s\'</string>
+    <string name="wol_send_broadcast">Lyckades skicka wake on LAN paket som broadcast till \'%s\'</string>
+    <string name="wol_address_invalid">MAC-adressen är ogiltig. Vänligen kolla dina inställningar.</string>
+    <string name="wol_error">Misslyckades skicka wake on LAN paket till \'%1$s\'.\n Felmeddelande: %2$s</string>
+
     <string-array name="pr_content_type0">
         <item>Film/Drama</item>
         <item>Nyheter/Aktualitet</item>
@@ -129,7 +176,7 @@
         <item>Äventyr/Västern/Krig</item>
         <item>Science Fiction/Fantasy/Skräck</item>
         <item>Komedi</item>
-        <item>Såpa/Melodrama/folklorisk</item>
+        <item>Såpa/Melodrama/folklorist</item>
         <item>Romantik</item>
         <item>Seriöst/Religion/Historisk</item>
         <item>Vuxenfilm/Drama</item>
@@ -169,7 +216,7 @@
         <item>Barn/Ungdom</item>
         <item>Förskola</item>
         <item>Underhållning (6 till 14 år)</item>
-        <item>Underhålling (10 till 16 år)</item>
+        <item>Underhållning (10 till 16 år)</item>
         <item>Informativt/Utbildning/Skola</item>
         <item>Tecknat/Dockor</item>
     </string-array>
@@ -189,10 +236,10 @@
         <item>Scenkonst</item>
         <item>Konst</item>
         <item>Religion</item>
-        <item>Populär Kultur/Traditionel Konst</item>
+        <item>Populär Kultur/Traditionell Konst</item>
         <item>Litteratur</item>
         <item>Film/Bio</item>
-        <item>Experimentel Film/Video</item>
+        <item>Experimentell Film/Video</item>
         <item>Broadcasting/Journalistik</item>
         <item>Ny Media</item>
         <item>Magasin</item>
@@ -206,7 +253,6 @@
         <item>Anmärkningsvärda Människor</item>
     </string-array>
 
-    
     <string-array name="pr_content_type9">
         <item>Utbildning/Forskning/Fakta</item>
         <item>Natur/Djur/Miljö</item>
@@ -241,6 +287,7 @@
     <string name="minutes">%d min</string>
     
     <string name="search_hint">Sök i programguide</string>
+    <string name="two_days_ago">Två dagar sedan</string>
     <string name="yesterday">Igår</string>
     <string name="today">Idag</string>
     <string name="tomorrow">Imorgon</string>
@@ -256,8 +303,9 @@
     <string name="programs">Program</string>
     <string name="completed_recordings">Färdiga</string>
     <string name="upcoming_recordings">Kommande</string>
-    <string name="upcoming_series_recordings">Kommande (Autorec)</string>
     <string name="failed_recordings">Misslyckade</string>
+    <string name="series_recordings">Serieinspelningar</string>
+    <string name="is_series_recordings">Denna inspelning är del av en serieinspelning</string>
     
     <string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>
@@ -271,7 +319,6 @@
     <string name="channel">Kanaler</string>
     <string name="time">Tid</string>
     <string name="date">Datum</string>
-
     <string name="summary">Sammandrag</string>
     <string name="description">Beskrivning</string>
     <string name="duration">Längd</string>
@@ -283,20 +330,31 @@
 
     <string name="nothing">Ingen</string>
     <string name="loading">Laddar&#8230;</string>
+    <string name="loading_channel">Laddar kanal %s</string>
+    <string name="updating">Uppdaterar&#8230;</string>
     <string name="all_channels">Alla Kanaler</string>
     <string name="season">Säsong</string>
     <string name="episode">Avsnitt</string>
     <string name="part">Del</string>
     <string name="progress">%1$d%% av serien redan visad</string>
     
+    <string name="connection">Anslutning</string>
     <string name="disc_space">Diskyta</string>
     <string name="total">Totalt</string>
     <string name="available">Tillgängligt</string>
     <string name="unknown">Okänd</string>
+    <string name="ready">Redo</string>
     <string name="select_timeframe">Visa programguide för valt datum och tid.</string>
-
     <string name="currently_recording">Pågående inspelning</string>
+
+    <string name="no_connection_available">Fortfarande ingen anslutning definierad. Du måste lägga till minst en anslutning från inställningsmenyn.</string>
+    <string name="no_connection_active">Minst en anslutning är definierad, men är ej aktiverad.</string>
+
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="show_play_store">Vill du söka efter tillgängliga mediaspelare på Google Play Store?</string>
+
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Öppna navigationslådan</string>
+    <string name="drawer_close">Stäng navigationslådan</string>
 
 </resources>
