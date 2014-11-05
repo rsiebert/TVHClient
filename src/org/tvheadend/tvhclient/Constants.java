@@ -68,6 +68,7 @@ public class Constants {
     public static final String ACTION_CONNECTION_STATE_AUTH = "action_connection_state_auth";
     public static final String ACTION_CONNECTION_STATE_OK = "action_connection_state_ok";
     public static final String ACTION_CONNECTION_STATE_SERVER_DOWN = "action_connection_state_server_down";
+    public static final String ACTION_CONNECTION_STATE_UNKNOWN = "action_connection_state_unknown";
 
     // HTSP actions that indicate that the server has sent something
     public static final String ACTION_CHANNEL_ADD = "CHANNEL_ADD";

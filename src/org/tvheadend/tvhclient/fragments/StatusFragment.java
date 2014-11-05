@@ -34,6 +34,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +78,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            connectionStatus  = bundle.getString(Constants.BUNDLE_CONNECTION_STATUS);
+            connectionStatus = bundle.getString(Constants.BUNDLE_CONNECTION_STATUS);
         }
 
         View v = inflater.inflate(R.layout.status_fragment_layout, container, false);
@@ -126,6 +127,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         // Upon resume show the actual status. If the connection is OK show the
         // full status or that stuff is loading, otherwise hide certain
         // information and show the cause of the connection problem. 
+        Log.d(TAG, "connectionStatus " + connectionStatus);
         hideStatus();
         if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
             onMessage(Constants.ACTION_LOADING, app.isLoading());
@@ -159,7 +161,8 @@ public class StatusFragment extends Fragment implements HTSListener {
                     getDiscSpaceStatus();
                 }
             });
-	    } else if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
+	    } else if (action.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)
+	            || action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
 	            || action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
@@ -263,6 +266,8 @@ public class StatusFragment extends Fragment implements HTSListener {
             status.setText(R.string.err_connect);
         } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
             status.setText(R.string.err_auth);
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)) {
+            status.setText(getString(R.string.unknown));
         }
     }
 

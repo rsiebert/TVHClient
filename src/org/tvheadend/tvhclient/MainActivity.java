@@ -124,7 +124,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private boolean changeLogDialogShown = false;
     
     // Contains the information about the current connection state.
-    private String connectionStatus = Constants.ACTION_CONNECTION_STATE_OK;
+    private String connectionStatus = Constants.ACTION_CONNECTION_STATE_UNKNOWN;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
