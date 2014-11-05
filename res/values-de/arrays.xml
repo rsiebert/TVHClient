@@ -5,17 +5,6 @@
         <item>None</item>
     </string-array>
 
-    <string-array name="pref_language_list_display">
-        <item>Standard</item>
-        <item>Englisch</item>
-        <item>Deutsch</item>
-        <item>Französisch</item>
-        <item>Polnisch</item>
-        <item>Swedisch</item>
-        <item>Nierländisch</item>
-        <item>Italienisch</item>
-    </string-array>
-
     <string-array name="pref_menu_names">
         <item>TV-Sender</item>
         <item>Fertige Aufnahmen</item>

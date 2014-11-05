@@ -5,17 +5,6 @@
         <item>Aucun</item>
     </string-array>
 
-    <string-array name="pref_language_list_display">
-        <item>Défaut</item>
-        <item>Anglais</item>
-        <item>Allemand</item>
-        <item>Français</item>
-        <item>Polonais</item>
-        <item>Suédois</item>
-        <item>Néerlandais</item>
-        <item>Italien</item>
-    </string-array>
-
     <string-array name="pref_menu_names">
         <item>Chaines</item>
         <item>Enregistrements terminés</item>

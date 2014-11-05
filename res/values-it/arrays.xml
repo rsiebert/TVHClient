@@ -5,17 +5,6 @@
         <item>None</item>
     </string-array>
 
-    <!--string-array name="pref_language_list_display">
-        <item>Predefinita</item>
-        <item>Inglese</item>
-        <item>Tedesco</item>
-        <item>Francese</item>
-        <item>Polacco</item>
-        <item>Svedese</item>
-        <item>Olandese</item>
-        <item>Italiano</item>
-    </string-array-->
-
     <string-array name="pref_menu_names">
         <item>Canali</item>
         <item>Registrazioni Completate</item>

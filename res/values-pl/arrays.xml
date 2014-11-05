@@ -5,17 +5,6 @@
         <item>None</item>
     </string-array>
 
-    <string-array name="pref_language_list_display">
-        <item>Domyślny</item>
-        <item>Angielski</item>
-        <item>Niemiecki</item>
-        <item>Francuzki</item>
-        <item>Polski</item>
-        <item>Szwedzki</item>
-        <item>Holenderski</item>
-        <item>Włoski</item>
-    </string-array>
-
     <string-array name="pref_menu_names">
         <item>Kanały</item>
         <item>Zakończone nagrania</item>

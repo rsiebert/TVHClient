@@ -5,17 +5,6 @@
         <item>Geen</item>
     </string-array>
 
-    <string-array name="pref_language_list_display">
-        <item>Standaard</item>
-        <item>Engels</item>
-        <item>Duits</item>
-        <item>Frans</item>
-        <item>Pools</item>
-        <item>Zweeds</item>
-        <item>Nederlands</item>
-        <item>Italiaans</item>
-    </string-array>
-
     <string-array name="pref_menu_names">
         <item>Kanalen</item>
         <item>Voltooide opnames</item>
