@@ -37,6 +37,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.DialogFragment;
@@ -52,6 +53,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class SearchResultActivity extends ActionBarActivity implements HTSListener {
+
+    @SuppressWarnings("unused")
+    private final static String TAG = SearchResultActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
     private SearchResultAdapter adapter;
@@ -180,8 +184,10 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             }
         }
 
-        // TODO rename string
         actionBar.setTitle(android.R.string.search_go);
+        actionBar.setSubtitle(getString(R.string.loading));
+        // Show that we are done when nothing has happened after 2s. 
+        timerHandler.postDelayed(timerRunnable, 2000);
     }
 
     @Override
@@ -194,6 +200,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     @Override
     protected void onPause() {
         super.onPause();
+        timerHandler.removeCallbacks(timerRunnable);
         TVHClientApplication app = (TVHClientApplication) getApplication();
         app.removeListener(this);
     }
@@ -243,7 +250,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         case R.id.menu_search_epg:
             startActivity(new SearchEPGIntent(this, program.title));
             return true;
-            
+
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(this, program.recording);
             return true;
@@ -295,7 +302,15 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                             adapter.add(p);
                             adapter.sort();
                             adapter.notifyDataSetChanged();
-                            actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
+
+                            // Show that we are still loading
+                            actionBar.setSubtitle(getString(R.string.loading)
+                                    + "... (" + adapter.getCount() 
+                                    + " " + getString(R.string.results) + ")");
+
+                            // Show that we are done when nothing has happened after 2s.
+                            timerHandler.removeCallbacks(timerRunnable);
+                            timerHandler.postDelayed(timerRunnable, 2000);
                         }
                     }
                 }
@@ -332,4 +347,13 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             });
         }
     }
+    
+    // Runs without a timer by reposting this handler at the end of the runnable
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
+        }
+    };
 }
