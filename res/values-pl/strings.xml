@@ -9,6 +9,7 @@
     <string name="menu_play">Play</string>
     <string name="menu_search">Szukaj</string>
     <string name="menu_record_once">Nagraj</string>
+	<string name="menu_record_series">Nagrywanie serii(Autorec)</string>
     <string name="menu_record_cancel">Anuluj nagrywanie</string>
     <string name="menu_record_cancel_all">Anuluj wszystkie nagrywania</string>
     <string name="menu_record_remove">Usuń nagranie</string>
@@ -34,6 +35,7 @@
     <string name="cancel_connection">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="delete_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>
+    <string name="delete_series_recording">Czy na pewno chcesz usunąć nagrywanie serii \'%s\'?\n\nTo usunie wszystkie zaplanowane nagrania, które należą do tej zasady nagrywania serii.</string>
     <string name="delete_all_recordings">Jesteś pewny że chcesz usunąć wszystkie nagrania?</string>
     <string name="cancel_recording">Jesteś pewny że chcesz anulować zaplanowane nagrywanie \'%s\'?</string>
     <string name="cancel_all_recordings">Jesteś pewny że chcesz anulować wszystkie nagrywania?</string>
@@ -302,6 +304,8 @@
     <string name="completed_recordings">Zakończone</string>
     <string name="upcoming_recordings">Zaplanowane</string>
     <string name="failed_recordings">Utracone / Nieprawidłowe</string>
+    <string name="series_recordings">Nagrywanie serii</string>
+    <string name="is_series_recordings">To nagranie jest częścią serii nagrań</string>
     
     <string name="channels">Kanały</string>
     <string name="recordings">Nagrania</string>
