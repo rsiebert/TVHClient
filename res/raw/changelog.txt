@@ -1,6 +1,7 @@
 $ 1.6.0
   % VERSION 1.6.0
-  _ 23.10.2014
+  _ 03.11.2014
+    * Added support for series recordings
     * Show the app icon when no channel tag is selected
     * As a default show the app icon, not the channel tag icon
     * When the program list is visible search only within that channel
@@ -8,9 +9,11 @@ $ 1.6.0
     * Added option to clear the channel icon cache to fetch updated icons from the server
     * Moved the series information before the description in the program details screen
     * Show the newest recordings first
-    * Italian translation update
+    * Show that a search is ongoing
+    * Updated Italian translation
     * Updated Polish translation
-    * Small bug fixes
+    * Updated Swedish translation
+    * Bug fixes
 $ 1.5.5
   % VERSION 1.5.5
   _ 06.10.2014
