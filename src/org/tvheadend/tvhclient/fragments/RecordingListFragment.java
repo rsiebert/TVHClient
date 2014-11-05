@@ -261,11 +261,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         // the menu items depending on the recording state
         menu.setHeaderTitle(rec.title);
         Utils.setRecordingMenu(menu, rec);
-
-        // Do not remove a recording that is part of a series recording.
-        if (rec.autorecId != null) {
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        }
     }
 
     @Override
