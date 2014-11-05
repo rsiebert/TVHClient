@@ -9,6 +9,7 @@
     <string name="menu_play">Riproduci</string>
     <string name="menu_search">Ricerca</string>
     <string name="menu_record_once">Registra</string>
+    <string name="menu_record_series">Registra serie (Autorec)</string>
     <string name="menu_record_cancel">Annulla registrazione</string>
     <string name="menu_record_cancel_all">Annulla tutte registrazioni</string>
     <string name="menu_record_remove">Cancella registrazione</string>
@@ -34,6 +35,7 @@
     <string name="cancel_connection">Scartare i valori? Tutte le modifiche andranno perdute.</string>
     <string name="delete_connection">Vuoi veramente cancellare la connessione \'%s\'?</string>
     <string name="delete_recording">Vuoi veramente cancellare la registrazione \'%s\'?</string>
+    <string name="delete_series_recording">Vuoi veramente cancellare la registrazione della serie \'%s\'?\n\nQuesto rimuoverà tutte le registrazioni programmate che appartengono a quella regola di registrazione della serie.</string>
     <string name="delete_all_recordings">Vuoi veramente cancellare TUTTE le registrazioni fallite?</string>
     <string name="cancel_recording">Vuoi veramente annullare la registrazione programmata \'%s\'?</string>
     <string name="cancel_all_recordings">Vuoi veramente annullare TUTTE le registrazioni programmate?</string>
@@ -302,6 +304,9 @@
     <string name="completed_recordings">Completate</string>
     <string name="upcoming_recordings">In arrivo</string>
     <string name="failed_recordings">Fallite</string>
+
+    <string name="series_recordings">Serie di registrazioni</string>
+    <string name="is_series_recordings">Questa registrazione fa parte di una serie di registrazioni</string>
 
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>
