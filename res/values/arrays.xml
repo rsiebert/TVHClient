@@ -59,23 +59,23 @@
 
     <string-array name="pref_language_list" translatable="false">
         <item>default</item>
-        <item>en-us</item>
         <item>de</item>
+        <item>en-us</item>
         <item>fr</item>
+        <item>it</item>
+        <item>nl</item>
         <item>pl</item>
         <item>sv</item>
-        <item>nl</item>
-        <item>it</item>
     </string-array>
-    <string-array name="pref_language_list_display">
+    <string-array name="pref_language_list_display" translatable="false">
         <item>Default</item>
-        <item>English</item>
         <item>Deutsch</item>
-        <item>French</item>
+        <item>English</item>
+        <item>Français</item>
+        <item>Italiano</item>
+        <item>Nederlands</item>
         <item>Polski</item>
-        <item>Swedish</item>
-        <item>Dutch</item>
-        <item>Italian</item>
+        <item>Svenska</item>
     </string-array>
 
     <string-array name="pref_menu_ids" translatable="false">
