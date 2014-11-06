@@ -248,12 +248,12 @@ public class Utils {
         if (rec != null) {
             intent.setAction(Constants.ACTION_DELETE_DVR_ENTRY);
             intent.putExtra("id", rec.id);
-        }
-        if (srec != null) {
+            context.startService(intent);
+        } else if (srec != null) {
             intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
             intent.putExtra("id", srec.id);
+            context.startService(intent);
         }
-        context.startService(intent);
     }
 
     /**
