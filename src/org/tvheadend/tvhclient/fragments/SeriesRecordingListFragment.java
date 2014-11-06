@@ -116,9 +116,9 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SeriesRecording rec = (SeriesRecording) adapter.getItem(position);
+                SeriesRecording srec = (SeriesRecording) adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, rec, TAG);
+                    fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }
                 adapter.setPosition(position);
                 adapter.notifyDataSetChanged();
@@ -327,11 +327,14 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // recording in the theme with the arrow.
         if (adapter != null && adapter.getCount() > position) {
             adapter.setPosition(position);
-            
+
             // Simulate a click in the list item to inform the activity
-            SeriesRecording recording = (SeriesRecording) adapter.getItem(position);
-            if (fragmentStatusInterface != null) {
-                fragmentStatusInterface.onListItemSelected(position, recording, TAG);
+            // It will then show the details fragment if dual pane is active
+            if (isDualPane) {
+                SeriesRecording srec = (SeriesRecording) adapter.getItem(position);
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.onListItemSelected(position, srec, TAG);
+                }
             }
         }
     }

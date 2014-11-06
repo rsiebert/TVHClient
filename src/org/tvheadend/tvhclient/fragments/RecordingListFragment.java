@@ -356,9 +356,12 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             adapter.setPosition(position);
             
             // Simulate a click in the list item to inform the activity
-            Recording recording = (Recording) adapter.getItem(position);
-            if (fragmentStatusInterface != null) {
-                fragmentStatusInterface.onListItemSelected(position, recording, TAG);
+            // It will then show the details fragment if dual pane is active
+            if (isDualPane) {
+                Recording recording = (Recording) adapter.getItem(position);
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.onListItemSelected(position, recording, TAG);
+                }
             }
         }
     }
