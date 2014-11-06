@@ -141,11 +141,12 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
 
             // Show only the recording icon
             if (holder.state != null) {
-                if (srec.enabled) {
-                    holder.state.setImageResource(R.drawable.ic_enabled_small);
-                } else {
-                    holder.state.setImageResource(R.drawable.ic_disabled_small);
-                }
+                holder.state.setVisibility(View.GONE);
+//                if (srec.enabled) {
+//                    holder.state.setImageResource(R.drawable.ic_enabled_small);
+//                } else {
+//                    holder.state.setImageResource(R.drawable.ic_disabled_small);
+//                }
             }
         }
         return view;
