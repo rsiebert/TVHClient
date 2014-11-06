@@ -149,7 +149,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         defaultMenuPosition = Integer.parseInt(prefs.getString("defaultMenuPositionPref", String.valueOf(MENU_STATUS)));
-        
+
         // The drawer does not support setting the background automatically from
         // the defined theme. This needs to be done manually. Set the correct
         // background depending on the used theme.
@@ -1052,7 +1052,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             Bundle args = new Bundle();
             args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
-            
+
             if (isDualPane) {
                 // Create and show the fragment
                 showFragment(RecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
