@@ -172,8 +172,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 settingsInterface.restartNow();
             }
         } else if (key.equals("epgMaxDays") 
-                || key.equals("epgHoursVisible") 
-                || key.equals("defaultMenuPosition")) {
+                || key.equals("epgHoursVisible")) {
             if (settingsInterface != null) {
                 settingsInterface.restart();
             }
