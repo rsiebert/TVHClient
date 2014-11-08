@@ -77,7 +77,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private TextView recordOnce;
     private TextView recordSeries;
     private TextView recordCancel;
-    private TextView recordRemove;
     
     public static ProgramDetailsFragment newInstance(Bundle args) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -154,7 +153,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         recordOnce = (TextView) v.findViewById(R.id.menu_record_once);
         recordSeries = (TextView) v.findViewById(R.id.menu_record_series);
         recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
-        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
 
         return v;
     }
@@ -215,7 +213,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         recordOnce.setVisibility(View.VISIBLE);
         recordSeries.setVisibility(View.VISIBLE);
         recordCancel.setVisibility(View.VISIBLE);
-        recordRemove.setVisibility(View.VISIBLE);
         
         // Show the play menu item when the current 
         // time is between the program start and end time
@@ -231,17 +228,14 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         if (program.recording == null) {
             // Show the record menu
             recordCancel.setVisibility(View.GONE);
-            recordRemove.setVisibility(View.GONE);
         } else if (program.isRecording()) {
             // Show the cancel menu
             recordOnce.setVisibility(View.GONE);
             recordSeries.setVisibility(View.GONE);
-            recordRemove.setVisibility(View.GONE);
         } else if (program.isScheduled()) {
             // Show the cancel and play menu
             recordOnce.setVisibility(View.GONE);
             recordSeries.setVisibility(View.GONE);
-            recordRemove.setVisibility(View.GONE);
         } else {
             // Show the delete menu
             recordOnce.setVisibility(View.GONE);
@@ -281,12 +275,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             @Override
             public void onClick(View v) {
                 Utils.confirmCancelRecording(activity, program.recording);
-            }
-        });
-        recordRemove.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.confirmRemoveRecording(activity, program.recording);
             }
         });
     }
