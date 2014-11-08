@@ -195,7 +195,7 @@ public class Utils {
      * @param srec
      */
     public static void confirmRemoveRecording(final Context context, final SeriesRecording srec) {
-        confirmRemoveRecording(context, srec);
+        confirmRemoveRecording(context, null, srec);
     }
 
     /**
