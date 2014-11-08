@@ -45,6 +45,20 @@
                 android:text="@string/menu_record_once" />
 
             <TextView
+                android:id="@+id/menu_record_series"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_record_series"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:layout_marginRight="12dp"
+                android:text="@string/menu_record_series" />
+
+            <TextView
                 android:id="@+id/menu_record_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
@@ -58,27 +72,20 @@
                 android:layout_marginRight="12dp"
                 android:text="@string/menu_record_cancel"
                 android:visibility="gone" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="12dp">
 
             <TextView
-                android:id="@+id/menu_record_series"
+                android:id="@+id/menu_record_remove"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:background="?attr/menu_text_selector"
-                android:drawableLeft="?attr/ic_menu_record_series"
+                android:drawableLeft="?attr/ic_menu_record_remove"
                 android:gravity="center_vertical"
                 android:paddingBottom="8dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="8dp"
                 android:paddingTop="8dp"
-                android:layout_marginRight="12dp"
-                android:text="@string/menu_record_series" />
+                android:text="@string/menu_record_remove"
+                android:visibility="gone" />
         </LinearLayout>
 
         <TextView
