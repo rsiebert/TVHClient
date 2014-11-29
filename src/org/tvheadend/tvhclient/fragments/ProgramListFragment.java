@@ -231,6 +231,12 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        // Check for a valid adapter size
+        if (adapter.getCount() <= info.position) {
+        	return super.onContextItemSelected(item);
+        }
+
         Program program = adapter.getItem(info.position);
 
         // Check if the context menu call came from the list in this fragment
