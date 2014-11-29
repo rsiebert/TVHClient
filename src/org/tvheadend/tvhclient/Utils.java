@@ -213,7 +213,7 @@ public class Utils {
 
         String message = "";
         if (rec != null) {
-            context.getString(R.string.delete_recording, rec.title);
+            message = context.getString(R.string.delete_recording, rec.title);
         } else if (srec != null) {
             message = context.getString(R.string.delete_series_recording, srec.title);
         }
