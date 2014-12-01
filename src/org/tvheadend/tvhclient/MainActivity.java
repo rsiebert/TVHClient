@@ -298,10 +298,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         list.add(new DrawerMenuItem(MENU_SCHEDULED_RECORDINGS, menuItems[2],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[4],
+        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[3],
                 (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
                         : R.drawable.ic_menu_failed_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
+        list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[4],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
         list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[5],
