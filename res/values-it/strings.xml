@@ -12,8 +12,8 @@
     <string name="menu_record_series">Registra serie (Autorec)</string>
     <string name="menu_record_cancel">Annulla registrazione</string>
     <string name="menu_record_cancel_all">Annulla tutte registrazioni</string>
-    <string name="menu_record_remove">Cancella registrazione</string>
-    <string name="menu_record_remove_all">Cancella tutte registrazioni</string>
+    <string name="menu_record_remove">Elimina registrazione</string>
+    <string name="menu_record_remove_all">Elimina tutte registrazioni</string>
     <string name="menu_search_imdb">Cerca su IMDB</string>
     <string name="menu_search_epg">Cerca nella guida programmi</string>
     <string name="menu_add">Aggiungi</string>
@@ -22,7 +22,7 @@
     <string name="menu_set_active">Attiva</string>
     <string name="menu_set_not_active">Disattiva</string>
     <string name="menu_edit">Modifica</string>
-    <string name="menu_delete">Cancella</string>
+    <string name="menu_delete">Elimina</string>
     <string name="menu_connections">Connessioni</string>
     <string name="menu_timeframe">Linea temporale</string>
     <string name="menu_genre_color_info">Illustra colori dei generi</string>
@@ -128,7 +128,7 @@
 
     <string name="pref_menu_visibility">Visibilità menu</string>
     <string name="pref_menu_visibility_sum">Nasconde o mostra alcuni elementi dei menu.</string>
-    <string name="pref_hide_menu_delete_all_recordings">Nascondi voce \`Cancella tutte registrazioni\`</string>
+    <string name="pref_hide_menu_delete_all_recordings">Nascondi voce \`Elimina tutte registrazioni\`</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Non mostra questa voce per prevenire l\'accidentale cancellazione di tutte le registrazioni.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Nascondi voce \`Annulla tutte registrazioni\`</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Non mostra questa voce per prevenire l\'accidentale annullamento di tutte le registrazioni programmate.</string>
@@ -302,11 +302,11 @@
 
     <string name="programs">Programmi</string>
     <string name="completed_recordings">Completate</string>
-    <string name="upcoming_recordings">In arrivo</string>
+    <string name="upcoming_recordings">Programmate</string>
     <string name="failed_recordings">Fallite</string>
 
-    <string name="series_recordings">Serie di registrazioni</string>
-    <string name="is_series_recordings">Questa registrazione fa parte di una serie di registrazioni</string>
+    <string name="series_recordings">Registrazioni di serie</string>
+    <string name="is_series_recordings">Questa registrazione fa parte di una registrazione di serie</string>
 
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>
@@ -329,7 +329,7 @@
     <string name="series_information">Informazione serie</string>
     <string name="genre_color_list">Lista dei colori dei generi e loro significato.</string>
 
-    <string name="nothing">Nulla</string>
+    <string name="nothing">Niente</string>
     <string name="loading">Caricamento&#8230;</string>
     <string name="loading_channel">Caricamento canale %s</string>
     <string name="updating">Aggiornamento&#8230;</string>
