@@ -31,24 +31,21 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -66,7 +63,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private DrawerMenuAdapter drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
 
-    private ActionBar actionBar = null;
     private ChangeLogDialog changeLogDialog;
 
     // Indication weather the layout supports two fragments. This is usually
@@ -107,6 +103,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     public List<Channel> channelLoadingList = new ArrayList<Channel>();
 
     // Holds the number of EPG entries for each channel
+    @SuppressLint("UseSparseArrays")
     public Map<Long, Integer> channelEpgCountList = new HashMap<Long, Integer>();
 
     // If the saved instance is not null then we return from an orientation
@@ -140,10 +137,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -207,7 +200,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // change the title and remove action items that are contextual to the
         // main content.
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 
-                R.drawable.ic_drawer,
                 R.string.drawer_open, 
                 R.string.drawer_close) {
 
@@ -448,57 +440,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         outState.putInt(Constants.FAILED_RECORDING_LIST_POSITION, failedRecordingListPosition);
         outState.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the navigation drawer is open, hide all menu items
-        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
-        for (int i = 0; i < menu.size(); i++) {
-            menu.getItem(i).setVisible(!drawerOpen);
-        }
-        // No search is available in the these menus
-        if (menuPosition == MENU_STATUS 
-                || menuPosition == MENU_COMPLETED_RECORDINGS 
-                || menuPosition == MENU_SCHEDULED_RECORDINGS
-                || menuPosition == MENU_FAILED_RECORDINGS
-                || menuPosition == MENU_SERIES_RECORDINGS ) {
-            (menu.findItem(R.id.menu_search)).setVisible(false);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        // Handle your other action bar items...
-        switch (item.getItemId()) {
-        case R.id.menu_search:
-            onSearchRequested();
-            return true;
-
-        case R.id.menu_refresh:
-            channelLoadingList.clear();
-            channelEpgCountList.clear();
-            TVHClientApplication app = (TVHClientApplication) getApplication();
-            app.unblockAllChannels();
-
-            // Reconnect to the server and reload all data
-            Utils.connect(this, true);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -787,7 +728,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 public void run() {
                     boolean loading = (Boolean) obj;
                     if (loading) {
-                        actionBar.setSubtitle(R.string.loading);
                         // Remove any fragments on the right during update to
                         // prevent seeing old data. These fragments could be the
                         // program list or the recording details. 
@@ -838,8 +778,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                         // fragment which in turn knows the channel count. 
                         Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                         if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
-                            int count = ((FragmentControlInterface) f).getItemCount();
-                            actionBar.setSubtitle(count + " " + getString(R.string.items));
+//                            int count = ((FragmentControlInterface) f).getItemCount();
+//                            actionBar.setSubtitle(count + " " + getString(R.string.items));
                         }
                     }
                 }
@@ -892,30 +832,30 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void setActionBarTitle(final String title, final String tag) {
-        if (actionBar != null) {
-            actionBar.setTitle(title);
-        }
+//        if (actionBar != null) {
+//            actionBar.setTitle(title);
+//        }
     }
 
     @Override
     public void setActionBarSubtitle(final String subtitle, final String tag) {
-        if (actionBar != null) {
-            actionBar.setSubtitle(subtitle);
-        }
+//        if (actionBar != null) {
+//            actionBar.setSubtitle(subtitle);
+//        }
     }
 
     @Override
     public void setActionBarIcon(final Bitmap bitmap, final String tag) {
-        if (actionBar != null && bitmap != null) {
-            actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
-        }
+//        if (actionBar != null && bitmap != null) {
+//            actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
+//        }
     }
 
     @Override
     public void setActionBarIcon(final int resource, final String tag) {
-        if (actionBar != null) {
-            actionBar.setIcon(resource);
-        }
+//        if (actionBar != null) {
+//            actionBar.setIcon(resource);
+//        }
     }
 
     @Override
@@ -971,6 +911,17 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     }
 
     @Override
+    public void reloadData(String tag) {
+        channelLoadingList.clear();
+      channelEpgCountList.clear();
+      TVHClientApplication app = (TVHClientApplication) getApplication();
+      app.unblockAllChannels();
+
+      // Reconnect to the server and reload all data
+      Utils.connect(this, true);
+    }
+
+    @Override
     public void moreDataRequired(final Channel channel, final String tag) {
         // Do not load a channel when it is already being loaded to avoid
         // loading the same or too many data.
@@ -994,9 +945,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             TVHClientApplication app = (TVHClientApplication) getApplication();
             if (!app.isChannelBlocked(ch)) {
                 isLoadingChannels = true;
-                if (actionBar != null) {
-                    actionBar.setSubtitle(getString(R.string.loading_channel, ch.name));
-                }
                 Utils.loadMorePrograms(this, ch);
             }
         }
