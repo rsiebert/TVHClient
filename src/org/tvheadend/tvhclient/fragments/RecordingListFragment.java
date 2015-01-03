@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -40,6 +39,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -58,7 +58,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     public static String TAG = RecordingListFragment.class.getSimpleName();
 
     protected Activity activity;
-    protected ActionBarInterface actionBarInterface;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected RecordingListAdapter adapter;
     private ListView listView;
@@ -69,6 +68,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     private int adapterLayout = R.layout.recording_list_widget;
 
     protected boolean isDualPane;
+
+    protected Toolbar toolbar;
 
     // Time to wait for the thread before the next service call is made when
     // either all recorded or scheduled programs are being removed. 
@@ -94,6 +95,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -107,9 +109,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
@@ -138,7 +137,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public void onDetach() {
         fragmentStatusInterface = null;
-        actionBarInterface = null;
         super.onDetach();
     }
 

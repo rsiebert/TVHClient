@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -39,6 +38,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -56,7 +56,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     public static String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
     protected Activity activity;
-    protected ActionBarInterface actionBarInterface;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected SeriesRecordingListAdapter adapter;
     private ListView listView;
@@ -67,6 +66,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private int adapterLayout = R.layout.series_recording_list_widget;
 
     protected boolean isDualPane;
+
+    private Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,6 +89,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -101,9 +103,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
@@ -132,7 +131,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onDetach() {
         fragmentStatusInterface = null;
-        actionBarInterface = null;
         super.onDetach();
     }
 
@@ -188,10 +186,10 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         adapter.notifyDataSetChanged();
         
         // Shows the currently visible number of recordings of the type  
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.recordings), TAG);
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.upcoming_recordings), TAG);
-            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.recordings));
+            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.upcoming_recordings));
+            toolbar.setNavigationIcon(R.drawable.ic_launcher);
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
