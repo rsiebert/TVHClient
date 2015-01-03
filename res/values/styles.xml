@@ -90,7 +90,7 @@
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
-    <style name="CustomTheme" parent="Theme.AppCompat">
+    <style name="CustomTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
         <item name="ic_menu_save">@drawable/ic_menu_save_dark</item>
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_dark</item>
@@ -123,10 +123,11 @@
         <item name="MenuItemLayoutStyle">@drawable/menu_item_dark</item>
         <item name="MenuHeaderLayoutStyle">@drawable/menu_header_dark</item>
         <item name="menu_text_selector">@drawable/menu_text_selector_dark</item>
+        <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
-    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light">
+    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
         <item name="ic_menu_save">@drawable/ic_menu_save_light</item>
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_light</item>
@@ -159,6 +160,7 @@
         <item name="MenuItemLayoutStyle">@drawable/menu_item_light</item>
         <item name="MenuHeaderLayoutStyle">@drawable/menu_header_light</item>
         <item name="menu_text_selector">@drawable/menu_text_selector_light</item>
+        <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
     </style>
 
 </resources>
