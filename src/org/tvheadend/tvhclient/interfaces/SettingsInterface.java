@@ -6,7 +6,12 @@ public interface SettingsInterface {
     public void restartNow();
     public void reconnect();
     
-    void manageConnections();
-    void addConnection();
-    void editConnection(long id);
+    public void manageConnections();
+    public void addConnection();
+    public void editConnection(long id);
+    public void mainSettingsGenreColors();
+    public void mainSettingsProgramGuide();
+    public void mainSettingsMenuVisibility();
+    public void mainSettingsPlaybackPrograms();
+    public void mainSettingsPlaybackRecordings();
 }

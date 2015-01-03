@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:name="@string/pref_container"
+        android:defaultValue="matroska"
+        android:dialogTitle="@string/pref_container"
+        android:entries="@array/pref_container_list_display"
+        android:entryValues="@array/pref_container_list"
+        android:key="progContainerPref"
+        android:summary="@string/pref_container_sum"
+        android:title="@string/pref_container" />
+
+    <CheckBoxPreference
+        android:id="@+id/pref_transcode"
+        android:name="@string/pref_transcode"
+        android:defaultValue="false"
+        android:key="progTranscodePref"
+        android:summary="@string/pref_transcode_sum"
+        android:title="@string/pref_transcode" />
+
+    <ListPreference
+        android:name="@string/pref_res"
+        android:defaultValue="384"
+        android:dependency="progTranscodePref"
+        android:dialogTitle="@string/pref_res"
+        android:entries="@array/pref_res_list_display"
+        android:entryValues="@array/pref_res_list"
+        android:key="progResolutionPref"
+        android:summary="@string/pref_res_sum"
+        android:title="@string/pref_res" />
+    <ListPreference
+        android:name="@string/pref_acodec"
+        android:defaultValue="AAC"
+        android:dependency="progTranscodePref"
+        android:dialogTitle="@string/pref_acodec"
+        android:entries="@array/pref_acodec_list_display"
+        android:entryValues="@array/pref_acodec_list"
+        android:key="progAcodecPref"
+        android:summary="@string/pref_acodec_sum"
+        android:title="@string/pref_acodec" />
+    <ListPreference
+        android:name="@string/pref_vcodec"
+        android:defaultValue="H264"
+        android:dependency="progTranscodePref"
+        android:dialogTitle="@string/pref_vcodec"
+        android:entries="@array/pref_vcodec_list_display"
+        android:entryValues="@array/pref_vcodec_list"
+        android:key="progVcodecPref"
+        android:summary="@string/pref_vcodec_sum"
+        android:title="@string/pref_vcodec" />
+    <ListPreference
+        android:name="@string/pref_scodec"
+        android:defaultValue="NONE"
+        android:dependency="progTranscodePref"
+        android:dialogTitle="@string/pref_scodec"
+        android:entries="@array/pref_scodec_list_display"
+        android:entryValues="@array/pref_scodec_list"
+        android:key="progScodecPref"
+        android:summary="@string/pref_scodec_sum"
+        android:title="@string/pref_scodec" />
+
+</PreferenceScreen>

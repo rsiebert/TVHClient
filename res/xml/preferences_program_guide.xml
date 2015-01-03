@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <EditTextPreference
+        android:id="@+id/pref_epg_hours_visible"
+        android:name="@string/pref_epg_hours_visible"
+        android:defaultValue="4"
+        android:key="epgHoursVisible"
+        android:numeric="integer"
+        android:summary="@string/pref_epg_hours_visible_sum"
+        android:title="@string/pref_epg_hours_visible" />
+    <EditTextPreference
+        android:id="@+id/pref_epg_max_days"
+        android:name="@string/pref_epg_max_days"
+        android:defaultValue="7"
+        android:key="epgMaxDays"
+        android:numeric="integer"
+        android:summary="@string/pref_epg_max_days_sum"
+        android:title="@string/pref_epg_max_days" />
+
+</PreferenceScreen>

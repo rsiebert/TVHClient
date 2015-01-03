@@ -3,10 +3,10 @@ package org.tvheadend.tvhclient.fragments;
 import java.io.File;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import android.app.Activity;
@@ -24,112 +24,185 @@ import android.widget.Toast;
 
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsFragment.class.getSimpleName();
     
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        int prefs = R.xml.preferences;
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            prefs = bundle.getInt(Constants.BUNDLE_SETTINGS_PREFS);
+        }
+
         // Set the default values and then load the preferences from the XML resource
-        PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
-        addPreferencesFromResource(R.xml.preferences);
-        
+        PreferenceManager.setDefaultValues(getActivity(), prefs, false);
+        addPreferencesFromResource(prefs);
+
         // Add a listener to the connection preference so that the 
         // SettingsManageConnectionsActivity can be shown.
         Preference prefManage = findPreference("pref_manage_connections");
-        prefManage.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (settingsInterface != null) {
-                    settingsInterface.manageConnections();
+        if (prefManage != null) {
+            prefManage.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (settingsInterface != null) {
+                        settingsInterface.manageConnections();
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        }
+
+        Preference prefGenreColors = findPreference("pref_genre_colors");
+        if (prefGenreColors != null) {
+            prefGenreColors.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (settingsInterface != null) {
+                        settingsInterface.mainSettingsGenreColors();
+                    }
+                    return false;
+                }
+            });
+        }
+
+        Preference prefProgramGuide = findPreference("pref_program_guide");
+        if (prefProgramGuide != null) {
+            prefProgramGuide.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (settingsInterface != null) {
+                        settingsInterface.mainSettingsProgramGuide();
+                    }
+                    return false;
+                }
+            });
+        }
+
+        Preference prefMenuVisibility = findPreference("pref_menu_visibility");
+        if (prefMenuVisibility != null) {
+            prefMenuVisibility.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (settingsInterface != null) {
+                        settingsInterface.mainSettingsMenuVisibility();
+                    }
+                    return false;
+                }
+            });
+        }
+
+        Preference prefPlaybackPrograms = findPreference("pref_playback_programs");
+        if (prefPlaybackPrograms != null) {
+            prefPlaybackPrograms.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (settingsInterface != null) {
+                        settingsInterface.mainSettingsPlaybackPrograms();
+                    }
+                    return false;
+                }
+            });
+        }
+
+        Preference prefPlaybackRecordings = findPreference("pref_playback_recordings");
+        if (prefPlaybackRecordings != null) {
+            prefPlaybackRecordings.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (settingsInterface != null) {
+                        settingsInterface.mainSettingsPlaybackRecordings();
+                    }
+                    return false;
+                }
+            });
+        }
         
         // Add a listener to the connection preference so that the 
         // ChangeLogDialog with all changes can be shown.
         Preference prefChangelog = findPreference("pref_changelog");
-        prefChangelog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
-                cld.getFullLogDialog().show();
-                return false;
-            }
-        });
+        if (prefChangelog != null) {
+            prefChangelog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
+                    cld.getFullLogDialog().show();
+                    return false;
+                }
+            });
+        }
         
         // Add a listener to the clear search history preference so that it can be cleared.
         Preference prefClearSearchHistory = findPreference("pref_clear_search_history");
-        prefClearSearchHistory.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                // Show a confirmation dialog before deleting the recording
-                new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.clear_search_history)
-                .setMessage(getString(R.string.clear_search_history_sum))
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
-                        suggestions.clearHistory();
-                        Toast.makeText(getActivity(), getString(R.string.clear_search_history_done), Toast.LENGTH_SHORT).show();
-                    }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // NOP
-                    }
-                }).show();
-                return false;
-            }
-        });
+        if (prefClearSearchHistory != null) {
+            prefClearSearchHistory.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // Show a confirmation dialog before deleting the recording
+                    new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.clear_search_history)
+                    .setMessage(getString(R.string.clear_search_history_sum))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+                            suggestions.clearHistory();
+                            Toast.makeText(getActivity(), getString(R.string.clear_search_history_done), Toast.LENGTH_SHORT).show();
+                        }
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // NOP
+                        }
+                    }).show();
+                    return false;
+                }
+            });
+        }
 
         // Add a listener to the clear icon cache preference so that it can be cleared.
         Preference prefClearIconCache = findPreference("pref_clear_icon_cache");
-        prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                // Show a confirmation dialog before deleting the recording
-                new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.clear_icon_cache)
-                .setMessage(getString(R.string.clear_icon_cache_sum))
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        File[] files = activity.getCacheDir().listFiles();
-                        for (File file : files) {
-                            if (file.toString().endsWith(".png")) {
-                                file.delete();
-                                if (settingsInterface != null) {
-                                    settingsInterface.reconnect();
+        if (prefClearIconCache != null) {
+            prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // Show a confirmation dialog before deleting the recording
+                    new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.clear_icon_cache)
+                    .setMessage(getString(R.string.clear_icon_cache_sum))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            File[] files = activity.getCacheDir().listFiles();
+                            for (File file : files) {
+                                if (file.toString().endsWith(".png")) {
+                                    file.delete();
+                                    if (settingsInterface != null) {
+                                        settingsInterface.reconnect();
+                                    }
                                 }
                             }
+                            Toast.makeText(getActivity(), getString(R.string.clear_icon_cache_done), Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(getActivity(), getString(R.string.clear_icon_cache_done), Toast.LENGTH_SHORT).show();
-                    }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // NOP
-                    }
-                }).show();
-                return false;
-            }
-        });
+                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // NOP
+                        }
+                    }).show();
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;
-        }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.menu_settings), TAG);
         }
     }
 
@@ -142,7 +215,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onDetach() {
         settingsInterface = null;
-        actionBarInterface = null;
         super.onDetach();
     }
 

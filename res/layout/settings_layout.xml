@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_parent_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/main_toolbar"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+	    <FrameLayout
+	        android:id="@+id/settings_fragment"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" />
+
+	    <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/toolbar_dropshadow" />
+    </FrameLayout>
+</LinearLayout>
