@@ -9,6 +9,7 @@
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_genre_color_info"
-        android:title="@string/menu_genre_color_info"/>
+        android:title="@string/menu_genre_color_info"
+        app:showAsAction="ifRoom|withText"/>
 
 </menu>
