@@ -20,7 +20,6 @@ import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -35,7 +34,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -53,7 +51,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
+public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -828,34 +826,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 });
             }
         }
-    }
-
-    @Override
-    public void setActionBarTitle(final String title, final String tag) {
-//        if (actionBar != null) {
-//            actionBar.setTitle(title);
-//        }
-    }
-
-    @Override
-    public void setActionBarSubtitle(final String subtitle, final String tag) {
-//        if (actionBar != null) {
-//            actionBar.setSubtitle(subtitle);
-//        }
-    }
-
-    @Override
-    public void setActionBarIcon(final Bitmap bitmap, final String tag) {
-//        if (actionBar != null && bitmap != null) {
-//            actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
-//        }
-    }
-
-    @Override
-    public void setActionBarIcon(final int resource, final String tag) {
-//        if (actionBar != null) {
-//            actionBar.setIcon(resource);
-//        }
     }
 
     @Override
