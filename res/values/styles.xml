@@ -124,6 +124,7 @@
         <item name="MenuHeaderLayoutStyle">@drawable/menu_header_dark</item>
         <item name="menu_text_selector">@drawable/menu_text_selector_dark</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -161,6 +162,7 @@
         <item name="MenuHeaderLayoutStyle">@drawable/menu_header_light</item>
         <item name="menu_text_selector">@drawable/menu_text_selector_light</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
 </resources>
