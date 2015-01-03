@@ -205,19 +205,23 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             registerForContextMenu(listView);
         }
 
-        toolbar.setNavigationIcon(R.drawable.ic_launcher);
+        // The toolbar will not be available when the this fragment is used in
+        // the program guide.
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(R.drawable.ic_launcher);
 
-        // Set an OnMenuItemClickListener to handle menu item clicks
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onToolbarItemSelected(item);
-            }
-        });
+            // Set an OnMenuItemClickListener to handle menu item clicks
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
+                }
+            });
 
-        // Inflate a menu to be displayed in the toolbar
-        toolbar.inflateMenu(R.menu.channel_menu);
-        onPrepareToolbarMenu(toolbar.getMenu());
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.channel_menu);
+            onPrepareToolbarMenu(toolbar.getMenu());
+        }
     }
 
     /**
@@ -452,7 +456,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 public void run() {
                     boolean loading = (Boolean) obj;
                     if (loading) {
-                        toolbar.setSubtitle(R.string.loading);
+                        if (toolbar != null) {
+                            toolbar.setSubtitle(R.string.loading);
+                        }
                         adapter.clear();
                         adapter.notifyDataSetChanged();
                     } else {
