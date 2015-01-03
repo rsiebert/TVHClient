@@ -30,7 +30,6 @@ import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -44,14 +43,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +69,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private Activity activity;
     private FragmentStatusInterface fragmentStatusInterface;
     private FragmentScrollInterface fragmentScrollInterface;
-	private ActionBarInterface actionBarInterface;
 
     private ChannelListAdapter adapter;
     ArrayAdapter<ChannelTag> tagAdapter;
@@ -92,6 +91,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private boolean showOnlyChannels = false;
 
     private boolean isDualPane = false;
+
+    private Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -118,6 +119,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         View v = inflater.inflate(viewLayout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -131,9 +133,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
@@ -205,35 +204,53 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         if (!showOnlyChannels) {
             registerForContextMenu(listView);
         }
-        // Enable the action bar menu. Even in the channel only mode the tags
-        // shall be available to set
-        setHasOptionsMenu(true);
+
+        toolbar.setNavigationIcon(R.drawable.ic_launcher);
+
+        // Set an OnMenuItemClickListener to handle menu item clicks
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onToolbarItemSelected(item);
+            }
+        });
+
+        // Inflate a menu to be displayed in the toolbar
+        toolbar.inflateMenu(R.menu.channel_menu);
+        onPrepareToolbarMenu(toolbar.getMenu());
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    /**
+     * 
+     * @param menu
+     */
+    private void onPrepareToolbarMenu(Menu menu) {
         // Hide the genre color menu in dual pane mode or if no genre colors
         // shall be shown or only channels shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsChannelsPref", false);
-        (menu.findItem(R.id.menu_genre_color_info_channels)).setVisible(!showOnlyChannels && showGenreColors);
+        (menu.findItem(R.id.menu_genre_color_info_channels)).setVisible(!showOnlyChannels && showGenreColors && !isDualPane);
 
-        // Playing a channel shall not be available in channel only mode or in
-        // single pane mode, because no channel is preselected.
-        if (!showOnlyChannels || !isDualPane) {
+        // Do not show the genre color, play, search or refresh button in dual
+        // pane mode or when only the channels are shown
+        if (showOnlyChannels || isDualPane) {
             (menu.findItem(R.id.menu_play)).setVisible(false);
+            (menu.findItem(R.id.menu_search)).setVisible(false);
+            (menu.findItem(R.id.menu_refresh)).setVisible(false);
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.channel_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    /**
+     * 
+     * @param item
+     * @return
+     */
+    private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case R.id.menu_search:
+            activity.onSearchRequested();
+            return true;
+
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
             Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
@@ -250,6 +267,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_genre_color_info_channels:
             Utils.showGenreColorDialog(activity);
+            return true;
+
+        case R.id.menu_refresh:
+            fragmentStatusInterface.reloadData(TAG);
             return true;
 
         default:
@@ -379,16 +400,16 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Inform the activity to show the currently visible number of the
         // channels that are in the selected channel tag and that the channel
         // list has been filled with data.
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items), TAG);
+        if (toolbar != null) {
+            toolbar.setTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items));
             // If activated show the the channel tag icon
             if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
                     && currentTag != null 
                     && currentTag.id != 0) {
-                actionBarInterface.setActionBarIcon(currentTag.iconBitmap, TAG);
+                toolbar.setNavigationIcon(new BitmapDrawable(getResources(), currentTag.iconBitmap));
             } else {
-                actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
+                toolbar.setNavigationIcon(R.drawable.ic_launcher);
             }
         }
         if (fragmentStatusInterface != null) {
@@ -417,7 +438,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void onDetach() {
         fragmentStatusInterface = null;
         fragmentScrollInterface = null;
-        actionBarInterface = null;
         super.onDetach();
     }
 
@@ -432,6 +452,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 public void run() {
                     boolean loading = (Boolean) obj;
                     if (loading) {
+                        toolbar.setSubtitle(R.string.loading);
                         adapter.clear();
                         adapter.notifyDataSetChanged();
                     } else {

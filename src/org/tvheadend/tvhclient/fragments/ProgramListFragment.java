@@ -31,7 +31,6 @@ import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -42,14 +41,15 @@ import org.tvheadend.tvhclient.model.Recording;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +64,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private final static String TAG = ProgramListFragment.class.getSimpleName();
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
     private FragmentStatusInterface fragmentStatusInterface;
 
     private ProgramListAdapter adapter;
@@ -73,6 +72,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private Channel channel;
     private boolean isDualPane = false;
     private boolean allowLoading = false;
+
+    private Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,6 +93,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -105,9 +107,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
@@ -131,8 +130,22 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         adapter = new ProgramListAdapter(activity, list);
         listView.setAdapter(adapter);
 
-        setHasOptionsMenu(true);
         registerForContextMenu(listView);
+        
+        // Set the toolbar options
+        if (!isDualPane) {
+            toolbar.setNavigationIcon(R.drawable.ic_launcher);
+        }
+        // Set an OnMenuItemClickListener to handle menu item clicks
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onToolbarItemSelected(item);
+            }
+        });
+        // Inflate a menu to be displayed in the toolbar
+        toolbar.inflateMenu(R.menu.program_menu);
+        onPrepareToolbarMenu(toolbar.getMenu());
     }
 
     /**
@@ -156,6 +169,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     if (fragmentStatusInterface != null) {
                         allowLoading = false;
                         if (fragmentStatusInterface != null) {
+                            toolbar.setSubtitle(R.string.loading);
                             fragmentStatusInterface.moreDataRequired(channel, TAG);
                         }
                     }
@@ -191,14 +205,14 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         // Inform the activity to show the currently visible number of the
         // programs and that the program list has been filled with data.
-        if (actionBarInterface != null && channel != null) {
-            actionBarInterface.setActionBarTitle(channel.name, TAG);
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
+        if (toolbar != null && channel != null) {
+            toolbar.setTitle(channel.name);
+            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.programs));
             if (!isDualPane) {
                 if (Utils.showChannelIcons(activity)) {
-                    actionBarInterface.setActionBarIcon(channel.iconBitmap, TAG);
+                    toolbar.setNavigationIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
                 } else {
-                    actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
+                    toolbar.setNavigationIcon(R.drawable.ic_launcher);
                 }
             }
         }
@@ -219,7 +233,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onDetach() {
         fragmentStatusInterface = null;
-        actionBarInterface = null;
         super.onDetach();
     }
 
@@ -302,8 +315,11 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         }
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    /**
+     * 
+     * @param menu
+     */
+    private void onPrepareToolbarMenu(Menu menu) {
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsProgramsPref", false);
@@ -311,15 +327,17 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         (menu.findItem(R.id.menu_play)).setVisible(!isDualPane);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.program_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    /**
+     * 
+     * @param item
+     * @return
+     */
+    private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case R.id.menu_search:
+            activity.onSearchRequested();
+            return true;
+
         case R.id.menu_play:
             // Open a new activity that starts playing the first program that is
             // currently transmitted over this channel 
@@ -332,6 +350,10 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_genre_color_info_programs:
             Utils.showGenreColorDialog(activity);
+            return true;
+
+        case R.id.menu_refresh:
+            fragmentStatusInterface.reloadData(TAG);
             return true;
 
         default:
@@ -365,8 +387,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                         adapter.add(p);
                         adapter.notifyDataSetChanged();
                         adapter.sort();
-                        if (actionBarInterface != null) {
-                            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
+                        if (toolbar != null) {
+                            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.programs));
                         }
                     }
                 }
@@ -376,8 +398,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 public void run() {
                     adapter.remove((Program) obj);
                     adapter.notifyDataSetChanged();
-                    if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
+                    if (toolbar != null) {
+                        toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.programs));
                     }
                 }
             });

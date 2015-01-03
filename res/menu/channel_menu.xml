@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
-
+    <item
+        android:id="@+id/menu_search"
+        android:icon="?attr/ic_menu_search"
+        android:orderInCategory="1"
+        android:title="@android:string/search_go"
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_play"
         android:icon="?attr/ic_menu_play"
@@ -18,5 +23,9 @@
         android:id="@+id/menu_genre_color_info_channels"
         android:orderInCategory="6"
         android:title="@string/menu_genre_color_info"/>
-
+    <item
+        android:id="@+id/menu_refresh"
+        android:icon="?attr/ic_menu_refresh"
+        android:orderInCategory="10"
+        android:title="@string/menu_refresh"/>
 </menu>
