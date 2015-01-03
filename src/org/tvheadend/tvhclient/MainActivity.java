@@ -615,11 +615,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             break;
 
         case MENU_CONNECTIONS:
-            // Show the connections
+            // Show the connection settings
             menuPosition = defaultMenuPosition;
-            Intent connIntent = new Intent(this, SettingsActivity.class);
-            connIntent.putExtra(Constants.BUNDLE_MANAGE_CONNECTIONS, true);
-            startActivityForResult(connIntent, Constants.RESULT_CODE_SETTINGS);
+            Intent settingsConnectionsIntent = new Intent(this, SettingsShowConnectionsActivity.class);
+            startActivityForResult(settingsConnectionsIntent, Constants.RESULT_CODE_SETTINGS);
             break;
         }
     }
