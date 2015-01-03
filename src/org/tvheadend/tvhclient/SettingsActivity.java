@@ -19,8 +19,6 @@
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.fragments.SettingsFragment;
-import org.tvheadend.tvhclient.fragments.SettingsManageConnectionFragment;
-import org.tvheadend.tvhclient.fragments.SettingsShowConnectionsFragment;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import android.content.Intent;
@@ -29,7 +27,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
 public class SettingsActivity extends ActionBarActivity implements SettingsInterface {
 
@@ -41,17 +38,9 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
 
     private static boolean restart = false;
     private static boolean reconnect = false;
-    private boolean manageConnections = false;
 
     private final static int MAIN_SETTINGS = 1;
-    private final static int MANAGE_CONNECTIONS = 2;
-    private final static int EDIT_CONNECTION = 3;
-    private final static int ADD_CONNECTION = 4;
-    private final static int MAIN_SETTINGS_GENRE_COLORS = 5;
-    private final static int MAIN_SETTINGS_PROGRAM_GUIDE = 6;
-    private final static int MAIN_SETTINGS_MENU_VISIBILITY = 7;
-    private final static int MAIN_SETTINGS_PLAYBACK_PROGRAMS = 8;
-    private final static int MAIN_SETTINGS_PLAYBACK_RECORDINGS = 9;
+    private final static int MAIN_SETTINGS_OTHERS = 2;
 
     private int currentSettingsMode = MAIN_SETTINGS;
 
@@ -86,19 +75,7 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
         // again.
         fragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.settings_fragment);
         if (fragment == null) {
-            // Get the information if the connection fragment shall be shown.
-            // This is the case when the user has selected the connection menu
-            // from the navigation drawer.
-            Bundle bundle = getIntent().getExtras();
-            if (bundle != null) {
-                manageConnections = bundle.getBoolean(Constants.BUNDLE_MANAGE_CONNECTIONS, false);
-            }
-            // Now show the manage connection or the general settings fragment
-            if (manageConnections) {
-                manageConnections();
-            } else {
-                mainSettings();
-            }
+            mainSettings();
         } else {
             // Show the available fragment
             getSupportFragmentManager().beginTransaction()
@@ -107,38 +84,14 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
                     .commit();
         }
     }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            onBackPressed();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     public void onBackPressed() {
         // Depending on the current mode either show the previous settings
         // screen or exit the settings.
         if (currentSettingsMode == MAIN_SETTINGS) {
-            restartNow();
-        } else if (currentSettingsMode == MANAGE_CONNECTIONS) {
-            if (manageConnections) {
-                restartNow();
-            } else {
-                mainSettings();
-            }
-        } else if (currentSettingsMode == ADD_CONNECTION 
-                || currentSettingsMode == EDIT_CONNECTION) {
-            manageConnections();
-        } else if (currentSettingsMode == MAIN_SETTINGS_GENRE_COLORS || 
-                currentSettingsMode == MAIN_SETTINGS_PROGRAM_GUIDE ||
-                currentSettingsMode == MAIN_SETTINGS_MENU_VISIBILITY ||
-                currentSettingsMode == MAIN_SETTINGS_PLAYBACK_PROGRAMS ||
-                currentSettingsMode == MAIN_SETTINGS_PLAYBACK_RECORDINGS) {
+            restartActivity();
+        } else {
             mainSettings();
         }
     }
@@ -154,7 +107,7 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
     }
 
     @Override
-    public void restartNow() {
+    public void restartActivity() {
         Intent intent = getIntent();
         intent.putExtra(Constants.BUNDLE_RESTART, restart);
         intent.putExtra(Constants.BUNDLE_RECONNECT, reconnect);
@@ -162,10 +115,13 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
         finish();
     }
 
+    /**
+     * 
+     */
     private void mainSettings() {
         currentSettingsMode = MAIN_SETTINGS;
-        removePreviousFragment();
 
+        removePreviousFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.settings_fragment, new SettingsFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -174,38 +130,11 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
 
     @Override
     public void manageConnections() {
-        currentSettingsMode = MANAGE_CONNECTIONS;
+        currentSettingsMode = MAIN_SETTINGS_OTHERS;
+
         removePreviousFragment();
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, new SettingsShowConnectionsFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-    }
-
-    @Override
-    public void addConnection() {
-        currentSettingsMode = ADD_CONNECTION;
-        removePreviousFragment();
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, new SettingsManageConnectionFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-    }
-
-    @Override
-    public void editConnection(long id) {
-        currentSettingsMode = EDIT_CONNECTION;
-        removePreviousFragment();
-
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constants.BUNDLE_CONNECTION_ID, id);
-        Fragment f = Fragment.instantiate(this, SettingsManageConnectionFragment.class.getName());
-        f.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.settings_fragment, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+        Intent settingsIntent = new Intent(this, SettingsShowConnectionsActivity.class);
+        startActivity(settingsIntent);
     }
 
     /**
@@ -220,79 +149,15 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
     }
 
     @Override
-    public void mainSettingsGenreColors() {
-        currentSettingsMode = MAIN_SETTINGS_GENRE_COLORS;
-        removePreviousFragment();
+    public void showPreference(int pref) {
+        currentSettingsMode = MAIN_SETTINGS_OTHERS;
 
         Fragment f = Fragment.instantiate(this, SettingsFragment.class.getName());
         Bundle bundle = new Bundle();
-        bundle.putInt(Constants.BUNDLE_SETTINGS_PREFS, R.xml.preferences_genre_colors);
+        bundle.putInt(Constants.BUNDLE_SETTINGS_PREFS, pref);
         f.setArguments(bundle);
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-    }
-
-    @Override
-    public void mainSettingsProgramGuide() {
-        currentSettingsMode = MAIN_SETTINGS_PROGRAM_GUIDE;
         removePreviousFragment();
-
-        Fragment f = Fragment.instantiate(this, SettingsFragment.class.getName());
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constants.BUNDLE_SETTINGS_PREFS, R.xml.preferences_program_guide);
-        f.setArguments(bundle);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-    }
-
-    @Override
-    public void mainSettingsMenuVisibility() {
-        currentSettingsMode = MAIN_SETTINGS_MENU_VISIBILITY;
-        removePreviousFragment();
-
-        Fragment f = Fragment.instantiate(this, SettingsFragment.class.getName());
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constants.BUNDLE_SETTINGS_PREFS, R.xml.preferences_menu_visibility);
-        f.setArguments(bundle);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-    }
-
-    @Override
-    public void mainSettingsPlaybackPrograms() {
-        currentSettingsMode = MAIN_SETTINGS_PLAYBACK_PROGRAMS;
-        removePreviousFragment();
-
-        Fragment f = Fragment.instantiate(this, SettingsFragment.class.getName());
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constants.BUNDLE_SETTINGS_PREFS, R.xml.preferences_playback_programs);
-        f.setArguments(bundle);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-    }
-
-    @Override
-    public void mainSettingsPlaybackRecordings() {
-        currentSettingsMode = MAIN_SETTINGS_PLAYBACK_RECORDINGS;
-        removePreviousFragment();
-
-        Fragment f = Fragment.instantiate(this, SettingsFragment.class.getName());
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constants.BUNDLE_SETTINGS_PREFS, R.xml.preferences_playback_recordings);
-        f.setArguments(bundle);
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.settings_fragment, f)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

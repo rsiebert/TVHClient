@@ -2,13 +2,12 @@ package org.tvheadend.tvhclient.fragments;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,21 +18,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Patterns;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 public class SettingsManageConnectionFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsManageConnectionFragment.class.getSimpleName();
     
-    private ActionBarActivity activity;
-    private ActionBarInterface actionBarInterface;
-    private SettingsInterface settingsInterface;
+    private Activity activity;
     
     // Preference widgets
     private EditTextPreference prefName;
@@ -67,7 +63,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     
     Connection conn = null;
     private boolean connectionChanged;
-    
+
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,35 +82,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefWolAddress = (EditTextPreference) findPreference("pref_wol_address");
         prefWolPort = (EditTextPreference) findPreference("pref_wol_port");
         prefWolBroadcast = (CheckBoxPreference) findPreference("pref_wol_broadcast");
-    }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
-    }
-
-    @Override
-    public void onDetach() {
-        actionBarInterface = null;
-        settingsInterface = null;
-        super.onDetach();
-    }
-    
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
-        }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.add_connection), TAG);
-        }
-        
         // Initially the connection has no been changed
         connectionChanged = false;
 
@@ -122,7 +90,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         // the first time. If the state is not null then the screen has
         // been rotated and we have to reuse the values.
         if (savedInstanceState == null) {
-            
             // Check if an id has been passed
             long connId = 0;
             Bundle bundle = getArguments();
@@ -138,7 +105,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 setPreferenceDefaults();
             }
         } else {
-
             // Get the connection id and the object
             conn = new Connection();
             conn.id = savedInstanceState.getLong(CONNECTION_ID);
@@ -153,9 +119,14 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             conn.wol_broadcast = savedInstanceState.getBoolean(CONNECTION_WOL_BROADCAST);
             connectionChanged = savedInstanceState.getBoolean(CONNECTION_CHANGED);
         }
-        setHasOptionsMenu(true);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (FragmentActivity) activity;
+    }
+    
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putLong(CONNECTION_ID, conn.id);
@@ -246,33 +217,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 getString(R.string.pref_wol_address_sum) : conn.wol_address);
         prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, conn.wol_port));
     }
-    
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.preference_edit_connection, menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            cancel();
-            return true;
-
-        case R.id.menu_save:
-            save();
-            return true;
-
-        case R.id.menu_cancel:
-            cancel();
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
-    
     @Override
     public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
         connectionChanged = true;
@@ -301,10 +246,11 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      */
     public void cancel() {
         // Do not show the cancel dialog if nothing has changed
-        if (!connectionChanged) {
-            settingsInterface.manageConnections();
+        if (connectionChanged) {
+            activity.finish();
             return;
         }
+        
         // Show confirmation dialog to cancel
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(getString(R.string.cancel_connection));
@@ -316,9 +262,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             public void onClick(DialogInterface dialog, int id) {
                 // Delete the connection so that we start fresh when
                 // the settings activity is called again.
-                if (settingsInterface != null) {
-                    settingsInterface.manageConnections();
-                }
+                activity.finish();
             }
         });
         // Define the action of the no button
@@ -337,12 +281,13 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * values will be saved as a new connection or the existing will be
      * updated.
      */
-    private void save() {
+    public void save() {
         if (conn == null 
                 || !validateName() 
                 || !validatePort() 
                 || !validateIpAddress()
                 || !validateMacAddress()) {
+            activity.finish();
             return;
         }
         
@@ -366,10 +311,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         // Nullify the connection so that we start fresh when
         // the settings activity is called again.
         conn = null;
-        if (settingsInterface != null) {
-            settingsInterface.reconnect();
-            settingsInterface.manageConnections();
-        }
+        activity.finish();
     }
     
     /**
@@ -390,7 +332,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
         Matcher matcher = pattern.matcher(conn.wol_address);
         if (!matcher.matches()) {
-            Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, getString(R.string.pref_wol_address_invalid), Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -409,7 +351,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         // Do not allow an empty address
         if (conn.name.length() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.pref_name_error_empty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.pref_name_error_empty), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -417,7 +359,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
         Matcher matcher = pattern.matcher(conn.name);
         if (!matcher.matches()) {
-            Toast.makeText(getActivity(), getString(R.string.pref_name_error_invalid), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.pref_name_error_invalid), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -438,7 +380,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         // Do not allow an empty address
         if (conn.address.length() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.pref_host_error_empty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.pref_host_error_empty), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -446,7 +388,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
         Matcher matcher = pattern.matcher(conn.address);
         if (!matcher.matches()) {
-            Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -459,7 +401,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             pattern = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) ? Patterns.IP_ADDRESS : Pattern.compile(IP_ADDRESS);
             matcher = pattern.matcher(conn.address);
             if (!matcher.matches()) {
-                Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -475,12 +417,12 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private boolean validatePort() {
         if (prefPort.getText().length() == 0 || 
                 prefStreamingPort.getText().length() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.pref_port_error_empty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.pref_port_error_empty), Toast.LENGTH_SHORT).show();
             return false;
         }
         if ((conn.port <= 0 || conn.port > 65535) ||
                 (conn.streaming_port <= 0 || conn.streaming_port > 65535)) {
-            Toast.makeText(getActivity(), getString(R.string.pref_port_error_invalid), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.pref_port_error_invalid), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

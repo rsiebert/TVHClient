@@ -44,8 +44,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         PreferenceManager.setDefaultValues(getActivity(), prefs, false);
         addPreferencesFromResource(prefs);
 
-        // Add a listener to the connection preference so that the 
-        // SettingsManageConnectionsActivity can be shown.
+        // Add the listeners to the each preference
         Preference prefManage = findPreference("pref_manage_connections");
         if (prefManage != null) {
             prefManage.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -54,7 +53,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                     if (settingsInterface != null) {
                         settingsInterface.manageConnections();
                     }
-                    return false;
+                    return true;
                 }
             });
         }
@@ -65,9 +64,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (settingsInterface != null) {
-                        settingsInterface.mainSettingsGenreColors();
+                        settingsInterface.showPreference(R.xml.preferences_genre_colors);
                     }
-                    return false;
+                    return true;
                 }
             });
         }
@@ -78,9 +77,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (settingsInterface != null) {
-                        settingsInterface.mainSettingsProgramGuide();
+                        settingsInterface.showPreference(R.xml.preferences_program_guide);
                     }
-                    return false;
+                    return true;
                 }
             });
         }
@@ -91,9 +90,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (settingsInterface != null) {
-                        settingsInterface.mainSettingsMenuVisibility();
+                        settingsInterface.showPreference(R.xml.preferences_menu_visibility);
                     }
-                    return false;
+                    return true;
                 }
             });
         }
@@ -104,9 +103,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (settingsInterface != null) {
-                        settingsInterface.mainSettingsPlaybackPrograms();
+                        settingsInterface.showPreference(R.xml.preferences_playback_programs);
                     }
-                    return false;
+                    return true;
                 }
             });
         }
@@ -117,9 +116,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (settingsInterface != null) {
-                        settingsInterface.mainSettingsPlaybackRecordings();
+                        settingsInterface.showPreference(R.xml.preferences_playback_recordings);
                     }
-                    return false;
+                    return true;
                 }
             });
         }
@@ -133,7 +132,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 public boolean onPreferenceClick(Preference preference) {
                     final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
                     cld.getFullLogDialog().show();
-                    return false;
+                    return true;
                 }
             });
         }
@@ -241,7 +240,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 || key.equals("languagePref")) {
             if (settingsInterface != null) {
                 settingsInterface.restart();
-                settingsInterface.restartNow();
+                settingsInterface.restartActivity();
             }
         } else if (key.equals("epgMaxDays") 
                 || key.equals("epgHoursVisible")) {

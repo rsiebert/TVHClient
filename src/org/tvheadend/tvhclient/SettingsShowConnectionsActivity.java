@@ -1,86 +1,49 @@
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.WakeOnLanTask;
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
-import android.view.LayoutInflater;
+import android.support.v7.widget.Toolbar;
+import android.view.ActionMode.Callback;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
+public class SettingsShowConnectionsActivity extends ActionBarActivity implements Callback {
 
-    private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();
-    
-    private ActionBarActivity activity;
-    private ActionBarInterface actionBarInterface;
-    private SettingsInterface settingsInterface;
+    @SuppressWarnings("unused")
+    private final static String TAG = SettingsShowConnectionsActivity.class.getSimpleName();
     
     private ConnectionListAdapter adapter;
     private ListView listView;
     private List<Connection> connList;
-    private ActionMode actionMode;
-    
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
-        if (container == null) {
-            return null;
-        }
-     
-        View v = inflater.inflate(R.layout.list_layout, container, false);
-        listView = (ListView) v.findViewById(R.id.item_list);
-        return v;
-    }
-    
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
-    }
+    private android.view.ActionMode actionMode;
+    private Toolbar toolbar = null;
+    private boolean reconnect = false;
 
-    @Override
-    public void onDetach() {
-        actionBarInterface = null;
-        settingsInterface = null;
-        super.onDetach();
-    }
     
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
-        }
-        
+    public void onCreate(Bundle savedInstanceState) {
+        setTheme(Utils.getThemeId(this));
+        super.onCreate(savedInstanceState);
+        Utils.setLanguage(this);
+        setContentView(R.layout.list_layout);
+
         connList = new ArrayList<Connection>();
-        adapter = new ConnectionListAdapter(activity, connList);
+        adapter = new ConnectionListAdapter(this, connList);
+        listView = (ListView) findViewById(R.id.item_list);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         
@@ -101,18 +64,37 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                 return;
             }
         });
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                addConnection();
+                return true;
+            }
+        });
+        toolbar.inflateMenu(R.menu.preference_connections);
+        toolbar.setTitle(R.string.menu_connections);
         
-        setHasOptionsMenu(true);
+        // TODO add home button
     }
 
     private void startActionMode() {
-        actionMode = activity.startSupportActionMode(this);
+        actionMode = toolbar.startActionMode(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         showConnections();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = getIntent();
+        intent.putExtra(Constants.BUNDLE_RECONNECT, reconnect);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     /**
@@ -128,28 +110,14 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         }
         adapter.sort();
         adapter.notifyDataSetChanged();
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
-        }
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.preference_connections, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.menu_add:
-            if (settingsInterface != null) {
-                settingsInterface.addConnection();
-            }
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
+    /**
+     * 
+     */
+    private void addConnection() {
+        Intent i = new Intent(this, SettingsManageConnectionActivity.class);
+        startActivityForResult(i, Constants.RESULT_CODE_SETTINGS);
     }
 
     /**
@@ -159,10 +127,6 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
      * @param c
      */
     private void setConnectionActive(Connection c) {
-        if (settingsInterface != null) {
-            settingsInterface.reconnect();
-        }
-
         // Switch the selection status
         c.selected = (c.selected) ? false : true;
         if (c.selected) {
@@ -178,24 +142,20 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     }
 
     @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+    public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
         // Get the currently selected program from the list
         int position = listView.getCheckedItemPosition();
         final Connection c = adapter.getItem(position);
         
         switch (item.getItemId()) {
         case R.id.menu_set_active:
-            if (!c.selected && settingsInterface != null) {
-                settingsInterface.reconnect();
-            }
+            reconnect = true;
             setConnectionActive(c);
             mode.finish();
             return true;
 
         case R.id.menu_set_not_active:
-            if (c.selected && settingsInterface != null) {
-                settingsInterface.reconnect();
-            }
+            reconnect = true;
             c.selected = false;
             DatabaseHelper.getInstance().updateConnection(c);
             showConnections();
@@ -203,15 +163,15 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             return true;
 
         case R.id.menu_edit:
-            if (settingsInterface != null) {
-                settingsInterface.editConnection(c.id);
-            }
+            Intent intent = new Intent(this, SettingsManageConnectionActivity.class);
+            intent.putExtra(Constants.BUNDLE_CONNECTION_ID, c.id);
+            startActivityForResult(intent, Constants.RESULT_CODE_SETTINGS);
             mode.finish();
             return true;
 
         case R.id.menu_send_wol:
             if (c != null) {
-                WakeOnLanTask task= new WakeOnLanTask(activity, c);
+                WakeOnLanTask task= new WakeOnLanTask(this, c);
                 task.execute();
             }
             mode.finish();
@@ -219,7 +179,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
 
         case R.id.menu_delete:
             // Show confirmation dialog to cancel 
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(getString(R.string.delete_connection, c.name));
             builder.setTitle(getString(R.string.menu_delete));
             // Define the action of the yes button
@@ -229,12 +189,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                         adapter.remove(c);
                         adapter.notifyDataSetChanged();
                         adapter.sort();
-                        if (actionBarInterface != null) {
-                            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
-                        }
-                        if (settingsInterface != null) {
-                            settingsInterface.reconnect();
-                        }
+                        reconnect = true;
                     }
                 }
             });
@@ -255,7 +210,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     }
 
     @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+    public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
         // Inflate a menu resource providing context menu items
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.connection_menu, menu);
@@ -263,12 +218,12 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     }
 
     @Override
-    public void onDestroyActionMode(ActionMode mode) {
+    public void onDestroyActionMode(android.view.ActionMode mode) {
         actionMode = null;
     }
 
     @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+    public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
         // Get the currently selected program from the list
         int position = listView.getCheckedItemPosition();
         final Connection c = adapter.getItem(position);
