@@ -25,7 +25,6 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
@@ -34,6 +33,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +45,6 @@ public class StatusFragment extends Fragment implements HTSListener {
     private final static String TAG = StatusFragment.class.getSimpleName();
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
 
     private TextView connection;
     private TextView status;
@@ -66,6 +65,8 @@ public class StatusFragment extends Fragment implements HTSListener {
     private String connectionStatus = "";
     private String freeDiscSpace = "";
     private String totalDiscSpace = "";
+
+    private Toolbar toolbar;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,6 +98,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
         seriesRecLabel = (TextView) v.findViewById(R.id.series_recording_label);
         seriesRec = (TextView) v.findViewById(R.id.series_recordings);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -109,12 +111,8 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.status);
         }
     }
 
@@ -141,12 +139,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
         app.removeListener(this);
-    }
-
-    @Override
-    public void onDetach() {
-        actionBarInterface = null;
-        super.onDetach();
     }
 
 	@Override
@@ -178,9 +170,9 @@ public class StatusFragment extends Fragment implements HTSListener {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
-                    if (actionBarInterface != null) {
+                    if (toolbar != null) {
                         final String updating = (loading ? getString(R.string.updating) : "");
-                        actionBarInterface.setActionBarSubtitle(updating, TAG);
+                        toolbar.setSubtitle(updating);
                     }
 
                     if (loading) {
