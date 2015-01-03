@@ -630,7 +630,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // Show the channel list fragment. In this case it shall not be used
             // in the program guide, so pass over that information
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
-            showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, null);
+            showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_COMPLETED_RECORDINGS:
