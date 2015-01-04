@@ -238,7 +238,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Do not show the genre color, play, search or refresh button in dual
         // pane mode or when only the channels are shown
         if (showOnlyChannels || isDualPane) {
-            (menu.findItem(R.id.menu_play)).setVisible(false);
             (menu.findItem(R.id.menu_search)).setVisible(false);
             (menu.findItem(R.id.menu_refresh)).setVisible(false);
         }
@@ -253,16 +252,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         switch (item.getItemId()) {
         case R.id.menu_search:
             activity.onSearchRequested();
-            return true;
-
-        case R.id.menu_play:
-            // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-            Channel channel = adapter.getSelectedItem();
-            if (channel != null) {
-                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
-            }
-            startActivity(intent);
             return true;
 
         case R.id.menu_tags:
