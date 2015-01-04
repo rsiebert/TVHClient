@@ -124,8 +124,18 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             }
         });
 
-        setHasOptionsMenu(true);
         registerForContextMenu(listView);
+
+        // Set an OnMenuItemClickListener to handle menu item clicks
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onToolbarItemSelected(item);
+            }
+        });
+        // Inflate a menu to be displayed in the toolbar
+        toolbar.inflateMenu(R.menu.recording_menu);
+        onPrepareToolbarMenu(toolbar.getMenu());
     }
 
     @Override
@@ -151,8 +161,11 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         app.removeListener(this);
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    /**
+     * 
+     * @param menu
+     */
+    private void onPrepareToolbarMenu(Menu menu) {
         // Only show the cancel recording menu when in dual pane mode. Only
         // there a recording is preselected. In single mode the first recording
         // would always be preselected. 
@@ -184,12 +197,14 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Show the newest scheduled recordings first 
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
-        
-        // Shows the currently visible number of recordings of the type  
+
         if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.recordings));
-            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.upcoming_recordings));
-            toolbar.setNavigationIcon(R.drawable.ic_launcher);
+            toolbar.setTitle(getString(R.string.series_recordings));
+            if (adapter.getCount() > 0) {
+                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items_available));
+            } else {
+                toolbar.setSubtitle(R.string.no_recordings_scheduled);
+            }
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
@@ -198,8 +213,12 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    /**
+     * 
+     * @param item
+     * @return
+     */
+    private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, null, adapter.getSelectedItem());
