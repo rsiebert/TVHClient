@@ -6,6 +6,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 
@@ -38,7 +39,16 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        onPrepareToolbarMenu(toolbar.getMenu());
+    }
+
+    /**
+     * 
+     * @param menu
+     */
+    private void onPrepareToolbarMenu(Menu menu) {
         // Do not show the remove menu in single pane mode. No recording is
         // preselected so the behavior is undefined. In dual pane mode one
         // recording is also selected which is fine.

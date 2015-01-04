@@ -44,8 +44,6 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -130,8 +128,25 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             }
         });
 
-        setHasOptionsMenu(true);
         registerForContextMenu(listView);
+        
+        // The toolbar will not be available when the this fragment is used in
+        // the program guide.
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(R.drawable.ic_launcher);
+
+            // Set an OnMenuItemClickListener to handle menu item clicks
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
+                }
+            });
+
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.recording_menu);
+//            Utils.setRecordingMenuIcons(activity, toolbar.getMenu());
+        }
     }
 
     @Override
@@ -140,8 +155,12 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         super.onDetach();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    /**
+     * 
+     * @param item
+     * @return
+     */
+    private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_play:
             // Open a new activity that starts playing the selected recording
@@ -196,7 +215,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         default:
-            return super.onOptionsItemSelected(item);
+            return false;
         }
     }
 
@@ -236,13 +255,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 }
             }
         }.start();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_menu, menu);
-        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override

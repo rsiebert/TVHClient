@@ -6,6 +6,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 
@@ -38,7 +39,16 @@ public class FailedRecordingListFragment extends RecordingListFragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        onPrepareToolbarMenu(toolbar.getMenu());
+    }
+
+    /**
+     * 
+     * @param menu
+     */
+    private void onPrepareToolbarMenu(Menu menu) {
         // Only show the cancel recording menu when in dual pane mode. Only
         // there a recording is preselected. In single mode the first recording
         // would always be preselected. 
