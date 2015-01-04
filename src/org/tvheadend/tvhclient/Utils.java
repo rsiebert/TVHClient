@@ -324,6 +324,36 @@ public class Utils {
     }
 
     /**
+     * 
+     * @param context
+     * @param configName
+     * @param channel
+     * @param title
+     * @param start
+     * @param stop
+     * @param startExtra
+     * @param stopExtra
+     */
+    public static void recordManualSchedule(final Context context, final String configName,
+            final Channel channel, final String title, final String start, final String stop,
+            final String startExtra, final String stopExtra) {
+
+        if (channel == null) {
+            return;
+        }
+        Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+        intent.putExtra("configName", configName);
+        intent.putExtra("channelId", channel.id);
+        intent.putExtra("title", title);
+        intent.putExtra("start", start);
+        intent.putExtra("stop", stop);
+        intent.putExtra("startExtra", startExtra);
+        intent.putExtra("stopExtra", stopExtra);
+        context.startService(intent);
+    }
+
+    /**
      * Shows or hides certain items from the program menu. This depends on the
      * current state of the program.
      *
