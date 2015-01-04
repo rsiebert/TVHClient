@@ -99,17 +99,15 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
-        // If the recording is null exit
-        if (srec == null) {
-            return;
-        }
-        if (getDialog() != null) {
-            getDialog().setTitle(srec.title);
-        }
 
-        Utils.setDescription(channelLabel, channelName, ((srec.channel != null) ? srec.channel.name : ""));
-        Utils.setDescription(descLabel, desc, srec.description);
+        if (srec != null) {
+            if (getDialog() != null) {
+                getDialog().setTitle(srec.title);
+            }
+    
+            Utils.setDescription(channelLabel, channelName, ((srec.channel != null) ? srec.channel.name : ""));
+            Utils.setDescription(descLabel, desc, srec.description);
+        }
 
         if (toolbar != null) {
             // Set an OnMenuItemClickListener to handle menu item clicks
@@ -130,7 +128,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
      * @param menu
      */
     private void onPrepareToolbarMenu(Menu menu) {
-        (menu.findItem(R.id.menu_play)).setVisible(true);
+        (menu.findItem(R.id.menu_play)).setVisible(srec != null);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
     }
 

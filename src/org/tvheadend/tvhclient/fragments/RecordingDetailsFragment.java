@@ -46,7 +46,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
     private Activity activity;
-    private boolean showControls = false;
+    private boolean isDualPane = false;
     private Recording rec;
 
     private TextView summaryLabel;
@@ -90,7 +90,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         Bundle bundle = getArguments();
         if (bundle != null) {
             recId = bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+            isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
         // Get the recording so we can show its details 
@@ -118,32 +118,29 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
-        // If the recording is null exit
-        if (rec == null) {
-            return;
-        }
 
-        if (getDialog() != null) {
-            getDialog().setTitle(rec.title);
-        }
+        if (rec != null) {
+            if (getDialog() != null) {
+                getDialog().setTitle(rec.title);
+            }
 
-        Utils.setDate(date, rec.start);
-        Utils.setTime(time, rec.start, rec.stop);
-        Utils.setDuration(duration, rec.start, rec.stop);
-        Utils.setProgressText(null, rec.start, rec.stop);
-        Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
-        Utils.setDescription(summaryLabel, summary, rec.summary);
-        Utils.setDescription(descLabel, desc, rec.description);
-        Utils.setFailedReason(failed_reason, rec);
+            Utils.setDate(date, rec.start);
+            Utils.setTime(time, rec.start, rec.stop);
+            Utils.setDuration(duration, rec.start, rec.stop);
+            Utils.setProgressText(null, rec.start, rec.stop);
+            Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
+            Utils.setDescription(summaryLabel, summary, rec.summary);
+            Utils.setDescription(descLabel, desc, rec.description);
+            Utils.setFailedReason(failed_reason, rec);
 
-        // Show the information if the recording belongs to a series recording
-        // only when no dual pane is active (the controls shall be shown)
-        if (is_series_recording != null) {
-            if (rec.autorecId != null && showControls) {
-                is_series_recording.setVisibility(ImageView.VISIBLE);
-            } else {
-                is_series_recording.setVisibility(ImageView.GONE);
+            // Show the information if the recording belongs to a series recording
+            // only when no dual pane is active (the controls shall be shown)
+            if (is_series_recording != null) {
+                if (rec.autorecId != null && !isDualPane) {
+                    is_series_recording.setVisibility(ImageView.VISIBLE);
+                } else {
+                    is_series_recording.setVisibility(ImageView.GONE);
+                }
             }
         }
 
@@ -166,7 +163,12 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
      * @param menu
      */
     private void onPrepareToolbarMenu(Menu menu) {
-        if (rec.error == null && rec.state.equals("completed")) {
+        if (rec == null) {
+            (menu.findItem(R.id.menu_play)).setVisible(false);
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+
+        } else if (rec.error == null && rec.state.equals("completed")) {
             // The recording is available, it can be played and removed
             (menu.findItem(R.id.menu_play)).setVisible(true);
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
