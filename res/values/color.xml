@@ -29,20 +29,15 @@
 	<color name="EPG_OTHER">#7f8185</color>
 
     <!-- Toolbar background -->
-    <color name="toolbar_background_color_light">#fffdd14d</color>
-    <color name="toolbar_background_color_dark">#fffdbe00</color>
+    <color name="toolbar_background_color_light">#ffFDC54F</color>
+    <color name="toolbar_background_color_dark">#ff660000</color>
 
 	<!-- Drawer menu item background -->
 	<color name="drawer_background_light">#ffeeeeee</color>
-	<color name="drawer_background_dark">#ff222222</color>
+	<color name="drawer_background_dark">#ff1A1A1A</color>
 
 	<!-- Drawer menu background when it is selected  -->
     <color name="drawer_selected_light">#aadedede</color>
-    <color name="drawer_selected_dark">#666e6e6e</color>
+    <color name="drawer_selected_dark">#665e5e5e</color>
 
-	<color name="menu_text_background_light">#ffececed</color>
-	<color name="menu_text_background_dark">#ff363637</color>
-
-    <color name="menu_text_selected_light">#aabebebe</color>
-    <color name="menu_text_selected_dark">#66bebebe</color>
 </resources>
