@@ -40,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -96,6 +97,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         long channelId = 0;
         long programId = 0;
@@ -154,10 +156,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             return;
         }
 
-        if (getDialog() != null) {
-            getDialog().setTitle(program.title);
-        }
-        
         // Show the program information        
         Utils.setState(state, program.recording);
         Utils.setDate(date, program.start);
@@ -182,7 +180,9 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
         
         if (toolbar != null) {
-            // Set an OnMenuItemClickListener to handle menu item clicks
+            if (program != null) {
+                toolbar.setTitle(program.title);
+            }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {

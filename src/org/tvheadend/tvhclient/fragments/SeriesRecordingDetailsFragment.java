@@ -35,6 +35,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -76,6 +77,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         String srecId = "";
         Bundle bundle = getArguments();
@@ -104,10 +106,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         super.onActivityCreated(savedInstanceState);
 
         if (srec != null) {
-            if (getDialog() != null) {
-                getDialog().setTitle(srec.title);
-            }
-    
             Utils.setDescription(channelLabel, channelName, ((srec.channel != null) ? srec.channel.name : ""));
             Utils.setDescription(descLabel, desc, srec.description);
         } else {
@@ -115,7 +113,9 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         }
 
         if (toolbar != null) {
-            // Set an OnMenuItemClickListener to handle menu item clicks
+            if (srec != null) {
+                toolbar.setTitle(srec.title);
+            }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {

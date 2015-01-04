@@ -37,6 +37,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -87,6 +88,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         long recId = 0;
         Bundle bundle = getArguments();
@@ -123,10 +125,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         super.onActivityCreated(savedInstanceState);
 
         if (rec != null) {
-            if (getDialog() != null) {
-                getDialog().setTitle(rec.title);
-            }
-
             Utils.setDate(date, rec.start);
             Utils.setTime(time, rec.start, rec.stop);
             Utils.setDuration(duration, rec.start, rec.stop);
@@ -150,7 +148,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         }
 
         if (toolbar != null) {
-            // Set an OnMenuItemClickListener to handle menu item clicks
+            if (rec != null) {
+                toolbar.setTitle(rec.title);
+            }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
