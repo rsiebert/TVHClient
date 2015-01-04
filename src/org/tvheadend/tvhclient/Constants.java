@@ -21,7 +21,6 @@ public class Constants {
     public static final String BUNDLE_RESTART = "reload";
     public static final String BUNDLE_COUNT = "count";
     public static final String BUNDLE_MENU_POSITION = "menuPosition";
-    public static final String BUNDLE_SHOW_CONTROLS = "showControls";
     public static final String BUNDLE_EPG_START_TIME = "epgStartTime";
     public static final String BUNDLE_EPG_END_TIME = "epgEndTime";
     public static final String BUNDLE_EPG_HOURS_TO_SHOW = "epgHoursToShow";
