@@ -129,12 +129,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         });
 
         registerForContextMenu(listView);
-        
-        // The toolbar will not be available when the this fragment is used in
-        // the program guide.
-        if (toolbar != null) {
-            toolbar.setNavigationIcon(R.drawable.ic_launcher);
 
+        if (toolbar != null) {
             // Set an OnMenuItemClickListener to handle menu item clicks
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -142,10 +138,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     return onToolbarItemSelected(item);
                 }
             });
-
             // Inflate a menu to be displayed in the toolbar
             toolbar.inflateMenu(R.menu.recording_menu);
-//            Utils.setRecordingMenuIcons(activity, toolbar.getMenu());
         }
     }
 

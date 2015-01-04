@@ -301,11 +301,12 @@
     <string name="sunday">Sunday</string>
 
     <string name="programs">Programs</string>
-    <string name="completed_recordings">Completed</string>
-    <string name="upcoming_recordings">Upcoming</string>
-    <string name="failed_recordings">Failed</string>
+    <string name="completed_recordings">Completed recordings</string>
+    <string name="upcoming_recordings">Upcoming recordings</string>
+    <string name="failed_recordings">Failed recordings</string>
     <string name="series_recordings">Series recordings</string>
     <string name="is_series_recordings">This recording is part of a series recording</string>
+    <string name="no_channels_available">No channels available</string>
     <string name="no_recordings_available">No recordings available</string>
     <string name="no_recordings_scheduled">No recordings are scheduled</string>
     <string name="no_programs_available">No programs available</string>
@@ -344,6 +345,7 @@
     <string name="connection">Connection</string>
     <string name="disc_space">Disc space</string>
     <string name="total">Total</string>
+    <string name="items_available">items available</string>
     <string name="available">Available</string>
     <string name="unknown">Unknown</string>
     <string name="ready">Ready</string>

@@ -395,7 +395,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // list has been filled with data.
         if (toolbar != null) {
             toolbar.setTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
-            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items));
+            if (adapter.getCount() > 0) {
+                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items_available));
+            } else {
+                toolbar.setSubtitle(R.string.no_channels_available);
+            }
             // If activated show the the channel tag icon
             if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
                     && currentTag != null 

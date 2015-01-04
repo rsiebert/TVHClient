@@ -81,12 +81,12 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // Show the newest scheduled recordings first 
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
-        
-        // Shows the currently visible number of recordings of the type  
+
+        // Shows the currently visible number of scheduled recordings  
         if (toolbar != null) {
             toolbar.setTitle(getString(R.string.upcoming_recordings));
             if (adapter.getCount() > 0) {
-                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.upcoming_recordings));
+                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items_available));
             } else {
                 toolbar.setSubtitle(R.string.no_recordings_scheduled);
             }
