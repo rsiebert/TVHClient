@@ -34,12 +34,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -49,7 +50,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
 
     private Activity activity;
-    private boolean showControls = false;
     private Program program;
     private Channel channel;
 
@@ -71,12 +71,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private TextView ratingBarLabel;
     private TextView ratingBarText;
     private RatingBar ratingBar;
-
-    private LinearLayout playerLayout;
-    private TextView play;
-    private TextView recordOnce;
-    private TextView recordSeries;
-    private TextView recordCancel;
+    private Toolbar toolbar;
     
     public static ProgramDetailsFragment newInstance(Bundle args) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -109,7 +104,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         if (bundle != null) {
             channelId = bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0);
             programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
         
         // Get the channel of the program
@@ -146,14 +140,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         ratingBarLabel = (TextView) v.findViewById(R.id.star_rating_label);
         ratingBarText = (TextView) v.findViewById(R.id.star_rating_text);
         ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
-        
-        // Initialize the player layout
-        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        play = (TextView) v.findViewById(R.id.menu_play);
-        recordOnce = (TextView) v.findViewById(R.id.menu_record_once);
-        recordSeries = (TextView) v.findViewById(R.id.menu_record_series);
-        recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
 
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -169,12 +157,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         if (getDialog() != null) {
             getDialog().setTitle(program.title);
         }
-
-        // Show the player controls
-        if (showControls) {
-            addPlayerControlListeners();
-        }
-        showPlayerControls();
         
         // Show the program information        
         Utils.setState(state, program.recording);
@@ -198,85 +180,85 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             ratingBar.setRating((float)program.starRating / 10.0f);
             ratingBarText.setText("(" + program.starRating + "/" + 100 + ")");
         }
+        
+        if (toolbar != null) {
+            // Set an OnMenuItemClickListener to handle menu item clicks
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
+                }
+            });
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.program_details_menu);
+            onPrepareToolbarMenu(toolbar.getMenu());
+        }
     }
 
     /**
      * 
+     * @param menu
      */
-    private void showPlayerControls() {
+    private void onPrepareToolbarMenu(Menu menu) {
         if (program == null) {
             return;
         }
-
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        play.setVisibility(View.VISIBLE);
-        recordOnce.setVisibility(View.VISIBLE);
-        recordSeries.setVisibility(View.VISIBLE);
-        recordCancel.setVisibility(View.VISIBLE);
-        
         // Show the play menu item when the current 
         // time is between the program start and end time
         long currentTime = new Date().getTime();
         if (program.start != null && program.stop != null
                 && currentTime > program.start.getTime()
                 && currentTime < program.stop.getTime()) {
-            play.setVisibility(View.VISIBLE);
+            (menu.findItem(R.id.menu_play)).setVisible(true);
         } else {
-            play.setVisibility(View.GONE);
+            (menu.findItem(R.id.menu_play)).setVisible(false);
         }
         
         if (program.recording == null) {
-            // Show the record menu
-            recordCancel.setVisibility(View.GONE);
-        } else if (program.isRecording()) {
             // Show the cancel menu
-            recordOnce.setVisibility(View.GONE);
-            recordSeries.setVisibility(View.GONE);
-        } else if (program.isScheduled()) {
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+
+        } else if (program.isRecording() || program.isScheduled()) {
             // Show the cancel and play menu
-            recordOnce.setVisibility(View.GONE);
-            recordSeries.setVisibility(View.GONE);
+            (menu.findItem(R.id.menu_record_once)).setVisible(false);
+            (menu.findItem(R.id.menu_record_series)).setVisible(false);
+
         } else {
-            // Show the delete menu
-            recordOnce.setVisibility(View.GONE);
-            recordSeries.setVisibility(View.GONE);
-            recordCancel.setVisibility(View.GONE);
+            (menu.findItem(R.id.menu_record_once)).setVisible(false);
+            (menu.findItem(R.id.menu_record_series)).setVisible(false);
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         }
     }
 
     /**
      * 
+     * @param item
+     * @return
      */
-    private void addPlayerControlListeners() {
-        play.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open a new activity that starts playing the program
-                if (program != null && program.channel != null) {
-                    Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-                    startActivity(intent);
-                }
+    protected boolean onToolbarItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.menu_play:
+            // Open a new activity that starts playing the selected program
+            if (program != null && program.channel != null) {
+                Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                startActivity(intent);
             }
-        });
-        recordOnce.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.recordProgram(activity, program, false);
-            }
-        });
-        recordSeries.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.recordProgram(activity, program, true);
-            }
-        });
-        recordCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.confirmCancelRecording(activity, program.recording);
-            }
-        });
+            return true;
+
+        case R.id.menu_record_once:
+            Utils.recordProgram(activity, program, false);
+            return true;
+
+        case R.id.menu_record_series:
+            Utils.recordProgram(activity, program, true);
+            return true;
+            
+        case R.id.menu_record_cancel:
+            Utils.confirmCancelRecording(activity, program.recording);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -302,7 +284,9 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
                 || action.equals(Constants.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    showPlayerControls();
+                    if (toolbar != null) {
+                        onPrepareToolbarMenu(toolbar.getMenu());
+                    }
                 }
             });
         }
