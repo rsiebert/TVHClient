@@ -43,7 +43,6 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -227,13 +226,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_menu, menu);
-        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override
