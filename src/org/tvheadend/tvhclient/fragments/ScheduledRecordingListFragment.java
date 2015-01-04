@@ -6,7 +6,6 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 
@@ -36,12 +35,6 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        onPrepareToolbarMenu(toolbar.getMenu());
     }
 
     /**
@@ -80,6 +73,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
 
         // Shows the currently visible number of scheduled recordings  
         if (toolbar != null) {
+            onPrepareToolbarMenu(toolbar.getMenu());
             toolbar.setTitle(getString(R.string.upcoming_recordings));
             if (adapter.getCount() > 0) {
                 toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items_available));

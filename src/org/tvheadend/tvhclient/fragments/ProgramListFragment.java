@@ -131,11 +131,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         listView.setAdapter(adapter);
 
         registerForContextMenu(listView);
-        
-        // Set the toolbar options
-        if (!isDualPane) {
-            toolbar.setNavigationIcon(R.drawable.ic_launcher);
-        }
+
         // Set an OnMenuItemClickListener to handle menu item clicks
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -143,9 +139,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 return onToolbarItemSelected(item);
             }
         });
-        // Inflate a menu to be displayed in the toolbar
-        toolbar.inflateMenu(R.menu.program_menu);
-        onPrepareToolbarMenu(toolbar.getMenu());
     }
 
     /**
@@ -206,6 +199,10 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // Inform the activity to show the currently visible number of the
         // programs and that the program list has been filled with data.
         if (toolbar != null && channel != null) {
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.program_menu);
+            onPrepareToolbarMenu(toolbar.getMenu());
+
             toolbar.setTitle(channel.name);
             if (adapter.getCount() > 0) {
                 toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.programs));
@@ -328,7 +325,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsProgramsPref", false);
         (menu.findItem(R.id.menu_genre_color_info_programs)).setVisible(!isDualPane && showGenreColors);
-        (menu.findItem(R.id.menu_play)).setVisible(isDualPane && adapter.getCount() > 0);
+        (menu.findItem(R.id.menu_play)).setVisible(adapter.getCount() > 0);
     }
 
     /**
