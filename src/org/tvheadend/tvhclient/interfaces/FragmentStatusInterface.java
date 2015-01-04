@@ -18,7 +18,17 @@ public interface FragmentStatusInterface {
      * @param tag
      */
     public void moreDataRequired(final Channel channel, final String tag);
-    
+
+    /**
+     * Informs the activity that the fragment wants to reload the data. The
+     * activity reconnects to the server and requests the new data. The fragment
+     * itself listens to the service status and updates itself when new data has
+     * arrived.
+     * 
+     * @param tag
+     */
+    public void reloadData(final String tag);
+
     /**
      * Informs the activity that the fragment has no data. The activity
      * could then start the service to load more data. The fragment itself
