@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -25,6 +26,7 @@ public class ProgramGuideItemView extends LinearLayout {
 
     private final static String TAG = ProgramGuideItemView.class.getSimpleName();
 
+    private ViewGroup viewGroupParent;
     private LinearLayout layout;
     private Activity activity;
     private int tabIndex;
@@ -64,10 +66,11 @@ public class ProgramGuideItemView extends LinearLayout {
         super(context);
     }
 
-    public ProgramGuideItemView(Activity activity, Fragment fragment, final LinearLayout layout, Bundle bundle) {
+    public ProgramGuideItemView(Activity activity, Fragment fragment, final LinearLayout layout, Bundle bundle, ViewGroup parent) {
         super(activity);
         this.activity = activity;
         this.layout = layout;
+        this.viewGroupParent = parent;
 
         // Create the interface so we can talk to the fragment
         if (activity instanceof FragmentStatusInterface) {
@@ -354,7 +357,7 @@ public class ProgramGuideItemView extends LinearLayout {
      */
     private void addCurrentProgramToView(final Program p, final int layoutWidth, final boolean expandLayout) {
 
-    	View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, null);
+        View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, viewGroupParent, false);
         final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
         final TextView title = (TextView) v.findViewById(R.id.title);
         final ImageView state = (ImageView) v.findViewById(R.id.state);

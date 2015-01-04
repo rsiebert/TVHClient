@@ -148,8 +148,6 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
         });
         tagDialog = builder.create();
 
-        toolbar.setNavigationIcon(R.drawable.ic_launcher);
-
         // Set an OnMenuItemClickListener to handle menu item clicks
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
