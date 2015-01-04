@@ -45,6 +45,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     private final static String TAG = SeriesRecordingDetailsFragment.class.getSimpleName();
 
     private Activity activity;
+    private boolean isDualPane = false;
     private SeriesRecording srec;
 
     private LinearLayout detailsLayout;
@@ -77,12 +78,15 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if (getDialog() != null) {
+            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
 
         String srecId = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
             srecId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
+            isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
         // Get the recording so we can show its details 
@@ -113,7 +117,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         }
 
         if (toolbar != null) {
-            if (srec != null) {
+            if (srec != null && !isDualPane) {
                 toolbar.setTitle(srec.title);
             }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {

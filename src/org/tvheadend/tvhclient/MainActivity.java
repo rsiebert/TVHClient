@@ -1004,6 +1004,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         if (seriesRecording != null) {
             args.putString(Constants.BUNDLE_SERIES_RECORDING_ID, seriesRecording.id);
         }
+        args.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+
         if (isDualPane) {
             // Create and show the fragment
             showFragment(SeriesRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
@@ -1020,6 +1022,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             Bundle args = new Bundle();
             args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
             args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+            args.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             // Create the fragment and show it as a dialog.
             DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
             newFragment.show(getSupportFragmentManager(), "dialog");

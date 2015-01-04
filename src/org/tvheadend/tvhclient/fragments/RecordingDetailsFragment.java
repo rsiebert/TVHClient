@@ -88,7 +88,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if (getDialog() != null) {
+            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
 
         long recId = 0;
         Bundle bundle = getArguments();
@@ -148,7 +150,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         }
 
         if (toolbar != null) {
-            if (rec != null) {
+            if (rec != null && !isDualPane) {
                 toolbar.setTitle(rec.title);
             }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {

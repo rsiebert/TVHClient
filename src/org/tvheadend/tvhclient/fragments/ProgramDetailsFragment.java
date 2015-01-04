@@ -51,6 +51,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
 
     private Activity activity;
+    private boolean isDualPane = false;
     private Program program;
     private Channel channel;
 
@@ -97,7 +98,9 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if (getDialog() != null) {
+            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
 
         long channelId = 0;
         long programId = 0;
@@ -106,6 +109,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         if (bundle != null) {
             channelId = bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0);
             programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
+            isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
         
         // Get the channel of the program
@@ -180,7 +184,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
         
         if (toolbar != null) {
-            if (program != null) {
+            if (program != null && !isDualPane) {
                 toolbar.setTitle(program.title);
             }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
