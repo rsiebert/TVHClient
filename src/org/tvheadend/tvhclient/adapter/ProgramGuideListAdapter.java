@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.adapter;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +34,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     private Fragment fragment;
     // private HashMap<Channel, Set<Program>> channelProgramList = new HashMap<Channel, Set<Program>>();
     
-    public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel> list, Bundle bundle) {
+    public ProgramGuideListAdapter(Activity activity, Fragment fragment, ArrayList<Channel> list, Bundle bundle) {
         super(activity, R.layout.program_guide_list_item, list);
         this.activity = activity;
         this.fragment = fragment;
@@ -89,7 +90,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
         View view = convertView;
 
         if (view == null) {
-            view = inflater.inflate(R.layout.program_guide_list_item, null);
+            view = inflater.inflate(R.layout.program_guide_list_item, parent, false);
             holder = new ViewHolder();
             holder.timeline = (LinearLayout) view.findViewById(R.id.timeline);
             holder.item = new ProgramGuideItemView(activity, fragment, holder.timeline, bundle);
