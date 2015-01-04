@@ -42,10 +42,8 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
     }
 
     static class ViewHolder {
+        public View divider;
         public LinearLayout itemLayout;
-        public LinearLayout headerLayout;
-        public TextView header;
-        public LinearLayout menuLayout;
         public ImageView icon;
         public TextView title;
         public TextView count;
@@ -60,10 +58,8 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
             view = context.getLayoutInflater().inflate(layout, null);
 
             holder = new ViewHolder();
+            holder.divider = (View) view.findViewById(R.id.divider);
             holder.itemLayout = (LinearLayout) view.findViewById(R.id.item_layout);
-            holder.headerLayout = (LinearLayout) view.findViewById(R.id.header_layout);
-            holder.header = (TextView) view.findViewById(R.id.header);
-            holder.menuLayout = (LinearLayout) view.findViewById(R.id.menu_layout);
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.count = (TextView) view.findViewById(R.id.count);
@@ -85,21 +81,8 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
         // Get the program and assign all the values
         final DrawerMenuItem m = getItem(position);
         if (m != null) {
-
-            // Show the header layout and the text if the menu item entry is not
-            // marked as a menu
-            if (holder.headerLayout != null) {
-                holder.headerLayout.setVisibility(m.isMenu ? View.GONE : View.VISIBLE);
-            }
-            if (holder.header != null) {
-                holder.header.setText(m.header);
-                holder.header.setVisibility((m.header.length() > 0) ? View.VISIBLE : View.GONE);
-            }
-
-            // Show the menu layout and the title and optionally the count if
-            // the menu item entry is marked as a menu
-            if (holder.menuLayout != null) {
-                holder.menuLayout.setVisibility(m.isMenu ? View.VISIBLE : View.GONE);
+            if (holder.divider != null) {
+                holder.divider.setVisibility((position == 0 || position == 7) ? View.VISIBLE : View.GONE);
             }
             if (holder.icon != null) {
                 holder.icon.setImageResource(m.icon);
@@ -111,11 +94,6 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
             if (holder.count != null) {
                 holder.count.setText(String.valueOf(m.count));
                 holder.count.setVisibility((m.count > 0) ? View.VISIBLE : View.GONE);
-            }
-
-            // Hide menu items that are marked as invisible
-            if (holder.menuLayout != null && !m.isVisible) {
-                holder.menuLayout.setVisibility(View.GONE);
             }
         }
         return view;

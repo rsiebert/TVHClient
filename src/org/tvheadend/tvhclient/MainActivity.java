@@ -25,6 +25,7 @@ import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DrawerMenuItem;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
@@ -44,12 +45,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
 
@@ -217,6 +220,18 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(drawerToggle);
 
+        // Add a header view to the drawer menu
+        LayoutInflater inflater = getLayoutInflater();
+        View header = (View) inflater.inflate(R.layout.drawer_list_header, drawerList, false);
+        drawerList.addHeaderView(header, null, false);
+        TextView serverName = (TextView) header.findViewById(R.id.server);
+        if (DatabaseHelper.getInstance() != null) {
+            Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+            if (conn != null && serverName != null) {
+                serverName.setText(conn.name);
+            }
+        }
+
         // Create the custom adapter for the menus in the navigation drawer.
         // Also set the listener to react to the user selection.
         drawerAdapter = new DrawerMenuAdapter(this, getDrawerMenu(), R.layout.drawer_list_item);
@@ -224,7 +239,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         drawerList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final DrawerMenuItem item = drawerAdapter.getItem(position);
+                // Decrease the position by one before getting the item. This is
+                // required because the first item in the drawer list is the
+                // header view. We don't want this.
+                final DrawerMenuItem item = drawerAdapter.getItem(--position);
                 // We can't just use the list position for the menu position
                 // because the list might contain separators. So we need to get
                 // the id if the list item which is the menu position. 
@@ -299,8 +317,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                         : R.drawable.ic_menu_program_guide_dark));
         list.add(new DrawerMenuItem(MENU_STATUS, menuItems[6],
                 (lightTheme) ? R.drawable.ic_menu_status_light : R.drawable.ic_menu_status_dark));
-
-        list.add(new DrawerMenuItem());
         list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[7],
                 (lightTheme) ? R.drawable.ic_menu_settings_light : R.drawable.ic_menu_settings_dark));
         list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[8],
