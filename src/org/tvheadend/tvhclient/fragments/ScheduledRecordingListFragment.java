@@ -52,7 +52,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // Do not show the remove menu in single pane mode. No recording is
         // preselected so the behavior is undefined. In dual pane mode one
         // recording is also selected which is fine.
-        if (!isDualPane) {
+        if (isDualPane) {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         }
 

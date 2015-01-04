@@ -52,7 +52,7 @@ public class FailedRecordingListFragment extends RecordingListFragment {
         // Only show the cancel recording menu when in dual pane mode. Only
         // there a recording is preselected. In single mode the first recording
         // would always be preselected. 
-        if (!isDualPane) {
+        if (isDualPane) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         }
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
