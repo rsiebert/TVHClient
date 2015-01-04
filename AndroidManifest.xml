@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tvheadend.tvhclient"
     android:versionCode="19"
-    android:versionName="1.6.2" >
+    android:versionName="1.7.0" >
     <uses-permission android:name="android.permission.INTERNET" />
     
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="21" />
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="21" />
     <application 
         android:allowBackup="true"
         android:name="org.tvheadend.tvhclient.TVHClientApplication" 
@@ -33,6 +33,8 @@
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
         <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
+        <activity android:name="org.tvheadend.tvhclient.SettingsShowConnectionsActivity"/>
+        <activity android:name="org.tvheadend.tvhclient.SettingsManageConnectionActivity"/>
         <activity android:name="org.tvheadend.tvhclient.PlaybackSelectionActivity" />
         <activity android:name="org.tvheadend.tvhclient.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name="org.tvheadend.tvhclient.htsp.HTSService" android:enabled="true"/>
