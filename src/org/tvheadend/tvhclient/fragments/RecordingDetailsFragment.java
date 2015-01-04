@@ -31,12 +31,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
@@ -60,10 +61,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView failed_reason;
     private TextView is_series_recording;
 
-    private LinearLayout playerLayout;
-    private TextView play;
-    private TextView recordCancel;
-    private TextView recordRemove;
+    private Toolbar toolbar;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -113,13 +111,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         duration = (TextView) v.findViewById(R.id.duration);
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
         is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
-        
-        // Initialize the player layout
-        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        play = (TextView) v.findViewById(R.id.menu_play);
-        recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
-        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
 
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -135,12 +128,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         if (getDialog() != null) {
             getDialog().setTitle(rec.title);
         }
-
-        // Show the player controls
-        if (showControls) {
-            addPlayerControlListeners();
-        }
-        showPlayerControls();
 
         Utils.setDate(date, rec.start);
         Utils.setTime(time, rec.start, rec.stop);
@@ -160,60 +147,75 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 is_series_recording.setVisibility(ImageView.GONE);
             }
         }
-    }
 
-    /**
-     * 
-     */
-    private void showPlayerControls() {
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        play.setVisibility(View.GONE);
-        recordCancel.setVisibility(View.GONE);
-        recordRemove.setVisibility(View.GONE);
-
-        // Show the play menu items
-        if (rec.error == null && rec.state.equals("completed")) {
-            // The recording is available, it can be played and removed
-            recordRemove.setVisibility(View.VISIBLE);
-            play.setVisibility(View.VISIBLE);
-        } else if (rec.isRecording() || rec.isScheduled()) {
-            // The recording is recording or scheduled, it can only be cancelled
-            recordCancel.setVisibility(View.VISIBLE);
-        } else if (rec.error != null || rec.state.equals("missed")) {
-            // The recording has failed or has been missed, allow removal
-            recordRemove.setVisibility(View.VISIBLE);
+        if (toolbar != null) {
+            // Set an OnMenuItemClickListener to handle menu item clicks
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
+                }
+            });
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.recording_menu);
+            onPrepareToolbarMenu(toolbar.getMenu());
         }
     }
 
     /**
      * 
+     * @param menu
      */
-    private void addPlayerControlListeners() {
-        play.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open a new activity that starts playing the program
-                if (rec != null) {
-                    Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-                    intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-                    startActivity(intent);
-                }
+    private void onPrepareToolbarMenu(Menu menu) {
+        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+        (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+
+        // Show the play menu items
+        if (rec.error == null && rec.state.equals("completed")) {
+            // The recording is available, it can be played and removed
+            (menu.findItem(R.id.menu_play)).setVisible(true);
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
+
+        } else if (rec.isRecording() || rec.isScheduled()) {
+            // The recording is recording or scheduled, it can only be cancelled
+            (menu.findItem(R.id.menu_play)).setVisible(false);
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
+            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+
+        } else if (rec.error != null || rec.state.equals("missed")) {
+            // The recording has failed or has been missed, allow removal
+            (menu.findItem(R.id.menu_play)).setVisible(false);
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
+        }
+    }
+
+    /**
+     * 
+     * @param item
+     * @return
+     */
+    protected boolean onToolbarItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.menu_play:
+            // Open a new activity that starts playing the selected recording
+            if (rec != null) {
+                Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+                intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+                startActivity(intent);
             }
-        });
-        recordCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.confirmCancelRecording(activity, rec);
-                getDialog().dismiss();
-            }
-        });
-        recordRemove.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.confirmRemoveRecording(activity, rec);
-                getDialog().dismiss();
-            }
-        });
+            return true;
+
+        case R.id.menu_record_remove:
+            Utils.confirmRemoveRecording(activity, rec);
+            return true;
+
+        case R.id.menu_record_cancel:
+            Utils.confirmCancelRecording(activity, rec);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -243,8 +245,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 || action.equals(Constants.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    if (showControls) {
-                        showPlayerControls();
+                    if (toolbar != null) {
+                        onPrepareToolbarMenu(toolbar.getMenu());
                     }
                 }
             });
