@@ -32,7 +32,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -53,7 +52,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
     private final static String TAG = ProgramGuideListFragment.class.getSimpleName();
 
-    private FragmentActivity activity;
+    private Activity activity;
     private FragmentStatusInterface fragmentStatusInterface;
     private FragmentScrollInterface fragmentScrollInterface;
     private ProgramGuideListAdapter adapter;
@@ -122,7 +121,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = activity;
     }
 
     @Override
