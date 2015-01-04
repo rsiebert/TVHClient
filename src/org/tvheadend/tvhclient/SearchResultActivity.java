@@ -100,6 +100,16 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         if (toolbar != null) {
             toolbar.setTitle(R.string.menu_search);
             toolbar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
+
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
+                }
+            });
+
+            toolbar.inflateMenu(R.menu.search_menu);
+            onPrepareToolbarMenu(toolbar.getMenu());
         }
 
         onNewIntent(getIntent());
@@ -185,15 +195,6 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         if (toolbar != null) {
             toolbar.setTitle(android.R.string.search_go);
             toolbar.setSubtitle(getString(R.string.loading));
-            // Set an OnMenuItemClickListener to handle menu item clicks
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return onToolbarItemSelected(item);
-                }
-            });
-            toolbar.inflateMenu(R.menu.search_menu);
-            onPrepareToolbarMenu(toolbar.getMenu());
         }
         // Show that we are done when nothing has happened after 2s. 
         timerHandler.postDelayed(timerRunnable, 2000);
