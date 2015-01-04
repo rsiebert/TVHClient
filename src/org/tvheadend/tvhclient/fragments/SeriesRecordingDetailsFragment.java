@@ -29,11 +29,12 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class SeriesRecordingDetailsFragment extends DialogFragment implements HTSListener {
@@ -42,16 +43,13 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     private final static String TAG = SeriesRecordingDetailsFragment.class.getSimpleName();
 
     private Activity activity;
-    private boolean showControls = false;
     private SeriesRecording srec;
 
     private TextView descLabel;
     private TextView desc;
     private TextView channelLabel;
     private TextView channelName;
-
-    private LinearLayout playerLayout;
-    private TextView recordRemove;
+    private Toolbar toolbar;
 
     public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
@@ -81,7 +79,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         Bundle bundle = getArguments();
         if (bundle != null) {
             srecId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 
         // Get the recording so we can show its details 
@@ -94,10 +91,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         desc = (TextView) v.findViewById(R.id.description);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
-        
-        // Initialize the player layout
-        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
+
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -112,34 +107,46 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         if (getDialog() != null) {
             getDialog().setTitle(srec.title);
         }
-        // Show the player controls
-        if (showControls) {
-            addPlayerControlListeners();
-        }
-        showPlayerControls();
 
         Utils.setDescription(channelLabel, channelName, ((srec.channel != null) ? srec.channel.name : ""));
         Utils.setDescription(descLabel, desc, srec.description);
+
+        if (toolbar != null) {
+            // Set an OnMenuItemClickListener to handle menu item clicks
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
+                }
+            });
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.recording_details_menu);
+            onPrepareToolbarMenu(toolbar.getMenu());
+        }
     }
 
     /**
      * 
+     * @param menu
      */
-    private void showPlayerControls() {
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        recordRemove.setVisibility(View.VISIBLE);
+    private void onPrepareToolbarMenu(Menu menu) {
+        (menu.findItem(R.id.menu_play)).setVisible(true);
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
     }
 
     /**
      * 
+     * @param item
+     * @return
      */
-    private void addPlayerControlListeners() {
-        recordRemove.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.confirmRemoveRecording(activity, srec);
-            }
-        });
+    protected boolean onToolbarItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.menu_record_remove:
+            Utils.confirmRemoveRecording(activity, srec);
+            return true;
+
+        }
+        return false;
     }
 
     @Override
