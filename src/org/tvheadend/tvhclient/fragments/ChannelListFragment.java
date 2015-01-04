@@ -220,7 +220,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
             // Inflate a menu to be displayed in the toolbar
             toolbar.inflateMenu(R.menu.channel_menu);
-            onPrepareToolbarMenu(toolbar.getMenu());
         }
     }
 
@@ -394,6 +393,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // channels that are in the selected channel tag and that the channel
         // list has been filled with data.
         if (toolbar != null) {
+            onPrepareToolbarMenu(toolbar.getMenu());
             toolbar.setTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
             if (adapter.getCount() > 0) {
                 toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items_available));
