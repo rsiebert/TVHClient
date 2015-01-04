@@ -430,35 +430,6 @@ public class Utils {
     }
 
     /**
-     * Shows or hides certain icons from the recording menu. This is required
-     * because the usual way does not seem to work.
-     * 
-     * @param context
-     * @param menu
-     */
-    public static void setRecordingMenuIcons(final Context context, final Menu menu) {
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
-        MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
-        
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-        if (recordCancelMenuItem != null) {
-            recordCancelMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
-        }
-        if (recordRemoveMenuItem != null) {
-            recordRemoveMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
-        }
-        if (recordCancelAllMenuItem != null) {
-            recordCancelAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
-        }
-        if (recordRemoveAllMenuItem != null) {
-            recordRemoveAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
-        }
-    }
-
-    /**
      * Shows an icon for the state of the current recording. If no recording was
      * given, the icon will be hidden.
      * 
