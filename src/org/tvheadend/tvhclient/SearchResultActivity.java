@@ -193,6 +193,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                 }
             });
             toolbar.inflateMenu(R.menu.search_menu);
+            onPrepareToolbarMenu(toolbar.getMenu());
         }
         // Show that we are done when nothing has happened after 2s. 
         timerHandler.postDelayed(timerRunnable, 2000);
@@ -213,13 +214,16 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         app.removeListener(this);
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    /**
+     * 
+     * @param menu
+     * @return
+     */
+    private void onPrepareToolbarMenu(Menu menu) {
         // Hide the genre color menu if no genre colors shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsSearchPref", false);
         (menu.findItem(R.id.menu_genre_color_info)).setVisible(showGenreColors);
-        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -248,7 +252,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             return true;
 
         default:
-            return super.onOptionsItemSelected(item);
+            return false;
         }
     }
 
