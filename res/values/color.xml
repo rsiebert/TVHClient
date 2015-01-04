@@ -37,7 +37,7 @@
 	<color name="drawer_background_dark">#ff1A1A1A</color>
 
 	<!-- Drawer menu background when it is selected  -->
-    <color name="drawer_selected_light">#aadedede</color>
+    <color name="drawer_selected_light">#ffdedede</color>
     <color name="drawer_selected_dark">#665e5e5e</color>
 
 </resources>
