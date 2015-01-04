@@ -138,7 +138,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
 
-        // Create a scroll listener to inform the parent activity about
+        // Create a scroll listener to inform the parent about the current scrolling state
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
