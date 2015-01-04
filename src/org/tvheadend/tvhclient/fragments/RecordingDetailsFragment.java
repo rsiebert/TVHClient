@@ -60,7 +60,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView duration;
     private TextView failed_reason;
     private TextView is_series_recording;
-
     private Toolbar toolbar;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
@@ -157,7 +156,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 }
             });
             // Inflate a menu to be displayed in the toolbar
-            toolbar.inflateMenu(R.menu.recording_menu);
+            toolbar.inflateMenu(R.menu.recording_details_menu);
             onPrepareToolbarMenu(toolbar.getMenu());
         }
     }
@@ -167,10 +166,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
      * @param menu
      */
     private void onPrepareToolbarMenu(Menu menu) {
-        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
-        (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-
-        // Show the play menu items
         if (rec.error == null && rec.state.equals("completed")) {
             // The recording is available, it can be played and removed
             (menu.findItem(R.id.menu_play)).setVisible(true);
