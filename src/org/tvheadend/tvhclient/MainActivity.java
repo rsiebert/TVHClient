@@ -784,16 +784,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
                     if (!channelLoadingList.isEmpty()) {
                         loadMorePrograms();
-                    } else {
-                        // Display the number of items because the loading is
-                        // done. We need to get the number from the program
-                        // guide pager fragment because it holds the channel
-                        // fragment which in turn knows the channel count. 
-                        Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                        if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
-//                            int count = ((FragmentControlInterface) f).getItemCount();
-//                            actionBar.setSubtitle(count + " " + getString(R.string.items));
-                        }
                     }
                 }
             });
