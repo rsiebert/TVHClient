@@ -357,7 +357,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         default:
-            return super.onOptionsItemSelected(item);
+            return false;
         }
     }
 
