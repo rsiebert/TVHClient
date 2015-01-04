@@ -125,15 +125,26 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
         registerForContextMenu(listView);
 
-        // Set an OnMenuItemClickListener to handle menu item clicks
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onToolbarItemSelected(item);
+        if (toolbar != null) {
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
+                }
+            });
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.recording_menu);
+
+            // Allow clicking on the navigation logo, if available
+            if (!isDualPane) {
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.onBackPressed();
+                    }
+                });
             }
-        });
-        // Inflate a menu to be displayed in the toolbar
-        toolbar.inflateMenu(R.menu.recording_menu);
+        }
     }
 
     @Override

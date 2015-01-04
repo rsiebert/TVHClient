@@ -140,6 +140,16 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             });
             // Inflate a menu to be displayed in the toolbar
             toolbar.inflateMenu(R.menu.recording_menu);
+
+            // Allow clicking on the navigation logo, if available
+            if (!isDualPane) {
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.onBackPressed();
+                    }
+                });
+            }
         }
     }
 

@@ -132,13 +132,23 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         registerForContextMenu(listView);
 
-        // Set an OnMenuItemClickListener to handle menu item clicks
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onToolbarItemSelected(item);
+        if (toolbar != null) {
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
+                }
+            });
+            // Allow clicking on the navigation logo, if available
+            if (!isDualPane) {
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.onBackPressed();
+                    }
+                });
             }
-        });
+        }
     }
 
     /**
