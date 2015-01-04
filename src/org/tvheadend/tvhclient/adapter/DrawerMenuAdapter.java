@@ -95,7 +95,14 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
                 holder.count.setText(String.valueOf(m.count));
                 holder.count.setVisibility((m.count > 0) ? View.VISIBLE : View.GONE);
             }
+            
+            // Hide the entire menu item if it shall not be visible. This is the
+            // case if the server does not support series recordings.
+            if (holder.itemLayout != null) {
+                holder.itemLayout.setVisibility(m.isVisible ? View.VISIBLE : View.GONE);
+            }
         }
+
         return view;
     }
 
