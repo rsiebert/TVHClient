@@ -35,6 +35,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class SeriesRecordingDetailsFragment extends DialogFragment implements HTSListener {
@@ -45,6 +46,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     private Activity activity;
     private SeriesRecording srec;
 
+    private LinearLayout detailsLayout;
     private TextView descLabel;
     private TextView desc;
     private TextView channelLabel;
@@ -87,6 +89,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
+        detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
         descLabel = (TextView) v.findViewById(R.id.description_label);
         desc = (TextView) v.findViewById(R.id.description);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
@@ -107,6 +110,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     
             Utils.setDescription(channelLabel, channelName, ((srec.channel != null) ? srec.channel.name : ""));
             Utils.setDescription(descLabel, desc, srec.description);
+        } else {
+            detailsLayout.setVisibility(View.GONE);
         }
 
         if (toolbar != null) {

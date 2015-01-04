@@ -38,6 +38,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
@@ -49,6 +50,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private boolean isDualPane = false;
     private Recording rec;
 
+    private LinearLayout detailsLayout;
     private TextView summaryLabel;
     private TextView summary;
     private TextView descLabel;
@@ -99,6 +101,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.recording_details_layout, container, false);
+        detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
         summaryLabel = (TextView) v.findViewById(R.id.summary_label);
         summary = (TextView) v.findViewById(R.id.summary);
         descLabel = (TextView) v.findViewById(R.id.description_label);
@@ -142,6 +145,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                     is_series_recording.setVisibility(ImageView.GONE);
                 }
             }
+        } else {
+            detailsLayout.setVisibility(View.GONE);
         }
 
         if (toolbar != null) {
