@@ -324,7 +324,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsProgramsPref", false);
         (menu.findItem(R.id.menu_genre_color_info_programs)).setVisible(!isDualPane && showGenreColors);
-        (menu.findItem(R.id.menu_play)).setVisible(!isDualPane);
+        (menu.findItem(R.id.menu_play)).setVisible(adapter.getCount() > 0);
     }
 
     /**
