@@ -27,6 +27,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 public class SettingsActivity extends ActionBarActivity implements SettingsInterface {
 
@@ -53,6 +54,14 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.menu_settings);
+        toolbar.setNavigationIcon((Utils.getThemeId(this) == R.style.CustomTheme_Light) ? R.drawable.ic_menu_back_light
+                : R.drawable.ic_menu_back_dark);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         // Get any saved values from the bundle
         if (savedInstanceState != null) {
