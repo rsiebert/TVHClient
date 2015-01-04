@@ -49,20 +49,18 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
      * @param menu
      */
     private void onPrepareToolbarMenu(Menu menu) {
-        // Do not show the remove and play menu in single pane mode. No
+        // Do not show the remove and play menu in single or dual pane mode. No
         // recording is preselected so the behavior is undefined. In dual pane
-        // mode one recording is also selected which is fine.
-        if (isDualPane) {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-            (menu.findItem(R.id.menu_play)).setVisible(false);
-        }
+        // mode these menus are handled by the recording details details fragment.
+        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+        (menu.findItem(R.id.menu_play)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false)) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
-
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
     }
 
     /**

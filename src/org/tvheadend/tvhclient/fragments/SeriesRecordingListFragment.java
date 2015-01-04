@@ -165,21 +165,18 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
      * @param menu
      */
     private void onPrepareToolbarMenu(Menu menu) {
-        // Only show the cancel recording menu when in dual pane mode. Only
-        // there a recording is preselected. In single mode the first recording
-        // would always be preselected. 
-        if (!isDualPane) {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-        }
+        // Do not show the remove and play menu in single or dual pane mode. No
+        // recording is preselected so the behavior is undefined. In dual pane
+        // mode these menus are handled by the recording details details fragment.
+        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+        (menu.findItem(R.id.menu_play)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false)) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
-
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
-        // Playing a failed recording is not possible
-        (menu.findItem(R.id.menu_play)).setVisible(false);
     }
 
     /**
