@@ -965,19 +965,19 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // show its details. In dual mode they are shown as a separate fragment
         // to the right of the recording list, otherwise replace the recording
         // list with the details fragment.
+        Bundle args = new Bundle();
         if (recording != null) {
-            Bundle args = new Bundle();
             args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
-            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
+        }
+        args.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
 
-            if (isDualPane) {
-                // Create and show the fragment
-                showFragment(RecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
-            } else {
-                // Create the fragment and show it as a dialog.
-                DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
-                newFragment.show(getSupportFragmentManager(), "dialog");
-            }
+        if (isDualPane) {
+            // Create and show the fragment
+            showFragment(RecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
+        } else {
+            // Create the fragment and show it as a dialog.
+            DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
+            newFragment.show(getSupportFragmentManager(), "dialog");
         }
     }
 
@@ -994,19 +994,17 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // show its details. In dual mode they are shown as a separate fragment
         // to the right of the series recording list, otherwise replace the recording
         // list with the details fragment.
+        Bundle args = new Bundle();
         if (seriesRecording != null) {
-            Bundle args = new Bundle();
             args.putString(Constants.BUNDLE_SERIES_RECORDING_ID, seriesRecording.id);
-            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
-
-            if (isDualPane) {
-                // Create and show the fragment
-                showFragment(SeriesRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
-            } else {
-                // Create the fragment and show it as a dialog.
-                DialogFragment newFragment = SeriesRecordingDetailsFragment.newInstance(args);
-                newFragment.show(getSupportFragmentManager(), "dialog");
-            }
+        }
+        if (isDualPane) {
+            // Create and show the fragment
+            showFragment(SeriesRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
+        } else {
+            // Create the fragment and show it as a dialog.
+            DialogFragment newFragment = SeriesRecordingDetailsFragment.newInstance(args);
+            newFragment.show(getSupportFragmentManager(), "dialog");
         }
     }
 
@@ -1016,7 +1014,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             Bundle args = new Bundle();
             args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
             args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
             // Create the fragment and show it as a dialog.
             DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
             newFragment.show(getSupportFragmentManager(), "dialog");
