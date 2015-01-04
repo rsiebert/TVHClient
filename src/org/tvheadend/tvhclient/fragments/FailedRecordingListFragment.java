@@ -83,9 +83,12 @@ public class FailedRecordingListFragment extends RecordingListFragment {
         
         // Shows the currently visible number of recordings of the type  
         if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.recordings));
-            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.failed_recordings));
-            toolbar.setNavigationIcon(R.drawable.ic_launcher);
+            toolbar.setTitle(getString(R.string.failed_recordings));
+            if (adapter.getCount() > 0) {
+                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.failed_recordings));
+            } else {
+                toolbar.setSubtitle(R.string.no_recordings_available);
+            }
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.

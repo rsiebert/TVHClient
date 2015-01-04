@@ -295,6 +295,9 @@
     <string name="failed_recordings">Fehlerhaft</string>
     <string name="series_recordings">Serienaufnahmen</string>
     <string name="is_series_recordings">Diese Aufnahme ist Teil einer Serienaufnahme</string>
+    <string name="no_recordings_available">Keine Aufnahmen vorhanden</string>
+    <string name="no_recordings_scheduled">Keine Aufnahmen geplant</string>
+    <string name="no_programs_available">Keine Programme vorhanden</string>
 
     <string name="channels">Sender</string>
     <string name="recordings">Aufnahmen</string>

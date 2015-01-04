@@ -207,7 +207,11 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // programs and that the program list has been filled with data.
         if (toolbar != null && channel != null) {
             toolbar.setTitle(channel.name);
-            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.programs));
+            if (adapter.getCount() > 0) {
+                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.programs));
+            } else {
+                toolbar.setSubtitle(R.string.no_programs_available);
+            }
             if (!isDualPane) {
                 if (Utils.showChannelIcons(activity)) {
                     toolbar.setNavigationIcon(new BitmapDrawable(getResources(), channel.iconBitmap));
