@@ -25,6 +25,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
@@ -36,6 +37,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -45,6 +47,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     private final static String TAG = StatusFragment.class.getSimpleName();
 
     private Activity activity;
+    private FragmentStatusInterface fragmentStatusInterface;
 
     private TextView connection;
     private TextView status;
@@ -111,8 +114,25 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        if (activity instanceof FragmentStatusInterface) {
+            fragmentStatusInterface = (FragmentStatusInterface) activity;
+        }
+
         if (toolbar != null) {
             toolbar.setTitle(R.string.status);
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                    case R.id.menu_refresh:
+                        fragmentStatusInterface.reloadData(TAG);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            toolbar.inflateMenu(R.menu.status_menu);
         }
     }
 
@@ -139,6 +159,12 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
         app.removeListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        fragmentStatusInterface = null;
+        super.onDetach();
     }
 
 	@Override
