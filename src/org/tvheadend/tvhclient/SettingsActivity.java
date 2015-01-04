@@ -23,8 +23,8 @@ import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -73,12 +73,12 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
         // When the orientation was changed the last visible fragment is
         // available from the manager. If this is the case get it and show it
         // again.
-        fragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.settings_fragment);
+        fragment = (Fragment) getFragmentManager().findFragmentById(R.id.settings_fragment);
         if (fragment == null) {
             mainSettings();
         } else {
             // Show the available fragment
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .replace(R.id.settings_fragment, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commit();
@@ -122,7 +122,7 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
         currentSettingsMode = MAIN_SETTINGS;
 
         removePreviousFragment();
-        getSupportFragmentManager().beginTransaction()
+        getFragmentManager().beginTransaction()
                 .replace(R.id.settings_fragment, new SettingsFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
@@ -142,9 +142,9 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
      * navigating back would not show the old fragment again.
      */
     private void removePreviousFragment() {
-        Fragment f = (Fragment) getSupportFragmentManager().findFragmentById(R.id.settings_fragment);
+        Fragment f = (Fragment) getFragmentManager().findFragmentById(R.id.settings_fragment);
         if (f != null) {
-            getSupportFragmentManager().beginTransaction().remove(f).commit();
+            getFragmentManager().beginTransaction().remove(f).commit();
         }
     }
 
@@ -158,7 +158,7 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
         f.setArguments(bundle);
 
         removePreviousFragment();
-        getSupportFragmentManager().beginTransaction()
+        getFragmentManager().beginTransaction()
                 .replace(R.id.settings_fragment, f)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
