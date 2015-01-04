@@ -1,8 +1,13 @@
-$ 1.6.2
-  % VERSION 1.6.2
-  _ 29.11.2014
-    * Dismiss dialog when deleting a recording
-    * Show recording title in the details dialog
+$ 1.7.0
+  % VERSION 1.7.0
+  _ 04.01.2015
+    * Added support for Android 5
+    * Minimum SDK version is now 11
+    * Dismiss dialog when a recording has been deleted
+    * Fixed showing the recording title in the details dialog
+    * Updated Italian and Swedish translations
+    * Updated some of the theme colors
+    * A lot of internal changes and improvements
 $ 1.6.1
   % VERSION 1.6.1
   _ 08.11.2014
