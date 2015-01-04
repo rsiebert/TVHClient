@@ -134,7 +134,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         });
         // Inflate a menu to be displayed in the toolbar
         toolbar.inflateMenu(R.menu.recording_menu);
-        onPrepareToolbarMenu(toolbar.getMenu());
     }
 
     @Override
@@ -174,7 +173,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false)) {
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
     }
@@ -195,6 +194,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         adapter.notifyDataSetChanged();
 
         if (toolbar != null) {
+            onPrepareToolbarMenu(toolbar.getMenu());
             toolbar.setTitle(getString(R.string.series_recordings));
             if (adapter.getCount() > 0) {
                 toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items_available));
@@ -331,13 +331,16 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
         // Set the position in the adapter so that we can show the selected
         // recording in the theme with the arrow.
-        if (adapter != null && adapter.getCount() > position) {
-            adapter.setPosition(position);
+        if (adapter != null) {
+            SeriesRecording srec = null;
+            if (adapter.getCount() > position) {
+                adapter.setPosition(position);
+                srec = (SeriesRecording) adapter.getItem(position);
+            }
 
             // Simulate a click in the list item to inform the activity
             // It will then show the details fragment if dual pane is active
             if (isDualPane) {
-                SeriesRecording srec = (SeriesRecording) adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }
