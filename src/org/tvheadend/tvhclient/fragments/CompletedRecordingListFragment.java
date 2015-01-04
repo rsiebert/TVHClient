@@ -58,7 +58,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false)) {
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
     }

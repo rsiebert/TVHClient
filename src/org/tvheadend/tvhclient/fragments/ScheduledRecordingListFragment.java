@@ -58,7 +58,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false)) {
+        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
         }
     }
