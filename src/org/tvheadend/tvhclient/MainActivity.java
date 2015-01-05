@@ -1044,7 +1044,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             Bundle args = new Bundle();
             args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
             args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-            args.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             // Create the fragment and show it as a dialog.
             DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
             newFragment.show(getSupportFragmentManager(), "dialog");
