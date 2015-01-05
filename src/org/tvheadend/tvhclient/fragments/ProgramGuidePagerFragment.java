@@ -179,6 +179,10 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
      */
     private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case R.id.menu_search:
+            activity.onSearchRequested();
+            return true;
+
         case R.id.menu_timeframe:
             programGuideTimeDialog.show();
             return true;
