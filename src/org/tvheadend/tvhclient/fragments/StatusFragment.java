@@ -133,6 +133,15 @@ public class StatusFragment extends Fragment implements HTSListener {
                 }
             });
             toolbar.inflateMenu(R.menu.status_menu);
+
+            // Allow clicking on the navigation logo, if available
+            toolbar.setNavigationIcon(R.drawable.ic_launcher);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.onBackPressed();
+                }
+            });
         }
     }
 

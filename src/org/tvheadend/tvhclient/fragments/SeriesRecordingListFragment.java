@@ -137,6 +137,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
             // Allow clicking on the navigation logo, if available
             if (!isDualPane) {
+                toolbar.setNavigationIcon(R.drawable.ic_launcher);
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

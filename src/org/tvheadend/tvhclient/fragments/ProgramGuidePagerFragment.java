@@ -53,7 +53,9 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
     ArrayAdapter<ChannelTag> tagAdapter;
     private AlertDialog tagDialog;
     private Toolbar toolbar;
-    
+
+    protected boolean isDualPane;
+
     // The time frame (start and end times) that shall be shown in a single fragment.  
     private static List<Long> startTimes = new ArrayList<Long>();
     private static List<Long> endTimes = new ArrayList<Long>();
@@ -68,6 +70,11 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
         // will not be shown.
         if (container == null) {
             return null;
+        }
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
         View v = inflater.inflate(R.layout.program_guide_pager, container, false);
@@ -159,6 +166,17 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
         // Inflate a menu to be displayed in the toolbar
         toolbar.inflateMenu(R.menu.epg_menu);
         onPrepareToolbarMenu(toolbar.getMenu());
+
+        // Allow clicking on the navigation icon, if available. The icon is set
+        // in the populateTagList method
+        if (!isDualPane) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.onBackPressed();
+                }
+            });
+        }
     }
 
     /**

@@ -614,7 +614,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         case MENU_PROGRAM_GUIDE:
             // Show the program guide on the right side
-            showFragment(ProgramGuidePagerFragment.class.getName(), R.id.main_fragment, null);
+            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            showFragment(ProgramGuidePagerFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_STATUS:
