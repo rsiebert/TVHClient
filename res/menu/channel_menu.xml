@@ -7,13 +7,13 @@
         android:icon="?attr/ic_menu_search"
         android:orderInCategory="1"
         android:title="@android:string/search_go"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_tags"
         android:icon="?attr/ic_menu_tags"
         android:orderInCategory="5"
         android:title="@string/menu_tags"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_genre_color_info_channels"
         android:orderInCategory="6"
@@ -23,6 +23,6 @@
         android:icon="?attr/ic_menu_refresh"
         android:orderInCategory="10"
         android:title="@string/menu_refresh"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>

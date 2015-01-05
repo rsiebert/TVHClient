@@ -7,13 +7,13 @@
         android:icon="?attr/ic_menu_play"
         android:orderInCategory="2"
         android:title="@string/menu_play"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:orderInCategory="4"
         android:title="@string/menu_record_remove"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_record_remove_all"
         android:icon="?attr/ic_menu_record_remove"
@@ -25,7 +25,7 @@
         android:icon="?attr/ic_menu_record_cancel"
         android:orderInCategory="6"
         android:title="@string/menu_record_cancel"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_record_cancel_all"
         android:icon="?attr/ic_menu_record_cancel"

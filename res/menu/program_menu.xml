@@ -6,13 +6,13 @@
         android:icon="?attr/ic_menu_search"
         android:orderInCategory="1"
         android:title="@android:string/search_go"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_play"
         android:icon="?attr/ic_menu_play"
         android:orderInCategory="2"
         android:title="@string/menu_play"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_genre_color_info_programs"
         android:orderInCategory="7"
@@ -21,5 +21,6 @@
         android:id="@+id/menu_refresh"
         android:icon="?attr/ic_menu_refresh"
         android:orderInCategory="10"
-        android:title="@string/menu_refresh"/>
+        android:title="@string/menu_refresh"
+        app:showAsAction="ifRoom"/>
 </menu>

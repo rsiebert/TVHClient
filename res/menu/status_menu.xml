@@ -7,6 +7,6 @@
         android:icon="?attr/ic_menu_refresh"
         android:orderInCategory="10"
         android:title="@string/menu_refresh"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>
