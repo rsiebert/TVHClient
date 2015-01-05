@@ -205,18 +205,20 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             registerForContextMenu(listView);
         }
 
-        // The toolbar will not be available when the this fragment is used in
-        // the program guide.
+        // The toolbar is not available when this fragment is used to show only
+        // the channels in the program guide screen
         if (toolbar != null) {
-            toolbar.setNavigationIcon(R.drawable.ic_launcher);
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.channel_menu);
+
+            // Allow clicking on the navigation icon, if available. The icon is
+            // set in the populateTagList method
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     return onToolbarItemSelected(item);
                 }
             });
-            // Inflate a menu to be displayed in the toolbar
-            toolbar.inflateMenu(R.menu.channel_menu);
         }
     }
 

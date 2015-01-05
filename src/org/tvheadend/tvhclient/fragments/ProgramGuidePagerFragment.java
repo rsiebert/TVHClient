@@ -155,27 +155,27 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
         });
         tagDialog = builder.create();
 
-        // Set an OnMenuItemClickListener to handle menu item clicks
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onToolbarItemSelected(item);
-            }
-        });
-
-        // Inflate a menu to be displayed in the toolbar
-        toolbar.inflateMenu(R.menu.epg_menu);
-        onPrepareToolbarMenu(toolbar.getMenu());
-
-        // Allow clicking on the navigation icon, if available. The icon is set
-        // in the populateTagList method
-        if (!isDualPane) {
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        if (toolbar != null) {
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
-                public void onClick(View v) {
-                    activity.onBackPressed();
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onToolbarItemSelected(item);
                 }
             });
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.epg_menu);
+            onPrepareToolbarMenu(toolbar.getMenu());
+
+            if (!isDualPane) {
+                // Allow clicking on the navigation icon, if available. The icon
+                // is set in the populateTagList method
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.onBackPressed();
+                    }
+                });
+            }
         }
     }
 

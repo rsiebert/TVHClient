@@ -131,7 +131,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         registerForContextMenu(listView);
 
         if (toolbar != null) {
-            // Set an OnMenuItemClickListener to handle menu item clicks
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -141,9 +140,10 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             // Inflate a menu to be displayed in the toolbar
             toolbar.inflateMenu(R.menu.recording_menu);
 
-            // Allow clicking on the navigation logo, if available
+            toolbar.setNavigationIcon(R.drawable.ic_launcher);
             if (!isDualPane) {
-                toolbar.setNavigationIcon(R.drawable.ic_launcher);
+                // Allow clicking on the navigation icon, if available. The icon is
+                // set in the populateTagList method
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
