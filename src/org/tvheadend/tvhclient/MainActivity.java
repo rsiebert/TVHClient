@@ -784,6 +784,16 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
                     if (!channelLoadingList.isEmpty()) {
                         loadMorePrograms();
+                    } else {
+                        // Display the number of items because the loading is
+                        // done. We need to get the number from the program
+                        // guide pager fragment because it holds the channel
+                        // fragment which in turn knows the channel count.
+                        Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                        if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+                            int count = ((FragmentControlInterface) f).getItemCount();
+                            ((ProgramGuidePagerFragment) f).setToolbarSubtitle(count + " " + getString(R.string.items));
+                        }
                     }
                 }
             });
@@ -920,6 +930,17 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             TVHClientApplication app = (TVHClientApplication) getApplication();
             if (!app.isChannelBlocked(ch)) {
                 isLoadingChannels = true;
+
+                // Show the loading indication for the program guide We need to
+                // go this way because currently there seems to be no way to
+                // access the fragment that holds the view pager fragments which
+                // itself contains the program list item views. 
+                if (menuPosition == MENU_PROGRAM_GUIDE) {
+                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                    if (f instanceof ProgramGuidePagerFragment) {
+                        ((ProgramGuidePagerFragment) f).setToolbarSubtitle(getString(R.string.loading_channel, ch.name));
+                    }
+                }
                 Utils.loadMorePrograms(this, ch);
             }
         }

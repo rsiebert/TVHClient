@@ -415,4 +415,14 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
             });
         }
     }
+
+    /**
+     * 
+     * @param title
+     */
+    public void setToolbarSubtitle(String title) {
+        if (toolbar != null) {
+            toolbar.setSubtitle(title);
+        }
+    }
 }
