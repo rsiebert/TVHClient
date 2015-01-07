@@ -241,7 +241,10 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.series_recording_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.recording_context_menu, menu);
+
+        (menu.findItem(R.id.menu_play)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
 
         // Get the currently selected program from the list where the context
         // menu has been triggered
