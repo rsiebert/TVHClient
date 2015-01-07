@@ -20,6 +20,7 @@ import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
+import org.tvheadend.tvhclient.fragments.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -30,6 +31,7 @@ import org.tvheadend.tvhclient.model.DrawerMenuItem;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -77,6 +79,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private int completedRecordingListPosition = 0;
     private int scheduledRecordingListPosition = 0;
     private int seriesRecordingListPosition = 0;
+    private int timerRecordingListPosition = 0;
     private int failedRecordingListPosition = 0;
     private int programGuideListPosition = 0;
     private int programGuideListPositionOffset = 0;
@@ -87,11 +90,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private static final int MENU_COMPLETED_RECORDINGS = 1;
     private static final int MENU_SCHEDULED_RECORDINGS = 2;
     private static final int MENU_SERIES_RECORDINGS = 3;
-    private static final int MENU_FAILED_RECORDINGS = 4;
-    private static final int MENU_PROGRAM_GUIDE = 5;
-    private static final int MENU_STATUS = 6;
-    private static final int MENU_SETTINGS = 7;
-    private static final int MENU_CONNECTIONS = 8;
+    private static final int MENU_TIMER_RECORDINGS = 4;
+    private static final int MENU_FAILED_RECORDINGS = 5;
+    private static final int MENU_PROGRAM_GUIDE = 6;
+    private static final int MENU_STATUS = 7;
+    private static final int MENU_SETTINGS = 8;
+    private static final int MENU_CONNECTIONS = 9;
 
     // Holds the stack of menu items
     public ArrayList<Integer> menuStack = new ArrayList<Integer>();
@@ -266,6 +270,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             completedRecordingListPosition = savedInstanceState.getInt(Constants.COMPLETED_RECORDING_LIST_POSITION, 0);
             scheduledRecordingListPosition = savedInstanceState.getInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, 0);
             seriesRecordingListPosition = savedInstanceState.getInt(Constants.SERIES_RECORDING_LIST_POSITION, 0);
+            timerRecordingListPosition = savedInstanceState.getInt(Constants.TIMER_RECORDING_LIST_POSITION, 0);
             failedRecordingListPosition = savedInstanceState.getInt(Constants.FAILED_RECORDING_LIST_POSITION, 0);
             connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
         }
@@ -282,6 +287,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItem(MENU_SERIES_RECORDINGS).count = 
                 app.getSeriesRecordings().size();
+        drawerAdapter.getItem(MENU_TIMER_RECORDINGS).count = 
+                app.getTimerRecordings().size();
         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         drawerAdapter.notifyDataSetChanged();
@@ -309,17 +316,20 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[4],
+        list.add(new DrawerMenuItem(MENU_TIMER_RECORDINGS, menuItems[4],
+                (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
+                        : R.drawable.ic_menu_scheduled_recordings_dark));
+        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[5],
                 (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
                         : R.drawable.ic_menu_failed_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[5],
+        list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[6],
                 (lightTheme) ? R.drawable.ic_menu_program_guide_light
                         : R.drawable.ic_menu_program_guide_dark));
-        list.add(new DrawerMenuItem(MENU_STATUS, menuItems[6],
+        list.add(new DrawerMenuItem(MENU_STATUS, menuItems[7],
                 (lightTheme) ? R.drawable.ic_menu_status_light : R.drawable.ic_menu_status_dark));
-        list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[7],
+        list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[8],
                 (lightTheme) ? R.drawable.ic_menu_settings_light : R.drawable.ic_menu_settings_dark));
-        list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[8],
+        list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[9],
                 (lightTheme) ? R.drawable.ic_menu_connections_light
                         : R.drawable.ic_menu_connections_dark));
 
@@ -451,6 +461,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         outState.putInt(Constants.COMPLETED_RECORDING_LIST_POSITION, completedRecordingListPosition);
         outState.putInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, scheduledRecordingListPosition);
         outState.putInt(Constants.SERIES_RECORDING_LIST_POSITION, seriesRecordingListPosition);
+        outState.putInt(Constants.TIMER_RECORDING_LIST_POSITION, timerRecordingListPosition);
         outState.putInt(Constants.FAILED_RECORDING_LIST_POSITION, failedRecordingListPosition);
         outState.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
         super.onSaveInstanceState(outState);
@@ -604,6 +615,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // Show series recordings
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             showFragment(SeriesRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+            break;
+
+        case MENU_TIMER_RECORDINGS:
+            // Show manually created recordings (by timer)
+            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            showFragment(TimerRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_FAILED_RECORDINGS:
@@ -806,12 +823,13 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     drawerAdapter.getItem(MENU_CHANNELS).isVisible = true;
                     drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).isVisible = true;
                     drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).isVisible = true;
-                    drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = true;
 
-                    // Only show the series recording entry when the server supports it
+                    // Only show the menu for the recording types if the server supports it
                     TVHClientApplication app = (TVHClientApplication) getApplication();
+                    drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = (app.getProtocolVersion() > 17);
                     drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = (app.getProtocolVersion() > 12);
 
+                    drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = true;
                     drawerAdapter.getItem(MENU_PROGRAM_GUIDE).isVisible = true;
                     drawerAdapter.notifyDataSetChanged();
                 }
@@ -832,6 +850,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                         drawerAdapter.getItem(MENU_CHANNELS).isVisible = false;
                         drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).isVisible = false;
+                        drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_PROGRAM_GUIDE).isVisible = false;
@@ -1036,6 +1055,18 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             DialogFragment newFragment = SeriesRecordingDetailsFragment.newInstance(args);
             newFragment.show(getSupportFragmentManager(), "dialog");
         }
+    }
+
+    @Override
+    public void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag) {
+        // Save the position of the selected recording type so it can be
+        // restored after an orientation change
+        switch (menuPosition) {
+        case MENU_TIMER_RECORDINGS:
+            timerRecordingListPosition = position;
+            break;
+        }
+        // TODO
     }
 
     @Override

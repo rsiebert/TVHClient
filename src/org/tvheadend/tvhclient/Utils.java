@@ -36,6 +36,7 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
 import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -326,30 +327,37 @@ public class Utils {
     /**
      * 
      * @param context
-     * @param configName
-     * @param channel
-     * @param title
-     * @param start
-     * @param stop
-     * @param startExtra
-     * @param stopExtra
+     * @param timerRec
      */
-    public static void recordManualSchedule(final Context context, final String configName,
-            final Channel channel, final String title, final String start, final String stop,
-            final String startExtra, final String stopExtra) {
-
-        if (channel == null) {
+    public static void addTimerToRecordProgram(final Context context, final TimerRecording timerRec) {
+        if (timerRec == null || timerRec.channel == null) {
             return;
         }
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
-        intent.putExtra("configName", configName);
-        intent.putExtra("channelId", channel.id);
-        intent.putExtra("title", title);
-        intent.putExtra("start", start);
-        intent.putExtra("stop", stop);
-        intent.putExtra("startExtra", startExtra);
-        intent.putExtra("stopExtra", stopExtra);
+        intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
+        intent.putExtra("title", timerRec.title);
+        intent.putExtra("start", timerRec.start);
+        intent.putExtra("stop", timerRec.stop);
+        intent.putExtra("channelId", timerRec.channel.id);
+        intent.putExtra("configName", timerRec.configName);
+        intent.putExtra("daysOfWeek", timerRec.daysOfWeek);
+        intent.putExtra("priority", timerRec.priority);
+        intent.putExtra("enabled", timerRec.enabled);
+        context.startService(intent);
+    }
+
+    /**
+     * 
+     * @param context
+     * @param timerRec
+     */
+    public static void deleteTimerToRecordProgram(final Context context, final TimerRecording timerRec) {
+        if (timerRec == null) {
+            return;
+        }
+        Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
+        intent.putExtra("id", timerRec.id);
         context.startService(intent);
     }
 

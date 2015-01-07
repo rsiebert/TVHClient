@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.Subscription;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Application;
 import android.content.Context;
@@ -46,6 +47,7 @@ public class TVHClientApplication extends Application {
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
     private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
     private final List<SeriesRecording> seriesRecordings = Collections.synchronizedList(new ArrayList<SeriesRecording>());
+    private final List<TimerRecording> timerRecordings = Collections.synchronizedList(new ArrayList<TimerRecording>());
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
 
@@ -579,6 +581,94 @@ public class TVHClientApplication extends Application {
     public void updateSeriesRecording(SeriesRecording srec) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_SERIES_DVR_UPDATE, srec);
+        }
+    }
+
+    /**
+     * Returns the list of all available timer recordings. If loading has
+     * finished any listener will be informed that a timer recording has been
+     * added.
+     * 
+     * @param srec
+     */
+    public void addTimerRecording(TimerRecording srec) {
+        synchronized (timerRecordings) {
+            timerRecordings.add(srec);
+        }
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_TIMER_DVR_ADD, srec);
+        }
+    }
+
+    /**
+     * Adds the given timer recording to the list of available timer
+     * recordings
+     * 
+     * @return
+     */
+    public List<TimerRecording> getTimerRecordings() {
+        return timerRecordings;
+    }
+
+    /**
+     * Returns a single timer recording that matches the given id.
+     * 
+     * @param id
+     * @return
+     */
+    public TimerRecording getTimerRecording(String id) {
+        synchronized (timerRecordings) {
+            for (TimerRecording srec : getTimerRecordings()) {
+                if (srec.id == id) {
+                    return srec;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Removes the given timer recording from the list of all available timer
+     * recordings. If loading has finished any listener will be informed that a
+     * timer recording has been removed.
+     * 
+     * @param srec
+     */
+    public void removeTimerRecording(TimerRecording srec) {
+        synchronized (timerRecordings) {
+            timerRecordings.remove(srec);
+        }
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_TIMER_DVR_DELETE, srec);
+        }
+    }
+
+    /**
+     * Removes the timer recording from the list of all available timer
+     * recordings that matches the given id.
+     * 
+     * @param id
+     */
+    public void removeTimerRecording(String id) {
+        synchronized (timerRecordings) {
+            for (TimerRecording srec : getTimerRecordings()) {
+                if (srec.id.equals(id)) {
+                    removeTimerRecording(srec);
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * If loading has finished any listener will be informed that a series
+     * recording has been updated.
+     * 
+     * @param srec
+     */
+    public void updateTimerRecording(TimerRecording srec) {
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_TIMER_DVR_UPDATE, srec);
         }
     }
 

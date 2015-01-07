@@ -294,6 +294,7 @@
     <string name="upcoming_recordings">Geplante Aufnahmen</string>
     <string name="failed_recordings">Fehlerhafte Aufnahmen</string>
     <string name="series_recordings">Serienaufnahmen</string>
+    <string name="timer_recordings">Manuelle Aufnahmen</string>
     <string name="is_series_recordings">Diese Aufnahme ist Teil einer Serienaufnahme</string>
     <string name="no_channels_available">Keine Sender vorhanden</string>
     <string name="no_recordings_available">Keine Aufnahmen vorhanden</string>

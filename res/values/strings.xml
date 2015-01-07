@@ -305,6 +305,7 @@
     <string name="upcoming_recordings">Upcoming recordings</string>
     <string name="failed_recordings">Failed recordings</string>
     <string name="series_recordings">Series recordings</string>
+    <string name="timer_recordings">Manual recordings</string>
     <string name="is_series_recordings">This recording is part of a series recording</string>
     <string name="no_channels_available">No channels available</string>
     <string name="no_recordings_available">No recordings available</string>
