@@ -27,6 +27,8 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
     private int selectedPosition;
     private boolean lightTheme;
 
+    private String[] menuItems;
+
     public DrawerMenuAdapter(Activity context, List<DrawerMenuItem> list, int layout) {
         super(context, layout, list);
         this.context = context;
@@ -35,6 +37,8 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
 
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
         this.lightTheme = prefs.getBoolean("lightThemePref", true);
+
+        this.menuItems = context.getResources().getStringArray(R.array.pref_menu_names);
     }
 
     public void setPosition(int pos) {
@@ -82,7 +86,7 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
         final DrawerMenuItem m = getItem(position);
         if (m != null) {
             if (holder.divider != null) {
-                holder.divider.setVisibility((position == 0 || position == 7) ? View.VISIBLE : View.GONE);
+                holder.divider.setVisibility((m.title.equals(menuItems[0]) || m.title.equals(menuItems[8])) ? View.VISIBLE : View.GONE);
             }
             if (holder.icon != null) {
                 holder.icon.setImageResource(m.icon);
