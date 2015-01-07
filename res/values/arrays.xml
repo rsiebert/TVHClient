@@ -88,6 +88,7 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
+        <item>9</item>
     </string-array>
 
     <string-array name="pref_menu_names">
@@ -95,6 +96,7 @@
         <item>Completed Recordings</item>
         <item>Scheduled Recordings</item>
         <item>Series Recordings</item>
+        <item>Timer Recordings</item>
         <item>Failed Recordings</item>
         <item>Program Guide</item>
         <item>Status</item>
