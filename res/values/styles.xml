@@ -124,6 +124,7 @@
         <item name="MenuHeaderLayoutStyle">@drawable/menu_header_dark</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@color/window_background_color_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -161,6 +162,7 @@
         <item name="MenuHeaderLayoutStyle">@drawable/menu_header_light</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@color/window_background_color_light</item>
     </style>
 
 </resources>

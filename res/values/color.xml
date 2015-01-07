@@ -40,4 +40,8 @@
     <color name="drawer_selected_light">#ffdedede</color>
     <color name="drawer_selected_dark">#665e5e5e</color>
 
+    <!-- Theme colors -->
+    <color name="window_background_color_light">#fff5f5f5</color>
+    <color name="window_background_color_dark">#ff171717</color>
+
 </resources>
