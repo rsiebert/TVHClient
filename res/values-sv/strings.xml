@@ -305,7 +305,7 @@
     <string name="upcoming_recordings">Kommande</string>
     <string name="failed_recordings">Misslyckade</string>
     <string name="series_recordings">Serieinspelningar</string>
-    <string name="is_series_recordings">Denna inspelning är del av en serieinspelning</string>
+    <string name="is_series_recording">Denna inspelning är del av en serieinspelning</string>
     
     <string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>

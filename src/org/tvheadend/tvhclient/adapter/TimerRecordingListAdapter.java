@@ -78,7 +78,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         public ImageView icon;
         public TextView title;
         public ImageView state;
-        public TextView is_series_recording;
+        public TextView recording_type;
         public TextView channel;
         public TextView time;
         public TextView date;
@@ -100,7 +100,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.is_series_recording = (TextView) view.findViewById(R.id.series_recording);
+            holder.recording_type = (TextView) view.findViewById(R.id.recording_type);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.date = (TextView) view.findViewById(R.id.date);
@@ -140,8 +140,8 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         if (holder.description != null) {
             holder.description.setVisibility(View.GONE);
         }
-        if (holder.is_series_recording != null) {
-            holder.is_series_recording.setVisibility(ImageView.GONE);
+        if (holder.recording_type != null) {
+            holder.recording_type.setVisibility(ImageView.GONE);
         }
         if (holder.state != null) {
             holder.state.setVisibility(ImageView.GONE);

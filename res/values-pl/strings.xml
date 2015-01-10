@@ -305,7 +305,7 @@
     <string name="upcoming_recordings">Zaplanowane</string>
     <string name="failed_recordings">Utracone / Nieprawidłowe</string>
     <string name="series_recordings">Nagrywanie serii</string>
-    <string name="is_series_recordings">To nagranie jest częścią serii nagrań</string>
+    <string name="is_series_recording">To nagranie jest częścią serii nagrań</string>
     
     <string name="channels">Kanały</string>
     <string name="recordings">Nagrania</string>

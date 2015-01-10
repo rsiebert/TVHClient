@@ -306,7 +306,7 @@
     <string name="failed_recordings">Fallite</string>
 
     <string name="series_recordings">Registrazioni di serie</string>
-    <string name="is_series_recordings">Questa registrazione fa parte di una registrazione di serie</string>
+    <string name="is_series_recording">Questa registrazione fa parte di una registrazione di serie</string>
 
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>

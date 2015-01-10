@@ -62,7 +62,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView time;
     private TextView duration;
     private TextView failed_reason;
-    private TextView is_series_recording;
+    private TextView recording_type;
     private Toolbar toolbar;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
@@ -116,7 +116,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         time = (TextView) v.findViewById(R.id.time);
         duration = (TextView) v.findViewById(R.id.duration);
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
-        is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
+        recording_type = (TextView) v.findViewById(R.id.recording_type);
 
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
@@ -136,13 +136,15 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             Utils.setDescription(descLabel, desc, rec.description);
             Utils.setFailedReason(failed_reason, rec);
 
-            // Show the information if the recording belongs to a series recording
-            // only when no dual pane is active (the controls shall be shown)
-            if (is_series_recording != null) {
-                if (rec.autorecId != null && !isDualPane) {
-                    is_series_recording.setVisibility(ImageView.VISIBLE);
-                } else {
-                    is_series_recording.setVisibility(ImageView.GONE);
+            // Show the information what type the recording is only when no dual
+            // pane is active
+            if (recording_type != null) {
+                if (rec.autorecId == null && rec.timerecId == null) {
+                    recording_type.setVisibility(ImageView.GONE);
+                } else if (rec.autorecId != null && rec.timerecId == null && !isDualPane) {
+                    recording_type.setText(R.string.is_series_recording);
+                } else if (rec.autorecId == null && rec.timerecId != null && !isDualPane) {
+                    recording_type.setText(R.string.is_timer_recording);
                 }
             }
         } else {

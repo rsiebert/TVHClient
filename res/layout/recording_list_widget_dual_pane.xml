@@ -56,14 +56,14 @@
 	        </LinearLayout>
         
 	        <TextView
-	            android:id="@+id/series_recording"
+	            android:id="@+id/recording_type"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:maxLines="1"
 	            android:paddingLeft="6dp"
 	            android:paddingRight="6dp"
 	            android:paddingBottom="3dp"
-	            android:text="@string/is_series_recordings" />
+	            android:text="@null" />
 
 	        <TextView
 	            android:id="@+id/summary"
