@@ -1324,7 +1324,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("getProfiles");
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                Log.i(TAG, "getProfiles");
                 if (!response.containsKey("profiles")) {
                     return;
                 }
@@ -1334,7 +1333,6 @@ public class HTSService extends Service implements HTSConnectionListener {
                     HTSMessage sub = (HTSMessage) obj;
 
                     Profiles p = new Profiles();
-                    Log.i(TAG, "profiles " + sub.getString("name") + " " + sub.getString("uuid"));
                     p.uuid = sub.getString("uuid");
                     p.name = sub.getString("name");
                     if (p.name.length() == 0) {
