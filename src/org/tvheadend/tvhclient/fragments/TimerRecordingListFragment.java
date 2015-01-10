@@ -36,6 +36,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -59,7 +60,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     // This is the default view for the channel list adapter. Other views can be
     // passed to the adapter to show less information. This is used in the
     // program guide where only the channel icon is relevant.
-    private int adapterLayout = R.layout.timer_recording_list_widget;
+    private int adapterLayout = R.layout.recording_list_widget;
 
     protected boolean isDualPane;
 
@@ -80,7 +81,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
         if (isDualPane) {
-            adapterLayout = R.layout.timer_recording_list_widget_dual_pane;
+            adapterLayout = R.layout.recording_list_widget_dual_pane;
         }
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
@@ -98,7 +99,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        Log.i(TAG, "onActivityCreated");
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
@@ -155,6 +156,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume");
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
@@ -193,6 +195,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
      * are scheduled are added to the list.
      */
     private void populateList() {
+        Log.i(TAG, "populateList");
         // Clear the list and add the recordings
         adapter.clear();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
@@ -215,6 +218,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
         if (fragmentStatusInterface != null) {
+            Log.i(TAG, "populateList onListPopulated");
             fragmentStatusInterface.onListPopulated(TAG);
         }
     }
@@ -262,7 +266,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        TimerRecording srec = adapter.getItem(info.position);
+        TimerRecording trec = adapter.getItem(info.position);
 
         switch (item.getItemId()) {
         case R.id.menu_record_remove:

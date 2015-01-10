@@ -17,6 +17,7 @@ public class Constants {
     public static final String BUNDLE_PROGRAM_ID = "eventId";
     public static final String BUNDLE_RECORDING_ID = "dvrId";
     public static final String BUNDLE_SERIES_RECORDING_ID = "autorecId";
+    public static final String BUNDLE_TIMER_RECORDING_ID = "timerId";
     public static final String BUNDLE_RECONNECT = "reconnect";
     public static final String BUNDLE_RESTART = "reload";
     public static final String BUNDLE_COUNT = "count";

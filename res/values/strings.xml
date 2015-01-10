@@ -133,7 +133,7 @@
     <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
     
-    <string name="loading_profiles">Loading profiles</string>
+    <string name="loading_profile">Loading profile</string>
     <string name="pref_profiles">Profiles</string>
     <string name="pref_recording_profiles">Recording profiles</string>
     <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
@@ -318,7 +318,13 @@
     <string name="no_recordings_available">No recordings available</string>
     <string name="no_recordings_scheduled">No recordings are scheduled</string>
     <string name="no_programs_available">No programs available</string>
-    
+
+    <string name="timer_recording_enabled">This recording is enabled</string>
+    <string name="timer_recording_disabled">This recording is disabled</string>
+    <string name="days_of_week">Days of week</string>
+    <string name="comment">Comment</string>
+    <string name="name">Name</string>
+
     <string name="channels">Channels</string>
     <string name="recordings">Recordings</string>
     <string name="status">Status</string>

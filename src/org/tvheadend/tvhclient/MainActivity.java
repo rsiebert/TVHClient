@@ -20,6 +20,7 @@ import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
+import org.tvheadend.tvhclient.fragments.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
@@ -47,6 +48,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -682,6 +684,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         case MENU_COMPLETED_RECORDINGS:
         case MENU_SCHEDULED_RECORDINGS:
         case MENU_SERIES_RECORDINGS:
+        case MENU_TIMER_RECORDINGS:
         case MENU_FAILED_RECORDINGS:
             if (isDualPane) {
                 mainLayoutWeight = 6;
@@ -1066,7 +1069,24 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             timerRecordingListPosition = position;
             break;
         }
-        // TODO
+        // When a series recording has been selected from the recording list fragment,
+        // show its details. In dual mode they are shown as a separate fragment
+        // to the right of the series recording list, otherwise replace the recording
+        // list with the details fragment.
+        Bundle args = new Bundle();
+        if (timerRecording != null) {
+            args.putString(Constants.BUNDLE_TIMER_RECORDING_ID, timerRecording.id);
+        }
+        args.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+
+        if (isDualPane) {
+            // Create and show the fragment
+            showFragment(TimerRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
+        } else {
+            // Create the fragment and show it as a dialog.
+            DialogFragment newFragment = TimerRecordingDetailsFragment.newInstance(args);
+            newFragment.show(getSupportFragmentManager(), "dialog");
+        }
     }
 
     @Override
@@ -1133,6 +1153,18 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof SeriesRecordingListFragment && f instanceof FragmentControlInterface) {
                     ((FragmentControlInterface) f).setInitialSelection(seriesRecordingListPosition);
+                }
+            }
+            break;
+
+        case MENU_TIMER_RECORDINGS:
+            // When the recording list fragment is done loading and dual pane is
+            // active, preselect a recording from the list to show the details
+            // of this recording on the right side.
+            if (isDualPane) {
+                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f instanceof TimerRecordingListFragment && f instanceof FragmentControlInterface) {
+                    ((FragmentControlInterface) f).setInitialSelection(timerRecordingListPosition);
                 }
             }
             break;

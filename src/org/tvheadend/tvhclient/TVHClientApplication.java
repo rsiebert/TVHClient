@@ -891,11 +891,11 @@ public class TVHClientApplication extends Application {
         return ret;
     }
 
-    public void addDvrConfigs(List<Profiles> dvrConfigList) {
+    public void addDvrConfigs(List<Profiles> list) {
         dvrConfigs.clear();
-        dvrConfigs.addAll(dvrConfigList);
+        dvrConfigs.addAll(list);
         if (!loading) {
-            broadcastMessage(Constants.ACTION_GET_DVR_CONFIG, dvrConfigs);
+            broadcastMessage(Constants.ACTION_GET_DVR_CONFIG, null);
         }
     }
 

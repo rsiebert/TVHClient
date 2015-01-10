@@ -29,6 +29,7 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -44,6 +45,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
     public TimerRecordingListAdapter(Activity context, List<TimerRecording> list, int layout) {
         super(context, layout, list);
+        Log.i("TimerRecordingListAdapter", "TimerRecordingListAdapter");
         this.context = context;
         this.layout = layout;
         this.list = list;
@@ -75,9 +77,15 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
     static class ViewHolder {
         public ImageView icon;
         public TextView title;
+        public ImageView state;
+        public TextView is_series_recording;
         public TextView channel;
-        public TextView start;
-        public TextView stop;
+        public TextView time;
+        public TextView date;
+        public TextView duration;
+        public TextView summary;
+        public TextView description;
+        public TextView failed_reason;
         public ImageView dual_pane_list_item_selection;
     }
 
@@ -91,9 +99,15 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
+            holder.state = (ImageView) view.findViewById(R.id.state);
+            holder.is_series_recording = (TextView) view.findViewById(R.id.series_recording);
             holder.channel = (TextView) view.findViewById(R.id.channel);
-            holder.start = (TextView) view.findViewById(R.id.start);
-            holder.stop = (TextView) view.findViewById(R.id.stop);
+            holder.time = (TextView) view.findViewById(R.id.time);
+            holder.date = (TextView) view.findViewById(R.id.date);
+            holder.duration = (TextView) view.findViewById(R.id.duration);
+            holder.summary = (TextView) view.findViewById(R.id.summary);
+            holder.description = (TextView) view.findViewById(R.id.description);
+            holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
@@ -116,17 +130,36 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             }
         }
 
-        // Get the program and assign all the values
-        TimerRecording srec = getItem(position);
-        if (srec != null) {
-            holder.title.setText(srec.title);
-            if (holder.channel != null && srec.channel != null) {
-                holder.channel.setText(srec.channel.name);
-            }
-            Utils.setChannelIcon(holder.icon, null, srec.channel);
-            Utils.setDate(holder.start, srec.start);
-            Utils.setDate(holder.stop, srec.stop);
+        // Hide unused widgets
+        if (holder.failed_reason != null) {
+            holder.failed_reason.setVisibility(View.GONE);
         }
+        if (holder.summary != null) {
+            holder.summary.setVisibility(View.GONE);
+        }
+        if (holder.description != null) {
+            holder.description.setVisibility(View.GONE);
+        }
+        if (holder.is_series_recording != null) {
+            holder.is_series_recording.setVisibility(ImageView.GONE);
+        }
+        if (holder.state != null) {
+            holder.state.setVisibility(ImageView.GONE);
+        }
+
+        // Get the program and assign all the values
+        TimerRecording rec = getItem(position);
+        if (rec != null) {
+            holder.title.setText(rec.title);
+            if (holder.channel != null && rec.channel != null) {
+                holder.channel.setText(rec.channel.name);
+            }
+            Utils.setChannelIcon(holder.icon, null, rec.channel);
+            Utils.setDate(holder.date, rec.start);
+            Utils.setTime(holder.time, rec.start, rec.stop);
+            Utils.setDuration(holder.duration, rec.start, rec.stop);
+        }
+        Log.i("TimerRecordingListAdapter", "getView");
         return view;
     }
 
