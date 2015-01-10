@@ -1,50 +1,174 @@
 package org.tvheadend.tvhclient.fragments;
 
 import java.io.File;
+import java.util.List;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
+import org.tvheadend.tvhclient.model.Profiles;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.Toast;
 
-public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragment implements
+        OnSharedPreferenceChangeListener, HTSListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsFragment.class.getSimpleName();
-    
+
+    private Toolbar toolbar = null;
     private Activity activity;
     private SettingsInterface settingsInterface;
+    int currentPreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int prefs = R.xml.preferences;
+        currentPreference = R.xml.preferences;
         Bundle bundle = getArguments();
         if (bundle != null) {
-            prefs = bundle.getInt(Constants.BUNDLE_SETTINGS_PREFS);
+            currentPreference = bundle.getInt(Constants.BUNDLE_SETTINGS_PREFS);
         }
 
-        // Set the default values and then load the preferences from the XML resource
-        PreferenceManager.setDefaultValues(getActivity(), prefs, false);
-        addPreferencesFromResource(prefs);
+        PreferenceManager.setDefaultValues(getActivity(), currentPreference, false);
+        addPreferencesFromResource(currentPreference);
+    }
 
-        // Add the listeners to the each preference
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (activity instanceof SettingsInterface) {
+            settingsInterface = (SettingsInterface) activity;
+        }
+
+        toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.menu_settings);
+            toolbar.setTitle(R.string.menu_settings);
+            toolbar.setNavigationIcon((Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? R.drawable.ic_menu_back_light
+                    : R.drawable.ic_menu_back_dark);
+
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.onBackPressed();
+                }
+            });
+        }
+
+        // Add the listeners to the each preference so the correct preference
+        // file can be loaded for the selected fragment.
+        addPreferenceListeners();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (FragmentActivity) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        settingsInterface = null;
+        super.onDetach();
+    }
+
+    public void onResume() {
+        super.onResume();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        app.addListener(this);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs.registerOnSharedPreferenceChangeListener(this);
+
+        // Check if the general settings are currently shown
+        if (currentPreference == R.xml.preferences) {
+            ListPreference prefRecordingProfiles = (ListPreference) findPreference("pref_recording_profiles");
+            ListPreference prefPlaybackProfiles = (ListPreference) findPreference("pref_playback_profiles");
+
+            if (prefRecordingProfiles != null && prefPlaybackProfiles != null) {
+                // Disable the settings until profiles have been loaded.
+                // If the server does not support it then it stays disabled
+                prefRecordingProfiles.setEnabled(false);
+                prefPlaybackProfiles.setEnabled(false);
+
+                // Hide or show the available profile menu items depending on
+                // the server version
+                if (app.getProtocolVersion() > 15) {
+                    // Get the available profiles from the server
+                    final Intent intent = new Intent(activity, HTSService.class);
+                    intent.setAction(Constants.ACTION_GET_DVR_CONFIG);
+                    activity.startService(intent);
+
+                    intent.setAction(Constants.ACTION_GET_PROFILES);
+                    activity.startService(intent);
+
+                    toolbar.setSubtitle(R.string.loading_profiles);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        app.removeListener(this);
+    }
+
+    /**
+     * Show a notification to the user in case the theme or language preference
+     * has changed.
+     */
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("lightThemePref") || key.equals("languagePref")) {
+            if (settingsInterface != null) {
+                settingsInterface.restart();
+                settingsInterface.restartActivity();
+            }
+        } else if (key.equals("epgMaxDays") || key.equals("epgHoursVisible")) {
+            if (settingsInterface != null) {
+                settingsInterface.restart();
+            }
+        }
+        // Reload the data to fetch the channel icons. They are not loaded
+        // (to save bandwidth) when not required.
+        if (key.equals("showIconPref")) {
+            if (settingsInterface != null) {
+                settingsInterface.reconnect();
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    private void addPreferenceListeners() {
         Preference prefManage = findPreference("pref_manage_connections");
         if (prefManage != null) {
             prefManage.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -122,8 +246,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 }
             });
         }
-        
-        // Add a listener to the connection preference so that the 
+        // Add a listener to the connection preference so that the
         // ChangeLogDialog with all changes can be shown.
         Preference prefChangelog = findPreference("pref_changelog");
         if (prefChangelog != null) {
@@ -136,8 +259,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 }
             });
         }
-        
-        // Add a listener to the clear search history preference so that it can be cleared.
+        // Add a listener to the clear search history preference so that it can
+        // be cleared.
         Preference prefClearSearchHistory = findPreference("pref_clear_search_history");
         if (prefClearSearchHistory != null) {
             prefClearSearchHistory.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -145,25 +268,32 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 public boolean onPreferenceClick(Preference preference) {
                     // Show a confirmation dialog before deleting the recording
                     new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.clear_search_history)
-                    .setMessage(getString(R.string.clear_search_history_sum))
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
-                            suggestions.clearHistory();
-                            Toast.makeText(getActivity(), getString(R.string.clear_search_history_done), Toast.LENGTH_SHORT).show();
-                        }
-                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // NOP
-                        }
-                    }).show();
+                            .setTitle(R.string.clear_search_history)
+                            .setMessage(getString(R.string.clear_search_history_sum))
+                            .setPositiveButton(android.R.string.yes,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+                                                    getActivity(), SuggestionProvider.AUTHORITY,
+                                                    SuggestionProvider.MODE);
+                                            suggestions.clearHistory();
+                                            Toast.makeText(getActivity(),
+                                                    getString(R.string.clear_search_history_done),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                            .setNegativeButton(android.R.string.no,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // NOP
+                                        }
+                                    }).show();
                     return false;
                 }
             });
         }
-
-        // Add a listener to the clear icon cache preference so that it can be cleared.
+        // Add a listener to the clear icon cache preference so that it can be
+        // cleared.
         Preference prefClearIconCache = findPreference("pref_clear_icon_cache");
         if (prefClearIconCache != null) {
             prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -171,26 +301,31 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 public boolean onPreferenceClick(Preference preference) {
                     // Show a confirmation dialog before deleting the recording
                     new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.clear_icon_cache)
-                    .setMessage(getString(R.string.clear_icon_cache_sum))
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            File[] files = activity.getCacheDir().listFiles();
-                            for (File file : files) {
-                                if (file.toString().endsWith(".png")) {
-                                    file.delete();
-                                    if (settingsInterface != null) {
-                                        settingsInterface.reconnect();
-                                    }
-                                }
-                            }
-                            Toast.makeText(getActivity(), getString(R.string.clear_icon_cache_done), Toast.LENGTH_SHORT).show();
-                        }
-                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // NOP
-                        }
-                    }).show();
+                            .setTitle(R.string.clear_icon_cache)
+                            .setMessage(getString(R.string.clear_icon_cache_sum))
+                            .setPositiveButton(android.R.string.yes,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            File[] files = activity.getCacheDir().listFiles();
+                                            for (File file : files) {
+                                                if (file.toString().endsWith(".png")) {
+                                                    file.delete();
+                                                    if (settingsInterface != null) {
+                                                        settingsInterface.reconnect();
+                                                    }
+                                                }
+                                            }
+                                            Toast.makeText(getActivity(),
+                                                    getString(R.string.clear_icon_cache_done),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                            .setNegativeButton(android.R.string.no,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // NOP
+                                        }
+                                    }).show();
                     return false;
                 }
             });
@@ -198,62 +333,55 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
+    public void onMessage(String action, final Object obj) {
+        if (action.equals(Constants.ACTION_GET_DVR_CONFIG)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    ListPreference prefProfile = (ListPreference) findPreference("pref_recording_profiles");
+                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+                    if (currentPreference == R.xml.preferences && app.getProtocolVersion() > 15) {
+                        addProfiles(prefProfile, app.getDvrConfigs());
+                    }
+                }
+            });
+        } else if (action.equals(Constants.ACTION_GET_PROFILES)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    ListPreference prefProfile = (ListPreference) findPreference("pref_program_profiles");
+                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+                    if (currentPreference == R.xml.preferences && app.getProtocolVersion() > 15) {
+                        addProfiles(prefProfile, app.getProfiles());
+                    }
+                }
+            });
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
-    }
-
-    @Override
-    public void onDetach() {
-        settingsInterface = null;
-        super.onDetach();
-    }
-
-    public void onResume() {
-        super.onResume();       
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        prefs.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        prefs.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     /**
-     * Show a notification to the user in case the theme or language
-     * preference has changed.
+     * 
+     * @param listPref
+     * @param profileList
      */
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("lightThemePref") 
-                || key.equals("languagePref")) {
-            if (settingsInterface != null) {
-                settingsInterface.restart();
-                settingsInterface.restartActivity();
-            }
-        } else if (key.equals("epgMaxDays") 
-                || key.equals("epgHoursVisible")) {
-            if (settingsInterface != null) {
-                settingsInterface.restart();
-            }
+    protected void addProfiles(ListPreference listPref, final List<Profiles> profileList) {
+        if (listPref == null) {
+            return;
         }
-        // Reload the data to fetch the channel icons. They are not loaded
-        // (to save bandwidth) when not required.  
-        if (key.equals("showIconPref")) {
-            if (settingsInterface != null) {
-                settingsInterface.reconnect();
-            }
+
+        // Initialize the arrays that contain the profile values
+        final int size = profileList.size();
+        CharSequence[] entries = new CharSequence[size];
+        CharSequence[] entryValues = new CharSequence[size];
+
+        // Add the available profiles to list preference
+        for (int i = 0; i < size; i++) {
+            entries[i] = profileList.get(i).name;
+            entryValues[i] = profileList.get(i).uuid;
         }
+        listPref.setEntries(entries);
+        listPref.setEntryValues(entryValues);
+
+        // Enable the preference for use selection
+        listPref.setEnabled(true);
+        toolbar.setSubtitle("");
     }
 }

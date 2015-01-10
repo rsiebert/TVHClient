@@ -28,6 +28,7 @@ import java.util.Map;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Program;
@@ -49,6 +50,8 @@ public class TVHClientApplication extends Application {
     private final List<SeriesRecording> seriesRecordings = Collections.synchronizedList(new ArrayList<SeriesRecording>());
     private final List<TimerRecording> timerRecordings = Collections.synchronizedList(new ArrayList<TimerRecording>());
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
+    private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
+    private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
     private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
 
     private volatile boolean loading = false;
@@ -886,5 +889,29 @@ public class TVHClientApplication extends Application {
         }
 
         return ret;
+    }
+
+    public void addDvrConfigs(List<Profiles> dvrConfigList) {
+        dvrConfigs.clear();
+        dvrConfigs.addAll(dvrConfigList);
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_GET_DVR_CONFIG, dvrConfigs);
+        }
+    }
+
+    public List<Profiles> getDvrConfigs() {
+        return dvrConfigs;
+    }
+
+    public void addProfiles(List<Profiles> list) {
+        profiles.clear();
+        profiles.addAll(list);
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_GET_PROFILES, null);
+        }
+    }
+
+    public List<Profiles> getProfiles() {
+        return profiles;
     }
 }

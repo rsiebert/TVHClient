@@ -133,6 +133,13 @@
     <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
     
+    <string name="loading_profiles">Loading profiles</string>
+    <string name="pref_profiles">Profiles</string>
+    <string name="pref_recording_profiles">Recording profiles</string>
+    <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
+    <string name="pref_playback_profiles">Playback profiles</string>
+    <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
+
     <string name="clear_search_history">Clear search history?</string>
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
     <string name="clear_search_history_done">Search history cleared</string>

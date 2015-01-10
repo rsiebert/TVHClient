@@ -21,20 +21,17 @@ package org.tvheadend.tvhclient;
 import org.tvheadend.tvhclient.fragments.SettingsFragment;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 public class SettingsActivity extends ActionBarActivity implements SettingsInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsActivity.class.getSimpleName();
 
-    private Toolbar toolbar = null;
     private Fragment fragment;
 
     private static boolean restart = false;
@@ -51,17 +48,6 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
         super.onCreate(savedInstanceState);
         Utils.setLanguage(this);
         setContentView(R.layout.settings_layout);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.menu_settings);
-        toolbar.setNavigationIcon((Utils.getThemeId(this) == R.style.CustomTheme_Light) ? R.drawable.ic_menu_back_light
-                : R.drawable.ic_menu_back_dark);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
         // Get any saved values from the bundle
         if (savedInstanceState != null) {

@@ -31,6 +31,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +41,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.DvrCutpoint;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
@@ -1186,7 +1188,21 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!response.containsKey("dvrconfigs")) {
                     return;
                 }
-                // TODO
+                List<Profiles> dcList = new ArrayList<Profiles>();
+                TVHClientApplication app = (TVHClientApplication) getApplication();
+                for (Object obj : response.getList("dvrconfigs")) {
+                    HTSMessage sub = (HTSMessage) obj;
+
+                    Profiles dc = new Profiles();
+                    dc.uuid = sub.getString("uuid");
+                    dc.name = sub.getString("name");
+                    if (dc.name.length() == 0) {
+                        dc.name = "(Default Profile)";
+                    }
+                    dc.comment = sub.getString("comment");
+                    dcList.add(dc);
+                }
+                app.addDvrConfigs(dcList);
             }
         });
     }
@@ -1269,15 +1285,21 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!response.containsKey("profiles")) {
                     return;
                 }
+                List<Profiles> pl = new ArrayList<Profiles>();
+                TVHClientApplication app = (TVHClientApplication) getApplication();
                 for (Object obj : response.getList("profiles")) {
                     HTSMessage sub = (HTSMessage) obj;
-                    sub.getString("uuid");
-                    sub.getString("name");
-                    sub.getString("comment");
-                    // TODO
 
-                    Log.d(TAG, "getProfiles, added profile");
+                    Profiles p = new Profiles();
+                    p.uuid = sub.getString("uuid");
+                    p.name = sub.getString("name");
+                    if (p.name.length() == 0) {
+                        p.name = "(Default Profile)";
+                    }
+                    p.comment = sub.getString("comment");
+                    pl.add(p);
                 }
+                app.addProfiles(pl);
             }
         });
     }
