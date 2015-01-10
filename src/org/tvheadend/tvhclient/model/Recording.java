@@ -35,11 +35,15 @@ public class Recording implements Comparable<Recording> {
     public String error;
     public long eventId;
     public String autorecId = null;
+    public String timerecId = null;
     public Date startExtra;
     public Date stopExtra;
     public long retention;
     public long priority;
     public long contentType;
+    public String owner;
+    public String creator;
+    public String path;
     public List<DvrCutpoint> dvrCutPoints = new ArrayList<DvrCutpoint>();
 
     @Override

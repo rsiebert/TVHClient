@@ -394,29 +394,33 @@ public class HTSService extends Service implements HTSConnectionListener {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         Recording rec = new Recording();
         rec.id = msg.getLong("id");
-        rec.description = msg.getString("description", "");
-        rec.summary = msg.getString("summary", "");
-        rec.error = msg.getString("error", null);
+
+        rec.eventId = msg.getLong("eventId", 0);
+        rec.autorecId = msg.getString("autorecId", null);
+        rec.timerecId = msg.getString("timerecId", null);
+
         rec.start = msg.getDate("start");
-        rec.state = msg.getString("state", null);
         rec.stop = msg.getDate("stop");
+        rec.startExtra = msg.getDate("startExtra");
+        rec.stopExtra = msg.getDate("stopExtra");
+        rec.retention = msg.getLong("retention");
+        rec.priority = msg.getLong("priority");
+        rec.contentType = msg.getLong("contentType");
+
         rec.title = msg.getString("title", null);
+        rec.description = msg.getString("description", "");
+        rec.owner = msg.getString("owner", null);
+        rec.creator = msg.getString("creator", null);
+        rec.path = msg.getString("path", null);
+
+        rec.state = msg.getString("state", null);
+        rec.error = msg.getString("error", null);
+
         rec.channel = app.getChannel(msg.getLong("channel", 0));
         if (rec.channel != null) {
             rec.channel.recordings.add(rec);
         }
 
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported htsp API version
-        if (connection.getProtocolVersion() > 12) {
-            rec.eventId = msg.getLong("eventId", 0);
-            rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getDate("startExtra");
-            rec.stopExtra = msg.getDate("stopExtra");
-            rec.retention = msg.getLong("retention");
-            rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType");
-        }
         app.addRecording(rec);
     }
 
@@ -427,25 +431,27 @@ public class HTSService extends Service implements HTSConnectionListener {
             return;
         }
 
-        rec.description = msg.getString("description", rec.description);
-        rec.summary = msg.getString("summary", rec.summary);
-        rec.error = msg.getString("error", rec.error);
-        rec.start = msg.getDate("start");
-        rec.state = msg.getString("state", rec.state);
-        rec.stop = msg.getDate("stop");
-        rec.title = msg.getString("title", rec.title);
+        rec.eventId = msg.getLong("eventId", rec.eventId);
+        rec.autorecId = msg.getString("autorecId", rec.autorecId);
+        rec.timerecId = msg.getString("timerecId", rec.timerecId);
 
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported htsp API version
-        if (connection.getProtocolVersion() > 12) {
-            rec.eventId = msg.getLong("eventId", 0);
-            rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getDate("startExtra");
-            rec.stopExtra = msg.getDate("stopExtra");
-            rec.retention = msg.getLong("retention");
-            rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType");
-        }
+        rec.start = msg.getDate("start");
+        rec.stop = msg.getDate("stop");
+        rec.startExtra = msg.getDate("startExtra");
+        rec.stopExtra = msg.getDate("stopExtra");
+        rec.retention = msg.getLong("retention");
+        rec.priority = msg.getLong("priority");
+        rec.contentType = msg.getLong("contentType");
+
+        rec.title = msg.getString("title", rec.title);
+        rec.description = msg.getString("description", rec.description);
+        rec.owner = msg.getString("owner", rec.owner);
+        rec.creator = msg.getString("creator", rec.creator);
+        rec.path = msg.getString("path", rec.path);
+
+        rec.state = msg.getString("state", rec.state);
+        rec.error = msg.getString("error", rec.error);
+
         app.updateRecording(rec);
     }
 
@@ -480,8 +486,31 @@ public class HTSService extends Service implements HTSConnectionListener {
         trec.stop = msg.getDate("stop");
         trec.title = msg.getString("title", null);
         trec.name = msg.getString("name", null);
+        trec.directory = msg.getString("directory", null);
         trec.owner = msg.getString("owner", null);
         trec.creator = msg.getString("creator", null);
+        trec.channel = app.getChannel(msg.getLong("channel", 0));
+        app.addTimerRecording(trec);
+    }
+
+    private void onTimerRecEntryUpdate(HTSMessage msg) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        TimerRecording trec = app.getTimerRecording(msg.getString("id"));
+        if (trec == null) {
+            return;
+        }
+
+        trec.enabled = msg.getLong("enabled", trec.enabled);
+        trec.daysOfWeek = msg.getLong("daysOfWeek", trec.daysOfWeek);
+        trec.retention = msg.getLong("retention", trec.retention);
+        trec.priority = msg.getLong("priority", trec.priority);
+        trec.start = msg.getDate("start");
+        trec.stop = msg.getDate("stop");
+        trec.title = msg.getString("title", trec.title);
+        trec.name = msg.getString("name", trec.name);
+        trec.directory = msg.getString("directory", trec.directory);
+        trec.owner = msg.getString("owner", trec.owner);
+        trec.creator = msg.getString("creator", trec.creator);
         trec.channel = app.getChannel(msg.getLong("channel", 0));
         app.addTimerRecording(trec);
     }
@@ -668,17 +697,23 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (srec == null) {
             return;
         }
-        srec.description = msg.getString("description", srec.description);
+
         srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
         srec.maxDuration = msg.getLong("maxDuration");
         srec.minDuration = msg.getLong("minDuration");
         srec.retention = msg.getLong("retention");
         srec.daysOfWeek = msg.getLong("daysOfWeek");
         srec.approxTime = msg.getLong("approxTime");
+        srec.start = msg.getLong("start");
+        srec.startWindow = msg.getLong("startWindow");
         srec.priority = msg.getLong("priority");
         srec.startExtra = msg.getDate("startExtra");
         srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title", srec.title);
+        srec.name = msg.getString("name", srec.name);
+        srec.directory = msg.getString("directory", srec.directory);
+        srec.owner = msg.getString("owner", srec.owner);
+        srec.creator = msg.getString("creator", srec.creator);
         app.updateSeriesRecording(srec);
     }
 
@@ -686,17 +721,22 @@ public class HTSService extends Service implements HTSConnectionListener {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         SeriesRecording srec = new SeriesRecording();
         srec.id = msg.getString("id");
-        srec.description = msg.getString("description", "");
         srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
         srec.maxDuration = msg.getLong("maxDuration");
         srec.minDuration = msg.getLong("minDuration");
         srec.retention = msg.getLong("retention");
         srec.daysOfWeek = msg.getLong("daysOfWeek");
         srec.approxTime = msg.getLong("approxTime");
+        srec.start = msg.getLong("start");
+        srec.startWindow = msg.getLong("startWindow");
         srec.priority = msg.getLong("priority");
         srec.startExtra = msg.getDate("startExtra");
         srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title");
+        srec.name = msg.getString("name");
+        srec.directory = msg.getString("directory");
+        srec.owner = msg.getString("owner");
+        srec.creator = msg.getString("creator");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
         app.addSeriesRecording(srec);
     }
@@ -725,6 +765,8 @@ public class HTSService extends Service implements HTSConnectionListener {
             onDvrEntryDelete(msg);
         } else if (method.equals("timerecEntryAdd")) {
             onTimerRecEntryAdd(msg);
+        } else if (method.equals("timerecEntryUpdate")) {
+            onTimerRecEntryUpdate(msg);
         } else if (method.equals("timerecEntryDelete")) {
             onTimerRecEntryDelete(msg);
         } else if (method.equals("subscriptionStart")) {
