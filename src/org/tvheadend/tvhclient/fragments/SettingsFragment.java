@@ -26,6 +26,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
@@ -66,7 +67,6 @@ public class SettingsFragment extends PreferenceFragment implements
 
         toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
         if (toolbar != null) {
-            toolbar.setTitle(R.string.menu_settings);
             toolbar.setTitle(R.string.menu_settings);
             toolbar.setNavigationIcon((Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? R.drawable.ic_menu_back_light
                     : R.drawable.ic_menu_back_dark);
@@ -114,6 +114,9 @@ public class SettingsFragment extends PreferenceFragment implements
                 prefRecordingProfiles.setEnabled(false);
                 prefPlaybackProfiles.setEnabled(false);
 
+                prefRecordingProfiles.setSummary(R.string.loading_profile);
+                prefPlaybackProfiles.setSummary(R.string.loading_profile);
+
                 // Hide or show the available profile menu items depending on
                 // the server version
                 if (app.getProtocolVersion() > 15) {
@@ -124,8 +127,6 @@ public class SettingsFragment extends PreferenceFragment implements
 
                     intent.setAction(Constants.ACTION_GET_PROFILES);
                     activity.startService(intent);
-
-                    toolbar.setSubtitle(R.string.loading_profiles);
                 }
             }
         }
@@ -339,18 +340,29 @@ public class SettingsFragment extends PreferenceFragment implements
                 public void run() {
                     ListPreference prefProfile = (ListPreference) findPreference("pref_recording_profiles");
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                    if (currentPreference == R.xml.preferences && app.getProtocolVersion() > 15) {
+                    if (prefProfile != null && currentPreference == R.xml.preferences && app.getProtocolVersion() > 15) {
                         addProfiles(prefProfile, app.getDvrConfigs());
+                        prefProfile.setSummary(R.string.pref_recording_profiles_sum);
                     }
                 }
             });
         } else if (action.equals(Constants.ACTION_GET_PROFILES)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    ListPreference prefProfile = (ListPreference) findPreference("pref_program_profiles");
+                    ListPreference prefProfile = (ListPreference) findPreference("pref_playback_profiles");
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                    if (currentPreference == R.xml.preferences && app.getProtocolVersion() > 15) {
+                    if (prefProfile != null && currentPreference == R.xml.preferences && app.getProtocolVersion() > 15) {
                         addProfiles(prefProfile, app.getProfiles());
+                        prefProfile.setSummary(R.string.pref_playback_profiles_sum);
+
+                        PreferenceScreen prefPlaybackPrograms = (PreferenceScreen) findPreference("pref_playback_programs");
+                        if (prefPlaybackPrograms != null) {
+                            prefPlaybackPrograms.setEnabled(false);
+                        }
+                        PreferenceScreen prefPlaybackRecordings = (PreferenceScreen) findPreference("pref_playback_recordings");
+                        if (prefPlaybackRecordings != null) {
+                            prefPlaybackRecordings.setEnabled(false);
+                        }
                     }
                 }
             });
@@ -363,10 +375,6 @@ public class SettingsFragment extends PreferenceFragment implements
      * @param profileList
      */
     protected void addProfiles(ListPreference listPref, final List<Profiles> profileList) {
-        if (listPref == null) {
-            return;
-        }
-
         // Initialize the arrays that contain the profile values
         final int size = profileList.size();
         CharSequence[] entries = new CharSequence[size];
@@ -382,6 +390,5 @@ public class SettingsFragment extends PreferenceFragment implements
 
         // Enable the preference for use selection
         listPref.setEnabled(true);
-        toolbar.setSubtitle("");
     }
 }
