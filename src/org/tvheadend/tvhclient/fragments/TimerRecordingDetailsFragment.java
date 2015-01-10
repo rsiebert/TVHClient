@@ -51,8 +51,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
     private LinearLayout detailsLayout;
     private TextView nameLabel;
     private TextView name;
-    private TextView commentLabel;
-    private TextView comment;
     private TextView channelLabel;
     private TextView channelName;
     private TextView daysOfWeekLabel;
@@ -106,8 +104,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
         detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
         nameLabel = (TextView) v.findViewById(R.id.name_label);
         name = (TextView) v.findViewById(R.id.name);
-        commentLabel = (TextView) v.findViewById(R.id.comment_label);
-        comment = (TextView) v.findViewById(R.id.comment);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         date = (TextView) v.findViewById(R.id.date);
@@ -132,7 +128,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
             Utils.setProgressText(null, rec.start, rec.stop);
             Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
             Utils.setDescription(nameLabel, name, rec.name);
-            Utils.setDescription(commentLabel, comment, rec.comment);
             
             if (daysOfWeek != null) {
                 daysOfWeek.setText(String.valueOf(rec.daysOfWeek));
