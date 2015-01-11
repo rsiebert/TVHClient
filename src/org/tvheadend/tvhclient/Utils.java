@@ -423,51 +423,6 @@ public class Utils {
     }
 
     /**
-     * Shows or hides certain items from the recording menu. This depends on the
-     * current state of the recording.
-     * 
-     * @param menu
-     * @param rec
-     */
-    public static void setRecordingMenu(final Menu menu, final Recording rec) {
-        // Get the menu items so they can be shown 
-        // or hidden depending on the recording state
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
-        MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
-
-        // Disable these menus as a default
-        recordCancelMenuItem.setVisible(false);
-        recordRemoveMenuItem.setVisible(false);
-        playMenuItem.setVisible(false);
-        searchMenuItemEpg.setVisible(false);
-        searchMenuItemImdb.setVisible(false);
-
-        // Exit if the recording is not valid
-        if (rec == null) {
-            return;
-        }
-
-        // Allow searching the recordings
-        searchMenuItemEpg.setVisible(true);
-        searchMenuItemImdb.setVisible(true);
-
-        if (rec.error == null && rec.state.equals("completed")) {
-        	// The recording is available, it can be played and removed
-            recordRemoveMenuItem.setVisible(true);
-            playMenuItem.setVisible(true);
-        } else if (rec.isRecording() || rec.isScheduled()) {
-            // The recording is recording or scheduled, it can only be cancelled
-            recordCancelMenuItem.setVisible(true);
-        } else if (rec.error != null || rec.state.equals("missed")) {
-        	// The recording has failed or has been missed, allow removal
-        	recordRemoveMenuItem.setVisible(true);
-        }
-    }
-
-    /**
      * Shows an icon for the state of the current recording. If no recording was
      * given, the icon will be hidden.
      * 
