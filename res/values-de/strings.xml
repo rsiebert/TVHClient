@@ -36,6 +36,7 @@
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_series_recording">Soll die Serienaufnahme \'%s\' wirklich gelöscht werden?\n\nAlle damit verbundenen geplanten Aufnahmen werden entfernt.</string>
+    <string name="delete_timer_recording">Soll die Manuelle Aufnahme \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_all_recordings">Sollen ALLE Aufnahmen gelöscht werden?</string>
     <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
     <string name="cancel_all_recordings">Sollen ALLE geplanten Aufnahmen abgebrochen werden?</string>

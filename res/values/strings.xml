@@ -36,6 +36,7 @@
     <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
     <string name="delete_recording">Do you really want to delete the recording \'%s\'?</string>
     <string name="delete_series_recording">Do you really want to delete the series recording \'%s\'?\n\nThis will remove all scheduled recordings that belong to that series recording rule.</string>
+    <string name="delete_timer_recording">Do you really want to delete the timer recording \'%s\'?</string>
     <string name="delete_all_recordings">Do you really want to delete ALL recordings?</string>
     <string name="cancel_recording">Do you really want to cancel the scheduled recording \'%s\'?</string>
     <string name="cancel_all_recordings">Do you really want to cancel ALL scheduled recordings?</string>

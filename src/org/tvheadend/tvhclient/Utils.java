@@ -181,6 +181,39 @@ public class Utils {
         }
     }
 
+    public static void confirmRemoveRecording(final Context context, final long id, final String title, final String type) {
+
+        String message = "";
+        if (type == Constants.ACTION_DELETE_DVR_ENTRY) {
+            message = context.getString(R.string.delete_recording, title);
+        } else if (type == Constants.ACTION_DELETE_SERIES_DVR_ENTRY) {
+            message = context.getString(R.string.delete_series_recording, title);
+        } else if (type == Constants.ACTION_DELETE_TIMER_REC_ENTRY) {
+            message = context.getString(R.string.delete_timer_recording, title);
+        }
+
+        // Show a confirmation dialog before deleting the recording
+        new AlertDialog.Builder(context)
+        .setTitle(R.string.menu_record_remove)
+        .setMessage(message)
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                removeRecording(context, id, type);
+            }
+        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // NOP
+            }
+        }).show();
+    }
+
+    public static void removeRecording(final Context context, final long id, final String type) {
+        final Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(type);
+        intent.putExtra("id", id);
+        context.startService(intent);
+    }
+
     /**
      * 
      * @param context
