@@ -45,7 +45,6 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
     public TimerRecordingListAdapter(Activity context, List<TimerRecording> list, int layout) {
         super(context, layout, list);
-        Log.i("TimerRecordingListAdapter", "TimerRecordingListAdapter");
         this.context = context;
         this.layout = layout;
         this.list = list;
@@ -150,7 +149,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         // Get the program and assign all the values
         TimerRecording rec = getItem(position);
         if (rec != null) {
-            holder.title.setText(rec.title);
+            holder.title.setText(rec.name);
             if (holder.channel != null && rec.channel != null) {
                 holder.channel.setText(rec.channel.name);
             }
@@ -159,7 +158,6 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
         }
-        Log.i("TimerRecordingListAdapter", "getView");
         return view;
     }
 
