@@ -132,7 +132,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
      * @param menu
      */
     private void onPrepareToolbarMenu(Menu menu) {
-        (menu.findItem(R.id.menu_play)).setVisible(srec != null);
+        (menu.findItem(R.id.menu_play)).setVisible(false);
+        (menu.findItem(R.id.menu_edit)).setVisible(srec != null);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
     }
 

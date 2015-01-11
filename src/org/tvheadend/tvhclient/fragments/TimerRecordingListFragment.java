@@ -273,6 +273,10 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             // TODO
             return true;
 
+        case R.id.menu_edit:
+            // TODO
+            return true;
+
         default:
             return super.onContextItemSelected(item);
         }
