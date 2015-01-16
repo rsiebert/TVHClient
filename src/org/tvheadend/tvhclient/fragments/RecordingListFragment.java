@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.PlaybackSelectionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
@@ -178,7 +179,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem(), null);
+            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
             return true;
 
         case R.id.menu_record_remove_all:
@@ -251,7 +252,13 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeRecording(activity, adapter.getItem(i), null);
+                    final Recording rec = adapter.getItem(i);
+                    if (rec != null) {
+                        final Intent intent = new Intent(activity, HTSService.class);
+                        intent.setAction(Constants.ACTION_DELETE_DVR_ENTRY);
+                        intent.putExtra("id", rec.id);
+                        activity.startService(intent);
+                    }
                     try {
                         sleep(THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {

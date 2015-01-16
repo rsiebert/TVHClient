@@ -220,7 +220,11 @@ public class Utils {
      * @param rec
      */
     public static void confirmRemoveRecording(final Context context, final Recording rec) {
-        confirmRemoveRecording(context, rec, null);
+        confirmRemoveRecording(context, 
+                Constants.ACTION_DELETE_DVR_ENTRY, 
+                R.string.delete_recording, 
+                rec.title, 
+                String.valueOf(rec.id));
     }
 
     /**
@@ -229,7 +233,24 @@ public class Utils {
      * @param srec
      */
     public static void confirmRemoveRecording(final Context context, final SeriesRecording srec) {
-        confirmRemoveRecording(context, null, srec);
+        confirmRemoveRecording(context, 
+                Constants.ACTION_SERIES_DVR_DELETE, 
+                R.string.delete_series_recording, 
+                srec.title, 
+                srec.id);
+    }
+
+    /**
+     * 
+     * @param context
+     * @param trec
+     */
+    public static void confirmRemoveRecording(final Context context, final TimerRecording trec) {
+        confirmRemoveRecording(context, 
+                Constants.ACTION_TIMER_DVR_DELETE, 
+                R.string.delete_timer_recording, 
+                trec.title, 
+                trec.id);
     }
 
     /**
@@ -237,20 +258,13 @@ public class Utils {
      * from the server. A dialog is shown up front to confirm the deletion.
      * 
      * @param context
-     * @param rec
-     * @param srec
+     * @param type
+     * @param dialogTitle
+     * @param title
+     * @param id
      */
-    public static void confirmRemoveRecording(final Context context, final Recording rec, final SeriesRecording srec) {
-        if (rec == null && srec == null) {
-            return;
-        }
-
-        String message = "";
-        if (rec != null) {
-            message = context.getString(R.string.delete_recording, rec.title);
-        } else if (srec != null) {
-            message = context.getString(R.string.delete_series_recording, srec.title);
-        }
+    public static void confirmRemoveRecording(final Context context, final String type, final int dialogTitle, final String title, final String id) {
+        String message = context.getString(dialogTitle, title);
 
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
@@ -258,36 +272,16 @@ public class Utils {
         .setMessage(message)
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                removeRecording(context, rec, srec);
+                final Intent intent = new Intent(context, HTSService.class);
+                intent.setAction(type);
+                intent.putExtra("id", id);
+                context.startService(intent);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // NOP
             }
         }).show();
-    }
-
-    /**
-     * Removes either the recording or the series recording with the given id
-     * from the server.
-     * 
-     * @param context
-     * @param rec
-     */
-    public static void removeRecording(final Context context, final Recording rec, final SeriesRecording srec) {
-        if (rec == null && srec == null) {
-            return;
-        }
-        final Intent intent = new Intent(context, HTSService.class);
-        if (rec != null) {
-            intent.setAction(Constants.ACTION_DELETE_DVR_ENTRY);
-            intent.putExtra("id", rec.id);
-            context.startService(intent);
-        } else if (srec != null) {
-            intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
-            intent.putExtra("id", srec.id);
-            context.startService(intent);
-        }
     }
 
     /**
