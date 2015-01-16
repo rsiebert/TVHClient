@@ -920,12 +920,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     @Override
     public void reloadData(String tag) {
         channelLoadingList.clear();
-      channelEpgCountList.clear();
-      TVHClientApplication app = (TVHClientApplication) getApplication();
-      app.unblockAllChannels();
+        channelEpgCountList.clear();
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        app.unblockAllChannels();
 
-      // Reconnect to the server and reload all data
-      Utils.connect(this, true);
+        // Reconnect to the server and reload all data
+        Utils.connect(this, true);
     }
 
     @Override
