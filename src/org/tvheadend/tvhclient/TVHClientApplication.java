@@ -676,7 +676,7 @@ public class TVHClientApplication extends Application {
     }
 
     /**
-     * Informes all registered listeners about the loading status.
+     * Informs all registered listeners about the loading status.
      * 
      * @param b
      */
