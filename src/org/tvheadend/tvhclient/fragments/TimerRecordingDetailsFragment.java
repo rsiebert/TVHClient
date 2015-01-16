@@ -49,16 +49,27 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
     private TimerRecording rec;
 
     private LinearLayout detailsLayout;
-    private TextView nameLabel;
-    private TextView name;
-    private TextView channelLabel;
-    private TextView channelName;
+    private TextView isEnabled;
+    private TextView retention;
     private TextView daysOfWeekLabel;
     private TextView daysOfWeek;
-    private TextView date;
-    private TextView time;
-    private TextView duration;
-    private TextView is_enabled;
+    private TextView priorityLabel;
+    private TextView priority;
+    private TextView start;
+    private TextView stop;
+    private TextView titleLabel;
+    private TextView title;
+    private TextView nameLabel;
+    private TextView name;
+    private TextView directoryLabel;
+    private TextView directory;
+    private TextView ownerLabel;
+    private TextView owner;
+    private TextView creatorLabel;
+    private TextView creator;
+    private TextView channelLabel;
+    private TextView channelName;
+
     private Toolbar toolbar;
 
     public static TimerRecordingDetailsFragment newInstance(Bundle args) {
@@ -88,30 +99,41 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
             getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
 
-        String trecId = "";
+        String recId = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
-            trecId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
+            recId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
             isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
         // Get the recording so we can show its details 
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        rec = app.getTimerRecording(trecId);
+        rec = app.getTimerRecording(recId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.timer_recording_details_layout, container, false);
         detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
-        nameLabel = (TextView) v.findViewById(R.id.name_label);
-        name = (TextView) v.findViewById(R.id.name);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
-        date = (TextView) v.findViewById(R.id.date);
-        time = (TextView) v.findViewById(R.id.time);
-        duration = (TextView) v.findViewById(R.id.duration);
+        isEnabled = (TextView) v.findViewById(R.id.is_enabled);
+        titleLabel = (TextView) v.findViewById(R.id.title_label);
+        title = (TextView) v.findViewById(R.id.title);
+        nameLabel = (TextView) v.findViewById(R.id.name_label);
+        name = (TextView) v.findViewById(R.id.name);
+        retention = (TextView) v.findViewById(R.id.retention);
         daysOfWeekLabel = (TextView) v.findViewById(R.id.days_of_week_label);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
-        is_enabled = (TextView) v.findViewById(R.id.is_enabled);
+        start = (TextView) v.findViewById(R.id.start);
+        stop = (TextView) v.findViewById(R.id.stop);
+        priorityLabel = (TextView) v.findViewById(R.id.priority_label);
+        priority = (TextView) v.findViewById(R.id.priority);
+        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
+        directory = (TextView) v.findViewById(R.id.directory);
+        ownerLabel = (TextView) v.findViewById(R.id.owner_label);
+        owner = (TextView) v.findViewById(R.id.owner);
+        creatorLabel = (TextView) v.findViewById(R.id.creator_label);
+        creator = (TextView) v.findViewById(R.id.creator);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
@@ -122,24 +144,31 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
         super.onActivityCreated(savedInstanceState);
 
         if (rec != null) {
-            Utils.setDate(date, rec.start);
-            Utils.setTime(time, rec.start, rec.stop);
-            Utils.setDuration(duration, rec.start, rec.stop);
-            Utils.setProgressText(null, rec.start, rec.stop);
+//            Utils.setDate(date, rec.start);
+//            Utils.setTime(time, rec.start, rec.stop);
+//            Utils.setDuration(duration, rec.start, rec.stop);
+
+//          Utils.setDaysOfWeek(daysOfWeekLabel, daysOfWeek, rec.daysOfWeek);
             Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
+
+            Utils.setDescription(titleLabel, title, rec.title);
             Utils.setDescription(nameLabel, name, rec.name);
-            
-            if (daysOfWeek != null) {
-                daysOfWeek.setText(String.valueOf(rec.daysOfWeek));
-            }
-            
+            Utils.setDescription(directoryLabel, directory, rec.directory);
+            Utils.setDescription(ownerLabel, owner, rec.owner);
+            Utils.setDescription(creatorLabel, creator, rec.creator);
+
+            retention.setText(String.valueOf(rec.retention));
+            start.setText(String.valueOf(rec.start));
+            stop.setText(String.valueOf(rec.stop));
+            priority.setText(String.valueOf(rec.priority));
+
             // Show the information if the recording belongs to a series recording
             // only when no dual pane is active (the controls shall be shown)
-            if (is_enabled != null) {
-                if (rec.enabled  == 0) {
-                    is_enabled.setText(R.string.timer_recording_disabled);
+            if (isEnabled != null) {
+                if (rec.enabled) {
+                    isEnabled.setText(R.string.recording_enabled);
                 } else {
-                    is_enabled.setText(R.string.timer_recording_enabled);
+                    isEnabled.setText(R.string.recording_disabled);
                 }
             }
         } else {
@@ -148,7 +177,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
 
         if (toolbar != null) {
             if (rec != null && !isDualPane) {
-                toolbar.setTitle(rec.title);
+                toolbar.setTitle(rec.name);
             }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -180,9 +209,12 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
     protected boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
-//            Utils.confirmRemoveRecording(activity, trec);
+            Utils.confirmRemoveRecording(activity, rec);
             return true;
 
+        case R.id.menu_edit:
+            // TODO
+            return true;
         }
         return false;
     }

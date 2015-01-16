@@ -230,7 +230,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, null, adapter.getSelectedItem());
+            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
             return true;
 
         default:
@@ -275,7 +275,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, null, srec);
+            Utils.confirmRemoveRecording(activity, srec);
             return true;
 
         case R.id.menu_edit:

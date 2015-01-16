@@ -25,6 +25,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -46,11 +47,35 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
 
     private Activity activity;
     private boolean isDualPane = false;
-    private SeriesRecording srec;
+    private SeriesRecording rec = null;
 
     private LinearLayout detailsLayout;
+    private TextView isEnabled;
+    private TextView minDuration;
+    private TextView maxDuration;
+    private TextView retention;
+    private TextView daysOfWeekLabel;
+    private TextView daysOfWeek;
+    private TextView approxTime;
+    private TextView start;
+    private TextView startWindow;
+    private TextView priorityLabel;
+    private TextView priority;
+    private TextView startExtra;
+    private TextView stopExtra;
+    private TextView titleLabel;
+    private TextView title;
+    private TextView nameLabel;
+    private TextView name;
+    private TextView directoryLabel;
+    private TextView directory;
+    private TextView ownerLabel;
+    private TextView owner;
+    private TextView creatorLabel;
+    private TextView creator;
     private TextView channelLabel;
     private TextView channelName;
+
     private Toolbar toolbar;
 
     public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
@@ -80,24 +105,45 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
             getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
 
-        String srecId = "";
+        String recId = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
-            srecId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
+            recId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
             isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
         // Get the recording so we can show its details 
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        srec = app.getSeriesRecording(srecId);
+        rec = app.getSeriesRecording(recId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
         detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
-
+        isEnabled = (TextView) v.findViewById(R.id.is_enabled);
+        nameLabel = (TextView) v.findViewById(R.id.name_label);
+        name = (TextView) v.findViewById(R.id.name);
+        minDuration = (TextView) v.findViewById(R.id.min_duration);
+        maxDuration = (TextView) v.findViewById(R.id.max_duration);
+        retention = (TextView) v.findViewById(R.id.retention);
+        daysOfWeekLabel = (TextView) v.findViewById(R.id.days_of_week_label);
+        daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
+        approxTime = (TextView) v.findViewById(R.id.approx_time);
+        start = (TextView) v.findViewById(R.id.start);
+        startWindow = (TextView) v.findViewById(R.id.start_window);
+        priorityLabel = (TextView) v.findViewById(R.id.priority_label);
+        priority = (TextView) v.findViewById(R.id.priority);
+        startExtra = (TextView) v.findViewById(R.id.start_extra);
+        stopExtra = (TextView) v.findViewById(R.id.stop_extra);
+        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
+        directory = (TextView) v.findViewById(R.id.directory);
+        ownerLabel = (TextView) v.findViewById(R.id.owner_label);
+        owner = (TextView) v.findViewById(R.id.owner);
+        creatorLabel = (TextView) v.findViewById(R.id.creator_label);
+        creator = (TextView) v.findViewById(R.id.creator);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+
         return v;
     }
 
@@ -105,15 +151,40 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (srec != null) {
-            Utils.setDescription(channelLabel, channelName, ((srec.channel != null) ? srec.channel.name : ""));
+        if (rec != null) {
+            Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
+            Utils.setDescription(nameLabel, name, rec.name);
+//            Utils.setDaysOfWeek(daysOfWeekLabel, daysOfWeek, rec.daysOfWeek);
+            Utils.setDescription(titleLabel, title, rec.title);
+            Utils.setDescription(nameLabel, name, rec.name);
+            Utils.setDescription(directoryLabel, directory, rec.directory);
+            Utils.setDescription(ownerLabel, owner, rec.owner);
+            Utils.setDescription(creatorLabel, creator, rec.creator);
+
+            minDuration.setText(String.valueOf(rec.minDuration));
+            maxDuration.setText(String.valueOf(rec.maxDuration));
+            retention.setText(String.valueOf(rec.retention));
+            approxTime.setText(String.valueOf(rec.approxTime));
+            start.setText(String.valueOf(rec.start));
+            startWindow.setText(String.valueOf(rec.startWindow));
+            priority.setText(String.valueOf(rec.priority));
+            startExtra.setText(String.valueOf(rec.startExtra));
+            stopExtra.setText(String.valueOf(rec.stopExtra));
+            
+            if (isEnabled != null) {
+                if (rec.enabled) {
+                    isEnabled.setText(R.string.recording_enabled);
+                } else {
+                    isEnabled.setText(R.string.recording_disabled);
+                }
+            }
         } else {
             detailsLayout.setVisibility(View.GONE);
         }
 
         if (toolbar != null) {
-            if (srec != null && !isDualPane) {
-                toolbar.setTitle(srec.title);
+            if (rec != null && !isDualPane) {
+                toolbar.setTitle(rec.title);
             }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -133,7 +204,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
      */
     private void onPrepareToolbarMenu(Menu menu) {
         (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_edit)).setVisible(srec != null);
+        (menu.findItem(R.id.menu_edit)).setVisible(rec != null);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
     }
 
@@ -145,9 +216,12 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     protected boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, srec);
+            Utils.confirmRemoveRecording(activity, rec);
             return true;
 
+        case R.id.menu_edit:
+            // TODO
+            return true;
         }
         return false;
     }

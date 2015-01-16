@@ -321,8 +321,8 @@
     <string name="no_recordings_scheduled">No recordings are scheduled</string>
     <string name="no_programs_available">No programs available</string>
 
-    <string name="timer_recording_enabled">This recording is enabled</string>
-    <string name="timer_recording_disabled">This recording is disabled</string>
+    <string name="recording_enabled">This recording is enabled</string>
+    <string name="recording_disabled">This recording is disabled</string>
     <string name="days_of_week">Days of week</string>
     <string name="comment">Comment</string>
     <string name="name">Name</string>

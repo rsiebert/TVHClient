@@ -156,7 +156,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume");
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
@@ -195,7 +194,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
      * are scheduled are added to the list.
      */
     private void populateList() {
-        Log.i(TAG, "populateList");
         // Clear the list and add the recordings
         adapter.clear();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
@@ -218,7 +216,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
         if (fragmentStatusInterface != null) {
-            Log.i(TAG, "populateList onListPopulated");
             fragmentStatusInterface.onListPopulated(TAG);
         }
     }
