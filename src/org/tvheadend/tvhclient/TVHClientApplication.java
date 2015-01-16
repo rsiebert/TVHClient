@@ -695,6 +695,7 @@ public class TVHClientApplication extends Application {
         tags.clear();
         recordings.clear();
         seriesRecordings.clear();
+        timerRecordings.clear();
 
         for (Channel ch : channels) {
             ch.epg.clear();
