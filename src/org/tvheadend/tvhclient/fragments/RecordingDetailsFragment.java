@@ -52,8 +52,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private Recording rec;
 
     private LinearLayout detailsLayout;
-    private TextView summaryLabel;
-    private TextView summary;
     private TextView descLabel;
     private TextView desc;
     private TextView channelLabel;
@@ -106,8 +104,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.recording_details_layout, container, false);
         detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
-        summaryLabel = (TextView) v.findViewById(R.id.summary_label);
-        summary = (TextView) v.findViewById(R.id.summary);
         descLabel = (TextView) v.findViewById(R.id.description_label);
         desc = (TextView) v.findViewById(R.id.description);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
@@ -132,7 +128,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             Utils.setDuration(duration, rec.start, rec.stop);
             Utils.setProgressText(null, rec.start, rec.stop);
             Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
-            Utils.setDescription(summaryLabel, summary, rec.summary);
             Utils.setDescription(descLabel, desc, rec.description);
             Utils.setFailedReason(failed_reason, rec);
 

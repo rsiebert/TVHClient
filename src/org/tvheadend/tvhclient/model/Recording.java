@@ -28,7 +28,6 @@ public class Recording implements Comparable<Recording> {
     public Date start;
     public Date stop;
     public String title;
-    public String summary;
     public String description;
     public Channel channel;
     public String state;
