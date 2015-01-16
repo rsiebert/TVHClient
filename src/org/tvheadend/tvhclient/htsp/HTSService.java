@@ -41,10 +41,10 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.DvrCutpoint;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
+import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
@@ -434,7 +434,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.eventId = msg.getLong("eventId", rec.eventId);
         rec.autorecId = msg.getString("autorecId", rec.autorecId);
         rec.timerecId = msg.getString("timerecId", rec.timerecId);
-
         rec.start = msg.getDate("start");
         rec.stop = msg.getDate("stop");
         rec.startExtra = msg.getDate("startExtra");
@@ -442,13 +441,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.retention = msg.getLong("retention");
         rec.priority = msg.getLong("priority");
         rec.contentType = msg.getLong("contentType");
-
         rec.title = msg.getString("title", rec.title);
         rec.description = msg.getString("description", rec.description);
         rec.owner = msg.getString("owner", rec.owner);
         rec.creator = msg.getString("creator", rec.creator);
         rec.path = msg.getString("path", rec.path);
-
         rec.state = msg.getString("state", rec.state);
         rec.error = msg.getString("error", rec.error);
 
@@ -476,55 +473,55 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void onTimerRecEntryAdd(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        TimerRecording trec = new TimerRecording();
-        trec.id = msg.getString("id", null);
-        trec.enabled = msg.getLong("enabled", 0);
-        trec.daysOfWeek = msg.getLong("daysOfWeek", 0);
-        trec.retention = msg.getLong("retention", 0);
-        trec.priority = msg.getLong("priority", 0);
-        trec.start = msg.getDate("start");
-        trec.stop = msg.getDate("stop");
-        trec.title = msg.getString("title", null);
-        trec.name = msg.getString("name", null);
-        trec.directory = msg.getString("directory", null);
-        trec.owner = msg.getString("owner", null);
-        trec.creator = msg.getString("creator", null);
-        trec.channel = app.getChannel(msg.getLong("channel", 0));
-        app.addTimerRecording(trec);
+        TimerRecording rec = new TimerRecording();
+        rec.id = msg.getString("id", null);
+        rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
+        rec.retention = msg.getLong("retention", 0);
+        rec.priority = msg.getLong("priority", 0);
+        rec.start = msg.getDate("start");
+        rec.stop = msg.getDate("stop");
+        rec.title = msg.getString("title", null);
+        rec.name = msg.getString("name", null);
+        rec.directory = msg.getString("directory", null);
+        rec.owner = msg.getString("owner", null);
+        rec.creator = msg.getString("creator", null);
+        rec.channel = app.getChannel(msg.getLong("channel", 0));
+        app.addTimerRecording(rec);
     }
 
     private void onTimerRecEntryUpdate(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        TimerRecording trec = app.getTimerRecording(msg.getString("id"));
-        if (trec == null) {
+        TimerRecording rec = app.getTimerRecording(msg.getString("id"));
+        if (rec == null) {
             return;
         }
 
-        trec.enabled = msg.getLong("enabled", trec.enabled);
-        trec.daysOfWeek = msg.getLong("daysOfWeek", trec.daysOfWeek);
-        trec.retention = msg.getLong("retention", trec.retention);
-        trec.priority = msg.getLong("priority", trec.priority);
-        trec.start = msg.getDate("start");
-        trec.stop = msg.getDate("stop");
-        trec.title = msg.getString("title", trec.title);
-        trec.name = msg.getString("name", trec.name);
-        trec.directory = msg.getString("directory", trec.directory);
-        trec.owner = msg.getString("owner", trec.owner);
-        trec.creator = msg.getString("creator", trec.creator);
-        trec.channel = app.getChannel(msg.getLong("channel", 0));
-        app.addTimerRecording(trec);
+        rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        rec.daysOfWeek = msg.getLong("daysOfWeek", rec.daysOfWeek);
+        rec.retention = msg.getLong("retention", rec.retention);
+        rec.priority = msg.getLong("priority", rec.priority);
+        rec.start = msg.getDate("start");
+        rec.stop = msg.getDate("stop");
+        rec.title = msg.getString("title", rec.title);
+        rec.name = msg.getString("name", rec.name);
+        rec.directory = msg.getString("directory", rec.directory);
+        rec.owner = msg.getString("owner", rec.owner);
+        rec.creator = msg.getString("creator", rec.creator);
+        rec.channel = app.getChannel(msg.getLong("channel", 0));
+        app.addTimerRecording(rec);
     }
 
     private void onTimerRecEntryDelete(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        TimerRecording trec = app.getTimerRecording(msg.getString("id"));
+        TimerRecording rec = app.getTimerRecording(msg.getString("id"));
 
-        if (trec == null || trec.channel == null) {
+        if (rec == null || rec.channel == null) {
             return;
         }
 
-        trec.channel = null;
-        app.removeTimerRecording(trec);
+        rec.channel = null;
+        app.removeTimerRecording(rec);
     }
 
     private void onInitialSyncCompleted(HTSMessage msg) {
@@ -693,52 +690,52 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void onAutorecEntryUpdate(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        SeriesRecording srec = app.getSeriesRecording(msg.getString("id"));
-        if (srec == null) {
+        SeriesRecording rec = app.getSeriesRecording(msg.getString("id"));
+        if (rec == null) {
             return;
         }
 
-        srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
-        srec.maxDuration = msg.getLong("maxDuration");
-        srec.minDuration = msg.getLong("minDuration");
-        srec.retention = msg.getLong("retention");
-        srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime");
-        srec.start = msg.getLong("start");
-        srec.startWindow = msg.getLong("startWindow");
-        srec.priority = msg.getLong("priority");
-        srec.startExtra = msg.getDate("startExtra");
-        srec.stopExtra = msg.getDate("stopExtra");
-        srec.title = msg.getString("title", srec.title);
-        srec.name = msg.getString("name", srec.name);
-        srec.directory = msg.getString("directory", srec.directory);
-        srec.owner = msg.getString("owner", srec.owner);
-        srec.creator = msg.getString("creator", srec.creator);
-        app.updateSeriesRecording(srec);
+        rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        rec.maxDuration = msg.getLong("maxDuration");
+        rec.minDuration = msg.getLong("minDuration");
+        rec.retention = msg.getLong("retention");
+        rec.daysOfWeek = msg.getLong("daysOfWeek");
+        rec.approxTime = msg.getLong("approxTime");
+        rec.start = msg.getDate("start");
+        rec.startWindow = msg.getLong("startWindow");
+        rec.priority = msg.getLong("priority");
+        rec.startExtra = msg.getDate("startExtra");
+        rec.stopExtra = msg.getDate("stopExtra");
+        rec.title = msg.getString("title", rec.title);
+        rec.name = msg.getString("name", rec.name);
+        rec.directory = msg.getString("directory", rec.directory);
+        rec.owner = msg.getString("owner", rec.owner);
+        rec.creator = msg.getString("creator", rec.creator);
+        app.updateSeriesRecording(rec);
     }
 
     private void onAutorecEntryAdd(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        SeriesRecording srec = new SeriesRecording();
-        srec.id = msg.getString("id");
-        srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
-        srec.maxDuration = msg.getLong("maxDuration");
-        srec.minDuration = msg.getLong("minDuration");
-        srec.retention = msg.getLong("retention");
-        srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime");
-        srec.start = msg.getLong("start");
-        srec.startWindow = msg.getLong("startWindow");
-        srec.priority = msg.getLong("priority");
-        srec.startExtra = msg.getDate("startExtra");
-        srec.stopExtra = msg.getDate("stopExtra");
-        srec.title = msg.getString("title");
-        srec.name = msg.getString("name");
-        srec.directory = msg.getString("directory");
-        srec.owner = msg.getString("owner");
-        srec.creator = msg.getString("creator");
-        srec.channel = app.getChannel(msg.getLong("channel", 0));
-        app.addSeriesRecording(srec);
+        SeriesRecording rec = new SeriesRecording();
+        rec.id = msg.getString("id");
+        rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        rec.maxDuration = msg.getLong("maxDuration");
+        rec.minDuration = msg.getLong("minDuration");
+        rec.retention = msg.getLong("retention");
+        rec.daysOfWeek = msg.getLong("daysOfWeek");
+        rec.approxTime = msg.getLong("approxTime");
+        rec.start = msg.getDate("start");
+        rec.startWindow = msg.getLong("startWindow");
+        rec.priority = msg.getLong("priority");
+        rec.startExtra = msg.getDate("startExtra");
+        rec.stopExtra = msg.getDate("stopExtra");
+        rec.title = msg.getString("title");
+        rec.name = msg.getString("name");
+        rec.directory = msg.getString("directory");
+        rec.owner = msg.getString("owner");
+        rec.creator = msg.getString("creator");
+        rec.channel = app.getChannel(msg.getLong("channel", 0));
+        app.addSeriesRecording(rec);
     }
 
     public void onMessage(HTSMessage msg) {

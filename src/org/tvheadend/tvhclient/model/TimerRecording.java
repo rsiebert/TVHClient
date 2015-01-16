@@ -5,11 +5,11 @@ import java.util.Date;
 public class TimerRecording implements Comparable<TimerRecording> {
 
     public String id;
-    public long enabled;
-    public long daysOfWeek;
+    public boolean enabled;
     public long retention;
+    public long daysOfWeek;
     public long priority;
-    public Date start; 
+    public Date start;
     public Date stop;
     public String title;
     public String name;
@@ -17,7 +17,7 @@ public class TimerRecording implements Comparable<TimerRecording> {
     public String owner;
     public String creator;
     public Channel channel;
-    
+
     // Required only when a new timer recording is added
     public String configName;
 
