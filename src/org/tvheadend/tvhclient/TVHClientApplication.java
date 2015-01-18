@@ -592,14 +592,14 @@ public class TVHClientApplication extends Application {
      * finished any listener will be informed that a timer recording has been
      * added.
      * 
-     * @param srec
+     * @param rec
      */
-    public void addTimerRecording(TimerRecording srec) {
+    public void addTimerRecording(TimerRecording rec) {
         synchronized (timerRecordings) {
-            timerRecordings.add(srec);
+            timerRecordings.add(rec);
         }
         if (!loading) {
-            broadcastMessage(Constants.ACTION_TIMER_DVR_ADD, srec);
+            broadcastMessage(Constants.ACTION_TIMER_DVR_ADD, rec);
         }
     }
 
@@ -621,9 +621,9 @@ public class TVHClientApplication extends Application {
      */
     public TimerRecording getTimerRecording(String id) {
         synchronized (timerRecordings) {
-            for (TimerRecording srec : getTimerRecordings()) {
-                if (srec.id == id) {
-                    return srec;
+            for (TimerRecording rec : getTimerRecordings()) {
+                if (rec.id.equals(id)) {
+                    return rec;
                 }
             }
         }
@@ -635,14 +635,14 @@ public class TVHClientApplication extends Application {
      * recordings. If loading has finished any listener will be informed that a
      * timer recording has been removed.
      * 
-     * @param srec
+     * @param rec
      */
-    public void removeTimerRecording(TimerRecording srec) {
+    public void removeTimerRecording(TimerRecording rec) {
         synchronized (timerRecordings) {
-            timerRecordings.remove(srec);
+            timerRecordings.remove(rec);
         }
         if (!loading) {
-            broadcastMessage(Constants.ACTION_TIMER_DVR_DELETE, srec);
+            broadcastMessage(Constants.ACTION_TIMER_DVR_DELETE, rec);
         }
     }
 
@@ -654,9 +654,9 @@ public class TVHClientApplication extends Application {
      */
     public void removeTimerRecording(String id) {
         synchronized (timerRecordings) {
-            for (TimerRecording srec : getTimerRecordings()) {
-                if (srec.id.equals(id)) {
-                    removeTimerRecording(srec);
+            for (TimerRecording rec : getTimerRecordings()) {
+                if (rec.id.equals(id)) {
+                    removeTimerRecording(rec);
                     return;
                 }
             }
@@ -669,9 +669,9 @@ public class TVHClientApplication extends Application {
      * 
      * @param srec
      */
-    public void updateTimerRecording(TimerRecording srec) {
+    public void updateTimerRecording(TimerRecording rec) {
         if (!loading) {
-            broadcastMessage(Constants.ACTION_TIMER_DVR_UPDATE, srec);
+            broadcastMessage(Constants.ACTION_TIMER_DVR_UPDATE, rec);
         }
     }
 
