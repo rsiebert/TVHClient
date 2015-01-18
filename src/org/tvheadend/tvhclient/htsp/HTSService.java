@@ -509,7 +509,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.owner = msg.getString("owner", rec.owner);
         rec.creator = msg.getString("creator", rec.creator);
         rec.channel = app.getChannel(msg.getLong("channel", 0));
-        app.addTimerRecording(rec);
+        app.updateTimerRecording(rec);
     }
 
     private void onTimerRecEntryDelete(HTSMessage msg) {
@@ -740,6 +740,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     public void onMessage(HTSMessage msg) {
         String method = msg.getMethod();
+        Log.i(TAG, "onMessage " + method);
         if (method.equals("tagAdd")) {
             onTagAdd(msg);
         } else if (method.equals("tagUpdate")) {
