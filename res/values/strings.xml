@@ -307,6 +307,8 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
+    <string name="all_days">All days</string>
+    <string name="no_days">No days</string>
 
     <string name="programs">Programs</string>
     <string name="completed_recordings">Completed recordings</string>

@@ -14,7 +14,7 @@
         <item>288p</item>
         <item>192p</item>
     </string-array>
-    
+
     <string-array name="pref_acodec_list" translatable="false">
         <item>AAC</item>
         <item>MPEG2AUDIO</item>
@@ -23,7 +23,7 @@
         <item>Advanced Audio Codec (AAC)</item>
         <item>MPEG-2 Audio Layer II (MP2)</item>
     </string-array>
-    
+
     <string-array name="pref_vcodec_list" translatable="false">
         <item>H264</item>
         <item>MPEG4VIDEO</item>
@@ -34,7 +34,7 @@
         <item>MPEG-4 Part 2</item>
         <item>VP8</item>
     </string-array>
-    
+
     <string-array name="pref_scodec_list" translatable="false">
         <item>PASS</item>
         <item>NONE</item>
@@ -43,7 +43,7 @@
         <item>Pass-through</item>
         <item>None</item>
     </string-array>
-    
+
     <string-array name="pref_container_list" translatable="false">
         <item>matroska</item>
         <item>mpegts</item>
@@ -114,5 +114,15 @@
         <item>Defined by the server</item>
         <item>Channel name</item>
         <item>Channel number</item>
+    </string-array>
+
+    <string-array name="day_short_names">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
     </string-array>
 </resources>

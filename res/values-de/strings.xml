@@ -289,6 +289,8 @@
     <string name="friday">Freitag</string>
     <string name="saturday">Samstag</string>
     <string name="sunday">Sonntag</string>
+    <string name="all_days">Alle Tage</string>
+    <string name="no_days">Keine Tage</string>
 
     <string name="programs">Programme</string>
     <string name="completed_recordings">Abgeschlossene Aufnahmen</string>
