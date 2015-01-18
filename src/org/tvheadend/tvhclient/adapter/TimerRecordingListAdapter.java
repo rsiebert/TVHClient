@@ -75,15 +75,11 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
     static class ViewHolder {
         public ImageView icon;
         public TextView title;
-        public ImageView state;
-        public TextView recording_type;
         public TextView channel;
         public TextView time;
-        public TextView date;
+        public TextView daysOfWeek;
         public TextView duration;
-        public TextView summary;
-        public TextView description;
-        public TextView failed_reason;
+        public TextView isEnabled;
         public ImageView dual_pane_list_item_selection;
     }
 
@@ -97,15 +93,11 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
-            holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.recording_type = (TextView) view.findViewById(R.id.recording_type);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.time = (TextView) view.findViewById(R.id.time);
-            holder.date = (TextView) view.findViewById(R.id.date);
+            holder.daysOfWeek = (TextView) view.findViewById(R.id.days_of_week);
             holder.duration = (TextView) view.findViewById(R.id.duration);
-            holder.summary = (TextView) view.findViewById(R.id.summary);
-            holder.description = (TextView) view.findViewById(R.id.description);
-            holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
+            holder.isEnabled = (TextView) view.findViewById(R.id.enabled);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
@@ -128,23 +120,6 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             }
         }
 
-        // Hide unused widgets
-        if (holder.failed_reason != null) {
-            holder.failed_reason.setVisibility(View.GONE);
-        }
-        if (holder.summary != null) {
-            holder.summary.setVisibility(View.GONE);
-        }
-        if (holder.description != null) {
-            holder.description.setVisibility(View.GONE);
-        }
-        if (holder.recording_type != null) {
-            holder.recording_type.setVisibility(ImageView.GONE);
-        }
-        if (holder.state != null) {
-            holder.state.setVisibility(ImageView.GONE);
-        }
-
         // Get the program and assign all the values
         TimerRecording rec = getItem(position);
         if (rec != null) {
@@ -153,9 +128,18 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
                 holder.channel.setText(rec.channel.name);
             }
             Utils.setChannelIcon(holder.icon, null, rec.channel);
-            Utils.setDate(holder.date, rec.start);
+            Utils.setDaysOfWeek(context, null, holder.daysOfWeek, rec.daysOfWeek);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
+
+            // Show only the recording icon
+            if (holder.isEnabled != null) {
+                if (rec.enabled) {
+                    holder.isEnabled.setText(R.string.recording_enabled);
+                } else {
+                    holder.isEnabled.setText(R.string.recording_disabled);
+                }
+            }
         }
         return view;
     }

@@ -25,7 +25,6 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -154,7 +153,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         if (rec != null) {
             Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
             Utils.setDescription(nameLabel, name, rec.name);
-//            Utils.setDaysOfWeek(daysOfWeekLabel, daysOfWeek, rec.daysOfWeek);
+            Utils.setDaysOfWeek(activity, daysOfWeekLabel, daysOfWeek, rec.daysOfWeek);
             Utils.setDescription(titleLabel, title, rec.title);
             Utils.setDescription(nameLabel, name, rec.name);
             Utils.setDescription(directoryLabel, directory, rec.directory);
@@ -165,12 +164,15 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
             maxDuration.setText(String.valueOf(rec.maxDuration));
             retention.setText(String.valueOf(rec.retention));
             approxTime.setText(String.valueOf(rec.approxTime));
-            start.setText(String.valueOf(rec.start));
+
+            Utils.setDate(start, rec.start);
+
             startWindow.setText(String.valueOf(rec.startWindow));
-            priority.setText(String.valueOf(rec.priority));
-            startExtra.setText(String.valueOf(rec.startExtra));
-            stopExtra.setText(String.valueOf(rec.stopExtra));
-            
+
+            Utils.setDescription(priorityLabel, priority, String.valueOf(rec.priority));
+            Utils.setDate(startExtra, rec.startExtra);
+            Utils.setDate(stopExtra, rec.stopExtra);
+
             if (isEnabled != null) {
                 if (rec.enabled) {
                     isEnabled.setText(R.string.recording_enabled);

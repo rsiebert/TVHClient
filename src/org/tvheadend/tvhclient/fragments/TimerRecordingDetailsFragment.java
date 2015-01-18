@@ -144,13 +144,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
         super.onActivityCreated(savedInstanceState);
 
         if (rec != null) {
-//            Utils.setDate(date, rec.start);
-//            Utils.setTime(time, rec.start, rec.stop);
-//            Utils.setDuration(duration, rec.start, rec.stop);
-
-//          Utils.setDaysOfWeek(daysOfWeekLabel, daysOfWeek, rec.daysOfWeek);
+            Utils.setDaysOfWeek(activity, daysOfWeekLabel, daysOfWeek, rec.daysOfWeek);
             Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
-
             Utils.setDescription(titleLabel, title, rec.title);
             Utils.setDescription(nameLabel, name, rec.name);
             Utils.setDescription(directoryLabel, directory, rec.directory);
@@ -158,9 +153,9 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
             Utils.setDescription(creatorLabel, creator, rec.creator);
 
             retention.setText(String.valueOf(rec.retention));
-            start.setText(String.valueOf(rec.start));
-            stop.setText(String.valueOf(rec.stop));
-            priority.setText(String.valueOf(rec.priority));
+            Utils.setDate(start, rec.start);
+            Utils.setDate(stop, rec.stop);
+            Utils.setDescription(priorityLabel, priority, String.valueOf(rec.priority));
 
             // Show the information if the recording belongs to a series recording
             // only when no dual pane is active (the controls shall be shown)

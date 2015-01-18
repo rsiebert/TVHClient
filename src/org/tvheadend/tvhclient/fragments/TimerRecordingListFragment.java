@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.TimerRecordingListAdapter;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -60,7 +61,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     // This is the default view for the channel list adapter. Other views can be
     // passed to the adapter to show less information. This is used in the
     // program guide where only the channel icon is relevant.
-    private int adapterLayout = R.layout.recording_list_widget;
+    private int adapterLayout = R.layout.timer_recording_list_widget;
 
     protected boolean isDualPane;
 
@@ -81,7 +82,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
         if (isDualPane) {
-            adapterLayout = R.layout.recording_list_widget_dual_pane;
+            adapterLayout = R.layout.timer_recording_list_widget_dual_pane;
         }
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
@@ -99,7 +100,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.i(TAG, "onActivityCreated");
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
@@ -263,11 +263,11 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        TimerRecording trec = adapter.getItem(info.position);
+        final TimerRecording trec = adapter.getItem(info.position);
 
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
-            // TODO
+            Utils.confirmRemoveRecording(activity, trec);
             return true;
 
         case R.id.menu_edit:
@@ -285,6 +285,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
      */
     @Override
     public void onMessage(String action, final Object obj) {
+        Log.i(TAG, "onMessage " + action);
         if (action.equals(Constants.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
