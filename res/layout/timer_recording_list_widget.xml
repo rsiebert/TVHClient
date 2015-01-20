@@ -77,7 +77,7 @@
                 android:paddingRight="3dp"
                 android:paddingStart="6dp"
                 android:singleLine="true"
-                android:text="@null" />
+                android:text="@string/days_of_week" />
 
             <TextView
                 android:id="@+id/time"

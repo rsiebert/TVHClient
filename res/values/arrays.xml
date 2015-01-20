@@ -125,4 +125,13 @@
         <item>Sat</item>
         <item>Sun</item>
     </string-array>
+
+    <string-array name="dvr_priorities">
+        <item>Important</item>
+        <item>High</item>
+        <item>Normal</item>
+        <item>Low</item>
+        <item>Unimportant</item>
+        <item>Not set</item>
+    </string-array>
 </resources>

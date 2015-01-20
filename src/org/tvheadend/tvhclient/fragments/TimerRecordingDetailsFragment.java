@@ -19,6 +19,10 @@
  */
 package org.tvheadend.tvhclient.fragments;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -51,23 +55,14 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
     private LinearLayout detailsLayout;
     private TextView isEnabled;
     private TextView retention;
-    private TextView daysOfWeekLabel;
     private TextView daysOfWeek;
-    private TextView priorityLabel;
     private TextView priority;
-    private TextView start;
-    private TextView stop;
-    private TextView titleLabel;
+    private TextView recordingTime;
     private TextView title;
-    private TextView nameLabel;
     private TextView name;
-    private TextView directoryLabel;
     private TextView directory;
-    private TextView ownerLabel;
     private TextView owner;
-    private TextView creatorLabel;
     private TextView creator;
-    private TextView channelLabel;
     private TextView channelName;
 
     private Toolbar toolbar;
@@ -113,25 +108,16 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.timer_recording_details_layout, container, false);
         detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
-        channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
-        titleLabel = (TextView) v.findViewById(R.id.title_label);
         title = (TextView) v.findViewById(R.id.title);
-        nameLabel = (TextView) v.findViewById(R.id.name_label);
         name = (TextView) v.findViewById(R.id.name);
         retention = (TextView) v.findViewById(R.id.retention);
-        daysOfWeekLabel = (TextView) v.findViewById(R.id.days_of_week_label);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
-        start = (TextView) v.findViewById(R.id.start);
-        stop = (TextView) v.findViewById(R.id.stop);
-        priorityLabel = (TextView) v.findViewById(R.id.priority_label);
+        recordingTime = (TextView) v.findViewById(R.id.recording_time);
         priority = (TextView) v.findViewById(R.id.priority);
-        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
         directory = (TextView) v.findViewById(R.id.directory);
-        ownerLabel = (TextView) v.findViewById(R.id.owner_label);
         owner = (TextView) v.findViewById(R.id.owner);
-        creatorLabel = (TextView) v.findViewById(R.id.creator_label);
         creator = (TextView) v.findViewById(R.id.creator);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
@@ -144,18 +130,43 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
         super.onActivityCreated(savedInstanceState);
 
         if (rec != null) {
-            Utils.setDaysOfWeek(activity, daysOfWeekLabel, daysOfWeek, rec.daysOfWeek);
-            Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
-            Utils.setDescription(titleLabel, title, rec.title);
-            Utils.setDescription(nameLabel, name, rec.name);
-            Utils.setDescription(directoryLabel, directory, rec.directory);
-            Utils.setDescription(ownerLabel, owner, rec.owner);
-            Utils.setDescription(creatorLabel, creator, rec.creator);
+            if (channelName != null && rec.channel != null) {
+                channelName.setText(rec.channel.name);
+            }
+            if (title != null && rec.title != null && rec.title.length() > 0) {
+                title.setText(rec.title);
+            }
+            if (name != null && rec.name != null && rec.name.length() > 0) {
+                name.setText(rec.name);
+            }
+            if (directory != null && rec.directory != null && rec.directory.length() > 0) {
+                directory.setText(rec.directory);
+            }
+            if (owner != null && rec.owner != null && rec.owner.length() > 0) {
+                owner.setText(rec.owner);
+            }
+            if (creator != null && rec.creator != null && rec.creator.length() > 0) {
+                creator.setText(rec.creator);
+            }
 
-            retention.setText(String.valueOf(rec.retention));
-            Utils.setDate(start, rec.start);
-            Utils.setDate(stop, rec.stop);
-            Utils.setDescription(priorityLabel, priority, String.valueOf(rec.priority));
+            Utils.setDaysOfWeek(activity, null, daysOfWeek, rec.daysOfWeek);
+
+            if (retention != null) {
+                retention.setText(getString(R.string.days, (int) rec.retention));
+            }
+
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+            if (recordingTime != null && rec.start >= 0 && rec.stop >= 0) {
+                String start = formatter.format(new Date(rec.start * 60L * 1000L));
+                String stop = formatter.format(new Date(rec.stop * 60L * 1000L));
+                recordingTime.setText(getString(R.string.record_from_to_time, start, stop));
+            }
+            if (priority != null) {
+                String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
+                if (rec.priority >= 0 && priorityItems.length < rec.priority) {
+                    priority.setText(priorityItems[(int) (rec.priority)]);
+                }
+            }
 
             // Show the information if the recording belongs to a series recording
             // only when no dual pane is active (the controls shall be shown)

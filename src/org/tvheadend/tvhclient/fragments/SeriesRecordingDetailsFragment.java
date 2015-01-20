@@ -19,6 +19,10 @@
  */
 package org.tvheadend.tvhclient.fragments;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -50,29 +54,18 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
 
     private LinearLayout detailsLayout;
     private TextView isEnabled;
-    private TextView minDuration;
-    private TextView maxDuration;
+    private TextView minMaxDuration;
     private TextView retention;
-    private TextView daysOfWeekLabel;
     private TextView daysOfWeek;
     private TextView approxTime;
-    private TextView start;
-    private TextView startWindow;
-    private TextView priorityLabel;
+    private TextView recordingWindow;
     private TextView priority;
-    private TextView startExtra;
-    private TextView stopExtra;
-    private TextView titleLabel;
+    private TextView startStopExtra;
     private TextView title;
-    private TextView nameLabel;
     private TextView name;
-    private TextView directoryLabel;
     private TextView directory;
-    private TextView ownerLabel;
     private TextView owner;
-    private TextView creatorLabel;
     private TextView creator;
-    private TextView channelLabel;
     private TextView channelName;
 
     private Toolbar toolbar;
@@ -118,28 +111,18 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
         detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
-        channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
-        nameLabel = (TextView) v.findViewById(R.id.name_label);
         name = (TextView) v.findViewById(R.id.name);
-        minDuration = (TextView) v.findViewById(R.id.min_duration);
-        maxDuration = (TextView) v.findViewById(R.id.max_duration);
+        minMaxDuration = (TextView) v.findViewById(R.id.minimum_and_maximum_duration);
         retention = (TextView) v.findViewById(R.id.retention);
-        daysOfWeekLabel = (TextView) v.findViewById(R.id.days_of_week_label);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         approxTime = (TextView) v.findViewById(R.id.approx_time);
-        start = (TextView) v.findViewById(R.id.start);
-        startWindow = (TextView) v.findViewById(R.id.start_window);
-        priorityLabel = (TextView) v.findViewById(R.id.priority_label);
+        recordingWindow = (TextView) v.findViewById(R.id.recording_window);
         priority = (TextView) v.findViewById(R.id.priority);
-        startExtra = (TextView) v.findViewById(R.id.start_extra);
-        stopExtra = (TextView) v.findViewById(R.id.stop_extra);
-        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
+        startStopExtra = (TextView) v.findViewById(R.id.start_and_stop_extra);
         directory = (TextView) v.findViewById(R.id.directory);
-        ownerLabel = (TextView) v.findViewById(R.id.owner_label);
         owner = (TextView) v.findViewById(R.id.owner);
-        creatorLabel = (TextView) v.findViewById(R.id.creator_label);
         creator = (TextView) v.findViewById(R.id.creator);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
@@ -151,28 +134,64 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         super.onActivityCreated(savedInstanceState);
 
         if (rec != null) {
-            Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
-            Utils.setDescription(nameLabel, name, rec.name);
-            Utils.setDaysOfWeek(activity, daysOfWeekLabel, daysOfWeek, rec.daysOfWeek);
-            Utils.setDescription(titleLabel, title, rec.title);
-            Utils.setDescription(nameLabel, name, rec.name);
-            Utils.setDescription(directoryLabel, directory, rec.directory);
-            Utils.setDescription(ownerLabel, owner, rec.owner);
-            Utils.setDescription(creatorLabel, creator, rec.creator);
+            if (channelName != null && rec.channel != null) {
+                channelName.setText(rec.channel.name);
+            }
+            if (title != null && rec.title != null && rec.title.length() > 0) {
+                title.setText(rec.title);
+            }
+            if (name != null && rec.name != null && rec.name.length() > 0) {
+                name.setText(rec.name);
+            }
+            if (directory != null && rec.directory != null && rec.directory.length() > 0) {
+                directory.setText(rec.directory);
+            }
+            if (owner != null && rec.owner != null && rec.owner.length() > 0) {
+                owner.setText(rec.owner);
+            }
+            if (creator != null && rec.creator != null && rec.creator.length() > 0) {
+                creator.setText(rec.creator);
+            }
 
-            minDuration.setText(String.valueOf(rec.minDuration));
-            maxDuration.setText(String.valueOf(rec.maxDuration));
-            retention.setText(String.valueOf(rec.retention));
-            approxTime.setText(String.valueOf(rec.approxTime));
+            Utils.setDaysOfWeek(activity, null, daysOfWeek, rec.daysOfWeek);
 
-            Utils.setDate(start, rec.start);
+            if (priority != null) {
+                String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
+                if (rec.priority >= 0 && priorityItems.length < rec.priority) {
+                    priority.setText(priorityItems[(int) (rec.priority)]);
+                }
+            }
+            if (minMaxDuration != null) {
+                if (rec.minDuration >= 0 && rec.maxDuration >= 0) {
+                    String min = getString(R.string.minutes, (int) rec.minDuration / 60);
+                    String max = getString(R.string.minutes, (int) rec.maxDuration / 60);
+                    minMaxDuration.setText(getString(R.string.record_from_to_time, min, max));;
+                } else {
+                    minMaxDuration.setText(R.string.not_set);
+                }
+            }
+            if (retention != null) {
+                retention.setText(getString(R.string.days, (int) rec.retention));
+            }
 
-            startWindow.setText(String.valueOf(rec.startWindow));
-
-            Utils.setDescription(priorityLabel, priority, String.valueOf(rec.priority));
-            Utils.setDate(startExtra, rec.startExtra);
-            Utils.setDate(stopExtra, rec.stopExtra);
-
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+            if (approxTime != null && rec.approxTime >= 0) {
+                approxTime.setText(formatter.format(new Date(rec.approxTime * 60L * 1000L)));
+            }
+            if (recordingWindow != null) {
+                if (rec.start >= 0 && rec.startWindow >= 0) {
+                    String startAfter = formatter.format(new Date(rec.start * 60L * 1000L));
+                    String stopBefore = formatter.format(new Date(rec.startWindow * 60L * 1000L));
+                    recordingWindow.setText(getString(R.string.start_after_end_before, startAfter, stopBefore));
+                } else {
+                    recordingWindow.setText(R.string.not_set);
+                }
+            }
+            if (startStopExtra != null) {
+                String start = getString(R.string.minutes, (int) rec.startExtra);
+                String stop = getString(R.string.minutes, (int) rec.stopExtra);
+                startStopExtra.setText(getString(R.string.start_and_stop_extra, start, stop));
+            }
             if (isEnabled != null) {
                 if (rec.enabled) {
                     isEnabled.setText(R.string.recording_enabled);

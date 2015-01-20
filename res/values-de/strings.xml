@@ -275,7 +275,9 @@
     <string name="no_transmission">Keine Übertragung</string>
     <string name="no_data">Keine Programme verfügbar</string>
     <string name="minutes">%d Min</string>
-    
+    <string name="days">%d Tage</string>
+    <string name="not_set">Nicht gesetzt</string>
+
     <string name="search_hint">Suche im TV-Programm</string>
     <string name="two_days_ago">Vor 2 Tagen</string>
     <string name="yesterday">Gestern</string>
@@ -325,6 +327,15 @@
     <string name="content_type">Genre</string>
     <string name="series_information">Serien Information</string>
     <string name="genre_color_list">Liste der Genrefarben und deren Bedeutung.</string>
+    <string name="retention">Aufbewahrungszeit</string>
+    <string name="priority">Priorität</string>
+    <string name="path">Pfad</string>
+    <string name="directory">Verzeichnis</string>
+    <string name="owner">Besitzer</string>
+    <string name="creator">Ersteller</string>
+    <string name="extra_time">Zusätzliche Zeit</string>
+    <string name="approx_time">Ungefähre Zeit</string>
+    <string name="start_time">Startzeit</string>
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>

@@ -18,8 +18,11 @@
  */
 package org.tvheadend.tvhclient.adapter;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -129,8 +132,16 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             }
             Utils.setChannelIcon(holder.icon, null, rec.channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, rec.daysOfWeek);
-            Utils.setTime(holder.time, rec.start, rec.stop);
-            Utils.setDuration(holder.duration, rec.start, rec.stop);
+
+            if (holder.time != null) {
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+                String start = formatter.format(new Date(rec.start * 60L * 1000L));
+                String stop = formatter.format(new Date(rec.stop * 60L * 1000L));
+                holder.time.setText(start + " - " + stop);
+            }
+            if (holder.duration != null) {
+                holder.duration.setText(context.getString(R.string.minutes, (int) (rec.stop - rec.start)));
+            }
 
             // Show only the recording icon
             if (holder.isEnabled != null) {

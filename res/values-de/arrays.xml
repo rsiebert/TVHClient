@@ -33,4 +33,13 @@
         <item>Sa</item>
         <item>So</item>
     </string-array>
+
+    <string-array name="dvr_priorities">
+        <item>Wichtig</item>
+        <item>Hoch</item>
+        <item>Normal</item>
+        <item>Niedrig</item>
+        <item>Unwichtig</item>
+        <item>Nicht gesetzt</item>
+    </string-array>
 </resources>
