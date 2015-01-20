@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.model;
 
-import java.util.Date;
 
 public class TimerRecording implements Comparable<TimerRecording> {
 
@@ -9,8 +8,8 @@ public class TimerRecording implements Comparable<TimerRecording> {
     public long retention;
     public long daysOfWeek;
     public long priority;
-    public Date start;
-    public Date stop;
+    public long start;  // value is in seconds
+    public long stop;   // value is in seconds
     public String title;
     public String name;
     public String directory;

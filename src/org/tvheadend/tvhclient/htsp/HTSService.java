@@ -479,8 +479,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
         rec.retention = msg.getLong("retention", 0);
         rec.priority = msg.getLong("priority", 0);
-        rec.start = msg.getDate("start");
-        rec.stop = msg.getDate("stop");
+        rec.start = msg.getLong("start");
+        rec.stop = msg.getLong("stop");
         rec.title = msg.getString("title", null);
         rec.name = msg.getString("name", null);
         rec.directory = msg.getString("directory", null);
@@ -501,8 +501,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.daysOfWeek = msg.getLong("daysOfWeek", rec.daysOfWeek);
         rec.retention = msg.getLong("retention", rec.retention);
         rec.priority = msg.getLong("priority", rec.priority);
-        rec.start = msg.getDate("start");
-        rec.stop = msg.getDate("stop");
+        rec.start = msg.getLong("start", rec.start);
+        rec.stop = msg.getLong("stop", rec.stop);
         rec.title = msg.getString("title", rec.title);
         rec.name = msg.getString("name", rec.name);
         rec.directory = msg.getString("directory", rec.directory);
@@ -701,11 +701,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.retention = msg.getLong("retention");
         rec.daysOfWeek = msg.getLong("daysOfWeek");
         rec.approxTime = msg.getLong("approxTime");
-        rec.start = msg.getDate("start");
+        rec.start = msg.getLong("start");
         rec.startWindow = msg.getLong("startWindow");
         rec.priority = msg.getLong("priority");
-        rec.startExtra = msg.getDate("startExtra");
-        rec.stopExtra = msg.getDate("stopExtra");
+        rec.startExtra = msg.getLong("startExtra");
+        rec.stopExtra = msg.getLong("stopExtra");
         rec.title = msg.getString("title", rec.title);
         rec.name = msg.getString("name", rec.name);
         rec.directory = msg.getString("directory", rec.directory);
@@ -724,11 +724,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.retention = msg.getLong("retention");
         rec.daysOfWeek = msg.getLong("daysOfWeek");
         rec.approxTime = msg.getLong("approxTime");
-        rec.start = msg.getDate("start");
+        rec.start = msg.getLong("start");
         rec.startWindow = msg.getLong("startWindow");
         rec.priority = msg.getLong("priority");
-        rec.startExtra = msg.getDate("startExtra");
-        rec.stopExtra = msg.getDate("stopExtra");
+        rec.startExtra = msg.getLong("startExtra");
+        rec.stopExtra = msg.getLong("stopExtra");
         rec.title = msg.getString("title");
         rec.name = msg.getString("name");
         rec.directory = msg.getString("directory");
@@ -740,7 +740,6 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     public void onMessage(HTSMessage msg) {
         String method = msg.getMethod();
-        Log.i(TAG, "onMessage " + method);
         if (method.equals("tagAdd")) {
             onTagAdd(msg);
         } else if (method.equals("tagUpdate")) {
