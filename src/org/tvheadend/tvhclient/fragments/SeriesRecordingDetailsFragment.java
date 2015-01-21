@@ -225,7 +225,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
      */
     private void onPrepareToolbarMenu(Menu menu) {
         (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_edit)).setVisible(rec != null);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
     }
 
@@ -238,10 +237,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, rec);
-            return true;
-
-        case R.id.menu_edit:
-            // TODO
             return true;
         }
         return false;

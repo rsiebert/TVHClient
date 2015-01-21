@@ -282,10 +282,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             Utils.confirmRemoveRecording(activity, srec);
             return true;
 
-        case R.id.menu_edit:
-            // TODO
-            return true;
-
         default:
             return super.onContextItemSelected(item);
         }

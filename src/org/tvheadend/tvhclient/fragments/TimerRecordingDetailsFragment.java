@@ -33,6 +33,7 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,7 +49,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
     @SuppressWarnings("unused")
     private final static String TAG = TimerRecordingDetailsFragment.class.getSimpleName();
 
-    private Activity activity;
+    private ActionBarActivity activity;
     private boolean isDualPane = false;
     private TimerRecording rec;
 
@@ -84,7 +85,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (Activity) activity;
+        this.activity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -203,7 +204,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
      */
     private void onPrepareToolbarMenu(Menu menu) {
         (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_edit)).setVisible(rec != null);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
     }
 
@@ -216,10 +216,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, rec);
-            return true;
-
-        case R.id.menu_edit:
-            // TODO
             return true;
         }
         return false;

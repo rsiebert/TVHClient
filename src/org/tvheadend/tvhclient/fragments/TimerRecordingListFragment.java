@@ -35,7 +35,9 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -53,7 +55,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
 
     public static String TAG = TimerRecordingListFragment.class.getSimpleName();
 
-    protected Activity activity;
+    protected ActionBarActivity activity;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected TimerRecordingListAdapter adapter;
     private ListView listView;
@@ -94,7 +96,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = activity;
+        this.activity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -228,7 +230,9 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_add:
-            // TODO
+            Bundle args = new Bundle();
+            DialogFragment newFragment = TimerRecordingAddFragment.newInstance(args);
+            newFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
         default:
@@ -268,10 +272,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, trec);
-            return true;
-
-        case R.id.menu_edit:
-            // TODO
             return true;
 
         default:
