@@ -249,8 +249,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        TimerRecording srec = adapter.getItem(info.position);
-        menu.setHeaderTitle(srec.title);
+        TimerRecording rec = adapter.getItem(info.position);
+        menu.setHeaderTitle((rec.name.length() > 0) ? rec.name : rec.title);
     }
 
     @Override
