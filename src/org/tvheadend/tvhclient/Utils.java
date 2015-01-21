@@ -234,7 +234,7 @@ public class Utils {
      */
     public static void confirmRemoveRecording(final Context context, final SeriesRecording srec) {
         confirmRemoveRecording(context, 
-                Constants.ACTION_SERIES_DVR_DELETE, 
+                Constants.ACTION_DELETE_SERIES_DVR_ENTRY, 
                 R.string.delete_series_recording, 
                 srec.title, 
                 srec.id);
@@ -247,7 +247,7 @@ public class Utils {
      */
     public static void confirmRemoveRecording(final Context context, final TimerRecording trec) {
         confirmRemoveRecording(context, 
-                Constants.ACTION_TIMER_DVR_DELETE, 
+                Constants.ACTION_DELETE_TIMER_REC_ENTRY, 
                 R.string.delete_timer_recording, 
                 trec.title, 
                 trec.id);
