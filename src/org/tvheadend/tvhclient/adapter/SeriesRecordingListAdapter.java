@@ -57,22 +57,14 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         case Constants.RECORDING_SORT_ASCENDING:
             sort(new Comparator<SeriesRecording>() {
                 public int compare(SeriesRecording x, SeriesRecording y) {
-                    if (x != null && x.title != null && y != null && y.title != null) {
-                        return (y.title.compareTo(x.title));
-                    } else {
-                        return 0;
-                    }
+                    return (y.title.compareTo(x.title));
                 }
             });
         break;
         case Constants.RECORDING_SORT_DESCENDING:
             sort(new Comparator<SeriesRecording>() {
                 public int compare(SeriesRecording x, SeriesRecording y) {
-                    if (x != null && x.title != null && y != null && y.title != null) {
-                        return (x.title.compareTo(y.title));
-                    } else {
-                        return 0;
-                    }
+                    return (x.title.compareTo(y.title));
                 }
             });
             break;
