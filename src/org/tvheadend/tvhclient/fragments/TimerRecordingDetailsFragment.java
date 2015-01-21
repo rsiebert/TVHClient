@@ -133,19 +133,19 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
             if (channelName != null && rec.channel != null) {
                 channelName.setText(rec.channel.name);
             }
-            if (title != null && rec.title != null && rec.title.length() > 0) {
+            if (title != null && rec.title.length() > 0) {
                 title.setText(rec.title);
             }
-            if (name != null && rec.name != null && rec.name.length() > 0) {
+            if (name != null && rec.name.length() > 0) {
                 name.setText(rec.name);
             }
-            if (directory != null && rec.directory != null && rec.directory.length() > 0) {
+            if (directory != null && rec.directory.length() > 0) {
                 directory.setText(rec.directory);
             }
-            if (owner != null && rec.owner != null && rec.owner.length() > 0) {
+            if (owner != null && rec.owner.length() > 0) {
                 owner.setText(rec.owner);
             }
-            if (creator != null && rec.creator != null && rec.creator.length() > 0) {
+            if (creator != null && rec.creator.length() > 0) {
                 creator.setText(rec.creator);
             }
 
@@ -183,7 +183,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
 
         if (toolbar != null) {
             if (rec != null && !isDualPane) {
-                toolbar.setTitle(rec.name);
+                toolbar.setTitle((rec.name.length() > 0) ? rec.name : rec.title);
             }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
