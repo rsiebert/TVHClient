@@ -55,7 +55,7 @@ public class SettingsManageConnectionActivity extends ActionBarActivity {
                 }
             }
         });
-        toolbar.inflateMenu(R.menu.preference_edit_connection);
+        toolbar.inflateMenu(R.menu.save_cancel_menu);
         toolbar.setTitle(R.string.menu_settings);
 
         // TODO add home button
