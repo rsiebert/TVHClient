@@ -126,7 +126,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         // Get the program and assign all the values
         TimerRecording rec = getItem(position);
         if (rec != null) {
-            holder.title.setText(rec.name);
+            holder.title.setText((rec.name.length() > 0) ? rec.name : rec.title);
             if (holder.channel != null && rec.channel != null) {
                 holder.channel.setText(rec.channel.name);
             }
