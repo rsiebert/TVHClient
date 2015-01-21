@@ -9,12 +9,6 @@
         android:title="@string/menu_play"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/menu_edit"
-        android:icon="?attr/ic_menu_edit"
-        android:orderInCategory="3"
-        android:title="@string/menu_edit"
-        app:showAsAction="ifRoom"/>
-    <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:orderInCategory="4"
