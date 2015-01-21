@@ -261,8 +261,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         ChannelTag tag = new ChannelTag();
         tag.id = msg.getLong("tagId");
-        tag.name = msg.getString("tagName", null);
-        tag.icon = msg.getString("tagIcon", null);
+        tag.name = msg.getString("tagName", "");
+        tag.icon = msg.getString("tagIcon", "");
         app.addChannelTag(tag);
         if (tag.icon != null) {
             getChannelTagIcon(tag);
@@ -296,14 +296,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         final Channel ch = new Channel();
         ch.id = msg.getLong("channelId");
-        ch.name = msg.getString("channelName", null);
+        ch.name = msg.getString("channelName", "");
         ch.number = msg.getInt("channelNumber", 0);
 
         // The default values will be set in case a server with a htsp API
         // version 12 or lower is used
         ch.numberMinor = msg.getInt("channelNumberMinor", 0);
 
-        ch.icon = msg.getString("channelIcon", null);
+        ch.icon = msg.getString("channelIcon", "");
         ch.tags = msg.getIntList("tags", ch.tags);
 
         if (ch.number == 0) {
@@ -396,9 +396,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.id = msg.getLong("id");
 
         rec.eventId = msg.getLong("eventId", 0);
-        rec.autorecId = msg.getString("autorecId", null);
-        rec.timerecId = msg.getString("timerecId", null);
-
+        rec.autorecId = msg.getString("autorecId", "");
+        rec.timerecId = msg.getString("timerecId", "");
         rec.start = msg.getDate("start");
         rec.stop = msg.getDate("stop");
         rec.startExtra = msg.getDate("startExtra");
@@ -406,14 +405,12 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.retention = msg.getLong("retention");
         rec.priority = msg.getLong("priority");
         rec.contentType = msg.getLong("contentType");
-
-        rec.title = msg.getString("title", null);
+        rec.title = msg.getString("title", "");
         rec.description = msg.getString("description", "");
-        rec.owner = msg.getString("owner", null);
-        rec.creator = msg.getString("creator", null);
-        rec.path = msg.getString("path", null);
-
-        rec.state = msg.getString("state", null);
+        rec.owner = msg.getString("owner", "");
+        rec.creator = msg.getString("creator", "");
+        rec.path = msg.getString("path", "");
+        rec.state = msg.getString("state", "");
         rec.error = msg.getString("error", null);
 
         rec.channel = app.getChannel(msg.getLong("channel", 0));
@@ -474,18 +471,18 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void onTimerRecEntryAdd(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         TimerRecording rec = new TimerRecording();
-        rec.id = msg.getString("id", null);
+        rec.id = msg.getString("id", "");
         rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
         rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
         rec.retention = msg.getLong("retention", 0);
         rec.priority = msg.getLong("priority", 0);
         rec.start = msg.getLong("start");
         rec.stop = msg.getLong("stop");
-        rec.title = msg.getString("title", null);
-        rec.name = msg.getString("name", null);
-        rec.directory = msg.getString("directory", null);
-        rec.owner = msg.getString("owner", null);
-        rec.creator = msg.getString("creator", null);
+        rec.title = msg.getString("title", "");
+        rec.name = msg.getString("name", "");
+        rec.directory = msg.getString("directory", "");
+        rec.owner = msg.getString("owner", "");
+        rec.creator = msg.getString("creator", "");
         rec.channel = app.getChannel(msg.getLong("channel", 0));
         app.addTimerRecording(rec);
     }
@@ -580,7 +577,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (s == null) {
             return;
         }
-        String status = msg.getString("status", null);
+        String status = msg.getString("status", "");
         if (s.status == null ? status != null : !s.status.equals(status)) {
             s.status = status;
             app.updateSubscription(s);
@@ -593,7 +590,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (s == null) {
             return;
         }
-        String status = msg.getString("status", null);
+        String status = msg.getString("status", "");
         if (s.status == null ? status != null : !s.status.equals(status)) {
             s.status = status;
             app.updateSubscription(s);
@@ -729,11 +726,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.priority = msg.getLong("priority");
         rec.startExtra = msg.getLong("startExtra");
         rec.stopExtra = msg.getLong("stopExtra");
-        rec.title = msg.getString("title");
-        rec.name = msg.getString("name");
-        rec.directory = msg.getString("directory");
-        rec.owner = msg.getString("owner");
-        rec.creator = msg.getString("creator");
+        rec.title = msg.getString("title", "");
+        rec.name = msg.getString("name", "");
+        rec.directory = msg.getString("directory", "");
+        rec.owner = msg.getString("owner", "");
+        rec.creator = msg.getString("creator", "");
         rec.channel = app.getChannel(msg.getLong("channel", 0));
         app.addSeriesRecording(rec);
     }
@@ -1067,7 +1064,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     }
                 }
                 @SuppressWarnings("unused")
-                String error = response.getString("error", null);
+                String error = response.getString("error", "");
             }
         });
     }
@@ -1106,7 +1103,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
                 @SuppressWarnings("unused")
-                String error = response.getString("error", null);
+                String error = response.getString("error", "");
             }
         });
     }
@@ -1166,8 +1163,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("channelId", ch.id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                String path = response.getString("path", null);
-                String ticket = response.getString("ticket", null);
+                String path = response.getString("path", "");
+                String ticket = response.getString("ticket", "");
                 String webroot = connection.getWebRoot();
 
                 if (path != null && ticket != null) {
@@ -1184,8 +1181,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("dvrId", rec.id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                String path = response.getString("path", null);
-                String ticket = response.getString("ticket", null);
+                String path = response.getString("path", "");
+                String ticket = response.getString("ticket", "");
 
                 if (path != null && ticket != null) {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
@@ -1201,8 +1198,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 TVHClientApplication app = (TVHClientApplication) getApplication();
-                app.updateStatus("freediskspace", response.getString("freediskspace", null));
-                app.updateStatus("totaldiskspace", response.getString("totaldiskspace", null));
+                app.updateStatus("freediskspace", response.getString("freediskspace", ""));
+                app.updateStatus("totaldiskspace", response.getString("totaldiskspace", ""));
             }
         });
     }
@@ -1213,8 +1210,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 TVHClientApplication app = (TVHClientApplication) getApplication();
-                app.updateStatus("time", response.getString("time", null));
-                app.updateStatus("timezone", response.getString("timezone", null));
+                app.updateStatus("time", response.getString("time", ""));
+                app.updateStatus("timezone", response.getString("timezone", ""));
             }
         });
     }
