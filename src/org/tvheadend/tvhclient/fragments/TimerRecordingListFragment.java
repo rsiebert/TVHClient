@@ -227,7 +227,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
      */
     private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_record_remove:
+        case R.id.menu_add:
             // TODO
             return true;
 
