@@ -346,6 +346,7 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
         if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
             ((FragmentControlInterface) cf).reloadData();
         }
+        populateTagList();
     }
 
     @Override
