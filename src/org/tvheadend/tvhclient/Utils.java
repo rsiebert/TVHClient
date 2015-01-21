@@ -356,28 +356,6 @@ public class Utils {
      * @param context
      * @param timerRec
      */
-    public static void addTimerToRecordProgram(final Context context, final TimerRecording timerRec) {
-        if (timerRec == null || timerRec.channel == null) {
-            return;
-        }
-        Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
-        intent.putExtra("title", timerRec.title);
-        intent.putExtra("start", timerRec.start);
-        intent.putExtra("stop", timerRec.stop);
-        intent.putExtra("channelId", timerRec.channel.id);
-        intent.putExtra("configName", timerRec.configName);
-        intent.putExtra("daysOfWeek", timerRec.daysOfWeek);
-        intent.putExtra("priority", timerRec.priority);
-        intent.putExtra("enabled", timerRec.enabled);
-        context.startService(intent);
-    }
-
-    /**
-     * 
-     * @param context
-     * @param timerRec
-     */
     public static void deleteTimerToRecordProgram(final Context context, final TimerRecording timerRec) {
         if (timerRec == null) {
             return;
