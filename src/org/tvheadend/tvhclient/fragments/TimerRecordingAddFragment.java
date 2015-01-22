@@ -42,7 +42,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -81,7 +80,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
     private String titleValue;
     private String nameValue;
     private String directoryValue;
-    private String retentionValue;
+    private int retentionValue;
     private boolean enabledValue;
     private int channelSelectionValue;
 
@@ -114,9 +113,9 @@ public class TimerRecordingAddFragment extends DialogFragment {
         stopTimeValue = 780;
         daysOfWeekValue = 127;
         titleValue = "Time-%x-%R";
-        nameValue = getString(R.string.not_set);
-        directoryValue = getString(R.string.not_set);
-        retentionValue = getString(R.string.not_set);
+        nameValue = "";
+        directoryValue = "";
+        retentionValue = 0;
         enabledValue = true;
         channelSelectionValue = 0;
         
@@ -128,7 +127,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
             titleValue = savedInstanceState.getString("titleValue");
             nameValue = savedInstanceState.getString("nameValue");
             directoryValue = savedInstanceState.getString("directoryValue");
-            retentionValue = savedInstanceState.getString("retentionValue");
+            retentionValue = savedInstanceState.getInt("retentionValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
@@ -143,7 +142,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
         outState.putString("titleValue", titleValue);
         outState.putString("nameValue", nameValue);
         outState.putString("directoryValue", directoryValue);
-        outState.putString("retentionValue", retentionValue);
+        outState.putInt("retentionValue", retentionValue);
         outState.putBoolean("enabledValue", enabledValue);
         outState.putInt("channelNameValue", channelSelectionValue);
         super.onSaveInstanceState(outState);
@@ -223,15 +222,9 @@ public class TimerRecordingAddFragment extends DialogFragment {
             };
 
             long dow = (rec != null) ? rec.daysOfWeek : daysOfWeekValue;
-            boolean[] checked = new boolean[7];
-            for (int i = 0; i < 7; ++i) {
-                checked[i] = ((dow & 1) == 1);
-                dow = (dow >> 1);
-            }
-
             List<String> items = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.day_long_names)));
             List<String> textItems = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.day_short_names)));
-            daysOfWeek.setItems(items, textItems, checked, msl);
+            daysOfWeek.setItems(items, textItems, dow, msl);
         }
         
         if (startTime != null && stopTime != null) {
@@ -271,7 +264,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
             directory.setText(rec != null ? rec.directory : directoryValue);
         }
         if (retention != null) {
-            retention.setText(rec != null ? getString(R.string.days, (int) rec.retention) : retentionValue);
+            retention.setText(String.valueOf(rec != null ? rec.retention : retentionValue));
         }
         if (isEnabled != null) {
             isEnabled.setChecked(rec != null ? rec.enabled : enabledValue);
@@ -317,11 +310,14 @@ public class TimerRecordingAddFragment extends DialogFragment {
                 }
             }
 
-            intent.putExtra("daysOfWeek", (long) 127);
+            intent.putExtra("configName", "");
+            intent.putExtra("retention", Long.valueOf(retention.getText().toString()));
+            intent.putExtra("daysOfWeek", (long) daysOfWeek.getSpinnerValue());
             intent.putExtra("priority", (long) priority.getSelectedItemPosition());
             intent.putExtra("enabled", (long) ((isEnabled.isChecked() ? 1 : 0)));
-
-//            activity.startService(intent);
+            intent.putExtra("name", name.getText().toString());
+            intent.putExtra("directory", directory.getText().toString());
+            activity.startService(intent);
 
             getDialog().dismiss();
             return true;
