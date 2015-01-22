@@ -162,35 +162,25 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
                 }
             }
 
-            if (minDuration != null) {
-                if (rec.minDuration > 0) {
-                    minDuration.setText(getString(R.string.minutes, (int) rec.minDuration));
-                }
+            if (minDuration != null && rec.minDuration > 0) {
+                minDuration.setText(getString(R.string.minutes, (int) rec.minDuration));
             }
-            
-            if (maxDuration != null) {
-                if (rec.maxDuration > 0) {
-                    maxDuration.setText(getString(R.string.minutes, (int) rec.maxDuration));
-                }
+            if (maxDuration != null && rec.maxDuration > 0) {
+                maxDuration.setText(getString(R.string.minutes, (int) rec.maxDuration));
             }
-
             if (retention != null) {
                 retention.setText(getString(R.string.days, (int) rec.retention));
             }
-
             if (approxTime != null && rec.approxTime >= 0) {
                 approxTime.setText(getString(R.string.minutes, rec.approxTime));
             }
-
             if (startWindow != null && rec.startWindow >= 0) {
                 startWindow.setText(getString(R.string.minutes, rec.startWindow));
             }
-
-            if (startExtra != null) {
+            if (startExtra != null && rec.startExtra >= 0) {
                 startExtra.setText(getString(R.string.minutes, (int) rec.startExtra));
             }
-
-            if (stopExtra != null) {
+            if (stopExtra != null && rec.stopExtra >= 0) {
                 stopExtra.setText(getString(R.string.minutes, (int) rec.stopExtra));
             }
 
