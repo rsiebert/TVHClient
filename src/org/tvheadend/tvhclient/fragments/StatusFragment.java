@@ -64,6 +64,8 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView failedRec;
 	private TextView seriesRecLabel;
 	private TextView seriesRec;
+	private TextView timeRecLabel;
+    private TextView timeRec;
 
     private String connectionStatus = "";
     private String freeDiscSpace = "";
@@ -101,6 +103,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
         seriesRecLabel = (TextView) v.findViewById(R.id.series_recording_label);
         seriesRec = (TextView) v.findViewById(R.id.series_recordings);
+        timeRecLabel = (TextView) v.findViewById(R.id.timer_recording_label);
+        timeRec = (TextView) v.findViewById(R.id.timer_recordings);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
@@ -249,6 +253,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setVisibility(View.GONE);
         seriesRecLabel.setVisibility(View.GONE);
         seriesRec.setVisibility(View.GONE);
+        timeRecLabel.setVisibility(View.GONE);
+        timeRec.setVisibility(View.GONE);
 	}
 
     /**
@@ -400,6 +406,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setVisibility(View.VISIBLE);
         seriesRecLabel.setVisibility(View.VISIBLE);
         seriesRec.setVisibility(View.VISIBLE);
+        timeRecLabel.setVisibility(View.VISIBLE);
+        timeRec.setVisibility(View.VISIBLE);
 
         // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
@@ -407,5 +415,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         upcomingRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size() + " " + getString(R.string.upcoming_recordings));
         failedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size() + " " + getString(R.string.failed_recordings));
         seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
+        timeRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
     }
 }
