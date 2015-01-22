@@ -249,7 +249,7 @@ public class Utils {
         confirmRemoveRecording(context, 
                 Constants.ACTION_DELETE_TIMER_REC_ENTRY, 
                 R.string.delete_timer_recording, 
-                trec.title, 
+                (trec.name.length() > 0 ? trec.name : trec.title), 
                 trec.id);
     }
 
