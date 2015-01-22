@@ -288,7 +288,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem editMenuItem = menu.findItem(R.id.menu_edit);
         MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
         MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
 
@@ -296,7 +295,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         recordCancelMenuItem.setVisible(false);
         recordRemoveMenuItem.setVisible(false);
         playMenuItem.setVisible(false);
-        editMenuItem.setVisible(false);
         searchMenuItemEpg.setVisible(false);
         searchMenuItemImdb.setVisible(false);
 
