@@ -39,7 +39,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -285,7 +284,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        Log.i(TAG, "onMessage " + action);
         if (action.equals(Constants.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
