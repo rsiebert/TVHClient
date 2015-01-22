@@ -222,9 +222,20 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
             
         } else if (action.equals(Constants.ACTION_ADD_SERIES_DVR_ENTRY)) {
-            String title = intent.getStringExtra("title");
-            long channelId = intent.getLongExtra("channelId", 0);
-            addAutorecEntry(title, channelId);
+            addAutorecEntry(
+                    intent.getStringExtra("title"), 
+                    intent.getLongExtra("channelId", 0),
+                    intent.getStringExtra("configName"),
+                    intent.getLongExtra("maxDuration", 0),
+                    intent.getLongExtra("minDuration", 0),
+                    intent.getLongExtra("retention", 0), 
+                    intent.getLongExtra("daysOfWeek", 127), 
+                    intent.getLongExtra("priority", 0), 
+                    intent.getLongExtra("enabled", 0), 
+                    intent.getLongExtra("startExtra", 0),
+                    intent.getLongExtra("stopExtra", 0),
+                    intent.getStringExtra("name"),
+                    intent.getStringExtra("directory"));
 
         } else if (action.equals(Constants.ACTION_DELETE_SERIES_DVR_ENTRY)) {
             String id = intent.getStringExtra("id");
@@ -1081,6 +1092,20 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
+    /**
+     * 
+     * @param title
+     * @param start
+     * @param stop
+     * @param channelId
+     * @param configName
+     * @param retention
+     * @param daysOfWeek
+     * @param priority
+     * @param enabled
+     * @param name
+     * @param directory
+     */
     private void addTimerRecEntry(String title, long start, long stop,
                 long channelId, String configName, long retention, long daysOfWeek,
                 long priority, long enabled, String name, String directory) {
@@ -1255,11 +1280,41 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void addAutorecEntry(final String title, final long channelId) {
+    /**
+     * 
+     * @param title
+     * @param channelId
+     * @param configName
+     * @param maxDuration
+     * @param minDuration
+     * @param retention
+     * @param daysOfWeek
+     * @param priority
+     * @param enabled
+     * @param startExtra
+     * @param stopExtra
+     * @param name
+     * @param directory
+     */
+    private void addAutorecEntry(String title, long channelId, String configName, long maxDuration,
+            long minDuration, long retention, long daysOfWeek, long priority, long enabled,
+            long startExtra, long stopExtra, String name, String directory) {
+
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
         request.putField("title", title);
+        request.putField("configName", configName);
         request.putField("channelId", channelId);
+        request.putField("minDuration", minDuration);
+        request.putField("maxDuration", maxDuration);
+        request.putField("retention", retention);
+        request.putField("daysOfWeek", daysOfWeek);
+        request.putField("priority", priority);
+        request.putField("enabled", enabled);
+        request.putField("startExtra", startExtra);
+        request.putField("stopExtra", stopExtra);
+        request.putField("name", name);
+        request.putField("directory", directory);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
