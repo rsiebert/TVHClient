@@ -79,7 +79,7 @@
                     style="?attr/HeaderFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/recording_start_time" />
+                    android:text="@string/start_time" />
 
                 <Spinner
                     android:id="@+id/start_time"
@@ -93,7 +93,7 @@
                     style="?attr/HeaderFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/recording_stop_time" />
+                    android:text="@string/stop_time" />
 
                 <Spinner
                     android:id="@+id/stop_time"

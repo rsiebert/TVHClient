@@ -63,14 +63,29 @@
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
-                    android:id="@+id/minimum_and_maximum_duration_label"
+                    android:id="@+id/minimum_duration_label"
                     style="?attr/HeaderFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/duration" />
+                    android:text="@string/min_duration" />
 
                 <TextView
-                    android:id="@+id/minimum_and_maximum_duration"
+                    android:id="@+id/minimum_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="12dp"
+                    android:text="@string/not_set"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/maximum_duration_label"
+                    style="?attr/HeaderFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_duration" />
+
+                <TextView
+                    android:id="@+id/maximum_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="12dp"
@@ -93,33 +108,48 @@
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
-                    android:id="@+id/recording_window_label"
+                    android:id="@+id/start_window_label"
                     style="?attr/HeaderFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/recording_window" />
+                    android:text="@string/start_window" />
 
                 <TextView
-                    android:id="@+id/recording_window"
+                    android:id="@+id/start_window"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="12dp"
-                    android:text="@string/start_after_end_before"
+                    android:text="@string/not_set"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
-                    android:id="@+id/start_and_stop_extra_label"
+                    android:id="@+id/start_extra_label"
                     style="?attr/HeaderFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/extra_time" />
+                    android:text="@string/extra_stop_time" />
 
                 <TextView
-                    android:id="@+id/start_and_stop_extra"
+                    android:id="@+id/start_extra"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="12dp"
-                    android:text="@string/start_and_stop_extra"
+                    android:text="@string/not_set"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/stop_extra_label"
+                    style="?attr/HeaderFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/extra_start_time" />
+
+                <TextView
+                    android:id="@+id/stop_extra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="12dp"
+                    android:text="@string/not_set"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -206,6 +236,21 @@
 
                 <TextView
                     android:id="@+id/creator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="12dp"
+                    android:text="@string/not_set"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/comment_label"
+                    style="?attr/HeaderFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/comment" />
+
+                <TextView
+                    android:id="@+id/comment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="12dp"
