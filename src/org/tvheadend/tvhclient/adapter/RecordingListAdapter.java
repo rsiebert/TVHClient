@@ -152,11 +152,11 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
             // Show the information what type the recording is
             if (holder.recording_type != null) {
-                if (rec.autorecId == null && rec.timerecId == null) {
+                if (rec.autorecId.length() == 0 && rec.timerecId.length() == 0) {
                     holder.recording_type.setVisibility(ImageView.GONE);
-                } else if (rec.autorecId != null && rec.timerecId == null) {
+                } else if (rec.autorecId.length() > 0 && rec.timerecId.length() == 0) {
                     holder.recording_type.setText(R.string.is_series_recording);
-                } else if (rec.autorecId == null && rec.timerecId != null) {
+                } else if (rec.autorecId.length() == 0 && rec.timerecId.length() > 0) {
                     holder.recording_type.setText(R.string.is_timer_recording);
                 }
             }

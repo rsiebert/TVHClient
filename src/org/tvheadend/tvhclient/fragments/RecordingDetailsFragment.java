@@ -134,11 +134,11 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             // Show the information what type the recording is only when no dual
             // pane is active
             if (recording_type != null) {
-                if (rec.autorecId == null && rec.timerecId == null) {
+                if (rec.autorecId.length() == 0 && rec.timerecId.length() == 0) {
                     recording_type.setVisibility(ImageView.GONE);
-                } else if (rec.autorecId != null && rec.timerecId == null && !isDualPane) {
+                } else if (rec.autorecId.length() > 0 && rec.timerecId.length() == 0 && !isDualPane) {
                     recording_type.setText(R.string.is_series_recording);
-                } else if (rec.autorecId == null && rec.timerecId != null && !isDualPane) {
+                } else if (rec.autorecId.length() == 0 && rec.timerecId.length() > 0 && !isDualPane) {
                     recording_type.setText(R.string.is_timer_recording);
                 }
             }
@@ -210,10 +210,16 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, rec);
+            if (!isDualPane) {
+                getDialog().dismiss();
+            }
             return true;
 
         case R.id.menu_record_cancel:
             Utils.confirmCancelRecording(activity, rec);
+            if (!isDualPane) {
+                getDialog().dismiss();
+            }
             return true;
         }
         return false;
