@@ -134,7 +134,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             // Show the information what type the recording is only when no dual
             // pane is active
             if (recording_type != null) {
-                if (rec.autorecId.length() == 0 && rec.timerecId.length() == 0) {
+                if ((rec.autorecId.length() == 0 && rec.timerecId.length() == 0) || isDualPane) {
                     recording_type.setVisibility(ImageView.GONE);
                 } else if (rec.autorecId.length() > 0 && rec.timerecId.length() == 0 && !isDualPane) {
                     recording_type.setText(R.string.is_series_recording);
