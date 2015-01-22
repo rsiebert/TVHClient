@@ -160,8 +160,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                 intent.getLongExtra("daysOfWeek", 0), 
                 intent.getLongExtra("priority", 0), 
                 intent.getLongExtra("enabled", 0), 
-                intent.getStringExtra("comment"),
-                intent.getStringExtra("name"));
+                intent.getStringExtra("name"),
+                intent.getStringExtra("directory"));
 
         } else if (action.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
             deleteTimerRecEntry(intent.getStringExtra("id"));
@@ -1083,7 +1083,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void addTimerRecEntry(String title, long start, long stop,
                 long channelId, String configName, long retention, long daysOfWeek,
-                long priority, long enabled, String comment, String name) {
+                long priority, long enabled, String name, String directory) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addTimerecEntry");
@@ -1096,8 +1096,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
         request.putField("enabled", enabled);
-        request.putField("comment", comment);
         request.putField("name", name);
+        request.putField("directory", directory);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
