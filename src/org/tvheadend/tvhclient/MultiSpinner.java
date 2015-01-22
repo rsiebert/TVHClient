@@ -13,21 +13,28 @@ import android.widget.Spinner;
 
 public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener, OnCancelListener {
 
+    @SuppressWarnings("unused")
+    private final static String TAG = MultiSpinner.class.getSimpleName();
+
+    private Context context;
     private List<String> items;
     private List<String> textItems;
     private boolean[] selected;
+    private int maxSelectionCount;
     private MultiSpinnerListener listener;
 
     public MultiSpinner(Context context) {
         super(context);
     }
 
-    public MultiSpinner(Context arg0, AttributeSet arg1) {
-        super(arg0, arg1);
+    public MultiSpinner(Context context, AttributeSet attrSet) {
+        super(context, attrSet);
+        this.context = context;
     }
 
-    public MultiSpinner(Context arg0, AttributeSet arg1, int arg2) {
-        super(arg0, arg1, arg2);
+    public MultiSpinner(Context context, AttributeSet attrSet, int arg2) {
+        super(context, attrSet, arg2);
+        this.context = context;
     }
 
     @Override
@@ -48,21 +55,38 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener,
     }
 
     private String getSpinnerText() {
-        StringBuffer spinnerBuffer = new StringBuffer();
-        for (int i = 0; i < textItems.size(); i++) {
+        int selectionCount = 0;
+        String spinnerText = "";
+        for (int i = 0; i < maxSelectionCount; i++) {
             if (selected[i] == true) {
-                spinnerBuffer.append(textItems.get(i));
-                spinnerBuffer.append(", ");
+                spinnerText += textItems.get(i) + ",";
+                selectionCount++;
             }
         }
-
-        String spinnerText = spinnerBuffer.toString();
-        if (spinnerText.length() > 2) {
-            spinnerText = spinnerText.substring(0, spinnerText.length() - 2);
+        // Remove the last comma or set the default value
+        final int idx = spinnerText.lastIndexOf(',');
+        if (idx > 0) {
+            spinnerText = spinnerText.substring(0, idx);
+        }
+        // Use strings for all or no selected days
+        if (selectionCount == maxSelectionCount) {
+            spinnerText = context.getString(R.string.all_days);
+        } else if (selectionCount == 0) {
+            spinnerText = context.getString(R.string.no_days);
         }
         return spinnerText;
     }
 
+    public int getSpinnerValue() {
+        int value = 0;
+        for (int i = 0; i < maxSelectionCount; i++) {
+            if (selected[i] == true) {
+                value += (1 << i);
+            }
+        }
+        return value;
+    }
+    
     @Override
     public boolean performClick() {
         super.performClick();
@@ -80,13 +104,17 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener,
         return true;
     }
 
-    public void setItems(List<String> items, List<String> textItems, boolean[] checked, MultiSpinnerListener listener) {
+    public void setItems(List<String> items, List<String> textItems, long selectionValue, MultiSpinnerListener listener) {
         this.items = items;
         this.textItems = textItems;
         this.listener = listener;
+        this.maxSelectionCount = textItems.size();
 
-        // all selected by default
-        selected = checked;
+        selected = new boolean[maxSelectionCount];
+        for (int i = 0; i < maxSelectionCount; ++i) {
+            selected[i] = ((selectionValue & 1) == 1);
+            selectionValue = (selectionValue >> 1);
+        }
 
         // all text on the spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), 
