@@ -303,7 +303,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     adapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(Constants.ACTION_TIMER_DVR_DELETE)) {
+        } else if (action.equals(Constants.ACTION_TIMER_DVR_DELETE) ||
+                action.equals(Constants.ACTION_PROGRAM_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Get the position of the series recording that has been deleted
@@ -311,7 +312,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     adapter.remove((TimerRecording) obj);
                     // Set the series recording below the deleted one as selected
                     setInitialSelection(previousPosition);
-                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(Constants.ACTION_TIMER_DVR_UPDATE)) {

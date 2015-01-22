@@ -312,7 +312,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
                     adapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
+        } else if (action.equals(Constants.ACTION_SERIES_DVR_DELETE) ||
+                action.equals(Constants.ACTION_PROGRAM_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Get the position of the series recording that has been deleted
@@ -320,7 +321,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
                     adapter.remove((SeriesRecording) obj);
                     // Set the series recording below the deleted one as selected
                     setInitialSelection(previousPosition);
-                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(Constants.ACTION_SERIES_DVR_UPDATE)) {
