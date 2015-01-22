@@ -163,14 +163,14 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
             }
 
             if (minDuration != null) {
-                if (rec.minDuration >= 0) {
-                    minDuration.setText(getString(R.string.minutes, (int) rec.minDuration / 60));
+                if (rec.minDuration > 0) {
+                    minDuration.setText(getString(R.string.minutes, (int) rec.minDuration));
                 }
             }
             
             if (maxDuration != null) {
-                if (rec.maxDuration >= 0) {
-                    maxDuration.setText(getString(R.string.minutes, (int) rec.maxDuration / 60));
+                if (rec.maxDuration > 0) {
+                    maxDuration.setText(getString(R.string.minutes, (int) rec.maxDuration));
                 }
             }
 
