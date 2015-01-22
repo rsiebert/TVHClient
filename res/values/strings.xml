@@ -370,6 +370,8 @@
     <string name="max_duration">Maximum duration</string>
     <string name="record_from_to_time">Record from %1$s to %2$s</string>
     <string name="recording_time">Recording Time</string>
+    <string name="series_recording_add_error">Can\'t add this series recording.\nThe title must no be empty!</string>
+    <string name="time_recording_add_error">Can\'t add this time recording.\nThe title must no be empty!</string>
 
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>
