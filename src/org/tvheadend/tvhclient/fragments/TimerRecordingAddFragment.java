@@ -74,13 +74,13 @@ public class TimerRecordingAddFragment extends DialogFragment {
     private Toolbar toolbar;
 
     private long priorityValue;
-    private int startTimeValue;
-    private int stopTimeValue;
-    private int daysOfWeekValue;
+    private long startTimeValue;
+    private long stopTimeValue;
+    private long daysOfWeekValue;
     private String titleValue;
     private String nameValue;
     private String directoryValue;
-    private int retentionValue;
+    private long retentionValue;
     private boolean enabledValue;
     private int channelSelectionValue;
 
@@ -107,27 +107,53 @@ public class TimerRecordingAddFragment extends DialogFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        priorityValue = 2;
-        startTimeValue = 720;
-        stopTimeValue = 780;
-        daysOfWeekValue = 127;
-        titleValue = "Time-%x-%R";
-        nameValue = "";
-        directoryValue = "";
-        retentionValue = 0;
-        enabledValue = true;
-        channelSelectionValue = 0;
-        
-        if (savedInstanceState != null) {
+
+        if (savedInstanceState == null) {
+            String recId = "";
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                recId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
+            }
+
+            // Get the recording so we can show its details
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            rec = app.getTimerRecording(recId);
+            
+            if (rec != null) {
+                priorityValue = rec.priority;
+                startTimeValue = rec.start;
+                stopTimeValue = rec.start;
+                daysOfWeekValue = rec.daysOfWeek;
+                titleValue = rec.title;
+                nameValue = rec.name;
+                directoryValue = rec.directory;
+                retentionValue = rec.retention;
+                enabledValue = rec.enabled;
+
+                int pos = app.getChannels().indexOf(rec.channel);
+                channelSelectionValue = (pos >= 0 ? pos : 0);
+            } else {
+                priorityValue = 2;
+                startTimeValue = 720;
+                stopTimeValue = 780;
+                daysOfWeekValue = 127;
+                titleValue = "Time-%x-%R";
+                nameValue = "";
+                directoryValue = "";
+                retentionValue = 0;
+                enabledValue = true;
+                channelSelectionValue = 0;
+            }
+            
+        } else {
             priorityValue = savedInstanceState.getLong("priorityValue");
-            startTimeValue = savedInstanceState.getInt("startTimeValue");
-            stopTimeValue = savedInstanceState.getInt("stopTimeValue");
-            daysOfWeekValue = savedInstanceState.getInt("daysOfWeekValue");
+            startTimeValue = savedInstanceState.getLong("startTimeValue");
+            stopTimeValue = savedInstanceState.getLong("stopTimeValue");
+            daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
             titleValue = savedInstanceState.getString("titleValue");
             nameValue = savedInstanceState.getString("nameValue");
             directoryValue = savedInstanceState.getString("directoryValue");
-            retentionValue = savedInstanceState.getInt("retentionValue");
+            retentionValue = savedInstanceState.getLong("retentionValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
@@ -136,13 +162,13 @@ public class TimerRecordingAddFragment extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putLong("priorityValue", priorityValue);
-        outState.putInt("startTimeValue", startTimeValue);
-        outState.putInt("stopTimeValue", stopTimeValue);
-        outState.putInt("daysOfWeekValue", daysOfWeekValue);
+        outState.putLong("startTimeValue", startTimeValue);
+        outState.putLong("stopTimeValue", stopTimeValue);
+        outState.putLong("daysOfWeekValue", daysOfWeekValue);
         outState.putString("titleValue", titleValue);
         outState.putString("nameValue", nameValue);
         outState.putString("directoryValue", directoryValue);
-        outState.putInt("retentionValue", retentionValue);
+        outState.putLong("retentionValue", retentionValue);
         outState.putBoolean("enabledValue", enabledValue);
         outState.putInt("channelNameValue", channelSelectionValue);
         super.onSaveInstanceState(outState);
@@ -154,16 +180,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
         if (getDialog() != null) {
             getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
-
-        String recId = "";
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            recId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
-        }
-
-        // Get the recording so we can show its details
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        rec = app.getTimerRecording(recId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
@@ -187,7 +203,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        
         if (channelName != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             List<String> channels = new ArrayList<String>();
@@ -196,20 +211,14 @@ public class TimerRecordingAddFragment extends DialogFragment {
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, channels);
             channelName.setAdapter(adapter);
-
-            if (rec != null && rec.channel != null) {
-                int pos = adapter.getPosition(rec.channel.name);
-                channelName.setSelection(pos);
-            } else {
-                channelName.setSelection(channelSelectionValue);
-            }
+            channelName.setSelection(channelSelectionValue);
         }
 
 
         if (priority != null) {
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity, R.array.dvr_priorities, android.R.layout.simple_spinner_item);
             priority.setAdapter(adapter);
-            priority.setSelection((int) (rec != null ? rec.priority : priorityValue));
+            priority.setSelection((int) priorityValue);
         }
 
         
@@ -217,14 +226,12 @@ public class TimerRecordingAddFragment extends DialogFragment {
             MultiSpinnerListener msl = new MultiSpinnerListener() {
                 @Override
                 public void onItemsSelected(boolean[] checked) {
-                    // NOP
+                    daysOfWeekValue = daysOfWeek.getSpinnerValue();
                 }
             };
-
-            long dow = (rec != null) ? rec.daysOfWeek : daysOfWeekValue;
             List<String> items = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.day_long_names)));
             List<String> textItems = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.day_short_names)));
-            daysOfWeek.setItems(items, textItems, dow, msl);
+            daysOfWeek.setItems(items, textItems, daysOfWeekValue, msl);
         }
         
         if (startTime != null && stopTime != null) {
@@ -241,33 +248,26 @@ public class TimerRecordingAddFragment extends DialogFragment {
             startTime.setAdapter(adapter);
             stopTime.setAdapter(adapter);
 
-            if (rec != null) {
-                String start = formatter.format(new Date(rec.start * 60L * 1000L));
-                String stop = formatter.format(new Date(rec.stop * 60L * 1000L));
-                startTime.setSelection(adapter.getPosition(start));
-                stopTime.setSelection(adapter.getPosition(stop));
-            } else {
-                String start = formatter.format(new Date(startTimeValue * 60L * 1000L));
-                String stop = formatter.format(new Date(stopTimeValue * 60L * 1000L));
-                startTime.setSelection(adapter.getPosition(start));
-                stopTime.setSelection(adapter.getPosition(stop));    
-            }
+            String start = formatter.format(new Date(startTimeValue * 60L * 1000L));
+            String stop = formatter.format(new Date(stopTimeValue * 60L * 1000L));
+            startTime.setSelection(adapter.getPosition(start));
+            stopTime.setSelection(adapter.getPosition(stop));    
         }
 
         if (title != null) {
-            title.setText(rec != null ? rec.title : titleValue);
+            title.setText(titleValue);
         }
         if (name != null) {
-            name.setText(rec != null ? rec.name : nameValue);
+            name.setText(nameValue);
         }
         if (directory != null) {
-            directory.setText(rec != null ? rec.directory : directoryValue);
+            directory.setText(directoryValue);
         }
         if (retention != null) {
-            retention.setText(String.valueOf(rec != null ? rec.retention : retentionValue));
+            retention.setText(String.valueOf(retentionValue));
         }
         if (isEnabled != null) {
-            isEnabled.setChecked(rec != null ? rec.enabled : enabledValue);
+            isEnabled.setChecked(enabledValue);
         }
         
         if (toolbar != null) {
