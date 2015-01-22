@@ -210,14 +210,14 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, rec);
-            if (!isDualPane) {
+            if (getDialog() != null) {
                 getDialog().dismiss();
             }
             return true;
 
         case R.id.menu_record_cancel:
             Utils.confirmCancelRecording(activity, rec);
-            if (!isDualPane) {
+            if (getDialog() != null) {
                 getDialog().dismiss();
             }
             return true;

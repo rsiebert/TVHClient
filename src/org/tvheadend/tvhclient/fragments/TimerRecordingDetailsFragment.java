@@ -216,6 +216,9 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, rec);
+            if (getDialog() != null) {
+                getDialog().dismiss();
+            }
             return true;
         }
         return false;

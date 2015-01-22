@@ -239,7 +239,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, rec);
-            if (!isDualPane) {
+            if (getDialog() != null) {
                 getDialog().dismiss();
             }
             return true;
