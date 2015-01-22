@@ -51,6 +51,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class TimerRecordingAddFragment extends DialogFragment {
 
@@ -294,6 +295,13 @@ public class TimerRecordingAddFragment extends DialogFragment {
     protected boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_save:
+            
+            // title, start, stop and channelId are mandatory and must be set
+            if (title.length() == 0) {
+                Toast.makeText(activity, getString(R.string.time_recording_add_error), Toast.LENGTH_LONG).show();
+                return true;
+            }
+
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
 
