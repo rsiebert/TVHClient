@@ -19,10 +19,6 @@
  */
 package org.tvheadend.tvhclient.fragments;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -54,13 +50,15 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
 
     private LinearLayout detailsLayout;
     private TextView isEnabled;
-    private TextView minMaxDuration;
+    private TextView minDuration;
+    private TextView maxDuration;
     private TextView retention;
     private TextView daysOfWeek;
     private TextView approxTime;
-    private TextView recordingWindow;
+    private TextView startWindow;
     private TextView priority;
-    private TextView startStopExtra;
+    private TextView startExtra;
+    private TextView stopExtra;
     private TextView title;
     private TextView name;
     private TextView directory;
@@ -114,13 +112,15 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
         name = (TextView) v.findViewById(R.id.name);
-        minMaxDuration = (TextView) v.findViewById(R.id.minimum_and_maximum_duration);
+        minDuration = (TextView) v.findViewById(R.id.minimum_duration);
+        maxDuration = (TextView) v.findViewById(R.id.maximum_duration);
         retention = (TextView) v.findViewById(R.id.retention);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         approxTime = (TextView) v.findViewById(R.id.approx_time);
-        recordingWindow = (TextView) v.findViewById(R.id.recording_window);
+        startWindow = (TextView) v.findViewById(R.id.start_window);
         priority = (TextView) v.findViewById(R.id.priority);
-        startStopExtra = (TextView) v.findViewById(R.id.start_and_stop_extra);
+        startExtra = (TextView) v.findViewById(R.id.start_extra);
+        stopExtra = (TextView) v.findViewById(R.id.stop_extra);
         directory = (TextView) v.findViewById(R.id.directory);
         owner = (TextView) v.findViewById(R.id.owner);
         creator = (TextView) v.findViewById(R.id.creator);
@@ -157,41 +157,43 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
 
             if (priority != null) {
                 String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-                if (rec.priority >= 0 && priorityItems.length < rec.priority) {
+                if (rec.priority >= 0 && rec.priority < priorityItems.length) {
                     priority.setText(priorityItems[(int) (rec.priority)]);
                 }
             }
-            if (minMaxDuration != null) {
-                if (rec.minDuration >= 0 && rec.maxDuration >= 0) {
-                    String min = getString(R.string.minutes, (int) rec.minDuration / 60);
-                    String max = getString(R.string.minutes, (int) rec.maxDuration / 60);
-                    minMaxDuration.setText(getString(R.string.record_from_to_time, min, max));;
-                } else {
-                    minMaxDuration.setText(R.string.not_set);
+
+            if (minDuration != null) {
+                if (rec.minDuration >= 0) {
+                    minDuration.setText(getString(R.string.minutes, (int) rec.minDuration / 60));
                 }
             }
+            
+            if (maxDuration != null) {
+                if (rec.maxDuration >= 0) {
+                    maxDuration.setText(getString(R.string.minutes, (int) rec.maxDuration / 60));
+                }
+            }
+
             if (retention != null) {
                 retention.setText(getString(R.string.days, (int) rec.retention));
             }
 
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
             if (approxTime != null && rec.approxTime >= 0) {
-                approxTime.setText(formatter.format(new Date(rec.approxTime * 60L * 1000L)));
+                approxTime.setText(getString(R.string.minutes, rec.approxTime));
             }
-            if (recordingWindow != null) {
-                if (rec.start >= 0 && rec.startWindow >= 0) {
-                    String startAfter = formatter.format(new Date(rec.start * 60L * 1000L));
-                    String stopBefore = formatter.format(new Date(rec.startWindow * 60L * 1000L));
-                    recordingWindow.setText(getString(R.string.start_after_end_before, startAfter, stopBefore));
-                } else {
-                    recordingWindow.setText(R.string.not_set);
-                }
+
+            if (startWindow != null && rec.startWindow >= 0) {
+                startWindow.setText(getString(R.string.minutes, rec.startWindow));
             }
-            if (startStopExtra != null) {
-                String start = getString(R.string.minutes, (int) rec.startExtra);
-                String stop = getString(R.string.minutes, (int) rec.stopExtra);
-                startStopExtra.setText(getString(R.string.start_and_stop_extra, start, stop));
+
+            if (startExtra != null) {
+                startExtra.setText(getString(R.string.minutes, (int) rec.startExtra));
             }
+
+            if (stopExtra != null) {
+                stopExtra.setText(getString(R.string.minutes, (int) rec.stopExtra));
+            }
+
             if (isEnabled != null) {
                 if (rec.enabled) {
                     isEnabled.setText(R.string.recording_enabled);
@@ -237,6 +239,9 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         switch (item.getItemId()) {
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, rec);
+            if (!isDualPane) {
+                getDialog().dismiss();
+            }
             return true;
         }
         return false;
