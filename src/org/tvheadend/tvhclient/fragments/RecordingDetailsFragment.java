@@ -167,7 +167,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
      * @param menu
      */
     private void onPrepareToolbarMenu(Menu menu) {
-        (menu.findItem(R.id.menu_edit)).setVisible(false);
         if (rec == null) {
             (menu.findItem(R.id.menu_play)).setVisible(false);
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
