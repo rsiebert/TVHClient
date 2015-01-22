@@ -164,7 +164,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment implements HTS
             }
             if (priority != null) {
                 String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-                if (rec.priority >= 0 && priorityItems.length < rec.priority) {
+                if (rec.priority >= 0 && rec.priority < priorityItems.length) {
                     priority.setText(priorityItems[(int) (rec.priority)]);
                 }
             }
