@@ -40,8 +40,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
+                    android:hint="@string/not_set"
                     android:inputType="text"
-                    android:text="@string/title"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -56,8 +56,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
+                    android:hint="@string/not_set"
                     android:inputType="text"
-                    android:text="@string/name"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -72,7 +72,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="@string/channel"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -87,7 +86,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="@string/not_set"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -102,7 +100,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="@string/not_set"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -131,7 +128,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="@string/priority"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -147,7 +143,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:inputType="number"
-                    android:text="@string/not_set"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -162,25 +157,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
+                    android:hint="@string/not_set"
                     android:inputType="text"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/comment_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/comment" />
-
-                <EditText
-                    android:id="@+id/comment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:inputType="textMultiLine"
-                    android:maxLines="3"
-                    android:text="@string/not_set"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
         </ScrollView>
