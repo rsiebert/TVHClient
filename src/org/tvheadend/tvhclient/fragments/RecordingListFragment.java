@@ -220,6 +220,10 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     }).show();
             return true;
 
+        case R.id.menu_refresh:
+            fragmentStatusInterface.reloadData(TAG);
+            return true;
+
         default:
             return false;
         }

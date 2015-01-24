@@ -241,6 +241,10 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             newFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
+        case R.id.menu_refresh:
+            fragmentStatusInterface.reloadData(TAG);
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
