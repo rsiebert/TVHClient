@@ -271,6 +271,12 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        // Check for a valid adapter size and objects
+        if (info == null || adapter == null || adapter.getCount() <= info.position) {
+            return super.onContextItemSelected(item);
+        }
+
         final SeriesRecording srec = adapter.getItem(info.position);
 
         switch (item.getItemId()) {
