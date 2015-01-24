@@ -384,7 +384,8 @@
     <string name="episode">Episode</string>
     <string name="part">Part</string>
     <string name="progress">%1$d%% of the show already shown</string>
-    
+    <string name="next_program">Next program: %s</string>
+
     <string name="server">Server</string>
     <string name="connection">Connection</string>
     <string name="disc_space">Disc space</string>

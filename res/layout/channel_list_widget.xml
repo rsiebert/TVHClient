@@ -9,8 +9,8 @@
         android:id="@+id/genre"
         android:layout_width="10dip"
         android:layout_height="fill_parent"
-        android:paddingTop="6dp"
         android:paddingBottom="6dp"
+        android:paddingTop="6dp"
         android:text="" />
 
     <ImageView
@@ -18,22 +18,22 @@
         android:layout_width="54dp"
         android:layout_height="54dp"
         android:layout_marginBottom="3dp"
+        android:layout_marginEnd="0dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="0dp"
         android:layout_marginStart="6dp"
-        android:layout_marginEnd="0dp"
         android:layout_marginTop="6dp"
         android:contentDescription="@string/channel_icon"
         android:scaleType="fitCenter" />
 
     <TextView
         android:id="@+id/icon_text"
+        style="?attr/ProgramGuideTitleFont"
         android:layout_width="54dp"
         android:layout_height="66dp"
-        android:paddingTop="6dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
-        style="?attr/ProgramGuideTitleFont" />
+        android:paddingTop="6dp" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -92,10 +92,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.7"
                 android:ellipsize="end"
+                android:paddingEnd="3dp"
                 android:paddingLeft="6dp"
                 android:paddingRight="3dp"
                 android:paddingStart="6dp"
-                android:paddingEnd="3dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/time"
@@ -124,6 +124,18 @@
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:layout_marginTop="3dp" />
+
+        <TextView
+            android:id="@+id/next_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="@string/title"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
 </LinearLayout>

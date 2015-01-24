@@ -97,6 +97,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         public ImageView icon;
         public TextView icon_text;
         public TextView title;
+        public TextView nextTitle;
         public TextView channel;
         public TextView time;
         public TextView duration;
@@ -117,6 +118,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
+            holder.nextTitle = (TextView) view.findViewById(R.id.next_title);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.progress = (ProgressBar) view.findViewById(R.id.progress);
             holder.time = (TextView) view.findViewById(R.id.time);
@@ -216,8 +218,12 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Get the program that is currently running
             // and set all the available values
             Program p = null;
+            Program np = null;
             if (it.hasNext()) {
                 p = it.next();
+            }
+            if (it.hasNext()) {
+                np = it.next();
             }
 
             // Check if the channel is actually transmitting
@@ -226,6 +232,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_transmission);
                 }
+                if (holder.nextTitle != null) {
+                    holder.nextTitle.setText(R.string.no_transmission);
+                }
             } else if (p != null) {
                 if (holder.title != null) {
                     holder.title.setText(p.title);
@@ -233,6 +242,10 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
                 Utils.setProgress(holder.progress, p.start, p.stop);
+
+                if (holder.nextTitle != null && np != null) {
+                    holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
+                }
             }
             else {
                 // The channel does not provide program data. Hide the progress
@@ -251,6 +264,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
                 if (holder.genre != null) {
                     holder.genre.setVisibility(View.GONE);
+                }
+                if (holder.nextTitle != null) {
+                    holder.nextTitle.setVisibility(View.GONE);
                 }
             }
             Utils.setGenreColor(context, holder.genre, p, TAG);
