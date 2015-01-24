@@ -233,7 +233,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.title.setText(R.string.no_transmission);
                 }
                 if (holder.nextTitle != null) {
-                    holder.nextTitle.setText(R.string.no_transmission);
+                    holder.nextTitle.setVisibility(View.GONE);
                 }
             } else if (p != null) {
                 if (holder.title != null) {
@@ -244,6 +244,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 Utils.setProgress(holder.progress, p.start, p.stop);
 
                 if (holder.nextTitle != null && np != null) {
+                    holder.nextTitle.setVisibility(View.VISIBLE);
                     holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
                 }
             }
