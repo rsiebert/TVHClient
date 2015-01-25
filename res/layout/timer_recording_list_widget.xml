@@ -43,10 +43,10 @@
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
+                android:paddingEnd="3dp"
                 android:paddingLeft="6dp"
                 android:paddingRight="3dp"
                 android:paddingStart="6dp"
-                android:paddingEnd="3dp"
                 android:singleLine="true"
                 android:text="@string/channel" />
 

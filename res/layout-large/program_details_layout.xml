@@ -87,11 +87,11 @@
                         android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
                         android:paddingEnd="12dp"
                         android:paddingLeft="0dp"
                         android:paddingRight="12dp"
                         android:paddingStart="0dp"
+                        android:singleLine="true"
                         android:text="@string/date" />
 
                     <TextView
