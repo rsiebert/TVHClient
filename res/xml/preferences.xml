@@ -77,31 +77,10 @@
 
     <PreferenceCategory
         android:title="@string/pref_profiles">
-	    <ListPreference
-            android:name="@string/pref_recording_profiles"
-            android:dialogTitle="@string/pref_recording_profiles"
-            android:key="pref_recording_profiles"
-            android:summary="@string/pref_recording_profiles_sum"
-            android:title="@string/pref_recording_profiles"
-            android:visible="false" />
-
-        <ListPreference
-            android:name="@string/pref_playback_profiles"
-            android:dialogTitle="@string/pref_playback_profiles"
-            android:key="pref_playback_profiles"
-            android:summary="@string/pref_playback_profiles_sum"
-            android:title="@string/pref_playback_profiles"
-            android:visible="false" />
-
         <PreferenceScreen
-	        android:key="pref_playback_programs"
-	        android:title="@string/programs"
-	        android:summary="@string/pref_playback_programs_sum" />
-
-        <PreferenceScreen
-            android:key="pref_playback_recordings"
-            android:title="@string/recordings"
-            android:summary="@string/pref_playback_recordings_sum" />
+            android:key="pref_menu_profiles"
+            android:title="@string/pref_profiles"
+            android:summary="@string/pref_profiles" />
 
 	</PreferenceCategory>
     <PreferenceCategory 

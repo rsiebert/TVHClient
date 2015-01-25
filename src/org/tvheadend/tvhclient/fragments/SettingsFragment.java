@@ -5,13 +5,16 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.SettingsProfileActivity;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
+import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profiles;
 
 import android.app.Activity;
@@ -222,31 +225,38 @@ public class SettingsFragment extends PreferenceFragment implements
             });
         }
 
-        Preference prefPlaybackPrograms = findPreference("pref_playback_programs");
-        if (prefPlaybackPrograms != null) {
-            prefPlaybackPrograms.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        Preference prefMenuProfiles = findPreference("pref_menu_profiles");
+        if (prefMenuProfiles != null) {
+            prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    if (settingsInterface != null) {
-                        settingsInterface.showPreference(R.xml.preferences_playback_programs);
+                    // Show a list of available connections
+                    if (DatabaseHelper.getInstance() != null) {
+                        final List<Connection> connList = DatabaseHelper.getInstance().getConnections();
+                        if (connList != null) {
+                            String[] items = new String[connList.size()];
+                            for (int i = 0; i < connList.size(); i++) {
+                                items[i] = connList.get(i).name;
+                            }
+                            // Show a dialog to select a connection
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle(R.string.select_connection).setItems(items,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // The 'which' argument contains the index of the selected item
+                                            Intent intent = new Intent(activity, SettingsProfileActivity.class);
+                                            intent.putExtra(Constants.BUNDLE_CONNECTION_ID, connList.get(which).id);
+                                            startActivity(intent);
+                                        }
+                                    });
+                            builder.create().show();
+                        }
                     }
-                    return true;
+                    return false;
                 }
             });
         }
 
-        Preference prefPlaybackRecordings = findPreference("pref_playback_recordings");
-        if (prefPlaybackRecordings != null) {
-            prefPlaybackRecordings.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    if (settingsInterface != null) {
-                        settingsInterface.showPreference(R.xml.preferences_playback_recordings);
-                    }
-                    return true;
-                }
-            });
-        }
         // Add a listener to the connection preference so that the
         // ChangeLogDialog with all changes can be shown.
         Preference prefChangelog = findPreference("pref_changelog");

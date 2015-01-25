@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     
     <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="21" />
-    <application 
+    <application
         android:allowBackup="true"
         android:name="org.tvheadend.tvhclient.TVHClientApplication" 
         android:label="TVHClient" android:icon="@drawable/ic_launcher">
@@ -35,6 +35,7 @@
         <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhclient.SettingsShowConnectionsActivity"/>
         <activity android:name="org.tvheadend.tvhclient.SettingsManageConnectionActivity"/>
+        <activity android:name="org.tvheadend.tvhclient.SettingsProfileActivity"/>
         <activity android:name="org.tvheadend.tvhclient.PlaybackSelectionActivity" />
         <activity android:name="org.tvheadend.tvhclient.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name="org.tvheadend.tvhclient.htsp.HTSService" android:enabled="true"/>
