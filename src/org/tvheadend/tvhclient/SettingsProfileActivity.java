@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.fragments.SettingsProfileFragment;
+import org.tvheadend.tvhclient.model.Connection;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -56,13 +57,24 @@ public class SettingsProfileActivity extends ActionBarActivity {
             }
         });
         toolbar.inflateMenu(R.menu.save_cancel_menu);
-        toolbar.setTitle(R.string.menu_settings);
+        toolbar.setTitle(R.string.pref_profiles);
 
-        // Display the fragment with the connection details
-        Fragment f = new SettingsProfileFragment();
-        f.setArguments(getIntent().getExtras());
-        getFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, f)
-                .commit();
+        // Get the selected connection and set the toolbar texts
+        if (DatabaseHelper.getInstance() != null) {
+            long id = getIntent().getLongExtra(Constants.BUNDLE_CONNECTION_ID, 0);
+            Connection conn = DatabaseHelper.getInstance().getConnection(id);
+            // Display the fragment with the connection details otherwise
+            // exit this activity because no valid connection was given.
+            if (conn != null) {
+                toolbar.setSubtitle(conn.name);
+                Fragment f = new SettingsProfileFragment();
+                f.setArguments(getIntent().getExtras());
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.settings_fragment, f)
+                        .commit();
+            } else {
+                finish();
+            }
+        }
     }
 }
