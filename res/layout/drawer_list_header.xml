@@ -8,10 +8,10 @@
 
     <TextView
         android:id="@+id/server_label"
+        style="?attr/HeaderFont"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/server"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="@string/server" />
 
     <TextView
         android:id="@+id/server"
