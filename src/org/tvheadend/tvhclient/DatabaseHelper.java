@@ -226,21 +226,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Connection conn = null;
         if (c.getCount() > 0) {
             c.moveToFirst();
-            conn = new Connection();
-            conn.id = c.getInt(c.getColumnIndex(KEY_CONN_ID));
-            conn.name = c.getString(c.getColumnIndex(KEY_CONN_NAME));
-            conn.address = c.getString(c.getColumnIndex(KEY_CONN_ADDRESS));
-            conn.port = c.getInt(c.getColumnIndex(KEY_CONN_PORT));
-            conn.username = c.getString(c.getColumnIndex(KEY_CONN_USERNAME));
-            conn.password = c.getString(c.getColumnIndex(KEY_CONN_PASSWORD));
-            conn.selected = (c.getInt(c.getColumnIndex(KEY_CONN_SELECTED)) > 0);
-            conn.channelTag = c.getInt(c.getColumnIndex(KEY_CONN_CHANNEL_TAG));
-            conn.streaming_port = c.getInt(c.getColumnIndex(KEY_CONN_STREAMING_PORT));
-            conn.wol_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
-            conn.wol_port = c.getInt(c.getColumnIndex(KEY_CONN_WOL_PORT));
-            conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_CONN_WOL_BROADCAST)) > 0);
-            conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));
-            conn.recording_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_REC_PROFILE_ID));
+            conn = getConnectionValues(c);
         }
         c.close();
         return conn;
@@ -258,21 +244,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Connection conn = null;
         if (c.moveToFirst()) {
-            conn = new Connection();
-            conn.id = c.getInt(c.getColumnIndex(KEY_CONN_ID));
-            conn.name = c.getString(c.getColumnIndex(KEY_CONN_NAME));
-            conn.address = c.getString(c.getColumnIndex(KEY_CONN_ADDRESS));
-            conn.port = c.getInt(c.getColumnIndex(KEY_CONN_PORT));
-            conn.username = c.getString(c.getColumnIndex(KEY_CONN_USERNAME));
-            conn.password = c.getString(c.getColumnIndex(KEY_CONN_PASSWORD));
-            conn.selected = (c.getInt(c.getColumnIndex(KEY_CONN_SELECTED)) > 0);
-            conn.channelTag = c.getInt(c.getColumnIndex(KEY_CONN_CHANNEL_TAG));
-            conn.streaming_port = c.getInt(c.getColumnIndex(KEY_CONN_STREAMING_PORT));
-            conn.wol_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
-            conn.wol_port = c.getInt(c.getColumnIndex(KEY_CONN_WOL_PORT));
-            conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_CONN_WOL_BROADCAST)) > 0);
-            conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));
-            conn.recording_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_REC_PROFILE_ID));
+            conn = getConnectionValues(c);
         }
         c.close();
         return conn;
@@ -304,21 +276,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Connection conn = null;
         if (c != null && c.moveToFirst()) {
             do {
-                conn = new Connection();
-                conn.id = c.getInt(c.getColumnIndex(KEY_CONN_ID));
-                conn.name = c.getString(c.getColumnIndex(KEY_CONN_NAME));
-                conn.address = c.getString(c.getColumnIndex(KEY_CONN_ADDRESS));
-                conn.port = c.getInt(c.getColumnIndex(KEY_CONN_PORT));
-                conn.username = c.getString(c.getColumnIndex(KEY_CONN_USERNAME));
-                conn.password = c.getString(c.getColumnIndex(KEY_CONN_PASSWORD));
-                conn.selected = (c.getInt(c.getColumnIndex(KEY_CONN_SELECTED)) > 0);
-                conn.channelTag = c.getInt(c.getColumnIndex(KEY_CONN_CHANNEL_TAG));
-                conn.streaming_port = c.getInt(c.getColumnIndex(KEY_CONN_STREAMING_PORT));
-                conn.wol_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
-                conn.wol_port = c.getInt(c.getColumnIndex(KEY_CONN_WOL_PORT));
-                conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_CONN_WOL_BROADCAST)) > 0);
-                conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));
-                conn.recording_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_REC_PROFILE_ID));
+                conn = getConnectionValues(c);
                 connList.add(conn);
             } while (c.moveToNext());
         }
@@ -326,5 +284,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             c.close();
         }
         return connList;
+    }
+
+    /**
+     * 
+     * @param c
+     * @return
+     */
+    private Connection getConnectionValues(final Cursor c) {
+        Connection conn = new Connection();
+        conn.id = c.getInt(c.getColumnIndex(KEY_CONN_ID));
+        conn.name = c.getString(c.getColumnIndex(KEY_CONN_NAME));
+        conn.address = c.getString(c.getColumnIndex(KEY_CONN_ADDRESS));
+        conn.port = c.getInt(c.getColumnIndex(KEY_CONN_PORT));
+        conn.username = c.getString(c.getColumnIndex(KEY_CONN_USERNAME));
+        conn.password = c.getString(c.getColumnIndex(KEY_CONN_PASSWORD));
+        conn.selected = (c.getInt(c.getColumnIndex(KEY_CONN_SELECTED)) > 0);
+        conn.channelTag = c.getInt(c.getColumnIndex(KEY_CONN_CHANNEL_TAG));
+        conn.streaming_port = c.getInt(c.getColumnIndex(KEY_CONN_STREAMING_PORT));
+        conn.wol_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
+        conn.wol_port = c.getInt(c.getColumnIndex(KEY_CONN_WOL_PORT));
+        conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_CONN_WOL_BROADCAST)) > 0);
+        conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));
+        conn.recording_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_REC_PROFILE_ID));
+        return conn;
     }
 }
