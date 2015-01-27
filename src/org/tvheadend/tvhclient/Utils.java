@@ -154,16 +154,19 @@ public class Utils {
         }
         return s;
     }
-    
+
     /**
-     * Connects to the server with the currently active connection.
+     * Connects to the server with the given connection.
      * 
      * @param context
-     * @param force
+     * @param conn
+     * @param force Disconnects the current connection before reconnecting
+     * @param async When this is enabled the client will get continuous updates
+     *            from the server about added, update or deleted channels, tags,
+     *            dvr and epg entries.
      */
-    public static void connect(final Context context, final boolean force) {
+    public static void connect(final Context context, final Connection conn, final boolean force, final boolean async) {
         Intent intent = null;
-        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
             // Create an intent and pass on the connection details
@@ -174,11 +177,23 @@ public class Utils {
             intent.putExtra("username", conn.username);
             intent.putExtra("password", conn.password);
             intent.putExtra("force", force);
+            intent.putExtra("async", async);
         }
         // Start the service with given action and data
         if (intent != null) {
             context.startService(intent);
         }
+    }
+
+    /**
+     * Connects to the server with the currently active connection.
+     * 
+     * @param context
+     * @param force Disconnects the current connection before reconnecting
+     */
+    public static void connect(final Context context, final boolean force) {
+        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        connect(context, conn, force, true);
     }
 
     public static void confirmRemoveRecording(final Context context, final long id, final String title, final String type) {
