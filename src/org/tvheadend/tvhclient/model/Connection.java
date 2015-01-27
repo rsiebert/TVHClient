@@ -13,4 +13,6 @@ public class Connection {
     public String wol_address;
     public int wol_port;
     public boolean wol_broadcast;
+    public int playback_profile_id;
+    public int recording_profile_id;
 }
