@@ -47,6 +47,7 @@ public class HTSConnection extends Thread {
     private int seq;
     private String clientName;
     private String clientVersion;
+    private boolean enableAsyncMetadata;
     private int protocolVersion;
     private String webRoot;
     
@@ -56,7 +57,7 @@ public class HTSConnection extends Thread {
     private boolean auth;
     private Selector selector;
 
-    public HTSConnection(HTSConnectionListener listener, String clientName, String clientVersion) {
+    public HTSConnection(HTSConnectionListener listener, String clientName, String clientVersion, boolean enableAsyncMetadata) {
         
         // Disable the use of IPv6
         System.setProperty("java.net.preferIPv6Addresses", "false");
@@ -71,6 +72,7 @@ public class HTSConnection extends Thread {
         this.listener = listener;
         this.clientName = clientName;
         this.clientVersion = clientVersion;
+        this.enableAsyncMetadata = enableAsyncMetadata;
     }
 
     public void setRunning(boolean b) {
@@ -138,7 +140,9 @@ public class HTSConnection extends Thread {
 
         auth = false;
         final HTSMessage authMessage = new HTSMessage();
-        authMessage.setMethod("enableAsyncMetadata");
+        if (enableAsyncMetadata) {
+            authMessage.setMethod("enableAsyncMetadata");
+        }
         authMessage.putField("username", username);
         final HTSResponseHandler authHandler = new HTSResponseHandler() {
 

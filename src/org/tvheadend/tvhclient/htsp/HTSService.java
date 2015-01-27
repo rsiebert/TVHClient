@@ -101,6 +101,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         if (action.equals(Constants.ACTION_CONNECT)) {
             boolean force = intent.getBooleanExtra("force", false);
+            boolean async = intent.getBooleanExtra("async", true);
             final String hostname = intent.getStringExtra("hostname");
             final int port = intent.getIntExtra("port", 9982);
             final String username = intent.getStringExtra("username");
@@ -113,7 +114,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 final TVHClientApplication app = (TVHClientApplication) getApplication();
                 app.clearAll();
                 app.setLoading(true);
-                connection = new HTSConnection(this, packInfo.packageName, packInfo.versionName);
+                connection = new HTSConnection(this, packInfo.packageName, packInfo.versionName, async);
 
                 // Since this is blocking, spawn to a new thread
                 execService.execute(new Runnable() {
