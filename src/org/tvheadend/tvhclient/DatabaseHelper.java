@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "tvhclient";
     public static final String TABLE_CONN_NAME = "connections";
 
@@ -37,6 +37,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_CONN_WOL_ADDRESS = "wol_address";
     public static final String KEY_CONN_WOL_PORT = "wol_port";
     public static final String KEY_CONN_WOL_BROADCAST = "wol_broadcast";
+    public static final String KEY_CONN_PLAY_PROFILE_ID = "playback_profile_id";
+    public static final String KEY_CONN_REC_PROFILE_ID = "recording_profile_id";
+
 
     // Defines a list of columns to retrieve from
     // the Cursor and load into an output row
@@ -53,6 +56,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         KEY_CONN_WOL_ADDRESS,
         KEY_CONN_WOL_PORT,
         KEY_CONN_WOL_BROADCAST,
+        KEY_CONN_PLAY_PROFILE_ID,
+        KEY_CONN_REC_PROFILE_ID,
     };
 
     public static DatabaseHelper instance = null;
@@ -94,7 +99,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_CONN_STREAMING_PORT + " INT DEFAULT 9981, "
                 + KEY_CONN_WOL_ADDRESS + " TEXT NULL, "
                 + KEY_CONN_WOL_PORT + " INT DEFAULT 9, "
-                + KEY_CONN_WOL_BROADCAST + " INT DEFAULT 0);";
+                + KEY_CONN_WOL_BROADCAST + " INT DEFAULT 0, "
+    	        + KEY_CONN_PLAY_PROFILE_ID + " INT DEFAULT 0, "
+                + KEY_CONN_REC_PROFILE_ID + " INT DEFAULT 0);";
         db.execSQL(query);
     }
 
@@ -128,6 +135,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_WOL_BROADCAST
                     + " INT DEFAULT 0;");
         }
+        if (oldVersion < newVersion && newVersion == 6) {
+            // Add the id columns for the profiles.
+            db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_PLAY_PROFILE_ID
+                    + " INT DEFAULT 0;");
+            db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_REC_PROFILE_ID
+                    + " INT DEFAULT 0;");
+        }
     }
 
     /**
@@ -148,6 +162,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CONN_WOL_ADDRESS, conn.wol_address);
         values.put(KEY_CONN_WOL_PORT, conn.wol_port);
         values.put(KEY_CONN_WOL_BROADCAST, conn.wol_broadcast);
+        values.put(KEY_CONN_PLAY_PROFILE_ID, conn.playback_profile_id);
+        values.put(KEY_CONN_REC_PROFILE_ID, conn.recording_profile_id);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long newId = db.insert(TABLE_CONN_NAME, null, values);
@@ -187,6 +203,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CONN_WOL_ADDRESS, conn.wol_address);
         values.put(KEY_CONN_WOL_PORT, conn.wol_port);
         values.put(KEY_CONN_WOL_BROADCAST, conn.wol_broadcast);
+        values.put(KEY_CONN_PLAY_PROFILE_ID, conn.playback_profile_id);
+        values.put(KEY_CONN_REC_PROFILE_ID, conn.recording_profile_id);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long rows = db.update(TABLE_CONN_NAME, values, KEY_CONN_ID + "=" + conn.id, null);
@@ -221,6 +239,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.wol_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
             conn.wol_port = c.getInt(c.getColumnIndex(KEY_CONN_WOL_PORT));
             conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_CONN_WOL_BROADCAST)) > 0);
+            conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));
+            conn.recording_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_REC_PROFILE_ID));
         }
         c.close();
         return conn;
@@ -251,6 +271,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             conn.wol_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
             conn.wol_port = c.getInt(c.getColumnIndex(KEY_CONN_WOL_PORT));
             conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_CONN_WOL_BROADCAST)) > 0);
+            conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));
+            conn.recording_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_REC_PROFILE_ID));
         }
         c.close();
         return conn;
@@ -295,6 +317,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 conn.wol_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
                 conn.wol_port = c.getInt(c.getColumnIndex(KEY_CONN_WOL_PORT));
                 conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_CONN_WOL_BROADCAST)) > 0);
+                conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));
+                conn.recording_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_REC_PROFILE_ID));
                 connList.add(conn);
             } while (c.moveToNext());
         }
