@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,8 +24,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "tvhclient";
     public static final String TABLE_CONN_NAME = "connections";
+    public static final String TABLE_PROFILE_NAME = "profiles";
 
-    // Database column names
+    // Database column names for the connection table
     public static final String KEY_CONN_ID = BaseColumns._ID;
     public static final String KEY_CONN_NAME = "name";
     public static final String KEY_CONN_ADDRESS = "address";
@@ -40,6 +42,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_CONN_PLAY_PROFILE_ID = "playback_profile_id";
     public static final String KEY_CONN_REC_PROFILE_ID = "recording_profile_id";
 
+    // Database column names for the profile table
+    public static final String KEY_PROFILE_ID = BaseColumns._ID;
+    public static final String KEY_PROFILE_ENABLED = "profile_enabled"; // use the new profile if htsp version > X
+    public static final String KEY_PROFILE_UUID = "profile_uuid";       // The uuid of the profile
+    public static final String KEY_PROFILE_CONTAINER = "container";
+    public static final String KEY_PROFILE_TRANSCODE = "transcode";
+    public static final String KEY_PROFILE_RESOLUTION = "resolution";
+    public static final String KEY_PROFILE_VIDEO_CODEC = "video_codec";
+    public static final String KEY_PROFILE_AUDIO_CODEC = "acode_codec";
+    public static final String KEY_PROFILE_SUBTITLE_CODEC = "subtitle_codec";
 
     // Defines a list of columns to retrieve from
     // the Cursor and load into an output row
@@ -58,6 +70,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         KEY_CONN_WOL_BROADCAST,
         KEY_CONN_PLAY_PROFILE_ID,
         KEY_CONN_REC_PROFILE_ID,
+    };
+
+    // Defines a list of columns to retrieve from
+    // the Cursor and load into an output row
+    public static final String[] PROFILE_COLUMNS = { 
+        KEY_PROFILE_ID,
+        KEY_PROFILE_ENABLED,
+        KEY_PROFILE_UUID, 
+        KEY_PROFILE_CONTAINER,
+        KEY_PROFILE_TRANSCODE, 
+        KEY_PROFILE_RESOLUTION,
+        KEY_PROFILE_AUDIO_CODEC,
+        KEY_PROFILE_VIDEO_CODEC,
+        KEY_PROFILE_SUBTITLE_CODEC,
     };
 
     public static DatabaseHelper instance = null;
@@ -87,7 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate");
 
-    	final String query = "CREATE TABLE IF NOT EXISTS " + TABLE_CONN_NAME + " (" 
+    	String query = "CREATE TABLE IF NOT EXISTS " + TABLE_CONN_NAME + " (" 
                 + KEY_CONN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_CONN_NAME + " TEXT NOT NULL," 
                 + KEY_CONN_ADDRESS + " TEXT NOT NULL, " 
@@ -102,6 +128,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_CONN_WOL_BROADCAST + " INT DEFAULT 0, "
     	        + KEY_CONN_PLAY_PROFILE_ID + " INT DEFAULT 0, "
                 + KEY_CONN_REC_PROFILE_ID + " INT DEFAULT 0);";
+        db.execSQL(query);
+        
+        query = "CREATE TABLE IF NOT EXISTS " + TABLE_PROFILE_NAME + " (" 
+                + KEY_PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + KEY_PROFILE_ENABLED + " INT DEFAULT 0, "
+                + KEY_PROFILE_UUID + " TEXT NULL, "
+                + KEY_PROFILE_CONTAINER + " TEXT NULL, "
+                + KEY_PROFILE_TRANSCODE + " INT DEFAULT 0, "
+                + KEY_PROFILE_RESOLUTION + " TEXT NULL, "
+                + KEY_PROFILE_AUDIO_CODEC + " TEXT NULL, "
+                + KEY_PROFILE_VIDEO_CODEC + " TEXT NULL, "
+                + KEY_PROFILE_SUBTITLE_CODEC + " TEXT NULL);";
         db.execSQL(query);
     }
 
@@ -141,6 +179,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + " INT DEFAULT 0;");
             db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_REC_PROFILE_ID
                     + " INT DEFAULT 0;");
+            // Add the new profile table
+            final String query = "CREATE TABLE IF NOT EXISTS " + TABLE_PROFILE_NAME + " (" 
+                    + KEY_PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + KEY_PROFILE_ENABLED + " INT DEFAULT 0, "
+                    + KEY_PROFILE_UUID + " TEXT NULL, "
+                    + KEY_PROFILE_CONTAINER + " TEXT NULL, "
+                    + KEY_PROFILE_TRANSCODE + " INT DEFAULT 0, "
+                    + KEY_PROFILE_RESOLUTION + " TEXT NULL, "
+                    + KEY_PROFILE_AUDIO_CODEC + " TEXT NULL, "
+                    + KEY_PROFILE_VIDEO_CODEC + " TEXT NULL, "
+                    + KEY_PROFILE_SUBTITLE_CODEC + " TEXT NULL);";
+            db.execSQL(query);
         }
     }
 
@@ -308,5 +358,88 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));
         conn.recording_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_REC_PROFILE_ID));
         return conn;
+    }
+    
+    /**
+     * Inserts a new profile with the given parameters into the database 
+     * @param p
+     * @return
+     */
+    public long addProfile(final Profile p) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_PROFILE_ENABLED, (p.enabled) ? "1" : "0");
+        values.put(KEY_PROFILE_UUID, p.uuid);
+        values.put(KEY_PROFILE_CONTAINER, p.container);
+        values.put(KEY_PROFILE_TRANSCODE, (p.transcode) ? "1" : "0");
+        values.put(KEY_PROFILE_RESOLUTION, p.resolution);
+        values.put(KEY_PROFILE_AUDIO_CODEC, p.audio_codec);
+        values.put(KEY_PROFILE_VIDEO_CODEC, p.video_codec);
+        values.put(KEY_PROFILE_SUBTITLE_CODEC, p.subtitle_codec);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        long newId = db.insert(TABLE_PROFILE_NAME, null, values);
+        db.close();
+        return newId;
+    }
+
+    /**
+     * Removes a profile with the given id from the database
+     * @param id
+     * @return
+     */
+    public boolean removeProfile(final long id) {
+        String[] whereArgs = { String.valueOf(id) };
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete(TABLE_PROFILE_NAME, KEY_PROFILE_ID + "=?", whereArgs);
+        db.close();
+        return (rows > 0);
+    }
+
+    /**
+     * Updates the profile with the given id and parameters in the database 
+     * @param p
+     * @return
+     */
+    public boolean updateProfile(final Profile p) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_PROFILE_ENABLED, (p.enabled) ? "1" : "0");
+        values.put(KEY_PROFILE_UUID, p.uuid);
+        values.put(KEY_PROFILE_CONTAINER, p.container);
+        values.put(KEY_PROFILE_TRANSCODE, (p.transcode) ? "1" : "0");
+        values.put(KEY_PROFILE_RESOLUTION, p.resolution);
+        values.put(KEY_PROFILE_AUDIO_CODEC, p.audio_codec);
+        values.put(KEY_PROFILE_VIDEO_CODEC, p.video_codec);
+        values.put(KEY_PROFILE_SUBTITLE_CODEC, p.subtitle_codec);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        long rows = db.update(TABLE_PROFILE_NAME, values, KEY_PROFILE_ID + "=" + p.id, null);
+        db.close();
+        return (rows > 0);
+    }
+    /**
+     * Returns the profile from the given id from the database
+     * @param id
+     * @return
+     */
+    public Profile getProfile(final long id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_PROFILE_NAME, PROFILE_COLUMNS, KEY_PROFILE_ID + "=?", 
+                new String[] { String.valueOf(id) }, null, null, null);
+
+        Profile profile = null;
+        if (c.moveToFirst()) {
+            profile = new Profile();
+            profile.id = c.getInt(c.getColumnIndex(KEY_PROFILE_ID));
+            profile.enabled = (c.getInt(c.getColumnIndex(KEY_PROFILE_ENABLED)) > 0);
+            profile.uuid = c.getString(c.getColumnIndex(KEY_PROFILE_UUID));
+            profile.container = c.getString(c.getColumnIndex(KEY_PROFILE_CONTAINER));
+            profile.transcode = (c.getInt(c.getColumnIndex(KEY_PROFILE_TRANSCODE)) > 0);
+            profile.resolution = c.getString(c.getColumnIndex(KEY_PROFILE_RESOLUTION));
+            profile.audio_codec = c.getString(c.getColumnIndex(KEY_PROFILE_VIDEO_CODEC));
+            profile.video_codec = c.getString(c.getColumnIndex(KEY_PROFILE_AUDIO_CODEC));
+            profile.subtitle_codec = c.getString(c.getColumnIndex(KEY_PROFILE_SUBTITLE_CODEC));
+        }
+        c.close();
+        return profile;
     }
 }
