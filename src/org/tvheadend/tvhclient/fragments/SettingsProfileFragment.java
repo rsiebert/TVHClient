@@ -32,37 +32,55 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Profiles;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
 public class SettingsProfileFragment extends PreferenceFragment implements HTSListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsProfileFragment.class.getSimpleName();
 
     private Activity activity;
     private Connection conn = null;
-    private Profile playbackConnProfile = null;
-    private Profile recordingConnProfile = null;
+    private Profile progProfile = null;
+    private Profile recProfile = null;
 
-    private ListPreference recProfiles;
-    private ListPreference playbackProfiles;
-    private ListPreference progContainer;
-    private CheckBoxPreference progTranscode;
-    private ListPreference progResolution;
-    private ListPreference progAudioCodec;
-    private ListPreference progVideoCodec;
-    private ListPreference progSubtitleCodec;
-    private ListPreference recContainer;
-    private CheckBoxPreference recTranscode;
-    private ListPreference recResolution;
-    private ListPreference recAudioCodec;
-    private ListPreference recVideoCodec;
-    private ListPreference recSubtitleCodec;
+    private ListPreference prefRecProfiles;
+    private ListPreference prefProgProfiles;
+    private ListPreference prefProgContainer;
+    private CheckBoxPreference prefProgTranscode;
+    private ListPreference prefProgResolution;
+    private ListPreference prefProgAudioCodec;
+    private ListPreference prefProgVideoCodec;
+    private ListPreference prefProgSubtitleCodec;
+    private ListPreference prefRecContainer;
+    private CheckBoxPreference prefRecTranscode;
+    private ListPreference prefRecResolution;
+    private ListPreference prefRecAudioCodec;
+    private ListPreference prefRecVideoCodec;
+    private ListPreference prefRecSubtitleCodec;
+
+    private boolean connectToSelectedServer;
+
+    private static final String CONNECTION_ID = "conn_id";
+    private static final String PROG_PROFILE_CONTAINER = "prog_profile_container";
+    private static final String PROG_PROFILE_TRANSCODE = "prog_profile_transcode";
+    private static final String PROG_PROFILE_RESOLUTION = "prog_profile_resolution";
+    private static final String PROG_PROFILE_AUDIO_CODEC = "prog_profile_audio_codec";
+    private static final String PROG_PROFILE_VIDEO_CODEC = "prog_profile_vodeo_codec";
+    private static final String PROG_PROFILE_SUBTITLE_CODEC = "prog_profile_subtitle_codec";
+    private static final String REC_PROFILE_CONTAINER = "rec_profile_container";
+    private static final String REC_PROFILE_TRANSCODE = "rec_profile_transcode";
+    private static final String REC_PROFILE_RESOLUTION = "rec_profile_resolution";
+    private static final String REC_PROFILE_AUDIO_CODEC = "rec_profile_audio_codec";
+    private static final String REC_PROFILE_VIDEO_CODEC = "rec_profile_vodeo_codec";
+    private static final String REC_PROFILE_SUBTITLE_CODEC = "rec_profile_subtitle_codec";
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -71,31 +89,92 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_profiles);
 
-        recProfiles = (ListPreference) findPreference("pref_recording_profiles");
-        playbackProfiles = (ListPreference) findPreference("pref_playback_profiles");
-        progContainer = (ListPreference) findPreference("progContainerPref");
-        progTranscode = (CheckBoxPreference) findPreference("progTranscodePref");
-        progResolution = (ListPreference) findPreference("progResolutionPref");
-        progAudioCodec = (ListPreference) findPreference("progAcodecPref");
-        progVideoCodec = (ListPreference) findPreference("progVcodecPref");
-        progSubtitleCodec = (ListPreference) findPreference("progScodecPref");
-        recContainer = (ListPreference) findPreference("recContainerPref");
-        recTranscode = (CheckBoxPreference) findPreference("recTranscodePref");
-        recResolution = (ListPreference) findPreference("recResolutionPref");
-        recAudioCodec = (ListPreference) findPreference("recAcodecPref");
-        recVideoCodec = (ListPreference) findPreference("recVcodecPref");
-        recSubtitleCodec = (ListPreference) findPreference("recScodecPref");
+        prefRecProfiles = (ListPreference) findPreference("pref_recording_profiles");
+        prefProgProfiles = (ListPreference) findPreference("pref_playback_profiles");
+        prefProgContainer = (ListPreference) findPreference("progContainerPref");
+        prefProgTranscode = (CheckBoxPreference) findPreference("progTranscodePref");
+        prefProgResolution = (ListPreference) findPreference("progResolutionPref");
+        prefProgAudioCodec = (ListPreference) findPreference("progAcodecPref");
+        prefProgVideoCodec = (ListPreference) findPreference("progVcodecPref");
+        prefProgSubtitleCodec = (ListPreference) findPreference("progScodecPref");
+        prefRecContainer = (ListPreference) findPreference("recContainerPref");
+        prefRecTranscode = (CheckBoxPreference) findPreference("recTranscodePref");
+        prefRecResolution = (ListPreference) findPreference("recResolutionPref");
+        prefRecAudioCodec = (ListPreference) findPreference("recAcodecPref");
+        prefRecVideoCodec = (ListPreference) findPreference("recVcodecPref");
+        prefRecSubtitleCodec = (ListPreference) findPreference("recScodecPref");
 
-        // Get the connection where the profiles shall be edited
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            long id = bundle.getLong(Constants.BUNDLE_CONNECTION_ID, 0);
+        // Connect to the chosen server when the fragment was called for the
+        // first time. Do not reconnect when orientation changes have occurred.
+        connectToSelectedServer = (savedInstanceState == null);
+
+        // If the state is null then this activity has been started for
+        // the first time. If the state is not null then the screen has
+        // been rotated and we have to reuse the values.
+        if (savedInstanceState == null) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                // Get the connection where the profiles shall be edited
+                long id = bundle.getLong(Constants.BUNDLE_CONNECTION_ID, 0);
+                conn = DatabaseHelper.getInstance().getConnection(id);
+                if (conn != null) {
+                    progProfile = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
+                    if (progProfile == null) {
+                        progProfile = new Profile();
+                    }
+                    recProfile = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+                    if (recProfile == null) {
+                        recProfile = new Profile();
+                    }
+                }
+            }
+        } else {
+            long id = savedInstanceState.getLong(CONNECTION_ID);
             conn = DatabaseHelper.getInstance().getConnection(id);
             if (conn != null) {
-                playbackConnProfile = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
-                recordingConnProfile = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+                progProfile = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
+                if (progProfile == null) {
+                    progProfile = new Profile();
+                }
+                progProfile.container = savedInstanceState.getString(PROG_PROFILE_CONTAINER);
+                progProfile.transcode = savedInstanceState.getBoolean(PROG_PROFILE_TRANSCODE);
+                progProfile.resolution = savedInstanceState.getString(PROG_PROFILE_RESOLUTION);
+                progProfile.audio_codec = savedInstanceState.getString(PROG_PROFILE_AUDIO_CODEC);
+                progProfile.video_codec = savedInstanceState.getString(PROG_PROFILE_VIDEO_CODEC);
+                progProfile.subtitle_codec = savedInstanceState.getString(PROG_PROFILE_SUBTITLE_CODEC);
+
+                recProfile = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+                if (recProfile == null) {
+                    recProfile = new Profile();
+                }
+                recProfile.container = savedInstanceState.getString(REC_PROFILE_CONTAINER);
+                recProfile.transcode = savedInstanceState.getBoolean(REC_PROFILE_TRANSCODE);
+                recProfile.resolution = savedInstanceState.getString(REC_PROFILE_RESOLUTION);
+                recProfile.audio_codec = savedInstanceState.getString(REC_PROFILE_AUDIO_CODEC);
+                recProfile.video_codec = savedInstanceState.getString(REC_PROFILE_VIDEO_CODEC);
+                recProfile.subtitle_codec = savedInstanceState.getString(REC_PROFILE_SUBTITLE_CODEC);
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putLong(CONNECTION_ID, conn.id);
+
+        outState.putString(PROG_PROFILE_CONTAINER, prefProgContainer.getValue());
+        outState.putBoolean(PROG_PROFILE_TRANSCODE, prefProgTranscode.isChecked());
+        outState.putString(PROG_PROFILE_RESOLUTION, prefProgResolution.getValue());
+        outState.putString(PROG_PROFILE_AUDIO_CODEC, prefProgAudioCodec.getValue());
+        outState.putString(PROG_PROFILE_VIDEO_CODEC, prefProgVideoCodec.getValue());
+        outState.putString(PROG_PROFILE_SUBTITLE_CODEC, prefProgSubtitleCodec.getValue());
+
+        outState.putString(REC_PROFILE_CONTAINER, prefRecContainer.getValue());
+        outState.putBoolean(REC_PROFILE_TRANSCODE, prefRecTranscode.isChecked());
+        outState.putString(REC_PROFILE_RESOLUTION, prefRecResolution.getValue());
+        outState.putString(REC_PROFILE_AUDIO_CODEC, prefRecAudioCodec.getValue());
+        outState.putString(REC_PROFILE_VIDEO_CODEC, prefRecVideoCodec.getValue());
+        outState.putString(REC_PROFILE_SUBTITLE_CODEC, prefRecSubtitleCodec.getValue());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -104,35 +183,43 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
         this.activity = (FragmentActivity) activity;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.activity = null;
+    }
+
     public void onResume() {
         super.onResume();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this); 
 
-        recProfiles.setEnabled(false);
-        playbackProfiles.setEnabled(false);
-
-        // Apply the saved settings from the database for the old profile stuff
-        if (playbackConnProfile != null) {
-            progContainer.setValue(playbackConnProfile.container);
-            progTranscode.setChecked(playbackConnProfile.transcode);
-            progResolution.setValue(playbackConnProfile.resolution);
-            progAudioCodec.setValue(playbackConnProfile.audio_codec);
-            progVideoCodec.setValue(playbackConnProfile.video_codec);
-            progSubtitleCodec.setValue(playbackConnProfile.subtitle_codec);
-        }
-        if (recordingConnProfile != null) {
-            recContainer.setValue(recordingConnProfile.container);
-            recTranscode.setChecked(recordingConnProfile.transcode);
-            recResolution.setValue(recordingConnProfile.resolution);
-            recAudioCodec.setValue(recordingConnProfile.audio_codec);
-            recVideoCodec.setValue(recordingConnProfile.video_codec);
-            recSubtitleCodec.setValue(recordingConnProfile.subtitle_codec);
+        // If no connection exists exit
+        if (conn == null) {
+            activity.setResult(Activity.RESULT_OK, activity.getIntent());
+            activity.finish();
         }
 
-        // Connect to the server with the selected connection and do not
+        prefProgContainer.setValue(progProfile.container);
+        prefProgTranscode.setChecked(progProfile.transcode);
+        prefProgResolution.setValue(progProfile.resolution);
+        prefProgAudioCodec.setValue(progProfile.audio_codec);
+        prefProgVideoCodec.setValue(progProfile.video_codec);
+        prefProgSubtitleCodec.setValue(progProfile.subtitle_codec);
+
+        prefRecContainer.setValue(recProfile.container);
+        prefRecTranscode.setChecked(recProfile.transcode);
+        prefRecResolution.setValue(recProfile.resolution);
+        prefRecAudioCodec.setValue(recProfile.audio_codec);
+        prefRecVideoCodec.setValue(recProfile.video_codec);
+        prefRecSubtitleCodec.setValue(recProfile.subtitle_codec);
+
+        // Connect to the server with the selected credentials and do not
         // retrieve the initial data
-        if (conn != null) {
+        if (connectToSelectedServer && conn != null) {
+            // Disable these preference, the data will be loaded now
+            prefRecProfiles.setEnabled(false);
+            prefProgProfiles.setEnabled(false);
             Utils.connect(activity, conn, true, false);
         }
     }
@@ -142,82 +229,87 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
-        
-        // Connect to the server with the selected connection and do not
-        // retrieve the initial data
-        Utils.connect(activity, true);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     public void save() {
-        Log.i(TAG, "save");
-        if (conn == null) {
-            activity.finish();
-        }
-        if (playbackConnProfile == null) {
-            Log.i(TAG, "save playbackConnProfile is null");
-            playbackConnProfile = new Profile();
-        }
-        playbackConnProfile.uuid = playbackProfiles.getValue();
-        playbackConnProfile.container = progContainer.getValue();
-        playbackConnProfile.transcode = progTranscode.isChecked();
-        playbackConnProfile.resolution = progResolution.getValue();
-        playbackConnProfile.audio_codec = progAudioCodec.getValue();
-        playbackConnProfile.video_codec = progVideoCodec.getValue();
-        playbackConnProfile.subtitle_codec = progSubtitleCodec.getValue();
+        // Save the values into the profile
+        progProfile.uuid = prefProgProfiles.getValue();
+        progProfile.container = prefProgContainer.getValue();
+        progProfile.transcode = prefProgTranscode.isChecked();
+        progProfile.resolution = prefProgResolution.getValue();
+        progProfile.audio_codec = prefProgAudioCodec.getValue();
+        progProfile.video_codec = prefProgVideoCodec.getValue();
+        progProfile.subtitle_codec = prefProgSubtitleCodec.getValue();
 
-        // This check is wrong
-        if (playbackConnProfile == null) {
-            conn.playback_profile_id = (int) DatabaseHelper.getInstance().addProfile(playbackConnProfile);
+        // If the profile does not contain an id then it is a new one. Add the
+        // to the database and update the connection with the new id. Otherwise
+        // just update the profile.
+        if (progProfile.id == 0) {
+            conn.playback_profile_id = (int) DatabaseHelper.getInstance().addProfile(progProfile);
             DatabaseHelper.getInstance().updateConnection(conn);
-            Log.i(TAG, "save added playbackConnProfile to db with id " + conn.playback_profile_id);
         } else {
-            DatabaseHelper.getInstance().updateProfile(playbackConnProfile);
-            Log.i(TAG, "save updated playbackConnProfile to db with id " + conn.playback_profile_id);
+            DatabaseHelper.getInstance().updateProfile(progProfile);
         }
 
-        if (recordingConnProfile == null) {
-            Log.i(TAG, "save recordingConnProfile is null");
-            recordingConnProfile = new Profile();
-        }
-        recordingConnProfile.uuid = recProfiles.getValue();
-        recordingConnProfile.container = recContainer.getValue();
-        recordingConnProfile.transcode = recTranscode.isChecked();
-        recordingConnProfile.resolution = recResolution.getValue();
-        recordingConnProfile.audio_codec = recAudioCodec.getValue();
-        recordingConnProfile.video_codec = recVideoCodec.getValue();
-        recordingConnProfile.subtitle_codec = recSubtitleCodec.getValue();
+        // Save the values into the profile
+        recProfile.uuid = prefRecProfiles.getValue();
+        recProfile.container = prefRecContainer.getValue();
+        recProfile.transcode = prefRecTranscode.isChecked();
+        recProfile.resolution = prefRecResolution.getValue();
+        recProfile.audio_codec = prefRecAudioCodec.getValue();
+        recProfile.video_codec = prefRecVideoCodec.getValue();
+        recProfile.subtitle_codec = prefRecSubtitleCodec.getValue();
 
-        if (recordingConnProfile == null) {
-            conn.recording_profile_id = (int) DatabaseHelper.getInstance().addProfile(recordingConnProfile);
+        // If the profile does not contain an id then it is a new one. Add the
+        // to the database and update the connection with the new id. Otherwise
+        // just update the profile.
+        if (recProfile.id == 0) {
+            conn.recording_profile_id = (int) DatabaseHelper.getInstance().addProfile(recProfile);
             DatabaseHelper.getInstance().updateConnection(conn);
-            Log.i(TAG, "save added recordingConnProfile to db with id " + conn.recording_profile_id);
         } else {
-            DatabaseHelper.getInstance().updateProfile(recordingConnProfile);
-            Log.i(TAG, "save updated recordingConnProfile in db with id " + conn.recording_profile_id);
+            DatabaseHelper.getInstance().updateProfile(recProfile);
         }
+
+        activity.setResult(Activity.RESULT_OK, activity.getIntent());
         activity.finish();
     }
 
     public void cancel() {
-        // TODO Auto-generated method stub
+        // Show confirmation dialog to cancel
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(getString(R.string.cancel));
+        builder.setTitle(getString(R.string.menu_cancel));
 
+        // Define the action of the yes button
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                // Connect to the server with the selected connection and do not
+                // retrieve the initial data
+                activity.setResult(Activity.RESULT_OK, activity.getIntent());
+                activity.finish();
+            }
+        });
+        // Define the action of the no button
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     /**
      * 
      */
     private void loadProfiles() {
-        if (recProfiles != null && playbackProfiles != null) {
-            Log.i(TAG, "loadProfiles");
+        if (prefRecProfiles != null && prefProgProfiles != null) {
             // Disable the settings until profiles have been loaded.
             // If the server does not support it then it stays disabled
-            recProfiles.setEnabled(false);
-            playbackProfiles.setEnabled(false);
+            prefRecProfiles.setEnabled(false);
+            prefProgProfiles.setEnabled(false);
 
             // Hide or show the available profile menu items depending on
             // the server version
@@ -235,14 +327,11 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
 
     @Override
     public void onMessage(String action, final Object obj) {
-        Log.i(TAG, "onMessage " + action);
         if (action.equals(Constants.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
-                    Log.i(TAG, "Loading done? " + !loading);
                     if (!loading) {
-                        // Load the profiles from the selected connection
                         loadProfiles();
                     }
                 }
@@ -251,10 +340,22 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                    if (recProfiles != null && app.getProtocolVersion() > 15) {
-                        addProfiles(recProfiles, app.getDvrConfigs());
-                        // TODO 
-                        // show the currently selected profile name
+                    if (prefRecProfiles != null && app.getProtocolVersion() > 15) {
+                        addProfiles(prefRecProfiles, app.getDvrConfigs());
+
+                        // If no uuid is set, no selected profile exists.
+                        // Preselect the default one.
+                        if (recProfile.uuid.isEmpty()) {
+                            for (Profiles p : app.getDvrConfigs()) {
+                                if (p.name.equals(Constants.REC_PROFILE_DEFAULT)) {
+                                    recProfile.uuid = p.uuid;
+                                    break;
+                                }
+                            }
+                        }
+                        // show the currently selected profile name, if none is
+                        // available then the default value is used
+                        prefRecProfiles.setValue(recProfile.uuid);
                     }
                 }
             });
@@ -262,11 +363,23 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                    if (playbackProfiles != null && app.getProtocolVersion() > 15) {
-                        addProfiles(playbackProfiles, app.getProfiles());
-                        playbackProfiles.setSummary(R.string.pref_playback_profiles_sum);
-                        // TODO 
-                        // show the currently selected profile name
+                    if (prefProgProfiles != null && app.getProtocolVersion() > 15) {
+                        addProfiles(prefProgProfiles, app.getProfiles());
+                        prefProgProfiles.setSummary(R.string.pref_playback_profiles_sum);
+
+                        // If no uuid is set, no selected profile exists.
+                        // Preselect the default one.
+                        if (progProfile.uuid.isEmpty()) {
+                            for (Profiles p : app.getProfiles()) {
+                                if (p.name.equals(Constants.PROG_PROFILE_DEFAULT)) {
+                                    progProfile.uuid = p.uuid;
+                                    break;
+                                }
+                            }
+                        }
+                        // show the currently selected profile name, if none is
+                        // available then the default value is used
+                        prefProgProfiles.setValue(progProfile.uuid);
                     }
                 }
             });
