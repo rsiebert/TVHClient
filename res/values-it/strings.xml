@@ -32,7 +32,7 @@
     <string name="pref_manage_connections_sum">Selezione la tua connessione attiva a un server TVHeadend oppure aggiungi, modifica o rimuovi connessioni.</string>
     <string name="select_connection">Seleziona connessione</string>
     <string name="add_connection">Aggiungi connessione</string>
-    <string name="cancel_connection">Scartare i valori? Tutte le modifiche andranno perdute.</string>
+    <string name="cancel">Scartare i valori? Tutte le modifiche andranno perdute.</string>
     <string name="delete_connection">Vuoi veramente cancellare la connessione \'%s\'?</string>
     <string name="delete_recording">Vuoi veramente cancellare la registrazione \'%s\'?</string>
     <string name="delete_series_recording">Vuoi veramente cancellare la registrazione della serie \'%s\'?\n\nQuesto rimuoverà tutte le registrazioni programmate che appartengono a quella regola di registrazione della serie.</string>

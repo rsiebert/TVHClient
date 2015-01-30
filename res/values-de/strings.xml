@@ -34,7 +34,7 @@
     <string name="pref_connection_wol">Einstellungen für Wake on LAN</string>
     <string name="select_connection">Verbindung wählen</string>
     <string name="add_connection">Verbindung hinzufügen</string>
-    <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
+    <string name="cancel">Aktion wirklich abbrechen? Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_series_recording">Soll die Serienaufnahme \'%s\' wirklich gelöscht werden?\n\nAlle damit verbundenen geplanten Aufnahmen werden entfernt.</string>

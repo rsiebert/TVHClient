@@ -32,7 +32,7 @@
     <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
     <string name="select_connection">Välj anslutning</string>
     <string name="add_connection">Lägg till anslutning</string>
-    <string name="cancel_connection">Kassera värden? Alla ändringar kommer att försvinna.</string>
+    <string name="cancel">Kassera värden? Alla ändringar kommer att försvinna.</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
     <string name="delete_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
     <string name="delete_series_recording">Vill du verkligen ta bort serieinspelningen \'%s\'?\n\nDetta kommer ta bort alla schemalagda inspelningar som tillhör denna serieinspelningsregel.</string>
