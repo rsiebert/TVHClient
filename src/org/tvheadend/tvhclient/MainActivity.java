@@ -718,10 +718,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     }
 
     /**
-     * This method is called when an activity has quit and was called with
-     * startActivityForResult and this one is now the active one again.
-     * Depending on the given request and result code certain action can be
-     * done.
+     * This method is called when an activity has quit which was called with
+     * startActivityForResult method. Depending on the given request and result
+     * code certain action can be done.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
