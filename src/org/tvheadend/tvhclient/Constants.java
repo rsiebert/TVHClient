@@ -127,4 +127,8 @@ public class Constants {
     public static final String ACTION_GET_SYSTEM_TIME = "GET_SYSTEM_TIME";
     public static final String ACTION_ADD_SERIES_DVR_ENTRY = "ADD_SERIES_DVR_ENTRY";
     public static final String ACTION_DELETE_SERIES_DVR_ENTRY = "DELETE_SERIES_DVR_ENTRY";
+
+    // The default names for the playback and recording profiles
+    public static final String PROG_PROFILE_DEFAULT = "htsp";
+    public static final String REC_PROFILE_DEFAULT = "(Default Profile)";
 }
