@@ -233,7 +233,7 @@ public class HTSConnection extends Thread {
             socketChannel.register(selector, 0);
             socketChannel.close();
         } catch (Exception ex) {
-            Log.e(TAG, "Can't close connection", ex);
+//            Log.e(TAG, "Can't close connection", ex);
         } finally {
             lock.unlock();
         }
@@ -267,7 +267,7 @@ public class HTSConnection extends Thread {
                 }
                 socketChannel.register(selector, ops);
             } catch (Exception ex) {
-                Log.e(TAG, "Can't read message", ex);
+//                Log.e(TAG, "Can't read message", ex);
                 running = false;
             } finally {
                 lock.unlock();
