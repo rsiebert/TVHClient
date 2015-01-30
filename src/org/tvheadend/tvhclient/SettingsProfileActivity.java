@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient;
 import org.tvheadend.tvhclient.fragments.SettingsProfileFragment;
 import org.tvheadend.tvhclient.model.Connection;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -67,11 +66,13 @@ public class SettingsProfileActivity extends ActionBarActivity {
             // exit this activity because no valid connection was given.
             if (conn != null) {
                 toolbar.setSubtitle(conn.name);
-                Fragment f = new SettingsProfileFragment();
-                f.setArguments(getIntent().getExtras());
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.settings_fragment, f)
-                        .commit();
+                SettingsProfileFragment f = (SettingsProfileFragment) getFragmentManager()
+                        .findFragmentById(R.id.settings_fragment);
+                if (f == null) {
+                    f = new SettingsProfileFragment();
+                    f.setArguments(getIntent().getExtras());
+                    getFragmentManager().beginTransaction().add(R.id.settings_fragment, f).commit();
+                }
             } else {
                 finish();
             }

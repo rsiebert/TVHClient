@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.fragments.SettingsManageConnectionFragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -61,10 +60,12 @@ public class SettingsManageConnectionActivity extends ActionBarActivity {
         // TODO add home button
 
         // Display the fragment with the connection details
-        Fragment f = new SettingsManageConnectionFragment();
-        f.setArguments(getIntent().getExtras());
-        getFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, f)
-                .commit();
+        SettingsManageConnectionFragment f = (SettingsManageConnectionFragment) getFragmentManager()
+                .findFragmentById(R.id.settings_fragment);
+        if (f == null) {
+            f = new SettingsManageConnectionFragment();
+            f.setArguments(getIntent().getExtras());
+            getFragmentManager().beginTransaction().add(R.id.settings_fragment, f).commit();
+        }
     }
 }
