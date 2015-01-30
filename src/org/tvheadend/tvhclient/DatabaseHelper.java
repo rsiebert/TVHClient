@@ -435,8 +435,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             profile.container = c.getString(c.getColumnIndex(KEY_PROFILE_CONTAINER));
             profile.transcode = (c.getInt(c.getColumnIndex(KEY_PROFILE_TRANSCODE)) > 0);
             profile.resolution = c.getString(c.getColumnIndex(KEY_PROFILE_RESOLUTION));
-            profile.audio_codec = c.getString(c.getColumnIndex(KEY_PROFILE_VIDEO_CODEC));
-            profile.video_codec = c.getString(c.getColumnIndex(KEY_PROFILE_AUDIO_CODEC));
+            profile.audio_codec = c.getString(c.getColumnIndex(KEY_PROFILE_AUDIO_CODEC));
+            profile.video_codec = c.getString(c.getColumnIndex(KEY_PROFILE_VIDEO_CODEC));
             profile.subtitle_codec = c.getString(c.getColumnIndex(KEY_PROFILE_SUBTITLE_CODEC));
         }
         c.close();
