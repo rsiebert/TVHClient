@@ -161,9 +161,9 @@ public class Utils {
      * @param context
      * @param conn
      * @param force Disconnects the current connection before reconnecting
-     * @param async When this is enabled the client will get continuous updates
-     *            from the server about added, update or deleted channels, tags,
-     *            dvr and epg entries.
+     * @param async When enabled the client will receive continuously updates
+     *            from the server about added, updated and deleted channels, 
+     *            channel tags, dvr and epg entries.
      */
     public static void connect(final Context context, final Connection conn, final boolean force, final boolean async) {
         Intent intent = null;
