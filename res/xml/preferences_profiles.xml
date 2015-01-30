@@ -6,6 +6,7 @@
         android:name="@string/pref_recording_profiles"
         android:dialogTitle="@string/pref_recording_profiles"
         android:key="pref_recording_profiles"
+        android:persistent="false"
         android:summary="@string/pref_recording_profiles_sum"
         android:title="@string/pref_recording_profiles"
         android:visible="false" />
@@ -13,6 +14,7 @@
         android:name="@string/pref_playback_profiles"
         android:dialogTitle="@string/pref_playback_profiles"
         android:key="pref_playback_profiles"
+        android:persistent="false"
         android:summary="@string/pref_playback_profiles_sum"
         android:title="@string/pref_playback_profiles"
         android:visible="false" />
@@ -25,6 +27,7 @@
             android:entries="@array/pref_container_list_display"
             android:entryValues="@array/pref_container_list"
             android:key="progContainerPref"
+            android:persistent="false"
             android:summary="@string/pref_container_sum"
             android:title="@string/pref_container" />
 
@@ -33,6 +36,7 @@
             android:name="@string/pref_transcode"
             android:defaultValue="false"
             android:key="progTranscodePref"
+            android:persistent="false"
             android:summary="@string/pref_transcode_sum"
             android:title="@string/pref_transcode" />
 
@@ -44,6 +48,7 @@
             android:entries="@array/pref_res_list_display"
             android:entryValues="@array/pref_res_list"
             android:key="progResolutionPref"
+            android:persistent="false"
             android:summary="@string/pref_res_sum"
             android:title="@string/pref_res" />
         <ListPreference
@@ -54,6 +59,7 @@
             android:entries="@array/pref_acodec_list_display"
             android:entryValues="@array/pref_acodec_list"
             android:key="progAcodecPref"
+            android:persistent="false"
             android:summary="@string/pref_acodec_sum"
             android:title="@string/pref_acodec" />
         <ListPreference
@@ -64,6 +70,7 @@
             android:entries="@array/pref_vcodec_list_display"
             android:entryValues="@array/pref_vcodec_list"
             android:key="progVcodecPref"
+            android:persistent="false"
             android:summary="@string/pref_vcodec_sum"
             android:title="@string/pref_vcodec" />
         <ListPreference
@@ -74,6 +81,7 @@
             android:entries="@array/pref_scodec_list_display"
             android:entryValues="@array/pref_scodec_list"
             android:key="progScodecPref"
+            android:persistent="false"
             android:summary="@string/pref_scodec_sum"
             android:title="@string/pref_scodec" />
     </PreferenceCategory>
@@ -85,6 +93,7 @@
             android:entries="@array/pref_container_list_display"
             android:entryValues="@array/pref_container_list"
             android:key="recContainerPref"
+            android:persistent="false"
             android:summary="@string/pref_container_sum"
             android:title="@string/pref_container" />
 
@@ -93,6 +102,7 @@
             android:name="@string/pref_transcode"
             android:defaultValue="false"
             android:key="recTranscodePref"
+            android:persistent="false"
             android:summary="@string/pref_transcode_sum"
             android:title="@string/pref_transcode" />
 
@@ -104,6 +114,7 @@
             android:entries="@array/pref_res_list_display"
             android:entryValues="@array/pref_res_list"
             android:key="recResolutionPref"
+            android:persistent="false"
             android:summary="@string/pref_res_sum"
             android:title="@string/pref_res" />
         <ListPreference
@@ -114,6 +125,7 @@
             android:entries="@array/pref_acodec_list_display"
             android:entryValues="@array/pref_acodec_list"
             android:key="recAcodecPref"
+            android:persistent="false"
             android:summary="@string/pref_acodec_sum"
             android:title="@string/pref_acodec" />
         <ListPreference
@@ -124,6 +136,7 @@
             android:entries="@array/pref_vcodec_list_display"
             android:entryValues="@array/pref_vcodec_list"
             android:key="recVcodecPref"
+            android:persistent="false"
             android:summary="@string/pref_vcodec_sum"
             android:title="@string/pref_vcodec" />
         <ListPreference
@@ -134,6 +147,7 @@
             android:entries="@array/pref_scodec_list_display"
             android:entryValues="@array/pref_scodec_list"
             android:key="recScodecPref"
+            android:persistent="false"
             android:summary="@string/pref_scodec_sum"
             android:title="@string/pref_scodec" />
     </PreferenceCategory>
