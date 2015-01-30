@@ -260,8 +260,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                // Delete the connection so that we start fresh when
-                // the settings activity is called again.
                 activity.finish();
             }
         });
