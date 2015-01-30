@@ -27,12 +27,7 @@ public class SettingsProfileActivity extends ActionBarActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the fragment that is showing the connection details
-                SettingsProfileFragment fragment = (SettingsProfileFragment) getFragmentManager()
-                        .findFragmentById(R.id.settings_fragment);
-                if (fragment != null) {
-                    fragment.cancel();
-                }
+                onBackPressed();
             }
         });
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -82,5 +77,11 @@ public class SettingsProfileActivity extends ActionBarActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK, getIntent());
+        finish();
     }
 }
