@@ -1250,21 +1250,21 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!response.containsKey("dvrconfigs")) {
                     return;
                 }
-                List<Profiles> dcList = new ArrayList<Profiles>();
+                List<Profiles> pList = new ArrayList<Profiles>();
                 TVHClientApplication app = (TVHClientApplication) getApplication();
                 for (Object obj : response.getList("dvrconfigs")) {
                     HTSMessage sub = (HTSMessage) obj;
 
-                    Profiles dc = new Profiles();
-                    dc.uuid = sub.getString("uuid");
-                    dc.name = sub.getString("name");
-                    if (dc.name.length() == 0) {
-                        dc.name = "(Default Profile)";
+                    Profiles p = new Profiles();
+                    p.uuid = sub.getString("uuid");
+                    p.name = sub.getString("name");
+                    if (p.name.length() == 0) {
+                        p.name = Constants.REC_PROFILE_DEFAULT;
                     }
-                    dc.comment = sub.getString("comment");
-                    dcList.add(dc);
+                    p.comment = sub.getString("comment");
+                    pList.add(p);
                 }
-                app.addDvrConfigs(dcList);
+                app.addDvrConfigs(pList);
             }
         });
     }
@@ -1377,7 +1377,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!response.containsKey("profiles")) {
                     return;
                 }
-                List<Profiles> pl = new ArrayList<Profiles>();
+                List<Profiles> pList = new ArrayList<Profiles>();
                 TVHClientApplication app = (TVHClientApplication) getApplication();
                 for (Object obj : response.getList("profiles")) {
                     HTSMessage sub = (HTSMessage) obj;
@@ -1385,13 +1385,10 @@ public class HTSService extends Service implements HTSConnectionListener {
                     Profiles p = new Profiles();
                     p.uuid = sub.getString("uuid");
                     p.name = sub.getString("name");
-                    if (p.name.length() == 0) {
-                        p.name = "(Default Profile)";
-                    }
                     p.comment = sub.getString("comment");
-                    pl.add(p);
+                    pList.add(p);
                 }
-                app.addProfiles(pl);
+                app.addProfiles(pList);
             }
         });
     }
