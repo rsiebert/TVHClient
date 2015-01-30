@@ -207,7 +207,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                             // The 'which' argument contains the index of the selected item
                                             Intent intent = new Intent(activity, SettingsProfileActivity.class);
                                             intent.putExtra(Constants.BUNDLE_CONNECTION_ID, connList.get(which).id);
-                                            startActivity(intent);
+                                            startActivityForResult(intent, Constants.RESULT_CODE_PROFILES);
                                         }
                                     });
                             builder.create().show();
@@ -301,6 +301,22 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                     return false;
                 }
             });
+        }
+    }
+
+    /**
+     * This method is called when an activity has quit which was called with
+     * startActivityForResult method. Depending on the given request and result
+     * code certain action can be done.
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.RESULT_CODE_PROFILES) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (settingsInterface != null) {
+                    settingsInterface.reconnect();
+                }
+            }
         }
     }
 }
