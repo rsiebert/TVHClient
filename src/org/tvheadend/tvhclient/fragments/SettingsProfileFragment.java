@@ -40,6 +40,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 public class SettingsProfileFragment extends PreferenceFragment implements HTSListener {
 
@@ -381,6 +382,18 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
                         // available then the default value is used
                         prefProgProfiles.setValue(progProfile.uuid);
                     }
+                }
+            });
+        } else if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    prefRecProfiles.setEnabled(false);
+                    prefProgProfiles.setEnabled(false);
+                    Toast.makeText(activity, getString(R.string.err_loading_profiles, getString(R.string.err_connect)), Toast.LENGTH_LONG).show();
                 }
             });
         }

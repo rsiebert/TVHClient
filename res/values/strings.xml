@@ -138,7 +138,7 @@
     <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
     
-    <string name="loading_profile">Loading profile</string>
+    <string name="loading_profiles">Loading profiles</string>
     <string name="pref_profiles">Profiles</string>
     <string name="pref_recording_profiles">Recording profiles</string>
     <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
@@ -157,6 +157,7 @@
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
     <string name="err_con_timeout">Connection timeout</string>
+    <string name="err_loading_profiles">Error loading profiles from server\n%s</string>
 
     <string name="recording_file_missing">Recorded file is missing</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>
