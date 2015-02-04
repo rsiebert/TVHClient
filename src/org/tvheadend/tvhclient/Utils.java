@@ -449,29 +449,33 @@ public class Utils {
      * @param state
      * @param recording
      */
-    public static void setState(ImageView state, final Recording recording) {
+    public static void setState(Activity activity, ImageView state, final Program p) {
         if (state == null) {
             return;
         }
+
         // If no recording was given hide the state icon
-        if (recording == null) {
+        if (p == null || p.recording == null) {
             state.setImageDrawable(null);
             state.setVisibility(ImageView.GONE);
         } else {
             // Show the state icon and set the correct image
             state.setVisibility(ImageView.VISIBLE);
 
-            if (recording.error != null) {
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            Recording rec = app.getRecording(p.recording.id);
+
+            if (rec == null || rec.error != null) {
                 state.setImageResource(R.drawable.ic_error_small);
-            } else if ("completed".equals(recording.state)) {
+            } else if ("completed".equals(rec.state)) {
                 state.setImageResource(R.drawable.ic_success_small);
-            } else if ("invalid".equals(recording.state)) {
+            } else if ("invalid".equals(rec.state)) {
                 state.setImageResource(R.drawable.ic_error_small);
-            } else if ("missed".equals(recording.state)) {
+            } else if ("missed".equals(rec.state)) {
                 state.setImageResource(R.drawable.ic_error_small);
-            } else if ("recording".equals(recording.state)) {
+            } else if ("recording".equals(rec.state)) {
                 state.setImageResource(R.drawable.ic_rec_small);
-            } else if ("scheduled".equals(recording.state)) {
+            } else if ("scheduled".equals(rec.state)) {
                 state.setImageResource(R.drawable.ic_schedule_small);
             } else {
                 state.setImageDrawable(null);
