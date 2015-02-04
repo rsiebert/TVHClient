@@ -156,9 +156,11 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                     return onToolbarItemSelected(item);
                 }
             });
-            // Inflate a menu to be displayed in the toolbar
-            toolbar.inflateMenu(R.menu.recording_details_menu);
-            onPrepareToolbarMenu(toolbar.getMenu());
+            if (rec != null) {
+                // Inflate a menu to be displayed in the toolbar
+                toolbar.inflateMenu(R.menu.recording_details_menu);
+                onPrepareToolbarMenu(toolbar.getMenu());
+            }
         }
     }
 
