@@ -232,7 +232,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("retention", 0), 
                     intent.getLongExtra("daysOfWeek", 127), 
                     intent.getLongExtra("priority", 0), 
-                    intent.getLongExtra("enabled", 0), 
+                    intent.getLongExtra("enabled", 1), 
                     intent.getLongExtra("startExtra", 0),
                     intent.getLongExtra("stopExtra", 0),
                     intent.getStringExtra("name"),
