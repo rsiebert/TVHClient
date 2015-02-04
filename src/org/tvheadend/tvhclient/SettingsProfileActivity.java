@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.fragments.SettingsProfileFragment;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 
 import android.os.Bundle;
@@ -9,10 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-public class SettingsProfileActivity extends ActionBarActivity {
+public class SettingsProfileActivity extends ActionBarActivity implements HTSListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsProfileActivity.class.getSimpleName();
+    private Toolbar toolbar;
+    private Connection conn;
     
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -21,7 +24,7 @@ public class SettingsProfileActivity extends ActionBarActivity {
         Utils.setLanguage(this);
         setContentView(R.layout.settings_layout);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon((Utils.getThemeId(this) == R.style.CustomTheme_Light) ? R.drawable.ic_menu_back_light
                 : R.drawable.ic_menu_back_dark);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -61,7 +64,7 @@ public class SettingsProfileActivity extends ActionBarActivity {
         // Get the selected connection and set the toolbar texts
         if (DatabaseHelper.getInstance() != null) {
             long id = getIntent().getLongExtra(Constants.BUNDLE_CONNECTION_ID, 0);
-            Connection conn = DatabaseHelper.getInstance().getConnection(id);
+            conn = DatabaseHelper.getInstance().getConnection(id);
             // Display the fragment with the connection details otherwise
             // exit this activity because no valid connection was given.
             if (conn != null) {
@@ -83,5 +86,34 @@ public class SettingsProfileActivity extends ActionBarActivity {
     public void onBackPressed() {
         setResult(RESULT_OK, getIntent());
         finish();
+    }
+
+    public void onResume() {
+        super.onResume();
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        app.addListener(this); 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        app.removeListener(this);
+    }
+
+    @Override
+    public void onMessage(String action, final Object obj) {
+        if (action.equals(Constants.ACTION_LOADING)) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    boolean loading = (Boolean) obj;
+                    if (!loading) {
+                        toolbar.setSubtitle(conn != null ? conn.name : getString(R.string.no_connection_available));
+                    } else {
+                        toolbar.setSubtitle(R.string.loading_profiles);
+                    }
+                }
+            });
+        }
     }
 }
