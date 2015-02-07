@@ -187,6 +187,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+        } else {
+            (menu.findItem(R.id.menu_record_remove_all)).setVisible(true);
         }
     }
 
@@ -310,16 +312,21 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((TimerRecording) obj);
-                    adapter.notifyDataSetChanged();
+                    populateList();
                 }
             });
         } else if (action.equals(Constants.ACTION_TIMER_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    // Get the position of the series recording that has been deleted
+                    // Get the position of the recording that is shown before
+					// the one that has been deleted. This recording will then
+					// be selected when the list has been updated.
                     int previousPosition = adapter.getPosition((TimerRecording) obj);
+                    if (--previousPosition < 0) {
+                        previousPosition = 0;
+                    }
                     adapter.remove((TimerRecording) obj);
-                    // Set the series recording below the deleted one as selected
+                    populateList();
                     setInitialSelection(previousPosition);
                 }
             });
