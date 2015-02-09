@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "tvhclient";
     public static final String TABLE_CONN_NAME = "connections";
     public static final String TABLE_PROFILE_NAME = "profiles";
@@ -46,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_PROFILE_ID = BaseColumns._ID;
     public static final String KEY_PROFILE_ENABLED = "profile_enabled"; // use the new profile if htsp version > X
     public static final String KEY_PROFILE_UUID = "profile_uuid";       // The uuid of the profile
+    public static final String KEY_PROFILE_NAME = "profile_name";       // The name of the profile
     public static final String KEY_PROFILE_CONTAINER = "container";
     public static final String KEY_PROFILE_TRANSCODE = "transcode";
     public static final String KEY_PROFILE_RESOLUTION = "resolution";
@@ -77,7 +78,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String[] PROFILE_COLUMNS = { 
         KEY_PROFILE_ID,
         KEY_PROFILE_ENABLED,
-        KEY_PROFILE_UUID, 
+        KEY_PROFILE_UUID,
+        KEY_PROFILE_NAME,
         KEY_PROFILE_CONTAINER,
         KEY_PROFILE_TRANSCODE, 
         KEY_PROFILE_RESOLUTION,
@@ -134,6 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + KEY_PROFILE_ENABLED + " INT DEFAULT 0, "
                 + KEY_PROFILE_UUID + " TEXT NULL, "
+                + KEY_PROFILE_NAME + " TEXT NULL, "
                 + KEY_PROFILE_CONTAINER + " TEXT NULL, "
                 + KEY_PROFILE_TRANSCODE + " INT DEFAULT 0, "
                 + KEY_PROFILE_RESOLUTION + " TEXT NULL, "
@@ -191,6 +194,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + KEY_PROFILE_VIDEO_CODEC + " TEXT NULL, "
                     + KEY_PROFILE_SUBTITLE_CODEC + " TEXT NULL);";
             db.execSQL(query);
+        }
+        if (oldVersion < newVersion && newVersion == 7) {
+            db.execSQL("ALTER TABLE " + TABLE_PROFILE_NAME + " ADD COLUMN " + KEY_PROFILE_NAME
+                    + " TEXT NULL;");
         }
     }
 
@@ -369,6 +376,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_PROFILE_ENABLED, (p.enabled) ? "1" : "0");
         values.put(KEY_PROFILE_UUID, p.uuid);
+        values.put(KEY_PROFILE_NAME, p.name);
         values.put(KEY_PROFILE_CONTAINER, p.container);
         values.put(KEY_PROFILE_TRANSCODE, (p.transcode) ? "1" : "0");
         values.put(KEY_PROFILE_RESOLUTION, p.resolution);
@@ -404,6 +412,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_PROFILE_ENABLED, (p.enabled) ? "1" : "0");
         values.put(KEY_PROFILE_UUID, p.uuid);
+        values.put(KEY_PROFILE_NAME, p.name);
         values.put(KEY_PROFILE_CONTAINER, p.container);
         values.put(KEY_PROFILE_TRANSCODE, (p.transcode) ? "1" : "0");
         values.put(KEY_PROFILE_RESOLUTION, p.resolution);
@@ -432,6 +441,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             profile.id = c.getInt(c.getColumnIndex(KEY_PROFILE_ID));
             profile.enabled = (c.getInt(c.getColumnIndex(KEY_PROFILE_ENABLED)) > 0);
             profile.uuid = c.getString(c.getColumnIndex(KEY_PROFILE_UUID));
+            profile.name = c.getString(c.getColumnIndex(KEY_PROFILE_NAME));
             profile.container = c.getString(c.getColumnIndex(KEY_PROFILE_CONTAINER));
             profile.transcode = (c.getInt(c.getColumnIndex(KEY_PROFILE_TRANSCODE)) > 0);
             profile.resolution = c.getString(c.getColumnIndex(KEY_PROFILE_RESOLUTION));

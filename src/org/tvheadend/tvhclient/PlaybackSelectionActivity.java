@@ -37,7 +37,7 @@ public class PlaybackSelectionActivity extends Activity {
             intent.putExtra("channelId", ch.id);
             Profile p = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
             if (p != null) {
-                intent.putExtra("profile", p.uuid);
+                intent.putExtra("profile", p.name);
             }
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("progResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("progTranscodePref", true));
@@ -51,7 +51,7 @@ public class PlaybackSelectionActivity extends Activity {
             intent.putExtra("dvrId", rec.id);
             Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
             if (p != null) {
-                intent.putExtra("profile", p.uuid);
+                intent.putExtra("profile", p.name);
             }
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("recResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("recTranscodePref", false));

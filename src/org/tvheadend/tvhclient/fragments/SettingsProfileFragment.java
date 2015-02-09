@@ -234,6 +234,7 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
 
     public void save() {
         // Save the values into the profile
+        progProfile.name = prefProgProfiles.getEntry().toString();
         progProfile.uuid = prefProgProfiles.getValue();
         progProfile.container = prefProgContainer.getValue();
         progProfile.transcode = prefProgTranscode.isChecked();
@@ -253,6 +254,7 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
         }
 
         // Save the values into the profile
+        recProfile.name = prefProgProfiles.getEntry().toString();
         recProfile.uuid = prefRecProfiles.getValue();
         recProfile.container = prefRecContainer.getValue();
         recProfile.transcode = prefRecTranscode.isChecked();
