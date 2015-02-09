@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingListFragment;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -418,27 +419,22 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) getApplication();
         app.removeListener(this);
-        
+
         // Save the previously active connection status
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.LAST_CONNECTION_STATE, connectionStatus);
         editor.commit();
-    }
 
-//    @Override
-//    public void onDestroy() {
-//        Log.i(TAG, "onDestroy");
-//
-//        // Remove all listeners so no one receives any status information
-//        TVHClientApplication app = (TVHClientApplication) getApplication();
-//        app.removeListeners();
-//        // stop the service when the application is closed
-//        Intent intent = new Intent(this, HTSService.class);
-//        stopService(intent);
-//
-//        super.onDestroy();
-//    }
+        // If requested by the user remove all listeners so no one receives any
+        // status information and stop the service when the application is
+        // closed to save battery power
+        if (!prefs.getBoolean("enableBackgroundServicePref", false)) {
+            app.removeListeners();
+            Intent serviceIntent = new Intent(this, HTSService.class);
+            stopService(serviceIntent);
+        }
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
