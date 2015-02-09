@@ -145,6 +145,11 @@
     <string name="pref_playback_profiles">Playback profiles</string>
     <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
 
+    <string name="pref_enable_background_service">Background service</string>
+    <string name="pref_enable_background_service_sum">When pausing the application keep the servive running in the background. Note that this will reduce battery life.</string>
+    <string name="pref_show_notifications">Show notification when recording has started</string>
+    <string name="pref_show_notifications_sum">Displays a notification at the top that a recording has started or finished recording. This requires that the service is running in the background.</string>
+
     <string name="clear_search_history">Clear search history?</string>
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
     <string name="clear_search_history_done">Search history cleared</string>
@@ -163,6 +168,10 @@
     <string name="recording_time_missed">Scheduled recording was missed</string>
     <string name="recording_file_invalid">Recording is invalid</string>
     <string name="recording_canceled">Recording has been canceled</string>
+    <string name="recording_started">Recording started</string>
+    <string name="recording_completed">Recording completed</string>
+    <string name="recording_started_text">The recording %s has been started</string>
+    <string name="recording_completed_text">The recording %s has been completed</string>
 
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>

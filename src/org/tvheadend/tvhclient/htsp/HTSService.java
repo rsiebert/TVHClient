@@ -37,6 +37,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.model.Channel;
@@ -54,6 +55,7 @@ import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -64,6 +66,7 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 /**
@@ -78,6 +81,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private ScheduledExecutorService execService;
     private HTSConnection connection;
     PackageInfo packInfo;
+    private NotificationManager notificationManager = null;
 
     public class LocalBinder extends Binder {
         HTSService getService() {
@@ -88,6 +92,10 @@ public class HTSService extends Service implements HTSConnectionListener {
     @Override
     public void onCreate() {
         execService = Executors.newScheduledThreadPool(5);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("showNotificationsPref", false)) {
+            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        }
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (NameNotFoundException ex) {
@@ -440,6 +448,9 @@ public class HTSService extends Service implements HTSConnectionListener {
             return;
         }
 
+        // Get the current recording state to check if a notification shall be shown
+        String currentRecState = rec.state;
+
         rec.eventId = msg.getLong("eventId", rec.eventId);
         rec.autorecId = msg.getString("autorecId", rec.autorecId);
         rec.timerecId = msg.getString("timerecId", rec.timerecId);
@@ -459,6 +470,23 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.error = msg.getString("error", rec.error);
 
         app.updateRecording(rec);
+
+        // Show a notification if enabled that the recording has either started or completed
+        if (notificationManager != null && currentRecState != rec.state) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setSmallIcon(R.drawable.notification_icon);
+
+            if (rec.state.equals("recording")) {
+                builder.setContentTitle(getString(R.string.recording_started));
+                builder.setContentText(getString(R.string.recording_started_text, rec.title));
+                notificationManager.notify(1, builder.build());
+
+            } else if (rec.state.equals("completed")) {
+                builder.setContentTitle(getString(R.string.recording_completed));
+                builder.setContentText(getString(R.string.recording_completed_text, rec.title));
+                notificationManager.notify(1, builder.build());
+            }
+        }
     }
 
     private void onDvrEntryDelete(HTSMessage msg) {
