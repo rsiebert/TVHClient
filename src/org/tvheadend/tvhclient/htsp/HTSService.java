@@ -82,6 +82,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private HTSConnection connection;
     PackageInfo packInfo;
     private NotificationManager notificationManager = null;
+    private SharedPreferences prefs;
 
     public class LocalBinder extends Binder {
         HTSService getService() {
@@ -92,10 +93,9 @@ public class HTSService extends Service implements HTSConnectionListener {
     @Override
     public void onCreate() {
         execService = Executors.newScheduledThreadPool(5);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("showNotificationsPref", false)) {
-            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        }
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (NameNotFoundException ex) {
@@ -471,8 +471,11 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         app.updateRecording(rec);
 
+        // Check that the notification shall be shown
+        boolean showNotification = prefs.getBoolean("showNotificationsPref", false);
+
         // Show a notification if enabled that the recording has either started or completed
-        if (notificationManager != null && currentRecState != rec.state) {
+        if (showNotification && notificationManager != null && currentRecState != rec.state) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setSmallIcon(R.drawable.notification_icon);
 

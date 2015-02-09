@@ -401,7 +401,15 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             // Connection exists and is active
             TVHClientApplication app = (TVHClientApplication) getApplication();
             app.addListener(this);
-            Utils.connect(this, false);
+
+            // Reconnect and get all new information in case the service was not
+            // running in the background. Otherwise just reconnect.
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (!prefs.getBoolean("showNotificationsPref", false)) {
+                Utils.connect(this, DatabaseHelper.getInstance().getSelectedConnection(), true, true);
+            } else {
+                Utils.connect(this, false);
+            }
 
             // Show the contents of the last selected menu position. In case it
             // is not set, use the the default one defined in the settings
@@ -428,8 +436,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         // If requested by the user remove all listeners so no one receives any
         // status information and stop the service when the application is
-        // closed to save battery power
-        if (!prefs.getBoolean("enableBackgroundServicePref", false)) {
+        // paused to save battery power
+        if (!prefs.getBoolean("showNotificationsPref", false)) {
             app.removeListeners();
             Intent serviceIntent = new Intent(this, HTSService.class);
             stopService(serviceIntent);
