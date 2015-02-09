@@ -57,6 +57,17 @@
             android:dialogTitle="@string/pref_sort_channels"
             android:entries="@array/pref_sort_channels_names"
             android:entryValues="@array/pref_sort_channels_ids" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="enableBackgroundServicePref"
+            android:summary="@string/pref_enable_background_service_sum"
+            android:title="@string/pref_enable_background_service" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showNotificationsPref"
+            android:dependency="enableBackgroundServicePref"
+            android:summary="@string/pref_show_notifications_sum"
+            android:title="@string/pref_show_notifications" />
 
         <PreferenceScreen
             android:key="pref_genre_colors"
