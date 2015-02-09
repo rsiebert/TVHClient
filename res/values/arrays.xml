@@ -144,4 +144,130 @@
         <item>Unimportant</item>
         <item>Not set</item>
     </string-array>
+    
+    <string-array name="pr_content_type0">
+        <item>Movie/Drama</item>
+        <item>News/Current affairs</item>
+        <item>Show/Game show</item>
+        <item>Sports</item>
+        <item>Children\'s/Youth</item>
+        <item>Music/Ballet/Dance</item>
+        <item>Arts/Culture</item>
+        <item>Social/Political issues/Economics</item>
+        <item>Education/Science/Factual</item>
+        <item>Leisure hobbies</item>
+        <item>Misc</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Movie/Drama</item>
+        <item>Detective/Thriller</item>
+        <item>Adventure/Western/War</item>
+        <item>Science Fiction/Fantasy/Horror</item>
+        <item>Comedy</item>
+        <item>Soap/Melodrama/Folkloric</item>
+        <item>Romance</item>
+        <item>Serious/ClassicalReligion/Historical</item>
+        <item>Adult Movie/Drama</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>News/Current affairs</item>
+        <item>News/Weather Report</item>
+        <item>Magazine</item>
+        <item>Documentary</item>
+        <item>Discussion/Interview/Debate</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Show/Game show</item>
+        <item>Game show/Quiz/Contest</item>
+        <item>Variety</item>
+        <item>Talk</item>
+    </string-array>
+    
+    <string-array name="pr_content_type4">
+        <item>Sports</item>
+        <item>Special Event</item>
+        <item>Magazine</item>
+        <item>Football/Soccer</item>
+        <item>Tennis/Squash</item>
+        <item>Team sports</item>
+        <item>Athletics</item>
+        <item>Motor Sport</item>
+        <item>Water Sport</item>
+        <item>Winter Sports</item>
+        <item>Equestrian</item>
+        <item>Martial sports</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Children\'s/Youth</item>
+        <item>Pre-school</item>
+        <item>Entertainment (6 to 14 year-olds)</item>
+        <item>Entertainment (10 to 16 year-olds)</item>
+        <item>Informational/Educational/Schools</item>
+        <item>Cartoons/Puppets</item>
+    </string-array>
+    
+    <string-array name="pr_content_type6">
+        <item>Music/Ballet/Dance</item>
+        <item>Rock/Pop</item>
+        <item>Serious music/Classical Music</item>
+        <item>Folk/Traditional music</item>
+        <item>Jazz</item>
+        <item>Musical/Opera</item>
+        <item>Ballet</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Arts/Culture</item>
+        <item>Performing Arts</item>
+        <item>Fine Arts</item>
+        <item>Religion</item>
+        <item>Popular Culture/Tradital Arts</item>
+        <item>Literature</item>
+        <item>Film/Cinema</item>
+        <item>Experimental Film/Video</item>
+        <item>Broadcasting/Press</item>
+        <item>New Media</item>
+        <item>Magazine</item>
+        <item>Fashion</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Social/Political issues/Economics</item>
+        <item>Magazine/Report/Domentary</item>
+        <item>Economics/Social Advisory</item>
+        <item>Remarkable People</item>
+    </string-array>
+ 
+    <string-array name="pr_content_type9">
+        <item>Education/Science/Factual</item>        
+        <item>Nature/Animals/Environment</item>
+        <item>Technology/Natural sciences</item>
+        <item>Medicine/Physiology/Psychology</item>
+        <item>Foreign Countries/Expeditions</item>
+        <item>Social/Spiritual Sciences</item>
+        <item>Further Education</item>
+        <item>Languages</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Leisure hobbies</item>
+        <item>Tourism/Travel</item>
+        <item>Handicraft</item>
+        <item>Motoring</item>
+        <item>Fitness and Health</item>
+        <item>Cooking</item>
+        <item>Advertisement/Shopping</item>
+        <item>Gardening</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Misc</item>
+        <item>Black and White</item>
+        <item>Unpublished</item>
+        <item>Live Broadcast</item>
+    </string-array>
 </resources>

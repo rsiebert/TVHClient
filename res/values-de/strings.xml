@@ -9,7 +9,7 @@
     <string name="menu_play">Abspielen</string>
     <string name="menu_search">Suchen</string>
     <string name="menu_record_once">Aufnehmen</string>
-    <string name="menu_record_series">Autom. Aufnehmen</string>
+    <string name="menu_record_series">Automatisch Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
     <string name="menu_record_cancel_all">Alle Aufnahmen abbrechen</string>
     <string name="menu_record_remove">Aufnahme löschen</string>
@@ -138,6 +138,13 @@
     <string name="pref_hide_menu_cancel_all_recordings">Menü \'Alle Aufnahmen abbrechen\' ausblenden</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Verstecke den Menüeintrag um ein versehentliches Abbrechen aller geplanter Aufnahmen zu vermeiden.</string>
 
+    <string name="loading_profiles">Lade Profile</string>
+    <string name="pref_profiles">Profile</string>
+    <string name="pref_recording_profiles">Aufnahmeprofile</string>
+    <string name="pref_recording_profiles_sum">Wähle ein Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
+    <string name="pref_playback_profiles">Wiedergabeprofile</string>
+    <string name="pref_playback_profiles_sum">Wähle ein Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
+
     <string name="clear_search_history">Lösche Suchhistorie?</string>
     <string name="clear_search_history_sum">Sind Sie sicher, dass sie alle Einträge aus der Historie löschen wollen?</string>
     <string name="clear_search_history_done">Suchhistorie wurde gelöscht</string>
@@ -150,6 +157,7 @@
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
     <string name="err_con_timeout">Zeitüberschreitung beim Verbinden zum Server.</string>
+    <string name="err_loading_profiles">Fehler beim Laden der Profile vom Server\n%s</string>
 
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
@@ -160,121 +168,6 @@
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_address_invalid">Die MAC-Adresse ist nicht gültig. Bitte in den Einstellungen überprüfen.</string>
     <string name="wol_error">Fehler beim Senden des Wake on LAN Pakets an \'%1$s\'.\n Fehlermeldung: %2$s</string>
-
-    <string-array name="pr_content_type0">
-        <item>Film / Drama</item>
-        <item>Nachrichten / Aktuelles</item>
-        <item>Show / Spielshow</item>
-        <item>Sport</item>
-        <item>Kinder / Jugend</item>
-        <item>Musik / Ballett / Tanz</item>
-        <item>Kunst / Kultur</item>
-        <item>Gesellschaft / Politik / Wirtschaft</item>
-        <item>Bildung / Wissenschaft</item>
-        <item>Freizeit / Hobbys</item>
-        <item>Verschiedenes</item>
-    </string-array>
-    <string-array name="pr_content_type1">
-        <item>Film / Drama</item>
-        <item>Krimi / Thriller</item>
-        <item>Abenteuer / Western / Krieg</item>
-        <item>Science Fiction / Fantasy / Horror</item>
-        <item>Komödie</item>
-        <item>Seifenoper / Melodrama / Folklore</item>
-        <item>Romanze</item>
-        <item>Historisches</item>
-        <item>Erwachsenen Film / Drama</item>
-    </string-array>
-    <string-array name="pr_content_type2">
-        <item>Nachrichten / Aktuelles</item>
-        <item>Nachrichten / Wetterbericht</item>
-        <item>Magazin</item>
-        <item>Dokumentation</item>
-        <item>Diskussion / Interview / Debatte</item>
-    </string-array>
-    <string-array name="pr_content_type3">
-        <item>Show / Spielshow</item>
-        <item>Spielshow / Quiz / Contest</item>
-        <item>Varietee</item>
-        <item>Unterhaltung</item>
-    </string-array>
-    <string-array name="pr_content_type4">
-        <item>Sport</item>
-        <item>Sondersendung</item>
-        <item>Magazin</item>
-        <item>Fußball</item>
-        <item>Tennis / Squash</item>
-        <item>Mannschaftssport</item>
-        <item>Leichtathletik</item>
-        <item>Motorsport</item>
-        <item>Wassersport</item>
-        <item>Wintersport</item>
-        <item>Reitsport</item>
-        <item>Kampfsport</item>
-    </string-array>
-    <string-array name="pr_content_type5">
-        <item>Kinder / Jugend</item>
-        <item>Vorschule</item>
-        <item>Unterhaltung (6 bis 14-Jährige)</item>
-        <item>Unterhaltung (10 bis 16-Jährige)</item>
-        <item>Informatives / Bildung / Schule</item>
-        <item>Cartoons / Zeichentrick</item>
-    </string-array>
-    <string-array name="pr_content_type6">
-        <item>Musik / Ballett / Tanz</item>
-        <item>Rock und Pop</item>
-        <item>Klassik</item>
-        <item>Folk / Traditionelle Musik</item>
-        <item>Jazz</item>
-        <item>Musical / Oper</item>
-        <item>Ballet</item>
-    </string-array>
-    <string-array name="pr_content_type7">
-        <item>Kunst / Kultur</item>
-        <item>Darstellende Kunst</item>
-        <item>Ästhetisches</item>
-        <item>Religion</item>
-        <item>Pop-Kultur / Traditionelle Kunst</item>
-        <item>Literatur</item>
-        <item>Film / Kino</item>
-        <item>Experimenteller Film / Video</item>
-        <item>Rundfunk / Presse</item>
-        <item>Neue Medien</item>
-        <item>Magazin</item>
-        <item>Mode</item>
-    </string-array>
-    <string-array name="pr_content_type8">
-        <item>Gesellschaft / Politik / Wirtschaft</item>
-        <item>Magazin / Report / Dokumentation</item>
-        <item>Wirtschaft / Soziales Engagement</item>
-        <item>Bemerkenswerte Menschen</item>
-    </string-array>
-    <string-array name="pr_content_type9">
-        <item>Bildung / Wissenschaft</item>
-        <item>Natur / Tiere / Umwelt</item>
-        <item>Technik / Naturwissenschaften</item>
-        <item>Medizin / Physiologie / Psychologie</item>
-        <item>Ausland / Expeditionen</item>
-        <item>Soziales / Spirituelles</item>
-        <item>Weiterbildung</item>
-        <item>Sprachen</item>
-    </string-array>
-    <string-array name="pr_content_type10">
-        <item>Freizeit / Hobbys</item>
-        <item>Tourismus / Reisen</item>
-        <item>Handwerk</item>
-        <item>Motorsport</item>
-        <item>Fitness und Gesundheit</item>
-        <item>Kochen</item>
-        <item>Werbung / Shopping</item>
-        <item>Garten</item>
-    </string-array>
-    <string-array name="pr_content_type11">
-        <item>Verschiedenes</item>
-        <item>Schwarz / Weiß</item>
-        <item>Unveröffentlicht</item>
-        <item>Live-Sendung</item>
-    </string-array>
     
     <string name="no_transmission">Keine Übertragung</string>
     <string name="no_data">Keine Programme verfügbar</string>
@@ -311,6 +204,12 @@
     <string name="no_recordings_scheduled">Keine Aufnahmen geplant</string>
     <string name="no_programs_available">Keine Programme vorhanden</string>
 
+    <string name="recording_enabled">Diese Aufnahme ist aktiviert</string>
+    <string name="recording_disabled">Diese Aufnahme ist deaktiviert</string>
+    <string name="days_of_week">Wochentage</string>
+    <string name="comment">Kommentar</string>
+    <string name="name">Name</string>
+
     <string name="channels">Sender</string>
     <string name="recordings">Aufnahmen</string>
     <string name="status">Status</string>
@@ -337,6 +236,19 @@
     <string name="directory">Verzeichnis</string>
     <string name="owner">Besitzer</string>
     <string name="creator">Ersteller</string>
+    <string name="approx_time">Minuten nach Mitternacht</string>
+
+    <string name="start_time">Startzeit</string>
+    <string name="stop_time">Stoppzeit</string>
+    <string name="start_window">Startfenster</string>
+    <string name="extra_start_time">Zusätzliche Minuten (Vorlaufzeit)</string>
+    <string name="extra_stop_time">Zusätzliche Minuten (Nachlaufzeit)</string>
+    <string name="min_duration">Minimale Dauer</string>
+    <string name="max_duration">Maximale Dauer</string>
+    <string name="record_from_to_time">Aufnehmen von %1$s bis %2$s</string>
+    <string name="recording_time">Aufnahmezeit</string>
+    <string name="series_recording_add_error">Kann die Serienaufnahme nicht hinzufügen.\nDer Titel darf nicht leer sein!</string>
+    <string name="time_recording_add_error">Kann diese Aufnahme nicht hinzufügen.\nDer Titel darf nicht leer sein!</string>
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>
@@ -347,7 +259,9 @@
     <string name="episode">Folge</string>
     <string name="part">Teil</string>
     <string name="progress">%1$d%% der Sendung bereits vorbei</string>
+    <string name="next_program">Nächstes Programm: %s</string>
 
+    <string name="server">Server</string>
     <string name="connection">Verbindung</string>
     <string name="disc_space">Speicherplatz</string>
     <string name="total">Total</string>

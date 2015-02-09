@@ -23,4 +23,130 @@
         <item>Nome canale</item>
         <item>Numero canale</item>
     </string-array>
+
+    <string-array name="pr_content_type0">
+        <item>Film/Drama</item>
+        <item>Notizie/Attualità</item>
+        <item>Show/Game show</item>
+        <item>Sports</item>
+        <item>Bambini/Giovani</item>
+        <item>Musica/Balletto/Danza</item>
+        <item>Arte/Cultura</item>
+        <item>Sociale/Politica/Economia</item>
+        <item>Educazione/Scienza</item>
+        <item>Hobby</item>
+        <item>Misc</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Film/Drama</item>
+        <item>Detective/Thriller</item>
+        <item>Avventura/Western/Guerra</item>
+        <item>Fantascientifico/Fantasy/Horror</item>
+        <item>Commedia</item>
+        <item>Telenovela/Melodramma/Folcloristico</item>
+        <item>Romantico</item>
+        <item>Religioso/Storico</item>
+        <item>Film per adulti/Drama</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>Notizie/Attualità</item>
+        <item>Notizie/Meteo</item>
+        <item>Magazine</item>
+        <item>Documentario</item>
+        <item>Intervista/Dibattito</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Show/Game show</item>
+        <item>Game show/Quiz/Contest</item>
+        <item>Varietà</item>
+        <item>Talk show</item>
+    </string-array>
+
+    <string-array name="pr_content_type4">
+        <item>Sports</item>
+        <item>Evento Speciale</item>
+        <item>Magazine</item>
+        <item>Football/Calcio</item>
+        <item>Tennis/Squash</item>
+        <item>Sport di squadra</item>
+        <item>Atletica</item>
+        <item>Sport Motori</item>
+        <item>Sport Acquatici</item>
+        <item>Sport Invernali</item>
+        <item>Equestre</item>
+        <item>Arti Marziali</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Bambini/Giovani</item>
+        <item>Pre-scuola</item>
+        <item>Intrattenimento (6 &#8211; 14 anni)</item>
+        <item>Intrattenimento (10 &#8211; 16 anni)</item>
+        <item>Informativo/Educativo/Scuola</item>
+        <item>Cartoni Animati/Pupazzi</item>
+    </string-array>
+
+    <string-array name="pr_content_type6">
+        <item>Musica/Balletto/Danza</item>
+        <item>Rock/Pop</item>
+        <item>Musica Classica</item>
+        <item>Folk/Musica Tradizionale</item>
+        <item>Jazz</item>
+        <item>Musical/Opera</item>
+        <item>Balletto</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Arte/Cultura</item>
+        <item>Performing Arts</item>
+        <item>Belle Arti</item>
+        <item>Religione</item>
+        <item>Cultura Popolare/Arte Tradizionale</item>
+        <item>Letteratura</item>
+        <item>Film/Cinema</item>
+        <item>Film Sperimentale/Video</item>
+        <item>Broadcasting/Press</item>
+        <item>New Media</item>
+        <item>Magazine</item>
+        <item>Fashion</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Sociale/Politica/Economia</item>
+        <item>Magazine/Report/Documentario</item>
+        <item>Economia/Avviso Sociale</item>
+        <item>Persone Famose</item>
+    </string-array>
+
+    <string-array name="pr_content_type9">
+        <item>Educazione/Scienza</item>
+        <item>Natura/Animali/Ambiente</item>
+        <item>Tecnologia/Scienze Naturali</item>
+        <item>Medicina/Fisiologia/Psicologia</item>
+        <item>Paesi Stranieri/Spedizioni</item>
+        <item>Sociale/Scienze Spirituali</item>
+        <item>Educazione Avanzata</item>
+        <item>Lingue</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Hobby</item>
+        <item>Turismo/Viaggi</item>
+        <item>Faidate</item>
+        <item>Motori</item>
+        <item>Fitness e Benessere</item>
+        <item>Cucina</item>
+        <item>Televendite/Shopping</item>
+        <item>Giardinaggio</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Misc</item>
+        <item>Bianco e Nero</item>
+        <item>Non Pubblicati</item>
+        <item>Dirette TV</item>
+    </string-array>
 </resources>
