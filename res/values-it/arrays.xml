@@ -10,7 +10,7 @@
         <item>Registrazioni Completate</item>
         <item>Registrazioni Programmate</item>
         <item>Registrazioni di Serie</item>
-        <item>Timer Recordings</item>
+        <item>Registrazioni Manuali</item>
         <item>Registrazioni Fallite</item>
         <item>Guida Programmi</item>
         <item>Stato</item>
@@ -22,5 +22,34 @@
         <item>Definito dal server</item>
         <item>Nome canale</item>
         <item>Numero canale</item>
+    </string-array>
+
+    <string-array name="day_short_names">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mer</item>
+        <item>Gio</item>
+        <item>Ven</item>
+        <item>Sab</item>
+        <item>Dom</item>
+    </string-array>
+
+    <string-array name="day_long_names">
+        <item>Lunedì</item>
+        <item>Martedì</item>
+        <item>Mercoledì</item>
+        <item>Giovedì</item>
+        <item>Venerdì</item>
+        <item>Sabato</item>
+        <item>Domenica</item>
+    </string-array>
+
+    <string-array name="dvr_priorities">
+        <item>Molto Alta</item>
+        <item>Alta</item>
+        <item>Normale</item>
+        <item>Bassa</item>
+        <item>Molto Bassa</item>
+        <item>Non Impostata</item>
     </string-array>
 </resources>
