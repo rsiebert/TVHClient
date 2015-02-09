@@ -8,6 +8,7 @@ $ 1.7.0
     * Updated Italian and Swedish translations
     * Updated some of the theme colors
     * A lot of internal changes and improvements
+    * Show more information for series recordings
 $ 1.6.1
   % VERSION 1.6.1
   _ 08.11.2014
