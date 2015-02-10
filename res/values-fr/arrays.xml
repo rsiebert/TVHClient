@@ -1,153 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_scodec_list_display">
-        <item>Pass-through</item>
-        <item>Aucun</item>
-    </string-array>
-
-    <string-array name="pref_menu_names">
-        <item>Chaines</item>
-        <item>Enregistrements terminés</item>
-        <item>Enregistrements programmés</item>
-        <item>Series Recordings</item>
-        <item>Timer Recordings</item>
-        <item>Enregistrements en erreur</item>
-        <item>Guide des programmes</item>
-        <item>Etat</item>
-        <item>Paramétres</item>
-        <item>Connexions</item>
-    </string-array>
-
-    <string-array name="pref_sort_channels_names">
-        <item>Défini par le serveur</item>
-        <item>Nom de la chaine</item>
-        <item>Numero de la chaine</item>
-    </string-array>
-
-    <string-array name="pr_content_type0">
-        <item>Film/Théâtre</item>
-        <item>Journal/Actualité</item>
-        <item>Emission/Jeu</item>
-        <item>Sports</item>
-        <item>Enfant/Jeunesse</item>
-        <item>Musique/Ballet/Dance</item>
-        <item>Arts/Culture</item>
-        <item>Social/Politique/Economie</item>
-        <item>Education/Science/Fait</item>
-        <item>Loisir</item>
-        <item>Divers</item>
-    </string-array>
-
-    <string-array name="pr_content_type1">
-        <item>Film/Théâtre</item>
-        <item>Détective/Suspense</item>
-        <item>Aventure/Western/Guerre</item>
-        <item>Science-Fiction/Fantastique/Horreur</item>
-        <item>Comédie</item>
-        <item>Feuilleton/Mélodrame/Folklore</item>
-        <item>Romance</item>
-        <item>Sérieux/Religieux/Histoire</item>
-        <item>Pour Adulte/Théâtre</item>
-    </string-array>
-
-    <string-array name="pr_content_type2">
-        <item>Journal/Actualité</item>
-        <item>Journal/Météo</item>
-        <item>Magasine</item>
-        <item>Documentaire</item>
-        <item>Discussion/Interview/Débat</item>
-    </string-array>
-
-    <string-array name="pr_content_type3">
-        <item>Emission/Jeu</item>
-        <item>Jeu/Quiz/Concours</item>
-        <item>Variété</item>
-        <item>Débat</item>
-    </string-array>
-    
-    <string-array name="pr_content_type4">
-        <item>Sports</item>
-        <item>Evènement spécial</item>
-        <item>Magasine</item>
-        <item>Football</item>
-        <item>Tennis/Squash</item>
-        <item>Sports d\'équipe</item>
-        <item>Athlétisme</item>
-        <item>Sport Motorisé</item>
-        <item>Sport nautique</item>
-        <item>Sports d\'hivers</item>
-        <item>Sports Equestres</item>
-        <item>Arts Martiaux</item>
-    </string-array>
-
-    <string-array name="pr_content_type5">
-        <item>Enfants/Jeunesse</item>
-        <item>Préscolaire</item>
-        <item>Divertissement (de 6 à 14 ans)</item>
-        <item>Divertissement (de 10 à 16 ans)</item>
-        <item>Information/Education/Ecoles</item>
-        <item>Dessins animés/Marionnettes</item>
-    </string-array>
-    
-    <string-array name="pr_content_type6">
-        <item>Musique/Ballet/Dance</item>
-        <item>Rock/Pop</item>
-        <item>Musique classique</item>
-        <item>Folk/Musique Traditionnelle</item>
-        <item>Jazz</item>
-        <item>Comédie Musicale/Opéra</item>
-        <item>Ballet</item>
-    </string-array>
-
-    <string-array name="pr_content_type7">
-        <item>Arts/Culture</item>
-        <item>Arts du spectacle</item>
-        <item>Beaux-Arts</item>
-        <item>Religion</item>
-        <item>Culture populaire/Arts traditionnels</item>
-        <item>Littérature</item>
-        <item>Film/Cinéma</item>
-        <item>Film Expérimental/Vidéo</item>
-        <item>Emissions/Presse</item>
-        <item>Média d\'information</item>
-        <item>Magasine</item>
-        <item>Mode</item>
-    </string-array>
-
-    <string-array name="pr_content_type8">
-        <item>Social/Questions Politiques/Economies</item>
-        <item>Magasine/Reportage/Documentaire</item>
-        <item>Economies/Emission Sociale</item>
-        <item>Célébrités</item>
-    </string-array>
-
-    
-    <string-array name="pr_content_type9">
-        <item>Education/Science/Factuel</item>        
-        <item>Nature/Animaux/Environnement</item>
-        <item>Technologie/Sciences naturelles</item>
-        <item>Médecine/Physiologie/Psychologie</item>
-        <item>Pays étrangers/Expéditions</item>
-        <item>Social/Sciences spirituelles</item>
-        <item>Education (autre)</item>
-        <item>Langues étrangères</item>
-    </string-array>
-
-    <string-array name="pr_content_type10">
-        <item>Passions/Loisirs</item>
-        <item>Tourisme/Voyage</item>
-        <item>Travail artisanal</item>
-        <item>Voiture</item>
-        <item>Sport et santé</item>
-        <item>Cuisine</item>
-        <item>Publicité/Shopping</item>
-        <item>Jardinage</item>
-    </string-array>
-
-    <string-array name="pr_content_type11">
-        <item>Divers</item>
-        <item>Noir et blanc</item>
-        <item>Inédit</item>
-        <item>Emission en direct</item>
-    </string-array>
+<string-array name="pref_res_list" translatable="false">
+<item>576</item>
+<item>480</item>
+<item>384</item>
+<item>288</item>
+<item>192</item>
+</string-array>
+<string-array name="pref_res_list_display" translatable="false">
+<item>576p</item>
+<item>480p</item>
+<item>384p</item>
+<item>288p</item>
+<item>192p</item>
+</string-array>
+<string-array name="pref_acodec_list" translatable="false">
+<item>AAC</item>
+<item>MPEG2AUDIO</item>
+</string-array>
+<string-array name="pref_acodec_list_display" translatable="false">
+<item>Advanced Audio Codec (AAC)</item>
+<item>MPEG-2 Audio Layer II (MP2)</item>
+</string-array>
+<string-array name="pref_vcodec_list" translatable="false">
+<item>H264</item>
+<item>MPEG4VIDEO</item>
+<item>VP8</item>
+</string-array>
+<string-array name="pref_vcodec_list_display" translatable="false">
+<item>MPEG-4 AVC (H.264)</item>
+<item>MPEG-4 Part 2</item>
+<item>VP8</item>
+</string-array>
+<string-array name="pref_scodec_list" translatable="false">
+<item>PASS</item>
+<item>NONE</item>
+</string-array>
+<string-array name="pref_scodec_list_display">
+<item>Pass-through</item>
+<item>Aucun</item>
+</string-array>
+<string-array name="pref_container_list" translatable="false">
+<item>matroska</item>
+<item>mpegts</item>
+<item>mpegps</item>
+<item>pass</item>
+</string-array>
+<string-array name="pref_container_list_display" translatable="false">
+<item>Matroska</item>
+<item>MPEG-TS</item>
+<item>MPEG-PS</item>
+<item>Pass-through</item>
+</string-array>
+<string-array name="pref_language_list" translatable="false">
+<item>default</item>
+<item>de</item>
+<item>en-us</item>
+<item>fr</item>
+<item>it</item>
+<item>nl</item>
+<item>pl</item>
+<item>sv</item>
+</string-array>
+<string-array name="pref_language_list_display" translatable="false">
+<item>Default</item>
+<item>Deutsch</item>
+<item>English</item>
+<item>Français</item>
+<item>Italiano</item>
+<item>Nederlands</item>
+<item>Polski</item>
+<item>Svenska</item>
+</string-array>
+<string-array name="pref_menu_ids" translatable="false">
+<item>0</item>
+<item>1</item>
+<item>2</item>
+<item>3</item>
+<item>4</item>
+<item>5</item>
+<item>6</item>
+<item>7</item>
+<item>8</item>
+<item>9</item>
+</string-array>
+<string-array name="pref_menu_names">
+<item>Chaines</item>
+<item>Enregistrements terminés</item>
+<item>Enregistrements programmés</item>
+<item>Enregistrements auto</item>
+<item>Enregistrements manuel</item>
+<item>Enregistrements en erreur</item>
+<item>Guide des programmes</item>
+<item>Etat</item>
+<item>Paramétres</item>
+<item>Connexions</item>
+</string-array>
+<string-array name="pref_sort_channels_ids" translatable="false">
+<item>0</item>
+<item>1</item>
+<item>2</item>
+</string-array>
+<string-array name="pref_sort_channels_names">
+<item>Défini par le serveur</item>
+<item>Nom de la chaine</item>
+<item>Numero de la chaine</item>
+</string-array>
+<string-array name="day_short_names">
+<item>Lun</item>
+<item>Mar</item>
+<item>Mer</item>
+<item>Jeu</item>
+<item>Ven</item>
+<item>Sam</item>
+<item>Dim</item>
+</string-array>
+<string-array name="day_long_names">
+<item>Lundi</item>
+<item>Mardi</item>
+<item>Mercredi</item>
+<item>jeudi</item>
+<item>Vendredi</item>
+<item>Samedi</item>
+<item>Dimanche</item>
+</string-array>
+<string-array name="dvr_priorities">
+<item>Important</item>
+<item>Haute</item>
+<item>Normal</item>
+<item>Bas</item>
+<item>Sans importance</item>
+<item>Pas réglé</item>
+</string-array>
+<string-array name="pr_content_type0">
+<item>Film/Théâtre</item>
+<item>Journal/Actualité</item>
+<item>Emission/Jeu</item>
+<item>Sports</item>
+<item>Enfant/Jeunesse</item>
+<item>Musique/Ballet/Dance</item>
+<item>Arts/Culture</item>
+<item>Social/Politique/Economie</item>
+<item>Education/Science/Fait</item>
+<item>Loisir</item>
+<item>Divers</item>
+</string-array>
+<string-array name="pr_content_type1">
+<item>Film/Théâtre</item>
+<item>Détective/Suspense</item>
+<item>Aventure/Western/Guerre</item>
+<item>Science-Fiction/Fantastique/Horreur</item>
+<item>Comédie</item>
+<item>Feuilleton/Mélodrame/Folklore</item>
+<item>Romance</item>
+<item>Sérieux/Religieux/Histoire</item>
+<item>Pour Adulte/Théâtre</item>
+</string-array>
+<string-array name="pr_content_type2">
+<item>Journal/Actualité</item>
+<item>Journal/Météo</item>
+<item>Magasine</item>
+<item>Documentaire</item>
+<item>Discussion/Interview/Débat</item>
+</string-array>
+<string-array name="pr_content_type3">
+<item>Emission/Jeu</item>
+<item>Jeu/Quiz/Concours</item>
+<item>Variété</item>
+<item>Débat</item>
+</string-array>
+<string-array name="pr_content_type4">
+<item>Sports</item>
+<item>Evènement spécial</item>
+<item>Magasine</item>
+<item>Football</item>
+<item>Tennis/Squash</item>
+<item>Sports d\'équipe</item>
+<item>Athlétisme</item>
+<item>Sport Motorisé</item>
+<item>Sport nautique</item>
+<item>Sports d\'hivers</item>
+<item>Sports Equestres</item>
+<item>Arts Martiaux</item>
+</string-array>
+<string-array name="pr_content_type5">
+<item>Enfants/Jeunesse</item>
+<item>Préscolaire</item>
+<item>Divertissement (de 6 à 14 ans)</item>
+<item>Divertissement (de 10 à 16 ans)</item>
+<item>Information/Education/Ecoles</item>
+<item>Dessins animés/Marionnettes</item>
+</string-array>
+<string-array name="pr_content_type6">
+<item>Musique/Ballet/Dance</item>
+<item>Rock/Pop</item>
+<item>Musique classique</item>
+<item>Folk/Musique Traditionnelle</item>
+<item>Jazz</item>
+<item>Comédie Musicale/Opéra</item>
+<item>Ballet</item>
+</string-array>
+<string-array name="pr_content_type7">
+<item>Arts/Culture</item>
+<item>Arts du spectacle</item>
+<item>Beaux-Arts</item>
+<item>Religion</item>
+<item>Culture populaire/Arts traditionnels</item>
+<item>Littérature</item>
+<item>Film/Cinéma</item>
+<item>Film Expérimental/Vidéo</item>
+<item>Emissions/Presse</item>
+<item>Média d\'information</item>
+<item>Magasine</item>
+<item>Mode</item>
+</string-array>
+<string-array name="pr_content_type8">
+<item>Social/Questions Politiques/Economies</item>
+<item>Magasine/Reportage/Documentaire</item>
+<item>Economies/Emission Sociale</item>
+<item>Célébrités</item>
+</string-array>
+<string-array name="pr_content_type9">
+<item>Education/Science/Factuel</item>
+<item>Nature/Animaux/Environnement</item>
+<item>Technologie/Sciences naturelles</item>
+<item>Médecine/Physiologie/Psychologie</item>
+<item>Pays étrangers/Expéditions</item>
+<item>Social/Sciences spirituelles</item>
+<item>Education (autre)</item>
+<item>Langues étrangères</item>
+</string-array>
+<string-array name="pr_content_type10">
+<item>Passions/Loisirs</item>
+<item>Tourisme/Voyage</item>
+<item>Travail artisanal</item>
+<item>Voiture</item>
+<item>Sport et santé</item>
+<item>Cuisine</item>
+<item>Publicité/Shopping</item>
+<item>Jardinage</item>
+</string-array>
+<string-array name="pr_content_type11">
+<item>Divers</item>
+<item>Noir et blanc</item>
+<item>Inédit</item>
+<item>Emission en direct</item>
+</string-array>
 </resources>
