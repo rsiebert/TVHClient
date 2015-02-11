@@ -130,6 +130,8 @@
     <string name="pref_misc">Varie</string>
     <string name="pref_clear_search_history">Pulire cronologia ricerche</string>
     <string name="pref_clear_icon_cache">Pulire cache icone canali</string>
+    <string name="pref_unlocker">COMPRA VERSIONE COMPLETA</string>
+    <string name="pref_unlocker_sum">Abilita l\'accesso a tutte le opzioni comprando l\'applicazione.</string>
 
     <string name="pref_menu_visibility">Visibilità menu</string>
     <string name="pref_menu_visibility_sum">Nasconde o mostra alcuni elementi dei menu.</string>
@@ -138,12 +140,17 @@
     <string name="pref_hide_menu_cancel_all_recordings">Nascondi voce \`Annulla tutte registrazioni\`</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Non mostra questa voce per prevenire l\'accidentale annullamento di tutte le registrazioni programmate.</string>
 
-    <string name="loading_profiles">Caricamento del profilo</string>
+    <string name="loading_profiles">Caricamento dei profili</string>
     <string name="pref_profiles">Profili</string>
+    <string name="pref_profiles_sum">Definisci i parametri o i profili (se supportati) di come i programmi devono essere registrati o le registrazioni riprodotte.</string>
     <string name="pref_recording_profiles">Profili di registrazione</string>
     <string name="pref_recording_profiles_sum">Scegli il profilo che il server userà per le registrazioni programmate.</string>
     <string name="pref_playback_profiles">Profili di riproduzione</string>
     <string name="pref_playback_profiles_sum">Scegli il profilo che il server userà per riprodurre i programmi registrati.</string>
+    <string name="pref_show_notifications">Mostra notifiche</string>
+    <string name="pref_show_notifications_sum">Mostra una notifica quando una registrazione inizia o finisce. Richiede servizio in background.</string>
+    <string name="pref_show_next_program">Mostra il prossimo programma nella lista dei canali</string>
+    <string name="pref_show_next_program_sum">Il nome del programma seguente sarà mostrato nella lista dei canali sotto l\'indicatore del progresso.</string>
 
     <string name="clear_search_history">Pulire cronologia ricerche?</string>
     <string name="clear_search_history_sum">Sei sicuro di voler rimuovere tutte le voci della cronologia delle ricerche?</string>
@@ -162,6 +169,10 @@
     <string name="recording_time_missed">Programmazione della registrazione mancata</string>
     <string name="recording_file_invalid">Registrazione non valida</string>
     <string name="recording_canceled">Registrazione annullata</string>
+    <string name="recording_started">Registrazione iniziata</string>
+    <string name="recording_completed">Registrazione completata</string>
+    <string name="recording_started_text">La registrazione %s è stata avviata</string>
+    <string name="recording_completed_text">La registrazione %s è stata completata</string>
 
     <string name="wol_send">Inviato con successo un pacchetto wake on LAN packet a \'%s\'</string>
     <string name="wol_send_broadcast">Inviato con successo un pacchetto wake on LAN in broadcast a \'%s\'</string>
@@ -272,11 +283,14 @@
     <string name="select_timeframe">Mostra guida programmi per la data e l\'orario selezionato.</string>
     <string name="currently_recording">Attualmente in registrazione</string>
 
-    <string name="no_connection_available">Non ci sono ancora connessioni definite. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
+    <string name="no_connection_available_advice">Nessuna connessione definita. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
+    <string name="no_connection_available">Nessuna connessione disponibile.</string>
     <string name="no_connection_active">Almeno una connessione è definita, ma nessuna è attiva.</string>
+    <string name="number_of_connections">%d connessioni disponibili</string>
 
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>
+    <string name="feature_not_available_in_free_version">Questa opzione non è disponibile nella versione gratis! Puoi sbloccare questa opzione comprando l\'applicazione dal Play Store di Google.</string>
 
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Apri navigation drawer</string>
