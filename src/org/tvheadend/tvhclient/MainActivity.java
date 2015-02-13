@@ -818,7 +818,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         // Only show the menu for the recording types if the server supports it
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = show && (app.getProtocolVersion() > 17);
+        drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = show && (app.getProtocolVersion() > 17) && app.isUnlocked();
         drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = show && (app.getProtocolVersion() > 12);
     }
 

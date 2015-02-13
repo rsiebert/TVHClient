@@ -63,6 +63,16 @@ public class TVHClientApplication extends Application {
         DatabaseHelper.init(this.getApplicationContext());
     }
 
+    /**
+     * Indicates the application is unlocked because the user has bought the
+     * application.
+     * 
+     * @return
+     */
+    public boolean isUnlocked() {
+        return false;
+    }
+
     // Holds a list of channels that are not allowed to load because the EPG
     // size did not change after the last loading call.
     private List<Channel> channelBlockingList = new ArrayList<Channel>();

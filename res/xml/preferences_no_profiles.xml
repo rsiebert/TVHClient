@@ -85,14 +85,6 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/pref_profiles">
-        <PreferenceScreen
-            android:key="pref_menu_profiles"
-            android:title="@string/pref_profiles"
-            android:summary="@string/pref_profiles_sum" />
-
-	</PreferenceCategory>
     <PreferenceCategory 
         android:title="@string/pref_misc" >
         <Preference
@@ -110,11 +102,6 @@
             android:key="pref_changelog"
             android:summary="@string/pref_changelog_sum"
             android:title="@string/pref_changelog" >
-        </Preference>
-        <Preference
-            android:key="pref_unlocker"
-            android:summary="@string/pref_unlocker_sum"
-            android:title="@string/pref_unlocker" >
         </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

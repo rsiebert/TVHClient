@@ -35,8 +35,10 @@ public class PlaybackSelectionActivity extends Activity {
         if (ch != null) {
             // Pass on the channel id and the other settings
             intent.putExtra("channelId", ch.id);
+
+            // Pass on the profile name, if allowed and available
             Profile p = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
-            if (p != null) {
+            if (p != null && app.isUnlocked()) {
                 intent.putExtra("profile", p.name);
             }
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("progResolutionPref", "288")));
@@ -49,8 +51,10 @@ public class PlaybackSelectionActivity extends Activity {
         } else if (rec != null) {
             // Pass on the recording id and the other settings
             intent.putExtra("dvrId", rec.id);
+
+            // Pass on the profile name, if allowed and available
             Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
-            if (p != null) {
+            if (p != null && app.isUnlocked()) {
                 intent.putExtra("profile", p.name);
             }
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("recResolutionPref", "288")));

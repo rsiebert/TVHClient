@@ -376,8 +376,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setVisibility(View.VISIBLE);
         seriesRecLabel.setVisibility(View.VISIBLE);
         seriesRec.setVisibility(View.VISIBLE);
-        timeRecLabel.setVisibility(View.VISIBLE);
-        timeRec.setVisibility(View.VISIBLE);
 
         // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
@@ -385,6 +383,11 @@ public class StatusFragment extends Fragment implements HTSListener {
         upcomingRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size() + " " + getString(R.string.upcoming_recordings));
         failedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size() + " " + getString(R.string.failed_recordings));
         seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
-        timeRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
+
+        if (app.isUnlocked()) {
+            timeRecLabel.setVisibility(View.VISIBLE);
+            timeRec.setVisibility(View.VISIBLE);
+            timeRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
+        }
     }
 }

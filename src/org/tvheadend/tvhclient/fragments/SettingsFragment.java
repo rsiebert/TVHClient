@@ -9,6 +9,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SettingsProfileActivity;
 import org.tvheadend.tvhclient.SuggestionProvider;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
@@ -44,7 +45,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        currentPreference = R.xml.preferences;
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        // TODO hide the profiles preference for now 
+        currentPreference = app.isUnlocked() ? R.xml.preferences : R.xml.preferences_no_profiles;
+
         Bundle bundle = getArguments();
         if (bundle != null) {
             currentPreference = bundle.getInt(Constants.BUNDLE_SETTINGS_PREFS);
@@ -188,32 +192,39 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
         Preference prefMenuProfiles = findPreference("pref_menu_profiles");
         if (prefMenuProfiles != null) {
-            prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    // Show a list of available connections
-                    final List<Connection> connList = DatabaseHelper.getInstance().getConnections();
-                    if (connList != null) {
-                        String[] items = new String[connList.size()];
-                        for (int i = 0; i < connList.size(); i++) {
-                            items[i] = connList.get(i).name;
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            if (!app.isUnlocked()) {
+                prefMenuProfiles.setEnabled(false);
+                prefMenuProfiles.setSummary(R.string.feature_not_available_in_free_version);
+            } else {
+                prefMenuProfiles.setSummary(R.string.pref_profiles_sum);
+                prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        // Show a list of available connections
+                        final List<Connection> connList = DatabaseHelper.getInstance().getConnections();
+                        if (connList != null) {
+                            String[] items = new String[connList.size()];
+                            for (int i = 0; i < connList.size(); i++) {
+                                items[i] = connList.get(i).name;
+                            }
+                            // Show a dialog to select a connection
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle(R.string.select_connection).setItems(items,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // The 'which' argument contains the index of the selected item
+                                            Intent intent = new Intent(activity, SettingsProfileActivity.class);
+                                            intent.putExtra(Constants.BUNDLE_CONNECTION_ID, connList.get(which).id);
+                                            startActivityForResult(intent, Constants.RESULT_CODE_PROFILES);
+                                        }
+                                    });
+                            builder.create().show();
                         }
-                        // Show a dialog to select a connection
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle(R.string.select_connection).setItems(items,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // The 'which' argument contains the index of the selected item
-                                        Intent intent = new Intent(activity, SettingsProfileActivity.class);
-                                        intent.putExtra(Constants.BUNDLE_CONNECTION_ID, connList.get(which).id);
-                                        startActivityForResult(intent, Constants.RESULT_CODE_PROFILES);
-                                    }
-                                });
-                        builder.create().show();
+                        return false;
                     }
-                    return false;
-                }
-            });
+                });
+            }
         }
 
         // Add a listener to the connection preference so that the

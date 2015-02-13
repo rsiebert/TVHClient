@@ -130,6 +130,8 @@
     <string name="pref_misc">Sonstiges</string>
     <string name="pref_clear_search_history">Lösche Suchhistorie</string>
     <string name="pref_clear_icon_cache">Lösche Senderlogos</string>
+    <string name="pref_unlocker">Features freischalten</string>
+    <string name="pref_unlocker_sum">Durch den Kauf der Applikation kannst Du zusätzliche Features freischalten und unterstützt die weitere Entwicklung.</string>
 
     <string name="pref_menu_visibility">Menü Sichtbarkeit</string>
     <string name="pref_menu_visibility_sum">Anzeigen oder Ausblenden bestimmter Menüeinträge.</string>
@@ -140,6 +142,7 @@
 
     <string name="loading_profiles">Lade Profile</string>
     <string name="pref_profiles">Profile</string>
+    <string name="pref_profiles_sum">Definiere die Parameter oder Profile (falls unterstützt), die verwendet werden sollen um Programme aufzunehmen oder Aufnahmen abzuspielen.</string>
     <string name="pref_recording_profiles">Aufnahmeprofile</string>
     <string name="pref_recording_profiles_sum">Wähle ein Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
     <string name="pref_playback_profiles">Wiedergabeprofile</string>
@@ -287,6 +290,7 @@
 
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
     <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
+    <string name="feature_not_available_in_free_version">Diese Feature ist in der kostenloses Version nicht enthalten! Durch den Kauf der Applikation kannst du es freischalten und auch die weitere Entwicklung unterstützen.</string>
 
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Navigationsmenü öffnen</string>

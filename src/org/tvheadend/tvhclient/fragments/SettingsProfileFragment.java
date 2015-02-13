@@ -221,7 +221,10 @@ public class SettingsProfileFragment extends PreferenceFragment implements HTSLi
             // Disable these preference, the data will be loaded now
             prefRecProfiles.setEnabled(false);
             prefProgProfiles.setEnabled(false);
-            Utils.connect(activity, conn, true, false);
+
+            if (app.isUnlocked()) {
+                Utils.connect(activity, conn, true, false);
+            }
         }
     }
 

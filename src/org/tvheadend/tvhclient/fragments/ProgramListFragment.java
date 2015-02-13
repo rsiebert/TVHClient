@@ -399,7 +399,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                         adapter.notifyDataSetChanged();
                         adapter.sort();
                         if (toolbar != null) {
-                            toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.programs));
+                            toolbar.setSubtitle(adapter.getCount() + " " + activity.getString(R.string.programs));
                         }
                     }
                 }
@@ -410,7 +410,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     adapter.remove((Program) obj);
                     adapter.notifyDataSetChanged();
                     if (toolbar != null) {
-                        toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.programs));
+                        toolbar.setSubtitle(adapter.getCount() + " " + activity.getString(R.string.programs));
                     }
                 }
             });

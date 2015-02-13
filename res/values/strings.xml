@@ -130,6 +130,8 @@
     <string name="pref_misc">Miscellaneous</string>
     <string name="pref_clear_search_history">Clear search history</string>
     <string name="pref_clear_icon_cache">Clear channel icon cache</string>
+    <string name="pref_unlocker">Enable all features</string>
+    <string name="pref_unlocker_sum">Enable access to additional features and support the development by buying this application.</string>
 
     <string name="pref_menu_visibility">Menu visibility</string>
     <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>
@@ -140,6 +142,7 @@
     
     <string name="loading_profiles">Loading profiles</string>
     <string name="pref_profiles">Profiles</string>
+    <string name="pref_profiles_sum">Define the parameters or the profiles (if supported) how programs shall be recorded or how recordings shall be played.</string>
     <string name="pref_recording_profiles">Recording profiles</string>
     <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
     <string name="pref_playback_profiles">Playback profiles</string>
@@ -287,6 +290,7 @@
     
     <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
+    <string name="feature_not_available_in_free_version">This feature is not available in the free version! You can unlock this feature and support further development by buying the application from the play store.</string>
 
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Open navigation drawer</string>
