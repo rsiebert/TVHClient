@@ -101,6 +101,14 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             toolbar.setTitle(R.string.menu_search);
             toolbar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
 
+            // Allow clicking on the navigation logo, if available
+            toolbar.setNavigationIcon(R.drawable.ic_launcher);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
