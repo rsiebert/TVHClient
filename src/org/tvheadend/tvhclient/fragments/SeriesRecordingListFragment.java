@@ -190,13 +190,13 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+        (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
-            (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
+            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
         } else {
-            (menu.findItem(R.id.menu_record_remove_all)).setVisible(true);
+            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(true);
         }
     }
 
@@ -238,11 +238,11 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
      */
     private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_record_remove_all:
+        case R.id.menu_record_cancel_all:
             // Show a confirmation dialog before deleting all recordings
             new AlertDialog.Builder(activity)
-                    .setTitle(R.string.menu_record_remove_all)
-                    .setMessage(getString(R.string.delete_all_recordings))
+                    .setTitle(R.string.menu_record_cancel_all)
+                    .setMessage(getString(R.string.cancel_all_recordings))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             removeAllRecordings();
