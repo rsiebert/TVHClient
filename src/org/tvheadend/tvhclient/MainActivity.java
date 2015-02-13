@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +45,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
@@ -158,48 +156,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     getResources().getColor(R.color.drawer_background_dark));
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-        // Increase the edge where the user can touch to slide out the
-        // navigation drawer
-        Field dragger = null;
-        try {
-            dragger = drawerLayout.getClass().getDeclaredField("mLeftDragger");
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        dragger.setAccessible(true);
-        ViewDragHelper draggerObj = null;
-        try {
-            draggerObj = (ViewDragHelper) dragger.get(drawerLayout);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        Field edgeSize = null;
-        try {
-            edgeSize = draggerObj.getClass().getDeclaredField("mEdgeSize");
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        edgeSize.setAccessible(true);
-        int edge = 20;
-        try {
-            edge = edgeSize.getInt(draggerObj);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            edgeSize.setInt(draggerObj, edge * 2);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
 
         // Listens for drawer open and close events so we can modify the
         // contents of the action bar when the drawer is visible, such as to
