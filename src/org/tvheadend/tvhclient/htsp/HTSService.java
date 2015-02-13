@@ -472,7 +472,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.updateRecording(rec);
 
         // Check that the notification shall be shown
-        boolean showNotification = prefs.getBoolean("showNotificationsPref", false);
+        boolean showNotification = app.isUnlocked() && prefs.getBoolean("showNotificationsPref", false);
 
         // Show a notification if enabled that the recording has either started or completed
         if (showNotification && notificationManager != null && currentRecState != rec.state) {

@@ -59,11 +59,6 @@
             android:entryValues="@array/pref_sort_channels_ids" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="showNotificationsPref"
-            android:summary="@string/pref_show_notifications_sum"
-            android:title="@string/pref_show_notifications" />
-        <CheckBoxPreference
-            android:defaultValue="true"
             android:key="showNextProgramPref"
             android:summary="@string/pref_show_next_program_sum"
             android:title="@string/pref_show_next_program" />
