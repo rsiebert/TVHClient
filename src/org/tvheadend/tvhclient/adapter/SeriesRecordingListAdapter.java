@@ -136,8 +136,9 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
                     SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
                     String start = formatter.format(new Date(srec.start * 60L * 1000L));
                     holder.start.setText(start);
+                    holder.start.setVisibility(View.VISIBLE);
                 } else {
-                    holder.start.setText(R.string.not_set);
+                    holder.start.setVisibility(View.GONE);
                 }
             }
 
