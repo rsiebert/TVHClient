@@ -47,7 +47,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         // TODO hide the profiles preference for now 
-        currentPreference = app.isUnlocked() ? R.xml.preferences : R.xml.preferences_no_profiles;
+        currentPreference = app.isUnlocked() ? R.xml.preferences : R.xml.preferences_hide_settings;
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -135,7 +135,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     /**
-     * 
+     * Adds a listener to the specified preferences so that the desired action
+     * can be executed when the user has selected a preference.
      */
     private void addPreferenceListeners() {
         Preference prefManage = findPreference("pref_manage_connections");
@@ -151,6 +152,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             });
         }
 
+        // Add a listener so that the genre colors can be enabled or not
         Preference prefGenreColors = findPreference("pref_genre_colors");
         if (prefGenreColors != null) {
             prefGenreColors.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -164,6 +166,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             });
         }
 
+        // Add a listener so that certain parameters of the program guide can be changed
         Preference prefProgramGuide = findPreference("pref_program_guide");
         if (prefProgramGuide != null) {
             prefProgramGuide.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -177,6 +180,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             });
         }
 
+        // Add a listener so that certain menus can be shown or hidden
         Preference prefMenuVisibility = findPreference("pref_menu_visibility");
         if (prefMenuVisibility != null) {
             prefMenuVisibility.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -190,6 +194,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             });
         }
 
+        // Add a listener so that the profiles and play and recording options can be set
         Preference prefMenuProfiles = findPreference("pref_menu_profiles");
         if (prefMenuProfiles != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
@@ -227,8 +232,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
         }
 
-        // Add a listener to the connection preference so that the
-        // ChangeLogDialog with all changes can be shown.
+        // Add a listener so that the dialog with all changes can be shown.
         Preference prefChangelog = findPreference("pref_changelog");
         if (prefChangelog != null) {
             prefChangelog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -240,8 +244,21 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 }
             });
         }
-        // Add a listener to the clear search history preference so that it can
-        // be cleared.
+
+        // Add a listener so that the android market can be launched when the
+        // user wants to buy the application.
+        Preference prefUnlocker = findPreference("pref_unlocker");
+        if (prefUnlocker != null) {
+            prefUnlocker.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // TODO
+                    return true;
+                }
+            });
+        }
+
+        // Add a listener so that the search history can be be cleared.
         Preference prefClearSearchHistory = findPreference("pref_clear_search_history");
         if (prefClearSearchHistory != null) {
             prefClearSearchHistory.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -273,8 +290,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 }
             });
         }
-        // Add a listener to the clear icon cache preference so that it can be
-        // cleared.
+
+        // Add a listener so that the icon cache can be cleared.
         Preference prefClearIconCache = findPreference("pref_clear_icon_cache");
         if (prefClearIconCache != null) {
             prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
