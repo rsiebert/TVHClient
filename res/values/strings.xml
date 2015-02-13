@@ -278,8 +278,10 @@
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
     <string name="currently_recording">Currently recording</string>
     
-    <string name="no_connection_available">Still no connections are defined. You need to add at least one connection from the settings menu.</string>
+    <string name="no_connection_available_advice">No connection is available. You need to add at least one from the settings menu.</string>
+    <string name="no_connection_available">No connection available.</string>
     <string name="no_connection_active">At least one connection is defined, but was not activated.</string>
+    <string name="number_of_connections">%d connection(s) available</string>
     
     <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>

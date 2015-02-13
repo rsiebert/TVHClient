@@ -276,7 +276,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         // none is selected or available
         if (conn == null) {
             if (noConnectionsDefined) {
-                connection.setText(getString(R.string.no_connection_available));
+                connection.setText(getString(R.string.no_connection_available_advice));
             } else {
                 connection.setText(getString(R.string.no_connection_active));
             }
