@@ -49,12 +49,14 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     private List<Channel> list;
     private int layout;
     private int selectedPosition = 0;
+    private SharedPreferences prefs;
 
     public ChannelListAdapter(Activity context, List<Channel> list, int layout) {
         super(context, layout, list);
         this.context = context;
         this.layout = layout;
         this.list = list;
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort(final int type) {
@@ -135,7 +137,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         // If the item is selected the the arrow will be shown, otherwise
         // only a vertical separation line is displayed.
         if (holder.dual_pane_list_item_selection != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
             
             if (selectedPosition == position) {
@@ -162,7 +163,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             Utils.setChannelIcon(holder.icon, holder.icon_text, c);
             // Only show the channel text in the program guide when no icons shall be shown
             if (holder.icon_text != null) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 final boolean showIcons = prefs.getBoolean("showIconPref", true);
                 if (!showIcons && layout == R.layout.program_guide_channel_item) {
                     holder.icon_text.setText(c.name);
@@ -244,7 +244,8 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 Utils.setProgress(holder.progress, p.start, p.stop);
 
                 if (holder.nextTitle != null && np != null) {
-                    holder.nextTitle.setVisibility(View.VISIBLE);
+                    final boolean showNextProgram = prefs.getBoolean("showNextProgramPref", true);
+                    holder.nextTitle.setVisibility(showNextProgram ? View.VISIBLE : View.GONE);
                     holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
                 }
             }

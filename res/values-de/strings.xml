@@ -146,6 +146,8 @@
     <string name="pref_playback_profiles_sum">Wähle ein Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
     <string name="pref_show_notifications">Zeige Benachrichtigungen</string>
     <string name="pref_show_notifications_sum">Wird eine Aufnahme gestarted oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt. Für diese Funktionalität muss der Hintergrunddienst aktiv sein.</string>
+    <string name="pref_show_next_program">Zeige nachfolgende Sendung</string>
+    <string name="pref_show_next_program_sum">Der Name der nachfolgenden Sendung wird in der Senderliste angezeigt. Er wird unter der Fortschrittsanzeige dargestellt.</string>
 
     <string name="clear_search_history">Lösche Suchhistorie?</string>
     <string name="clear_search_history_sum">Sind Sie sicher, dass sie alle Einträge aus der Historie löschen wollen?</string>
