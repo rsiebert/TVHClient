@@ -61,6 +61,13 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView duration;
     private TextView failed_reason;
     private TextView recording_type;
+    private TextView priority;
+    private TextView retention;
+    private TextView startExtra;
+    private TextView stopExtra;
+    private TextView path;
+    private TextView owner;
+    private TextView creator;
     private Toolbar toolbar;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
@@ -113,6 +120,13 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         duration = (TextView) v.findViewById(R.id.duration);
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
         recording_type = (TextView) v.findViewById(R.id.recording_type);
+        priority = (TextView) v.findViewById(R.id.priority);
+        retention = (TextView) v.findViewById(R.id.retention);
+        startExtra = (TextView) v.findViewById(R.id.start_extra);
+        stopExtra = (TextView) v.findViewById(R.id.stop_extra);
+        owner = (TextView) v.findViewById(R.id.owner);
+        creator = (TextView) v.findViewById(R.id.creator);
+        path = (TextView) v.findViewById(R.id.path);
 
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
@@ -130,6 +144,31 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
             Utils.setDescription(descLabel, desc, rec.description);
             Utils.setFailedReason(failed_reason, rec);
+
+            if (owner != null && rec.owner.length() > 0) {
+                owner.setText(rec.owner);
+            }
+            if (creator != null && rec.creator.length() > 0) {
+                creator.setText(rec.creator);
+            }
+            if (path != null && rec.path.length() > 0) {
+                path.setText(rec.path);
+            }
+            if (priority != null) {
+                String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
+                if (rec.priority >= 0 && rec.priority < priorityItems.length) {
+                    priority.setText(priorityItems[(int) (rec.priority)]);
+                }
+            }
+            if (retention != null) {
+                retention.setText(getString(R.string.days, (int) rec.retention));
+            }
+            if (startExtra != null && rec.startExtra >= 0) {
+                startExtra.setText(getString(R.string.minutes, (int) rec.startExtra));
+            }
+            if (stopExtra != null && rec.stopExtra >= 0) {
+                stopExtra.setText(getString(R.string.minutes, (int) rec.stopExtra));
+            }
 
             // Show the information what type the recording is only when no dual
             // pane is active
