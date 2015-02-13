@@ -118,6 +118,12 @@ public class SettingsShowConnectionsActivity extends ActionBarActivity implement
         }
         adapter.sort();
         adapter.notifyDataSetChanged();
+
+        if (adapter.getCount() > 0) {
+            toolbar.setSubtitle(getString(R.string.number_of_connections, adapter.getCount()));
+        } else {
+            toolbar.setSubtitle(getString(R.string.no_connection_available));
+        }
     }
 
     /**
