@@ -420,8 +420,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.timerecId = msg.getString("timerecId", "");
         rec.start = msg.getDate("start");
         rec.stop = msg.getDate("stop");
-        rec.startExtra = msg.getDate("startExtra");
-        rec.stopExtra = msg.getDate("stopExtra");
+        rec.startExtra = msg.getLong("startExtra");
+        rec.stopExtra = msg.getLong("stopExtra");
         rec.retention = msg.getLong("retention");
         rec.priority = msg.getLong("priority");
         rec.contentType = msg.getLong("contentType");
@@ -456,8 +456,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.timerecId = msg.getString("timerecId", rec.timerecId);
         rec.start = msg.getDate("start");
         rec.stop = msg.getDate("stop");
-        rec.startExtra = msg.getDate("startExtra");
-        rec.stopExtra = msg.getDate("stopExtra");
+        rec.startExtra = msg.getLong("startExtra");
+        rec.stopExtra = msg.getLong("stopExtra");
         rec.retention = msg.getLong("retention");
         rec.priority = msg.getLong("priority");
         rec.contentType = msg.getLong("contentType");
