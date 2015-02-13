@@ -229,9 +229,13 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             timerRecordingListPosition = savedInstanceState.getInt(Constants.TIMER_RECORDING_LIST_POSITION, 0);
             failedRecordingListPosition = savedInstanceState.getInt(Constants.FAILED_RECORDING_LIST_POSITION, 0);
             connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
-        }
 
-        showDrawerMenu(false);
+            // Show the menu items when the orientation was changed
+            showDrawerMenu(true);
+        } else {
+            // Hide the menu items as a default
+            showDrawerMenu(false);
+        }
     }
 
     /**
@@ -346,8 +350,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
      * not reload all data.
      */
     private void reconnectAndResume() {
-        if (DatabaseHelper.getInstance().getConnections().isEmpty() || DatabaseHelper.getInstance().getSelectedConnection() == null) {
+        if (DatabaseHelper.getInstance().getConnections().isEmpty() || 
+                DatabaseHelper.getInstance().getSelectedConnection() == null) {
             // No connection is present or active
+            showDrawerMenu(false);
             final int menu = (connectionSettingsShown) ? MENU_STATUS : MENU_CONNECTIONS;
             connectionSettingsShown = true;
             handleMenuSelection(menu);
@@ -818,8 +824,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         // Only show the menu for the recording types if the server supports it
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = show && (app.getProtocolVersion() > 17) && app.isUnlocked();
-        drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = show && (app.getProtocolVersion() > 12);
+        drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = (show && (app.getProtocolVersion() > 17) && app.isUnlocked());
+        drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = (show && (app.getProtocolVersion() > 12));
     }
 
     @Override
