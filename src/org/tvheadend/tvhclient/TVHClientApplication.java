@@ -28,9 +28,9 @@ import java.util.Map;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
+import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
@@ -56,6 +56,12 @@ public class TVHClientApplication extends Application {
 
     private volatile boolean loading = false;
     private int protocolVersion = 10;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        DatabaseHelper.init(this.getApplicationContext());
+    }
 
     // Holds a list of channels that are not allowed to load because the EPG
     // size did not change after the last loading call.

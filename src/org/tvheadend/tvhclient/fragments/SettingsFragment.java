@@ -192,26 +192,24 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     // Show a list of available connections
-                    if (DatabaseHelper.getInstance() != null) {
-                        final List<Connection> connList = DatabaseHelper.getInstance().getConnections();
-                        if (connList != null) {
-                            String[] items = new String[connList.size()];
-                            for (int i = 0; i < connList.size(); i++) {
-                                items[i] = connList.get(i).name;
-                            }
-                            // Show a dialog to select a connection
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setTitle(R.string.select_connection).setItems(items,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            // The 'which' argument contains the index of the selected item
-                                            Intent intent = new Intent(activity, SettingsProfileActivity.class);
-                                            intent.putExtra(Constants.BUNDLE_CONNECTION_ID, connList.get(which).id);
-                                            startActivityForResult(intent, Constants.RESULT_CODE_PROFILES);
-                                        }
-                                    });
-                            builder.create().show();
+                    final List<Connection> connList = DatabaseHelper.getInstance().getConnections();
+                    if (connList != null) {
+                        String[] items = new String[connList.size()];
+                        for (int i = 0; i < connList.size(); i++) {
+                            items[i] = connList.get(i).name;
                         }
+                        // Show a dialog to select a connection
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle(R.string.select_connection).setItems(items,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // The 'which' argument contains the index of the selected item
+                                        Intent intent = new Intent(activity, SettingsProfileActivity.class);
+                                        intent.putExtra(Constants.BUNDLE_CONNECTION_ID, connList.get(which).id);
+                                        startActivityForResult(intent, Constants.RESULT_CODE_PROFILES);
+                                    }
+                                });
+                        builder.create().show();
                     }
                     return false;
                 }

@@ -142,7 +142,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         View v = findViewById(R.id.right_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
-        DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
@@ -231,11 +230,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         View header = (View) inflater.inflate(R.layout.drawer_list_header, drawerList, false);
         drawerList.addHeaderView(header, null, false);
         TextView serverName = (TextView) header.findViewById(R.id.server);
-        if (DatabaseHelper.getInstance() != null) {
-            Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-            if (conn != null && serverName != null) {
-                serverName.setText(conn.name);
-            }
+
+        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        if (conn != null && serverName != null) {
+            serverName.setText(conn.name);
         }
 
         // Create the custom adapter for the menus in the navigation drawer.
@@ -392,9 +390,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
      * not reload all data.
      */
     private void reconnectAndResume() {
-        if (DatabaseHelper.getInstance() != null
-                && (DatabaseHelper.getInstance().getConnections().isEmpty() 
-                        || DatabaseHelper.getInstance().getSelectedConnection() == null)) {
+        if (DatabaseHelper.getInstance().getConnections().isEmpty() || DatabaseHelper.getInstance().getSelectedConnection() == null) {
             // No connection is present or active
             final int menu = (connectionSettingsShown) ? MENU_STATUS : MENU_CONNECTIONS;
             connectionSettingsShown = true;

@@ -62,23 +62,21 @@ public class SettingsProfileActivity extends ActionBarActivity implements HTSLis
         toolbar.setTitle(R.string.pref_profiles);
 
         // Get the selected connection and set the toolbar texts
-        if (DatabaseHelper.getInstance() != null) {
-            long id = getIntent().getLongExtra(Constants.BUNDLE_CONNECTION_ID, 0);
-            conn = DatabaseHelper.getInstance().getConnection(id);
-            // Display the fragment with the connection details otherwise
-            // exit this activity because no valid connection was given.
-            if (conn != null) {
-                toolbar.setSubtitle(conn.name);
-                SettingsProfileFragment f = (SettingsProfileFragment) getFragmentManager()
-                        .findFragmentById(R.id.settings_fragment);
-                if (f == null) {
-                    f = new SettingsProfileFragment();
-                    f.setArguments(getIntent().getExtras());
-                    getFragmentManager().beginTransaction().add(R.id.settings_fragment, f).commit();
-                }
-            } else {
-                finish();
+        long id = getIntent().getLongExtra(Constants.BUNDLE_CONNECTION_ID, 0);
+        conn = DatabaseHelper.getInstance().getConnection(id);
+        // Display the fragment with the connection details otherwise
+        // exit this activity because no valid connection was given.
+        if (conn != null) {
+            toolbar.setSubtitle(conn.name);
+            SettingsProfileFragment f = (SettingsProfileFragment) getFragmentManager()
+                    .findFragmentById(R.id.settings_fragment);
+            if (f == null) {
+                f = new SettingsProfileFragment();
+                f.setArguments(getIntent().getExtras());
+                getFragmentManager().beginTransaction().add(R.id.settings_fragment, f).commit();
             }
+        } else {
+            finish();
         }
     }
 
