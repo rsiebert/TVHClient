@@ -131,4 +131,8 @@ public class Constants {
     // The default names for the playback and recording profiles
     public static final String PROG_PROFILE_DEFAULT = "htsp";
     public static final String REC_PROFILE_DEFAULT = "(Default Profile)";
+
+    // Time to wait for the thread before the next service call is made when
+    // either all recorded or scheduled programs are being removed. 
+    public static final int THREAD_SLEEPING_TIME = 2000;
 }

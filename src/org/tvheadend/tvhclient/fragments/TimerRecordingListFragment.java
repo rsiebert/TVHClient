@@ -26,12 +26,16 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.TimerRecordingListAdapter;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -39,6 +43,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -236,6 +241,23 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             newFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
+        case R.id.menu_record_remove_all:
+            // Show a confirmation dialog before deleting all recordings
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.menu_record_remove_all)
+                    .setMessage(getString(R.string.delete_all_recordings))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            removeAllRecordings();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // NOP
+                        }
+                    }).show();
+            return true;
+
         case R.id.menu_refresh:
             fragmentStatusInterface.reloadData(TAG);
             return true;
@@ -243,6 +265,31 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Calls the service to remove the scheduled recordings. The service is
+     * called in a certain interval to prevent too many calls to the interface.
+     */
+    private void removeAllRecordings() {
+        new Thread() {
+            public void run() {
+                for (int i = 0; i < adapter.getCount(); ++i) {
+                    final TimerRecording rec = adapter.getItem(i);
+                    if (rec != null) {
+                        final Intent intent = new Intent(activity, HTSService.class);
+                        intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
+                        intent.putExtra("id", rec.id);
+                        activity.startService(intent);
+                    }
+                    try {
+                        sleep(Constants.THREAD_SLEEPING_TIME);
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, "Error removing all manual recordings, " + e.getLocalizedMessage());
+                    }
+                }
+            }
+        }.start();
     }
 
     @Override
