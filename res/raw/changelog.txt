@@ -1,14 +1,16 @@
 $ 1.7.0
   % VERSION 1.7.0
-  _ 04.01.2015
+  _ 14.02.2015
     * Added support for Android 5
-    * Minimum SDK version is now 11
+    * Added toolbar with improved menu structure
+    * Updated some theme colors
+    * Dropped support for Android versions below 4. Minimum SDK version is now 14.
     * Dismiss dialog when a recording has been deleted
     * Fixed showing the recording title in the details dialog
-    * Updated Italian and Swedish translations
-    * Updated some of the theme colors
-    * A lot of internal changes and improvements
-    * Show more information for series recordings
+    * Updated German, English, Italian and Swedish translations
+    * Added options to show next program name in the channel list
+    * Show more details for a recording or a series recording
+    * Many other small improvements
 $ 1.6.1
   % VERSION 1.6.1
   _ 08.11.2014
