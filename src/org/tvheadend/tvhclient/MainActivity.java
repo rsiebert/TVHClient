@@ -242,6 +242,13 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
      * 
      */
     private void updateDrawerMenu() {
+        // Also update the server name if it has been changed
+        TextView serverName = (TextView) drawerList.findViewById(R.id.server);
+        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        if (conn != null && serverName != null) {
+            serverName.setText(conn.name);
+        }
+        // Update the number of recordings in each category
         TVHClientApplication app = (TVHClientApplication) getApplication();
         drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
