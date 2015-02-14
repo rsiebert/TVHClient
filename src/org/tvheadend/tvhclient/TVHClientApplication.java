@@ -55,6 +55,9 @@ public class TVHClientApplication extends Application {
     private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
 
     private volatile boolean loading = false;
+
+    // The default minimum protocol version that shall be assume for a server
+    // until it reports its own version
     private int protocolVersion = 10;
 
     @Override
