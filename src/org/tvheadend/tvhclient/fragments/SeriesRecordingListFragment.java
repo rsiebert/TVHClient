@@ -192,6 +192,10 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
 
+        // Adding a manual series recording also requires the unlocked version
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
