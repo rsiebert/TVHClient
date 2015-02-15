@@ -204,12 +204,18 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             @Override
             public void onClick(View v) {
                 Utils.confirmCancelRecording(activity, rec);
+                if (getDialog() != null) {
+                    getDialog().dismiss();
+                }
             }
         });
         recordRemove.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utils.confirmRemoveRecording(activity, rec);
+                if (getDialog() != null) {
+                    getDialog().dismiss();
+                }
             }
         });
     }
