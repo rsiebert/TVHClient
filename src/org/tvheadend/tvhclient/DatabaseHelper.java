@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 8;
     public static final String DATABASE_NAME = "tvhclient";
     public static final String TABLE_CONN_NAME = "connections";
     public static final String TABLE_PROFILE_NAME = "profiles";
@@ -198,6 +198,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < newVersion && newVersion == 7) {
             db.execSQL("ALTER TABLE " + TABLE_PROFILE_NAME + " ADD COLUMN " + KEY_PROFILE_NAME
                     + " TEXT NULL;");
+        }
+        if (oldVersion < newVersion && newVersion == 8) {
+            // Add the id columns for the profiles.
+            db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_PLAY_PROFILE_ID
+                    + " INT DEFAULT 0;");
+            db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_REC_PROFILE_ID
+                    + " INT DEFAULT 0;");
+            // Add the new profile table
+            final String query = "CREATE TABLE IF NOT EXISTS " + TABLE_PROFILE_NAME + " (" 
+                    + KEY_PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + KEY_PROFILE_ENABLED + " INT DEFAULT 0, "
+                    + KEY_PROFILE_UUID + " TEXT NULL, "
+                    + KEY_PROFILE_NAME + " TEXT NULL, "
+                    + KEY_PROFILE_CONTAINER + " TEXT NULL, "
+                    + KEY_PROFILE_TRANSCODE + " INT DEFAULT 0, "
+                    + KEY_PROFILE_RESOLUTION + " TEXT NULL, "
+                    + KEY_PROFILE_AUDIO_CODEC + " TEXT NULL, "
+                    + KEY_PROFILE_VIDEO_CODEC + " TEXT NULL, "
+                    + KEY_PROFILE_SUBTITLE_CODEC + " TEXT NULL);";
+            db.execSQL(query);
         }
     }
 
