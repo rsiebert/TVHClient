@@ -43,6 +43,9 @@ import android.util.SparseArray;
 
 public class TVHClientApplication extends Application {
 
+    @SuppressWarnings("unused")
+    private final static String TAG = TVHClientApplication.class.getSimpleName();
+
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
