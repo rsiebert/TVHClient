@@ -14,6 +14,9 @@ import android.preference.PreferenceManager;
 
 public class PlaybackSelectionActivity extends Activity {
 
+    @SuppressWarnings("unused")
+    private final static String TAG = PlaybackSelectionActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
