@@ -1,3 +1,7 @@
+$ 1.7.1
+  % VERSION 1.7.1
+  _ 15.02.2015
+    * Fixed database upgrade error that prevented the app from starting
 $ 1.7.0
   % VERSION 1.7.0
   _ 14.02.2015
