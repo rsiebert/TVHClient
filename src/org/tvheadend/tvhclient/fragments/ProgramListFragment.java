@@ -324,9 +324,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             menu.setHeaderTitle(program.title);
             Utils.setProgramMenu(menu, program);
         }
-
-        // TODO disabled until fix is found
-        (menu.findItem(R.id.menu_play)).setVisible(false);
     }
 
     /**
@@ -338,10 +335,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsProgramsPref", false);
         (menu.findItem(R.id.menu_genre_color_info_programs)).setVisible(!isDualPane && showGenreColors);
-//        (menu.findItem(R.id.menu_play)).setVisible(adapter.getCount() > 0);
-
-        // TODO disabled until fix is found
-        (menu.findItem(R.id.menu_play)).setVisible(false);
+        (menu.findItem(R.id.menu_play)).setVisible(adapter.getCount() > 0);
     }
 
     /**

@@ -40,13 +40,13 @@ import org.tvheadend.tvhclient.model.Program;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -366,9 +366,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             menu.setHeaderTitle(program.title);
             Utils.setProgramMenu(menu, program);
         }
-
-        // TODO disabled until fix is found
-        (menu.findItem(R.id.menu_play)).setVisible(false);
     }
 
     /**

@@ -230,9 +230,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             (menu.findItem(R.id.menu_record_series)).setVisible(false);
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         }
-
-        // TODO disabled until fix is found
-        (menu.findItem(R.id.menu_play)).setVisible(false);
     }
 
     /**

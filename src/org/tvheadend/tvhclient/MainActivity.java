@@ -21,7 +21,6 @@ import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingListFragment;
-import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -357,8 +356,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
      * not reload all data.
      */
     private void reconnectAndResume() {
-        if (DatabaseHelper.getInstance().getConnections().isEmpty() || 
-                DatabaseHelper.getInstance().getSelectedConnection() == null) {
+        if (DatabaseHelper.getInstance().getConnections().isEmpty()
+                || DatabaseHelper.getInstance().getSelectedConnection() == null) {
             // No connection is present or active
             showDrawerMenu(false);
             final int menu = (connectionSettingsShown) ? MENU_STATUS : MENU_CONNECTIONS;
@@ -371,12 +370,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
             // Reconnect and get all new information in case the service was not
             // running in the background. Otherwise just reconnect.
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (!prefs.getBoolean("showNotificationsPref", false)) {
-                Utils.connect(this, DatabaseHelper.getInstance().getSelectedConnection(), true, true);
-            } else {
+//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//            if (!prefs.getBoolean("showNotificationsPref", false)) {
+//                Utils.connect(this, DatabaseHelper.getInstance().getSelectedConnection(), true, true);
+//            } else {
                 Utils.connect(this, false);
-            }
+//            }
 
             // Show the contents of the last selected menu position. In case it
             // is not set, use the the default one defined in the settings
@@ -400,15 +399,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.LAST_CONNECTION_STATE, connectionStatus);
         editor.commit();
-
-        // If requested by the user remove all listeners so no one receives any
-        // status information and stop the service when the application is
-        // paused to save battery power
-        if (!prefs.getBoolean("showNotificationsPref", false)) {
-            app.removeListeners();
-            Intent serviceIntent = new Intent(this, HTSService.class);
-            stopService(serviceIntent);
-        }
     }
 
     @Override
