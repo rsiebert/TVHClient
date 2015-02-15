@@ -1,268 +1,68 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <include layout="@layout/main_toolbar" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingLeft="9dp"
+        android:paddingRight="6dp"
+        android:paddingTop="6dp" >
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <ScrollView
+        <LinearLayout
+            android:id="@+id/player_layout"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="12dp">
 
-            <LinearLayout
-                android:id="@+id/details_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp" >
+            <TextView
+                android:id="@+id/menu_record_remove"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_record_remove"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/menu_record_remove"
+                android:visibility="gone" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/is_enabled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/recording_enabled"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/description_label"
+            style="?attr/HeaderFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description" />
 
-                <TextView
-                    android:id="@+id/name_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/name" />
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/description"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <TextView
-                    android:id="@+id/name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:paddingBottom="12dp"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/channel_label"
+            style="?attr/HeaderFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/channel" />
 
-                <TextView
-                    android:id="@+id/channel_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/channel" />
+        <TextView
+            android:id="@+id/channel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/channel"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/channel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/channel"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/minimum_duration_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/min_duration" />
-
-                <TextView
-                    android:id="@+id/minimum_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/maximum_duration_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/max_duration" />
-
-                <TextView
-                    android:id="@+id/maximum_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/days_of_week_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/days_of_week" />
-
-                <TextView
-                    android:id="@+id/days_of_week"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/days_of_week"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/start_window_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/start_window" />
-
-                <TextView
-                    android:id="@+id/start_window"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/start_extra_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/extra_start_time" />
-
-                <TextView
-                    android:id="@+id/start_extra"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/stop_extra_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/extra_stop_time" />
-
-                <TextView
-                    android:id="@+id/stop_extra"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/retention_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/retention" />
-
-                <TextView
-                    android:id="@+id/retention"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/retention"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/priority_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/priority" />
-
-                <TextView
-                    android:id="@+id/priority"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/priority"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/approx_time_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/approx_time" />
-
-                <TextView
-                    android:id="@+id/approx_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/directory_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/directory" />
-
-                <TextView
-                    android:id="@+id/directory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/owner_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/owner" />
-
-                <TextView
-                    android:id="@+id/owner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/creator_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/creator" />
-
-                <TextView
-                    android:id="@+id/creator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/comment_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/comment" />
-
-                <TextView
-                    android:id="@+id/comment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
-        </ScrollView>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_elevation"
-            android:background="@drawable/toolbar_dropshadow" />
-    </FrameLayout>
-
-</LinearLayout>
+</ScrollView>

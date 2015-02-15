@@ -6,14 +6,9 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramGuideTimeDialogAdapter;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
 
 import android.app.Activity;
@@ -21,7 +16,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -29,33 +23,26 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
-public class ProgramGuidePagerFragment extends Fragment implements HTSListener, FragmentControlInterface {
+public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface {
 
+    @SuppressWarnings("unused")
     private final static String TAG = ProgramGuidePagerFragment.class.getSimpleName();
 
     private Activity activity;
-    private FragmentStatusInterface fragmentStatusInterface;
     private static ViewPager viewPager = null;
     private ProgramGuidePagerAdapter adapter = null;
 
     // The dialog that allows the user to select a certain time frame
     private AlertDialog programGuideTimeDialog;
-
-    ArrayAdapter<ChannelTag> tagAdapter;
-    private AlertDialog tagDialog;
-    private Toolbar toolbar;
-
-    protected boolean isDualPane;
-
+    
     // The time frame (start and end times) that shall be shown in a single fragment.  
     private static List<Long> startTimes = new ArrayList<Long>();
     private static List<Long> endTimes = new ArrayList<Long>();
@@ -72,14 +59,8 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
             return null;
         }
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
-        }
-
         View v = inflater.inflate(R.layout.program_guide_pager, container, false);
         viewPager = (ViewPager) v.findViewById(R.id.pager);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
     
@@ -90,35 +71,8 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        app.addListener(this);
-        if (!app.isLoading()) {
-            populateTagList();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        app.removeListener(this);
-    }
-
-    @Override
-    public void onDetach() {
-        fragmentStatusInterface = null;
-        super.onDetach();
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        if (activity instanceof FragmentStatusInterface) {
-            fragmentStatusInterface = (FragmentStatusInterface) activity;
-        }
 
         // Calculate the max number of fragments in the view pager 
         calcFragmentCount();
@@ -140,81 +94,32 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
         viewPager.setOffscreenPageLimit(1);
         adapter.notifyDataSetChanged();
 
-        // Create the dialog with the available channel tags
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.menu_tags);
-        tagAdapter = new ArrayAdapter<ChannelTag>(activity,
-                android.R.layout.simple_dropdown_item_1line, new ArrayList<ChannelTag>());
-        builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int pos) {
-                Utils.setChannelTagId(pos);
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.channelTagChanged(TAG);
-                }
-            }
-        });
-        tagDialog = builder.create();
-
-        if (toolbar != null) {
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return onToolbarItemSelected(item);
-                }
-            });
-            // Inflate a menu to be displayed in the toolbar
-            toolbar.inflateMenu(R.menu.epg_menu);
-            onPrepareToolbarMenu(toolbar.getMenu());
-
-            if (!isDualPane) {
-                // Allow clicking on the navigation icon, if available. The icon
-                // is set in the populateTagList method
-                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        activity.onBackPressed();
-                    }
-                });
-            }
-        }
+        setHasOptionsMenu(true);
     }
 
-    /**
-     * 
-     * @param menu
-     */
-    private void onPrepareToolbarMenu(Menu menu) {
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu if no genre colors shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsGuidePref", false);
         (menu.findItem(R.id.menu_genre_color_info_epg)).setVisible(showGenreColors);
     }
 
-    /**
-     * 
-     * @param item
-     * @return
-     */
-    private boolean onToolbarItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.menu_search:
-            activity.onSearchRequested();
-            return true;
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.epg_menu, menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
         case R.id.menu_timeframe:
             programGuideTimeDialog.show();
             return true;
-
-        case R.id.menu_tags:
-            tagDialog.show();
-            return true;
-
-        case R.id.menu_genre_color_info_channels:
+            
+        case R.id.menu_genre_color_info_epg:
             Utils.showGenreColorDialog(activity);
-            return true;
-
-        case R.id.menu_refresh:
-            fragmentStatusInterface.reloadData(TAG);
             return true;
 
         default:
@@ -346,7 +251,6 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
         if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
             ((FragmentControlInterface) cf).reloadData();
         }
-        populateTagList();
     }
 
     @Override
@@ -385,67 +289,5 @@ public class ProgramGuidePagerFragment extends Fragment implements HTSListener, 
             count = ((FragmentControlInterface) cf).getItemCount();
         }
         return count;
-    }
-
-    /**
-     * Fills the tag adapter with the available channel tags.
-     */
-    public void populateTagList() {
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        ChannelTag currentTag = Utils.getChannelTag(app);
-        int channelCount = 0;
-        for (Channel ch : app.getChannels()) {
-            if (currentTag == null || ch.hasTag(currentTag.id)) {
-                channelCount++;
-            }
-        }
-        
-        tagAdapter.clear();
-        for (ChannelTag t : app.getChannelTags()) {
-            tagAdapter.add(t);
-        }
-        // Inform the activity to show the currently visible number of the
-        // channels that are in the selected channel tag and that the channel
-        // list has been filled with data.
-        if (toolbar != null) {
-            toolbar.setTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
-            toolbar.setSubtitle(channelCount + " " + getString(R.string.items));
-            // If activated show the the channel tag icon
-            if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
-                    && currentTag != null 
-                    && currentTag.id != 0) {
-                toolbar.setNavigationIcon(new BitmapDrawable(getResources(), currentTag.iconBitmap));
-            } else {
-                toolbar.setNavigationIcon(R.drawable.ic_launcher);
-            }
-        }
-    }
-
-    @Override
-    public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    if (loading) {
-                        if (toolbar != null) {
-                            toolbar.setSubtitle(R.string.loading);
-                        }
-                    } else {
-                        populateTagList();
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * 
-     * @param title
-     */
-    public void setToolbarSubtitle(String title) {
-        if (toolbar != null) {
-            toolbar.setSubtitle(title);
-        }
     }
 }

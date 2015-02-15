@@ -33,7 +33,6 @@
     <attr name="MenuItemLayoutStyle" format="reference" />
     <attr name="MenuHeaderLayoutStyle" format="reference" />
     <attr name="menu_text_selector" format="reference" />
-    <attr name="toolbar_background_color" format="reference" />
 
     <attr name="minimumValue" format="integer"/>
     <attr name="maximumValue" format="integer"/>

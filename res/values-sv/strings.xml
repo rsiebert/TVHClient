@@ -32,7 +32,7 @@
     <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
     <string name="select_connection">Välj anslutning</string>
     <string name="add_connection">Lägg till anslutning</string>
-    <string name="cancel">Kassera värden? Alla ändringar kommer att försvinna.</string>
+    <string name="cancel_connection">Kassera värden? Alla ändringar kommer att försvinna.</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
     <string name="delete_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
     <string name="delete_series_recording">Vill du verkligen ta bort serieinspelningen \'%s\'?\n\nDetta kommer ta bort alla schemalagda inspelningar som tillhör denna serieinspelningsregel.</string>
@@ -156,6 +156,132 @@
     <string name="wol_address_invalid">MAC-adressen är ogiltig. Vänligen kolla dina inställningar.</string>
     <string name="wol_error">Misslyckades skicka wake on LAN paket till \'%1$s\'.\n Felmeddelande: %2$s</string>
 
+    <string-array name="pr_content_type0">
+        <item>Film/Drama</item>
+        <item>Nyheter/Aktualitet</item>
+        <item>Show/Tävling</item>
+        <item>Sport</item>
+        <item>Barn/Ungdom</item>
+        <item>Musik/Balett/Dans</item>
+        <item>Konst/Kultur</item>
+        <item>Samhälle/Politik/Ekonomi</item>
+        <item>Utbildning/Forskning/Fakta</item>
+        <item>Fritidsintressen</item>
+        <item>Diverse</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Film/Drama</item>
+        <item>Kriminal/Thriller</item>
+        <item>Äventyr/Västern/Krig</item>
+        <item>Science Fiction/Fantasy/Skräck</item>
+        <item>Komedi</item>
+        <item>Såpa/Melodrama/folklorist</item>
+        <item>Romantik</item>
+        <item>Seriöst/Religion/Historisk</item>
+        <item>Vuxenfilm/Drama</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>Nyheter/Aktualitet</item>
+        <item>Nyheter/Väder</item>
+        <item>Magasin</item>
+        <item>Dokumentär</item>
+        <item>Diskussion/Intervju/Debatt</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Show/Tävling</item>
+        <item>Tävling/Frågesport</item>
+        <item>Revy</item>
+        <item>Pratshow</item>
+    </string-array>
+    
+    <string-array name="pr_content_type4">
+        <item>Sport</item>
+        <item>Evenemang</item>
+        <item>Magasin</item>
+        <item>Fotboll</item>
+        <item>Tennis/Squash</item>
+        <item>Lagsports</item>
+        <item>Friidrott</item>
+        <item>Motorsport</item>
+        <item>Vattensport</item>
+        <item>Vintersport</item>
+        <item>Hästsport</item>
+        <item>Kampsport</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Barn/Ungdom</item>
+        <item>Förskola</item>
+        <item>Underhållning (6 till 14 år)</item>
+        <item>Underhållning (10 till 16 år)</item>
+        <item>Informativt/Utbildning/Skola</item>
+        <item>Tecknat/Dockor</item>
+    </string-array>
+    
+    <string-array name="pr_content_type6">
+        <item>Musik/Balett/Dans</item>
+        <item>Rock/Pop</item>
+        <item>Seriöst/Klassiskt</item>
+        <item>Folkmusik/Traditionellt</item>
+        <item>Jazz</item>
+        <item>Musikal/Opera</item>
+        <item>Balett</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Konst/Kultur</item>
+        <item>Scenkonst</item>
+        <item>Konst</item>
+        <item>Religion</item>
+        <item>Populär Kultur/Traditionell Konst</item>
+        <item>Litteratur</item>
+        <item>Film/Bio</item>
+        <item>Experimentell Film/Video</item>
+        <item>Broadcasting/Journalistik</item>
+        <item>Ny Media</item>
+        <item>Magasin</item>
+        <item>Mode</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Samhälle/Politik/Ekonomi</item>
+        <item>Magasin/Reportage/Dokumentärt</item>
+        <item>Ekonomi/Rådgivning</item>
+        <item>Anmärkningsvärda Människor</item>
+    </string-array>
+
+    <string-array name="pr_content_type9">
+        <item>Utbildning/Forskning/Fakta</item>
+        <item>Natur/Djur/Miljö</item>
+        <item>Teknik/Naturvetenskap</item>
+        <item>Medicin/Fysik/Psykologi</item>
+        <item>Utrikes/Expeditioner</item>
+        <item>Samhälle/Andlighet</item>
+        <item>Vidareutbildning</item>
+        <item>Språk</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Fritid</item>
+        <item>Turism/Resor</item>
+        <item>Hantverk</item>
+        <item>Motorism</item>
+        <item>Träning och Hälsa</item>
+        <item>Matlagning</item>
+        <item>Annonsering/Shopping</item>
+        <item>Trädgård</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Diverse</item>
+        <item>Svartvit</item>
+        <item>Opublicerat</item>
+        <item>Livesändning</item>
+    </string-array>
+
     <string name="no_transmission">Ingen sändning</string>
     <string name="no_data">Programinformation ej tillgänglig</string>
     <string name="minutes">%d min</string>
@@ -179,7 +305,7 @@
     <string name="upcoming_recordings">Kommande</string>
     <string name="failed_recordings">Misslyckade</string>
     <string name="series_recordings">Serieinspelningar</string>
-    <string name="is_series_recording">Denna inspelning är del av en serieinspelning</string>
+    <string name="is_series_recordings">Denna inspelning är del av en serieinspelning</string>
     
     <string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>

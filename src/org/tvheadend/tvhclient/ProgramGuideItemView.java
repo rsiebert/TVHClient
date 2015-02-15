@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -26,7 +25,6 @@ public class ProgramGuideItemView extends LinearLayout {
 
     private final static String TAG = ProgramGuideItemView.class.getSimpleName();
 
-    private ViewGroup viewGroupParent;
     private LinearLayout layout;
     private Activity activity;
     private int tabIndex;
@@ -66,11 +64,10 @@ public class ProgramGuideItemView extends LinearLayout {
         super(context);
     }
 
-    public ProgramGuideItemView(Activity activity, Fragment fragment, final LinearLayout layout, Bundle bundle, ViewGroup parent) {
+    public ProgramGuideItemView(Activity activity, Fragment fragment, final LinearLayout layout, Bundle bundle) {
         super(activity);
         this.activity = activity;
         this.layout = layout;
-        this.viewGroupParent = parent;
 
         // Create the interface so we can talk to the fragment
         if (activity instanceof FragmentStatusInterface) {
@@ -357,7 +354,7 @@ public class ProgramGuideItemView extends LinearLayout {
      */
     private void addCurrentProgramToView(final Program p, final int layoutWidth, final boolean expandLayout) {
 
-        View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, viewGroupParent, false);
+    	View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, null);
         final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
         final TextView title = (TextView) v.findViewById(R.id.title);
         final ImageView state = (ImageView) v.findViewById(R.id.state);
@@ -380,7 +377,7 @@ public class ProgramGuideItemView extends LinearLayout {
             Utils.setGenreColor(activity, itemLayout, p, TAG);
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
-	        Utils.setState(activity, state, p);
+	        Utils.setState(state, p.recording);
 
 	        // Only show the duration if the layout is wide enough
 	        if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {

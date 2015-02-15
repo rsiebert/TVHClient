@@ -35,4 +35,5 @@
         android:id="@+id/menu_search_epg"
         android:icon="?attr/ic_menu_search"
         android:title="@string/menu_search_epg"/>
+
 </menu>

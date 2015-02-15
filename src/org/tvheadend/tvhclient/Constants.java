@@ -5,7 +5,6 @@ public class Constants {
     // Codes to identify the returning activity
     public static final int RESULT_CODE_SETTINGS = 101;
     public static final int RESULT_CODE_START_PLAYER = 102;
-    public static final int RESULT_CODE_PROFILES = 103;
 
     // Amount of programs of a channel that shall be loaded from the server
     public static final int PREF_PROGRAMS_TO_LOAD = 15;
@@ -18,11 +17,11 @@ public class Constants {
     public static final String BUNDLE_PROGRAM_ID = "eventId";
     public static final String BUNDLE_RECORDING_ID = "dvrId";
     public static final String BUNDLE_SERIES_RECORDING_ID = "autorecId";
-    public static final String BUNDLE_TIMER_RECORDING_ID = "timerId";
     public static final String BUNDLE_RECONNECT = "reconnect";
     public static final String BUNDLE_RESTART = "reload";
     public static final String BUNDLE_COUNT = "count";
     public static final String BUNDLE_MENU_POSITION = "menuPosition";
+    public static final String BUNDLE_SHOW_CONTROLS = "showControls";
     public static final String BUNDLE_EPG_START_TIME = "epgStartTime";
     public static final String BUNDLE_EPG_END_TIME = "epgEndTime";
     public static final String BUNDLE_EPG_HOURS_TO_SHOW = "epgHoursToShow";
@@ -31,7 +30,6 @@ public class Constants {
     public static final String BUNDLE_CONNECTION_ID = "connectionId";
     public static final String BUNDLE_MANAGE_CONNECTIONS = "manageConnections";
     public static final String BUNDLE_SETTINGS_MODE = "settingsMode";
-    public static final String BUNDLE_SETTINGS_PREFS = "settingsPreferences";
 
     // Differentiates the different types of recordings
     public static final int RECORDING_TYPE_COMPLETED = 1;
@@ -47,7 +45,6 @@ public class Constants {
     public static final String COMPLETED_RECORDING_LIST_POSITION = "completed_recording_list_position";
     public static final String SCHEDULED_RECORDING_LIST_POSITION = "scheduled_recording_list_position";
     public static final String SERIES_RECORDING_LIST_POSITION = "series_recording_list_position";
-    public static final String TIMER_RECORDING_LIST_POSITION = "timer_recording_list_position";
     public static final String FAILED_RECORDING_LIST_POSITION = "failed_recording_list_position";
     public static final String LAST_CONNECTION_STATE = "last_connection_state";
 
@@ -84,9 +81,6 @@ public class Constants {
     public static final String ACTION_DVR_DELETE = "DVR_DELETE";
     public static final String ACTION_DVR_UPDATE = "DVR_UPDATE";
     public static final String ACTION_DVR_CANCEL = "DVR_CANCEL";
-    public static final String ACTION_TIMER_DVR_ADD = "TIMER_DVR_ADD";
-    public static final String ACTION_TIMER_DVR_DELETE = "TIMER_DVR_DELETE";
-    public static final String ACTION_TIMER_DVR_UPDATE = "TIMER_DVR_UPDATE";
     public static final String ACTION_SERIES_DVR_ADD = "SERIES_DVR_ADD";
     public static final String ACTION_SERIES_DVR_DELETE = "SERIES_DVR_DELETE";
     public static final String ACTION_SERIES_DVR_UPDATE = "SERIES_DVR_UPDATE";
@@ -116,8 +110,6 @@ public class Constants {
     public static final String ACTION_ADD_DVR_ENTRY = "ADD_DVR_ENTRY";
     public static final String ACTION_CANCEL_DVR_ENTRY = "CANCEL_DVR_ENTRY";
     public static final String ACTION_DELETE_DVR_ENTRY = "DELETE_DVR_ENTRY";
-    public static final String ACTION_ADD_TIMER_REC_ENTRY = "ADD_TIMER_REC_ENTRY";
-    public static final String ACTION_DELETE_TIMER_REC_ENTRY = "DELETE_TIMER_REC_ENTRY";
     public static final String ACTION_GET_DISC_SPACE = "GET_DISC_SPACE";
     public static final String ACTION_GET_DVR_CONFIG = "GET_DVR_CONFIG";
     public static final String ACTION_GET_DVR_CUTPOINTS = "GET_DVR_CUTPOINTS";
@@ -127,12 +119,4 @@ public class Constants {
     public static final String ACTION_GET_SYSTEM_TIME = "GET_SYSTEM_TIME";
     public static final String ACTION_ADD_SERIES_DVR_ENTRY = "ADD_SERIES_DVR_ENTRY";
     public static final String ACTION_DELETE_SERIES_DVR_ENTRY = "DELETE_SERIES_DVR_ENTRY";
-
-    // The default names for the playback and recording profiles
-    public static final String PROG_PROFILE_DEFAULT = "htsp";
-    public static final String REC_PROFILE_DEFAULT = "(Default Profile)";
-
-    // Time to wait for the thread before the next service call is made when
-    // either all recorded or scheduled programs are being removed. 
-    public static final int THREAD_SLEEPING_TIME = 2000;
 }

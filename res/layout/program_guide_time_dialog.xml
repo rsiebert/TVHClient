@@ -16,11 +16,8 @@
             style="?attr/HeaderFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:paddingEnd="0dp"
+            android:gravity="left"
             android:paddingLeft="8dp"
-            android:paddingRight="0dp"
-            android:paddingStart="8dp"
             android:text="@string/date" />
 
         <TextView
@@ -28,11 +25,8 @@
             style="?attr/HeaderFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:paddingEnd="0dp"
+            android:gravity="left"
             android:paddingLeft="8dp"
-            android:paddingRight="0dp"
-            android:paddingStart="8dp"
             android:text="@string/date" />
     </LinearLayout>
 
@@ -41,11 +35,8 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.5"
-        android:gravity="center|end"
-        android:paddingEnd="8dp"
-        android:paddingLeft="0dp"
+        android:gravity="center|right"
         android:paddingRight="8dp"
-        android:paddingStart="0dp"
         android:text="@string/time"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

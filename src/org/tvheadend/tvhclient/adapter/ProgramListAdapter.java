@@ -21,9 +21,9 @@ package org.tvheadend.tvhclient.adapter;
 import java.util.Comparator;
 import java.util.List;
 
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.view.View;
@@ -72,7 +72,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         ViewHolder holder = null;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.program_list_widget, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.program_list_widget, null);
             holder = new ViewHolder();
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.state = (ImageView) view.findViewById(R.id.state);
@@ -94,7 +94,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         Program p = getItem(position);
         if (p != null) {
             holder.title.setText(p.title);
-            Utils.setState(context, holder.state, p);
+            Utils.setState(holder.state, p.recording);
             Utils.setDate(holder.date, p.start);
             Utils.setTime(holder.time, p.start, p.stop);
             Utils.setDuration(holder.duration, p.start, p.stop);

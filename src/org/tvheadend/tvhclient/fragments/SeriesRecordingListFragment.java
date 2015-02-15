@@ -26,30 +26,24 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
-import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +55,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
     public static String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
-    protected ActionBarActivity activity;
+    protected Activity activity;
+    protected ActionBarInterface actionBarInterface;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected SeriesRecordingListAdapter adapter;
     private ListView listView;
@@ -72,8 +67,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private int adapterLayout = R.layout.series_recording_list_widget;
 
     protected boolean isDualPane;
-
-    private Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,20 +88,22 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
+        this.activity = activity;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
@@ -130,35 +125,14 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             }
         });
 
+        setHasOptionsMenu(true);
         registerForContextMenu(listView);
-
-        if (toolbar != null) {
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return onToolbarItemSelected(item);
-                }
-            });
-            // Inflate a menu to be displayed in the toolbar
-            toolbar.inflateMenu(R.menu.recording_menu);
-
-            toolbar.setNavigationIcon(R.drawable.ic_launcher);
-            if (!isDualPane) {
-                // Allow clicking on the navigation icon, if available. The icon is
-                // set in the populateTagList method
-                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        activity.onBackPressed();
-                    }
-                });
-            }
-        }
     }
 
     @Override
     public void onDetach() {
         fragmentStatusInterface = null;
+        actionBarInterface = null;
         super.onDetach();
     }
 
@@ -179,29 +153,23 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         app.removeListener(this);
     }
 
-    /**
-     * 
-     * @param menu
-     */
-    private void onPrepareToolbarMenu(Menu menu) {
-        // Do not show the remove and play menu in single or dual pane mode. No
-        // recording is preselected so the behavior is undefined. In dual pane
-        // mode these menus are handled by the recording details details fragment.
-        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-        (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-
-        // Adding a manual series recording also requires the unlocked version
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
-            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
-        } else {
-            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(true);
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // Only show the cancel recording menu when in dual pane mode. Only
+        // there a recording is preselected. In single mode the first recording
+        // would always be preselected. 
+        if (!isDualPane) {
+            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false)) {
+            (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+        }
+
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+        // Playing a failed recording is not possible
+        (menu.findItem(R.id.menu_play)).setVisible(false);
     }
 
     /**
@@ -218,15 +186,12 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Show the newest scheduled recordings first 
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
-
-        if (toolbar != null) {
-            onPrepareToolbarMenu(toolbar.getMenu());
-            toolbar.setTitle(getString(R.string.series_recordings));
-            if (adapter.getCount() > 0) {
-                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items_available));
-            } else {
-                toolbar.setSubtitle(R.string.no_recordings_scheduled);
-            }
+        
+        // Shows the currently visible number of recordings of the type  
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.recordings), TAG);
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.upcoming_recordings), TAG);
+            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
@@ -235,38 +200,11 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
     }
 
-    /**
-     * 
-     * @param item
-     * @return
-     */
-    private boolean onToolbarItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_record_cancel_all:
-            // Show a confirmation dialog before deleting all recordings
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.menu_record_cancel_all)
-                    .setMessage(getString(R.string.cancel_all_recordings))
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            removeAllRecordings();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // NOP
-                        }
-                    }).show();
-            return true;
-
-        case R.id.menu_add:
-            Bundle args = new Bundle();
-            DialogFragment newFragment = SeriesRecordingAddFragment.newInstance(args);
-            newFragment.show(activity.getSupportFragmentManager(), "dialog");
-            return true;
-
-        case R.id.menu_refresh:
-            fragmentStatusInterface.reloadData(TAG);
+        case R.id.menu_record_remove:
+            Utils.confirmRemoveRecording(activity, null, adapter.getSelectedItem());
             return true;
 
         default:
@@ -274,38 +212,17 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
     }
 
-    /**
-     * Calls the service to remove the scheduled recordings. The service is
-     * called in a certain interval to prevent too many calls to the interface.
-     */
-    private void removeAllRecordings() {
-        new Thread() {
-            public void run() {
-                for (int i = 0; i < adapter.getCount(); ++i) {
-                    final SeriesRecording rec = adapter.getItem(i);
-                    if (rec != null) {
-                        final Intent intent = new Intent(activity, HTSService.class);
-                        intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
-                        intent.putExtra("id", rec.id);
-                        activity.startService(intent);
-                    }
-                    try {
-                        sleep(Constants.THREAD_SLEEPING_TIME);
-                    } catch (InterruptedException e) {
-                        Log.d(TAG, "Error removing all series recordings, " + e.getLocalizedMessage());
-                    }
-                }
-            }
-        }.start();
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.recording_menu, menu);
+        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.recording_context_menu, menu);
-
-        (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        activity.getMenuInflater().inflate(R.menu.series_recording_context_menu, menu);
 
         // Get the currently selected program from the list where the context
         // menu has been triggered
@@ -324,13 +241,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        // Check for a valid adapter size and objects
-        if (info == null || adapter == null || adapter.getCount() <= info.position) {
-            return super.onContextItemSelected(item);
-        }
-
-        final SeriesRecording srec = adapter.getItem(info.position);
+        SeriesRecording srec = adapter.getItem(info.position);
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
@@ -342,7 +253,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, srec);
+            Utils.confirmRemoveRecording(activity, null, srec);
             return true;
 
         default:
@@ -372,22 +283,18 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((SeriesRecording) obj);
-                    populateList();
+                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    // Get the position of the recording that is shown before
-					// the one that has been deleted. This recording will then
-					// be selected when the list has been updated.
+                    // Get the position of the series recording that has been deleted
                     int previousPosition = adapter.getPosition((SeriesRecording) obj);
-                    if (--previousPosition < 0) {
-                        previousPosition = 0;
-                    }
                     adapter.remove((SeriesRecording) obj);
-                    populateList();
+                    // Set the series recording below the deleted one as selected
                     setInitialSelection(previousPosition);
+                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(Constants.ACTION_SERIES_DVR_UPDATE)) {
@@ -418,16 +325,13 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
         // Set the position in the adapter so that we can show the selected
         // recording in the theme with the arrow.
-        if (adapter != null) {
-            SeriesRecording srec = null;
-            if (adapter.getCount() > position) {
-                adapter.setPosition(position);
-                srec = (SeriesRecording) adapter.getItem(position);
-            }
+        if (adapter != null && adapter.getCount() > position) {
+            adapter.setPosition(position);
 
             // Simulate a click in the list item to inform the activity
             // It will then show the details fragment if dual pane is active
             if (isDualPane) {
+                SeriesRecording srec = (SeriesRecording) adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }

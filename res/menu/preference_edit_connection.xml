@@ -6,11 +6,11 @@
         android:id="@+id/menu_save"
         android:icon="?attr/ic_menu_save"
         android:title="@string/menu_save"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_cancel"
         android:icon="?attr/ic_menu_cancel"
         android:title="@string/menu_cancel"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom|withText"/>
 
 </menu>

@@ -10,7 +10,6 @@
         android:layout_width="10dip"
         android:layout_height="fill_parent"
         android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
         android:text="" />
@@ -19,10 +18,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingEnd="0dp"
-        android:paddingLeft="2dp"
-        android:paddingRight="0dp"
-        android:paddingStart="2dp" >
+        android:paddingLeft="2dp" >
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -86,10 +82,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:paddingEnd="3dp"
                 android:paddingLeft="6dp"
                 android:paddingRight="3dp"
-                android:paddingStart="6dp"
                 android:text="@string/date" />
 
             <TextView
@@ -106,7 +100,7 @@
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.3"
-                android:gravity="end"
+                android:gravity="right"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:singleLine="true"

@@ -9,7 +9,7 @@
     <string name="menu_play">Abspielen</string>
     <string name="menu_search">Suchen</string>
     <string name="menu_record_once">Aufnehmen</string>
-    <string name="menu_record_series">Automatisch Aufnehmen</string>
+    <string name="menu_record_series">Autom. Aufnehmen</string>
     <string name="menu_record_cancel">Aufnahme abbrechen</string>
     <string name="menu_record_cancel_all">Alle Aufnahmen abbrechen</string>
     <string name="menu_record_remove">Aufnahme löschen</string>
@@ -30,20 +30,15 @@
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
-    <string name="pref_connection_details">Details der Verbindung</string>
-    <string name="pref_connection_wol">Einstellungen für Wake on LAN</string>
     <string name="select_connection">Verbindung wählen</string>
     <string name="add_connection">Verbindung hinzufügen</string>
-    <string name="cancel">Aktion wirklich abbrechen? Alle Änderungen gehen verloren.</string>
+    <string name="cancel_connection">Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Soll die Verbindung \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_recording">Soll die Aufnahme \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_series_recording">Soll die Serienaufnahme \'%s\' wirklich gelöscht werden?\n\nAlle damit verbundenen geplanten Aufnahmen werden entfernt.</string>
-    <string name="delete_timer_recording">Soll die Manuelle Aufnahme \'%s\' wirklich gelöscht werden?</string>
     <string name="delete_all_recordings">Sollen ALLE Aufnahmen gelöscht werden?</string>
     <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich abgebrochen werden?</string>
     <string name="cancel_all_recordings">Sollen ALLE geplanten Aufnahmen abgebrochen werden?</string>
-    <string name="add_recording">Neue Aufnahme hinzufügen</string>
-    <string name="cancel_add_recording">Hinzufügen der Aufnahme abbrechen? Alle Eingaben gehen verloren.</string>
 
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
@@ -130,8 +125,6 @@
     <string name="pref_misc">Sonstiges</string>
     <string name="pref_clear_search_history">Lösche Suchhistorie</string>
     <string name="pref_clear_icon_cache">Lösche Senderlogos</string>
-    <string name="pref_unlocker">Features freischalten</string>
-    <string name="pref_unlocker_sum">Durch den Kauf der Applikation kannst Du zusätzliche Features freischalten und unterstützt die weitere Entwicklung.</string>
 
     <string name="pref_menu_visibility">Menü Sichtbarkeit</string>
     <string name="pref_menu_visibility_sum">Anzeigen oder Ausblenden bestimmter Menüeinträge.</string>
@@ -139,18 +132,6 @@
     <string name="pref_hide_menu_delete_all_recordings_sum">Verstecke den Menüeintrag um ein versehentliches Löschen aller aufgenommenen Programme zu vermeiden.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Menü \'Alle Aufnahmen abbrechen\' ausblenden</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Verstecke den Menüeintrag um ein versehentliches Abbrechen aller geplanter Aufnahmen zu vermeiden.</string>
-
-    <string name="loading_profiles">Lade Profile</string>
-    <string name="pref_profiles">Profile</string>
-    <string name="pref_profiles_sum">Definiere die Parameter oder Profile (falls unterstützt), die verwendet werden sollen um Programme aufzunehmen oder Aufnahmen abzuspielen.</string>
-    <string name="pref_recording_profiles">Aufnahmeprofile</string>
-    <string name="pref_recording_profiles_sum">Wähle ein Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
-    <string name="pref_playback_profiles">Wiedergabeprofile</string>
-    <string name="pref_playback_profiles_sum">Wähle ein Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
-    <string name="pref_show_notifications">Zeige Benachrichtigungen</string>
-    <string name="pref_show_notifications_sum">Wird eine Aufnahme gestarted oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt. Für diese Funktionalität muss der Hintergrunddienst aktiv sein.</string>
-    <string name="pref_show_next_program">Zeige nachfolgende Sendung</string>
-    <string name="pref_show_next_program_sum">Der Name der nachfolgenden Sendung wird in der Senderliste angezeigt. Er wird unter der Fortschrittsanzeige dargestellt.</string>
 
     <string name="clear_search_history">Lösche Suchhistorie?</string>
     <string name="clear_search_history_sum">Sind Sie sicher, dass sie alle Einträge aus der Historie löschen wollen?</string>
@@ -164,28 +145,136 @@
     <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
     <string name="err_con_timeout">Zeitüberschreitung beim Verbinden zum Server.</string>
-    <string name="err_loading_profiles">Fehler beim Laden der Profile vom Server\n%s</string>
 
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
     <string name="recording_file_invalid">Aufnahme ist ungültig bzw. fehlerhaft</string>
     <string name="recording_canceled">Aufnahmen wurde abgebrochen</string>
-    <string name="recording_started">Aufnahme gestarted</string>
-    <string name="recording_completed">Aufnahme beendet</string>
-    <string name="recording_started_text">Die Aufnahme %s wurde gestarted.</string>
-    <string name="recording_completed_text">Die Aufnahme %s wurde beendet.</string>
 
     <string name="wol_send">Wake on LAN Paket erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_address_invalid">Die MAC-Adresse ist nicht gültig. Bitte in den Einstellungen überprüfen.</string>
     <string name="wol_error">Fehler beim Senden des Wake on LAN Pakets an \'%1$s\'.\n Fehlermeldung: %2$s</string>
+
+    <string-array name="pr_content_type0">
+        <item>Film / Drama</item>
+        <item>Nachrichten / Aktuelles</item>
+        <item>Show / Spielshow</item>
+        <item>Sport</item>
+        <item>Kinder / Jugend</item>
+        <item>Musik / Ballett / Tanz</item>
+        <item>Kunst / Kultur</item>
+        <item>Gesellschaft / Politik / Wirtschaft</item>
+        <item>Bildung / Wissenschaft</item>
+        <item>Freizeit / Hobbys</item>
+        <item>Verschiedenes</item>
+    </string-array>
+    <string-array name="pr_content_type1">
+        <item>Film / Drama</item>
+        <item>Krimi / Thriller</item>
+        <item>Abenteuer / Western / Krieg</item>
+        <item>Science Fiction / Fantasy / Horror</item>
+        <item>Komödie</item>
+        <item>Seifenoper / Melodrama / Folklore</item>
+        <item>Romanze</item>
+        <item>Historisches</item>
+        <item>Erwachsenen Film / Drama</item>
+    </string-array>
+    <string-array name="pr_content_type2">
+        <item>Nachrichten / Aktuelles</item>
+        <item>Nachrichten / Wetterbericht</item>
+        <item>Magazin</item>
+        <item>Dokumentation</item>
+        <item>Diskussion / Interview / Debatte</item>
+    </string-array>
+    <string-array name="pr_content_type3">
+        <item>Show / Spielshow</item>
+        <item>Spielshow / Quiz / Contest</item>
+        <item>Varietee</item>
+        <item>Unterhaltung</item>
+    </string-array>
+    <string-array name="pr_content_type4">
+        <item>Sport</item>
+        <item>Sondersendung</item>
+        <item>Magazin</item>
+        <item>Fußball</item>
+        <item>Tennis / Squash</item>
+        <item>Mannschaftssport</item>
+        <item>Leichtathletik</item>
+        <item>Motorsport</item>
+        <item>Wassersport</item>
+        <item>Wintersport</item>
+        <item>Reitsport</item>
+        <item>Kampfsport</item>
+    </string-array>
+    <string-array name="pr_content_type5">
+        <item>Kinder / Jugend</item>
+        <item>Vorschule</item>
+        <item>Unterhaltung (6 bis 14-Jährige)</item>
+        <item>Unterhaltung (10 bis 16-Jährige)</item>
+        <item>Informatives / Bildung / Schule</item>
+        <item>Cartoons / Zeichentrick</item>
+    </string-array>
+    <string-array name="pr_content_type6">
+        <item>Musik / Ballett / Tanz</item>
+        <item>Rock und Pop</item>
+        <item>Klassik</item>
+        <item>Folk / Traditionelle Musik</item>
+        <item>Jazz</item>
+        <item>Musical / Oper</item>
+        <item>Ballet</item>
+    </string-array>
+    <string-array name="pr_content_type7">
+        <item>Kunst / Kultur</item>
+        <item>Darstellende Kunst</item>
+        <item>Ästhetisches</item>
+        <item>Religion</item>
+        <item>Pop-Kultur / Traditionelle Kunst</item>
+        <item>Literatur</item>
+        <item>Film / Kino</item>
+        <item>Experimenteller Film / Video</item>
+        <item>Rundfunk / Presse</item>
+        <item>Neue Medien</item>
+        <item>Magazin</item>
+        <item>Mode</item>
+    </string-array>
+    <string-array name="pr_content_type8">
+        <item>Gesellschaft / Politik / Wirtschaft</item>
+        <item>Magazin / Report / Dokumentation</item>
+        <item>Wirtschaft / Soziales Engagement</item>
+        <item>Bemerkenswerte Menschen</item>
+    </string-array>
+    <string-array name="pr_content_type9">
+        <item>Bildung / Wissenschaft</item>
+        <item>Natur / Tiere / Umwelt</item>
+        <item>Technik / Naturwissenschaften</item>
+        <item>Medizin / Physiologie / Psychologie</item>
+        <item>Ausland / Expeditionen</item>
+        <item>Soziales / Spirituelles</item>
+        <item>Weiterbildung</item>
+        <item>Sprachen</item>
+    </string-array>
+    <string-array name="pr_content_type10">
+        <item>Freizeit / Hobbys</item>
+        <item>Tourismus / Reisen</item>
+        <item>Handwerk</item>
+        <item>Motorsport</item>
+        <item>Fitness und Gesundheit</item>
+        <item>Kochen</item>
+        <item>Werbung / Shopping</item>
+        <item>Garten</item>
+    </string-array>
+    <string-array name="pr_content_type11">
+        <item>Verschiedenes</item>
+        <item>Schwarz / Weiß</item>
+        <item>Unveröffentlicht</item>
+        <item>Live-Sendung</item>
+    </string-array>
     
     <string name="no_transmission">Keine Übertragung</string>
     <string name="no_data">Keine Programme verfügbar</string>
     <string name="minutes">%d Min</string>
-    <string name="days">%d Tage</string>
-    <string name="not_set">Nicht gesetzt</string>
-
+    
     <string name="search_hint">Suche im TV-Programm</string>
     <string name="two_days_ago">Vor 2 Tagen</string>
     <string name="yesterday">Gestern</string>
@@ -199,27 +288,13 @@
     <string name="friday">Freitag</string>
     <string name="saturday">Samstag</string>
     <string name="sunday">Sonntag</string>
-    <string name="all_days">Alle Tage</string>
-    <string name="no_days">Keine Tage</string>
 
     <string name="programs">Programme</string>
-    <string name="completed_recordings">Abgeschlossene Aufnahmen</string>
-    <string name="upcoming_recordings">Geplante Aufnahmen</string>
-    <string name="failed_recordings">Fehlerhafte Aufnahmen</string>
+    <string name="completed_recordings">Aufgenommen</string>
+    <string name="upcoming_recordings">Geplant</string>
+    <string name="failed_recordings">Fehlerhaft</string>
     <string name="series_recordings">Serienaufnahmen</string>
-    <string name="timer_recordings">Manuelle Aufnahmen</string>
-    <string name="is_series_recording">Diese Aufnahme ist Teil einer Serienaufnahme</string>
-    <string name="is_timer_recording">Diese Aufnahme wurde per Timer manuell erstellt</string>
-    <string name="no_channels_available">Keine Sender vorhanden</string>
-    <string name="no_recordings_available">Keine Aufnahmen vorhanden</string>
-    <string name="no_recordings_scheduled">Keine Aufnahmen geplant</string>
-    <string name="no_programs_available">Keine Programme vorhanden</string>
-
-    <string name="recording_enabled">Diese Aufnahme ist aktiviert</string>
-    <string name="recording_disabled">Diese Aufnahme ist deaktiviert</string>
-    <string name="days_of_week">Wochentage</string>
-    <string name="comment">Kommentar</string>
-    <string name="name">Name</string>
+    <string name="is_series_recordings">Diese Aufnahme ist Teil einer Serienaufnahme</string>
 
     <string name="channels">Sender</string>
     <string name="recordings">Aufnahmen</string>
@@ -241,25 +316,6 @@
     <string name="content_type">Genre</string>
     <string name="series_information">Serien Information</string>
     <string name="genre_color_list">Liste der Genrefarben und deren Bedeutung.</string>
-    <string name="retention">Aufbewahrungszeit</string>
-    <string name="priority">Priorität</string>
-    <string name="path">Pfad</string>
-    <string name="directory">Verzeichnis</string>
-    <string name="owner">Besitzer</string>
-    <string name="creator">Ersteller</string>
-    <string name="approx_time">Minuten nach Mitternacht</string>
-
-    <string name="start_time">Startzeit</string>
-    <string name="stop_time">Stoppzeit</string>
-    <string name="start_window">Startfenster</string>
-    <string name="extra_start_time">Zusätzliche Minuten (Vorlaufzeit)</string>
-    <string name="extra_stop_time">Zusätzliche Minuten (Nachlaufzeit)</string>
-    <string name="min_duration">Minimale Dauer</string>
-    <string name="max_duration">Maximale Dauer</string>
-    <string name="record_from_to_time">Aufnehmen von %1$s bis %2$s</string>
-    <string name="recording_time">Aufnahmezeit</string>
-    <string name="series_recording_add_error">Kann die Serienaufnahme nicht hinzufügen.\nDer Titel darf nicht leer sein!</string>
-    <string name="time_recording_add_error">Kann diese Aufnahme nicht hinzufügen.\nDer Titel darf nicht leer sein!</string>
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>
@@ -270,27 +326,21 @@
     <string name="episode">Folge</string>
     <string name="part">Teil</string>
     <string name="progress">%1$d%% der Sendung bereits vorbei</string>
-    <string name="next_program">Nächstes Programm: %s</string>
 
-    <string name="server">Server</string>
     <string name="connection">Verbindung</string>
     <string name="disc_space">Speicherplatz</string>
     <string name="total">Total</string>
-    <string name="items_available">Einträge vorhanden</string>
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>
     <string name="ready">Bereit</string>
     <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
     <string name="currently_recording">Laufende Aufnahmen</string>
 
-    <string name="no_connection_available_advice">Keine Verbindung definiert. Mindestens eine muss vorhanden sein. In den Einstellungen kannst Du eine neue hinzufügen.</string>
-    <string name="no_connection_available">Keine Verbindung verfügbar</string>
+    <string name="no_connection_available">Immer noch keine Verbindungen gefunden. Mindestens eine Verbindung muss vorhanden sein. In den Einstellungen kannst Du eine neue hinzufügen.</string>
     <string name="no_connection_active">Mindestens eine Verbindung zu einem Server wurde gefunden, ist aber nicht aktiviert.</string>
-    <string name="number_of_connections">%d Verbindung(en) verfügbar</string>
 
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
     <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
-    <string name="feature_not_available_in_free_version">Diese Feature ist in der kostenloses Version nicht enthalten! Durch den Kauf der Applikation kannst du es freischalten und auch die weitere Entwicklung unterstützen.</string>
 
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Navigationsmenü öffnen</string>

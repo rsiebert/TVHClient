@@ -28,21 +28,18 @@ public class Recording implements Comparable<Recording> {
     public Date start;
     public Date stop;
     public String title;
+    public String summary;
     public String description;
     public Channel channel;
     public String state;
     public String error;
     public long eventId;
     public String autorecId = null;
-    public String timerecId = null;
-    public long startExtra;
-    public long stopExtra;
+    public Date startExtra;
+    public Date stopExtra;
     public long retention;
     public long priority;
     public long contentType;
-    public String owner;
-    public String creator;
-    public String path;
     public List<DvrCutpoint> dvrCutPoints = new ArrayList<DvrCutpoint>();
 
     @Override

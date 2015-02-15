@@ -41,8 +41,8 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -57,7 +57,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     @SuppressWarnings("unused")
     private final static String TAG = SearchResultActivity.class.getSimpleName();
 
-    private Toolbar toolbar;
+    private ActionBar actionBar = null;
     private SearchResultAdapter adapter;
     private ListView listView;
     private Pattern pattern;
@@ -70,6 +70,13 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         setTheme(Utils.getThemeId(this));
         super.onCreate(icicle);
         setContentView(R.layout.list_layout);
+        
+        // Setup the action bar and show the title
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(R.string.menu_search);
+        actionBar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
 
         listView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(listView);
@@ -89,36 +96,13 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                     args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
                     args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
                     args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
+                    args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
                     // Create the fragment and show it as a dialog.
                     DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
                     newFragment.show(getSupportFragmentManager(), "dialog");
                 }
             }
         });
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.menu_search);
-            toolbar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
-
-            // Allow clicking on the navigation logo, if available
-            toolbar.setNavigationIcon(R.drawable.ic_launcher);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return onToolbarItemSelected(item);
-                }
-            });
-
-            toolbar.inflateMenu(R.menu.search_menu);
-            onPrepareToolbarMenu(toolbar.getMenu());
-        }
 
         onNewIntent(getIntent());
     }
@@ -200,10 +184,8 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             }
         }
 
-        if (toolbar != null) {
-            toolbar.setTitle(android.R.string.search_go);
-            toolbar.setSubtitle(getString(R.string.loading));
-        }
+        actionBar.setTitle(android.R.string.search_go);
+        actionBar.setSubtitle(getString(R.string.loading));
         // Show that we are done when nothing has happened after 2s. 
         timerHandler.postDelayed(timerRunnable, 2000);
     }
@@ -223,16 +205,13 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         app.removeListener(this);
     }
 
-    /**
-     * 
-     * @param menu
-     * @return
-     */
-    private void onPrepareToolbarMenu(Menu menu) {
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu if no genre colors shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsSearchPref", false);
         (menu.findItem(R.id.menu_genre_color_info)).setVisible(showGenreColors);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -241,12 +220,8 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         return true;
     }
 
-    /**
-     * 
-     * @param item
-     * @return
-     */
-    private boolean onToolbarItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
             onBackPressed();
@@ -261,7 +236,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             return true;
 
         default:
-            return false;
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -329,11 +304,9 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                             adapter.notifyDataSetChanged();
 
                             // Show that we are still loading
-                            if (toolbar != null) {
-                                toolbar.setSubtitle(getString(R.string.loading)
+                            actionBar.setSubtitle(getString(R.string.loading)
                                     + "... (" + adapter.getCount() 
                                     + " " + getString(R.string.results) + ")");
-                            }
 
                             // Show that we are done when nothing has happened after 2s.
                             timerHandler.removeCallbacks(timerRunnable);
@@ -380,9 +353,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
-            if (toolbar != null) {
-                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
-            }
+            actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
         }
     };
 }

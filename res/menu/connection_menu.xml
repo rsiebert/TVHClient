@@ -21,7 +21,7 @@
         android:id="@+id/menu_edit"
         android:icon="?attr/ic_menu_edit"
         android:title="@string/menu_edit"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_delete"
         android:icon="?attr/ic_menu_delete"

@@ -3,32 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/menu_search"
-        android:icon="?attr/ic_menu_search"
-        android:orderInCategory="1"
-        android:title="@android:string/search_go"
-        app:showAsAction="ifRoom"/>
-    <item
         android:id="@+id/menu_timeframe"
         android:icon="?attr/ic_menu_timeframe"
-        android:orderInCategory="2"
         android:title="@string/menu_timeframe"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/menu_tags"
-        android:icon="?attr/ic_menu_tags"
-        android:orderInCategory="5"
-        android:title="@string/menu_tags"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom|withText"
+        android:orderInCategory="2"/>
     <item
         android:id="@+id/menu_genre_color_info_epg"
-        android:orderInCategory="6"
-        android:title="@string/menu_genre_color_info"/>
-    <item
-        android:id="@+id/menu_refresh"
-        android:icon="?attr/ic_menu_refresh"
-        android:orderInCategory="10"
-        android:title="@string/menu_refresh"
-        app:showAsAction="ifRoom"/>
-
-</menu>
+        android:title="@string/menu_genre_color_info"
+        android:orderInCategory="6"/>
+</menu>

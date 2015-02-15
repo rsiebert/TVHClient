@@ -37,26 +37,24 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         app.removeListener(this);
     }
 
-    /**
-     * 
-     * @param menu
-     */
-    private void onPrepareToolbarMenu(Menu menu) {
-        // Do not show the remove and play menu in single or dual pane mode. No
-        // recording is preselected so the behavior is undefined. In dual pane
-        // mode these menus are handled by the recording details details fragment.
-        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-        (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_add)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // Do not show the remove menu in single pane mode. No recording is
+        // preselected so the behavior is undefined. In dual pane mode one
+        // recording is also selected which is fine.
+        if (!isDualPane) {
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
+        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false)) {
             (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
-        } else {
-            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(true);
         }
+
+        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+        (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+        // Playing a scheduled recording is not possible 
+        (menu.findItem(R.id.menu_play)).setVisible(false);
     }
 
     /**
@@ -73,16 +71,12 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // Show the newest scheduled recordings first 
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
-
-        // Shows the currently visible number of scheduled recordings  
-        if (toolbar != null) {
-            onPrepareToolbarMenu(toolbar.getMenu());
-            toolbar.setTitle(getString(R.string.upcoming_recordings));
-            if (adapter.getCount() > 0) {
-                toolbar.setSubtitle(adapter.getCount() + " " + getString(R.string.items_available));
-            } else {
-                toolbar.setSubtitle(R.string.no_recordings_scheduled);
-            }
+        
+        // Shows the currently visible number of recordings of the type  
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.recordings), TAG);
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.upcoming_recordings), TAG);
+            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.

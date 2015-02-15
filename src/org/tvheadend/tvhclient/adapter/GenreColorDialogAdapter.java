@@ -30,7 +30,7 @@ public class GenreColorDialogAdapter extends ArrayAdapter<GenreColorDialogItem> 
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null) {
-            view = inflater.inflate(R.layout.genre_color_dialog, parent, false);
+            view = inflater.inflate(R.layout.genre_color_dialog, null);
             holder = new ViewHolder();
             holder.color = (TextView) view.findViewById(R.id.color);
             holder.genre = (TextView) view.findViewById(R.id.genre);

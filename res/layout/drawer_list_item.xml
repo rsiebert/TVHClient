@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="52dp"
+    android:id="@+id/item_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/listDivider" />
+    <LinearLayout
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/MenuHeaderLayoutStyle"
+        android:minHeight="2dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/header"
+            style="?attr/MenuHeaderFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="" />
+    </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/item_layout"
+        android:id="@+id/menu_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="56dp"
         android:background="?attr/MenuItemLayoutStyle"
         android:orientation="horizontal" >
 
@@ -21,11 +33,11 @@
             android:id="@+id/icon"
             android:layout_width="44dp"
             android:layout_height="fill_parent"
-            android:contentDescription="@null"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:contentDescription="@string/channel_icon"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
             android:scaleType="fitCenter"
-            android:src="@null" />
+            android:src="@drawable/ic_menu_channels_light" />
 
         <TextView
             android:id="@+id/title"
@@ -33,20 +45,16 @@
             android:layout_width="220dp"
             android:layout_height="fill_parent"
             android:gravity="center_vertical"
-            android:paddingEnd="8dp"
-            android:paddingLeft="0dp"
             android:paddingRight="8dp"
-            android:paddingStart="0dp"
             android:text="" />
 
         <TextView
             android:id="@+id/count"
             style="?attr/MenuFont"
-            android:layout_width="52dp"
+            android:layout_width="56dp"
             android:layout_height="fill_parent"
             android:gravity="center"
-            android:text="@null"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="" />
     </LinearLayout>
 
 </LinearLayout>

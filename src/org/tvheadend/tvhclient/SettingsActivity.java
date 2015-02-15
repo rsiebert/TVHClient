@@ -19,36 +19,50 @@
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.fragments.SettingsFragment;
+import org.tvheadend.tvhclient.fragments.SettingsManageConnectionFragment;
+import org.tvheadend.tvhclient.fragments.SettingsShowConnectionsFragment;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 
-public class SettingsActivity extends ActionBarActivity implements SettingsInterface {
+public class SettingsActivity extends ActionBarActivity implements ActionBarInterface, SettingsInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsActivity.class.getSimpleName();
 
+    private ActionBar actionBar = null;
     private Fragment fragment;
 
     private static boolean restart = false;
     private static boolean reconnect = false;
+    private boolean manageConnections = false;
 
     private final static int MAIN_SETTINGS = 1;
-    private final static int MAIN_SETTINGS_OTHERS = 2;
+    private final static int MANAGE_CONNECTIONS = 2;
+    private final static int EDIT_CONNECTION = 3;
+    private final static int ADD_CONNECTION = 4;
 
-    private int currentSettingsMode = MAIN_SETTINGS;
+    private int currentSettingsMode = MAIN_SETTINGS; 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
         Utils.setLanguage(this);
-        setContentView(R.layout.settings_layout);
 
+        // Setup the action bar and show the title
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        
         // Get any saved values from the bundle
         if (savedInstanceState != null) {
             currentSettingsMode = savedInstanceState.getInt(Constants.BUNDLE_SETTINGS_MODE);
@@ -64,19 +78,41 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
     @Override
     public void onResume() {
         super.onResume();
-
         // When the orientation was changed the last visible fragment is
         // available from the manager. If this is the case get it and show it
         // again.
-        fragment = (Fragment) getFragmentManager().findFragmentById(R.id.settings_fragment);
+        fragment = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
         if (fragment == null) {
-            mainSettings();
+            // Get the information if the connection fragment shall be shown.
+            // This is the case when the user has selected the connection menu
+            // from the navigation drawer.
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
+                manageConnections = bundle.getBoolean(Constants.BUNDLE_MANAGE_CONNECTIONS, false);
+            }
+            // Now show the manage connection or the general settings fragment
+            if (manageConnections) {
+                manageConnections();
+            } else {
+                mainSettings();
+            }
         } else {
             // Show the available fragment
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.settings_fragment, fragment)
+            getSupportFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commit();
+        }
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -85,9 +121,16 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
         // Depending on the current mode either show the previous settings
         // screen or exit the settings.
         if (currentSettingsMode == MAIN_SETTINGS) {
-            restartActivity();
-        } else {
-            mainSettings();
+            restartNow();
+        } else if (currentSettingsMode == MANAGE_CONNECTIONS) {
+            if (manageConnections) {
+                restartNow();
+            } else {
+                mainSettings();
+            }
+        } else if (currentSettingsMode == ADD_CONNECTION 
+                || currentSettingsMode == EDIT_CONNECTION) {
+            manageConnections();
         }
     }
 
@@ -102,7 +145,7 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
     }
 
     @Override
-    public void restartActivity() {
+    public void restartNow() {
         Intent intent = getIntent();
         intent.putExtra(Constants.BUNDLE_RESTART, restart);
         intent.putExtra(Constants.BUNDLE_RECONNECT, reconnect);
@@ -110,26 +153,50 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
         finish();
     }
 
-    /**
-     * 
-     */
     private void mainSettings() {
         currentSettingsMode = MAIN_SETTINGS;
-
         removePreviousFragment();
-        getFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, new SettingsFragment())
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
 
     @Override
     public void manageConnections() {
-        currentSettingsMode = MAIN_SETTINGS_OTHERS;
-
+        currentSettingsMode = MANAGE_CONNECTIONS;
         removePreviousFragment();
-        Intent settingsIntent = new Intent(this, SettingsShowConnectionsActivity.class);
-        startActivity(settingsIntent);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsShowConnectionsFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+    }
+
+    @Override
+    public void addConnection() {
+        currentSettingsMode = ADD_CONNECTION;
+        removePreviousFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsManageConnectionFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+    }
+
+    @Override
+    public void editConnection(long id) {
+        currentSettingsMode = EDIT_CONNECTION;
+        removePreviousFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constants.BUNDLE_CONNECTION_ID, id);
+        Fragment f = Fragment.instantiate(this, SettingsManageConnectionFragment.class.getName());
+        f.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, f)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
     }
 
     /**
@@ -137,25 +204,33 @@ public class SettingsActivity extends ActionBarActivity implements SettingsInter
      * navigating back would not show the old fragment again.
      */
     private void removePreviousFragment() {
-        Fragment f = (Fragment) getFragmentManager().findFragmentById(R.id.settings_fragment);
+        Fragment f = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
         if (f != null) {
-            getFragmentManager().beginTransaction().remove(f).commit();
+            getSupportFragmentManager().beginTransaction().remove(f).commit();
         }
     }
 
     @Override
-    public void showPreference(int pref) {
-        currentSettingsMode = MAIN_SETTINGS_OTHERS;
+    public void setActionBarTitle(final String title, final String tag) {
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
+    }
 
-        Fragment f = Fragment.instantiate(this, SettingsFragment.class.getName());
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constants.BUNDLE_SETTINGS_PREFS, pref);
-        f.setArguments(bundle);
+    @Override
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
+        if (actionBar != null) {
+            actionBar.setSubtitle(subtitle);
+        }
+    }
 
-        removePreviousFragment();
-        getFragmentManager().beginTransaction()
-                .replace(R.id.settings_fragment, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+    @Override
+    public void setActionBarIcon(Bitmap bitmap, String tag) {
+        // NOP
+    }
+
+    @Override
+    public void setActionBarIcon(int resource, String tag) {
+        // NOP
     }
 }

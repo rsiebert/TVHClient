@@ -10,10 +10,8 @@
         android:layout_width="54dp"
         android:layout_height="54dp"
         android:layout_marginBottom="3dp"
-        android:layout_marginEnd="0dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="0dp"
-        android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
         android:contentDescription="@string/channel_icon"
         android:scaleType="fitCenter" />
@@ -50,16 +48,28 @@
                 android:paddingTop="6dp"
                 android:scaleType="fitCenter" />
         </LinearLayout>
-
+        
         <TextView
-            android:id="@+id/recording_type"
+            android:id="@+id/series_recording"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:paddingBottom="3dp"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
-            android:text="@null" />
+            android:paddingBottom="3dp"
+            android:text="@string/is_series_recordings" />
+
+        <TextView
+            android:id="@+id/summary"
+            style="?attr/SubtitleFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="@string/summary" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -71,10 +81,8 @@
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:paddingEnd="3dp"
                 android:paddingLeft="6dp"
                 android:paddingRight="3dp"
-                android:paddingStart="6dp"
                 android:singleLine="true"
                 android:text="@string/channel" />
 
@@ -83,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:gravity="end"
+                android:gravity="right"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:singleLine="true"
@@ -100,10 +108,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:paddingEnd="3dp"
                 android:paddingLeft="6dp"
                 android:paddingRight="3dp"
-                android:paddingStart="6dp"
                 android:singleLine="true"
                 android:text="@string/date" />
 
@@ -112,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:gravity="end"
+                android:gravity="right"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:singleLine="true"

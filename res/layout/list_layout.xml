@@ -4,22 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <include layout="@layout/main_toolbar" />
-
-    <FrameLayout
+    <ListView
+        android:id="@+id/item_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <ListView
-            android:id="@+id/item_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fastScrollEnabled="true" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_elevation"
-            android:background="@drawable/toolbar_dropshadow" />
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:fastScrollEnabled="true" />
 
 </LinearLayout>

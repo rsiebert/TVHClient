@@ -76,11 +76,12 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         public ImageView icon;
         public TextView title;
         public ImageView state;
-        public TextView recording_type;
+        public TextView is_series_recording;
         public TextView channel;
         public TextView time;
         public TextView date;
         public TextView duration;
+        public TextView summary;
         public TextView description;
         public TextView failed_reason;
         public ImageView dual_pane_list_item_selection;
@@ -97,11 +98,12 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.recording_type = (TextView) view.findViewById(R.id.recording_type);
+            holder.is_series_recording = (TextView) view.findViewById(R.id.series_recording);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.date = (TextView) view.findViewById(R.id.date);
             holder.duration = (TextView) view.findViewById(R.id.duration);
+            holder.summary = (TextView) view.findViewById(R.id.summary);
             holder.description = (TextView) view.findViewById(R.id.description);
             holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
@@ -137,6 +139,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
+            Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
             Utils.setFailedReason(holder.failed_reason, rec);
             
@@ -150,14 +153,12 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 }
             }
 
-            // Show the information what type the recording is
-            if (holder.recording_type != null) {
-                if (rec.autorecId.length() == 0 && rec.timerecId.length() == 0) {
-                    holder.recording_type.setVisibility(ImageView.GONE);
-                } else if (rec.autorecId.length() > 0 && rec.timerecId.length() == 0) {
-                    holder.recording_type.setText(R.string.is_series_recording);
-                } else if (rec.autorecId.length() == 0 && rec.timerecId.length() > 0) {
-                    holder.recording_type.setText(R.string.is_timer_recording);
+            // Show the information if the recording belongs to a series recording
+            if (holder.is_series_recording != null) {
+                if (rec.autorecId != null) {
+                    holder.is_series_recording.setVisibility(ImageView.VISIBLE);
+                } else {
+                    holder.is_series_recording.setVisibility(ImageView.GONE);
                 }
             }
         }

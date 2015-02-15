@@ -47,7 +47,6 @@ public class HTSConnection extends Thread {
     private int seq;
     private String clientName;
     private String clientVersion;
-    private boolean loadInitialData;
     private int protocolVersion;
     private String webRoot;
     
@@ -57,7 +56,7 @@ public class HTSConnection extends Thread {
     private boolean auth;
     private Selector selector;
 
-    public HTSConnection(HTSConnectionListener listener, String clientName, String clientVersion, boolean loadInitialData) {
+    public HTSConnection(HTSConnectionListener listener, String clientName, String clientVersion) {
         
         // Disable the use of IPv6
         System.setProperty("java.net.preferIPv6Addresses", "false");
@@ -72,7 +71,6 @@ public class HTSConnection extends Thread {
         this.listener = listener;
         this.clientName = clientName;
         this.clientVersion = clientVersion;
-        this.loadInitialData = loadInitialData;
     }
 
     public void setRunning(boolean b) {
@@ -140,18 +138,14 @@ public class HTSConnection extends Thread {
 
         auth = false;
         final HTSMessage authMessage = new HTSMessage();
-        // Either load all initial data or just authenticate 
-        authMessage.setMethod(loadInitialData ? "enableAsyncMetadata" : "authenticate");
+        authMessage.setMethod("enableAsyncMetadata");
         authMessage.putField("username", username);
         final HTSResponseHandler authHandler = new HTSResponseHandler() {
+
             public void handleResponse(HTSMessage response) {
                 auth = response.getInt("noaccess", 0) != 1;
                 if (!auth) {
                     listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
-                } else {
-                    if (!loadInitialData) {
-                        listener.onError(Constants.ACTION_CONNECTION_STATE_OK);
-                    }
                 }
                 synchronized (authMessage) {
                     authMessage.notify();
@@ -233,7 +227,7 @@ public class HTSConnection extends Thread {
             socketChannel.register(selector, 0);
             socketChannel.close();
         } catch (Exception ex) {
-//            Log.e(TAG, "Can't close connection", ex);
+            Log.e(TAG, "Can't close connection", ex);
         } finally {
             lock.unlock();
         }
@@ -267,7 +261,7 @@ public class HTSConnection extends Thread {
                 }
                 socketChannel.register(selector, ops);
             } catch (Exception ex) {
-//                Log.e(TAG, "Can't read message", ex);
+                Log.e(TAG, "Can't read message", ex);
                 running = false;
             } finally {
                 lock.unlock();

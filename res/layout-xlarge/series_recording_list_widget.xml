@@ -10,10 +10,8 @@
         android:layout_width="54dp"
         android:layout_height="54dp"
         android:layout_marginBottom="3dp"
-        android:layout_marginEnd="0dp"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="0dp"
-        android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
         android:contentDescription="@string/channel_icon"
         android:scaleType="fitCenter" />
@@ -23,24 +21,40 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/title"
-            style="?attr/TitleFont"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="3dp"
-            android:text="@string/title" />
+            android:orientation="horizontal" >
+        
+	        <TextView
+	            android:id="@+id/title"
+	            style="?attr/TitleFont"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.9"
+	            android:paddingLeft="6dp"
+	            android:paddingRight="6dp"
+	            android:paddingTop="3dp"
+	            android:text="@string/title" />
+	        
+	        <ImageView
+                android:id="@+id/state"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/status_icon"
+                android:paddingBottom="0dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="3dp"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/channel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingEnd="6dp"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
-            android:paddingStart="6dp"
             android:singleLine="true"
             android:text="@string/channel" />
 
@@ -54,19 +68,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:paddingEnd="3dp"
                 android:paddingLeft="6dp"
                 android:paddingRight="3dp"
-                android:paddingStart="6dp"
                 android:singleLine="true"
                 android:text="@string/date" />
 
             <TextView
-                android:id="@+id/start"
+                android:id="@+id/approxTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:gravity="end"
+                android:gravity="right"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:singleLine="true"
@@ -74,12 +86,16 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/enabled"
-            android:layout_width="fill_parent"
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLines="6"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
-            android:text="@string/recording_enabled" />
+            android:paddingTop="3dp"
+            android:text="@string/description"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
     </LinearLayout>
 
 </LinearLayout>

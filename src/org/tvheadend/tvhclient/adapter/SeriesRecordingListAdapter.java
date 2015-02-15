@@ -18,11 +18,8 @@
  */
 package org.tvheadend.tvhclient.adapter;
 
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -79,9 +76,10 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         public ImageView icon;
         public TextView title;
         public TextView channel;
+        public ImageView state;
         public TextView daysOfWeek;
-        public TextView start;
-        public TextView isEnabled;
+        public TextView approxTime;
+        public TextView description;
         public ImageView dual_pane_list_item_selection;
     }
 
@@ -96,9 +94,10 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.channel = (TextView) view.findViewById(R.id.channel);
+            holder.state = (ImageView) view.findViewById(R.id.state);
             holder.daysOfWeek = (TextView) view.findViewById(R.id.daysOfWeek);
-            holder.start = (TextView) view.findViewById(R.id.start);
-            holder.isEnabled = (TextView) view.findViewById(R.id.enabled);
+            holder.approxTime = (TextView) view.findViewById(R.id.approxTime);
+            holder.description = (TextView) view.findViewById(R.id.description);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
@@ -129,26 +128,25 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
                 holder.channel.setText(srec.channel.name);
             }
             Utils.setChannelIcon(holder.icon, null, srec.channel);
-            Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);
+            Utils.setDescription(null, holder.description, srec.description);
 
-            if (holder.start != null) {
-                if (srec.start >= 0) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-                    String start = formatter.format(new Date(srec.start * 60L * 1000L));
-                    holder.start.setText(start);
-                    holder.start.setVisibility(View.VISIBLE);
-                } else {
-                    holder.start.setVisibility(View.GONE);
-                }
+            // Hide this for now
+            if (holder.daysOfWeek != null) {
+                holder.daysOfWeek.setVisibility(View.GONE);
+            }
+            // Hide this for now
+            if (holder.approxTime != null) {
+                holder.approxTime.setVisibility(View.GONE);
             }
 
             // Show only the recording icon
-            if (holder.isEnabled != null) {
-                if (srec.enabled) {
-                    holder.isEnabled.setText(R.string.recording_enabled);
-                } else {
-                    holder.isEnabled.setText(R.string.recording_disabled);
-                }
+            if (holder.state != null) {
+                holder.state.setVisibility(View.GONE);
+//                if (srec.enabled) {
+//                    holder.state.setImageResource(R.drawable.ic_enabled_small);
+//                } else {
+//                    holder.state.setImageResource(R.drawable.ic_disabled_small);
+//                }
             }
         }
         return view;

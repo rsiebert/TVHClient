@@ -31,13 +31,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -48,10 +45,11 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
     private Activity activity;
-    private boolean isDualPane = false;
+    private boolean showControls = false;
     private Recording rec;
 
-    private LinearLayout detailsLayout;
+    private TextView summaryLabel;
+    private TextView summary;
     private TextView descLabel;
     private TextView desc;
     private TextView channelLabel;
@@ -60,15 +58,12 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView time;
     private TextView duration;
     private TextView failed_reason;
-    private TextView recording_type;
-    private TextView priority;
-    private TextView retention;
-    private TextView startExtra;
-    private TextView stopExtra;
-    private TextView path;
-    private TextView owner;
-    private TextView creator;
-    private Toolbar toolbar;
+    private TextView is_series_recording;
+
+    private LinearLayout playerLayout;
+    private TextView play;
+    private TextView recordCancel;
+    private TextView recordRemove;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -93,15 +88,12 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        if (getDialog() != null) {
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
 
         long recId = 0;
         Bundle bundle = getArguments();
         if (bundle != null) {
             recId = bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0);
-            isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 
         // Get the recording so we can show its details 
@@ -110,7 +102,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.recording_details_layout, container, false);
-        detailsLayout = (LinearLayout) v.findViewById(R.id.details_layout);
+        summaryLabel = (TextView) v.findViewById(R.id.summary_label);
+        summary = (TextView) v.findViewById(R.id.summary);
         descLabel = (TextView) v.findViewById(R.id.description_label);
         desc = (TextView) v.findViewById(R.id.description);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
@@ -119,151 +112,106 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         time = (TextView) v.findViewById(R.id.time);
         duration = (TextView) v.findViewById(R.id.duration);
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
-        recording_type = (TextView) v.findViewById(R.id.recording_type);
-        priority = (TextView) v.findViewById(R.id.priority);
-        retention = (TextView) v.findViewById(R.id.retention);
-        startExtra = (TextView) v.findViewById(R.id.start_extra);
-        stopExtra = (TextView) v.findViewById(R.id.stop_extra);
-        owner = (TextView) v.findViewById(R.id.owner);
-        creator = (TextView) v.findViewById(R.id.creator);
-        path = (TextView) v.findViewById(R.id.path);
+        is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
+        
+        // Initialize the player layout
+        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
+        play = (TextView) v.findViewById(R.id.menu_play);
+        recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
+        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
 
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        if (rec != null) {
-            Utils.setDate(date, rec.start);
-            Utils.setTime(time, rec.start, rec.stop);
-            Utils.setDuration(duration, rec.start, rec.stop);
-            Utils.setProgressText(null, rec.start, rec.stop);
-            Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
-            Utils.setDescription(descLabel, desc, rec.description);
-            Utils.setFailedReason(failed_reason, rec);
-
-            if (owner != null && rec.owner.length() > 0) {
-                owner.setText(rec.owner);
-            }
-            if (creator != null && rec.creator.length() > 0) {
-                creator.setText(rec.creator);
-            }
-            if (path != null && rec.path.length() > 0) {
-                path.setText(rec.path);
-            }
-            if (priority != null) {
-                String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-                if (rec.priority >= 0 && rec.priority < priorityItems.length) {
-                    priority.setText(priorityItems[(int) (rec.priority)]);
-                }
-            }
-            if (retention != null) {
-                retention.setText(getString(R.string.days, (int) rec.retention));
-            }
-            if (startExtra != null && rec.startExtra >= 0) {
-                startExtra.setText(getString(R.string.minutes, (int) rec.startExtra));
-            }
-            if (stopExtra != null && rec.stopExtra >= 0) {
-                stopExtra.setText(getString(R.string.minutes, (int) rec.stopExtra));
-            }
-
-            // Show the information what type the recording is only when no dual
-            // pane is active
-            if (recording_type != null) {
-                if ((rec.autorecId.length() == 0 && rec.timerecId.length() == 0) || isDualPane) {
-                    recording_type.setVisibility(ImageView.GONE);
-                } else if (rec.autorecId.length() > 0 && rec.timerecId.length() == 0 && !isDualPane) {
-                    recording_type.setText(R.string.is_series_recording);
-                } else if (rec.autorecId.length() == 0 && rec.timerecId.length() > 0 && !isDualPane) {
-                    recording_type.setText(R.string.is_timer_recording);
-                }
-            }
-        } else {
-            detailsLayout.setVisibility(View.GONE);
+        
+        // If the recording is null exit
+        if (rec == null) {
+            return;
         }
 
-        if (toolbar != null) {
-            if (rec != null && !isDualPane) {
-                toolbar.setTitle(rec.title);
-            }
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return onToolbarItemSelected(item);
-                }
-            });
-            if (rec != null) {
-                // Inflate a menu to be displayed in the toolbar
-                toolbar.inflateMenu(R.menu.recording_details_menu);
-                onPrepareToolbarMenu(toolbar.getMenu());
+        if (getDialog() != null) {
+            getDialog().setTitle(rec.title);
+        }
+
+        // Show the player controls
+        if (showControls) {
+            addPlayerControlListeners();
+        }
+        showPlayerControls();
+
+        Utils.setDate(date, rec.start);
+        Utils.setTime(time, rec.start, rec.stop);
+        Utils.setDuration(duration, rec.start, rec.stop);
+        Utils.setProgressText(null, rec.start, rec.stop);
+        Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
+        Utils.setDescription(summaryLabel, summary, rec.summary);
+        Utils.setDescription(descLabel, desc, rec.description);
+        Utils.setFailedReason(failed_reason, rec);
+
+        // Show the information if the recording belongs to a series recording
+        // only when no dual pane is active (the controls shall be shown)
+        if (is_series_recording != null) {
+            if (rec.autorecId != null && showControls) {
+                is_series_recording.setVisibility(ImageView.VISIBLE);
+            } else {
+                is_series_recording.setVisibility(ImageView.GONE);
             }
         }
     }
 
     /**
      * 
-     * @param menu
      */
-    private void onPrepareToolbarMenu(Menu menu) {
-        if (rec == null) {
-            (menu.findItem(R.id.menu_play)).setVisible(false);
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+    private void showPlayerControls() {
+        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
+        play.setVisibility(View.GONE);
+        recordCancel.setVisibility(View.GONE);
+        recordRemove.setVisibility(View.GONE);
 
-        } else if (rec.error == null && rec.state.equals("completed")) {
+        // Show the play menu items
+        if (rec.error == null && rec.state.equals("completed")) {
             // The recording is available, it can be played and removed
-            (menu.findItem(R.id.menu_play)).setVisible(true);
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-
+            recordRemove.setVisibility(View.VISIBLE);
+            play.setVisibility(View.VISIBLE);
         } else if (rec.isRecording() || rec.isScheduled()) {
             // The recording is recording or scheduled, it can only be cancelled
-            (menu.findItem(R.id.menu_play)).setVisible(false);
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
-            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-
+            recordCancel.setVisibility(View.VISIBLE);
         } else if (rec.error != null || rec.state.equals("missed")) {
             // The recording has failed or has been missed, allow removal
-            (menu.findItem(R.id.menu_play)).setVisible(false);
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
+            recordRemove.setVisibility(View.VISIBLE);
         }
     }
 
     /**
      * 
-     * @param item
-     * @return
      */
-    protected boolean onToolbarItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.menu_play:
-            // Open a new activity that starts playing the selected recording
-            if (rec != null) {
-                Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
-                intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-                startActivity(intent);
+    private void addPlayerControlListeners() {
+        play.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open a new activity that starts playing the program
+                if (rec != null) {
+                    Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+                    intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+                    startActivity(intent);
+                }
             }
-            return true;
-
-        case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, rec);
-            if (getDialog() != null) {
-                getDialog().dismiss();
+        });
+        recordCancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.confirmCancelRecording(activity, rec);
             }
-            return true;
-
-        case R.id.menu_record_cancel:
-            Utils.confirmCancelRecording(activity, rec);
-            if (getDialog() != null) {
-                getDialog().dismiss();
+        });
+        recordRemove.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.confirmRemoveRecording(activity, rec);
             }
-            return true;
-        }
-        return false;
+        });
     }
 
     @Override
@@ -293,8 +241,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 || action.equals(Constants.ACTION_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    if (toolbar != null) {
-                        onPrepareToolbarMenu(toolbar.getMenu());
+                    if (showControls) {
+                        showPlayerControls();
                     }
                 }
             });

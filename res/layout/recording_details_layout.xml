@@ -1,222 +1,169 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <include layout="@layout/main_toolbar" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingLeft="9dp"
+        android:paddingRight="6dp"
+        android:paddingTop="6dp" >
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <ScrollView
+        <LinearLayout
+            android:id="@+id/player_layout"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="12dp">
 
-            <LinearLayout
-                android:id="@+id/details_layout"
-                android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/menu_play"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_play"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:layout_marginRight="12dp"
+                android:text="@string/menu_play" />
+
+            <TextView
+                android:id="@+id/menu_record_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_record_cancel"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/menu_record_cancel"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/menu_record_remove"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_record_remove"
+                android:gravity="center_vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/menu_record_remove"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/is_series_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/is_series_recordings"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/summary_label"
+            style="?attr/HeaderFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/summary" />
+
+        <TextView
+            android:id="@+id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingBottom="12dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="@string/summary"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/description_label"
+            style="?attr/HeaderFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/description"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/time_date_label"
+            style="?attr/HeaderFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/airing" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="12dp" >
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp" >
+                android:paddingRight="3dp"
+                android:singleLine="true"
+                android:text="@string/date" />
 
-                <TextView
-                    android:id="@+id/recording_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@null"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="3dp"
+                android:singleLine="true"
+                android:text="@string/time" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/description_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/description" />
+        <TextView
+            android:id="@+id/duration_label"
+            style="?attr/HeaderFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/duration" />
 
-                <TextView
-                    android:id="@+id/description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/description"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/duration"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <TextView
-                    android:id="@+id/time_date_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/airing" />
+        <TextView
+            android:id="@+id/channel_label"
+            style="?attr/HeaderFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/channel" />
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="12dp" >
+        <TextView
+            android:id="@+id/channel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/channel"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingEnd="12dp"
-                        android:paddingLeft="0dp"
-                        android:paddingRight="12dp"
-                        android:paddingStart="0dp"
-                        android:singleLine="true"
-                        android:text="@string/date" />
+    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:text="@string/time" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/duration_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/duration" />
-
-                <TextView
-                    android:id="@+id/duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/duration"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/channel_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/channel" />
-
-                <TextView
-                    android:id="@+id/channel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/channel"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/start_extra_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/extra_start_time" />
-
-                <TextView
-                    android:id="@+id/start_extra"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/stop_extra_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/extra_stop_time" />
-
-                <TextView
-                    android:id="@+id/stop_extra"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/retention_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/retention" />
-
-                <TextView
-                    android:id="@+id/retention"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/retention"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/priority_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/priority" />
-
-                <TextView
-                    android:id="@+id/priority"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/priority"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/path_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/path" />
-
-                <TextView
-                    android:id="@+id/path"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/owner_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/owner" />
-
-                <TextView
-                    android:id="@+id/owner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/creator_label"
-                    style="?attr/HeaderFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/creator" />
-
-                <TextView
-                    android:id="@+id/creator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:text="@string/not_set"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
-        </ScrollView>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_elevation"
-            android:background="@drawable/toolbar_dropshadow" />
-    </FrameLayout>
-
-</LinearLayout>
+</ScrollView>

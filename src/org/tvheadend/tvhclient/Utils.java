@@ -36,7 +36,6 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
 import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -154,19 +153,16 @@ public class Utils {
         }
         return s;
     }
-
+    
     /**
-     * Connects to the server with the given connection.
+     * Connects to the server with the currently active connection.
      * 
      * @param context
-     * @param conn
-     * @param force Disconnects the current connection before reconnecting
-     * @param async When enabled the client will receive continuously updates
-     *            from the server about added, updated and deleted channels, 
-     *            channel tags, dvr and epg entries.
+     * @param force
      */
-    public static void connect(final Context context, final Connection conn, final boolean force, final boolean async) {
+    public static void connect(final Context context, final boolean force) {
         Intent intent = null;
+        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
             // Create an intent and pass on the connection details
@@ -177,7 +173,6 @@ public class Utils {
             intent.putExtra("username", conn.username);
             intent.putExtra("password", conn.password);
             intent.putExtra("force", force);
-            intent.putExtra("async", async);
         }
         // Start the service with given action and data
         if (intent != null) {
@@ -186,60 +181,12 @@ public class Utils {
     }
 
     /**
-     * Connects to the server with the currently active connection.
-     * 
-     * @param context
-     * @param force Disconnects the current connection before reconnecting
-     */
-    public static void connect(final Context context, final boolean force) {
-        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        connect(context, conn, force, true);
-    }
-
-    public static void confirmRemoveRecording(final Context context, final long id, final String title, final String type) {
-
-        String message = "";
-        if (type == Constants.ACTION_DELETE_DVR_ENTRY) {
-            message = context.getString(R.string.delete_recording, title);
-        } else if (type == Constants.ACTION_DELETE_SERIES_DVR_ENTRY) {
-            message = context.getString(R.string.delete_series_recording, title);
-        } else if (type == Constants.ACTION_DELETE_TIMER_REC_ENTRY) {
-            message = context.getString(R.string.delete_timer_recording, title);
-        }
-
-        // Show a confirmation dialog before deleting the recording
-        new AlertDialog.Builder(context)
-        .setTitle(R.string.menu_record_remove)
-        .setMessage(message)
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                removeRecording(context, id, type);
-            }
-        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // NOP
-            }
-        }).show();
-    }
-
-    public static void removeRecording(final Context context, final long id, final String type) {
-        final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(type);
-        intent.putExtra("id", id);
-        context.startService(intent);
-    }
-
-    /**
      * 
      * @param context
      * @param rec
      */
     public static void confirmRemoveRecording(final Context context, final Recording rec) {
-        confirmRemoveRecording(context, 
-                Constants.ACTION_DELETE_DVR_ENTRY, 
-                R.string.delete_recording, 
-                rec.title, 
-                String.valueOf(rec.id));
+        confirmRemoveRecording(context, rec, null);
     }
 
     /**
@@ -248,24 +195,7 @@ public class Utils {
      * @param srec
      */
     public static void confirmRemoveRecording(final Context context, final SeriesRecording srec) {
-        confirmRemoveRecording(context, 
-                Constants.ACTION_DELETE_SERIES_DVR_ENTRY, 
-                R.string.delete_series_recording, 
-                srec.title, 
-                srec.id);
-    }
-
-    /**
-     * 
-     * @param context
-     * @param trec
-     */
-    public static void confirmRemoveRecording(final Context context, final TimerRecording trec) {
-        confirmRemoveRecording(context, 
-                Constants.ACTION_DELETE_TIMER_REC_ENTRY, 
-                R.string.delete_timer_recording, 
-                (trec.name.length() > 0 ? trec.name : trec.title), 
-                trec.id);
+        confirmRemoveRecording(context, null, srec);
     }
 
     /**
@@ -273,13 +203,20 @@ public class Utils {
      * from the server. A dialog is shown up front to confirm the deletion.
      * 
      * @param context
-     * @param type
-     * @param dialogTitle
-     * @param title
-     * @param id
+     * @param rec
+     * @param srec
      */
-    public static void confirmRemoveRecording(final Context context, final String type, final int dialogTitle, final String title, final String id) {
-        String message = context.getString(dialogTitle, title);
+    public static void confirmRemoveRecording(final Context context, final Recording rec, final SeriesRecording srec) {
+        if (rec == null && srec == null) {
+            return;
+        }
+
+        String message = "";
+        if (rec != null) {
+            context.getString(R.string.delete_recording, rec.title);
+        } else if (srec != null) {
+            message = context.getString(R.string.delete_series_recording, srec.title);
+        }
 
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
@@ -287,16 +224,36 @@ public class Utils {
         .setMessage(message)
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                final Intent intent = new Intent(context, HTSService.class);
-                intent.setAction(type);
-                intent.putExtra("id", id);
-                context.startService(intent);
+                removeRecording(context, rec, srec);
             }
         }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // NOP
             }
         }).show();
+    }
+
+    /**
+     * Removes either the recording or the series recording with the given id
+     * from the server.
+     * 
+     * @param context
+     * @param rec
+     */
+    public static void removeRecording(final Context context, final Recording rec, final SeriesRecording srec) {
+        if (rec == null && srec == null) {
+            return;
+        }
+        final Intent intent = new Intent(context, HTSService.class);
+        if (rec != null) {
+            intent.setAction(Constants.ACTION_DELETE_DVR_ENTRY);
+            intent.putExtra("id", rec.id);
+            context.startService(intent);
+        } else if (srec != null) {
+            intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
+            intent.putExtra("id", srec.id);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -367,21 +324,6 @@ public class Utils {
     }
 
     /**
-     * 
-     * @param context
-     * @param timerRec
-     */
-    public static void deleteTimerToRecordProgram(final Context context, final TimerRecording timerRec) {
-        if (timerRec == null) {
-            return;
-        }
-        Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
-        intent.putExtra("id", timerRec.id);
-        context.startService(intent);
-    }
-
-    /**
      * Shows or hides certain items from the program menu. This depends on the
      * current state of the program.
      *
@@ -443,39 +385,109 @@ public class Utils {
     }
 
     /**
+     * Shows or hides certain items from the recording menu. This depends on the
+     * current state of the recording.
+     * 
+     * @param menu
+     * @param rec
+     */
+    public static void setRecordingMenu(final Menu menu, final Recording rec) {
+        // Get the menu items so they can be shown 
+        // or hidden depending on the recording state
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
+        MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
+
+        // Disable these menus as a default
+        recordCancelMenuItem.setVisible(false);
+        recordRemoveMenuItem.setVisible(false);
+        playMenuItem.setVisible(false);
+        searchMenuItemEpg.setVisible(false);
+        searchMenuItemImdb.setVisible(false);
+
+        // Exit if the recording is not valid
+        if (rec == null) {
+            return;
+        }
+
+        // Allow searching the recordings
+        searchMenuItemEpg.setVisible(true);
+        searchMenuItemImdb.setVisible(true);
+
+        if (rec.error == null && rec.state.equals("completed")) {
+        	// The recording is available, it can be played and removed
+            recordRemoveMenuItem.setVisible(true);
+            playMenuItem.setVisible(true);
+        } else if (rec.isRecording() || rec.isScheduled()) {
+            // The recording is recording or scheduled, it can only be cancelled
+            recordCancelMenuItem.setVisible(true);
+        } else if (rec.error != null || rec.state.equals("missed")) {
+        	// The recording has failed or has been missed, allow removal
+        	recordRemoveMenuItem.setVisible(true);
+        }
+    }
+
+    /**
+     * Shows or hides certain icons from the recording menu. This is required
+     * because the usual way does not seem to work.
+     * 
+     * @param context
+     * @param menu
+     */
+    public static void setRecordingMenuIcons(final Context context, final Menu menu) {
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem recordCancelAllMenuItem = menu.findItem(R.id.menu_record_cancel_all);
+        MenuItem recordRemoveAllMenuItem = menu.findItem(R.id.menu_record_remove_all);
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean lightTheme = prefs.getBoolean("lightThemePref", true);
+        if (recordCancelMenuItem != null) {
+            recordCancelMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        }
+        if (recordRemoveMenuItem != null) {
+            recordRemoveMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        }
+        if (recordCancelAllMenuItem != null) {
+            recordCancelAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_cancel_light : R.drawable.ic_menu_record_cancel_dark);
+        }
+        if (recordRemoveAllMenuItem != null) {
+            recordRemoveAllMenuItem.setIcon(lightTheme ? R.drawable.ic_menu_record_remove_light : R.drawable.ic_menu_record_remove_dark);
+        }
+    }
+
+    /**
      * Shows an icon for the state of the current recording. If no recording was
      * given, the icon will be hidden.
      * 
      * @param state
      * @param recording
      */
-    public static void setState(Activity activity, ImageView state, final Program p) {
+    public static void setState(ImageView state, final Recording recording) {
         if (state == null) {
             return;
         }
-
         // If no recording was given hide the state icon
-        if (p == null || p.recording == null) {
+        if (recording == null) {
             state.setImageDrawable(null);
             state.setVisibility(ImageView.GONE);
         } else {
             // Show the state icon and set the correct image
             state.setVisibility(ImageView.VISIBLE);
 
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            Recording rec = app.getRecording(p.recording.id);
-
-            if (rec == null || rec.error != null) {
+            if (recording.error != null) {
                 state.setImageResource(R.drawable.ic_error_small);
-            } else if ("completed".equals(rec.state)) {
+            } else if ("completed".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_success_small);
-            } else if ("invalid".equals(rec.state)) {
+            } else if ("invalid".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_error_small);
-            } else if ("missed".equals(rec.state)) {
+            } else if ("missed".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_error_small);
-            } else if ("recording".equals(rec.state)) {
+            } else if ("recording".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_rec_small);
-            } else if ("scheduled".equals(rec.state)) {
+            } else if ("scheduled".equals(recording.state)) {
                 state.setImageResource(R.drawable.ic_schedule_small);
             } else {
                 state.setImageDrawable(null);
@@ -584,50 +596,6 @@ public class Utils {
     }
 
     /**
-     * 
-     * @param dayOfWeekLabel
-     * @param dayOfWeek
-     * @param dow
-     */
-    public static void setDaysOfWeek(Context context, TextView dayOfWeekLabel, TextView dayOfWeek, long dow) {
-        if (dayOfWeek == null) {
-            return;
-        }
-        String dowValue = "";
-
-        // Use different strings if either no days or all days are chosen. If
-        // certain days are selected check which ones.
-        if (dow == 0) {
-            dowValue = context.getString(R.string.no_days);
-        } else if (dow == 127) {
-            dowValue = context.getString(R.string.all_days);
-        } else {
-            String[] dayNames = context.getResources().getStringArray(R.array.day_short_names);
-
-            // Use bit shifting to check if the first bit it set. The values are:
-            // 0 = no days, 1 = Monday, 2 = Tuesday, 4 = Wednesday, 8 = Thursday,
-            // 16 = Friday, 32 = Saturday, 64 = Sunday
-            for (int i = 0; i < 7; ++i) {
-                if ((dow & 1) == 1) {
-                    dowValue += dayNames[i] + ",";
-                }
-                dow = (dow >> 1);
-            }
-            // Remove the last comma or set the default value
-            final int idx = dowValue.lastIndexOf(',');
-            if (idx > 0) {
-                dowValue = dowValue.substring(0, idx);
-            }
-        }
-
-        dayOfWeek.setText(dowValue);
-        dayOfWeek.setVisibility((dowValue.length() > 0) ? View.VISIBLE : View.GONE);
-        if (dayOfWeekLabel != null) {
-            dayOfWeekLabel.setVisibility((dowValue.length() > 0) ? View.VISIBLE : View.GONE);
-        }
-    }
-
-    /**
      * Shows the given series text for the given view. If the text is empty
      * then the view will be hidden.
      * 
@@ -711,9 +679,9 @@ public class Utils {
             return;
         }
         description.setText(desc);
-        description.setVisibility((desc != null && desc.length() > 0) ? View.VISIBLE : View.GONE);
+        description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
         if (descriptionLabel != null) {
-            descriptionLabel.setVisibility((desc != null && desc.length() > 0) ? View.VISIBLE : View.GONE);
+            descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -1010,9 +978,11 @@ public class Utils {
     public static int getChannelTagId() {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
-	    Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-	    if (conn != null) {
-	        return conn.channelTag;
+    	if (DatabaseHelper.getInstance() != null) {
+	        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+	        if (conn != null) {
+	            return conn.channelTag;
+	        }
     	}
         return 0;
     }
@@ -1025,11 +995,13 @@ public class Utils {
      */
     public static void setChannelTagId(final int channelTagId) {
         // Save the selected tag for the active connection in the database
-        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        if (conn != null) {
-            conn.channelTag = channelTagId;
-            DatabaseHelper.getInstance().updateConnection(conn);
-        }
+    	if (DatabaseHelper.getInstance() != null) {
+	        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+	        if (conn != null) {
+	            conn.channelTag = channelTagId;
+	            DatabaseHelper.getInstance().updateConnection(conn);
+	        }
+	    }
     }
 
     /**

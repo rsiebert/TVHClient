@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Stream;
 
@@ -13,9 +12,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 public class PlaybackSelectionActivity extends Activity {
-
-    @SuppressWarnings("unused")
-    private final static String TAG = PlaybackSelectionActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +34,6 @@ public class PlaybackSelectionActivity extends Activity {
         if (ch != null) {
             // Pass on the channel id and the other settings
             intent.putExtra("channelId", ch.id);
-
-            // Pass on the profile name, if allowed and available
-            Profile p = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
-            if (p != null && app.isUnlocked()) {
-                intent.putExtra("profile", p.name);
-            }
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("progResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("progTranscodePref", true));
             intent.putExtra("acodecPref", prefs.getString("progAcodecPref", Stream.STREAM_TYPE_AAC));
@@ -54,12 +44,6 @@ public class PlaybackSelectionActivity extends Activity {
         } else if (rec != null) {
             // Pass on the recording id and the other settings
             intent.putExtra("dvrId", rec.id);
-
-            // Pass on the profile name, if allowed and available
-            Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
-            if (p != null && app.isUnlocked()) {
-                intent.putExtra("profile", p.name);
-            }
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("recResolutionPref", "288")));
             intent.putExtra("transcodePref", prefs.getBoolean("recTranscodePref", false));
             intent.putExtra("acodecPref", prefs.getString("recAcodecPref", Stream.STREAM_TYPE_AAC));

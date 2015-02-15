@@ -41,12 +41,12 @@ public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTime
         public TextView date2;
         public TextView time;
     }
-
+    
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null) {
-            view = inflater.inflate(R.layout.program_guide_time_dialog, parent, false);
+            view = inflater.inflate(R.layout.program_guide_time_dialog, null);
             holder = new ViewHolder();
             holder.date1 = (TextView) view.findViewById(R.id.date1);
             holder.date2 = (TextView) view.findViewById(R.id.date2);
@@ -72,10 +72,9 @@ public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTime
             
             if (holder.date1.getText().equals(holder.date2.getText())) {
                 holder.date2.setVisibility(View.GONE);
-            } else {
-                holder.date2.setVisibility(View.VISIBLE);
             }
         }
         return view;
     }
 }
+

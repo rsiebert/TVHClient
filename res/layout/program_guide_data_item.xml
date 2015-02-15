@@ -13,7 +13,7 @@
         style="?attr/ProgramGuideTitleFont"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
-        android:gravity="top|start"
+        android:gravity="top|left"
         android:maxLines="2"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
@@ -31,11 +31,9 @@
             android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:layout_weight="0.99"
-            android:gravity="start|center_vertical"
-            android:paddingEnd="3dp"
+            android:gravity="left|center_vertical"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
-            android:paddingStart="3dp"
             android:singleLine="true"
             android:text="@string/time" />
 
@@ -44,11 +42,8 @@
             android:layout_width="18dp"
             android:layout_height="fill_parent"
             android:contentDescription="@string/status_icon"
-            android:gravity="end|center_vertical"
-            android:paddingEnd="3dp"
-            android:paddingLeft="0dp"
+            android:gravity="right|center_vertical"
             android:paddingRight="3dp"
-            android:paddingStart="0dp"
             android:scaleType="fitCenter" />
     </LinearLayout>
 

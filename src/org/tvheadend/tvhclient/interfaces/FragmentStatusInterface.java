@@ -4,7 +4,6 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.TimerRecording;
 
 
 public interface FragmentStatusInterface {
@@ -19,17 +18,7 @@ public interface FragmentStatusInterface {
      * @param tag
      */
     public void moreDataRequired(final Channel channel, final String tag);
-
-    /**
-     * Informs the activity that the fragment wants to reload the data. The
-     * activity reconnects to the server and requests the new data. The fragment
-     * itself listens to the service status and updates itself when new data has
-     * arrived.
-     * 
-     * @param tag
-     */
-    public void reloadData(final String tag);
-
+    
     /**
      * Informs the activity that the fragment has no data. The activity
      * could then start the service to load more data. The fragment itself
@@ -71,17 +60,6 @@ public interface FragmentStatusInterface {
      * @param tag
      */
     public void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag);
-
-    /**
-     * Informs the activity that user has selected a certain timer recording
-     * from the list of timer recordings. The item position within the list is
-     * also passed.
-     * 
-     * @param position
-     * @param timerRecording
-     * @param tag
-     */
-    public void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag);
 
     /**
      * Informs the activity that user has selected a certain program from the
