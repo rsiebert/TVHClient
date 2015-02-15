@@ -316,6 +316,9 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 recordRemoveMenuItem.setVisible(true);
             }
         }
+        
+        // TODO disabled until fix is found
+        playMenuItem.setVisible(false);
     }
 
     @Override

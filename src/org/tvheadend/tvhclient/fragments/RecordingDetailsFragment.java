@@ -231,6 +231,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
         }
+        // TODO disabled until fix is found
+        (menu.findItem(R.id.menu_play)).setVisible(false);
     }
 
     /**

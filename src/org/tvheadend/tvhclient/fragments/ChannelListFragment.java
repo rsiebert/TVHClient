@@ -366,6 +366,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             menu.setHeaderTitle(program.title);
             Utils.setProgramMenu(menu, program);
         }
+
+        // TODO disabled until fix is found
+        (menu.findItem(R.id.menu_play)).setVisible(false);
     }
 
     /**
