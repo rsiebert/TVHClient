@@ -89,8 +89,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private static final int MENU_CHANNELS = 0;
     private static final int MENU_COMPLETED_RECORDINGS = 1;
     private static final int MENU_SCHEDULED_RECORDINGS = 2;
-    private static final int MENU_FAILED_RECORDINGS = 3;
-    private static final int MENU_SERIES_RECORDINGS = 4;
+    private static final int MENU_SERIES_RECORDINGS = 3;
+    private static final int MENU_FAILED_RECORDINGS = 4;
     private static final int MENU_PROGRAM_GUIDE = 5;
     private static final int MENU_STATUS = 6;
     private static final int MENU_SETTINGS = 7;
@@ -298,12 +298,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         list.add(new DrawerMenuItem(MENU_SCHEDULED_RECORDINGS, menuItems[2],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[4],
-                (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
-                        : R.drawable.ic_menu_failed_recordings_dark));
         list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
+        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[4],
+                (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
+                        : R.drawable.ic_menu_failed_recordings_dark));
         list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[5],
                 (lightTheme) ? R.drawable.ic_menu_program_guide_light
                         : R.drawable.ic_menu_program_guide_dark));
