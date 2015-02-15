@@ -200,11 +200,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + " TEXT NULL;");
         }
         if (oldVersion < newVersion && newVersion == 8) {
-            // Add the id columns for the profiles.
-            db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_PLAY_PROFILE_ID
-                    + " INT DEFAULT 0;");
-            db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_REC_PROFILE_ID
-                    + " INT DEFAULT 0;");
+            // Add the id columns for the profiles but check if they exist
+            Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_CONN_NAME, null);
+            int colIndex = cursor.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID);
+            if (colIndex < 0) {
+                db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN "
+                        + KEY_CONN_PLAY_PROFILE_ID + " INT DEFAULT 0;");
+            }
+
+            cursor = db.rawQuery("SELECT * FROM " + TABLE_CONN_NAME, null);
+            colIndex = cursor.getColumnIndex(KEY_CONN_REC_PROFILE_ID);
+            if (colIndex < 0) {
+                db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN "
+                        + KEY_CONN_REC_PROFILE_ID + " INT DEFAULT 0;");
+            }
+
             // Add the new profile table
             final String query = "CREATE TABLE IF NOT EXISTS " + TABLE_PROFILE_NAME + " (" 
                     + KEY_PROFILE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
