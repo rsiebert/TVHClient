@@ -30,16 +30,21 @@
 
     <string name="pref_manage_connections">Hantera anslutningar</string>
     <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
-    <string name="select_connection">Välj anslutning</string>
+    <string name="pref_connection_details">Detaljer om ansluting</string>
+    <string name="pref_connection_wol">Wake on LAN</string>
+	<string name="select_connection">Välj anslutning</string>
     <string name="add_connection">Lägg till anslutning</string>
-    <string name="cancel_connection">Kassera värden? Alla ändringar kommer att försvinna.</string>
+    <string name="cancel">Kassera värden? Alla ändringar kommer att försvinna.</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
     <string name="delete_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
     <string name="delete_series_recording">Vill du verkligen ta bort serieinspelningen \'%s\'?\n\nDetta kommer ta bort alla schemalagda inspelningar som tillhör denna serieinspelningsregel.</string>
-    <string name="delete_all_recordings">Vill du verkligen ta bort ALLA inspelningar?</string>
+    <string name="delete_timer_recording">Vill du verkligen ta bort timer inspelningen \'%s\'?</string>
+	<string name="delete_all_recordings">Vill du verkligen ta bort ALLA inspelningar?</string>
     <string name="cancel_recording">Vill du verkligen avbryta schemalagd inspelning \'%s\'?</string>
     <string name="cancel_all_recordings">Vill du verkligen avbryta ALLA schemalagda inspelningar?</string>
-
+    <string name="add_recording">Lägg till inspelning</string>
+    <string name="cancel_add_recording">Ångra lägg till ny inspelning? Alla värden går förlorade.</string>
+	
     <string name="pref_connections">Anslutningar</string>
     <string name="pref_name">Anslutningsnamn</string>
     <string name="pref_name_sum">Fyll i ett unikt namn på anslutningen</string>
@@ -125,6 +130,8 @@
     <string name="pref_misc">Diverse</string>
     <string name="pref_clear_search_history">Rensa sökhistorik</string>
     <string name="pref_clear_icon_cache">Rensa kanalikon cache</string>
+	<string name="pref_unlocker">Aktivera alla funktioner</string>
+    <string name="pref_unlocker_sum">Aktivera tillgång till ytterligare funktioner och stödja utvecklingen genom att köpa det här programmet.</string>
 
     <string name="pref_menu_visibility">Menysynlighet</string>
     <string name="pref_menu_visibility_sum">Göm eller visa vissa menyposter.</string>
@@ -133,7 +140,19 @@
     <string name="pref_hide_menu_cancel_all_recordings">Göm \'Avbryt alla inspelningar\' menyn</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Visa inte denna meny för att undvika att avbryta alla schemalagda inspelningar.</string>
     
-    <string name="clear_search_history">Rensa sökhistorik?</string>
+    <string name="loading_profiles">Laddar profiler</string>
+    <string name="pref_profiles">Profiler</string>
+    <string name="pref_profiles_sum">Definera parametrar eller profiler (om det stöds) för hur program ska spelas in eller hur inspelningar ska spelas upp.</string>
+    <string name="pref_recording_profiles">Inspelningsprofiler</string>
+    <string name="pref_recording_profiles_sum">Välj en profil som servern ska använda för att spela in ett schemalagt program.</string>
+    <string name="pref_playback_profiles">Uppspelningsprofiler</string>
+    <string name="pref_playback_profiles_sum">Välj en profil som ska använads för att spela upp ett inspelat program.</string>
+    <string name="pref_show_notifications">Visa notifieringar</string>
+    <string name="pref_show_notifications_sum">Informarea användaren när en inspelning har startat eller är färdig. Detta kräver att servicen körs i bakgrunden.</string>
+    <string name="pref_show_next_program">Visa nästa program i kanallistan</string>
+    <string name="pref_show_next_program_sum">Namnet på programmet som kommer näst visas i kanallistan. Det visas under förloppsindikatorn.</string>
+		
+	<string name="clear_search_history">Rensa sökhistorik?</string>
     <string name="clear_search_history_sum">Är du säker på att du vill ta bort all sökhistorik?</string>
     <string name="clear_search_history_done">Sökhistorik rensad</string>
 
@@ -145,146 +164,27 @@
     <string name="err_connect">Kan ej ansluta till server</string>
     <string name="err_con_lost">Anslutning till server tappad</string>
     <string name="err_con_timeout">Anslutningstimeout</string>
+	<string name="err_loading_profiles">Ett fel uppstod vid laddning av profiler från servern\n%s</string>
 
     <string name="recording_file_missing">Inspelad fil saknas</string>
     <string name="recording_time_missed">Schemalagd inspelning missades</string>
     <string name="recording_file_invalid">Inspelningen är ogiltig</string>
     <string name="recording_canceled">Inspelningen har avbrutits</string>
+	<string name="recording_started">Inspelningen startat/string>
+    <string name="recording_completed">Inspelningen färdig</string>
+    <string name="recording_started_text">Inspelningen %s har startat</string>
+    <string name="recording_completed_text">Inspelningen %s är färdig</string>
 
     <string name="wol_send">Lyckades skicka wake on LAN paket till \'%s\'</string>
     <string name="wol_send_broadcast">Lyckades skicka wake on LAN paket som broadcast till \'%s\'</string>
     <string name="wol_address_invalid">MAC-adressen är ogiltig. Vänligen kolla dina inställningar.</string>
     <string name="wol_error">Misslyckades skicka wake on LAN paket till \'%1$s\'.\n Felmeddelande: %2$s</string>
 
-    <string-array name="pr_content_type0">
-        <item>Film/Drama</item>
-        <item>Nyheter/Aktualitet</item>
-        <item>Show/Tävling</item>
-        <item>Sport</item>
-        <item>Barn/Ungdom</item>
-        <item>Musik/Balett/Dans</item>
-        <item>Konst/Kultur</item>
-        <item>Samhälle/Politik/Ekonomi</item>
-        <item>Utbildning/Forskning/Fakta</item>
-        <item>Fritidsintressen</item>
-        <item>Diverse</item>
-    </string-array>
-
-    <string-array name="pr_content_type1">
-        <item>Film/Drama</item>
-        <item>Kriminal/Thriller</item>
-        <item>Äventyr/Västern/Krig</item>
-        <item>Science Fiction/Fantasy/Skräck</item>
-        <item>Komedi</item>
-        <item>Såpa/Melodrama/folklorist</item>
-        <item>Romantik</item>
-        <item>Seriöst/Religion/Historisk</item>
-        <item>Vuxenfilm/Drama</item>
-    </string-array>
-
-    <string-array name="pr_content_type2">
-        <item>Nyheter/Aktualitet</item>
-        <item>Nyheter/Väder</item>
-        <item>Magasin</item>
-        <item>Dokumentär</item>
-        <item>Diskussion/Intervju/Debatt</item>
-    </string-array>
-
-    <string-array name="pr_content_type3">
-        <item>Show/Tävling</item>
-        <item>Tävling/Frågesport</item>
-        <item>Revy</item>
-        <item>Pratshow</item>
-    </string-array>
-    
-    <string-array name="pr_content_type4">
-        <item>Sport</item>
-        <item>Evenemang</item>
-        <item>Magasin</item>
-        <item>Fotboll</item>
-        <item>Tennis/Squash</item>
-        <item>Lagsports</item>
-        <item>Friidrott</item>
-        <item>Motorsport</item>
-        <item>Vattensport</item>
-        <item>Vintersport</item>
-        <item>Hästsport</item>
-        <item>Kampsport</item>
-    </string-array>
-
-    <string-array name="pr_content_type5">
-        <item>Barn/Ungdom</item>
-        <item>Förskola</item>
-        <item>Underhållning (6 till 14 år)</item>
-        <item>Underhållning (10 till 16 år)</item>
-        <item>Informativt/Utbildning/Skola</item>
-        <item>Tecknat/Dockor</item>
-    </string-array>
-    
-    <string-array name="pr_content_type6">
-        <item>Musik/Balett/Dans</item>
-        <item>Rock/Pop</item>
-        <item>Seriöst/Klassiskt</item>
-        <item>Folkmusik/Traditionellt</item>
-        <item>Jazz</item>
-        <item>Musikal/Opera</item>
-        <item>Balett</item>
-    </string-array>
-
-    <string-array name="pr_content_type7">
-        <item>Konst/Kultur</item>
-        <item>Scenkonst</item>
-        <item>Konst</item>
-        <item>Religion</item>
-        <item>Populär Kultur/Traditionell Konst</item>
-        <item>Litteratur</item>
-        <item>Film/Bio</item>
-        <item>Experimentell Film/Video</item>
-        <item>Broadcasting/Journalistik</item>
-        <item>Ny Media</item>
-        <item>Magasin</item>
-        <item>Mode</item>
-    </string-array>
-
-    <string-array name="pr_content_type8">
-        <item>Samhälle/Politik/Ekonomi</item>
-        <item>Magasin/Reportage/Dokumentärt</item>
-        <item>Ekonomi/Rådgivning</item>
-        <item>Anmärkningsvärda Människor</item>
-    </string-array>
-
-    <string-array name="pr_content_type9">
-        <item>Utbildning/Forskning/Fakta</item>
-        <item>Natur/Djur/Miljö</item>
-        <item>Teknik/Naturvetenskap</item>
-        <item>Medicin/Fysik/Psykologi</item>
-        <item>Utrikes/Expeditioner</item>
-        <item>Samhälle/Andlighet</item>
-        <item>Vidareutbildning</item>
-        <item>Språk</item>
-    </string-array>
-
-    <string-array name="pr_content_type10">
-        <item>Fritid</item>
-        <item>Turism/Resor</item>
-        <item>Hantverk</item>
-        <item>Motorism</item>
-        <item>Träning och Hälsa</item>
-        <item>Matlagning</item>
-        <item>Annonsering/Shopping</item>
-        <item>Trädgård</item>
-    </string-array>
-
-    <string-array name="pr_content_type11">
-        <item>Diverse</item>
-        <item>Svartvit</item>
-        <item>Opublicerat</item>
-        <item>Livesändning</item>
-    </string-array>
-
     <string name="no_transmission">Ingen sändning</string>
     <string name="no_data">Programinformation ej tillgänglig</string>
     <string name="minutes">%d min</string>
+    <string name="days">%d dagar</string>
+    <string name="not_set">Inte satt</string>
     
     <string name="search_hint">Sök i programguide</string>
     <string name="two_days_ago">Två dagar sedan</string>
@@ -299,15 +199,29 @@
     <string name="friday">Fredag</string>
     <string name="saturday">Lördag</string>
     <string name="sunday">Söndag</string>
+    <string name="all_days">Alla dagar</string>
+    <string name="no_days">Inga dagar</string>
 
     <string name="programs">Program</string>
     <string name="completed_recordings">Färdiga</string>
     <string name="upcoming_recordings">Kommande</string>
     <string name="failed_recordings">Misslyckade</string>
     <string name="series_recordings">Serieinspelningar</string>
-    <string name="is_series_recordings">Denna inspelning är del av en serieinspelning</string>
+	<string name="timer_recordings">Tidsinspelningar</string>
+    <string name="is_series_recording">Denna inspelning är del av en serieinspelning</string>
+    <string name="is_timer_recording">Den här inspelningen skapades av en timer</string>
+    <string name="no_channels_available">Inga kanaler tillgängliga</string>
+    <string name="no_recordings_available">Inga inspelningar tillgängliga</string>
+    <string name="no_recordings_scheduled">Inga inspelningar är schemalagda</string>
+    <string name="no_programs_available">Inga program tillgängliga</string>
     
-    <string name="channels">Kanaler</string>
+    <string name="recording_enabled">Denna inspelning är aktiverad</string>
+    <string name="recording_disabled">Denna inspelning är avaktiverad</string>
+    <string name="days_of_week">Veckodagar</string>
+    <string name="comment">Kommentar</string>
+    <string name="name">Namn</string>
+	
+	<string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>
     <string name="status">Status</string>
     <string name="items">Objekt</string>
@@ -327,8 +241,27 @@
     <string name="content_type">Genre</string>
     <string name="series_information">Serieinformation</string>
     <string name="genre_color_list">Lista på genrefärger och deras betydelser.</string>
+    <string name="retention">Retention</string>
+    <string name="priority">Prioritet</string>
+    <string name="path">Sökväg</string>
+    <string name="directory">Katalog</string>
+    <string name="owner">Ägare</string>
+    <string name="creator">Skapare</string>
+    <string name="approx_time">Minuter från midnatt</string>
 
-    <string name="nothing">Ingen</string>
+    <string name="start_time">Starttid</string>
+    <string name="stop_time">Sluttid</string>
+    <string name="start_window">Startfönster</string>
+    <string name="extra_start_time">Extra startminuter (pre-tid)</string>
+    <string name="extra_stop_time">Extra stoppminuter (post-tid)</string>
+    <string name="min_duration">Minsta varaktighet</string>
+    <string name="max_duration">Maximal varaktighet</string>
+    <string name="record_from_to_time">Spela in från %1$s till %2$s</string>
+    <string name="recording_time">Inspelningstid</string>
+    <string name="series_recording_add_error">Kan inte lägga till denna serieinspelning. Titeln får inte vara tom!</string>
+    <string name="time_recording_add_error">Kan inte lägga till denna tidsinspelning. Titeln får inte vara tom!</string>
+	
+	<string name="nothing">Ingen</string>
     <string name="loading">Laddar&#8230;</string>
     <string name="loading_channel">Laddar kanal %s</string>
     <string name="updating">Uppdaterar&#8230;</string>
@@ -337,23 +270,29 @@
     <string name="episode">Avsnitt</string>
     <string name="part">Del</string>
     <string name="progress">%1$d%% av serien redan visad</string>
+	<string name="next_program">Nästa program: %s</string>
     
-    <string name="connection">Anslutning</string>
+    <string name="server">Server</string>
+	<string name="connection">Anslutning</string>
     <string name="disc_space">Diskyta</string>
     <string name="total">Totalt</string>
-    <string name="available">Tillgängligt</string>
+    <string name="items_available">objekt tillgängliga</string>
+	<string name="available">Tillgängligt</string>
     <string name="unknown">Okänd</string>
     <string name="ready">Redo</string>
     <string name="select_timeframe">Visa programguide för valt datum och tid.</string>
     <string name="currently_recording">Pågående inspelning</string>
 
-    <string name="no_connection_available">Fortfarande ingen anslutning definierad. Du måste lägga till minst en anslutning från inställningsmenyn.</string>
+    <string name="no_connection_available_advice">Ingen anslutning är tillgänglig. Du behöver åtminstone en från inställningsmenyn.</string>
+	<string name="no_connection_available">Fortfarande ingen anslutning definierad. Du måste lägga till minst en anslutning från inställningsmenyn.</string>
     <string name="no_connection_active">Minst en anslutning är definierad, men är ej aktiverad.</string>
-
+    <string name="number_of_connections">%d anslutning(ar) tillgängliga</string>
+	
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="show_play_store">Vill du söka efter tillgängliga mediaspelare på Google Play Store?</string>
-
-    <!-- Optional strings for the navigation drawer -->
+	<string name="feature_not_available_in_free_version">Den här funktionen är inte tillgänglig i den fria versionen! Du kan låsa upp denna funktion och stödja ytterligare utveckling genom att köpa programmet från Play Store.</string>
+    
+	<!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Öppna navigationslådan</string>
     <string name="drawer_close">Stäng navigationslådan</string>
 
