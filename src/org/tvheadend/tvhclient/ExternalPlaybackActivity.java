@@ -98,7 +98,8 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         String url = "http://" + host + ":" + port + path;
 
         // If a profile was given, use it instead of the old values
-        if (profile != null) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        if (profile != null && app.isUnlocked()) {
             url += "?profile=" + profile;
         } else {
             url += "?ticket=" + ticket;
