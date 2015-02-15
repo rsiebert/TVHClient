@@ -2,6 +2,7 @@ $ 1.7.1
   % VERSION 1.7.1
   _ 15.02.2015
     * Fixed database upgrade error that prevented the app from starting
+    * IMPORTANT! Playing a channel or recording has been disabled until a proper solution has been found.
 $ 1.7.0
   % VERSION 1.7.0
   _ 14.02.2015
