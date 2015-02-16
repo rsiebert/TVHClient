@@ -207,7 +207,7 @@
     <string name="upcoming_recordings">Kommande</string>
     <string name="failed_recordings">Misslyckade</string>
     <string name="series_recordings">Serieinspelningar</string>
-	<string name="timer_recordings">Tidsinspelningar</string>
+	<string name="timer_recordings">Manuella inspelningar</string>
     <string name="is_series_recording">Denna inspelning är del av en serieinspelning</string>
     <string name="is_timer_recording">Den här inspelningen skapades av en timer</string>
     <string name="no_channels_available">Inga kanaler tillgängliga</string>
