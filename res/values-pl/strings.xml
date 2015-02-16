@@ -276,7 +276,7 @@
 	<string name="connection">Połączenie</string>
     <string name="disc_space">Przestrzeń dysku</string>
     <string name="total">Całość</string>
-	<string name="items_available">items available</string>
+	<string name="items_available">pozycji dostępnych</string>
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>
     <string name="ready">Gotowy</string>
