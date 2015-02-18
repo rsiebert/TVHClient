@@ -39,21 +39,24 @@ public class FailedRecordingListFragment extends RecordingListFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Only show the cancel recording menu when in dual pane mode. Only
-        // there a recording is preselected. In single mode the first recording
-        // would always be preselected. 
-        if (!isDualPane) {
+        // Do not show the remove menu in single mode. No recording
+        // is preselected so the behavior would be undefined. In dual pane
+        // mode these menus are handled by the recording details details fragment.
+        if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+        } else {
+            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
         }
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false)) {
-            (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-        }
-
+        (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
-        // Playing a failed recording is not possible
-        (menu.findItem(R.id.menu_play)).setVisible(false);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
+            (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+        } else {
+            (menu.findItem(R.id.menu_record_remove_all)).setVisible(true);
+        }
     }
 
     /**

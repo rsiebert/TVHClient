@@ -39,22 +39,24 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Do not show the remove menu in single pane mode. No recording is
-        // preselected so the behavior is undefined. In dual pane mode one
-        // recording is also selected which is fine.
-        if (!isDualPane) {
+        // Do not show the cancel menu in single mode. No recording
+        // is preselected so the behavior would be undefined. In dual pane
+        // mode these menus are handled by the recording details details fragment.
+        if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        } else {
+            (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
         }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false)) {
-            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
-        }
-
+        (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-        // Playing a scheduled recording is not possible 
-        (menu.findItem(R.id.menu_play)).setVisible(false);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
+            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+        } else {
+            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(true);
+        }
     }
 
     /**
