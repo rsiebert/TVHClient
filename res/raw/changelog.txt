@@ -1,3 +1,20 @@
+$ 1.7.4
+  % VERSION 1.7.4
+  _ 18.02.2015
+    * Switched series and failed menu order. It was mixed for the English language
+    * Close dialog when the associated recording has been cancelled or deleted
+    * Fixed possible crash when opening the context menu
+    * Updated English, German, French, Italian, Polish and Swedish translations (thanks to all translators!)
+    * Added settings option to show next program name in the channel list
+    * Hide certain recording menu items when not required
+    * Show the recording title in the confirmation dialog
+    * When a recording was deleted select the previous one from the list
+    * Show the scheduled indication for series recordings in the program guide
+    * Added menu to remove all series recordings
+    * Made the dark theme a bit darker
+    * Made the actionbar titles consistent
+    * Increased the font of the current program name in the channel list
+    * Fixed missing dates in the program guide timeframe dialog 
 $ 1.7.3
   % VERSION 1.7.3
   _ 16.02.2015
