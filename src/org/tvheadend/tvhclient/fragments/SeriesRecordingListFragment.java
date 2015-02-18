@@ -298,12 +298,16 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         } else if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    // Get the position of the series recording that has been deleted
+                    // Get the position of the recording that is shown before
+                    // the one that has been deleted. This recording will then
+                    // be selected when the list has been updated.
                     int previousPosition = adapter.getPosition((SeriesRecording) obj);
+                    if (--previousPosition < 0) {
+                        previousPosition = 0;
+                    }
                     adapter.remove((SeriesRecording) obj);
-                    // Set the series recording below the deleted one as selected
+                    populateList();
                     setInitialSelection(previousPosition);
-                    adapter.notifyDataSetChanged();
                 }
             });
         } else if (action.equals(Constants.ACTION_SERIES_DVR_UPDATE)) {

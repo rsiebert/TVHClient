@@ -324,8 +324,13 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         } else if (action.equals(Constants.ACTION_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    // Get the position of the recording that has been deleted
+                    // Get the position of the recording that is shown before
+                    // the one that has been deleted. This recording will then
+                    // be selected when the list has been updated.
                     int previousPosition = adapter.getPosition((Recording) obj);
+                    if (--previousPosition < 0) {
+                        previousPosition = 0;
+                    }
                     adapter.remove((Recording) obj);
                     // Set the recording below the deleted one as selected
                     setInitialSelection(previousPosition);
