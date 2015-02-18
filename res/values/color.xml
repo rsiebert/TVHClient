@@ -41,4 +41,8 @@
 
     <color name="menu_text_selected_light">#aabebebe</color>
     <color name="menu_text_selected_dark">#66bebebe</color>
+
+    <!-- Theme colors -->
+    <color name="window_background_color_light">#fff5f5f5</color>
+    <color name="window_background_color_dark">#ff171717</color>
 </resources>
