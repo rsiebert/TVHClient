@@ -123,6 +123,11 @@
                 android:summary="@string/pref_hide_menu_cancel_all_recordings_sum"
                 android:title="@string/pref_hide_menu_cancel_all_recordings" />
         </PreferenceScreen>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showNextProgramPref"
+            android:summary="@string/pref_show_next_program_sum"
+            android:title="@string/pref_show_next_program" />
     </PreferenceCategory>
 
     <PreferenceCategory
