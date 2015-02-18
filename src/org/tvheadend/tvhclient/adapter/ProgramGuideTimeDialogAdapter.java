@@ -72,6 +72,8 @@ public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTime
             
             if (holder.date1.getText().equals(holder.date2.getText())) {
                 holder.date2.setVisibility(View.GONE);
+            } else {
+                holder.date2.setVisibility(View.VISIBLE);
             }
         }
         return view;
