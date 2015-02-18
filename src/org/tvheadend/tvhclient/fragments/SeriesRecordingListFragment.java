@@ -35,10 +35,13 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -210,9 +213,45 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             Utils.confirmRemoveRecording(activity, null, adapter.getSelectedItem());
             return true;
 
+        case R.id.menu_record_remove_all:
+            // Show a confirmation dialog before deleting all recordings
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.menu_record_remove_all)
+                    .setMessage(getString(R.string.delete_all_recordings))
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            removeAllRecordings();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // NOP
+                        }
+                    }).show();
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Calls the service to remove the series recordings. The service is
+     * called in a certain interval to prevent too many calls to the interface.
+     */
+    private void removeAllRecordings() {
+        new Thread() {
+            public void run() {
+                for (int i = 0; i < adapter.getCount(); ++i) {
+                    Utils.removeRecording(activity, null, adapter.getItem(i));
+                    try {
+                        sleep(Constants.THREAD_SLEEPING_TIME);
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, "Error removing all series recordings, " + e.getLocalizedMessage());
+                    }
+                }
+            }
+        }.start();
     }
 
     @Override

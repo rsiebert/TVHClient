@@ -70,10 +70,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
     protected boolean isDualPane;
 
-    // Time to wait for the thread before the next service call is made when
-    // either all recorded or scheduled programs are being removed. 
-    private static final int THREAD_SLEEPING_TIME = 2000;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -212,7 +208,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 for (int i = 0; i < adapter.getCount(); ++i) {
                     Utils.cancelRecording(activity, adapter.getItem(i));
                     try {
-                        sleep(THREAD_SLEEPING_TIME);
+                        sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
                         Log.d(TAG, "Error cancelling all recordings, " + e.getLocalizedMessage());
                     }
@@ -231,7 +227,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 for (int i = 0; i < adapter.getCount(); ++i) {
                     Utils.removeRecording(activity, adapter.getItem(i), null);
                     try {
-                        sleep(THREAD_SLEEPING_TIME);
+                        sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
                         Log.d(TAG, "Error removing all recordings, " + e.getLocalizedMessage());
                     }
