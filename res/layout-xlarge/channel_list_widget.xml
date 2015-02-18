@@ -83,6 +83,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:text="@string/title"
+                android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <LinearLayout
