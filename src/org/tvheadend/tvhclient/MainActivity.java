@@ -321,6 +321,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                 (lightTheme) ? R.drawable.ic_menu_connections_light
                         : R.drawable.ic_menu_connections_dark));
 
+        // Hide this menu entry for now
+        list.get(MENU_TIMER_RECORDINGS).isVisible = false;
         return list;
     }
 
@@ -856,7 +858,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     drawerAdapter.getItem(MENU_CHANNELS).isVisible = true;
                     drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).isVisible = true;
                     drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).isVisible = true;
-                    drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = false;
                     drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = true;
 
                     // Only show the series recording entry when the server supports it
@@ -883,7 +884,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                         drawerAdapter.getItem(MENU_CHANNELS).isVisible = false;
                         drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).isVisible = false;
-                        drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_PROGRAM_GUIDE).isVisible = false;
