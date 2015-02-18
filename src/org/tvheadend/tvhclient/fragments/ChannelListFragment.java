@@ -267,9 +267,13 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Program program = null;
         Channel channel = null;
-        if (adapter.getCount() > info.position) {
-            channel = adapter.getItem(info.position);
+        
+        // Check for a valid adapter size and objects
+        if (info == null || adapter == null || adapter.getCount() <= info.position) {
+            return super.onContextItemSelected(item);
         }
+
+        channel = adapter.getItem(info.position);
         if (channel != null) {
             synchronized(channel.epg) {
                 Iterator<Program> it = channel.epg.iterator();
