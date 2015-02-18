@@ -63,7 +63,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         ViewHolder holder = null;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.connection_list_widget, null);
+            view = context.getLayoutInflater().inflate(R.layout.connection_list_widget, parent, false);
             holder = new ViewHolder();
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.summary = (TextView) view.findViewById(R.id.summary);
