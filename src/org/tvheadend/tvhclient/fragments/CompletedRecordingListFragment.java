@@ -45,9 +45,6 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
             (menu.findItem(R.id.menu_play)).setVisible(false);
-        } else {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-            (menu.findItem(R.id.menu_play)).setVisible(true);
         }
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
@@ -55,8 +52,6 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-        } else {
-            (menu.findItem(R.id.menu_record_remove_all)).setVisible(true);
         }
     }
 

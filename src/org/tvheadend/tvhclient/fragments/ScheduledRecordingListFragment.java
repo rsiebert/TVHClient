@@ -44,8 +44,6 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // mode these menus are handled by the recording details details fragment.
         if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        } else {
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
         }
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
@@ -54,8 +52,6 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
-        } else {
-            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(true);
         }
     }
 

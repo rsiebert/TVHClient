@@ -163,8 +163,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // mode these menus are handled by the recording details details fragment.
         if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-        } else {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
         }
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
@@ -173,8 +171,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-        } else {
-            (menu.findItem(R.id.menu_record_remove_all)).setVisible(true);
         }
     }
 
