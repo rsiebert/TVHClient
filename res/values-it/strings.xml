@@ -12,8 +12,8 @@
     <string name="menu_record_series">Registra serie (Autorec)</string>
     <string name="menu_record_cancel">Annulla registrazione</string>
     <string name="menu_record_cancel_all">Annulla tutte registrazioni</string>
-    <string name="menu_record_remove">Cancella registrazione</string>
-    <string name="menu_record_remove_all">Cancella tutte registrazioni</string>
+    <string name="menu_record_remove">Elimina registrazione</string>
+    <string name="menu_record_remove_all">Elimina tutte registrazioni</string>
     <string name="menu_search_imdb">Cerca su IMDB</string>
     <string name="menu_search_epg">Cerca nella guida programmi</string>
     <string name="menu_add">Aggiungi</string>
@@ -22,7 +22,7 @@
     <string name="menu_set_active">Attiva</string>
     <string name="menu_set_not_active">Disattiva</string>
     <string name="menu_edit">Modifica</string>
-    <string name="menu_delete">Cancella</string>
+    <string name="menu_delete">Elimina</string>
     <string name="menu_connections">Connessioni</string>
     <string name="menu_timeframe">Linea temporale</string>
     <string name="menu_genre_color_info">Illustra colori dei generi</string>
@@ -30,15 +30,20 @@
 
     <string name="pref_manage_connections">Gestisci connessioni</string>
     <string name="pref_manage_connections_sum">Selezione la tua connessione attiva a un server TVHeadend oppure aggiungi, modifica o rimuovi connessioni.</string>
+    <string name="pref_connection_details">Dettagli connessione</string>
+    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="select_connection">Seleziona connessione</string>
     <string name="add_connection">Aggiungi connessione</string>
-    <string name="cancel_connection">Scartare i valori? Tutte le modifiche andranno perdute.</string>
+    <string name="cancel">Annullare le modifiche? Tutte le modifiche non salvate andranno perdute.</string>
     <string name="delete_connection">Vuoi veramente cancellare la connessione \'%s\'?</string>
     <string name="delete_recording">Vuoi veramente cancellare la registrazione \'%s\'?</string>
     <string name="delete_series_recording">Vuoi veramente cancellare la registrazione della serie \'%s\'?\n\nQuesto rimuoverà tutte le registrazioni programmate che appartengono a quella regola di registrazione della serie.</string>
+    <string name="delete_timer_recording">uoi veramente cancellare la registrazione manuale \'%s\'?</string>
     <string name="delete_all_recordings">Vuoi veramente cancellare TUTTE le registrazioni fallite?</string>
     <string name="cancel_recording">Vuoi veramente annullare la registrazione programmata \'%s\'?</string>
     <string name="cancel_all_recordings">Vuoi veramente annullare TUTTE le registrazioni programmate?</string>
+    <string name="add_recording">Aggiungi nuova registrazione</string>
+    <string name="cancel_add_recording">Annullare l\'aggiunta di una nuova registrzione? Tutti i valori saranno persi.</string>
 
     <string name="pref_connections">Connessioni</string>
     <string name="pref_name">Nome connessione</string>
@@ -125,13 +130,27 @@
     <string name="pref_misc">Varie</string>
     <string name="pref_clear_search_history">Pulire cronologia ricerche</string>
     <string name="pref_clear_icon_cache">Pulire cache icone canali</string>
+    <string name="pref_unlocker">COMPRA VERSIONE COMPLETA</string>
+    <string name="pref_unlocker_sum">Abilita l\'accesso a tutte le opzioni comprando l\'applicazione.</string>
 
     <string name="pref_menu_visibility">Visibilità menu</string>
     <string name="pref_menu_visibility_sum">Nasconde o mostra alcuni elementi dei menu.</string>
-    <string name="pref_hide_menu_delete_all_recordings">Nascondi voce \`Cancella tutte registrazioni\`</string>
+    <string name="pref_hide_menu_delete_all_recordings">Nascondi voce \`Elimina tutte registrazioni\`</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Non mostra questa voce per prevenire l\'accidentale cancellazione di tutte le registrazioni.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Nascondi voce \`Annulla tutte registrazioni\`</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Non mostra questa voce per prevenire l\'accidentale annullamento di tutte le registrazioni programmate.</string>
+
+    <string name="loading_profiles">Caricamento dei profili</string>
+    <string name="pref_profiles">Profili</string>
+    <string name="pref_profiles_sum">Definisci i parametri o i profili (se supportati) di come i programmi devono essere registrati o le registrazioni riprodotte.</string>
+    <string name="pref_recording_profiles">Profili di registrazione</string>
+    <string name="pref_recording_profiles_sum">Scegli il profilo che il server userà per le registrazioni programmate.</string>
+    <string name="pref_playback_profiles">Profili di riproduzione</string>
+    <string name="pref_playback_profiles_sum">Scegli il profilo che il server userà per riprodurre i programmi registrati.</string>
+    <string name="pref_show_notifications">Mostra notifiche</string>
+    <string name="pref_show_notifications_sum">Mostra una notifica quando una registrazione inizia o finisce. Richiede servizio in background.</string>
+    <string name="pref_show_next_program">Mostra il prossimo programma nella lista dei canali</string>
+    <string name="pref_show_next_program_sum">Il nome del programma seguente sarà mostrato nella lista dei canali sotto l\'indicatore del progresso.</string>
 
     <string name="clear_search_history">Pulire cronologia ricerche?</string>
     <string name="clear_search_history_sum">Sei sicuro di voler rimuovere tutte le voci della cronologia delle ricerche?</string>
@@ -150,141 +169,21 @@
     <string name="recording_time_missed">Programmazione della registrazione mancata</string>
     <string name="recording_file_invalid">Registrazione non valida</string>
     <string name="recording_canceled">Registrazione annullata</string>
+    <string name="recording_started">Registrazione iniziata</string>
+    <string name="recording_completed">Registrazione completata</string>
+    <string name="recording_started_text">La registrazione %s è stata avviata</string>
+    <string name="recording_completed_text">La registrazione %s è stata completata</string>
 
     <string name="wol_send">Inviato con successo un pacchetto wake on LAN packet a \'%s\'</string>
     <string name="wol_send_broadcast">Inviato con successo un pacchetto wake on LAN in broadcast a \'%s\'</string>
     <string name="wol_address_invalid">L\'indirizzo MAC non è valido. Per favore controlla le impostazioni.</string>
     <string name="wol_error">Errore durante l\'invio del pacchetto wake on LAN a \'%1$s\'.\n Messaggio d\'errore: %2$s</string>
 
-    <string-array name="pr_content_type0">
-        <item>Film/Drama</item>
-        <item>Notizie/Attualità</item>
-        <item>Show/Game show</item>
-        <item>Sports</item>
-        <item>Bambini/Giovani</item>
-        <item>Musica/Balletto/Danza</item>
-        <item>Arte/Cultura</item>
-        <item>Sociale/Politica/Economia</item>
-        <item>Educazione/Scienza</item>
-        <item>Hobby</item>
-        <item>Misc</item>
-    </string-array>
-
-    <string-array name="pr_content_type1">
-        <item>Film/Drama</item>
-        <item>Detective/Thriller</item>
-        <item>Avventura/Western/Guerra</item>
-        <item>Fantascientifico/Fantasy/Horror</item>
-        <item>Commedia</item>
-        <item>Telenovela/Melodramma/Folcloristico</item>
-        <item>Romantico</item>
-        <item>Religioso/Storico</item>
-        <item>Film per adulti/Drama</item>
-    </string-array>
-
-    <string-array name="pr_content_type2">
-        <item>Notizie/Attualità</item>
-        <item>Notizie/Meteo</item>
-        <item>Magazine</item>
-        <item>Documentario</item>
-        <item>Intervista/Dibattito</item>
-    </string-array>
-
-    <string-array name="pr_content_type3">
-        <item>Show/Game show</item>
-        <item>Game show/Quiz/Contest</item>
-        <item>Varietà</item>
-        <item>Talk show</item>
-    </string-array>
-
-    <string-array name="pr_content_type4">
-        <item>Sports</item>
-        <item>Evento Speciale</item>
-        <item>Magazine</item>
-        <item>Football/Calcio</item>
-        <item>Tennis/Squash</item>
-        <item>Sport di squadra</item>
-        <item>Atletica</item>
-        <item>Sport Motori</item>
-        <item>Sport Acquatici</item>
-        <item>Sport Invernali</item>
-        <item>Equestre</item>
-        <item>Arti Marziali</item>
-    </string-array>
-
-    <string-array name="pr_content_type5">
-        <item>Bambini/Giovani</item>
-        <item>Pre-scuola</item>
-        <item>Intrattenimento (6 &#8211; 14 anni)</item>
-        <item>Intrattenimento (10 &#8211; 16 anni)</item>
-        <item>Informativo/Educativo/Scuola</item>
-        <item>Cartoni Animati/Pupazzi</item>
-    </string-array>
-
-    <string-array name="pr_content_type6">
-        <item>Musica/Balletto/Danza</item>
-        <item>Rock/Pop</item>
-        <item>Musica Classica</item>
-        <item>Folk/Musica Tradizionale</item>
-        <item>Jazz</item>
-        <item>Musical/Opera</item>
-        <item>Balletto</item>
-    </string-array>
-
-    <string-array name="pr_content_type7">
-        <item>Arte/Cultura</item>
-        <item>Performing Arts</item>
-        <item>Belle Arti</item>
-        <item>Religione</item>
-        <item>Cultura Popolare/Arte Tradizionale</item>
-        <item>Letteratura</item>
-        <item>Film/Cinema</item>
-        <item>Film Sperimentale/Video</item>
-        <item>Broadcasting/Press</item>
-        <item>New Media</item>
-        <item>Magazine</item>
-        <item>Fashion</item>
-    </string-array>
-
-    <string-array name="pr_content_type8">
-        <item>Sociale/Politica/Economia</item>
-        <item>Magazine/Report/Documentario</item>
-        <item>Economia/Avviso Sociale</item>
-        <item>Persone Famose</item>
-    </string-array>
-
-    <string-array name="pr_content_type9">
-        <item>Educazione/Scienza</item>
-        <item>Natura/Animali/Ambiente</item>
-        <item>Tecnologia/Scienze Naturali</item>
-        <item>Medicina/Fisiologia/Psicologia</item>
-        <item>Paesi Stranieri/Spedizioni</item>
-        <item>Sociale/Scienze Spirituali</item>
-        <item>Educazione Avanzata</item>
-        <item>Lingue</item>
-    </string-array>
-
-    <string-array name="pr_content_type10">
-        <item>Hobby</item>
-        <item>Turismo/Viaggi</item>
-        <item>Faidate</item>
-        <item>Motori</item>
-        <item>Fitness e Benessere</item>
-        <item>Cucina</item>
-        <item>Televendite/Shopping</item>
-        <item>Giardinaggio</item>
-    </string-array>
-
-    <string-array name="pr_content_type11">
-        <item>Misc</item>
-        <item>Bianco e Nero</item>
-        <item>Non Pubblicati</item>
-        <item>Dirette TV</item>
-    </string-array>
-
     <string name="no_transmission">Nessuna trasmissione</string>
     <string name="no_data">Programmazione non disponibile</string>
     <string name="minutes">%d minuti</string>
+    <string name="days">%d giorni</string>
+    <string name="not_set">Non impostato</string>
 
     <string name="search_hint">Cerca nella guida</string>
     <string name="two_days_ago">Due giorni fa</string>
@@ -299,14 +198,27 @@
     <string name="friday">Venerdì</string>
     <string name="saturday">Sabato</string>
     <string name="sunday">Domenica</string>
+    <string name="all_days">Tutti i giorni</string>
+    <string name="no_days">Nessun giorno</string>
 
     <string name="programs">Programmi</string>
-    <string name="completed_recordings">Completate</string>
-    <string name="upcoming_recordings">In arrivo</string>
-    <string name="failed_recordings">Fallite</string>
+    <string name="completed_recordings">Registrazioni completate</string>
+    <string name="upcoming_recordings">Registrazioni programmate</string>
+    <string name="failed_recordings">Registrazioni fallite</string>
+    <string name="series_recordings">Registrazioni di serie</string>
+    <string name="timer_recordings">Registrazioni manuali</string>
+    <string name="is_series_recording">Questa registrazione fa parte di una registrazione di serie</string>
+    <string name="is_timer_recording">Questa registrazione è stata creata manualmente</string>
+    <string name="no_channels_available">Nessun canale disponibile</string>
+    <string name="no_recordings_available">Nessuna registrazione disponibile</string>
+    <string name="no_recordings_scheduled">Nessuna registrazione programmata</string>
+    <string name="no_programs_available">Nessun programma disponibile</string>
 
-    <string name="series_recordings">Serie di registrazioni</string>
-    <string name="is_series_recordings">Questa registrazione fa parte di una serie di registrazioni</string>
+    <string name="recording_enabled">Questa registrazione è abilitata</string>
+    <string name="recording_disabled">Questa registrazione è disabilitata</string>
+    <string name="days_of_week">Giorni della settimana</string>
+    <string name="comment">Commento</string>
+    <string name="name">Nome</string>
 
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>
@@ -328,8 +240,27 @@
     <string name="content_type">Tipo di contenuto</string>
     <string name="series_information">Informazione serie</string>
     <string name="genre_color_list">Lista dei colori dei generi e loro significato.</string>
+    <string name="retention">Memorizzazione</string>
+    <string name="priority">Priorità</string>
+    <string name="path">Percorso</string>
+    <string name="directory">Directory</string>
+    <string name="owner">Possessore</string>
+    <string name="creator">Creatore</string>
+    <string name="approx_time">Minuti da mezzanotte</string>
 
-    <string name="nothing">Nulla</string>
+    <string name="start_time">Ora d\'inizio</string>
+    <string name="stop_time">Ora di fine</string>
+    <string name="start_window">Finestra d\'avvio</string>
+    <string name="extra_start_time">Minuti extra inizio (pre-time)</string>
+    <string name="extra_stop_time">Minuti extra fine (post-time)</string>
+    <string name="min_duration">Durata minima</string>
+    <string name="max_duration">Durata massima</string>
+    <string name="record_from_to_time">Registra da %1$s a %2$s</string>
+    <string name="recording_time">Durata Registrazione</string>
+    <string name="series_recording_add_error">Impossibile aggiungere questa registrazione di serie.\nIl titolo non può essere vuoto!</string>
+    <string name="time_recording_add_error">Impossibile aggiungere questa registrazione manuale.\nIl titolo non può essere vuoto!</string>
+
+    <string name="nothing">Niente</string>
     <string name="loading">Caricamento&#8230;</string>
     <string name="loading_channel">Caricamento canale %s</string>
     <string name="updating">Aggiornamento&#8230;</string>
@@ -339,20 +270,27 @@
     <string name="part">Parte</string>
     <string name="progress">%1$d%% del programma già trasmesso</string>
 
+    <string name="next_program">Prossimo programma: %s</string>
+
+    <string name="server">Server</string>
     <string name="connection">Connessione</string>
     <string name="disc_space">Spazio su disco</string>
     <string name="total">Totale</string>
+    <string name="items_available">oggetti disponibili</string>
     <string name="available">Disponibili</string>
     <string name="unknown">Sconosciuto</string>
     <string name="ready">Pronto</string>
     <string name="select_timeframe">Mostra guida programmi per la data e l\'orario selezionato.</string>
     <string name="currently_recording">Attualmente in registrazione</string>
 
-    <string name="no_connection_available">Non ci sono ancora connessioni definite. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
+    <string name="no_connection_available_advice">Nessuna connessione definita. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
+    <string name="no_connection_available">Nessuna connessione disponibile.</string>
     <string name="no_connection_active">Almeno una connessione è definita, ma nessuna è attiva.</string>
+    <string name="number_of_connections">%d connessioni disponibili</string>
 
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>
+    <string name="feature_not_available_in_free_version">Questa opzione non è disponibile nella versione gratis! Puoi sbloccare questa opzione comprando l\'applicazione dal Play Store di Google.</string>
 
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Apri navigation drawer</string>

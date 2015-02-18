@@ -10,6 +10,7 @@
         <item>Zakończone nagrania</item>
         <item>Zaplanowane nagrania</item>
         <item>Automatyczne nagrania</item>
+        <item>Timer Recordings</item>
         <item>Nieudane nagrania</item>
         <item>Przewodnik programów</item>
         <item>Status</item>
@@ -21,5 +22,131 @@
         <item>Zdefiniowane przez serwer</item>
         <item>Nazwa kanału</item>
         <item>Numer kanału</item>
+    </string-array>
+
+    <string-array name="pr_content_type0">
+        <item>Film/Dramat</item>
+        <item>Aktualności/Sprawy bieżące</item>
+        <item>Widowisko/Teleturniej</item>
+        <item>Sport</item>
+        <item>Dzieci/Młodzież</item>
+        <item>Muzyka/Balet/Taniec</item>
+        <item>Sztuka/Kultura</item>
+        <item>Społeczeństwo/Polityka/Gospodarka</item>
+        <item>Edukacja/Nauka/Natura</item>
+        <item>Czas wolny/Hobby</item>
+        <item>Inne</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Film/Dramat</item>
+        <item>Detektywistyczny/Thriller</item>
+        <item>Przygoda/Western/Wojna</item>
+        <item>Science Fiction/Fantasy/Horror</item>
+        <item>Komedia</item>
+        <item>Melodramat/Folklorystyczny</item>
+        <item>Romantyczny</item>
+        <item>Poważny/Klasyczny Religijny/Historyczny</item>
+        <item>Film dla dorosłych/Dramat</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>Aktualności/Sprawy bieżące</item>
+        <item>Aktualności/Prognoza pogody</item>
+        <item>Magazyn</item>
+        <item>Dokumentalny</item>
+        <item>Dyskusja/Wywiad/Debata</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Widowisko/Teleturniej</item>
+        <item>Teleturniej/Quiz/Konkurs</item>
+        <item>Różnorodność</item>
+        <item>Rozmowa</item>
+    </string-array>
+
+    <string-array name="pr_content_type4">
+        <item>Sport</item>
+        <item>Specjalne wydarzenia</item>
+        <item>Magazyn</item>
+        <item>Piłka nożna</item>
+        <item>Tenis/Squash</item>
+        <item>TSporty zespołowe</item>
+        <item>Atletyka</item>
+        <item>Sporty motorowe</item>
+        <item>Sporty wodne</item>
+        <item>Sporty zimowe</item>
+        <item>Sporty konne</item>
+        <item>Sporty walki</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Dzieci/Młodzież</item>
+        <item>Przedszkole</item>
+        <item>Rozrywka (od 6 do 14 lat)</item>
+        <item>Rozrywka (od 10 do 16 lat)</item>
+        <item>Informacyjny/Edukacyjny/Szkolny</item>
+        <item>Rysunkowy/Marionetki</item>
+    </string-array>
+
+    <string-array name="pr_content_type6">
+        <item>Muzyka/Balet/Taniec</item>
+        <item>Rock/Pop</item>
+        <item>Muzyka poważna/Muzyka klasyczna</item>
+        <item>Muzyka ludowa/Muzyka tradycyjna</item>
+        <item>Jazz</item>
+        <item>Musical/Opera</item>
+        <item>Balet</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Sztuka/Kulturaitem</item>
+        <item>Wykonywanie sztuki</item>
+        <item>Sztuka piękna</item>
+        <item>Religia</item>
+        <item>Popularna kultura/Tradycyjna sztuka</item>
+        <item>Literatura</item>
+        <item>Film/Kino</item>
+        <item>Experymentalny Film/Video</item>
+        <item>Transmisja/Prasa</item>
+        <item>Nowe media</item>
+        <item>Magazyn</item>
+        <item>Moda</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Społeczeństwo/Polityka/Gospodarka</item>
+        <item>Magazyn/Reportaż/Dokumentalny</item>
+        <item>Ekonomika/Społeczno doradczy</item>
+        <item>Nadzwyczajne osoby</item>
+    </string-array>
+
+    <string-array name="pr_content_type9">
+        <item>Edukacja/Nauka/Fakty</item>
+        <item>Natura/Zwierzęta/Środowisko</item>
+        <item>Technologia/Nauki przyrodnicze</item>
+        <item>Medycyna/Fizjologia/Psychologia</item>
+        <item>Zagranica/Wyprawy</item>
+        <item>Społeczny/Nauki duchowe</item>
+        <item>Dalsza edukacja</item>
+        <item>Języki</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Czas wolny/Hobby</item>
+        <item>Turystyka/Podróże</item>
+        <item>Rekodzieło</item>
+        <item>Jazda samochodem</item>
+        <item>Fitness i zdrowie</item>
+        <item>Gotowanie</item>
+        <item>Reklama/Zakupy</item>
+        <item>Ogrodnictwo</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Inne</item>
+        <item>Czarno-biały</item>
+        <item>Niepublikowane</item>
+        <item>Transmisja na żywo</item>
     </string-array>
 </resources>

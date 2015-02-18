@@ -30,15 +30,20 @@
 
     <string name="pref_manage_connections">Manage connections</string>
     <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
+    <string name="pref_connection_details">Connection details</string>
+    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="select_connection">Select connection</string>
     <string name="add_connection">Add connection</string>
-    <string name="cancel_connection">Discard values? All changes will be lost.</string>
+    <string name="cancel">Do you really want to cancel? All changes will be discarded!</string>
     <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
     <string name="delete_recording">Do you really want to delete the recording \'%s\'?</string>
     <string name="delete_series_recording">Do you really want to delete the series recording \'%s\'?\n\nThis will remove all scheduled recordings that belong to that series recording rule.</string>
+    <string name="delete_timer_recording">Do you really want to delete the timer recording \'%s\'?</string>
     <string name="delete_all_recordings">Do you really want to delete ALL recordings?</string>
     <string name="cancel_recording">Do you really want to cancel the scheduled recording \'%s\'?</string>
     <string name="cancel_all_recordings">Do you really want to cancel ALL scheduled recordings?</string>
+    <string name="add_recording">Add new recording</string>
+    <string name="cancel_add_recording">Cancel adding a new recording? All values will be lost.</string>
 
     <string name="pref_connections">Connections</string>
     <string name="pref_name">Connection name</string>
@@ -125,6 +130,8 @@
     <string name="pref_misc">Miscellaneous</string>
     <string name="pref_clear_search_history">Clear search history</string>
     <string name="pref_clear_icon_cache">Clear channel icon cache</string>
+    <string name="pref_unlocker">Enable all features</string>
+    <string name="pref_unlocker_sum">Enable access to additional features and support the development by buying this application.</string>
 
     <string name="pref_menu_visibility">Menu visibility</string>
     <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>
@@ -133,6 +140,18 @@
     <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
     
+    <string name="loading_profiles">Loading profiles</string>
+    <string name="pref_profiles">Profiles</string>
+    <string name="pref_profiles_sum">Define the parameters or the profiles (if supported) how programs shall be recorded or how recordings shall be played.</string>
+    <string name="pref_recording_profiles">Recording profiles</string>
+    <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
+    <string name="pref_playback_profiles">Playback profiles</string>
+    <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
+    <string name="pref_show_notifications">Show notifications</string>
+    <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed. This requires that the service is running in the background.</string>
+    <string name="pref_show_next_program">Show next program in channel list</string>
+    <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
+
     <string name="clear_search_history">Clear search history?</string>
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
     <string name="clear_search_history_done">Search history cleared</string>
@@ -145,146 +164,27 @@
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
     <string name="err_con_timeout">Connection timeout</string>
+    <string name="err_loading_profiles">Error loading profiles from server\n%s</string>
 
     <string name="recording_file_missing">Recorded file is missing</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>
     <string name="recording_file_invalid">Recording is invalid</string>
     <string name="recording_canceled">Recording has been canceled</string>
+    <string name="recording_started">Recording started</string>
+    <string name="recording_completed">Recording completed</string>
+    <string name="recording_started_text">The recording %s has been started</string>
+    <string name="recording_completed_text">The recording %s has been completed</string>
 
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
     <string name="wol_address_invalid">The MAC-address is not valid. Please check your settings.</string>
     <string name="wol_error">Error sending wake on LAN packet to \'%1$s\'.\n Error message: %2$s</string>
 
-    <string-array name="pr_content_type0">
-        <item>Movie/Drama</item>
-        <item>News/Current affairs</item>
-        <item>Show/Game show</item>
-        <item>Sports</item>
-        <item>Children\'s/Youth</item>
-        <item>Music/Ballet/Dance</item>
-        <item>Arts/Culture</item>
-        <item>Social/Political issues/Economics</item>
-        <item>Education/Science/Factual</item>
-        <item>Leisure hobbies</item>
-        <item>Misc</item>
-    </string-array>
-
-    <string-array name="pr_content_type1">
-        <item>Movie/Drama</item>
-        <item>Detective/Thriller</item>
-        <item>Adventure/Western/War</item>
-        <item>Science Fiction/Fantasy/Horror</item>
-        <item>Comedy</item>
-        <item>Soap/Melodrama/Folkloric</item>
-        <item>Romance</item>
-        <item>Serious/ClassicalReligion/Historical</item>
-        <item>Adult Movie/Drama</item>
-    </string-array>
-
-    <string-array name="pr_content_type2">
-        <item>News/Current affairs</item>
-        <item>News/Weather Report</item>
-        <item>Magazine</item>
-        <item>Documentary</item>
-        <item>Discussion/Interview/Debate</item>
-    </string-array>
-
-    <string-array name="pr_content_type3">
-        <item>Show/Game show</item>
-        <item>Game show/Quiz/Contest</item>
-        <item>Variety</item>
-        <item>Talk</item>
-    </string-array>
-    
-    <string-array name="pr_content_type4">
-        <item>Sports</item>
-        <item>Special Event</item>
-        <item>Magazine</item>
-        <item>Football/Soccer</item>
-        <item>Tennis/Squash</item>
-        <item>Team sports</item>
-        <item>Athletics</item>
-        <item>Motor Sport</item>
-        <item>Water Sport</item>
-        <item>Winter Sports</item>
-        <item>Equestrian</item>
-        <item>Martial sports</item>
-    </string-array>
-
-    <string-array name="pr_content_type5">
-        <item>Children\'s/Youth</item>
-        <item>Pre-school</item>
-        <item>Entertainment (6 to 14 year-olds)</item>
-        <item>Entertainment (10 to 16 year-olds)</item>
-        <item>Informational/Educational/Schools</item>
-        <item>Cartoons/Puppets</item>
-    </string-array>
-    
-    <string-array name="pr_content_type6">
-        <item>Music/Ballet/Dance</item>
-        <item>Rock/Pop</item>
-        <item>Serious music/Classical Music</item>
-        <item>Folk/Traditional music</item>
-        <item>Jazz</item>
-        <item>Musical/Opera</item>
-        <item>Ballet</item>
-    </string-array>
-
-    <string-array name="pr_content_type7">
-        <item>Arts/Culture</item>
-        <item>Performing Arts</item>
-        <item>Fine Arts</item>
-        <item>Religion</item>
-        <item>Popular Culture/Tradital Arts</item>
-        <item>Literature</item>
-        <item>Film/Cinema</item>
-        <item>Experimental Film/Video</item>
-        <item>Broadcasting/Press</item>
-        <item>New Media</item>
-        <item>Magazine</item>
-        <item>Fashion</item>
-    </string-array>
-
-    <string-array name="pr_content_type8">
-        <item>Social/Political issues/Economics</item>
-        <item>Magazine/Report/Domentary</item>
-        <item>Economics/Social Advisory</item>
-        <item>Remarkable People</item>
-    </string-array>
- 
-    <string-array name="pr_content_type9">
-        <item>Education/Science/Factual</item>        
-        <item>Nature/Animals/Environment</item>
-        <item>Technology/Natural sciences</item>
-        <item>Medicine/Physiology/Psychology</item>
-        <item>Foreign Countries/Expeditions</item>
-        <item>Social/Spiritual Sciences</item>
-        <item>Further Education</item>
-        <item>Languages</item>
-    </string-array>
-
-    <string-array name="pr_content_type10">
-        <item>Leisure hobbies</item>
-        <item>Tourism/Travel</item>
-        <item>Handicraft</item>
-        <item>Motoring</item>
-        <item>Fitness and Health</item>
-        <item>Cooking</item>
-        <item>Advertisement/Shopping</item>
-        <item>Gardening</item>
-    </string-array>
-
-    <string-array name="pr_content_type11">
-        <item>Misc</item>
-        <item>Black and White</item>
-        <item>Unpublished</item>
-        <item>Live Broadcast</item>
-    </string-array>
-
     <string name="no_transmission">No transmission</string>
     <string name="no_data">No program data available</string>
     <string name="minutes">%d min</string>
+    <string name="days">%d days</string>
+    <string name="not_set">Not set</string>
     
     <string name="search_hint">Search the EPG</string>
     <string name="two_days_ago">Two days ago</string>
@@ -299,13 +199,27 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
+    <string name="all_days">All days</string>
+    <string name="no_days">No days</string>
 
     <string name="programs">Programs</string>
-    <string name="completed_recordings">Completed</string>
-    <string name="upcoming_recordings">Upcoming</string>
-    <string name="failed_recordings">Failed</string>
+    <string name="completed_recordings">Completed recordings</string>
+    <string name="upcoming_recordings">Upcoming recordings</string>
+    <string name="failed_recordings">Failed recordings</string>
     <string name="series_recordings">Series recordings</string>
-    <string name="is_series_recordings">This recording is part of a series recording</string>
+    <string name="timer_recordings">Manual recordings</string>
+    <string name="is_series_recording">This recording is part of a series recording</string>
+    <string name="is_timer_recording">This recording was created by a timer</string>
+    <string name="no_channels_available">No channels available</string>
+    <string name="no_recordings_available">No recordings available</string>
+    <string name="no_recordings_scheduled">No recordings are scheduled</string>
+    <string name="no_programs_available">No programs available</string>
+
+    <string name="recording_enabled">This recording is enabled</string>
+    <string name="recording_disabled">This recording is disabled</string>
+    <string name="days_of_week">Days of week</string>
+    <string name="comment">Comment</string>
+    <string name="name">Name</string>
 
     <string name="channels">Channels</string>
     <string name="recordings">Recordings</string>
@@ -327,6 +241,25 @@
     <string name="content_type">Content type</string>
     <string name="series_information">Series information</string>
     <string name="genre_color_list">List of genre colors and their meaning.</string>
+    <string name="retention">Retention</string>
+    <string name="priority">Priority</string>
+    <string name="path">Path</string>
+    <string name="directory">Directory</string>
+    <string name="owner">Owner</string>
+    <string name="creator">Creator</string>
+    <string name="approx_time">Minutes from midnight</string>
+
+    <string name="start_time">Start time</string>
+    <string name="stop_time">Stop time</string>
+    <string name="start_window">Start window</string>
+    <string name="extra_start_time">Extra start minutes (pre-time)</string>
+    <string name="extra_stop_time">Extra stop minutes (post-time)</string>
+    <string name="min_duration">Minimum duration</string>
+    <string name="max_duration">Maximum duration</string>
+    <string name="record_from_to_time">Record from %1$s to %2$s</string>
+    <string name="recording_time">Recording Time</string>
+    <string name="series_recording_add_error">Can\'t add this series recording.\nThe title must no be empty!</string>
+    <string name="time_recording_add_error">Can\'t add this time recording.\nThe title must no be empty!</string>
 
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>
@@ -337,21 +270,27 @@
     <string name="episode">Episode</string>
     <string name="part">Part</string>
     <string name="progress">%1$d%% of the show already shown</string>
-    
+    <string name="next_program">Next program: %s</string>
+
+    <string name="server">Server</string>
     <string name="connection">Connection</string>
     <string name="disc_space">Disc space</string>
     <string name="total">Total</string>
+    <string name="items_available">items available</string>
     <string name="available">Available</string>
     <string name="unknown">Unknown</string>
     <string name="ready">Ready</string>
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
     <string name="currently_recording">Currently recording</string>
     
-    <string name="no_connection_available">Still no connections are defined. You need to add at least one connection from the settings menu.</string>
+    <string name="no_connection_available_advice">No connection is available. You need to add at least one from the settings menu.</string>
+    <string name="no_connection_available">No connection available.</string>
     <string name="no_connection_active">At least one connection is defined, but was not activated.</string>
+    <string name="number_of_connections">%d connection(s) available</string>
     
     <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
+    <string name="feature_not_available_in_free_version">This feature is not available in the free version! You can unlock this feature and support further development by buying the application from the play store.</string>
 
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Open navigation drawer</string>

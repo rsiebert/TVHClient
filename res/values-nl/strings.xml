@@ -31,7 +31,7 @@
     <string name="pref_manage_connections_sum">Selecteer een actieve connectie naar een TVHeadend server of maak, wijzig of verwijder connecties.</string>
     <string name="select_connection">Selecteer connectie</string>
     <string name="add_connection">Connectie toevoegen</string>
-    <string name="cancel_connection">Vergeet waarden? Alle wijzigen zullen verloren gaan.</string>
+    <string name="cancel">Vergeet waarden? Alle wijzigen zullen verloren gaan.</string>
     <string name="delete_connection">Weet je zeker dat je connectie \'%s\' wilt verwijderen?</string>
     <string name="delete_recording">Weet je zeker dat je opname \'%s\' wilt verwijderen?</string>
     <string name="delete_all_recordings">Weet je zeker dat je ALLE opnames wilt verwijderen?</string>
