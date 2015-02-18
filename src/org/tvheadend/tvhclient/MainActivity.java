@@ -90,11 +90,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private static final int MENU_COMPLETED_RECORDINGS = 1;
     private static final int MENU_SCHEDULED_RECORDINGS = 2;
     private static final int MENU_SERIES_RECORDINGS = 3;
-    private static final int MENU_FAILED_RECORDINGS = 4;
-    private static final int MENU_PROGRAM_GUIDE = 5;
-    private static final int MENU_STATUS = 6;
-    private static final int MENU_SETTINGS = 7;
-    private static final int MENU_CONNECTIONS = 8;
+    private static final int MENU_TIMER_RECORDINGS = 4;
+    private static final int MENU_FAILED_RECORDINGS = 5;
+    private static final int MENU_PROGRAM_GUIDE = 6;
+    private static final int MENU_STATUS = 7;
+    private static final int MENU_SETTINGS = 8;
+    private static final int MENU_CONNECTIONS = 9;
 
     // Holds the stack of menu items
     public ArrayList<Integer> menuStack = new ArrayList<Integer>();
@@ -301,19 +302,22 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         list.add(new DrawerMenuItem(MENU_SERIES_RECORDINGS, menuItems[3],
                 (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
                         : R.drawable.ic_menu_scheduled_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[4],
+        list.add(new DrawerMenuItem(MENU_TIMER_RECORDINGS, menuItems[4],
+                (lightTheme) ? R.drawable.ic_menu_scheduled_recordings_light
+                        : R.drawable.ic_menu_scheduled_recordings_dark));
+        list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[5],
                 (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
                         : R.drawable.ic_menu_failed_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[5],
+        list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[6],
                 (lightTheme) ? R.drawable.ic_menu_program_guide_light
                         : R.drawable.ic_menu_program_guide_dark));
-        list.add(new DrawerMenuItem(MENU_STATUS, menuItems[6],
+        list.add(new DrawerMenuItem(MENU_STATUS, menuItems[7],
                 (lightTheme) ? R.drawable.ic_menu_status_light : R.drawable.ic_menu_status_dark));
 
         list.add(new DrawerMenuItem());
-        list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[7],
+        list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[8],
                 (lightTheme) ? R.drawable.ic_menu_settings_light : R.drawable.ic_menu_settings_dark));
-        list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[8],
+        list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[9],
                 (lightTheme) ? R.drawable.ic_menu_connections_light
                         : R.drawable.ic_menu_connections_dark));
 
@@ -852,6 +856,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                     drawerAdapter.getItem(MENU_CHANNELS).isVisible = true;
                     drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).isVisible = true;
                     drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).isVisible = true;
+                    drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = false;
                     drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = true;
 
                     // Only show the series recording entry when the server supports it
@@ -878,6 +883,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                         drawerAdapter.getItem(MENU_CHANNELS).isVisible = false;
                         drawerAdapter.getItem(MENU_COMPLETED_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_SCHEDULED_RECORDINGS).isVisible = false;
+                        drawerAdapter.getItem(MENU_TIMER_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_FAILED_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_SERIES_RECORDINGS).isVisible = false;
                         drawerAdapter.getItem(MENU_PROGRAM_GUIDE).isVisible = false;
