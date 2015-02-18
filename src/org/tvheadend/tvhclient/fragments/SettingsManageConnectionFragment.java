@@ -307,7 +307,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         // Show confirmation dialog to cancel
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(getString(R.string.cancel_connection));
+        builder.setMessage(getString(R.string.cancel));
         builder.setTitle(getString(R.string.menu_cancel));
 
         // Define the action of the yes button
