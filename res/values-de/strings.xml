@@ -270,7 +270,7 @@
     <string name="episode">Folge</string>
     <string name="part">Teil</string>
     <string name="progress">%1$d%% der Sendung bereits vorbei</string>
-    <string name="next_program">Nächstes Programm: %s</string>
+    <string name="next_program">Danach: %s</string>
 
     <string name="server">Server</string>
     <string name="connection">Verbindung</string>
