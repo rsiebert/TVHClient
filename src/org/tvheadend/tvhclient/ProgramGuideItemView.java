@@ -377,7 +377,7 @@ public class ProgramGuideItemView extends LinearLayout {
             Utils.setGenreColor(activity, itemLayout, p, TAG);
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
-	        Utils.setState(state, p.recording);
+	        Utils.setState(activity, state, p);
 
 	        // Only show the duration if the layout is wide enough
 	        if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {
@@ -437,7 +437,6 @@ public class ProgramGuideItemView extends LinearLayout {
                     if (fragmentStatusInterface != null && program != null) {
                         fragmentStatusInterface.onListItemSelected(0, program, TAG);
                     }
-
 	            }
 	        });
         }

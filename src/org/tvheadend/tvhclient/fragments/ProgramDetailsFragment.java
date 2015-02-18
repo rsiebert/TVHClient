@@ -177,7 +177,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         showPlayerControls();
         
         // Show the program information        
-        Utils.setState(state, program.recording);
+        Utils.setState(activity, state, program);
         Utils.setDate(date, program.start);
         Utils.setTime(time, program.start, program.stop);
         Utils.setDuration(duration, program.start, program.stop);

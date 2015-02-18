@@ -94,7 +94,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         Program p = getItem(position);
         if (p != null) {
             holder.title.setText(p.title);
-            Utils.setState(holder.state, p.recording);
+            Utils.setState(context, holder.state, p);
             Utils.setDate(holder.date, p.start);
             Utils.setTime(holder.time, p.start, p.stop);
             Utils.setDuration(holder.duration, p.start, p.stop);
