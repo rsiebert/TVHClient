@@ -1,8 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_scodec_list_display">
+    <string-array name="pref_res_list" translatable="false">
+        <item>576</item>
+        <item>480</item>
+        <item>384</item>
+        <item>288</item>
+        <item>192</item>
+    </string-array>
+    <string-array name="pref_res_list_display" translatable="false">
+        <item>576p</item>
+        <item>480p</item>
+        <item>384p</item>
+        <item>288p</item>
+        <item>192p</item>
+    </string-array>
+
+    <string-array name="pref_acodec_list" translatable="false">
+        <item>AAC</item>
+        <item>MPEG2AUDIO</item>
+    </string-array>
+    <string-array name="pref_acodec_list_display" translatable="false">
+        <item>Advanced Audio Codec (AAC)</item>
+        <item>MPEG-2 Audio Layer II (MP2)</item>
+    </string-array>
+
+    <string-array name="pref_vcodec_list" translatable="false">
+        <item>H264</item>
+        <item>MPEG4VIDEO</item>
+        <item>VP8</item>
+    </string-array>
+    <string-array name="pref_vcodec_list_display" translatable="false">
+        <item>MPEG-4 AVC (H.264)</item>
+        <item>MPEG-4 Part 2</item>
+        <item>VP8</item>
+    </string-array>
+
+    <string-array name="pref_scodec_list" translatable="false">
+        <item>PASS</item>
+        <item>NONE</item>
+    </string-array>
+	<string-array name="pref_scodec_list_display">
         <item>Pass-through</item>
         <item>None</item>
+    </string-array>
+	
+	<string-array name="pref_container_list" translatable="false">
+        <item>matroska</item>
+        <item>mpegts</item>
+        <item>mpegps</item>
+        <item>pass</item>
+    </string-array>
+    <string-array name="pref_container_list_display" translatable="false">
+        <item>Matroska</item>
+        <item>MPEG-TS</item>
+        <item>MPEG-PS</item>
+        <item>Pass-through</item>
+    </string-array>
+
+    <string-array name="pref_language_list" translatable="false">
+        <item>domyślny</item>
+        <item>de</item>
+        <item>en-us</item>
+        <item>fr</item>
+        <item>it</item>
+        <item>nl</item>
+        <item>pl</item>
+        <item>sv</item>
+    </string-array>
+    <string-array name="pref_language_list_display" translatable="false">
+        <item>Domyślny</item>
+        <item>Deutsch</item>
+        <item>English</item>
+        <item>Français</item>
+        <item>Italiano</item>
+        <item>Nederlands</item>
+        <item>Polski</item>
+        <item>Svenska</item>
+    </string-array>
+
+    <string-array name="pref_menu_ids" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
     </string-array>
 
     <string-array name="pref_menu_names">
@@ -17,11 +103,46 @@
         <item>Ustawienia</item>
         <item>Połączenia</item>
     </string-array>
+	
+    <string-array name="pref_sort_channels_ids" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
     <string-array name="pref_sort_channels_names">
         <item>Zdefiniowane przez serwer</item>
         <item>Nazwa kanału</item>
         <item>Numer kanału</item>
+    </string-array>
+	
+    <string-array name="day_short_names">
+        <item>Pon</item>
+        <item>Wt</item>
+        <item>Śr</item>
+        <item>Czw</item>
+        <item>Pt</item>
+        <item>Sob</item>
+        <item>Niedz</item>
+    </string-array>
+	
+    <string-array name="day_long_names">
+        <item>Poniedziałek</item>
+        <item>Wtorek</item>
+        <item>Środa</item>
+        <item>Czwartek</item>
+        <item>Piątek</item>
+        <item>Sobota</item>
+        <item>Niedziela</item>
+    </string-array>
+	
+    <string-array name="dvr_priorities">
+        <item>Ważny</item>
+        <item>Wysoki</item>
+        <item>Normalny</item>
+        <item>Niski</item>
+        <item>Nieważny</item>
+        <item>Nie ustawiono</item>
     </string-array>
 
     <string-array name="pr_content_type0">

@@ -9,7 +9,7 @@
     <string name="menu_play">Play</string>
     <string name="menu_search">Szukaj</string>
     <string name="menu_record_once">Nagraj</string>
-	<string name="menu_record_series">Nagrywanie serii(Autorec)</string>
+    <string name="menu_record_series">Nagrywanie serii(Autorec)</string>
     <string name="menu_record_cancel">Anuluj nagrywanie</string>
     <string name="menu_record_cancel_all">Anuluj wszystkie nagrywania</string>
     <string name="menu_record_remove">Usuń nagranie</string>
@@ -31,18 +31,18 @@
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
     <string name="pref_connection_details">Connection details</string>
-	<string name="pref_connection_wol">Wake on LAN</string>
-	<string name="select_connection">Wybierz połączenie</string>
+    <string name="pref_connection_wol">Wake on LAN</string>
+    <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
     <string name="cancel">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="delete_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>
     <string name="delete_series_recording">Czy na pewno chcesz usunąć nagrywanie serii \'%s\'?\n\nTo usunie wszystkie zaplanowane nagrania, które należą do tej zasady nagrywania serii.</string>
     <string name="delete_timer_recording">Czy na pewno chcesz usunąć czasowe nagrywanie \'%s\'?</string>
-	<string name="delete_all_recordings">Jesteś pewny że chcesz usunąć wszystkie nagrania?</string>
+    <string name="delete_all_recordings">Jesteś pewny że chcesz usunąć wszystkie nagrania?</string>
     <string name="cancel_recording">Jesteś pewny że chcesz anulować zaplanowane nagrywanie \'%s\'?</string>
     <string name="cancel_all_recordings">Jesteś pewny że chcesz anulować wszystkie nagrywania?</string>
-	<string name="add_recording">Dodaj nowe nagrywanie</string>
+    <string name="add_recording">Dodaj nowe nagrywanie</string>
     <string name="cancel_add_recording">Anulować dodawanie nowego nagrywania? Wszystkie wartości zostaną utracone.</string>
 
     <string name="pref_connections">Połączenia</string>
@@ -129,8 +129,8 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% widoczności</string>
     <string name="pref_misc">Różne</string>
     <string name="pref_clear_search_history">Wyczyść historię wyszukiwania</string>
-	<string name="pref_clear_icon_cache">Wyczyść cache ikon kanałów</string>
-	<string name="pref_unlocker">Włacz wszystkie opcję</string>
+    <string name="pref_clear_icon_cache">Wyczyść cache ikon kanałów</string>
+    <string name="pref_unlocker">Włacz wszystkie opcję</string>
     <string name="pref_unlocker_sum">Włącz dostęp do zaawansowanych opcji i wspieraj rozwój przez zakup tej aplikacji.</string>
     
     <string name="pref_menu_visibility">Widoczność menu</string>
@@ -152,7 +152,7 @@
     <string name="pref_show_next_program">Pokazuj następny program na liście kanałów</string>
     <string name="pref_show_next_program_sum">Nazwa zbliżającego się programu jest wyświetlana na liście kanałów. Jest wyświetlona poniżej paska postępu.</string>
 	
-	<string name="clear_search_history">Wyczyścić historię wyszukiwania?</string>
+    <string name="clear_search_history">Wyczyścić historię wyszukiwania?</string>
     <string name="clear_search_history_sum">Jesteś pewny, że chcesz usunąć wszystkie wpisy z historii wyszukiwania?</string>
     <string name="clear_search_history_done">Historia wyszukiwania wyczyszczona</string>
 
@@ -160,17 +160,17 @@
     <string name="clear_icon_cache_sum">Jesteś pewny, że chcesz usunąć wszystkie ikony kanałów? Możesz to zrobić aby pobrać zaktualizowane ikony kanałów z serwera.</string>
     <string name="clear_icon_cache_done">Cache ikon kanałów wyczyszczony</string>
 	
-	<string name="err_auth">Odmowa dostępu</string>
+    <string name="err_auth">Odmowa dostępu</string>
     <string name="err_connect">Nie można połączyć się z serweram</string>
     <string name="err_con_lost">Utracono połączenie z serwerem</string>
     <string name="err_con_timeout">Limit czasu połączenia</string>
-	<string name="err_loading_profiles">Błąd ładowania profilu z serwera\n%s</string>
+    <string name="err_loading_profiles">Błąd ładowania profilu z serwera\n%s</string>
     
     <string name="recording_file_missing">Nagrywany plik jest utracony</string>
     <string name="recording_time_missed">Zaplanowane nagranie zostało utracone</string>
     <string name="recording_file_invalid">Nagranie jest nieważne</string>
     <string name="recording_canceled">Nagrywanie zostało anulowane</string>
-	<string name="recording_started">Nagrywanie rozpoczęte</string>
+    <string name="recording_started">Nagrywanie rozpoczęte</string>
     <string name="recording_completed">Nagrywanie zakończone</string>
     <string name="recording_started_text">Nagrywanie %s zostało rozpoczęte</string>
     <string name="recording_completed_text">Nagrywanie %s zostało zakończone</string>
@@ -183,7 +183,7 @@
     <string name="no_transmission">Brak transmisji</string>
     <string name="no_data">Brak dostępnych danych dla kanału</string>
     <string name="minutes">%d min</string>
-	<string name="days">%d dni</string>
+    <string name="days">%d dni</string>
     <string name="not_set">Nie ustawiono</string>
     
     <string name="search_hint">Szukaj w EPG</string>
@@ -199,7 +199,7 @@
     <string name="friday">Piątek</string>
     <string name="saturday">Sobota</string>
     <string name="sunday">Niedziela</string>
-	<string name="all_days">Wszystkie dni</string>
+    <string name="all_days">Wszystkie dni</string>
     <string name="no_days">Brak dni</string>
     
     <string name="programs">Programy</string>
@@ -207,15 +207,15 @@
     <string name="upcoming_recordings">Zaplanowane</string>
     <string name="failed_recordings">Utracone / Nieprawidłowe</string>
     <string name="series_recordings">Nagrywanie serii</string>
-	<string name="timer_recordings">Ręczne nagrywanie</string>
+    <string name="timer_recordings">Ręczne nagrywanie</string>
     <string name="is_series_recording">To nagranie jest częścią serii nagrań</string>
-	<string name="is_timer_recording">To nagrywanie zostało stworzone przez Timer</string>
+    <string name="is_timer_recording">To nagrywanie zostało stworzone przez Timer</string>
     <string name="no_channels_available">Brak dostępnych kanałów</string>
     <string name="no_recordings_available">Brak dostępnych nagrań</string>
     <string name="no_recordings_scheduled">Brak zaplanowanych nagrań</string>
     <string name="no_programs_available">Brak dostępnych programów</string>
 	
-	<string name="recording_enabled">To nagrywanie jest włączone</string>
+    <string name="recording_enabled">To nagrywanie jest włączone</string>
     <string name="recording_disabled">To nagrywanie jest wyłączone</string>
     <string name="days_of_week">Dni tygodnia</string>
     <string name="comment">Komentarz</string>
@@ -241,7 +241,7 @@
     <string name="content_type">Kategoria</string>
     <string name="series_information">Część</string>
     <string name="genre_color_list">Lista rodzaju kolorów i ich znaczenie.</string>
-	<string name="retention">Retencja</string>
+    <string name="retention">Retencja</string>
     <string name="priority">Priorytet</string>
     <string name="path">Ścieżka</string>
     <string name="directory">Katalog</string>
@@ -249,7 +249,7 @@
     <string name="creator">Twórca</string>
     <string name="approx_time">Minuty przed północą</string>
 	
-	<string name="start_time">Czas rozpoczęcia</string>
+    <string name="start_time">Czas rozpoczęcia</string>
     <string name="stop_time">Czas zakończenia</string>
     <string name="start_window">Uruchom okno</string>
     <string name="extra_start_time">Ekstra minuty rozpoczęcia (przed czasem)</string>
@@ -270,13 +270,13 @@
     <string name="episode">Odcinek</string>
     <string name="part">Odcinek</string>
     <string name="progress">%1$d%% z transmisji zostało pokazane</string>
-	<string name="next_program">Następny program: %s</string>
+    <string name="next_program">Następny program: %s</string>
 
     <string name="server">Serwer</string>
-	<string name="connection">Połączenie</string>
+    <string name="connection">Połączenie</string>
     <string name="disc_space">Przestrzeń dysku</string>
     <string name="total">Całość</string>
-	<string name="items_available">pozycji dostępnych</string>
+    <string name="items_available">pozycji dostępnych</string>
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>
     <string name="ready">Gotowy</string>
@@ -284,13 +284,13 @@
     <string name="currently_recording">Aktualnie nagrywane</string>
     
     <string name="no_connection_available_advice">Brak połaczenia. Musisz dodać conajmniej jedno z menu ustawień.</string>
-	<string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
+    <string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
     <string name="no_connection_active">Co najmniej jedno połaczenie jest zdefioniowane, ale nie jest aktywowane.</string>
-	<string name="number_of_connections">%d połączenie(a) dostępne</string>
+    <string name="number_of_connections">%d połączenie(a) dostępne</string>
     
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
     <string name="show_play_store">Czy chcesz przejść do sklepu Google Play i poszukać dostępnych odtwarzaczy?</string>
-	<string name="feature_not_available_in_free_version">Ta opcja nie jest dostępna w darmowej wersji! Możesz odblokować tą opcję i wspierać dalszy rozwój poprzez zakup aplikacji ze sklepu Play.</string>
+    <string name="feature_not_available_in_free_version">Ta opcja nie jest dostępna w darmowej wersji! Możesz odblokować tą opcję i wspierać dalszy rozwój poprzez zakup aplikacji ze sklepu Play.</string>
     
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Otwórz szufladę nawigacji</string>
