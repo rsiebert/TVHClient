@@ -135,6 +135,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     // Contains the information about the current connection state.
     private String connectionStatus = Constants.ACTION_CONNECTION_STATE_UNKNOWN;
 
+    private String[] menuItems;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
@@ -158,6 +160,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         defaultMenuPosition = Integer.parseInt(prefs.getString("defaultMenuPositionPref", String.valueOf(MENU_STATUS)));
+
+        menuItems = getResources().getStringArray(R.array.pref_menu_names);
 
         // The drawer does not support setting the background automatically from
         // the defined theme. This needs to be done manually. Set the correct
@@ -307,8 +311,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             });
         }
 
-        showDrawerMenu(false);
-
         // If the saved instance is not null then we return from an orientation
         // change. The drawer menu could be open, so update the recording
         // counts. Also get any saved values from the bundle.
@@ -355,8 +357,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private List<DrawerMenuItem> getDrawerMenu() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-
-        String[] menuItems = getResources().getStringArray(R.array.pref_menu_names);
 
         List<DrawerMenuItem> list = new ArrayList<DrawerMenuItem>();
         list.add(new DrawerMenuItem(""));
