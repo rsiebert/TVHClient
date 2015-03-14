@@ -13,7 +13,6 @@ import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -24,6 +23,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.format.Time;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,7 +42,17 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
 
     // The dialog that allows the user to select a certain time frame
     private AlertDialog programGuideTimeDialog;
-    
+
+    // This is the width in pixels from the icon in the program_guide_list.xml
+    // We need to subtract this value from the window width to get the real
+    // usable width. The same values is also used in the
+    // ProgramGuideListFragment class.
+    private final static int LAYOUT_ICON_OFFSET = 66;
+
+    // The ratio how many minutes a pixel represents on the screen.
+    private static float pixelsPerMinute;
+    private static int displayWidth;
+
     // The time frame (start and end times) that shall be shown in a single fragment.  
     private static List<Long> startTimes = new ArrayList<Long>();
     private static List<Long> endTimes = new ArrayList<Long>();
@@ -78,6 +88,14 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         calcFragmentCount();
         calcProgramGuideTimeslots();
         createProgramGuideTimeDialog();
+
+        // Calculates the available display width of one minute in pixels. This
+        // depends how wide the screen is and how many hours shall be shown in
+        // one screen.
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        displayWidth = displaymetrics.widthPixels;
+        pixelsPerMinute = ((float) (displayWidth - LAYOUT_ICON_OFFSET) / (60.0f * (float) hoursToShow));
 
         // Show the list of channels on the left side
         Bundle bundle = new Bundle();
@@ -212,19 +230,25 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private static class ProgramGuidePagerAdapter extends FragmentPagerAdapter {
         private int count = 0;
 
-        public ProgramGuidePagerAdapter(FragmentManager fm, Context context, int fragmentCount) {
+        public ProgramGuidePagerAdapter(FragmentManager fm, Activity activity, int fragmentCount) {
             super(fm);
-            count = fragmentCount;
+            this.count = fragmentCount;
         }
 
         @Override
         public Fragment getItem(int position) {
             Fragment fragment = new ProgramGuideListFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt(Constants.BUNDLE_EPG_INDEX, position);
-            bundle.putInt(Constants.BUNDLE_EPG_HOURS_TO_SHOW, hoursToShow);
             bundle.putLong(Constants.BUNDLE_EPG_START_TIME, startTimes.get(position));
             bundle.putLong(Constants.BUNDLE_EPG_END_TIME, endTimes.get(position));
+            // Used to only show the vertical current time indication in the first fragment
+            bundle.putInt(Constants.BUNDLE_EPG_INDEX, position);
+            // Required to know how many pixels of the display are remaining
+            bundle.putInt(Constants.BUNDLE_EPG_DISPLAY_WIDTH, displayWidth);
+            // Required so that the correct width of each program guide entry
+            // can be calculated. Also used to determine the exact position of
+            // the vertical current time indication
+            bundle.putFloat(Constants.BUNDLE_EPG_PIXELS_PER_MINUTE, pixelsPerMinute);
             fragment.setArguments(bundle);
             return fragment;
         }

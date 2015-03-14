@@ -30,6 +30,8 @@ public class Constants {
     public static final String BUNDLE_CONNECTION_ID = "connectionId";
     public static final String BUNDLE_MANAGE_CONNECTIONS = "manageConnections";
     public static final String BUNDLE_SETTINGS_MODE = "settingsMode";
+    public static final String BUNDLE_EPG_PIXELS_PER_MINUTE = "pixelsPerMinute";
+    public static final String BUNDLE_EPG_DISPLAY_WIDTH = "displayWidth";
 
     // Differentiates the different types of recordings
     public static final int RECORDING_TYPE_COMPLETED = 1;
