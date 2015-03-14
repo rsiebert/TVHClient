@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/pager_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="?attr/TimelineHeaderLayoutStyle"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/pager_title_date_text"
+            style="?attr/ProgramGuideTimelineFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:padding="4dp"
+            android:text="@string/unknown" />
+
+        <TextView
+            android:id="@+id/pager_title_date"
+            style="?attr/ProgramGuideTimelineFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:padding="4dp"
+            android:text="@string/unknown" />
+
+        <TextView
+            android:id="@+id/pager_title_hours"
+            style="?attr/ProgramGuideTimelineFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:padding="4dp"
+            android:text="@string/unknown" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/item_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/pager_title"
+        android:fastScrollEnabled="true" />
+
+    <ImageView
+        android:id="@+id/current_time"
+        android:layout_width="3dp"
+        android:layout_height="fill_parent"
+        android:contentDescription="@string/time"
+        android:scaleType="fitXY"
+        android:src="@drawable/current_time" />
+
+</RelativeLayout>

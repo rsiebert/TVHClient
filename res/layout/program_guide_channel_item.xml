@@ -2,9 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="54dp"
     android:layout_height="66dp"
-    android:background="?attr/TimelineListLayoutStyle"
-    android:orientation="vertical"
-    android:paddingBottom="4dp" >
+    android:background="?attr/TimelineItemLayoutStyle"
+    android:orientation="vertical" >
 
     <ImageView
         android:id="@+id/icon"

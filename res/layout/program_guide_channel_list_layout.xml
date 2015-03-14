@@ -4,7 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/pager_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/TimelineHeaderLayoutStyle"
+        android:orientation="horizontal" >
+
+        <TextView
             android:id="@+id/channel_title_date"
             style="?attr/ProgramGuideTimelineFont"
             android:layout_width="wrap_content"
@@ -12,8 +19,8 @@
             android:paddingBottom="4dp"
             android:paddingTop="4dp"
             android:text="" />
-    
-    
+    </LinearLayout>
+
     <ListView
         android:id="@+id/item_list"
         android:layout_width="match_parent"

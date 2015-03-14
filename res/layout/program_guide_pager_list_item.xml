@@ -2,9 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="?attr/TimelineListLayoutStyle"
-    android:orientation="horizontal"
-    android:paddingBottom="4dp" >
+    android:orientation="horizontal" >
 
     <!-- The timeline layout is required to set the height of one row 
          in the program guide. Without it the rows would be of 
