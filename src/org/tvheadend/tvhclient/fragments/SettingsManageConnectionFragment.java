@@ -280,13 +280,25 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         // Update the connection object with the new values
         conn.name = prefName.getText();
         conn.address = prefAddress.getText();
-        conn.port = Integer.parseInt(prefPort.getText());
-        conn.streaming_port = Integer.parseInt(prefStreamingPort.getText());
+        try {
+            conn.port = Integer.parseInt(prefPort.getText());
+        } catch (NumberFormatException nex) {
+            conn.port = 9982;
+        }
+        try {
+            conn.streaming_port = Integer.parseInt(prefStreamingPort.getText());
+        } catch (NumberFormatException nex) {
+            conn.port = 9981;
+        }
         conn.username = prefUsername.getText();
         conn.password = prefPassword.getText();
         conn.selected = prefSelected.isChecked();
         conn.wol_address = prefWolAddress.getText();
-        conn.wol_port = Integer.parseInt(prefWolPort.getText());
+        try {
+            conn.wol_port = Integer.parseInt(prefWolPort.getText());
+        } catch (NumberFormatException nex) {
+            conn.port = 9;
+        }
         conn.wol_broadcast = prefWolBroadcast.isChecked();
 
         // Show the values from the connection object
