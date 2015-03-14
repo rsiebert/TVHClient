@@ -214,66 +214,68 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
             }
 
-            // Get the iterator so we can check the channel status 
-            Iterator<Program> it = c.epg.iterator();
-            
-            // Get the program that is currently running
-            // and set all the available values
-            Program p = null;
-            if (it.hasNext()) {
-                p = it.next();
-            }
-            Program np = null;
-            if (it.hasNext()) {
-                np = it.next();
-            }
-
-            // Check if the channel is actually transmitting
-            // data and contains program data which can be shown.
-            if (!c.isTransmitting && p != null) {
-                if (holder.title != null) {
-                    holder.title.setText(R.string.no_transmission);
-                }
-                if (holder.nextTitle != null) {
-                    holder.nextTitle.setVisibility(View.GONE);
-                }
-            } else if (p != null) {
-                if (holder.title != null) {
-                    holder.title.setText(p.title);
-                }
-                Utils.setTime(holder.time, p.start, p.stop);
-                Utils.setDuration(holder.duration, p.start, p.stop);
-                Utils.setProgress(holder.progress, p.start, p.stop);
+            synchronized(c.epg) {
+                // Get the iterator so we can check the channel status 
+                Iterator<Program> it = c.epg.iterator();
                 
-                if (holder.nextTitle != null && np != null) {
-                    final boolean showNextProgram = prefs.getBoolean("showNextProgramPref", true);
-                    holder.nextTitle.setVisibility(showNextProgram ? View.VISIBLE : View.GONE);
-                    holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
+                // Get the program that is currently running
+                // and set all the available values
+                Program p = null;
+                if (it.hasNext()) {
+                    p = it.next();
                 }
+                Program np = null;
+                if (it.hasNext()) {
+                    np = it.next();
+                }
+    
+                // Check if the channel is actually transmitting
+                // data and contains program data which can be shown.
+                if (!c.isTransmitting && p != null) {
+                    if (holder.title != null) {
+                        holder.title.setText(R.string.no_transmission);
+                    }
+                    if (holder.nextTitle != null) {
+                        holder.nextTitle.setVisibility(View.GONE);
+                    }
+                } else if (p != null) {
+                    if (holder.title != null) {
+                        holder.title.setText(p.title);
+                    }
+                    Utils.setTime(holder.time, p.start, p.stop);
+                    Utils.setDuration(holder.duration, p.start, p.stop);
+                    Utils.setProgress(holder.progress, p.start, p.stop);
+                    
+                    if (holder.nextTitle != null && np != null) {
+                        final boolean showNextProgram = prefs.getBoolean("showNextProgramPref", true);
+                        holder.nextTitle.setVisibility(showNextProgram ? View.VISIBLE : View.GONE);
+                        holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
+                    }
+                }
+                else {
+                    // The channel does not provide program data. Hide the progress
+                    // bar,the time and duration texts.
+                    if (holder.title != null) {
+                        holder.title.setText(R.string.no_data);
+                    }
+                    if (holder.progress != null) {
+                        holder.progress.setVisibility(View.GONE);
+                    }
+                    if (holder.time != null) {
+                        holder.time.setVisibility(View.GONE);
+                    }
+                    if (holder.duration != null) {
+                        holder.duration.setVisibility(View.GONE);
+                    }
+                    if (holder.genre != null) {
+                        holder.genre.setVisibility(View.GONE);
+                    }
+                    if (holder.nextTitle != null) {
+                        holder.nextTitle.setVisibility(View.GONE);
+                    }
+                }
+                Utils.setGenreColor(context, holder.genre, p, TAG);
             }
-            else {
-                // The channel does not provide program data. Hide the progress
-                // bar,the time and duration texts.
-                if (holder.title != null) {
-                    holder.title.setText(R.string.no_data);
-                }
-                if (holder.progress != null) {
-                    holder.progress.setVisibility(View.GONE);
-                }
-                if (holder.time != null) {
-                    holder.time.setVisibility(View.GONE);
-                }
-                if (holder.duration != null) {
-                    holder.duration.setVisibility(View.GONE);
-                }
-                if (holder.genre != null) {
-                    holder.genre.setVisibility(View.GONE);
-                }
-                if (holder.nextTitle != null) {
-                    holder.nextTitle.setVisibility(View.GONE);
-                }
-            }
-            Utils.setGenreColor(context, holder.genre, p, TAG);
         }
         return view;
     }
