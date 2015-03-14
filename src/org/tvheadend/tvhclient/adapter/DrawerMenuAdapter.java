@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
@@ -23,14 +23,12 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
     private Activity context;
     private SharedPreferences prefs;
     private List<DrawerMenuItem> list;
-    private int layout;
     private int selectedPosition;
     private boolean lightTheme;
 
-    public DrawerMenuAdapter(Activity context, List<DrawerMenuItem> list, int layout) {
-        super(context, layout, list);
+    public DrawerMenuAdapter(Activity context, List<DrawerMenuItem> list) {
+        super(context, R.layout.list_layout, list);
         this.context = context;
-        this.layout = layout;
         this.list = list;
 
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -42,10 +40,8 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
     }
 
     static class ViewHolder {
-        public LinearLayout itemLayout;
-        public LinearLayout headerLayout;
-        public TextView header;
-        public LinearLayout menuLayout;
+        public View divider;
+        public RelativeLayout itemLayout;
         public ImageView icon;
         public TextView title;
         public TextView count;
@@ -56,14 +52,23 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
         View view = convertView;
         ViewHolder holder = null;
 
+        final DrawerMenuItem m = getItem(position);
         if (view == null) {
-            view = context.getLayoutInflater().inflate(layout, null);
-
+            // Inflate the section layout if a section shall be shown, otherwise
+            // inflate the regular menu item layout or one that has no contents
+            // and is pretty much invisible
+            if (m.isSection) {
+                view = context.getLayoutInflater().inflate(R.layout.drawer_list_section, parent, false);
+            } else {
+                if (m.isVisible) {
+                    view = context.getLayoutInflater().inflate(R.layout.drawer_list_item, parent, false);
+                } else {
+                    view = context.getLayoutInflater().inflate(R.layout.drawer_list_item_empty, parent, false);
+                }
+            }
             holder = new ViewHolder();
-            holder.itemLayout = (LinearLayout) view.findViewById(R.id.item_layout);
-            holder.headerLayout = (LinearLayout) view.findViewById(R.id.header_layout);
-            holder.header = (TextView) view.findViewById(R.id.header);
-            holder.menuLayout = (LinearLayout) view.findViewById(R.id.menu_layout);
+            holder.divider = (View) view.findViewById(R.id.divider);
+            holder.itemLayout = (RelativeLayout) view.findViewById(R.id.item_layout);
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.count = (TextView) view.findViewById(R.id.count);
@@ -72,35 +77,31 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
             holder = (ViewHolder) view.getTag();
         }
 
-        if (selectedPosition == position) {
+        // Highlight the selected position with a different color. This can't be
+        // done with the list position because the section menu items mess up
+        // the positions. So we need to check if the id of the menu item is the
+        // right one.
+        if (selectedPosition == m.id) {
             final int color = (lightTheme) ? context.getResources().getColor(
                     R.color.drawer_selected_light) : context.getResources().getColor(
                     R.color.drawer_selected_dark);
-            holder.itemLayout.setBackgroundColor(color);
+            if (holder.itemLayout != null) {
+                holder.itemLayout.setBackgroundColor(color);
+            }
         } else {
             final int color = context.getResources().getColor(android.R.color.transparent);
-            holder.itemLayout.setBackgroundColor(color);
+            if (holder.itemLayout != null) {
+                holder.itemLayout.setBackgroundColor(color);
+            }
         }
-
-        // Get the program and assign all the values
-        final DrawerMenuItem m = getItem(position);
+        
+        // Apply the values to the available layout items
         if (m != null) {
-
-            // Show the header layout and the text if the menu item entry is not
-            // marked as a menu
-            if (holder.headerLayout != null) {
-                holder.headerLayout.setVisibility(m.isMenu ? View.GONE : View.VISIBLE);
-            }
-            if (holder.header != null) {
-                holder.header.setText(m.header);
-                holder.header.setVisibility((m.header.length() > 0) ? View.VISIBLE : View.GONE);
-            }
-
-            // Show the menu layout and the title and optionally the count if
-            // the menu item entry is marked as a menu
-            if (holder.menuLayout != null) {
-                holder.menuLayout.setVisibility(m.isMenu ? View.VISIBLE : View.GONE);
-            }
+            if (m.isSection) {
+                view.setOnClickListener(null);
+                view.setOnLongClickListener(null);
+                view.setLongClickable(false);
+            } 
             if (holder.icon != null) {
                 holder.icon.setImageResource(m.icon);
                 holder.icon.setVisibility((m.icon != 0) ? ImageView.VISIBLE : ImageView.GONE);
@@ -112,25 +113,25 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
                 holder.count.setText(String.valueOf(m.count));
                 holder.count.setVisibility((m.count > 0) ? View.VISIBLE : View.GONE);
             }
-
-            // Hide menu items that are marked as invisible
-            if (holder.menuLayout != null && !m.isVisible) {
-                holder.menuLayout.setVisibility(View.GONE);
-            }
         }
         return view;
     }
 
-    public void update(DrawerMenuItem m) {
-        int length = list.size();
-
-        // Go through the list of menu items and find the
-        // one with the same id. If its been found, replace it.
-        for (int i = 0; i < length; ++i) {
-            if (list.get(i).id == m.id) {
-                list.set(i, m);
-                break;
+    /**
+     * The main activity has access to the menu entries in the adapter to change
+     * the visible value. The list position can't be used because the section
+     * menu items mess up the positions. So the id is used to get the correct
+     * menu item from the list.
+     * 
+     * @param id
+     * @return
+     */
+    public DrawerMenuItem getItemById(final int id) {
+        for (DrawerMenuItem item : list) {
+            if (item.id == id) {
+                return item;
             }
         }
+        return null;
     }
 }

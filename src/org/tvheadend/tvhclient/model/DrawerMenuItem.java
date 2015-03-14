@@ -1,16 +1,13 @@
 package org.tvheadend.tvhclient.model;
 
-
 public class DrawerMenuItem {
 
     // Default variables
     public int id = -1;
     public int icon = 0;
-    public String header = "";
     public String title = "";
     public int count = 0;
-    public boolean isMenu = false;
-    public boolean isEnabled = true;
+    public boolean isSection = false;
     public boolean isVisible = true;
 
     /**
@@ -21,12 +18,13 @@ public class DrawerMenuItem {
     }
 
     /**
-     * Creates an header item with the given text
+     * Creates a menu section item with the given text
      * 
      * @param header
      */
-    public DrawerMenuItem(String header) {
-        this.header = header;
+    public DrawerMenuItem(String title) {
+        this.title = title;
+        this.isSection = true;
     }
 
     /**
@@ -39,7 +37,7 @@ public class DrawerMenuItem {
     public DrawerMenuItem(int id, String title) {
         this.id = id;
         this.title = title;
-        this.isMenu = true;
+        this.isSection = false;
     }
 
     /**
@@ -54,6 +52,6 @@ public class DrawerMenuItem {
         this.id = id;
         this.icon = icon;
         this.title = title;
-        this.isMenu = true;
+        this.isSection = false;
     }
 }
