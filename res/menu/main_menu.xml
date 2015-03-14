@@ -7,7 +7,8 @@
         android:icon="?attr/ic_menu_search"
         android:orderInCategory="1"
         android:title="@android:string/search_go"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
     <item
         android:id="@+id/menu_refresh"
         android:icon="?attr/ic_menu_refresh"
