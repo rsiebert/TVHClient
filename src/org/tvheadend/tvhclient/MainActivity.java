@@ -481,20 +481,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         editor.commit();
     }
 
-//    @Override
-//    public void onDestroy() {
-//        Log.i(TAG, "onDestroy");
-//
-//        // Remove all listeners so no one receives any status information
-//        TVHClientApplication app = (TVHClientApplication) getApplication();
-//        app.removeListeners();
-//        // stop the service when the application is closed
-//        Intent intent = new Intent(this, HTSService.class);
-//        stopService(intent);
-//
-//        super.onDestroy();
-//    }
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
