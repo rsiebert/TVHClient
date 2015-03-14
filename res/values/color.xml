@@ -30,7 +30,7 @@
 
 	<!-- Drawer menu item background -->
 	<color name="drawer_background_light">#ffeeeeee</color>
-	<color name="drawer_background_dark">#ff222222</color>
+	<color name="drawer_background_dark">#ff191919</color>
 
 	<!-- Drawer menu background when it is selected  -->
     <color name="drawer_selected_light">#aadedede</color>
