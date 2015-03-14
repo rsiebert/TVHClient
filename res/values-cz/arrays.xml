@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>None</item>
+    </string-array>
+
+    <string-array name="pref_menu_names">
+        <item>Kanály</item>
+        <item>Dokončené nahrávky</item>
+        <item>Naplánované nahrávky</item>
+        <item>Opakované nahrávky</item>
+        <item>Ruční nahrávky</item>
+        <item>Nezdařené nahrávky</item>
+        <item>Programový průvodce</item>
+        <item>Stav</item>
+        <item>Připojení</item>
+        <item>Nastavení</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Určené serverem</item>
+        <item>Jméno kanálu</item>
+        <item>Číslo kanálu</item>
+    </string-array>
+
+    <string-array name="day_short_names">
+        <item>Pon</item>
+        <item>Úte</item>
+        <item>Stř</item>
+        <item>Čtv</item>
+        <item>Pát</item>
+        <item>Sob</item>
+        <item>Neď</item>
+    </string-array>
+
+    <string-array name="day_long_names">
+        <item>Pondělí</item>
+        <item>Úterý</item>
+        <item>Středa</item>
+        <item>Čtvrtek</item>
+        <item>Pátek</item>
+        <item>Sobota</item>
+        <item>Neděle</item>
+    </string-array>
+
+    <string-array name="dvr_priorities">
+        <item>Důležité</item>
+        <item>Vysoká</item>
+        <item>Normální</item>
+        <item>Nízká</item>
+        <item>Nedůležité</item>
+        <item>Nenastavena</item>
+    </string-array>
+    
+    <string-array name="pr_content_type0">
+        <item>Film/Drama</item>
+        <item>Zprávy/Aktuální události</item>
+        <item>Zábava/Zábavné hry</item>
+        <item>Sport</item>
+        <item>Dětské/Mládež</item>
+        <item>Hudba/Balet/Tanec</item>
+        <item>Umění/Kultura</item>
+        <item>Sociální/Politika/Ekonomika</item>
+        <item>Vzdělávání/Věda/Fakta</item>
+        <item>Volnočasová zábava</item>
+        <item>Ostatní</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Film/Drama</item>
+        <item>Detektivka/Thriller</item>
+        <item>Dobrodružství/Western/Válka</item>
+        <item>Science Fiction/Fantasy/Horror</item>
+        <item>Komedie</item>
+        <item>Soap/Melodrama/Folklór</item>
+        <item>Romantika</item>
+        <item>Vážné/Klasické náboženství/Historické</item>
+        <item>Film pro dospělé/Drama</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>Zprávy/Aktuální události</item>
+        <item>Zprávy/Předpověď počasí</item>
+        <item>Magazín</item>
+        <item>Dokumentární</item>
+        <item>Diskuse/Interview/Debata</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Zábava/Zábavné hry</item>
+        <item>Zábavné hry/Kvíz/Soutěž</item>
+        <item>Různé</item>
+        <item>Mluvené</item>
+    </string-array>
+    
+    <string-array name="pr_content_type4">
+        <item>Sporty</item>
+        <item>Speciální událost</item>
+        <item>Magazín</item>
+        <item>Fotbal/Soccer</item>
+        <item>Tenis/Squash</item>
+        <item>Týmové sporty</item>
+        <item>Atletika</item>
+        <item>Motoristické sporty</item>
+        <item>Vodní sporty</item>
+        <item>Zimní sporty</item>
+        <item>Jezdecké sporty</item>
+        <item>Bojové sporty</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Dětské/Mládež</item>
+        <item>Předškolní</item>
+        <item>Zábava (od 6 do 14 let věku)</item>
+        <item>Zábava (od 10 do 16 let věku)</item>
+        <item>Informační/Vzdělávací/Školní</item>
+        <item>Kreslené/Loutkové</item>
+    </string-array>
+    
+    <string-array name="pr_content_type6">
+        <item>Hudba/Balet/Tanec</item>
+        <item>Rock/Pop</item>
+        <item>Vážná hudba/Klasická hudba</item>
+        <item>Folk/Tradiční hudba</item>
+        <item>Jazz</item>
+        <item>Hudební/Opera</item>
+        <item>Balet</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Umění/Kultura</item>
+        <item>Živé umění</item>
+        <item>Výtvarné umění</item>
+        <item>Náboženství</item>
+        <item>Populární kultura/Tradital umění</item>
+        <item>Literatura</item>
+        <item>Film/Kino</item>
+        <item>Experimentální Film/Video</item>
+        <item>Vysílání/Tisk</item>
+        <item>Nová média</item>
+        <item>Magazín</item>
+        <item>Móda</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Sociální/Politika/Ekonomika</item>
+        <item>Magazín/Reportáž/Dokument</item>
+        <item>Ekonomika/Sociální poradenství</item>
+        <item>Nevšední lidé</item>
+    </string-array>
+ 
+    <string-array name="pr_content_type9">
+        <item>Vzdělávání/Věda/Fakta</item>        
+        <item>Příroda/Zvířata /Životní prostředí</item>
+        <item>Technologie/Přírodní vědy</item>
+        <item>Lékařství/Fyziologie/Psychologie</item>
+        <item>Cizí země/Expedice</item>
+        <item>Sociální/Duchovní vědy</item>
+        <item>Další vzdělávání</item>
+        <item>Jazyky</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Volnočasová zábava</item>
+        <item>Turistika/Cestovní</item>
+        <item>Ruční práce</item>
+        <item>Automobilismus</item>
+        <item>Fitness a zdraví</item>
+        <item>Vaření</item>
+        <item>Reklama/Nakupování</item>
+        <item>Zahradničení</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Ostatní</item>
+        <item>Černá a bílá</item>
+        <item>Nepublikované</item>
+        <item>Živé vysílání</item>
+    </string-array>
+</resources>

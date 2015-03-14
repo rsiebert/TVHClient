@@ -66,6 +66,7 @@
         <item>nl</item>
         <item>pl</item>
         <item>sv</item>
+        <item>cz</item>
     </string-array>
     <string-array name="pref_language_list_display" translatable="false">
         <item>Default</item>
@@ -76,6 +77,7 @@
         <item>Nederlands</item>
         <item>Polski</item>
         <item>Svenska</item>
+        <item>Česky</item>
     </string-array>
 
     <string-array name="pref_menu_ids" translatable="false">

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">TVHClient</string>
+
+    <string name="menu_settings">Nastavení</string>
+    <string name="menu_refresh">Obnovit</string>
+    <string name="menu_tags">Štítky</string>
+
+    <string name="menu_play">Přehrát</string>
+    <string name="menu_search">Hledat</string>
+    <string name="menu_record_once">Nahrát</string>
+    <string name="menu_record_series">Nahrát (Autorec)</string>
+    <string name="menu_record_cancel">Zrušit nahrávání</string>
+    <string name="menu_record_cancel_all">Zrušit všechna nahrávání</string>
+    <string name="menu_record_remove">Smazat nahrávku</string>
+    <string name="menu_record_remove_all">Smazat všechny nahrávky</string>
+    <string name="menu_search_imdb">Hledat v IMDB</string>
+    <string name="menu_search_epg">Hledat v programovém průvodci</string>
+    <string name="menu_add">Přidat</string>
+    <string name="menu_save">Uložit</string>
+    <string name="menu_cancel">Zrušit</string>
+    <string name="menu_set_active">Aktivovat</string>
+    <string name="menu_set_not_active">Deaktivovat</string>
+    <string name="menu_edit">Upravit</string>
+    <string name="menu_delete">Smazat</string>
+    <string name="menu_connections">Připojení</string>
+    <string name="menu_timeframe">Časový rámec</string>
+    <string name="menu_genre_color_info">Vysvětlit barvy žánrů</string>
+    <string name="menu_send_wol">Probudit</string>
+
+    <string name="pref_manage_connections">Spravovat připojení</string>
+    <string name="pref_manage_connections_sum">Nastavit Vaše aktivní připojení k TVHeadend serveru nebo přidat, odebrat a upravit již existující připojení.</string>
+    <string name="pref_connection_details">Podrobnosti připojení</string>
+    <string name="pref_connection_wol">Wake on LAN</string>
+    <string name="select_connection">Vybrat připojení</string>
+    <string name="add_connection">Přidat připojení</string>
+    <string name="cancel">Opravdu chcete zrušit? Všechny změny budou ztraceny!</string>
+    <string name="delete_connection">Opravdu chcete odstranit připojení \'%s\'?</string>
+    <string name="delete_recording">Opravdu chcete smazat nahrávku \'%s\'?</string>
+    <string name="delete_series_recording">Opravdu chcete smazat opakované nahrávání \'%s\'?\n\nTím budou odstraněna všechna plánovaná nahrávání patřící do tohoto pravidla pro opakovaného nahrávání.</string>
+    <string name="delete_timer_recording">Opravdu chcete smazat načasované nahrávání \'%s\'?</string>
+    <string name="delete_all_recordings">Opravdu chcete smazat VŠECHNY nahrávky?</string>
+    <string name="cancel_recording">Opravdu chcete zrušit naplánované nahrávání \'%s\'?</string>
+    <string name="cancel_all_recordings">Opravdu chcete zrušit VŠECHNA naplánovaná nahrávání?</string>
+    <string name="add_recording">Přidat nové nahrávání</string>
+    <string name="cancel_add_recording">Zrušit přidávání nového nahrávání? Všechny hodnoty budou ztraceny.</string>
+
+    <string name="pref_connections">Připojení</string>
+    <string name="pref_name">Jméno připojení</string>
+    <string name="pref_name_sum">Zadejte unikátní jméno tohoto připojení</string>
+    <string name="pref_name_error_empty">Jméno nesmí být prázdné.</string>
+    <string name="pref_name_error_invalid">Jméno může obsahovat pouze písmena, čísla, pomlčku a podtržítko.</string>
+    <string name="pref_selected">Výchozí připojení</string>
+    <string name="pref_selected_sum">Nastaví toto připojení jako výchozí při spuštění aplikace.</string>
+    <string name="pref_host">Název hostitele</string>
+    <string name="pref_host_sum">Zadejte adresu serveru (hostname nebo IP)</string>
+    <string name="pref_host_error_empty">Adresa serveru nesmí být prázdná.</string>
+    <string name="pref_host_error_invalid">Neplatná adresa serveru.</string>
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Zadejte port serveru</string>
+    <string name="pref_port_error_empty">Číslo portu nesmí být prázdné.</string>
+    <string name="pref_port_error_invalid">Číslo portu je neplatné. Zadejte číslo v rozsahu 1 a 65535.</string>
+    <string name="pref_streaming_port">Port pro media streaming</string>
+    <string name="pref_streaming_port_sum">%d bude použit pro media streaming. Výchozí port je 9981, který je obvykle správně.</string>
+    <string name="pref_user">Uživatelské jméno</string>
+    <string name="pref_user_sum">Zadejte uživatelské jméno</string>
+    <string name="pref_pass">Heslo</string>
+    <string name="pref_pass_sum">Zadejte heslo</string>
+    <string name="pref_pass_set_sum">Heslo je nastavené, ale je skryté.</string>
+    <string name="pref_wol_address">MAC adresa</string>
+    <string name="pref_wol_address_sum">Zadejte MAC adresu serveru (např. 00:ef:aa:dc:09:45).</string>
+    <string name="pref_wol_port">Wake on LAN port</string>
+    <string name="pref_wol_port_sum">Port %d bude použit pro probuzení serveru. Výchozí port je 9.</string>
+    <string name="pref_wol_broadcast">Použít broadcast</string>
+    <string name="pref_wol_broadcast_sum">Poslat WOL paket jako broadcast. Některé routery tento druh WOL nepodporují.</string>
+    <string name="pref_wol_address_invalid">MAC adresa je neplatná. \nAdresa musí odpovídat vzoru \'01:24:67:9a:cd:ef\' a může obsahovat pouze hexadecimální čísla 0\-9 a a\-f a oddělovač \':\' nebo \'\-\'.</string>
+    
+    <string name="pref_user_interface">Uživatelské rozhraní</string>
+    <string name="pref_icons">Ikony kanálů</string>
+    <string name="pref_icons_sum">Zobrazit ikony kanálů.</string>
+    <string name="pref_tag_icon">Ikona kanálového štítku</string>
+    <string name="pref_tag_icon_sum">Zobrazit ikonu pro kanálový štítek místo loga aplikace.</string>
+    <string name="pref_theme">Světlé téma</string>
+    <string name="pref_theme_sum">Použít světlé téma</string>
+    <string name="pref_language">Jazyk</string>
+    <string name="pref_language_sum">Zvolte jazyk, který bude použit v aplikaci.</string>
+    <string name="pref_default_menu">Startovací obrazovka</string>
+    <string name="pref_default_menu_sum">Vyberte obrazovku, která se zobrazí po spuštění aplikace.</string>
+    <string name="pref_sort_channels">Řazení kanálů</string>
+    <string name="pref_sort_channels_sum">Vyberte v jakém pořadí budou zobrazeny kanály.</string>
+    <string name="pref_res">Rozlišení</string>
+    <string name="pref_res_sum">Zadejte maximální rozlišení, které použije transcoder.</string>
+    <string name="pref_acodec">Audio kodek</string>
+    <string name="pref_acodec_sum">Určete typ zvuku, který bude používat transcoder.</string>
+    <string name="pref_vcodec">Video kodek</string>
+    <string name="pref_vcodec_sum">Určete typ videa, které použije transcoder.</string>
+    <string name="pref_scodec">Titulkový kodek</string>
+    <string name="pref_scodec_sum">Určete typ titulků, které použije transcoder.</string>
+    <string name="pref_container">Média kontejner</string>
+    <string name="pref_container_sum">Určete kontejner média, který se použije pro přepravu audio a video streamů. Matroska je obvykle preferovanou volbou.</string>
+    
+    <string name="pref_playback">Přehrávání</string>
+    <string name="pref_playback_programs_sum">Konfigurace možností přehrávání pro Live-TV programy.</string>
+    <string name="pref_playback_recordings_sum">Konfigurace možností přehrávání nahraných programů.</string>
+    <string name="pref_transcode">Překódovat stream</string>
+    <string name="pref_transcode_sum">Konvertovat program nebo nahrávku do jiného formátu v průběhu přehrávání (toto musí podporovat TVHeadend server).</string>
+
+    <string name="pref_information">Informace</string>
+    <string name="pref_changelog">Seznam změn</string>
+    <string name="pref_changelog_sum">Zobrazit seznam funkcí a změn v jednotlivých verzí aplikace.</string>
+    <string name="pref_program_guide">Programový průvodce</string>
+    <string name="pref_program_guide_sum">Konfigurace obrazovky programového průvodce a způsobu, jakým mají být zobrazeny údaje.</string>
+    <string name="pref_epg_hours_visible">Počet zobrazených hodin</string>
+    <string name="pref_epg_hours_visible_sum">Určete kolik hodin z programového průvodce má být zobrazeno na jedné obrazovce. Nastavením příliš mnoha hodin způsobíte zobrazení příliš mnoha informací o programech, což způsobí zmatek a sníží čitelnost.</string>
+    <string name="pref_epg_max_days">Největší množství dní k zobrazení</string>
+    <string name="pref_epg_max_days_sum">Určuje maximální počet dní zobrazených v programovém průvodci.</string>
+    <string name="pref_genre_colors">Barvy žánrů</string>
+    <string name="pref_genre_colors_sum">Určuje na kterých obrazovkách budou použity barvy žánrů.</string>
+    <string name="pref_genre_colors_channels">Kanály</string>
+    <string name="pref_genre_colors_channels_sum">Žánrová barva bude zobrazena jako svislá linka na levé straně obrazovky se seznamem kanálů.</string>
+    <string name="pref_genre_colors_programs">Programy</string>
+    <string name="pref_genre_colors_programs_sum">Žánrová barva bude zobrazena jako svislá linka na levé straně obrazovky se seznamem kanálů a detailů programu.</string>
+    <string name="pref_genre_colors_epg">Programový průvodce</string>
+    <string name="pref_genre_colors_epg_sum">Zobrazí barvu žánru na pozadí každé položky v programovém průvodci.</string>
+    <string name="pref_genre_colors_search_results">Výsledky vyhledávání</string>
+    <string name="pref_genre_colors_search_results_sum">Žánrová barva bude zobrazena jako svislá linka na levé straně seznamu výsledku vyhledávání.</string>
+    <string name="pref_genre_colors_visibility_message">Nastavit viditelnost barev. Vyšší hodnoty znamenají sytější barvy.</string>
+    <string name="pref_genre_colors_visibility">Intenzita barvy žánrů</string>
+    <string name="pref_genre_colors_visibility_value">%1$d%% intenzity</string>
+    <string name="pref_misc">Ostatní</string>
+    <string name="pref_clear_search_history">Vymazat historii vyhledávání</string>
+    <string name="pref_clear_icon_cache">Vymazat cache ikon kanálů</string>
+    <string name="pref_unlocker">Povolit všechny funkce</string>
+    <string name="pref_unlocker_sum">Povolit přístup k dalším funkcím a podpořit vývoj zakoupením této aplikace.</string>
+
+    <string name="pref_menu_visibility">Viditelnost částí menu</string>
+    <string name="pref_menu_visibility_sum">Skrytí nebo zobrazení některých položek v menu.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Skrýt menu \'Smazat všechny nahrávky\'</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Skrýt tuto položku v menu aby se zabránilo nechtěnému smazání všech nahraných programů.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Skrýt menu \'Zrušit všechna nahrávání\'</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Skrýt tuto položku v menu aby se zabránilo nechtěnému zrušení všech naplánovaných nahrávání.</string>
+    
+    <string name="loading_profiles">Natahují se profily</string>
+    <string name="pref_profiles">Profily</string>
+    <string name="pref_profiles_sum">Určuje parametry nebo profily (pokud jsou podporovány) jak mají být programy nahrávány nebo nahrávky přehrávány.</string>
+    <string name="pref_recording_profiles">Profily pro nahrávání</string>
+    <string name="pref_recording_profiles_sum">Vyberte profil pro nahrávání naplánovaného programu.</string>
+    <string name="pref_playback_profiles">Profily pro přehrávání</string>
+    <string name="pref_playback_profiles_sum">Vyberte profil pro přehrávání nahraného programu.</string>
+    <string name="pref_show_notifications">Zobrazit oznámení</string>
+    <string name="pref_show_notifications_sum">Informuje uživatele vždy, když nahrávání začalo nebo bylo dokončeno. To vyžaduje službu běžící na pozadí.</string>
+    <string name="pref_show_next_program">Zobrazit další program v seznamu kanálů</string>
+    <string name="pref_show_next_program_sum">Název následujícího programu je zobrazen v seznamu kanálů. Je uveden vedle ukazatele průběhu.</string>
+
+    <string name="clear_search_history">Vymazat historii vyhledávání?</string>
+    <string name="clear_search_history_sum">Jste si jisti, že chcete odstranit všechny položky z historie vyhledávání?</string>
+    <string name="clear_search_history_done">Historie vyhledávání byla vymazána.</string>
+
+    <string name="clear_icon_cache">Vymazat cache ikon kanálů?</string>
+    <string name="clear_icon_cache_sum">Jste si jisti, že chcete odstranit všechny ikony kanálů? Tímto můžete vynutit nové načtení ikon ze serveru.</string>
+    <string name="clear_icon_cache_done">Cache ikon kanálů byla vymazána</string>
+
+    <string name="err_auth">Přístup zamítnut</string>
+    <string name="err_connect">Nelze se připojit k serveru</string>
+    <string name="err_con_lost">Připojení k serveru bylo ztraceno</string>
+    <string name="err_con_timeout">Časový limit připojení vypršel</string>
+    <string name="err_loading_profiles">Chyba při načítání profilů ze serveru\n%s</string>
+
+    <string name="recording_file_missing">Nahraný soubor chybí</string>
+    <string name="recording_time_missed">Naplánované nahrávání bylo minuto.</string>
+    <string name="recording_file_invalid">Nahrávání je neplatné</string>
+    <string name="recording_canceled">Nahrávání bylo zrušeno</string>
+    <string name="recording_started">Nahrávání začalo</string>
+    <string name="recording_completed">Nahrávání dokončeno</string>
+    <string name="recording_started_text">Nahrávání %s bylo započato.</string>
+    <string name="recording_completed_text">Nahrávání %s bylo dokončeno</string>
+
+    <string name="wol_send">Úspěšně odeslán Wake on LAN paket na \'%s\'</string>
+    <string name="wol_send_broadcast">Úspěšně odeslán Wake on LAN paket jako broadcast na \'%s\'</string>
+    <string name="wol_address_invalid">MAC adresa není platná. Zkontrolujte nastavení.</string>
+    <string name="wol_error">Chyba při odesílání Wake on LAN paketu na \'%1$s\'.\n Chybová hláška: %2$s</string>
+
+    <string name="no_transmission">Žádné vysílání</string>
+    <string name="no_data">Žádná dostupná data o programu</string>
+    <string name="minutes">%d min</string>
+    <string name="days">%d dní</string>
+    <string name="not_set">Není nastaveno</string>
+    
+    <string name="search_hint">Vyhledat v EPG</string>
+    <string name="two_days_ago">Před dvěma dny</string>
+    <string name="yesterday">Včera</string>
+    <string name="today">Dnes</string>
+    <string name="tomorrow">Zítra</string>
+    <string name="in_2_days">Za dva dny</string>
+    <string name="monday">Pondělí</string>
+    <string name="tuesday">Úterý</string>
+    <string name="wednesday">Středa</string>
+    <string name="thursday">Čtvrtek</string>
+    <string name="friday">Pátek</string>
+    <string name="saturday">Sobota</string>
+    <string name="sunday">Neděle</string>
+    <string name="all_days">Všechny dny</string>
+    <string name="no_days">Žádné dny</string>
+
+    <string name="programs">Programy</string>
+    <string name="completed_recordings">Dokončené nahrávky</string>
+    <string name="upcoming_recordings">Naplánované nahrávky</string>
+    <string name="failed_recordings">Nezdařené nahrávky</string>
+    <string name="series_recordings">Opakované nahrávky</string>
+    <string name="timer_recordings">Ruční nahrávky</string>
+    <string name="is_series_recording">Tato nahrávka je součástí opakovaného nahrávání</string>
+    <string name="is_timer_recording">Tato nahrávka byla vytvořena časovačem</string>
+    <string name="no_channels_available">Žádné kanály k dispozici</string>
+    <string name="no_recordings_available">Žádné nahrávky k dispozici</string>
+    <string name="no_recordings_scheduled">Žádné naplánované nahrávky</string>
+    <string name="no_programs_available">Žádné dostupné programy</string>
+
+    <string name="recording_enabled">Toto nahrávání je povoleno</string>
+    <string name="recording_disabled">Toto nahrávání je zakázáno</string>
+    <string name="days_of_week">Dny v týdnu</string>
+    <string name="comment">Komentář</string>
+    <string name="name">Jméno</string>
+
+    <string name="channels">Kanály</string>
+    <string name="recordings">Nahrávky</string>
+    <string name="status">Stav</string>
+    <string name="items">Položky</string>
+    <string name="results">Výsledky</string>
+    
+    <string name="channel_icon">Ikona kanálu</string>
+    <string name="status_icon">Ikona stavu</string>
+    <string name="title">Název</string>
+    <string name="channel">Kanál</string>
+    <string name="time">Čas</string>
+    <string name="date">Datum</string>
+    <string name="summary">Shrnutí</string>
+    <string name="description">Popis</string>
+    <string name="duration">Trvání</string>
+    <string name="airing">Vysíláno</string>
+    <string name="rating">Hodnocení</string>
+    <string name="content_type">Typ obsahu</string>
+    <string name="series_information">Informace o opakování</string>
+    <string name="genre_color_list">Seznam žánrových barev a jejich význam.</string>
+    <string name="retention">Zdržení</string>
+    <string name="priority">Priorita</string>
+    <string name="path">Cesta</string>
+    <string name="directory">Složka</string>
+    <string name="owner">Vlastník</string>
+    <string name="creator">Tvůrce</string>
+    <string name="approx_time">Minuty od půlnoci</string>
+
+    <string name="start_time">Čas začátku</string>
+    <string name="stop_time">Čas konce</string>
+    <string name="start_window">Okno začátku</string>
+    <string name="extra_start_time">Minuty navíc před začátkem (pre-time)</string>
+    <string name="extra_stop_time">Minuty navíc po skončení (post-time)</string>
+    <string name="min_duration">Minimální trvání</string>
+    <string name="max_duration">Maximální trvání</string>
+    <string name="record_from_to_time">Záznam od %1$s do %2$s</string>
+    <string name="recording_time">Čas nahrávání</string>
+    <string name="series_recording_add_error">Nelze přidat toto opakované nahrávání. Název nesmí být prázdný!</string>
+    <string name="time_recording_add_error">Nelze přidat toto časové nahrávání. Název nesmí být prázdný!</string>
+
+    <string name="nothing">Nic</string>
+    <string name="loading">Natahuji&#8230;</string>
+    <string name="loading_channel">Natahuji kanál %s</string>
+    <string name="updating">Aktualizace&#8230;</string>
+    <string name="all_channels">Všechny kanály</string>
+    <string name="season">Sezóna</string>
+    <string name="episode">Epizoda</string>
+    <string name="part">Část</string>
+    <string name="progress">%1$d%% z pořadu již zhlédnuto.</string>
+    <string name="next_program">Další: %s</string>
+
+    <string name="server">Server</string>
+    <string name="connection">Připojení</string>
+    <string name="disc_space">Místo na disku</string>
+    <string name="total">Celkem</string>
+    <string name="items_available">dostupné položky</string>
+    <string name="available">Dostupný</string>
+    <string name="unknown">Neznámý</string>
+    <string name="ready">Připravený</string>
+    <string name="select_timeframe">Zobrazit programového průvodce pro zvolený datum a čas.</string>
+    <string name="currently_recording">Současné nahrávání</string>
+    
+    <string name="no_connection_available_advice">Žádné připojení není k dispozici. Musíte přidat alespoň jedno připojení v menu nastavení.</string>
+    <string name="no_connection_available">K dispozici není žádné připojení.</string>
+    <string name="no_connection_active">Alespoň jedno připojení je nastaveno, ale není aktivováno.</string>
+    <string name="number_of_connections">%d spojení dostupných</string>
+    
+    <string name="no_media_player">Nebyl nalezen žádný přehrávač multimédií.</string>
+    <string name="show_play_store">Chcete jít na Google Play Store a vyhledat dostupné přehrávače multimédií?</string>
+    <string name="feature_not_available_in_free_version">Tato funkce není k dispozici v bezplatné verzi! Tuto funkci můžete odemknout a podpořit další vývoj zakoupením aplikace z obchodu Play.</string>
+
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Otevřít navigační šuplík</string>
+    <string name="drawer_close">Zavřít navigační šuplík</string>
+
+</resources>
