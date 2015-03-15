@@ -93,7 +93,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         ViewHolder holder = null;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(layout, null);
+            view = context.getLayoutInflater().inflate(layout, parent, false);
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
