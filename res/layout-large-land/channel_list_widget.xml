@@ -141,11 +141,17 @@
         </LinearLayout>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/dual_pane_list_item_selection"
+    <LinearLayout
         android:layout_width="16dp"
         android:layout_height="fill_parent"
-        android:contentDescription="@string/unknown"
-        android:scaleType="fitXY" />
+        android:orientation="vertical"
+        android:gravity="center" >
+	    <ImageView
+	        android:id="@+id/dual_pane_list_item_selection"
+	        android:layout_width="16dp"
+	        android:layout_height="48dp"
+	        android:contentDescription="@null"
+	        android:scaleType="center" />
+    </LinearLayout>
 
 </LinearLayout>
