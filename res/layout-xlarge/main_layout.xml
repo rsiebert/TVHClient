@@ -21,7 +21,8 @@
             android:id="@+id/right_fragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0" />
+            android:layout_weight="0" 
+            android:background="?attr/FragmentDividerLayoutStyle" />
     </LinearLayout>
 
     <!-- The navigation drawer -->

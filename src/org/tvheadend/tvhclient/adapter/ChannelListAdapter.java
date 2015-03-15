@@ -144,7 +144,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
             } else {
-                final int icon = (lightTheme) ? R.drawable.dual_pane_selector_light : R.drawable.dual_pane_selector_dark;
+                final int icon = R.drawable.dual_pane_selector_inactive;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
             }
         }
