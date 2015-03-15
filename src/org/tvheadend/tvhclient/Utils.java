@@ -222,11 +222,11 @@ public class Utils {
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_remove)
         .setMessage(message)
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 removeRecording(context, rec, srec);
             }
-        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // NOP
             }
@@ -271,11 +271,11 @@ public class Utils {
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_cancel)
         .setMessage(context.getString(R.string.cancel_recording, rec.title))
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 cancelRecording(context, rec);
             }
-        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // NOP
             }

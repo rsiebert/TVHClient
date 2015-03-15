@@ -34,7 +34,9 @@
     <string name="pref_connection_wol">Wake on LAN</string>
     <string name="select_connection">Select connection</string>
     <string name="add_connection">Add connection</string>
-    <string name="cancel">Do you really want to cancel? All changes will be discarded!</string>
+    <string name="confirm_cancel">Do you really want to cancel? All changes will be discarded!</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove">Remove</string>
     <string name="delete_connection">Do you really want to delete the connection \'%s\'?</string>
     <string name="delete_recording">Do you really want to delete the recording \'%s\'?</string>
     <string name="delete_series_recording">Do you really want to delete the series recording \'%s\'?\n\nThis will remove all scheduled recordings that belong to that series recording rule.</string>
@@ -282,7 +284,7 @@
     <string name="ready">Ready</string>
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
     <string name="currently_recording">Currently recording</string>
-    
+
     <string name="no_connection_available_advice">No connection is available. You need to add at least one from the settings menu.</string>
     <string name="no_connection_available">No connection available.</string>
     <string name="no_connection_active">At least one connection is defined, but was not activated.</string>

@@ -31,7 +31,9 @@
     <string name="pref_connection_wol">Wake on LAN</string>
     <string name="select_connection">choisir une connexion</string>
     <string name="add_connection">Ajouter connexion</string>
-    <string name="cancel">Effacer les valeurs? Tous les changements vont etre perdu.</string>
+    <string name="confirm_cancel">Effacer les valeurs? Tous les changements vont etre perdu.</string>
+    <string name="cancel">Annuler</string>
+    <string name="remove">Supprimer</string>
     <string name="delete_connection">Voulez-vous vraiment effacer la connexion \'%s\'?</string>
     <string name="delete_recording">Voulez-vous vraiment effacer l\'enregistrement \'%s\'?</string>
     <string name="delete_series_recording">Voulez-vous vraiment effacer l\'enregistrement auto \'%s\'?\n\nCela va effacer tous les enregistrements auto de cette série.</string>

@@ -34,7 +34,9 @@
     <string name="pref_connection_wol">Wake on LAN</string>
     <string name="select_connection">Vybrat připojení</string>
     <string name="add_connection">Přidat připojení</string>
-    <string name="cancel">Opravdu chcete zrušit? Všechny změny budou ztraceny!</string>
+    <string name="confirm_cancel">Opravdu chcete zrušit? Všechny změny budou ztraceny!</string>
+    <string name="cancel">Zrušit</string>
+    <string name="remove">Odstranit</string>
     <string name="delete_connection">Opravdu chcete odstranit připojení \'%s\'?</string>
     <string name="delete_recording">Opravdu chcete smazat nahrávku \'%s\'?</string>
     <string name="delete_series_recording">Opravdu chcete smazat opakované nahrávání \'%s\'?\n\nTím budou odstraněna všechna plánovaná nahrávání patřící do tohoto pravidla pro opakovaného nahrávání.</string>
