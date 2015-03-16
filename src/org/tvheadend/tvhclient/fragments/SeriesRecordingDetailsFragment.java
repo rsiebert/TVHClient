@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -60,9 +61,10 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (getDialog() != null) {
+            getDialog().requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
     }
@@ -109,8 +111,14 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         if (srec == null) {
             return;
         }
+
         if (getDialog() != null) {
-            getDialog().setTitle(srec.title);
+            getDialog().getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.dialog_fragment_title);
+            TextView dialogTitle = (TextView) getDialog().findViewById(android.R.id.title);
+            if (dialogTitle != null) {
+                dialogTitle.setText(srec.title);
+                dialogTitle.setSingleLine(false);
+            }
         }
         // Show the player controls
         if (showControls) {

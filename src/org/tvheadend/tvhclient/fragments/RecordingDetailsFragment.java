@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -72,9 +73,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (getDialog() != null) {
+            getDialog().requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
     }
@@ -133,7 +135,12 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         }
 
         if (getDialog() != null) {
-            getDialog().setTitle(rec.title);
+            getDialog().getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.dialog_fragment_title);
+            TextView dialogTitle = (TextView) getDialog().findViewById(android.R.id.title);
+            if (dialogTitle != null) {
+                dialogTitle.setText(rec.title);
+                dialogTitle.setSingleLine(false);
+            }
         }
 
         // Show the player controls
