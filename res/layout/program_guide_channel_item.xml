@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="54dp"
+    android:layout_width="66dp"
     android:layout_height="66dp"
     android:background="?attr/TimelineItemLayoutStyle"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:gravity="top" >
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="54dp"
-        android:layout_height="66dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:contentDescription="@string/channel_icon"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="6dp"
+        android:contentDescription="@null"
         android:scaleType="fitCenter" />
 
     <TextView
         android:id="@+id/icon_text"
-        android:layout_width="54dp"
-        android:layout_height="66dp"
-        android:paddingTop="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="6dp"
         style="?attr/ProgramGuideTitleFont" />
 
 </LinearLayout>
