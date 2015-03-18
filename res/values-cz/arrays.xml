@@ -14,8 +14,8 @@
         <item>Nezdařené nahrávky</item>
         <item>Programový průvodce</item>
         <item>Stav</item>
-        <item>Připojení</item>
         <item>Nastavení</item>
+        <item>Připojení</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">
