@@ -47,7 +47,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     // We need to subtract this value from the window width to get the real
     // usable width. The same values is also used in the
     // ProgramGuideListFragment class.
-    private final static int LAYOUT_ICON_OFFSET = 66;
+    private final static int LAYOUT_ICON_OFFSET = 72;
 
     // The ratio how many minutes a pixel represents on the screen.
     private static float pixelsPerMinute;
