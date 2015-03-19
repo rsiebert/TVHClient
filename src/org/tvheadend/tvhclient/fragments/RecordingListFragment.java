@@ -84,9 +84,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         if (bundle != null) {
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
-        if (isDualPane) {
-            adapterLayout = R.layout.recording_list_widget_dual_pane;
-        }
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
