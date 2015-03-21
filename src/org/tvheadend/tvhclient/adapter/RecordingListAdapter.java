@@ -98,7 +98,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.is_series_recording = (TextView) view.findViewById(R.id.series_recording);
+            holder.is_series_recording = (TextView) view.findViewById(R.id.is_series_recording);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.date = (TextView) view.findViewById(R.id.date);
