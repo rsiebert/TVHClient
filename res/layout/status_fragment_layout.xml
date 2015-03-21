@@ -6,172 +6,141 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp" >
 
         <TextView
             android:id="@+id/connection_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="6dp"
             android:text="@string/connection" />
 
         <TextView
             android:id="@+id/connection"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
-            android:text="@string/connection" />
+            android:text="@string/connection"
+            android:paddingBottom="16dp" />
 
         <TextView
             android:id="@+id/status_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="6dp"
+            android:paddingTop="16dp"
             android:text="@string/status" />
 
         <TextView
             android:id="@+id/status"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
-            android:text="@string/status" />
+            android:text="@string/status"
+            android:paddingBottom="16dp" />
 
         <TextView
             android:id="@+id/channel_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="6dp"
+            android:paddingTop="16dp"
             android:text="@string/channels" />
 
         <TextView
             android:id="@+id/channels"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
-            android:text="@string/channels" />
+            android:text="@string/channels"
+            android:paddingBottom="16dp" />
 
         <TextView
             android:id="@+id/recording_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="6dp"
+            android:paddingTop="16dp"
             android:text="@string/recordings" />
 
         <TextView
             android:id="@+id/completed_recordings"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
             android:text="@string/completed_recordings" />
 
         <TextView
             android:id="@+id/upcoming_recordings"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
             android:text="@string/upcoming_recordings" />
 
         <TextView
             android:id="@+id/failed_recordings"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
-            android:text="@string/failed_recordings" />
+            android:text="@string/failed_recordings"
+            android:paddingBottom="16dp" />
 
         <TextView
             android:id="@+id/series_recording_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="6dp"
+            android:paddingTop="16dp"
             android:text="@string/series_recordings" />
 
         <TextView
             android:id="@+id/series_recordings"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
-            android:text="@string/series_recordings" />
+            android:text="@string/series_recordings"
+            android:paddingBottom="16dp" />
 
         <TextView
             android:id="@+id/currently_recording_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="6dp"
+            android:paddingTop="16dp"
             android:text="@string/currently_recording" />
 
         <TextView
             android:id="@+id/currently_recording"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:text="@string/nothing" />
+            android:text="@string/nothing"
+            android:paddingBottom="16dp" />
 
         <TextView
             android:id="@+id/discspace_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="6dp"
+            android:paddingTop="16dp"
             android:text="@string/disc_space" />
 
         <TextView
             android:id="@+id/total_discspace"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
             android:text="@string/unknown" />
 
         <TextView
             android:id="@+id/free_discspace"
+            style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:singleLine="true"
             android:text="@string/unknown" />
     </LinearLayout>
 

@@ -6,7 +6,7 @@
 
     <FrameLayout
         android:id="@+id/program_guide_channel_fragment"
-        android:layout_width="66dp"
+        android:layout_width="72dp"
         android:layout_height="match_parent" />
 
     <android.support.v4.view.ViewPager

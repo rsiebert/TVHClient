@@ -22,12 +22,12 @@
     <attr name="ic_arrow_drop_down" format="reference" />
     <attr name="TitleFont" format="reference" />
     <attr name="SubtitleFont" format="reference" />
+    <attr name="ContentFont" format="reference" />
     <attr name="MenuTitleFont" format="reference" />
     <attr name="MenuSubtitleFont" format="reference" />
-    <attr name="HeaderFont" format="reference" />
     <attr name="ProgramGuideTimelineFont" format="reference" />
     <attr name="ProgramGuideTitleFont" format="reference" />
-    <attr name="ProgramGuideFont" format="reference" />
+    <attr name="ProgramGuideContentFont" format="reference" />
     <attr name="TimelineItemLayoutStyle" format="reference" />
     <attr name="TimelineHeaderLayoutStyle" format="reference" />
     <attr name="MenuItemLayoutStyle" format="reference" />

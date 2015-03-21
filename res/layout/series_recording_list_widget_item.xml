@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingBottom="20dp"
-    android:paddingTop="16dp" >
-
-    <TextView
-        android:id="@+id/genre"
-        android:layout_width="8dip"
-        android:layout_height="fill_parent"
-        android:layout_marginLeft="4dp"
-        android:layout_marginStart="4dp"
-        android:text="@null" />
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ImageView
         android:id="@+id/icon"
@@ -59,11 +46,11 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/content_type"
+            android:id="@+id/channel"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/content_type" />
+            android:text="@string/channel" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -71,34 +58,7 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/channel"
-                style="?attr/ContentFont"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingEnd="16dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="16dp"
-                android:paddingStart="0dp"
-                android:text="@string/channel" />
-
-            <TextView
-                android:id="@+id/duration"
-                style="?attr/ContentFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:gravity="end"
-                android:text="@string/duration" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/date"
+                android:id="@+id/daysOfWeek"
                 style="?attr/ContentFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,7 +70,7 @@
                 android:text="@string/date" />
 
             <TextView
-                android:id="@+id/time"
+                android:id="@+id/approxTime"
                 style="?attr/ContentFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -120,20 +80,13 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/series_info"
-            style="?attr/ContentFont"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/series_information" />
-
-        <TextView
             android:id="@+id/description"
             style="?attr/ContentFont"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="4"
+            android:maxLines="6"
             android:text="@string/description" />
     </LinearLayout>
 
-</LinearLayout>
+</merge>

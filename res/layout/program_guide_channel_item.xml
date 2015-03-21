@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="66dp"
-    android:layout_height="66dp"
+    android:layout_width="72dp"
+    android:layout_height="72dp"
     android:background="?attr/TimelineItemLayoutStyle"
     android:orientation="vertical"
     android:gravity="top" >
@@ -10,15 +10,15 @@
         android:id="@+id/icon"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:padding="6dp"
+        android:padding="16dp"
         android:contentDescription="@null"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitStart" />
 
     <TextView
         android:id="@+id/icon_text"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:padding="6dp"
-        style="?attr/ProgramGuideTitleFont" />
+        android:padding="16dp"
+        style="?attr/ProgramGuideContentFont" />
 
 </LinearLayout>

@@ -8,44 +8,41 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="6dp"
-        android:paddingLeft="9dp"
-        android:paddingRight="6dp"
-        android:paddingTop="6dp" >
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp" >
 
         <LinearLayout
             android:id="@+id/player_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="12dp">
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp" >
 
             <TextView
                 android:id="@+id/menu_play"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_play"
+                android:drawableStart="?attr/ic_menu_play"
                 android:gravity="center_vertical"
-                android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:layout_marginRight="12dp"
+                android:padding="8dp"
                 android:text="@string/menu_play" />
 
             <TextView
                 android:id="@+id/menu_record_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_record_cancel"
+                android:drawableStart="?attr/ic_menu_record_cancel"
                 android:gravity="center_vertical"
-                android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:layout_marginRight="10dp"
+                android:padding="8dp"
                 android:text="@string/menu_record_cancel"
                 android:visibility="gone" />
 
@@ -55,116 +52,123 @@
                 android:layout_height="fill_parent"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_record_remove"
+                android:drawableStart="?attr/ic_menu_record_remove"
                 android:gravity="center_vertical"
-                android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
+                android:padding="8dp"
                 android:text="@string/menu_record_remove"
                 android:visibility="gone" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/is_series_recording"
+            style="?attr/SubtitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:text="@string/is_series_recording"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:paddingBottom="16dp"
+            android:text="@string/is_series_recording" />
 
         <TextView
             android:id="@+id/summary_label"
-            style="?attr/HeaderFont"
+            style="?attr/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/summary" />
 
         <TextView
             android:id="@+id/summary"
+            style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:paddingBottom="12dp"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@string/summary"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:paddingBottom="16dp"
+            android:text="@string/summary" />
 
         <TextView
             android:id="@+id/description_label"
-            style="?attr/HeaderFont"
+            style="?attr/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
             android:text="@string/description" />
 
         <TextView
             android:id="@+id/description"
+            style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:text="@string/description"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:paddingBottom="16dp"
+            android:text="@string/description" />
 
         <TextView
             android:id="@+id/time_date_label"
-            style="?attr/HeaderFont"
+            style="?attr/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
             android:text="@string/airing" />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="12dp" >
+            android:paddingBottom="16dp" >
 
             <TextView
                 android:id="@+id/date"
+                style="?attr/ContentFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingEnd="3dp"
+                android:paddingLeft="0dp"
                 android:paddingRight="3dp"
+                android:paddingStart="0dp"
                 android:singleLine="true"
                 android:text="@string/date" />
 
             <TextView
                 android:id="@+id/time"
+                style="?attr/ContentFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingEnd="0dp"
                 android:paddingLeft="3dp"
+                android:paddingRight="0dp"
+                android:paddingStart="3dp"
                 android:singleLine="true"
                 android:text="@string/time" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/duration_label"
-            style="?attr/HeaderFont"
+            style="?attr/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
             android:text="@string/duration" />
 
         <TextView
             android:id="@+id/duration"
+            style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:text="@string/duration"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:paddingBottom="16dp"
+            android:text="@string/duration" />
 
         <TextView
             android:id="@+id/channel_label"
-            style="?attr/HeaderFont"
+            style="?attr/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
             android:text="@string/channel" />
 
         <TextView
             android:id="@+id/channel"
+            style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:text="@string/channel"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
+            android:paddingBottom="16dp"
+            android:text="@string/channel" />
     </LinearLayout>
 
 </ScrollView>

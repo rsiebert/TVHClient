@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/timeline"
         android:layout_width="fill_parent"
-        android:layout_height="66dp"
+        android:layout_height="72dp"
         android:orientation="horizontal" />
 
 </LinearLayout>

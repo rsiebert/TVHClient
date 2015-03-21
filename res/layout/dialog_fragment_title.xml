@@ -7,7 +7,8 @@
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@null" >
+        android:text="@null"
+        android:padding="16dp" >
     </TextView>
 
 </LinearLayout>

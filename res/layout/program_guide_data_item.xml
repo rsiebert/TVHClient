@@ -5,8 +5,8 @@
     android:layout_height="fill_parent"
     android:background="?attr/TimelineItemLayoutStyle"
     android:orientation="vertical"
-    android:paddingLeft="3dp"
-    android:paddingRight="3dp" >
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp" >
 
     <TextView
         android:id="@+id/title"
@@ -15,25 +15,25 @@
         android:layout_height="42dp"
         android:gravity="top|left"
         android:maxLines="2"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:paddingTop="3dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="4dp"
         android:text="@string/title" />
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="24dp"
+        android:layout_height="30dp"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/time"
-            style="?attr/ProgramGuideFont"
+            style="?attr/ProgramGuideContentFont"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:layout_weight="0.99"
             android:gravity="left|center_vertical"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
             android:singleLine="true"
             android:text="@string/time" />
 
@@ -43,7 +43,7 @@
             android:layout_height="fill_parent"
             android:contentDescription="@string/status_icon"
             android:gravity="right|center_vertical"
-            android:paddingRight="3dp"
+            android:paddingRight="4dp"
             android:scaleType="fitCenter" />
     </LinearLayout>
 

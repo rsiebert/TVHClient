@@ -3,20 +3,20 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:padding="8dp" >
+    android:padding="16dp" >
 
     <TextView
         android:id="@+id/color"
-        style="?attr/HeaderFont"
-        android:layout_width="25dp"
-        android:layout_height="25dp" />
+        style="?attr/TitleFont"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/genre"
+        style="?attr/TitleFont"
         android:layout_width="fill_parent"
-        android:layout_height="25dp"
-        android:paddingLeft="8dp"
-        android:text="@string/time"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:text="@string/time" />
 
 </LinearLayout>

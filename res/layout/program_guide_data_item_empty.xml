@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/timeline_item"
     android:layout_width="fill_parent"
-    android:layout_height="66dp"
+    android:layout_height="72dp"
     android:background="?attr/TimelineItemLayoutStyle"
     android:orientation="vertical"
-    android:paddingLeft="3dp"
-    android:paddingRight="3dp" >
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp" >
 
     <TextView
         android:id="@+id/title"
         style="?attr/ProgramGuideTitleFont"
         android:layout_width="fill_parent"
-        android:layout_height="66dp"
+        android:layout_height="72dp"
         android:gravity="top|left"
-        android:padding="3dp"
+        android:padding="4dp"
         android:text="@string/no_data" />
 
 </LinearLayout>
