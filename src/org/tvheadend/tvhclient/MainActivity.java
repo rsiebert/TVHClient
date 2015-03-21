@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.adapter.DrawerMenuAdapter;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
@@ -30,6 +31,7 @@ import org.tvheadend.tvhclient.model.DrawerMenuItem;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -43,7 +45,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -52,6 +53,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -118,6 +120,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     public List<Channel> channelLoadingList = new ArrayList<Channel>();
 
     // Holds the number of EPG entries for each channel
+    @SuppressLint("UseSparseArrays")
     public Map<Long, Integer> channelEpgCountList = new HashMap<Long, Integer>();
 
     // If the saved instance is not null then we return from an orientation
@@ -222,7 +225,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         // change the title and remove action items that are contextual to the
         // main content.
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 
-                R.drawable.ic_drawer,
                 R.string.drawer_open, 
                 R.string.drawer_close) {
 
