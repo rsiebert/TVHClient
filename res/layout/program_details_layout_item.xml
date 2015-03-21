@@ -70,6 +70,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="16dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
             android:text="@string/date" />
 
         <TextView
