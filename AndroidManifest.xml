@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tvheadend.tvhclient"
-    android:versionCode="24"
-    android:versionName="1.7.5" >
+    android:versionCode="25"
+    android:versionName="1.7.6" >
     <uses-permission android:name="android.permission.INTERNET" />
     
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="21" />
@@ -10,9 +10,12 @@
         android:allowBackup="true"
         android:name="org.tvheadend.tvhclient.TVHClientApplication" 
         android:label="TVHClient" android:icon="@drawable/ic_launcher">
-        <meta-data 
-            android:name="android.app.default_searchable" 
+        <meta-data
+            android:name="android.app.default_searchable"
             android:value=".SearchResultActivity" />
+        <meta-data 
+            android:name="android.app.searchable" 
+            android:resource="@xml/searchable" />
         <activity android:name="org.tvheadend.tvhclient.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
