@@ -328,6 +328,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             });
         }
 
+        showDrawerMenu(true);
+
         // If the saved instance is not null then we return from an orientation
         // change. The drawer menu could be open, so update the recording
         // counts. Also get any saved values from the bundle.
