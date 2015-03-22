@@ -175,9 +175,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.icon_text.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (c.epg.isEmpty()) {
-                                return;
-                            }
                             if (context instanceof FragmentStatusInterface) {
                                 ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
                             }
@@ -192,9 +189,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 holder.icon.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (c.epg.isEmpty()) {
-                            return;
-                        }
                         if (context instanceof FragmentStatusInterface) {
                             ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
                         }
