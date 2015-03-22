@@ -1,12 +1,15 @@
 $ 1.7.6
   % VERSION 1.7.6
-  _ 21.03.2015
+  _ 22.03.2015
     * Added Czech translation
     * Updated the UI according to the Material design guidelines
     * Small performance improvements in the program guide
     * Show the current connection name in the navigation menu
     * Option to select another connection from the navigation menu
     * Prevent crash from invalid numbers in the settings
+    * Channel tag icon is available again
+    * Start streaming by selecting a channel in the program guide screen
+    * Allow playing a program that is currently being recorded
 $ 1.7.5
   % VERSION 1.7.5
   _ 19.02.2015
