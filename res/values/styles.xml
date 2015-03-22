@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Font for the title text in the actionbar at the top -->
+    <style name="ActionbarTitleFont.Light" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">#ce000000</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ActionbarTitleFont.Dark" parent="ActionbarTitleFont.Light">
+        <item name="android:textColor">#ceffffff</item>
+    </style>
+
+    <!-- Font for the subtitle text in the actionbar at the top -->
+    <style name="ActionbarSubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#ac000000</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ActionbarSubtitleFont.Dark" parent="ActionbarSubtitleFont.Light">
+        <item name="android:textColor">#acffffff</item>
+    </style>
+
     <!-- Font for the title texts in various screens -->
     <style name="TitleFont.Light" parent="@android:style/TextAppearance.Large">
         <item name="android:textColor">#ce000000</item>
@@ -106,6 +126,8 @@
         <item name="ic_arrow_drop_down">@drawable/ic_arrow_drop_down_dark</item>
         <item name="item_active">@drawable/item_active_dark</item>
         <item name="item_not_active">@drawable/item_not_active_dark</item>
+        <item name="ActionbarTitleFont">@style/ActionbarTitleFont.Dark</item>
+        <item name="ActionbarSubtitleFont">@style/ActionbarSubtitleFont.Dark</item>
         <item name="TitleFont">@style/TitleFont.Dark</item>
         <item name="SubtitleFont">@style/SubtitleFont.Dark</item>
         <item name="ContentFont">@style/ContentFont.Dark</item>
@@ -144,6 +166,8 @@
         <item name="ic_arrow_drop_down">@drawable/ic_arrow_drop_down_light</item>
         <item name="item_active">@drawable/item_active_light</item>
         <item name="item_not_active">@drawable/item_not_active_light</item>
+        <item name="ActionbarTitleFont">@style/ActionbarTitleFont.Light</item>
+        <item name="ActionbarSubtitleFont">@style/ActionbarSubtitleFont.Light</item>
         <item name="TitleFont">@style/TitleFont.Light</item>
         <item name="SubtitleFont">@style/SubtitleFont.Light</item>
         <item name="ContentFont">@style/ContentFont.Light</item>

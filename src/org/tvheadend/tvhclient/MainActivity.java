@@ -142,6 +142,10 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     private String[] menuItems;
 
+    private TextView actionBarTitle;
+    private TextView actionBarSubtitle;
+    private ImageView actionBarIcon;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
@@ -157,9 +161,18 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
         actionBar = getSupportActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.actionbar_title);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
+
+        // Get the widgets so we can use them later and do not need to inflate again
+        actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
+        actionBarSubtitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_subtitle);
+        actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
+        actionBarIcon.setVisibility(Utils.showChannelIcons(this) ? View.VISIBLE : View.GONE);
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -695,6 +708,15 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         drawerAdapter.setPosition(menuPosition);
         drawerAdapter.notifyDataSetChanged();
 
+        // Only show the channel tag icon in the channels and program guide
+        // fragments. In the other ones the recordings could be from any channel
+        // group so it would make no sense to show the tag icon there.
+        if (position == MENU_CHANNELS || position == MENU_PROGRAM_GUIDE) {
+            actionBarIcon.setVisibility(Utils.showChannelIcons(this) ? View.VISIBLE : View.GONE);
+        } else {
+            actionBarIcon.setVisibility(View.GONE);
+        }
+
         Bundle bundle = new Bundle();
 
         switch (position) {
@@ -968,29 +990,31 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
     @Override
     public void setActionBarTitle(final String title, final String tag) {
-        if (actionBar != null) {
-            actionBar.setTitle(title);
+        if (actionBar != null && actionBarTitle != null) {
+            actionBarTitle.setText(title);
         }
     }
 
     @Override
     public void setActionBarSubtitle(final String subtitle, final String tag) {
-        if (actionBar != null) {
-            actionBar.setSubtitle(subtitle);
+        if (actionBar != null && actionBarSubtitle != null) {
+            actionBarSubtitle.setText(subtitle);
+            actionBarSubtitle.setVisibility(subtitle.length() == 0 ? View.GONE : View.VISIBLE);
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void setActionBarIcon(final Bitmap bitmap, final String tag) {
-        if (actionBar != null && bitmap != null) {
-            actionBar.setIcon(new BitmapDrawable(getResources(), bitmap));
+        if (actionBar != null && actionBarIcon != null && bitmap != null) {
+            actionBarIcon.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
         }
     }
 
     @Override
     public void setActionBarIcon(final int resource, final String tag) {
-        if (actionBar != null) {
-            actionBar.setIcon(resource);
+        if (actionBar != null && actionBarIcon != null) {
+            actionBarIcon.setBackgroundResource(resource);
         }
     }
 
