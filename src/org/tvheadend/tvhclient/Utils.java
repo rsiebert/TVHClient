@@ -372,11 +372,11 @@ public class Utils {
             recordOnceMenuItem.setVisible(true);
             recordSeriesMenuItem.setVisible(true);
         } else if (program.isRecording()) {
-            // Show the cancel menu
+            // Show the play and cancel menu
+            playMenuItem.setVisible(true);
             recordCancelMenuItem.setVisible(true);
         } else if (program.isScheduled()) {
-            // Show the cancel and play menu
-            playMenuItem.setVisible(true);
+            // Show the cancel menu
             recordCancelMenuItem.setVisible(true);
         } else {
             // Show the delete menu
