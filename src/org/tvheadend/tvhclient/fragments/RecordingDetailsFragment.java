@@ -183,8 +183,12 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             // The recording is available, it can be played and removed
             recordRemove.setVisibility(View.VISIBLE);
             play.setVisibility(View.VISIBLE);
-        } else if (rec.isRecording() || rec.isScheduled()) {
-            // The recording is recording or scheduled, it can only be cancelled
+        } else if (rec.isRecording()) {
+            // The recording is recording it can be played or cancelled
+            recordCancel.setVisibility(View.VISIBLE);
+            play.setVisibility(View.VISIBLE);
+        } else if (rec.isScheduled()) {
+            // The recording is scheduled, it can only be cancelled
             recordCancel.setVisibility(View.VISIBLE);
         } else if (rec.error != null || rec.state.equals("missed")) {
             // The recording has failed or has been missed, allow removal

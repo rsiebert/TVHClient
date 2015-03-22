@@ -420,8 +420,12 @@ public class Utils {
         	// The recording is available, it can be played and removed
             recordRemoveMenuItem.setVisible(true);
             playMenuItem.setVisible(true);
-        } else if (rec.isRecording() || rec.isScheduled()) {
-            // The recording is recording or scheduled, it can only be cancelled
+        } else if (rec.isRecording()) {
+            // The recording is recording it can be played or cancelled
+            recordCancelMenuItem.setVisible(true);
+            playMenuItem.setVisible(true);
+        } else if (rec.isScheduled()) {
+            // The recording is scheduled, it can only be cancelled
             recordCancelMenuItem.setVisible(true);
         } else if (rec.error != null || rec.state.equals("missed")) {
         	// The recording has failed or has been missed, allow removal
