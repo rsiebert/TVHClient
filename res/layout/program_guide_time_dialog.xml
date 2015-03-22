@@ -16,7 +16,7 @@
             style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:text="@string/date" />
 
         <TextView
@@ -24,7 +24,7 @@
             style="?attr/SubtitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:text="@string/date" />
     </LinearLayout>
 
@@ -34,7 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.5"
-        android:gravity="center|right"
+        android:gravity="center|end"
         android:text="@string/time" />
 
 </LinearLayout>

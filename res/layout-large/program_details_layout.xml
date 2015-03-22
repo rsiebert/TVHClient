@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:minWidth="440dp"
-    android:background="?attr/FragmentDividerLayoutStyle" >
+    android:background="?attr/FragmentDividerLayoutStyle"
+    android:minWidth="440dp" >
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -17,8 +17,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp" >
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp" >
 
             <TextView
                 android:id="@+id/menu_play"
@@ -28,6 +28,7 @@
                 android:layout_marginRight="16dp"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_play"
+                android:drawableStart="?attr/ic_menu_play"
                 android:gravity="center_vertical"
                 android:padding="8dp"
                 android:text="@string/menu_play" />
@@ -40,6 +41,7 @@
                 android:layout_marginRight="16dp"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_record_once"
+                android:drawableStart="?attr/ic_menu_record_once"
                 android:gravity="center_vertical"
                 android:padding="8dp"
                 android:text="@string/menu_record_once" />
@@ -52,6 +54,7 @@
                 android:layout_marginRight="16dp"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_record_series"
+                android:drawableStart="?attr/ic_menu_record_series"
                 android:gravity="center_vertical"
                 android:padding="8dp"
                 android:text="@string/menu_record_series" />
@@ -64,6 +67,7 @@
                 android:layout_marginRight="16dp"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_record_cancel"
+                android:drawableStart="?attr/ic_menu_record_cancel"
                 android:gravity="center_vertical"
                 android:padding="8dp"
                 android:text="@string/menu_record_cancel"
@@ -75,6 +79,7 @@
                 android:layout_height="fill_parent"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_record_remove"
+                android:drawableStart="?attr/ic_menu_record_remove"
                 android:gravity="center_vertical"
                 android:padding="8dp"
                 android:text="@string/menu_record_remove"
@@ -82,7 +87,6 @@
         </LinearLayout>
 
         <include layout="@layout/program_details_layout_item" />
-        
     </LinearLayout>
 
 </ScrollView>
