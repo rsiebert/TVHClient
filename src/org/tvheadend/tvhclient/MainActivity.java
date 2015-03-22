@@ -171,7 +171,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
         actionBarSubtitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_subtitle);
         actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
-        actionBarIcon.setVisibility(Utils.showChannelIcons(this) ? View.VISIBLE : View.GONE);
+        actionBarIcon.setVisibility(View.GONE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
@@ -708,15 +708,6 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         drawerAdapter.setPosition(menuPosition);
         drawerAdapter.notifyDataSetChanged();
 
-        // Only show the channel tag icon in the channels and program guide
-        // fragments. In the other ones the recordings could be from any channel
-        // group so it would make no sense to show the tag icon there.
-        if (position == MENU_CHANNELS || position == MENU_PROGRAM_GUIDE) {
-            actionBarIcon.setVisibility(Utils.showChannelIcons(this) ? View.VISIBLE : View.GONE);
-        } else {
-            actionBarIcon.setVisibility(View.GONE);
-        }
-
         Bundle bundle = new Bundle();
 
         switch (position) {
@@ -1006,15 +997,31 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     @SuppressWarnings("deprecation")
     @Override
     public void setActionBarIcon(final Bitmap bitmap, final String tag) {
-        if (actionBar != null && actionBarIcon != null && bitmap != null) {
-            actionBarIcon.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+        if (actionBarIcon != null && bitmap != null) {
+            // Only show the channel tag icon in the channels and program guide
+            // fragments. In the other ones the recordings could be from any channel
+            // group so it would make no sense to show the tag icon there.
+            if (menuPosition == MENU_CHANNELS || menuPosition == MENU_PROGRAM_GUIDE) {
+                actionBarIcon.setVisibility(Utils.showChannelTagIcon(this) ? View.VISIBLE : View.GONE);
+                actionBarIcon.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+            } else {
+                actionBarIcon.setVisibility(View.GONE);
+            }
         }
     }
 
     @Override
     public void setActionBarIcon(final int resource, final String tag) {
-        if (actionBar != null && actionBarIcon != null) {
-            actionBarIcon.setBackgroundResource(resource);
+        if (actionBarIcon != null) {
+            // Only show the channel tag icon in the channels and program guide
+            // fragments. In the other ones the recordings could be from any channel
+            // group so it would make no sense to show the tag icon there.
+            if (menuPosition == MENU_CHANNELS || menuPosition == MENU_PROGRAM_GUIDE) {
+                actionBarIcon.setVisibility(Utils.showChannelTagIcon(this) ? View.VISIBLE : View.GONE);
+                actionBarIcon.setBackgroundResource(resource);
+            } else {
+                actionBarIcon.setVisibility(View.GONE);
+            }
         }
     }
 
