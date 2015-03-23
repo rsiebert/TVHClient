@@ -55,6 +55,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -988,11 +989,18 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         }
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     public void setActionBarSubtitle(final String subtitle, final String tag) {
         if (actionBar != null && actionBarSubtitle != null) {
             actionBarSubtitle.setText(subtitle);
-            actionBarSubtitle.setVisibility(subtitle.length() == 0 ? View.GONE : View.VISIBLE);
+            if (subtitle.length() == 0) {
+                actionBarSubtitle.setVisibility(View.GONE);
+                actionBarTitle.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            } else {
+                actionBarSubtitle.setVisibility(View.VISIBLE);
+                actionBarTitle.setGravity(Gravity.LEFT | Gravity.BOTTOM);
+            }
         }
     }
 

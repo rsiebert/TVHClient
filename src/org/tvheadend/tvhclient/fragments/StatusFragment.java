@@ -115,6 +115,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         }
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
+            actionBarInterface.setActionBarSubtitle("", TAG);
         }
     }
 
