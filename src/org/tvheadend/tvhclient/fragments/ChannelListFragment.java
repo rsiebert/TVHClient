@@ -385,7 +385,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // list has been filled with data.
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items), TAG);
+            String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
+            actionBarInterface.setActionBarSubtitle(items, TAG);
             // If activated show the the channel tag icon
             if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
                     && currentTag != null 

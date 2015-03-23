@@ -153,7 +153,8 @@
     <string name="pref_show_notifications_sum">Informuje użytkownika gdy nagrywanie zostało rozpoczęte lub zostało zakończone. Wymaga to uruchomionej usługi w tle.</string>
     <string name="pref_show_next_program">Pokazuj następny program na liście kanałów</string>
     <string name="pref_show_next_program_sum">Nazwa zbliżającego się programu jest wyświetlana na liście kanałów. Jest wyświetlona poniżej paska postępu.</string>
-    
+    <string name="pref_programs">Programy</string>
+
     <string name="clear_search_history">Wyczyścić historię wyszukiwania?</string>
     <string name="clear_search_history_sum">Jesteś pewny, że chcesz usunąć wszystkie wpisy z historii wyszukiwania?</string>
     <string name="clear_search_history_done">Historia wyszukiwania wyczyszczona</string>
@@ -203,8 +204,7 @@
     <string name="sunday">Niedziela</string>
     <string name="all_days">Wszystkie dni</string>
     <string name="no_days">Brak dni</string>
-    
-    <string name="programs">Programy</string>
+
     <string name="completed_recordings">Zakończone</string>
     <string name="upcoming_recordings">Zaplanowane</string>
     <string name="failed_recordings">Utracone / Nieprawidłowe</string>
@@ -226,7 +226,6 @@
     <string name="channels">Kanały</string>
     <string name="recordings">Nagrania</string>
     <string name="status">Status</string>
-    <string name="items">Pozycja</string>
     <string name="results">Wyniki</string>
     
     <string name="channel_icon">Ikony kanałów</string>
@@ -278,7 +277,6 @@
     <string name="connection">Połączenie</string>
     <string name="disc_space">Przestrzeń dysku</string>
     <string name="total">Całość</string>
-    <string name="items_available">pozycji dostępnych</string>
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>
     <string name="ready">Gotowy</string>

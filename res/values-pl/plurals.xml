@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="programs">
+        <item quantity="one">%d program</item>
+        <item quantity="few">%d programy</item>
+        <item quantity="many">%d programów</item>
+        <item quantity="other">%d programów</item>
+    </plurals>
+    <plurals name="items">
+        <item quantity="one">%d pozycja</item>
+        <item quantity="few">%d pozycje</item>
+        <item quantity="many">%d pozycji</item>
+        <item quantity="other">%d pozycji</item>
+    </plurals>
+    <plurals name="recordings">
+        <item quantity="one">%d nagranie</item>
+        <item quantity="few">%d nagrania</item>
+        <item quantity="many">%d nagrań</item>
+        <item quantity="other">%d nagrań</item>
+    </plurals>
+
+</resources>

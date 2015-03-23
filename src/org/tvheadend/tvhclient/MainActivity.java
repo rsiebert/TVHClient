@@ -927,7 +927,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                         Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                         if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
                             int count = ((FragmentControlInterface) f).getItemCount();
-                            actionBar.setSubtitle(count + " " + getString(R.string.items));
+                            String items = getResources().getQuantityString(R.plurals.items, count, count);
+                            actionBar.setSubtitle(items);
                         }
                     }
                 }

@@ -153,7 +153,8 @@
     <string name="pref_show_notifications_sum">Informarea användaren när en inspelning har startat eller är färdig. Detta kräver att servicen körs i bakgrunden.</string>
     <string name="pref_show_next_program">Visa nästa program i kanallistan</string>
     <string name="pref_show_next_program_sum">Namnet på programmet som kommer näst visas i kanallistan. Det visas under förloppsindikatorn.</string>
-        
+    <string name="pref_programs">Program</string>
+
     <string name="clear_search_history">Rensa sökhistorik?</string>
     <string name="clear_search_history_sum">Är du säker på att du vill ta bort all sökhistorik?</string>
     <string name="clear_search_history_done">Sökhistorik rensad</string>
@@ -204,7 +205,6 @@
     <string name="all_days">Alla dagar</string>
     <string name="no_days">Inga dagar</string>
 
-    <string name="programs">Program</string>
     <string name="completed_recordings">Färdiga</string>
     <string name="upcoming_recordings">Kommande</string>
     <string name="failed_recordings">Misslyckade</string>
@@ -226,7 +226,6 @@
     <string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>
     <string name="status">Status</string>
-    <string name="items">Objekt</string>
     <string name="results">Resultat</string>
     
     <string name="channel_icon">Kanalikoner</string>
@@ -278,7 +277,6 @@
     <string name="connection">Anslutning</string>
     <string name="disc_space">Diskyta</string>
     <string name="total">Totalt</string>
-    <string name="items_available">objekt tillgängliga</string>
     <string name="available">Tillgängligt</string>
     <string name="unknown">Okänd</string>
     <string name="ready">Redo</string>

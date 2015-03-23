@@ -153,6 +153,7 @@
     <string name="pref_show_notifications_sum">Mostra una notifica quando una registrazione inizia o finisce. Richiede servizio in background.</string>
     <string name="pref_show_next_program">Mostra il prossimo programma nella lista dei canali</string>
     <string name="pref_show_next_program_sum">Il nome del programma seguente sarà mostrato nella lista dei canali sotto l\'indicatore del progresso.</string>
+    <string name="pref_programs">Programmi</string>
 
     <string name="clear_search_history">Pulire cronologia ricerche?</string>
     <string name="clear_search_history_sum">Sei sicuro di voler rimuovere tutte le voci della cronologia delle ricerche?</string>
@@ -203,7 +204,6 @@
     <string name="all_days">Tutti i giorni</string>
     <string name="no_days">Nessun giorno</string>
 
-    <string name="programs">Programmi</string>
     <string name="completed_recordings">Registrazioni completate</string>
     <string name="upcoming_recordings">Registrazioni programmate</string>
     <string name="failed_recordings">Registrazioni fallite</string>
@@ -225,7 +225,6 @@
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>
     <string name="status">Stato</string>
-    <string name="items">Elementi</string>
     <string name="results">Risultati</string>
 
     <string name="channel_icon">Icona canale</string>
@@ -278,7 +277,6 @@
     <string name="connection">Connessione</string>
     <string name="disc_space">Spazio su disco</string>
     <string name="total">Totale</string>
-    <string name="items_available">oggetti disponibili</string>
     <string name="available">Disponibili</string>
     <string name="unknown">Sconosciuto</string>
     <string name="ready">Pronto</string>

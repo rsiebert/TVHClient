@@ -153,6 +153,7 @@
     <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed. This requires that the service is running in the background.</string>
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
+    <string name="pref_programs">Programs</string>
 
     <string name="clear_search_history">Clear search history?</string>
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
@@ -204,7 +205,6 @@
     <string name="all_days">All days</string>
     <string name="no_days">No days</string>
 
-    <string name="programs">Programs</string>
     <string name="completed_recordings">Completed recordings</string>
     <string name="upcoming_recordings">Upcoming recordings</string>
     <string name="failed_recordings">Failed recordings</string>
@@ -226,7 +226,6 @@
     <string name="channels">Channels</string>
     <string name="recordings">Recordings</string>
     <string name="status">Status</string>
-    <string name="items">Items</string>
     <string name="results">Results</string>
     
     <string name="channel_icon">Channel icon</string>
@@ -278,7 +277,6 @@
     <string name="connection">Connection</string>
     <string name="disc_space">Disc space</string>
     <string name="total">Total</string>
-    <string name="items_available">items available</string>
     <string name="available">Available</string>
     <string name="unknown">Unknown</string>
     <string name="ready">Ready</string>

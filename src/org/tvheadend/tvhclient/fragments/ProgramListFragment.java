@@ -193,7 +193,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // programs and that the program list has been filled with data.
         if (actionBarInterface != null && channel != null) {
             actionBarInterface.setActionBarTitle(channel.name, TAG);
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
+            String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
+            actionBarInterface.setActionBarSubtitle(items, TAG);
             if (!isDualPane) {
                 if (Utils.showChannelIcons(activity)) {
                     actionBarInterface.setActionBarIcon(channel.iconBitmap, TAG);
@@ -366,7 +367,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                         adapter.notifyDataSetChanged();
                         adapter.sort();
                         if (actionBarInterface != null) {
-                            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
+                            String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
+                            actionBarInterface.setActionBarSubtitle(items, TAG);
                         }
                     }
                 }
@@ -377,7 +379,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     adapter.remove((Program) obj);
                     adapter.notifyDataSetChanged();
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.programs), TAG);
+                        String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
+                        actionBarInterface.setActionBarSubtitle(items, TAG);
                     }
                 }
             });

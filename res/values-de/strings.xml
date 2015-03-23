@@ -153,6 +153,7 @@
     <string name="pref_show_notifications_sum">Wird eine Aufnahme gestarted oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt. Für diese Funktionalität muss der Hintergrunddienst aktiv sein.</string>
     <string name="pref_show_next_program">Zeige nachfolgende Sendung</string>
     <string name="pref_show_next_program_sum">Der Name der nachfolgenden Sendung wird in der Senderliste angezeigt. Er wird unter der Fortschrittsanzeige dargestellt.</string>
+    <string name="pref_programs">Programme</string>
 
     <string name="clear_search_history">Lösche Suchhistorie?</string>
     <string name="clear_search_history_sum">Sind Sie sicher, dass sie alle Einträge aus der Historie löschen wollen?</string>
@@ -204,7 +205,6 @@
     <string name="all_days">Alle Tage</string>
     <string name="no_days">Keine Tage</string>
 
-    <string name="programs">Programme</string>
     <string name="completed_recordings">Abgeschlossene Aufnahmen</string>
     <string name="upcoming_recordings">Geplante Aufnahmen</string>
     <string name="failed_recordings">Fehlerhafte Aufnahmen</string>
@@ -226,7 +226,6 @@
     <string name="channels">Sender</string>
     <string name="recordings">Aufnahmen</string>
     <string name="status">Status</string>
-    <string name="items">Elemente</string>
     <string name="results">Ergebnisse</string>
     
     <string name="channel_icon">Senderlogo</string>
@@ -278,7 +277,6 @@
     <string name="connection">Verbindung</string>
     <string name="disc_space">Speicherplatz</string>
     <string name="total">Total</string>
-    <string name="items_available">Einträge vorhanden</string>
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>
     <string name="ready">Bereit</string>

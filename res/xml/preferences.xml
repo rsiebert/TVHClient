@@ -134,7 +134,7 @@
         android:title="@string/pref_playback">
         <PreferenceScreen
 	        android:key="pref_program_playback"
-	        android:title="@string/programs"
+	        android:title="@string/pref_programs"
 	        android:summary="@string/pref_playback_programs_sum" >
 	        <ListPreference
 	            android:name="@string/pref_container"

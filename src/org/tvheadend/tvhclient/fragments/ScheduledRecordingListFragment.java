@@ -73,7 +73,8 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.upcoming_recordings), TAG);
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.items_available), TAG);
+            String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
+            actionBarInterface.setActionBarSubtitle(items, TAG);
             actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
         }
         // Inform the listeners that the channel list is populated.

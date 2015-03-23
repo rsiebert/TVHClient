@@ -153,6 +153,7 @@
     <string name="pref_show_notifications_sum">Informuje uživatele vždy, když nahrávání začalo nebo bylo dokončeno. To vyžaduje službu běžící na pozadí.</string>
     <string name="pref_show_next_program">Zobrazit další program v seznamu kanálů</string>
     <string name="pref_show_next_program_sum">Název následujícího programu je zobrazen v seznamu kanálů. Je uveden vedle ukazatele průběhu.</string>
+    <string name="pref_programs">Programy</string>
 
     <string name="clear_search_history">Vymazat historii vyhledávání?</string>
     <string name="clear_search_history_sum">Jste si jisti, že chcete odstranit všechny položky z historie vyhledávání?</string>
@@ -204,7 +205,6 @@
     <string name="all_days">Všechny dny</string>
     <string name="no_days">Žádné dny</string>
 
-    <string name="programs">Programy</string>
     <string name="completed_recordings">Dokončené nahrávky</string>
     <string name="upcoming_recordings">Naplánované nahrávky</string>
     <string name="failed_recordings">Nezdařené nahrávky</string>
@@ -226,7 +226,6 @@
     <string name="channels">Kanály</string>
     <string name="recordings">Nahrávky</string>
     <string name="status">Stav</string>
-    <string name="items">Položky</string>
     <string name="results">Výsledky</string>
     
     <string name="channel_icon">Ikona kanálu</string>
@@ -278,7 +277,6 @@
     <string name="connection">Připojení</string>
     <string name="disc_space">Místo na disku</string>
     <string name="total">Celkem</string>
-    <string name="items_available">dostupné položky</string>
     <string name="available">Dostupný</string>
     <string name="unknown">Neznámý</string>
     <string name="ready">Připravený</string>

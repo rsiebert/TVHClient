@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="programs">
+        <item quantity="one">%d Programma</item>
+        <item quantity="other">%d Programma\'s</item>
+    </plurals>
+    <plurals name="items">
+        <item quantity="one">%d Element</item>
+        <item quantity="other">%d Elementen</item>
+    </plurals>
+    <plurals name="recordings">
+        <item quantity="one">%d Opname</item>
+        <item quantity="other">%d Opnames</item>
+    </plurals>
+
+</resources>

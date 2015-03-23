@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="programs">
+        <item quantity="one">%d Program</item>
+        <item quantity="other">%d Program</item>
+    </plurals>
+    <plurals name="items">
+        <item quantity="one">%d Elementet</item>
+        <item quantity="other">%d Element</item>
+    </plurals>
+    <plurals name="recordings">
+        <item quantity="one">%d Inspelning</item>
+        <item quantity="other">%d Inspelningar</item>
+    </plurals>
+
+</resources>

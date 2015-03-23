@@ -139,6 +139,7 @@
     <string name="pref_playback_profiles_sum">Choisir un profil qui doit utiliser pour lire un enregistrement.</string>
     <string name="pref_show_notifications">Lister les notifications</string>
     <string name="pref_show_notifications_sum">Informe l\'utilisateur dès qu\'un enregistrement a commencé ou est fini. Cela nécessite que le service tourne en tâche de fond.</string>
+    <string name="pref_programs">Programmes</string>
     <string name="clear_search_history">Effacer l\'historique de recherche?</string>
     <string name="clear_search_history_sum">Etes vous sur de vouloir effacer l\'historique de recherche?</string>
     <string name="clear_search_history_done">Historique de recherche effacé</string>
@@ -182,7 +183,7 @@
     <string name="sunday">Dimanche</string>
     <string name="all_days">Tous les jours</string>
     <string name="no_days">Aucun jour</string>
-    <string name="programs">Programmes</string>
+
     <string name="completed_recordings">Terminé</string>
     <string name="upcoming_recordings">A venir</string>
     <string name="failed_recordings">Echec</string>
@@ -202,7 +203,6 @@
     <string name="channels">Chaines</string>
     <string name="recordings">Enregistrements</string>
     <string name="status">Etat</string>
-    <string name="items">Eléments</string>
     <string name="results">Résultats</string>
     <string name="channel_icon">Logo de la chaine</string>
     <string name="status_icon">Icone d\'état</string>
@@ -250,7 +250,6 @@
     <string name="connection">Connexion</string>
     <string name="disc_space">Espace disque</string>
     <string name="total">Total</string>
-    <string name="items_available">Objets disponibles</string>
     <string name="available">Disponible</string>
     <string name="unknown">Inconnu</string>
     <string name="ready">Prêt</string>

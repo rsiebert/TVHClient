@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="programs">
+        <item quantity="one">%d program</item>
+        <item quantity="few">%d programy</item>
+        <item quantity="other">%d programů</item>
+    </plurals>
+    <plurals name="items">
+        <item quantity="one">%d položka</item>
+        <item quantity="few">%d položky</item>
+        <item quantity="other">%d položek</item>
+    </plurals>
+    <plurals name="recordings">
+        <item quantity="one">%d nahrávka</item>
+        <item quantity="few">%d nahrávky</item>
+        <item quantity="other">%d nahrávek</item>
+    </plurals>
+
+</resources>
