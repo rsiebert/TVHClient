@@ -377,9 +377,14 @@ public class StatusFragment extends Fragment implements HTSListener {
 
         // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
-        completedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() + " " + getString(R.string.completed_recordings));
-        upcomingRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size() + " " + getString(R.string.upcoming_recordings));
-        failedRec.setText(app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size() + " " + getString(R.string.failed_recordings));
+
+        final int completedRecCount = app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
+        final int scheduledRecCount = app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
+        final int failedRecCount = app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
+
+        completedRec.setText(getResources().getQuantityString(R.plurals.completed_recordings, completedRecCount, completedRecCount));
+        upcomingRec.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, scheduledRecCount, scheduledRecCount));
+        failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, failedRecCount, failedRecCount));
         seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
     }
 }

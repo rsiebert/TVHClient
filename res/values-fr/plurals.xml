@@ -13,5 +13,16 @@
         <item quantity="one">%d Enregistrement</item>
         <item quantity="other">%d Enregistrements</item>
     </plurals>
-
+    <plurals name="completed_recordings">
+        <item quantity="one">%d Terminé</item>
+        <item quantity="other">%d Terminé</item>
+    </plurals>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d A venir</item>
+        <item quantity="other">%d A venir</item>
+    </plurals>
+    <plurals name="failed_recordings">
+        <item quantity="one">%d Echec</item>
+        <item quantity="other">%d Echec</item>
+    </plurals>
 </resources>

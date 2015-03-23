@@ -13,5 +13,17 @@
         <item quantity="one">%d Opname</item>
         <item quantity="other">%d Opnames</item>
     </plurals>
+    <plurals name="completed_recordings">
+        <item quantity="one">%d Voltooid</item>
+        <item quantity="other">%d Voltooid</item>
+    </plurals>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d Toekomstig</item>
+        <item quantity="other">%d Toekomstig</item>
+    </plurals>
+    <plurals name="failed_recordings">
+        <item quantity="one">%d Mislukt</item>
+        <item quantity="other">%d Mislukt</item>
+    </plurals>
 
 </resources>
