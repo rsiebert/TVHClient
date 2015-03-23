@@ -6,7 +6,7 @@
         android:id="@+id/menu_timeframe"
         android:icon="?attr/ic_menu_timeframe"
         android:title="@string/menu_timeframe"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="ifRoom|collapseActionView|withText"
         android:orderInCategory="2"/>
     <item
         android:id="@+id/menu_genre_color_info_epg"

@@ -7,7 +7,7 @@
         android:icon="?attr/ic_menu_play"
         android:orderInCategory="2"
         android:title="@string/menu_play"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_genre_color_info_programs"
         android:orderInCategory="7"
