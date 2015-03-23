@@ -27,7 +27,7 @@
             android:layout_weight="0.5"
             android:ellipsize="end"
             android:gravity="start|bottom"
-            android:text="@string/title" />
+            android:text="@null" />
 
         <TextView
             android:id="@+id/actionbar_subtitle"
@@ -37,7 +37,7 @@
             android:layout_weight="0.5"
             android:ellipsize="end"
             android:gravity="start|top"
-            android:text="@string/title" />
+            android:text="@null" />
     </LinearLayout>
 
 </LinearLayout>
