@@ -156,7 +156,9 @@ public class TVHClientApplication extends Application {
      * @return
      */
     public List<ChannelTag> getChannelTags() {
-        return tags;
+        synchronized (tags) {
+            return tags;
+        }
     }
 
     /**
@@ -255,7 +257,9 @@ public class TVHClientApplication extends Application {
      * @return
      */
     public List<Channel> getChannels() {
-        return channels;
+        synchronized (channels) {
+            return channels;
+        }
     }
 
     /**
@@ -378,7 +382,9 @@ public class TVHClientApplication extends Application {
      * @return
      */
     public List<Recording> getRecordings() {
-        return recordings;
+        synchronized (recordings) {
+            return recordings;
+        }
     }
 
     /**
@@ -518,7 +524,9 @@ public class TVHClientApplication extends Application {
      * @return
      */
     public List<SeriesRecording> getSeriesRecordings() {
-        return seriesRecordings;
+        synchronized (seriesRecordings) {
+            return seriesRecordings;
+        }
     }
 
     /**
