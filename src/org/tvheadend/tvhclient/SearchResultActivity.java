@@ -65,6 +65,9 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     // The currently selected program
     private Program program;
 
+    private Runnable updateTask;
+    private Handler updateHandler = new Handler();
+
     @Override
     public void onCreate(Bundle icicle) {
         setTheme(Utils.getThemeId(this));
@@ -186,8 +189,15 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
 
         actionBar.setTitle(android.R.string.search_go);
         actionBar.setSubtitle(getString(R.string.loading));
-        // Show that we are done when nothing has happened after 2s. 
-        timerHandler.postDelayed(timerRunnable, 2000);
+
+        // Create the runnable that will initiate the update of the adapter and
+        // indicates that we are done when nothing has happened after 2s. 
+        updateTask = new Runnable() {
+            public void run() {
+                adapter.notifyDataSetChanged();
+                actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
+            }
+        };
     }
 
     @Override
@@ -200,7 +210,6 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     @Override
     protected void onPause() {
         super.onPause();
-        timerHandler.removeCallbacks(timerRunnable);
         TVHClientApplication app = (TVHClientApplication) getApplication();
         app.removeListener(this);
     }
@@ -287,6 +296,23 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         Utils.setProgramMenu(menu, program);
     }
 
+
+    /**
+     * Starts a timer that will update the search list view when expired. If
+     * this method is called while the timer is running, the timer will be
+     * restarted. This will prevent calls adapter.notifyDataSetChanged() until
+     * all data has been loaded and nothing has happened for 2s.
+     */
+    private void startDelayedAdapterUpdate() {
+        updateHandler.removeCallbacks(updateTask);
+        updateHandler.postDelayed(updateTask, 2000);
+        
+        // Show that we are still loading
+        actionBar.setSubtitle(getString(R.string.loading)
+                + "... (" + adapter.getCount() 
+                + " " + getString(R.string.results) + ")");
+    }
+
     /**
      * This method is part of the HTSListener interface. Whenever the HTSService
      * sends a new message the correct action will then be executed here.
@@ -301,16 +327,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                         if (pattern != null && pattern.matcher(p.title).find()) {
                             adapter.add(p);
                             adapter.sort();
-                            adapter.notifyDataSetChanged();
-
-                            // Show that we are still loading
-                            actionBar.setSubtitle(getString(R.string.loading)
-                                    + "... (" + adapter.getCount() 
-                                    + " " + getString(R.string.results) + ")");
-
-                            // Show that we are done when nothing has happened after 2s.
-                            timerHandler.removeCallbacks(timerRunnable);
-                            timerHandler.postDelayed(timerRunnable, 2000);
+                            startDelayedAdapterUpdate();
                         }
                     }
                 }
@@ -320,14 +337,14 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                 public void run() {
                     Program p = (Program) obj;
                     adapter.remove(p);
-                    adapter.notifyDataSetChanged();
+                    startDelayedAdapterUpdate();
                 }
             });
         } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.update((Program) obj);
-                    adapter.notifyDataSetChanged();
+                    startDelayedAdapterUpdate();
                 }
             });
         } else if (action.equals(Constants.ACTION_DVR_ADD)
@@ -339,7 +356,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                     for (Program p : adapter.getList()) {
                         if (rec == p.recording) {
                             adapter.update(p);
-                            adapter.notifyDataSetChanged();
+                            startDelayedAdapterUpdate();
                             return;
                         }
                     }
@@ -347,13 +364,4 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             });
         }
     }
-    
-    // Runs without a timer by reposting this handler at the end of the runnable
-    Handler timerHandler = new Handler();
-    Runnable timerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
-        }
-    };
 }
