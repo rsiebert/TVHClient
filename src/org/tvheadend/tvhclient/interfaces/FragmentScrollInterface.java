@@ -1,7 +1,5 @@
 package org.tvheadend.tvhclient.interfaces;
 
-
-
 public interface FragmentScrollInterface {
 
     /**

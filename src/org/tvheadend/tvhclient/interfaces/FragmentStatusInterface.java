@@ -5,7 +5,6 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
-
 public interface FragmentStatusInterface {
 
     /**

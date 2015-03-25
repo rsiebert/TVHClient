@@ -1,9 +1,9 @@
 /*
+ * Copyright 2014 Robert Siebert
  * Copyright 2012 Jay Weisskopf
  *
  * Licensed under the MIT License (see LICENSE.txt)
  */
-
 package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.R;
@@ -17,10 +17,6 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-/**
- * @author Robert Siebert
- * @author Jay Weisskopf
- */
 public class SliderPreference extends DialogPreference {
 
     private final static String TAG = SliderPreference.class.getSimpleName();

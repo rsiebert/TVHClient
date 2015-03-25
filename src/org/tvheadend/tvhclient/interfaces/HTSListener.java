@@ -1,10 +1,5 @@
 package org.tvheadend.tvhclient.interfaces;
 
-/**
- *
- * @author john-tornblom
- * @author Robert Siebert
- */
 public interface HTSListener {
 
     /**

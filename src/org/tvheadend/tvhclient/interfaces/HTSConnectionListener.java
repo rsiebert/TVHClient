@@ -2,11 +2,6 @@ package org.tvheadend.tvhclient.interfaces;
 
 import org.tvheadend.tvhclient.htsp.HTSMessage;
 
-/**
- * 
- * @author john-tornblom
- * @author Robert Siebert
- */
 public interface HTSConnectionListener {
 
     /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013-2014, Robert Siebert
  * Copyright (C) 2011-2013, Karsten Priegnitz
  *
