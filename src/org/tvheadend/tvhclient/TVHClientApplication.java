@@ -421,8 +421,7 @@ public class TVHClientApplication extends Application {
                 for (Recording rec : recordings) {
                     // Include all recordings that are marked as completed, also
                     // include recordings marked as auto recorded
-                    if (rec.error == null 
-                            && (rec.state.equals("completed") || rec.state.equals("recording"))) {
+                    if (rec.error == null && rec.state.equals("completed")) {
                         recs.add(rec);
                     }
                 }
