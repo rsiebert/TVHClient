@@ -34,9 +34,7 @@
     <string name="pref_connection_wol">Wake on LAN</string>
     <string name="select_connection">Vybrat připojení</string>
     <string name="add_connection">Přidat připojení</string>
-    <string name="confirm_cancel">Opravdu chcete zrušit? Všechny změny budou ztraceny!</string>
-    <string name="cancel">Zrušit</string>
-    <string name="remove">Odstranit</string>
+    <string name="cancel">Opravdu chcete zrušit? Všechny změny budou ztraceny!</string>
     <string name="delete_connection">Opravdu chcete odstranit připojení \'%s\'?</string>
     <string name="delete_recording">Opravdu chcete smazat nahrávku \'%s\'?</string>
     <string name="delete_series_recording">Opravdu chcete smazat opakované nahrávání \'%s\'?\n\nTím budou odstraněna všechna plánovaná nahrávání patřící do tohoto pravidla pro opakovaného nahrávání.</string>
@@ -80,10 +78,10 @@
     <string name="pref_user_interface">Uživatelské rozhraní</string>
     <string name="pref_icons">Ikony kanálů</string>
     <string name="pref_icons_sum">Zobrazit ikony kanálů.</string>
-    <string name="pref_tag_icon">Ikona kanálového štítku</string>
-    <string name="pref_tag_icon_sum">Zobrazit ikonu pro kanálový štítek místo loga aplikace.</string>
+    <string name="pref_tag_icon">Ikona štítku kanálu</string>
+    <string name="pref_tag_icon_sum">Zobrazit ikonu pro štítek kanálu místo loga aplikace.</string>
     <string name="pref_theme">Světlé téma</string>
-    <string name="pref_theme_sum">Použít světlé téma</string>
+    <string name="pref_theme_sum">Použít světlé téma.</string>
     <string name="pref_language">Jazyk</string>
     <string name="pref_language_sum">Zvolte jazyk, který bude použit v aplikaci.</string>
     <string name="pref_default_menu">Startovací obrazovka</string>
@@ -138,9 +136,9 @@
     <string name="pref_menu_visibility">Viditelnost částí menu</string>
     <string name="pref_menu_visibility_sum">Skrytí nebo zobrazení některých položek v menu.</string>
     <string name="pref_hide_menu_delete_all_recordings">Skrýt menu \'Smazat všechny nahrávky\'</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Skrýt tuto položku v menu aby se zabránilo nechtěnému smazání všech nahraných programů.</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Skrýt tuto položku v menu, aby se zabránilo nechtěnému smazání všech nahraných programů.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Skrýt menu \'Zrušit všechna nahrávání\'</string>
-    <string name="pref_hide_menu_cancel_all_recordings_sum">Skrýt tuto položku v menu aby se zabránilo nechtěnému zrušení všech naplánovaných nahrávání.</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Skrýt tuto položku v menu, aby se zabránilo nechtěnému zrušení všech naplánovaných nahrávání.</string>
     
     <string name="loading_profiles">Natahují se profily</string>
     <string name="pref_profiles">Profily</string>
@@ -226,7 +224,7 @@
     <string name="channels">Kanály</string>
     <string name="recordings">Nahrávky</string>
     <string name="status">Stav</string>
-    <string name="results">Výsledky</string>
+    <string name="results">Výsledeků</string>
     
     <string name="channel_icon">Ikona kanálu</string>
     <string name="status_icon">Ikona stavu</string>
@@ -236,12 +234,12 @@
     <string name="date">Datum</string>
     <string name="summary">Shrnutí</string>
     <string name="description">Popis</string>
-    <string name="duration">Trvání</string>
+    <string name="duration">Délka</string>
     <string name="airing">Vysíláno</string>
     <string name="rating">Hodnocení</string>
     <string name="content_type">Typ obsahu</string>
     <string name="series_information">Informace o opakování</string>
-    <string name="genre_color_list">Seznam žánrových barev a jejich význam.</string>
+    <string name="genre_color_list">Seznam barev žánrů a jejich význam.</string>
     <string name="retention">Zdržení</string>
     <string name="priority">Priorita</string>
     <string name="path">Cesta</string>
@@ -262,10 +260,10 @@
     <string name="series_recording_add_error">Nelze přidat toto opakované nahrávání. Název nesmí být prázdný!</string>
     <string name="time_recording_add_error">Nelze přidat toto časové nahrávání. Název nesmí být prázdný!</string>
 
-    <string name="nothing">Nic</string>
-    <string name="loading">Natahuji&#8230;</string>
-    <string name="loading_channel">Natahuji kanál %s</string>
-    <string name="updating">Aktualizace&#8230;</string>
+    <string name="nothing">Žádné</string>
+    <string name="loading">Načítám&#8230;</string>
+    <string name="loading_channel">Načítám kanál %s</string>
+    <string name="updating">Aktualizování&#8230;</string>
     <string name="all_channels">Všechny kanály</string>
     <string name="season">Sezóna</string>
     <string name="episode">Epizoda</string>
@@ -277,11 +275,12 @@
     <string name="connection">Připojení</string>
     <string name="disc_space">Místo na disku</string>
     <string name="total">Celkem</string>
-    <string name="available">Dostupný</string>
+    <string name="items_available">dostupných položek</string>
+    <string name="available">K dispozici</string>
     <string name="unknown">Neznámý</string>
-    <string name="ready">Připravený</string>
+    <string name="ready">Připraven</string>
     <string name="select_timeframe">Zobrazit programového průvodce pro zvolený datum a čas.</string>
-    <string name="currently_recording">Současné nahrávání</string>
+    <string name="currently_recording">Probíhající nahrávání</string>
     
     <string name="no_connection_available_advice">Žádné připojení není k dispozici. Musíte přidat alespoň jedno připojení v menu nastavení.</string>
     <string name="no_connection_available">K dispozici není žádné připojení.</string>
