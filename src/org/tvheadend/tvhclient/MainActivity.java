@@ -283,6 +283,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
                         handleMenuSelection(item.id);
                     }
                 }
+                drawerLayout.closeDrawer(drawerList);
             }
         });
 
@@ -668,10 +669,9 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             orientationChangeOccurred = false;
             return;
         }
-        // Highlight the selected item and close the drawer if its open
+        // Highlight the selected item
         if (drawerLayout.isDrawerOpen(drawerList)) {
             drawerList.setItemChecked(position, true);
-            drawerLayout.closeDrawer(drawerList);
         }
 
         // Remove any previously active fragment on the right side. In case the
