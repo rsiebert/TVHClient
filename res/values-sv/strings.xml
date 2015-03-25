@@ -37,6 +37,7 @@
     <string name="confirm_cancel">Kassera värden? Alla ändringar kommer att försvinna.</string>
     <string name="cancel">Avboka</string>
     <string name="remove">Avlägsna</string>
+    <string name="delete">Ta bort</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
     <string name="delete_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
     <string name="delete_series_recording">Vill du verkligen ta bort serieinspelningen \'%s\'?\n\nDetta kommer ta bort alla schemalagda inspelningar som tillhör denna serieinspelningsregel.</string>

@@ -72,13 +72,13 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.clear_search_history)
                 .setMessage(getString(R.string.clear_search_history_sum))
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                         suggestions.clearHistory();
                         Toast.makeText(getActivity(), getString(R.string.clear_search_history_done), Toast.LENGTH_SHORT).show();
                     }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // NOP
                     }
@@ -96,7 +96,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.clear_icon_cache)
                 .setMessage(getString(R.string.clear_icon_cache_sum))
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         File[] files = activity.getCacheDir().listFiles();
                         for (File file : files) {
@@ -109,7 +109,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                         }
                         Toast.makeText(getActivity(), getString(R.string.clear_icon_cache_done), Toast.LENGTH_SHORT).show();
                     }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // NOP
                     }

@@ -37,6 +37,7 @@
     <string name="confirm_cancel">Do you really want to cancel? All changes will be discarded!</string>
     <string name="cancel">Cancel</string>
     <string name="remove">Remove</string>
+    <string name="delete">Delete</string>
     <string name="delete_connection">Do you really want to remove the connection \'%s\'?</string>
     <string name="delete_recording">Do you really want to remove the recording \'%s\'?</string>
     <string name="delete_series_recording">Do you really want to remove the series recording \'%s\'?\n\nThis will remove all scheduled recordings that belong to that series recording rule.</string>
