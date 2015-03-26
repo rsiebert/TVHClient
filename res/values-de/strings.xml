@@ -29,7 +29,7 @@
     <string name="menu_send_wol">Aufwecken</string>
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
-    <string name="pref_manage_connections_sum">Wähle die aktive Verbindung zum TVHeadend Server oder erstelle, bearbeite oder lösche eine.</string>
+    <string name="pref_manage_connections_sum">Die aktive Verbindung zum TVHeadend Server ändern, neue Verbindungen erstellen, vorhandene bearbeiten oder entfernen.</string>
     <string name="pref_connection_details">Details der Verbindung</string>
     <string name="pref_connection_wol">Einstellungen für Wake on LAN</string>
     <string name="select_connection">Verbindung wählen</string>
@@ -83,8 +83,8 @@
     <string name="pref_icons_sum">Zeigt zu jedem Sender (falls verfügbar) das dazugehörige Logo als Icon an.</string>
     <string name="pref_tag_icon">Logo für Sendergruppen</string>
     <string name="pref_tag_icon_sum">Zeigt für die gewählte Sendergruppe (falls verfügbar) das dazugehörige Logo. Ist keines konfiguriert, wird das Logo der Applikation verwendet.</string>
-    <string name="pref_theme">Verwendet ein helles Theme</string>
-    <string name="pref_theme_sum">Zeigt den Hintergrund und alle Elemente in helleren Farben an. Falls nicht gesetzt, werden ein fast schwarzer Hintergrund und dunklere Farben für die Darstellung verwendet.</string>
+    <string name="pref_theme">Helles Theme</string>
+    <string name="pref_theme_sum">Zeigt den Hintergrund und alle Elemente in helleren Farben an. Alternativ wird ein Theme mit fast schwarzem Hintergrund und dunkleren Farben verwendet.</string>
     <string name="pref_language">Sprache</string>
     <string name="pref_language_sum">Definiert die Sprache, die verwendet werden soll.</string>
     <string name="pref_default_menu">Start-Ansicht</string>
@@ -112,7 +112,7 @@
     <string name="pref_changelog">Änderungshistorie</string>
     <string name="pref_changelog_sum">Zeigt eine Liste aller Änderungen und Eigenschaften zwischen den Versionen.</string>
     <string name="pref_program_guide">Programmübersicht</string>
-    <string name="pref_program_guide_sum">Konfiguriert das Aussehen und einige Parameter der Programmübersicht.</string>
+    <string name="pref_program_guide_sum">Konfiguriert das Aussehen und weitere Parameter der Programmübersicht.</string>
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
     <string name="pref_epg_hours_visible_sum">Legt fest, wieviele Stunden auf einem Bildschirm angezeigt werden sollen. Je höher die Anzahl, desto mehr Programme werden gleichzeitig pro Sender angezeigt. Dies verringert die Lesbarkeit und benötigt mehr Rechenleistung für die Darstellung.</string>
     <string name="pref_epg_max_days">Anzahl der Tage</string>
@@ -151,9 +151,9 @@
     <string name="pref_playback_profiles">Wiedergabeprofile</string>
     <string name="pref_playback_profiles_sum">Bestimmt das Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
     <string name="pref_show_notifications">Zeige Benachrichtigungen</string>
-    <string name="pref_show_notifications_sum">Wird eine Aufnahme gestarted oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt.</string>
-    <string name="pref_show_next_program">Zeige nachfolgende Sendung</string>
-    <string name="pref_show_next_program_sum">Zeigt den Namen der nachfolgenden Sendung in der Senderliste an. Dieser ist für jeden Sender unter der Fortschrittsanzeige zu finden.</string>
+    <string name="pref_show_notifications_sum">Wird eine Aufnahme gestartet oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt.</string>
+    <string name="pref_show_next_program">Anzeige der nachfolgenden Sendung</string>
+    <string name="pref_show_next_program_sum">Zeigt den Namen der nachfolgenden Sendung in der Senderliste unter der Fortschrittsanzeige an.</string>
     <string name="pref_programs">Programme</string>
 
     <string name="clear_search_history">Lösche Suchhistorie?</string>
