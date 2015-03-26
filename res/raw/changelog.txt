@@ -1,6 +1,6 @@
 $ 1.7.6
   % VERSION 1.7.6
-  _ 22.03.2015
+  _ 26.03.2015
     * Added Czech translation
     * Updated the UI according to the Material design guidelines
     * Small performance improvements in the program guide
@@ -9,7 +9,7 @@ $ 1.7.6
     * Prevent crash from invalid numbers in the settings
     * Channel tag icon is available again
     * Start streaming by selecting a channel in the program guide screen
-    * Allow playing a program that is currently being recorded
+    * Allow playing a program that is currently being recorded (it is listed in the scheduled recording list)
 $ 1.7.5
   % VERSION 1.7.5
   _ 19.02.2015
