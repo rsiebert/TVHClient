@@ -69,7 +69,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends ActionBarActivity implements ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
+public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -146,6 +146,8 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
     private TextView actionBarTitle;
     private TextView actionBarSubtitle;
     private ImageView actionBarIcon;
+
+    private MenuItem searchMenuItem = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -434,6 +436,7 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
         }
     }
     
+    @SuppressLint("NewApi")
     @Override
     public void onResume() {
         super.onResume();
@@ -555,9 +558,12 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+            searchMenuItem = menu.findItem(R.id.menu_search); 
+            SearchView searchView = (SearchView) searchMenuItem.getActionView();
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setIconifiedByDefault(false);
+            searchView.setIconifiedByDefault(true);
+            searchView.setOnQueryTextListener(this);
+            searchView.setOnSuggestionListener(this);
         }
         return true;
     }
@@ -1343,5 +1349,33 @@ public class MainActivity extends ActionBarActivity implements ChangeLogDialogIn
             }
             break;
         }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String text) {
+        return false;
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public boolean onQueryTextSubmit(String text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            searchMenuItem.collapseActionView();
+        }
+        return false;
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public boolean onSuggestionClick(int position) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            searchMenuItem.collapseActionView();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onSuggestionSelect(int position) {
+        return false;
     }
 }
