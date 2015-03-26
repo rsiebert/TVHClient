@@ -12,8 +12,7 @@
         android:id="@+id/menu_tags"
         android:icon="?attr/ic_menu_tags"
         android:orderInCategory="5"
-        android:title="@string/menu_tags"
-        app:showAsAction="ifRoom|collapseActionView|withText"/>
+        android:title="@string/menu_tags"/>
     <item
         android:id="@+id/menu_genre_color_info_channels"
         android:orderInCategory="6"
