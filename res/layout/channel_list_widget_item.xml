@@ -113,7 +113,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:singleLine="false"
+            android:maxLines="2"
             android:text="@string/title" />
     </LinearLayout>
 
