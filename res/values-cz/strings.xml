@@ -87,7 +87,7 @@
     <string name="pref_theme_sum">Použít světlé téma.</string>
     <string name="pref_language">Jazyk</string>
     <string name="pref_language_sum">Zvolte jazyk, který bude použit v aplikaci.</string>
-    <string name="pref_default_menu">Startovací obrazovka</string>
+    <string name="pref_default_menu">Výchozí obrazovka</string>
     <string name="pref_default_menu_sum">Vyberte obrazovku, která se zobrazí po spuštění aplikace.</string>
     <string name="pref_sort_channels">Řazení kanálů</string>
     <string name="pref_sort_channels_sum">Vyberte v jakém pořadí budou zobrazeny kanály.</string>
@@ -235,7 +235,7 @@
     <string name="channel">Kanál</string>
     <string name="time">Čas</string>
     <string name="date">Datum</string>
-    <string name="summary">Shrnutí</string>
+    <string name="summary">Stručný souhrn</string>
     <string name="description">Popis</string>
     <string name="duration">Délka</string>
     <string name="airing">Vysíláno</string>
