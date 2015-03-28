@@ -9,6 +9,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
+import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -169,8 +170,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Create the dialog with the available channel tags
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.menu_tags);
-        tagAdapter = new ArrayAdapter<ChannelTag>(activity,
-                android.R.layout.simple_dropdown_item_1line, new ArrayList<ChannelTag>());
+
+        tagAdapter = new ChannelTagListAdapter(activity, new ArrayList<ChannelTag>());
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int pos) {
                 Utils.setChannelTagId(pos);
