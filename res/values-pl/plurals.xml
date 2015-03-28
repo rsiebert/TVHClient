@@ -20,7 +20,7 @@
         <item quantity="other">%d nagrań</item>
     </plurals>
     <plurals name="completed_recordings">
-        <item quantity="one">%d Zakończone nagranie nahrávka</item>
+        <item quantity="one">%d Zakończone nagranie</item>
         <item quantity="few">%d Zakończone nagrania</item>
         <item quantity="many">%d Zakończonych nagrań</item>
         <item quantity="other">%d Zakończonych nagrań</item>
