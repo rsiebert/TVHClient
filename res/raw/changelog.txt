@@ -1,7 +1,8 @@
 $ 1.7.6
   % VERSION 1.7.6
-  _ 26.03.2015
+  _ 29.03.2015
     * Added Czech translation
+    * Updated Polish translation
     * Updated the UI according to the Material design guidelines
     * Small performance improvements in the program guide
     * Show the current connection name in the navigation menu
