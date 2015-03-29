@@ -1,35 +1,27 @@
 package org.tvheadend.tvhclient.model;
 
-import java.util.Date;
 
-public class SeriesRecording implements Comparable<SeriesRecording> {
+public class TimerRecording implements Comparable<TimerRecording> {
 
     public String id;
-    public String description;
-    public long maxDuration;
     public boolean enabled;
-    public long minDuration;
     public long retention;
     public long daysOfWeek;
-    public long approxTime;
     public long priority;
-    public Date startExtra;
-    public Date stopExtra;
+    public long start;  // value is in seconds
+    public long stop;   // value is in seconds
     public String title;
-    public Channel channel;
-
-    public long start;
-    public long startWindow;
     public String name;
     public String directory;
     public String owner;
     public String creator;
+    public Channel channel;
 
     // Required only when a new timer recording is added
     public String configName;
 
     @Override
-    public int compareTo(SeriesRecording that) {
+    public int compareTo(TimerRecording that) {
         return (this.id.equals(that.id)) ? 0 : 1;
     }
 }

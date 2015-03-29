@@ -87,6 +87,9 @@ public class Constants {
     public static final String ACTION_DVR_DELETE = "DVR_DELETE";
     public static final String ACTION_DVR_UPDATE = "DVR_UPDATE";
     public static final String ACTION_DVR_CANCEL = "DVR_CANCEL";
+    public static final String ACTION_TIMER_DVR_ADD = "TIMER_DVR_ADD";
+    public static final String ACTION_TIMER_DVR_DELETE = "TIMER_DVR_DELETE";
+    public static final String ACTION_TIMER_DVR_UPDATE = "TIMER_DVR_UPDATE";
     public static final String ACTION_SERIES_DVR_ADD = "SERIES_DVR_ADD";
     public static final String ACTION_SERIES_DVR_DELETE = "SERIES_DVR_DELETE";
     public static final String ACTION_SERIES_DVR_UPDATE = "SERIES_DVR_UPDATE";
@@ -116,6 +119,8 @@ public class Constants {
     public static final String ACTION_ADD_DVR_ENTRY = "ADD_DVR_ENTRY";
     public static final String ACTION_CANCEL_DVR_ENTRY = "CANCEL_DVR_ENTRY";
     public static final String ACTION_DELETE_DVR_ENTRY = "DELETE_DVR_ENTRY";
+    public static final String ACTION_ADD_TIMER_REC_ENTRY = "ADD_TIMER_REC_ENTRY";
+    public static final String ACTION_DELETE_TIMER_REC_ENTRY = "DELETE_TIMER_REC_ENTRY";
     public static final String ACTION_GET_DISC_SPACE = "GET_DISC_SPACE";
     public static final String ACTION_GET_DVR_CONFIG = "GET_DVR_CONFIG";
     public static final String ACTION_GET_DVR_CUTPOINTS = "GET_DVR_CUTPOINTS";
@@ -125,4 +130,8 @@ public class Constants {
     public static final String ACTION_GET_SYSTEM_TIME = "GET_SYSTEM_TIME";
     public static final String ACTION_ADD_SERIES_DVR_ENTRY = "ADD_SERIES_DVR_ENTRY";
     public static final String ACTION_DELETE_SERIES_DVR_ENTRY = "DELETE_SERIES_DVR_ENTRY";
+
+    // The default names for the playback and recording profiles
+    public static final String PROG_PROFILE_DEFAULT = "htsp";
+    public static final String REC_PROFILE_DEFAULT = "(Default Profile)";
 }

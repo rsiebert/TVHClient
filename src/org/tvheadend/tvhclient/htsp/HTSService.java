@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +26,7 @@ import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.DvrCutpoint;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
+import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
@@ -32,6 +34,7 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.SourceInfo;
 import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Service;
 import android.content.Intent;
@@ -123,6 +126,23 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (action.equals(Constants.ACTION_CANCEL_DVR_ENTRY)) {
             cancelDvrEntry(intent.getLongExtra("id", 0));
 
+        } else if (action.equals(Constants.ACTION_ADD_TIMER_REC_ENTRY)) {
+            addTimerRecEntry(
+                intent.getStringExtra("title"),
+                intent.getLongExtra("start", 0), 
+                intent.getLongExtra("stop", 0), 
+                intent.getLongExtra("channelId", 0), 
+                intent.getStringExtra("configName"),
+                intent.getLongExtra("retention", 0), 
+                intent.getLongExtra("daysOfWeek", 0), 
+                intent.getLongExtra("priority", 0), 
+                intent.getLongExtra("enabled", 0), 
+                intent.getStringExtra("name"),
+                intent.getStringExtra("directory"));
+
+        } else if (action.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
+            deleteTimerRecEntry(intent.getStringExtra("id"));
+
         } else if (action.equals(Constants.ACTION_EPG_QUERY)) {
             TVHClientApplication app = (TVHClientApplication) getApplication();
             Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
@@ -179,9 +199,20 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
             
         } else if (action.equals(Constants.ACTION_ADD_SERIES_DVR_ENTRY)) {
-            String title = intent.getStringExtra("title");
-            long channelId = intent.getLongExtra("channelId", 0);
-            addAutorecEntry(title, channelId);
+            addAutorecEntry(
+                    intent.getStringExtra("title"),
+                    intent.getLongExtra("channelId", 0),
+                    intent.getStringExtra("configName"),
+                    intent.getLongExtra("maxDuration", 0),
+                    intent.getLongExtra("minDuration", 0),
+                    intent.getLongExtra("retention", 0),
+                    intent.getLongExtra("daysOfWeek", 127),
+                    intent.getLongExtra("priority", 0),
+                    intent.getLongExtra("enabled", 1),
+                    intent.getLongExtra("startExtra", 0),
+                    intent.getLongExtra("stopExtra", 0),
+                    intent.getStringExtra("name"),
+                    intent.getStringExtra("directory"));
 
         } else if (action.equals(Constants.ACTION_DELETE_SERIES_DVR_ENTRY)) {
             String id = intent.getStringExtra("id");
@@ -425,6 +456,59 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.removeRecording(rec);
     }
 
+    private void onTimerRecEntryAdd(HTSMessage msg) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        TimerRecording rec = new TimerRecording();
+        rec.id = msg.getString("id", "");
+        rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
+        rec.retention = msg.getLong("retention", 0);
+        rec.priority = msg.getLong("priority", 0);
+        rec.start = msg.getLong("start");
+        rec.stop = msg.getLong("stop");
+        rec.title = msg.getString("title", "");
+        rec.name = msg.getString("name", "");
+        rec.directory = msg.getString("directory", "");
+        rec.owner = msg.getString("owner", "");
+        rec.creator = msg.getString("creator", "");
+        rec.channel = app.getChannel(msg.getLong("channel", 0));
+        app.addTimerRecording(rec);
+    }
+
+    private void onTimerRecEntryUpdate(HTSMessage msg) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        TimerRecording rec = app.getTimerRecording(msg.getString("id"));
+        if (rec == null) {
+            return;
+        }
+
+        rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        rec.daysOfWeek = msg.getLong("daysOfWeek", rec.daysOfWeek);
+        rec.retention = msg.getLong("retention", rec.retention);
+        rec.priority = msg.getLong("priority", rec.priority);
+        rec.start = msg.getLong("start", rec.start);
+        rec.stop = msg.getLong("stop", rec.stop);
+        rec.title = msg.getString("title", rec.title);
+        rec.name = msg.getString("name", rec.name);
+        rec.directory = msg.getString("directory", rec.directory);
+        rec.owner = msg.getString("owner", rec.owner);
+        rec.creator = msg.getString("creator", rec.creator);
+        rec.channel = app.getChannel(msg.getLong("channel", 0));
+        app.updateTimerRecording(rec);
+    }
+
+    private void onTimerRecEntryDelete(HTSMessage msg) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        TimerRecording rec = app.getTimerRecording(msg.getString("id"));
+
+        if (rec == null || rec.channel == null) {
+            return;
+        }
+
+        rec.channel = null;
+        app.removeTimerRecording(rec);
+    }
+
     private void onInitialSyncCompleted(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         app.setLoading(false);
@@ -650,6 +734,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             onDvrEntryUpdate(msg);
         } else if (method.equals("dvrEntryDelete")) {
             onDvrEntryDelete(msg);
+        } else if (method.equals("timerecEntryAdd")) {
+            onTimerRecEntryAdd(msg);
+        } else if (method.equals("timerecEntryUpdate")) {
+            onTimerRecEntryUpdate(msg);
+        } else if (method.equals("timerecEntryDelete")) {
+            onTimerRecEntryDelete(msg);
         } else if (method.equals("subscriptionStart")) {
             onSubscriptionStart(msg);
         } else if (method.equals("subscriptionStatus")) {
@@ -956,6 +1046,63 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
+    /**
+     * 
+     * @param id
+     */
+    private void deleteTimerRecEntry(String id) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("deleteTimerecEntry");
+        request.putField("id", id);
+        connection.sendMessage(request, new HTSResponseHandler() {
+            public void handleResponse(HTSMessage response) {
+                @SuppressWarnings("unused")
+                boolean success = response.getInt("success", 0) == 1;
+            }
+        });
+    }
+
+    /**
+     * 
+     * @param title
+     * @param start
+     * @param stop
+     * @param channelId
+     * @param configName
+     * @param retention
+     * @param daysOfWeek
+     * @param priority
+     * @param enabled
+     * @param name
+     * @param directory
+     */
+    private void addTimerRecEntry(String title, long start, long stop,
+                long channelId, String configName, long retention, long daysOfWeek,
+                long priority, long enabled, String name, String directory) {
+
+        HTSMessage request = new HTSMessage();
+        request.setMethod("addTimerecEntry");
+        request.putField("title", title);
+        request.putField("start", start);
+        request.putField("stop", stop);
+        request.putField("channelId", channelId);
+        request.putField("configName", configName);
+        request.putField("retention", retention);
+        request.putField("daysOfWeek", daysOfWeek);
+        request.putField("priority", priority);
+        request.putField("enabled", enabled);
+        request.putField("name", name);
+        request.putField("directory", directory);
+        connection.sendMessage(request, new HTSResponseHandler() {
+            public void handleResponse(HTSMessage response) {
+                @SuppressWarnings("unused")
+                boolean success = response.getInt("success", 0) == 1;
+                @SuppressWarnings("unused")
+                String error = response.getString("error", "");
+            }
+        });
+    }
+
     private void subscribe(long channelId, long subscriptionId, int maxWidth, int maxHeight, String aCodec, String vCodec) {
         Subscription subscription = new Subscription();
         subscription.id = subscriptionId;
@@ -1072,7 +1219,21 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!response.containsKey("dvrconfigs")) {
                     return;
                 }
-                // TODO
+                List<Profiles> pList = new ArrayList<Profiles>();
+                TVHClientApplication app = (TVHClientApplication) getApplication();
+                for (Object obj : response.getList("dvrconfigs")) {
+                    HTSMessage sub = (HTSMessage) obj;
+
+                    Profiles p = new Profiles();
+                    p.uuid = sub.getString("uuid");
+                    p.name = sub.getString("name");
+                    if (p.name.length() == 0) {
+                        p.name = Constants.REC_PROFILE_DEFAULT;
+                    }
+                    p.comment = sub.getString("comment");
+                    pList.add(p);
+                }
+                app.addDvrConfigs(pList);
             }
         });
     }
@@ -1089,11 +1250,41 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void addAutorecEntry(final String title, final long channelId) {
+    /**
+     * 
+     * @param title
+     * @param channelId
+     * @param configName
+     * @param maxDuration
+     * @param minDuration
+     * @param retention
+     * @param daysOfWeek
+     * @param priority
+     * @param enabled
+     * @param startExtra
+     * @param stopExtra
+     * @param name
+     * @param directory
+     */
+    private void addAutorecEntry(String title, long channelId, String configName, long maxDuration,
+            long minDuration, long retention, long daysOfWeek, long priority, long enabled,
+            long startExtra, long stopExtra, String name, String directory) {
+
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
         request.putField("title", title);
+        request.putField("configName", configName);
         request.putField("channelId", channelId);
+        request.putField("minDuration", minDuration);
+        request.putField("maxDuration", maxDuration);
+        request.putField("retention", retention);
+        request.putField("daysOfWeek", daysOfWeek);
+        request.putField("priority", priority);
+        request.putField("enabled", enabled);
+        request.putField("startExtra", startExtra);
+        request.putField("stopExtra", stopExtra);
+        request.putField("name", name);
+        request.putField("directory", directory);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
@@ -1155,15 +1346,18 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!response.containsKey("profiles")) {
                     return;
                 }
+                List<Profiles> pList = new ArrayList<Profiles>();
+                TVHClientApplication app = (TVHClientApplication) getApplication();
                 for (Object obj : response.getList("profiles")) {
                     HTSMessage sub = (HTSMessage) obj;
-                    sub.getString("uuid");
-                    sub.getString("name");
-                    sub.getString("comment");
-                    // TODO
 
-                    Log.d(TAG, "getProfiles, added profile");
+                    Profiles p = new Profiles();
+                    p.uuid = sub.getString("uuid");
+                    p.name = sub.getString("name");
+                    p.comment = sub.getString("comment");
+                    pList.add(p);
                 }
+                app.addProfiles(pList);
             }
         });
     }
