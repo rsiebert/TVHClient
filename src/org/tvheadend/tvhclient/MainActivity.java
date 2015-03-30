@@ -314,7 +314,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
                                         // Only if a new connection has been selected
                                         // switch the selection status and reconnect
-                                        if (oldConn.id != newConn.id) {
+                                        if (oldConn != null && newConn != null && oldConn.id != newConn.id) {
                                             // Close the menu when a new connection has been selected
                                             drawerLayout.closeDrawers();
                                             // Set the new connection as the active one
