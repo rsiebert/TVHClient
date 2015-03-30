@@ -5,7 +5,6 @@ import java.util.Date;
 public class SeriesRecording implements Comparable<SeriesRecording> {
 
     public String id;
-    public String description;
     public long maxDuration;
     public boolean enabled;
     public long minDuration;

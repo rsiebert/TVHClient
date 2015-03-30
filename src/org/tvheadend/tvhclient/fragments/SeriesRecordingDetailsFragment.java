@@ -27,8 +27,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     private boolean showControls = false;
     private SeriesRecording srec;
 
-    private TextView descLabel;
-    private TextView desc;
     private TextView channelLabel;
     private TextView channelName;
 
@@ -73,8 +71,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
-        descLabel = (TextView) v.findViewById(R.id.description_label);
-        desc = (TextView) v.findViewById(R.id.description);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         
@@ -108,7 +104,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         showPlayerControls();
 
         Utils.setDescription(channelLabel, channelName, ((srec.channel != null) ? srec.channel.name : ""));
-        Utils.setDescription(descLabel, desc, srec.description);
     }
 
     /**

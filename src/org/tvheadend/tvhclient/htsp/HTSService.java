@@ -679,7 +679,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (srec == null) {
             return;
         }
-        srec.description = msg.getString("description", srec.description);
         srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
         srec.maxDuration = msg.getLong("maxDuration");
         srec.minDuration = msg.getLong("minDuration");
@@ -697,7 +696,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         SeriesRecording srec = new SeriesRecording();
         srec.id = msg.getString("id");
-        srec.description = msg.getString("description", "");
         srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
         srec.maxDuration = msg.getLong("maxDuration");
         srec.minDuration = msg.getLong("minDuration");
