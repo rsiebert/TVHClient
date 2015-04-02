@@ -35,8 +35,8 @@
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
     <string name="confirm_cancel">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
-    <string name="cancel">Anulować</string>
-    <string name="remove">Usunąć</string>
+    <string name="cancel">Anuluj</string>
+    <string name="remove">Usuń</string>
     <string name="delete">Usuń</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="delete_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>
