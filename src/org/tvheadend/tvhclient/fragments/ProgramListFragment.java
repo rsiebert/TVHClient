@@ -385,6 +385,12 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 }
             });
+        } else if (action.equals(Constants.ACTION_DVR_ADD)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
     }
 
