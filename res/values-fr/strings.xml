@@ -37,10 +37,10 @@
     <string name="remove">Supprimer</string>
     <string name="delete">Effacer</string>
     <string name="delete_connection">Voulez-vous vraiment effacer la connexion \'%s\'?</string>
-    <string name="delete_recording">Voulez-vous vraiment effacer l\'enregistrement \'%s\'?</string>
-    <string name="delete_series_recording">Voulez-vous vraiment effacer l\'enregistrement auto \'%s\'?\n\nCela va effacer tous les enregistrements auto de cette série.</string>
-    <string name="delete_timer_recording">Voulez-vous vraiment effacer l\'enregistrement horaire \'%s\'?</string>
-    <string name="delete_all_recordings">Voulez-vous vraiment effacer tous les enregistrements?</string>
+    <string name="remove_recording">Voulez-vous vraiment effacer l\'enregistrement \'%s\'?</string>
+    <string name="remove_series_recording">Voulez-vous vraiment effacer l\'enregistrement auto \'%s\'?\n\nCela va effacer tous les enregistrements auto de cette série.</string>
+    <string name="remove_timer_recording">Voulez-vous vraiment effacer l\'enregistrement horaire \'%s\'?</string>
+    <string name="remove_all_recordings">Voulez-vous vraiment effacer tous les enregistrements?</string>
     <string name="cancel_recording">Voulez-vous vraiment annuler l\'enregistrement \'%s\'?</string>
     <string name="cancel_all_recordings">Voulez-vous vraiment annuler tous les enregistrements?</string>
     <string name="add_recording">Ajouter un nouvel enregistrement</string>

@@ -195,9 +195,9 @@ public class Utils {
 
         String message = "";
         if (rec != null) {
-            message = context.getString(R.string.delete_recording, rec.title);
+            message = context.getString(R.string.remove_recording, rec.title);
         } else if (srec != null) {
-            message = context.getString(R.string.delete_series_recording, srec.title);
+            message = context.getString(R.string.remove_series_recording, srec.title);
         }
 
         // Show a confirmation dialog before deleting the recording

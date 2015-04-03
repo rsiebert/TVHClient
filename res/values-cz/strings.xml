@@ -39,10 +39,10 @@
     <string name="remove">Odstranit</string>
     <string name="delete">Smazat</string>
     <string name="delete_connection">Opravdu chcete odstranit připojení \'%s\'?</string>
-    <string name="delete_recording">Opravdu chcete smazat nahrávku \'%s\'?</string>
-    <string name="delete_series_recording">Opravdu chcete smazat opakované nahrávání \'%s\'?\n\nTím budou odstraněna všechna plánovaná nahrávání patřící do tohoto pravidla pro opakovaného nahrávání.</string>
-    <string name="delete_timer_recording">Opravdu chcete smazat načasované nahrávání \'%s\'?</string>
-    <string name="delete_all_recordings">Opravdu chcete smazat VŠECHNY nahrávky?</string>
+    <string name="remove_recording">Opravdu chcete smazat nahrávku \'%s\'?</string>
+    <string name="remove_series_recording">Opravdu chcete smazat opakované nahrávání \'%s\'?\n\nTím budou odstraněna všechna plánovaná nahrávání patřící do tohoto pravidla pro opakovaného nahrávání.</string>
+    <string name="remove_timer_recording">Opravdu chcete smazat načasované nahrávání \'%s\'?</string>
+    <string name="remove_all_recordings">Opravdu chcete smazat VŠECHNY nahrávky?</string>
     <string name="cancel_recording">Opravdu chcete zrušit naplánované nahrávání \'%s\'?</string>
     <string name="cancel_all_recordings">Opravdu chcete zrušit VŠECHNA naplánovaná nahrávání?</string>
     <string name="add_recording">Přidat nové nahrávání</string>

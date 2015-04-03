@@ -12,8 +12,8 @@
     <string name="menu_record_series">Record (Autorec)</string>
     <string name="menu_record_cancel">Cancel recording</string>
     <string name="menu_record_cancel_all">Cancel all recordings</string>
-    <string name="menu_record_remove">Delete recording</string>
-    <string name="menu_record_remove_all">Delete all recordings</string>
+    <string name="menu_record_remove">Remove recording</string>
+    <string name="menu_record_remove_all">Remove all recordings</string>
     <string name="menu_search_imdb">Search on IMDB</string>
     <string name="menu_search_epg">Search the program guide</string>
     <string name="menu_add">Add</string>
@@ -39,10 +39,10 @@
     <string name="remove">Remove</string>
     <string name="delete">Delete</string>
     <string name="delete_connection">Do you really want to remove the connection \'%s\'?</string>
-    <string name="delete_recording">Do you really want to remove the recording \'%s\'?</string>
-    <string name="delete_series_recording">Do you really want to remove the series recording \'%s\'?\n\nThis will remove all scheduled recordings that belong to that series recording rule.</string>
-    <string name="delete_timer_recording">Do you really want to remove the timer recording \'%s\'?</string>
-    <string name="delete_all_recordings">Do you really want to remove ALL recordings?</string>
+    <string name="remove_recording">Do you really want to remove the recording \'%s\'?</string>
+    <string name="remove_series_recording">Do you really want to remove the series recording \'%s\'? This will remove all scheduled recordings that are affected by this series recording rule.</string>
+    <string name="remove_timer_recording">Do you really want to remove the timer recording \'%s\'?</string>
+    <string name="remove_all_recordings">Do you really want to remove ALL recordings?</string>
     <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
     <string name="cancel_all_recordings">Do you really want to remove ALL scheduled recordings?</string>
     <string name="add_recording">Add new recording</string>

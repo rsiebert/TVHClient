@@ -39,10 +39,10 @@
     <string name="remove">Avlägsna</string>
     <string name="delete">Ta bort</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
-    <string name="delete_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
-    <string name="delete_series_recording">Vill du verkligen ta bort serieinspelningen \'%s\'?\n\nDetta kommer ta bort alla schemalagda inspelningar som tillhör denna serieinspelningsregel.</string>
-    <string name="delete_timer_recording">Vill du verkligen ta bort timerinspelningen \'%s\'?</string>
-    <string name="delete_all_recordings">Vill du verkligen ta bort ALLA inspelningar?</string>
+    <string name="remove_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
+    <string name="remove_series_recording">Vill du verkligen ta bort serieinspelningen \'%s\'?\n\nDetta kommer ta bort alla schemalagda inspelningar som tillhör denna serieinspelningsregel.</string>
+    <string name="remove_timer_recording">Vill du verkligen ta bort timerinspelningen \'%s\'?</string>
+    <string name="remove_all_recordings">Vill du verkligen ta bort ALLA inspelningar?</string>
     <string name="cancel_recording">Vill du verkligen avbryta schemalagd inspelning \'%s\'?</string>
     <string name="cancel_all_recordings">Vill du verkligen avbryta ALLA schemalagda inspelningar?</string>
     <string name="add_recording">Lägg till inspelning</string>

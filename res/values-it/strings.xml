@@ -39,10 +39,10 @@
     <string name="remove">Rimuovere</string>
     <string name="delete">Elimina</string>
     <string name="delete_connection">Vuoi veramente cancellare la connessione \'%s\'?</string>
-    <string name="delete_recording">Vuoi veramente cancellare la registrazione \'%s\'?</string>
-    <string name="delete_series_recording">Vuoi veramente cancellare la registrazione della serie \'%s\'?\n\nQuesto rimuoverà tutte le registrazioni programmate che appartengono a quella regola di registrazione della serie.</string>
-    <string name="delete_timer_recording">uoi veramente cancellare la registrazione manuale \'%s\'?</string>
-    <string name="delete_all_recordings">Vuoi veramente cancellare TUTTE le registrazioni fallite?</string>
+    <string name="remove_recording">Vuoi veramente cancellare la registrazione \'%s\'?</string>
+    <string name="remove_series_recording">Vuoi veramente cancellare la registrazione della serie \'%s\'?\n\nQuesto rimuoverà tutte le registrazioni programmate che appartengono a quella regola di registrazione della serie.</string>
+    <string name="remove_timer_recording">uoi veramente cancellare la registrazione manuale \'%s\'?</string>
+    <string name="remove_all_recordings">Vuoi veramente cancellare TUTTE le registrazioni fallite?</string>
     <string name="cancel_recording">Vuoi veramente annullare la registrazione programmata \'%s\'?</string>
     <string name="cancel_all_recordings">Vuoi veramente annullare TUTTE le registrazioni programmate?</string>
     <string name="add_recording">Aggiungi nuova registrazione</string>

@@ -36,8 +36,8 @@
     <string name="remove">Verwijderen</string>
     <string name="delete">Verwijder</string>
     <string name="delete_connection">Weet je zeker dat je connectie \'%s\' wilt verwijderen?</string>
-    <string name="delete_recording">Weet je zeker dat je opname \'%s\' wilt verwijderen?</string>
-    <string name="delete_all_recordings">Weet je zeker dat je ALLE opnames wilt verwijderen?</string>
+    <string name="remove_recording">Weet je zeker dat je opname \'%s\' wilt verwijderen?</string>
+    <string name="remove_all_recordings">Weet je zeker dat je ALLE opnames wilt verwijderen?</string>
     <string name="cancel_recording">Weet je zeker dat je geplande opname \'%s\' wilt annuleren?</string>
 	<string name="cancel_all_recordings">Weet je zeker dat je ALLE geplande opnames wilt annuleren?</string>
 	
