@@ -122,6 +122,9 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
             @Override
             public void onClick(View v) {
                 Utils.confirmRemoveRecording(activity, srec);
+                if (getDialog() != null) {
+                    getDialog().dismiss();
+                }
             }
         });
     }
