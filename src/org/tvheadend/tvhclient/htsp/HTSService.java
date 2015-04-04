@@ -405,6 +405,18 @@ public class HTSService extends Service implements HTSConnectionListener {
             rec.priority = msg.getLong("priority");
             rec.contentType = msg.getLong("contentType");
         }
+
+        if (rec.channel != null && rec.channel.epg != null) {
+            for (Program p : rec.channel.epg) {
+                if (p != null 
+                        && p.title.equals(rec.title)
+                        && p.start.getTime() == rec.start.getTime()
+                        && p.stop.getTime() == rec.stop.getTime()) {
+                    p.recording = rec;
+                    break;
+                }
+            }
+        }
         app.addRecording(rec);
     }
 
