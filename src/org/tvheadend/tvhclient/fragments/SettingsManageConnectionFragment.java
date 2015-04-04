@@ -319,11 +319,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         // Show confirmation dialog to cancel
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(getString(R.string.confirm_cancel));
-        builder.setTitle(getString(R.string.menu_cancel));
+        builder.setMessage(getString(R.string.confirm_discard_connection));
 
         // Define the action of the yes button
-        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 // Delete the connection so that we start fresh when
@@ -334,7 +333,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             }
         });
         // Define the action of the no button
-        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
