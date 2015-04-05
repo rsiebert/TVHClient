@@ -38,6 +38,9 @@
     <string name="cancel">Cancel</string>
     <string name="remove">Remove</string>
     <string name="delete">Delete</string>
+    <string name="discard">Discard</string>
+    <string name="confirm_discard_profile">Discard profile values? All changes will be lost.</string>
+    <string name="confirm_discard_connection">Discard connection values? All changes will be lost.</string>
     <string name="delete_connection">Do you really want to remove the connection \'%s\'?</string>
     <string name="remove_recording">Do you really want to remove the recording \'%s\'?</string>
     <string name="remove_series_recording">Do you really want to remove the series recording \'%s\'? This will remove all scheduled recordings that are affected by this series recording rule.</string>
@@ -155,6 +158,10 @@
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
     <string name="pref_programs">Programs</string>
+    <string name="pref_playback_and_recording">Playback and Recording</string>
+    <string name="pref_transcoding">Transcoding Parameters</string>
+    <string name="pref_transcoding_sum">Defines the video and audio parameters how programs shall be recorded or how recordings shall be played.</string>
+    <string name="feature_not_supported_by_server">The TVHeadend server does not supported this feature. A newer version is required.</string>
 
     <string name="clear_search_history">Clear search history?</string>
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>

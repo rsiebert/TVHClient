@@ -34,17 +34,20 @@
     <string name="pref_connection_wol">Einstellungen für Wake on LAN</string>
     <string name="select_connection">Verbindung wählen</string>
     <string name="add_connection">Verbindung hinzufügen</string>
-    <string name="confirm_cancel">Aktion wirklich abbrechen? Alle Änderungen gehen verloren.</string>
+    <string name="confirm_cancel">Aktion abbrechen? Alle Änderungen gehen verloren.</string>
     <string name="cancel">Abbrechen</string>
     <string name="remove">Entfernen</string>
     <string name="delete">Löschen</string>
-    <string name="delete_connection">Soll die Verbindung \'%s\' wirklich entfernt werden?</string>
-    <string name="remove_recording">Soll die Aufnahme \'%s\' wirklich entfernt werden?</string>
-    <string name="remove_series_recording">Soll die Serienaufnahme \'%s\' und alle dazugehörigen geplanten Aufnahmen wirklich entfernt werden?</string>
-    <string name="remove_timer_recording">Soll die manuelle Aufnahme \'%s\' wirklich entfernt werden?</string>
-    <string name="remove_all_recordings">Sollen ALLE Aufnahmen entfernt werden?</string>
-    <string name="cancel_recording">Soll die geplante Aufnahme \'%s\' wirklich entfernt werden?</string>
-    <string name="cancel_all_recordings">Sollen ALLE geplanten Aufnahmen entfernt werden?</string>
+    <string name="discard">Verwerfen</string>
+    <string name="confirm_discard_profile">Profileinstellungen verwerfen? Alle Änderungen gehen verloren.</string>
+    <string name="confirm_discard_connection">Verbindungseinstellungen verwerfen? Alle Änderungen gehen verloren.</string>
+    <string name="delete_connection">Verbindung \'%s\' entfernen?</string>
+    <string name="remove_recording">Aufnahme \'%s\' entfernen?</string>
+    <string name="remove_series_recording">Serienaufnahme \'%s\' und alle dazugehörigen geplanten Aufnahmen entfernen?</string>
+    <string name="remove_timer_recording">Manuelle Aufnahme \'%s\' entfernen?</string>
+    <string name="remove_all_recordings">Alle Aufnahmen entfernen?</string>
+    <string name="cancel_recording">Geplante Aufnahme \'%s\' entfernen?</string>
+    <string name="cancel_all_recordings">Alle geplanten Aufnahmen entfernen?</string>
     <string name="add_recording">Neue Aufnahme hinzufügen</string>
     <string name="cancel_add_recording">Hinzufügen der Aufnahme abbrechen? Alle Eingaben gehen verloren.</string>
 
@@ -145,16 +148,20 @@
 
     <string name="loading_profiles">Lade Profile</string>
     <string name="pref_profiles">Profile</string>
-    <string name="pref_profiles_sum">Definiert die Parameter oder Profile (falls unterstützt), die verwendet werden sollen um Programme aufzunehmen oder Aufnahmen abzuspielen.</string>
+    <string name="pref_profiles_sum">Auswahl eines verfügbaren Serverprofils, mit denen Programme aufgenommen oder Aufnahmen abgespielt werden.</string>
     <string name="pref_recording_profiles">Aufnahmeprofile</string>
     <string name="pref_recording_profiles_sum">Bestimmt das Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
     <string name="pref_playback_profiles">Wiedergabeprofile</string>
     <string name="pref_playback_profiles_sum">Bestimmt das Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
     <string name="pref_show_notifications">Zeige Benachrichtigungen</string>
     <string name="pref_show_notifications_sum">Wird eine Aufnahme gestartet oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt.</string>
-    <string name="pref_show_next_program">Anzeige der nachfolgenden Sendung</string>
+    <string name="pref_show_next_program">Nachfolgende Sendung anzeigen</string>
     <string name="pref_show_next_program_sum">Zeigt den Namen der nachfolgenden Sendung in der Senderliste unter der Fortschrittsanzeige an.</string>
     <string name="pref_programs">Programme</string>
+    <string name="pref_playback_and_recording">Wiedergabe und Aufnahme</string>
+    <string name="pref_transcoding">Parameter für die Transcodierung</string>
+    <string name="pref_transcoding_sum">Definiert die Video- and Audio-Parameter mit denen Programme aufgenommen und Aufnahmen abgespielt werden.</string>
+    <string name="feature_not_supported_by_server">Der TVHeadend Server unterstützt diese Funktion nicht. Eine neuere Version wird benötigt.</string>
 
     <string name="clear_search_history">Lösche Suchhistorie?</string>
     <string name="clear_search_history_sum">Bitte bestätigen, dass alle Einträge aus der Historie gelöscht werden sollen.</string>
