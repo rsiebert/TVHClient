@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Stream;
 
@@ -32,6 +33,11 @@ public class PlaybackSelectionActivity extends Activity {
         intent.putExtra("httpPortPref", conn.streaming_port);
         
         if (ch != null) {
+            // Pass on the program profile name, if allowed and available
+            Profile p = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
+            if (p != null && app.getProtocolVersion() > Constants.MIN_API_VERSION_PROFILES) { // && app.isUnlocked()) {
+                intent.putExtra("profile", p.name);
+            }
             // Pass on the channel id and the other settings
             intent.putExtra("channelId", ch.id);
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("progResolutionPref", "288")));
@@ -42,6 +48,11 @@ public class PlaybackSelectionActivity extends Activity {
             intent.putExtra("containerPref", prefs.getString("progContainerPref", "matroska"));
 
         } else if (rec != null) {
+            // Pass on the recording profile name, if allowed and available
+            Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+            if (p != null && app.getProtocolVersion() > Constants.MIN_API_VERSION_PROFILES) { // && app.isUnlocked()) {
+                intent.putExtra("profile", p.name);
+            }
             // Pass on the recording id and the other settings
             intent.putExtra("dvrId", rec.id);
             intent.putExtra("resolutionPref", Integer.parseInt(prefs.getString("recResolutionPref", "288")));

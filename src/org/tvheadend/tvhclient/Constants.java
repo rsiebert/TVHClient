@@ -9,6 +9,9 @@ public class Constants {
     // Amount of programs of a channel that shall be loaded from the server
     public static final int PREF_PROGRAMS_TO_LOAD = 15;
 
+    // Minimum API version for certain functionalities
+    public static final int MIN_API_VERSION_PROFILES = 15;
+
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";
     public static final String BUNDLE_RECORDING_TYPE = "recordingType";

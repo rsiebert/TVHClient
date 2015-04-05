@@ -3,15 +3,20 @@ package org.tvheadend.tvhclient.fragments;
 import java.io.File;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.SettingsProfileActivity;
+import org.tvheadend.tvhclient.SettingsTranscodingActivity;
 import org.tvheadend.tvhclient.SuggestionProvider;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -50,7 +55,44 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 return false;
             }
         });
-        
+
+        // Add a listener so that the profiles and play and recording options can be set
+        Preference prefMenuProfiles = findPreference("pref_menu_profiles");
+        if (prefMenuProfiles != null) {
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            if (app.getProtocolVersion() <= Constants.MIN_API_VERSION_PROFILES) {
+                prefMenuProfiles.setEnabled(false);
+                prefMenuProfiles.setSummary(R.string.feature_not_supported_by_server);
+//            } else if (!app.isUnlocked()) {
+//                prefMenuProfiles.setEnabled(false);
+//                prefMenuProfiles.setSummary(R.string.feature_not_available_in_free_version);
+            } else {
+                prefMenuProfiles.setSummary(R.string.pref_profiles_sum);
+                prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        Intent intent = new Intent(activity, SettingsProfileActivity.class);
+                        startActivity(intent);
+                        return false;
+                    }
+                });
+            }
+        }
+
+        // Add a listener so that the profiles and play and recording options can be set
+        Preference prefMenuTranscoding = findPreference("pref_menu_transcoding");
+        if (prefMenuTranscoding != null) {
+            prefMenuTranscoding.setSummary(R.string.pref_transcoding_sum);
+            prefMenuTranscoding.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(activity, SettingsTranscodingActivity.class);
+                    startActivity(intent);
+                    return false;
+                }
+            });
+        }
+
         // Add a listener to the connection preference so that the 
         // ChangeLogDialog with all changes can be shown.
         Preference prefChangelog = findPreference("pref_changelog");

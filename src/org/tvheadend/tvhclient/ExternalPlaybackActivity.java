@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.HttpTicket;
-import org.tvheadend.tvhclient.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -54,6 +53,7 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
     private void startPlayback(String path, String ticket) {
         String host = getIntent().getStringExtra("serverHostPref");
         Integer port = getIntent().getIntExtra("httpPortPref", 9981);
+        String profile = getIntent().getStringExtra("profile");
         Integer resolution = getIntent().getIntExtra("resolutionPref", 288);
         Boolean transcode = getIntent().getBooleanExtra("transcodePref", false);
         String container = getIntent().getStringExtra("containerPref");
@@ -76,14 +76,20 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         // Create the URL for the external media player that is required to get
         // the stream from the server
         String url = "http://" + host + ":" + port + path;
-        url += "?ticket=" + ticket;
-        url += "&mux=" + container;
-        if (transcode) {
-            url += "&transcode=1";
-            url += "&resolution=" + resolution;
-            url += "&acodec=" + acodec;
-            url += "&vcodec=" + vcodec;
-            url += "&scodec=" + scodec;
+
+        // If a profile was given, use it instead of the old values
+        if (profile != null) {
+            url += "?profile=" + profile;
+        } else {
+            url += "?ticket=" + ticket;
+            url += "&mux=" + container;
+            if (transcode) {
+                url += "&transcode=1";
+                url += "&resolution=" + resolution;
+                url += "&acodec=" + acodec;
+                url += "&vcodec=" + vcodec;
+                url += "&scodec=" + scodec;
+            }
         }
 
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
@@ -132,7 +138,6 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult " + requestCode + ", " + resultCode);
         if (requestCode == Constants.RESULT_CODE_START_PLAYER) {
             if (resultCode == RESULT_OK) {
                 finish();
