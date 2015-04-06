@@ -187,7 +187,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.preference_edit_connection, menu);
+        inflater.inflate(R.menu.save_cancel_menu, menu);
     }
 
     @Override
