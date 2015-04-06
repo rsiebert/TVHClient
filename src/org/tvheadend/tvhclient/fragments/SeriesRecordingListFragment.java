@@ -21,7 +21,9 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -39,7 +41,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
     public static String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
-    protected Activity activity;
+    protected ActionBarActivity activity;
     protected ActionBarInterface actionBarInterface;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected SeriesRecordingListAdapter adapter;
@@ -75,7 +77,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = activity;
+        this.activity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -184,6 +186,12 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case R.id.menu_add:
+            // Create the fragment and show it as a dialog.
+            DialogFragment newFragment = SeriesRecordingAddFragment.newInstance(null);
+            newFragment.show(activity.getSupportFragmentManager(), "dialog");
+            return true;
+
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, null, adapter.getSelectedItem());
             return true;

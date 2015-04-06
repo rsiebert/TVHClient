@@ -46,6 +46,7 @@ public class FailedRecordingListFragment extends RecordingListFragment {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         }
         (menu.findItem(R.id.menu_play)).setVisible(false);
+        (menu.findItem(R.id.menu_add)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
 
