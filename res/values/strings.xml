@@ -157,13 +157,18 @@
     <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
     <string name="pref_playback_profiles">Playback profiles</string>
     <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
+    <string name="pref_enable_recording_profiles">Enable recording profiles</string>
+    <string name="pref_enable_recording_profiles_sum">Use the newer server profile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
+    <string name="pref_enable_playback_profiles">Enable playback profiles</string>
+    <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
+
     <string name="pref_show_notifications">Show notifications</string>
     <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed. This requires that the service is running in the background.</string>
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
     <string name="pref_programs">Programs</string>
-    <string name="pref_playback_and_recording">Playback and Recording</string>
-    <string name="pref_transcoding">Transcoding Parameters</string>
+    <string name="pref_playback_and_recording">Playback and recording</string>
+    <string name="pref_transcoding">Video and audio parameters</string>
     <string name="pref_transcoding_sum">Defines the video and audio parameters how programs shall be recorded or how recordings shall be played.</string>
     <string name="feature_not_supported_by_server">The TVHeadend server does not supported this feature. A newer version is required.</string>
 

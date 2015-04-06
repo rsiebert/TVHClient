@@ -157,14 +157,19 @@
     <string name="pref_recording_profiles_sum">Bestimmt das Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
     <string name="pref_playback_profiles">Wiedergabeprofile</string>
     <string name="pref_playback_profiles_sum">Bestimmt das Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
+    <string name="pref_enable_recording_profiles">Aktiviere Aufnahmeprofile</string>
+    <string name="pref_enable_recording_profiles_sum">Verwende die neueren Serverprofile für Aufnahmen. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
+    <string name="pref_enable_playback_profiles">Aktiviere Wiedergabeprofile</string>
+    <string name="pref_enable_playback_profiles_sum">Verwende die neueren Serverprofile für Programme. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
+
     <string name="pref_show_notifications">Zeige Benachrichtigungen</string>
     <string name="pref_show_notifications_sum">Wird eine Aufnahme gestartet oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt.</string>
     <string name="pref_show_next_program">Nachfolgende Sendung anzeigen</string>
     <string name="pref_show_next_program_sum">Zeigt den Namen der nachfolgenden Sendung in der Senderliste unter der Fortschrittsanzeige an.</string>
     <string name="pref_programs">Programme</string>
     <string name="pref_playback_and_recording">Wiedergabe und Aufnahme</string>
-    <string name="pref_transcoding">Parameter für die Transcodierung</string>
-    <string name="pref_transcoding_sum">Definiert die Video- and Audio-Parameter mit denen Programme aufgenommen und Aufnahmen abgespielt werden.</string>
+    <string name="pref_transcoding">Video- und Audio</string>
+    <string name="pref_transcoding_sum">Definiert die Einstellungen mit denen Programme aufgenommen und Aufnahmen abgespielt werden.</string>
     <string name="feature_not_supported_by_server">Der TVHeadend Server unterstützt diese Funktion nicht. Eine neuere Version wird benötigt.</string>
 
     <string name="clear_search_history">Lösche Suchhistorie?</string>

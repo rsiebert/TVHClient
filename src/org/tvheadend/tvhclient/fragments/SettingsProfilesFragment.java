@@ -39,8 +39,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -49,7 +51,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
+public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, OnPreferenceChangeListener, BackPressedInterface {
 
     private final static String TAG = SettingsProfilesFragment.class.getSimpleName();
 
@@ -59,11 +61,15 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     private Profile progProfile = null;
     private Profile recProfile = null;
 
+    private CheckBoxPreference prefEnableRecProfiles;
+    private CheckBoxPreference prefEnableProgProfiles;
     private ListPreference prefRecProfiles;
     private ListPreference prefProgProfiles;
 
     private boolean settingsHaveChanged = false;
 
+    private static final String ENABLE_PROG_PROFILE = "enable_prog_profile";
+    private static final String ENABLE_REC_PROFILE = "enable_rec_profile";
     private static final String PROG_PROFILE_UUID = "prog_profile_uuid";
     private static final String REC_PROFILE_UUID = "rec_profile_uuid";
 
@@ -74,6 +80,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_profiles);
 
+        prefEnableRecProfiles = (CheckBoxPreference) findPreference("pref_enable_recording_profiles");
+        prefEnableProgProfiles = (CheckBoxPreference) findPreference("pref_enable_playback_profiles");
         prefRecProfiles = (ListPreference) findPreference("pref_recording_profiles");
         prefProgProfiles = (ListPreference) findPreference("pref_playback_profiles");
 
@@ -93,21 +101,35 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // the first time. If the state is not null then the screen has
         // been rotated and we have to reuse the values.
         if (savedInstanceState != null) {
+            prefEnableProgProfiles.setChecked(savedInstanceState.getBoolean(ENABLE_PROG_PROFILE));
+            prefEnableRecProfiles.setChecked(savedInstanceState.getBoolean(ENABLE_REC_PROFILE));
             progProfile.uuid = savedInstanceState.getString(PROG_PROFILE_UUID);
             recProfile.uuid = savedInstanceState.getString(REC_PROFILE_UUID);
         }
-        
+
+        prefEnableRecProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                prefRecProfiles.setEnabled(prefEnableRecProfiles.isChecked());
+                return false;
+            }
+        });
+        prefEnableProgProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());
+                return false;
+            }
+        });
         prefRecProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                settingsHaveChanged = true;
                 return false;
             }
         });
         prefProgProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                settingsHaveChanged = true;
                 return false;
             }
         });
@@ -115,6 +137,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(ENABLE_PROG_PROFILE, prefEnableProgProfiles.isChecked());
+        outState.putBoolean(ENABLE_REC_PROFILE, prefEnableRecProfiles.isChecked());
         outState.putString(PROG_PROFILE_UUID, prefProgProfiles.getValue());
         outState.putString(REC_PROFILE_UUID, prefRecProfiles.getValue());
         super.onSaveInstanceState(outState);
@@ -155,6 +179,11 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             activity.finish();
         }
 
+        prefEnableProgProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefEnableRecProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefProgProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefRecProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+
         settingsHaveChanged = false;
         loadProfiles();
     }
@@ -194,6 +223,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
     public void save() {
         // Save the values into the profile
+        progProfile.enabled = prefEnableProgProfiles.isChecked();
         progProfile.name = prefProgProfiles.getEntry().toString();
         progProfile.uuid = prefProgProfiles.getValue();
 
@@ -208,6 +238,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         }
 
         // Save the values into the profile
+        recProfile.enabled = prefEnableRecProfiles.isChecked();
         recProfile.name = prefProgProfiles.getEntry().toString();
         recProfile.uuid = prefRecProfiles.getValue();
 
@@ -263,6 +294,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
         // Disable the preferences until the profiles have been loaded.
         // If the server does not support it then it stays disabled
+        prefEnableRecProfiles.setEnabled(false);
+        prefEnableProgProfiles.setEnabled(false);
         prefRecProfiles.setEnabled(false);
         prefProgProfiles.setEnabled(false);
 
@@ -299,8 +332,11 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                     }
 
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                    if (prefRecProfiles != null) {
+                    if (prefRecProfiles != null && prefEnableRecProfiles != null) {
                         addProfiles(prefRecProfiles, app.getDvrConfigs());
+
+                        prefRecProfiles.setEnabled(prefEnableRecProfiles.isChecked());
+                        prefEnableRecProfiles.setEnabled(true);
 
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
@@ -327,9 +363,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                     }
 
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                    if (prefProgProfiles != null) {
+                    if (prefProgProfiles != null && prefEnableProgProfiles != null) {
                         addProfiles(prefProgProfiles, app.getProfiles());
-                        prefProgProfiles.setSummary(R.string.pref_playback_profiles_sum);
+                        prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());
+                        prefEnableProgProfiles.setEnabled(true);
 
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
@@ -368,13 +405,16 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         }
         preferenceList.setEntries(entries);
         preferenceList.setEntryValues(entryValues);
-
-        // Enable the preference for use selection
-        preferenceList.setEnabled(true);
     }
 
     @Override
     public void onBackPressed() {
         cancel();
+    }
+    
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        settingsHaveChanged = true;
+        return true;
     }
 }
