@@ -48,8 +48,12 @@
     <string name="remove_all_recordings">Do you really want to remove ALL recordings?</string>
     <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
     <string name="cancel_all_recordings">Do you really want to remove ALL scheduled recordings?</string>
+
     <string name="add_recording">Add new recording</string>
     <string name="cancel_add_recording">Cancel adding a new recording? All values will be lost.</string>
+    <string name="add_series_recording">Add new series recording</string>
+    <string name="add_timer_recording">Add new manual recording</string>
+    <string name="activate_recording">Activate recording</string>
 
     <string name="pref_connections">Connections</string>
     <string name="pref_name">Connection name</string>
