@@ -31,12 +31,14 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class SettingsTranscodingFragment extends PreferenceFragment implements BackPressedInterface {
+public class SettingsTranscodingFragment extends PreferenceFragment implements OnPreferenceChangeListener, BackPressedInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsTranscodingFragment.class.getSimpleName();
@@ -72,6 +74,8 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     private static final String REC_PROFILE_AUDIO_CODEC = "rec_profile_audio_codec";
     private static final String REC_PROFILE_VIDEO_CODEC = "rec_profile_vodeo_codec";
     private static final String REC_PROFILE_SUBTITLE_CODEC = "rec_profile_subtitle_codec";
+
+    private boolean settingsHaveChanged = false;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -182,6 +186,22 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         prefRecAudioCodec.setValue(recProfile.audio_codec);
         prefRecVideoCodec.setValue(recProfile.video_codec);
         prefRecSubtitleCodec.setValue(recProfile.subtitle_codec);
+
+        prefProgContainer.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefProgTranscode.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefProgResolution.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefProgAudioCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefProgVideoCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefProgSubtitleCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+
+        prefRecContainer.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefRecTranscode.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefRecResolution.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefRecAudioCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefRecVideoCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+        prefRecSubtitleCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
+
+        settingsHaveChanged = false;
     }
 
     @Override
@@ -252,6 +272,11 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     }
 
     public void cancel() {
+        // Quit immediately if nothing has changed 
+        if (!settingsHaveChanged) {
+            activity.finish();
+            return;
+        }
         // Show confirmation dialog to cancel
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(getString(R.string.confirm_discard_profile));
@@ -280,5 +305,11 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     @Override
     public void onBackPressed() {
         cancel();
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        settingsHaveChanged = true;
+        return true;
     }
 }
