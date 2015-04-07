@@ -27,7 +27,10 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     private boolean showControls = false;
     private SeriesRecording srec;
 
-    private TextView channelLabel;
+    private TextView isEnabled;
+    private TextView minDuration;
+    private TextView maxDuration;
+    private TextView daysOfWeek;
     private TextView channelName;
 
     private LinearLayout playerLayout;
@@ -71,9 +74,12 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
-        channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
-        
+        isEnabled = (TextView) v.findViewById(R.id.is_enabled);
+        minDuration = (TextView) v.findViewById(R.id.minimum_duration);
+        maxDuration = (TextView) v.findViewById(R.id.maximum_duration);
+        daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
+
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
         recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
@@ -103,7 +109,25 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         }
         showPlayerControls();
 
-        Utils.setDescription(channelLabel, channelName, ((srec.channel != null) ? srec.channel.name : ""));
+        if (isEnabled != null) {
+            if (srec.enabled) {
+                isEnabled.setText(R.string.recording_enabled);
+            } else {
+                isEnabled.setText(R.string.recording_disabled);
+            }
+        }
+        if (channelName != null && srec.channel != null) {
+            channelName.setText(srec.channel.name);
+        }
+
+        Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);
+
+        if (minDuration != null && srec.minDuration > 0) {
+            minDuration.setText(getString(R.string.minutes, (int) srec.minDuration));
+        }
+        if (maxDuration != null && srec.maxDuration > 0) {
+            maxDuration.setText(getString(R.string.minutes, (int) srec.maxDuration));
+        }
     }
 
     /**

@@ -587,6 +587,50 @@ public class Utils {
     }
 
     /**
+     * 
+     * @param dayOfWeekLabel
+     * @param dayOfWeek
+     * @param dow
+     */
+    public static void setDaysOfWeek(Context context, TextView dayOfWeekLabel, TextView dayOfWeek, long dow) {
+        if (dayOfWeek == null) {
+            return;
+        }
+        String dowValue = "";
+
+        // Use different strings if either no days or all days are chosen. If
+        // certain days are selected check which ones.
+        if (dow == 0) {
+            dowValue = context.getString(R.string.no_days);
+        } else if (dow == 127) {
+            dowValue = context.getString(R.string.all_days);
+        } else {
+            String[] dayNames = context.getResources().getStringArray(R.array.day_short_names);
+
+            // Use bit shifting to check if the first bit it set. The values are:
+            // 0 = no days, 1 = Monday, 2 = Tuesday, 4 = Wednesday, 8 = Thursday,
+            // 16 = Friday, 32 = Saturday, 64 = Sunday
+            for (int i = 0; i < 7; ++i) {
+                if ((dow & 1) == 1) {
+                    dowValue += dayNames[i] + ",";
+                }
+                dow = (dow >> 1);
+            }
+            // Remove the last comma or set the default value
+            final int idx = dowValue.lastIndexOf(',');
+            if (idx > 0) {
+                dowValue = dowValue.substring(0, idx);
+            }
+        }
+
+        dayOfWeek.setText(dowValue);
+        dayOfWeek.setVisibility((dowValue.length() > 0) ? View.VISIBLE : View.GONE);
+        if (dayOfWeekLabel != null) {
+            dayOfWeekLabel.setVisibility((dowValue.length() > 0) ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    /**
      * Shows the given series text for the given view. If the text is empty
      * then the view will be hidden.
      * 
