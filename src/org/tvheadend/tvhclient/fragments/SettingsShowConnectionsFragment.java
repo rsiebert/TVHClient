@@ -129,6 +129,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         adapter.sort();
         adapter.notifyDataSetChanged();
         if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.menu_settings), TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
         }
     }
@@ -144,7 +145,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         switch (item.getItemId()) {
         case R.id.menu_add:
             if (settingsInterface != null) {
-                settingsInterface.addConnection();
+                settingsInterface.showAddConnection();
             }
             return true;
         default:
@@ -204,7 +205,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
 
         case R.id.menu_edit:
             if (settingsInterface != null) {
-                settingsInterface.editConnection(c.id);
+                settingsInterface.showEditConnection(c.id);
             }
             mode.finish();
             return true;

@@ -2,10 +2,14 @@ package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.fragments.SettingsFragment;
 import org.tvheadend.tvhclient.fragments.SettingsManageConnectionFragment;
+import org.tvheadend.tvhclient.fragments.SettingsProfilesFragment;
 import org.tvheadend.tvhclient.fragments.SettingsShowConnectionsFragment;
+import org.tvheadend.tvhclient.fragments.SettingsTranscodingFragment;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -13,7 +17,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class SettingsActivity extends ActionBarActivity implements ActionBarInterface, SettingsInterface {
 
@@ -21,6 +29,9 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     private final static String TAG = SettingsActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
+    private TextView actionBarTitle;
+    private TextView actionBarSubtitle;
+    private ImageView actionBarIcon;
     private Fragment fragment;
 
     private static boolean restart = false;
@@ -28,9 +39,11 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     private boolean manageConnections = false;
 
     private final static int MAIN_SETTINGS = 1;
-    private final static int MANAGE_CONNECTIONS = 2;
+    private final static int LIST_CONNECTIONS = 2;
     private final static int EDIT_CONNECTION = 3;
     private final static int ADD_CONNECTION = 4;
+    private final static int PROFILES = 5;
+    private final static int TRANSCODING = 6;
 
     private int currentSettingsMode = MAIN_SETTINGS; 
 
@@ -42,8 +55,16 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.actionbar_title);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
+
+        // Get the widgets so we can use them later and do not need to inflate again
+        actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
+        actionBarSubtitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_subtitle);
+        actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
+        actionBarIcon.setVisibility(View.GONE);
         
         // Get any saved values from the bundle
         if (savedInstanceState != null) {
@@ -74,7 +95,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
             }
             // Now show the manage connection or the general settings fragment
             if (manageConnections) {
-                manageConnections();
+                showConnections();
             } else {
                 mainSettings();
             }
@@ -100,20 +121,76 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
     @Override
     public void onBackPressed() {
-        // Depending on the current mode either show the previous settings
-        // screen or exit the settings.
-        if (currentSettingsMode == MAIN_SETTINGS) {
+        // Depending on the current mode either close the current subscreen by
+        // popping the fragment back stack or exit the main settings screen
+        switch (currentSettingsMode) {
+        case MAIN_SETTINGS:
             restartNow();
-        } else if (currentSettingsMode == MANAGE_CONNECTIONS) {
+            return;
+
+        case LIST_CONNECTIONS:
             if (manageConnections) {
                 restartNow();
             } else {
                 mainSettings();
             }
-        } else if (currentSettingsMode == ADD_CONNECTION 
-                || currentSettingsMode == EDIT_CONNECTION) {
-            manageConnections();
+            return;
+
+        case ADD_CONNECTION:
+        case EDIT_CONNECTION:
+            getSupportFragmentManager().popBackStack();
+            currentSettingsMode = LIST_CONNECTIONS;
+            return;
+
+        case PROFILES:
+        case TRANSCODING:
+            getSupportFragmentManager().popBackStack();
+            currentSettingsMode = MAIN_SETTINGS;
+            return;
         }
+    }
+
+    /**
+     * Removes the previous fragment from the view and back stack so that
+     * navigating back would not show the old fragment again.
+     */
+    private void removePreviousFragment() {
+        Fragment f = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+        if (f != null) {
+            getSupportFragmentManager().beginTransaction().remove(f).commit();
+        }
+    }
+
+    @Override
+    public void setActionBarTitle(final String title, final String tag) {
+        if (actionBar != null && actionBarTitle != null) {
+            actionBarTitle.setText(title);
+        }
+    }
+
+    @SuppressLint("RtlHardcoded")
+    @Override
+    public void setActionBarSubtitle(final String subtitle, final String tag) {
+        if (actionBar != null && actionBarSubtitle != null) {
+            actionBarSubtitle.setText(subtitle);
+            if (subtitle.length() == 0) {
+                actionBarSubtitle.setVisibility(View.GONE);
+                actionBarTitle.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            } else {
+                actionBarSubtitle.setVisibility(View.VISIBLE);
+                actionBarTitle.setGravity(Gravity.LEFT | Gravity.BOTTOM);
+            }
+        }
+    }
+
+    @Override
+    public void setActionBarIcon(Bitmap bitmap, String tag) {
+        // NOP
+    }
+
+    @Override
+    public void setActionBarIcon(int resource, String tag) {
+        // NOP
     }
 
     @Override
@@ -146,73 +223,67 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     }
 
     @Override
-    public void manageConnections() {
-        currentSettingsMode = MANAGE_CONNECTIONS;
-        removePreviousFragment();
-
+    public void showConnections() {
+        currentSettingsMode = LIST_CONNECTIONS;
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsShowConnectionsFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(null)
                 .commit();
     }
 
     @Override
-    public void addConnection() {
+    public void showAddConnection() {
         currentSettingsMode = ADD_CONNECTION;
-        removePreviousFragment();
-
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsManageConnectionFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(null)
                 .commit();
     }
 
     @Override
-    public void editConnection(long id) {
+    public void showEditConnection(long id) {
         currentSettingsMode = EDIT_CONNECTION;
-        removePreviousFragment();
-
         Bundle bundle = new Bundle();
         bundle.putLong(Constants.BUNDLE_CONNECTION_ID, id);
         Fragment f = Fragment.instantiate(this, SettingsManageConnectionFragment.class.getName());
         f.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, f)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(null)
                 .commit();
     }
 
-    /**
-     * Removes the previous fragment from the view and back stack so that
-     * navigating back would not show the old fragment again.
-     */
-    private void removePreviousFragment() {
-        Fragment f = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
-        if (f != null) {
-            getSupportFragmentManager().beginTransaction().remove(f).commit();
+    @Override
+    public void showProfiles() {
+        currentSettingsMode = PROFILES;
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsProfilesFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void showTranscodingSettings() {
+        currentSettingsMode = TRANSCODING;
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsTranscodingFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void done(int resultCode) {
+        // This method is provided by the settings interface and is called from
+        // the profile, transcoding and connection fragments. If the result is
+        // ok then something has changed, otherwise these fragments shall just
+        // be removed. 
+        if (resultCode == Activity.RESULT_OK) {
+            reconnect = true;
         }
-    }
-
-    @Override
-    public void setActionBarTitle(final String title, final String tag) {
-        if (actionBar != null) {
-            actionBar.setTitle(title);
-        }
-    }
-
-    @Override
-    public void setActionBarSubtitle(final String subtitle, final String tag) {
-        if (actionBar != null) {
-            actionBar.setSubtitle(subtitle);
-        }
-    }
-
-    @Override
-    public void setActionBarIcon(Bitmap bitmap, String tag) {
-        // NOP
-    }
-
-    @Override
-    public void setActionBarIcon(int resource, String tag) {
-        // NOP
+        onBackPressed();
     }
 }

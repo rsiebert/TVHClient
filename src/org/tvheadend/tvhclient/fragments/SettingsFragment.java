@@ -6,8 +6,6 @@ import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.SettingsProfileActivity;
-import org.tvheadend.tvhclient.SettingsTranscodingActivity;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -16,7 +14,6 @@ import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -42,7 +39,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         // Set the default values and then load the preferences from the XML resource
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
         addPreferencesFromResource(R.xml.preferences);
-        
+
         // Add a listener to the connection preference so that the 
         // SettingsManageConnectionsActivity can be shown.
         Preference prefManage = findPreference("pref_manage_connections");
@@ -50,7 +47,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (settingsInterface != null) {
-                    settingsInterface.manageConnections();
+                    settingsInterface.showConnections();
                 }
                 return false;
             }
@@ -71,8 +68,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        Intent intent = new Intent(activity, SettingsProfileActivity.class);
-                        startActivity(intent);
+                        if (settingsInterface != null) {
+                            settingsInterface.showProfiles();
+                        }
                         return false;
                     }
                 });
@@ -82,12 +80,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         // Add a listener so that the profiles and play and recording options can be set
         Preference prefMenuTranscoding = findPreference("pref_menu_transcoding");
         if (prefMenuTranscoding != null) {
-            prefMenuTranscoding.setSummary(R.string.pref_transcoding_sum);
             prefMenuTranscoding.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(activity, SettingsTranscodingActivity.class);
-                    startActivity(intent);
+                    if (settingsInterface != null) {
+                        settingsInterface.showTranscodingSettings();
+                    }
                     return false;
                 }
             });
@@ -172,6 +170,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         }
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.menu_settings), TAG);
+            actionBarInterface.setActionBarSubtitle("", TAG);
         }
     }
 

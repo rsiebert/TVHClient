@@ -34,6 +34,7 @@
     <string name="pref_connection_wol">Einstellungen für Wake on LAN</string>
     <string name="select_connection">Verbindung wählen</string>
     <string name="add_connection">Verbindung hinzufügen</string>
+    <string name="edit_connection">Verbindung bearbeiten</string>
     <string name="confirm_cancel">Aktion abbrechen? Alle Änderungen gehen verloren.</string>
     <string name="cancel">Abbrechen</string>
     <string name="remove">Entfernen</string>

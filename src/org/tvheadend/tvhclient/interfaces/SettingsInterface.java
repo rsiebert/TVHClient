@@ -5,8 +5,11 @@ public interface SettingsInterface {
     public void restart();
     public void restartNow();
     public void reconnect();
+    public void done(int resultCode);
     
-    void manageConnections();
-    void addConnection();
-    void editConnection(long id);
+    void showConnections();
+    void showAddConnection();
+    void showEditConnection(long id);
+    void showProfiles();
+    void showTranscodingSettings();
 }

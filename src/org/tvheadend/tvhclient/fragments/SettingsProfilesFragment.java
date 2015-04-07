@@ -29,6 +29,7 @@ import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Profiles;
@@ -57,6 +58,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
+    private SettingsInterface settingsInterface;
+
     private Connection conn = null;
     private Profile progProfile = null;
     private Profile recProfile = null;
@@ -165,6 +168,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.pref_profiles), TAG);
         }
+        if (activity instanceof SettingsInterface) {
+            settingsInterface = (SettingsInterface) activity;
+        }
         setHasOptionsMenu(true);
     }
 
@@ -175,8 +181,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
         // If no connection exists exit
         if (conn == null) {
-            activity.setResult(Activity.RESULT_OK, activity.getIntent());
-            activity.finish();
+            if (settingsInterface != null) {
+                settingsInterface.done(Activity.RESULT_CANCELED);
+            }
         }
 
         prefEnableProgProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
@@ -252,15 +259,17 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             DatabaseHelper.getInstance().updateProfile(recProfile);
         }
 
-        activity.setResult(Activity.RESULT_OK, activity.getIntent());
-        activity.finish();
+        if (settingsInterface != null) {
+            settingsInterface.done(Activity.RESULT_OK);
+        }
     }
 
     public void cancel() {
         // Quit immediately if nothing has changed 
         if (!settingsHaveChanged) {
-            activity.finish();
-            return;
+            if (settingsInterface != null) {
+                settingsInterface.done(Activity.RESULT_CANCELED);
+            }
         }
         // Show confirmation dialog to cancel
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);

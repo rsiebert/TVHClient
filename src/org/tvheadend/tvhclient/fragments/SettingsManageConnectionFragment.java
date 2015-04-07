@@ -113,6 +113,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.add_connection), TAG);
+            actionBarInterface.setActionBarSubtitle("", TAG);
         }
         
         // Initially the connection has no been changed
@@ -134,6 +135,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             // Otherwise create a new connection with default values.
             if (connId > 0) {
                 conn = DatabaseHelper.getInstance().getConnection(connId);
+                actionBarInterface.setActionBarTitle(getString(R.string.edit_connection), TAG);
+                actionBarInterface.setActionBarSubtitle(conn != null ? conn.name : "", TAG);
             } else {
                 setPreferenceDefaults();
             }
@@ -314,7 +317,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     public void cancel() {
         // Do not show the cancel dialog if nothing has changed
         if (!connectionChanged) {
-            settingsInterface.manageConnections();
+            settingsInterface.showConnections();
             return;
         }
         // Show confirmation dialog to cancel
@@ -328,7 +331,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 // Delete the connection so that we start fresh when
                 // the settings activity is called again.
                 if (settingsInterface != null) {
-                    settingsInterface.manageConnections();
+                    settingsInterface.showConnections();
                 }
             }
         });
@@ -379,7 +382,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         conn = null;
         if (settingsInterface != null) {
             settingsInterface.reconnect();
-            settingsInterface.manageConnections();
+            settingsInterface.showConnections();
         }
     }
     

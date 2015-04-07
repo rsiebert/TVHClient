@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
+import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 
@@ -44,6 +45,8 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
     private final static String TAG = SettingsTranscodingFragment.class.getSimpleName();
 
     private Activity activity;
+    private SettingsInterface settingsInterface;
+
     private Connection conn = null;
     private Profile progProfile = null;
     private Profile recProfile = null;
@@ -159,18 +162,28 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
     }
 
     @Override
+    public void onDetach() {
+        settingsInterface = null;
+        super.onDetach();
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (activity instanceof SettingsInterface) {
+            settingsInterface = (SettingsInterface) activity;
+        }
         setHasOptionsMenu(true);
     }
 
     public void onResume() {
         super.onResume();
 
-        // If no connection exists exit
+        // If no connection exists the screen
         if (conn == null) {
-            activity.setResult(Activity.RESULT_OK, activity.getIntent());
-            activity.finish();
+            if (settingsInterface != null) {
+                settingsInterface.done(Activity.RESULT_CANCELED);
+            }
         }
 
         prefProgContainer.setValue(progProfile.container);
@@ -274,7 +287,9 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
     public void cancel() {
         // Quit immediately if nothing has changed 
         if (!settingsHaveChanged) {
-            activity.finish();
+            if (settingsInterface != null) {
+                settingsInterface.done(Activity.RESULT_CANCELED);
+            }
             return;
         }
         // Show confirmation dialog to cancel
@@ -287,8 +302,9 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
             public void onClick(DialogInterface dialog, int id) {
                 // Connect to the server with the selected connection and do not
                 // retrieve the initial data
-                activity.setResult(Activity.RESULT_OK, activity.getIntent());
-                activity.finish();
+                if (settingsInterface != null) {
+                    settingsInterface.done(Activity.RESULT_OK);
+                }
             }
         });
         // Define the action of the no button
