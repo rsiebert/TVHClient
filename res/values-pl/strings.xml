@@ -6,7 +6,7 @@
     <string name="menu_refresh">Odśwież</string>
     <string name="menu_tags">Tagi</string>
 
-    <string name="menu_play">Play</string>
+    <string name="menu_play">Odtwórz</string>
     <string name="menu_search">Szukaj</string>
     <string name="menu_record_once">Nagraj</string>
     <string name="menu_record_series">Nagrywanie serii(Autorec)</string>
@@ -35,9 +35,9 @@
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
     <string name="confirm_cancel">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
-    <string name="cancel">Anulować</string>
-    <string name="remove">Usunąć</string>
-    <string name="delete">Usuń</string>
+    <string name="cancel">Anuluj</string>
+    <string name="remove">Usuń</string>
+    <string name="delete">Kasować</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="remove_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>
     <string name="remove_series_recording">Czy na pewno chcesz usunąć nagrywanie serii \'%s\'?\n\nTo usunie wszystkie zaplanowane nagrania, które należą do tej zasady nagrywania serii.</string>
