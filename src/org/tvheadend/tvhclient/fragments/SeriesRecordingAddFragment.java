@@ -38,7 +38,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private Toolbar toolbar;
 
     private CheckBox isEnabled;
-    private EditText retention;
     private Spinner priority;
     private CheckBox monday;
     private CheckBox tuesday;
@@ -52,8 +51,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private EditText startTime;
     private EditText stopTime;
     private EditText title;
-    private EditText name;
-    private EditText directory;
     private Spinner channelName;
 
     private long priorityValue;
@@ -63,9 +60,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private long stopTimeValue;
     private long daysOfWeekValue;
     private String titleValue;
-    private String nameValue;
-    private String directoryValue;
-    private long retentionValue;
     private boolean enabledValue;
     private int channelSelectionValue;
 
@@ -98,9 +92,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         outState.putLong("stopTimeValue", stopTimeValue);
         outState.putLong("daysOfWeekValue", getDayOfWeekValue());
         outState.putString("titleValue", titleValue);
-        outState.putString("nameValue", nameValue);
-        outState.putString("directoryValue", directoryValue);
-        outState.putLong("retentionValue", retentionValue);
         outState.putBoolean("enabledValue", enabledValue);
         outState.putInt("channelNameValue", channelSelectionValue);
         super.onSaveInstanceState(outState);
@@ -119,10 +110,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         channelName = (Spinner) v.findViewById(R.id.channel);
         isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
         title = (EditText) v.findViewById(R.id.title);
-        name = (EditText) v.findViewById(R.id.name);
         minDuration = (EditText) v.findViewById(R.id.minimum_duration);
         maxDuration = (EditText) v.findViewById(R.id.maximum_duration);
-        retention = (EditText) v.findViewById(R.id.retention);
         monday = (CheckBox) v.findViewById(R.id.monday);
         tuesday = (CheckBox) v.findViewById(R.id.tuesday);
         wednesday = (CheckBox) v.findViewById(R.id.wednesday);
@@ -133,7 +122,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         startTime = (EditText) v.findViewById(R.id.start_extra);
         stopTime = (EditText) v.findViewById(R.id.stop_extra);
         priority = (Spinner) v.findViewById(R.id.priority);
-        directory = (EditText) v.findViewById(R.id.directory);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
         if (savedInstanceState == null) {
@@ -154,9 +142,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 stopTimeValue = rec.start;
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
-                nameValue = rec.name;
-                directoryValue = rec.directory;
-                retentionValue = rec.retention;
                 enabledValue = rec.enabled;
 
                 int pos = app.getChannels().indexOf(rec.channel);
@@ -169,9 +154,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 stopTimeValue = 0;
                 daysOfWeekValue = 127;
                 titleValue = "";
-                nameValue = "";
-                directoryValue = "";
-                retentionValue = 0;
                 enabledValue = true;
                 channelSelectionValue = 0;
             }
@@ -183,9 +165,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             stopTimeValue = savedInstanceState.getLong("stopTimeValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
             titleValue = savedInstanceState.getString("titleValue");
-            nameValue = savedInstanceState.getString("nameValue");
-            directoryValue = savedInstanceState.getString("directoryValue");
-            retentionValue = savedInstanceState.getLong("retentionValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
@@ -247,15 +226,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         }
         if (title != null) {
             title.setText(titleValue);
-        }
-        if (name != null) {
-            name.setText(nameValue);
-        }
-        if (directory != null) {
-            directory.setText(directoryValue);
-        }
-        if (retention != null) {
-            retention.setText(String.valueOf(retentionValue));
         }
         if (isEnabled != null) {
             isEnabled.setChecked(enabledValue);
@@ -330,12 +300,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         }
 
         intent.putExtra("configName", "");
-        intent.putExtra("retention", Long.valueOf(retention.getText().toString()));
         intent.putExtra("daysOfWeek", getDayOfWeekValue());
         intent.putExtra("priority", (long) priority.getSelectedItemPosition());
         intent.putExtra("enabled", (long) ((isEnabled.isChecked() ? 1 : 0)));
-        intent.putExtra("name", name.getText().toString());
-        intent.putExtra("directory", directory.getText().toString());
         activity.startService(intent);
 
         if (getDialog() != null) {

@@ -17,9 +17,7 @@
 
         <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="?attr/FragmentDividerLayoutStyle"
-            android:minWidth="330dp" >
+            android:layout_height="fill_parent" >
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -47,23 +45,6 @@
 
                 <EditText
                     android:id="@+id/title"
-                    style="?attr/ContentFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
-                    android:inputType="text"
-                    android:paddingBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/name_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:text="@string/name" />
-
-                <EditText
-                    android:id="@+id/name"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -113,40 +94,6 @@
 
                 <EditText
                     android:id="@+id/maximum_duration"
-                    style="?attr/ContentFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
-                    android:inputType="number"
-                    android:paddingBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/start_extra_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:text="@string/extra_stop_time" />
-
-                <EditText
-                    android:id="@+id/start_extra"
-                    style="?attr/ContentFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
-                    android:inputType="number"
-                    android:paddingBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/stop_extra_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:text="@string/extra_start_time" />
-
-                <EditText
-                    android:id="@+id/stop_extra"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -224,6 +171,42 @@
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
+                <!-- Below are additional input fields -->
+
+                <TextView
+                    android:id="@+id/start_extra_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/extra_stop_time" />
+
+                <EditText
+                    android:id="@+id/start_extra"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/not_set"
+                    android:inputType="number"
+                    android:paddingBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/stop_extra_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/extra_start_time" />
+
+                <EditText
+                    android:id="@+id/stop_extra"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/not_set"
+                    android:inputType="number"
+                    android:paddingBottom="16dp" />
+
                 <TextView
                     android:id="@+id/priority_label"
                     style="?attr/TitleFont"
@@ -236,39 +219,7 @@
                     android:id="@+id/priority"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/retention_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:text="@string/retention" />
-
-                <EditText
-                    android:id="@+id/retention"
-                    style="?attr/ContentFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:paddingBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/directory_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:text="@string/directory" />
-
-                <EditText
-                    android:id="@+id/directory"
-                    style="?attr/ContentFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
-                    android:inputType="text"
                     android:paddingBottom="16dp" />
             </LinearLayout>
         </ScrollView>
