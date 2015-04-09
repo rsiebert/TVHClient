@@ -20,6 +20,7 @@ public class Constants {
     public static final String BUNDLE_PROGRAM_ID = "eventId";
     public static final String BUNDLE_RECORDING_ID = "dvrId";
     public static final String BUNDLE_SERIES_RECORDING_ID = "autorecId";
+    public static final String BUNDLE_TIMER_RECORDING_ID = "timerId";
     public static final String BUNDLE_RECONNECT = "reconnect";
     public static final String BUNDLE_RESTART = "reload";
     public static final String BUNDLE_COUNT = "count";
@@ -50,6 +51,7 @@ public class Constants {
     public static final String COMPLETED_RECORDING_LIST_POSITION = "completed_recording_list_position";
     public static final String SCHEDULED_RECORDING_LIST_POSITION = "scheduled_recording_list_position";
     public static final String SERIES_RECORDING_LIST_POSITION = "series_recording_list_position";
+    public static final String TIMER_RECORDING_LIST_POSITION = "timer_recording_list_position";
     public static final String FAILED_RECORDING_LIST_POSITION = "failed_recording_list_position";
     public static final String LAST_CONNECTION_STATE = "last_connection_state";
 

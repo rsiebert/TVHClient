@@ -20,6 +20,8 @@ import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
+import org.tvheadend.tvhclient.fragments.TimerRecordingDetailsFragment;
+import org.tvheadend.tvhclient.fragments.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
@@ -31,6 +33,7 @@ import org.tvheadend.tvhclient.model.DrawerMenuItem;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -93,6 +96,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private int completedRecordingListPosition = 0;
     private int scheduledRecordingListPosition = 0;
     private int seriesRecordingListPosition = 0;
+    private int timerRecordingListPosition = 0;
     private int failedRecordingListPosition = 0;
     private int programGuideListPosition = 0;
     private int programGuideListPositionOffset = 0;
@@ -345,6 +349,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             completedRecordingListPosition = savedInstanceState.getInt(Constants.COMPLETED_RECORDING_LIST_POSITION, 0);
             scheduledRecordingListPosition = savedInstanceState.getInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, 0);
             seriesRecordingListPosition = savedInstanceState.getInt(Constants.SERIES_RECORDING_LIST_POSITION, 0);
+            timerRecordingListPosition = savedInstanceState.getInt(Constants.TIMER_RECORDING_LIST_POSITION, 0);
             failedRecordingListPosition = savedInstanceState.getInt(Constants.FAILED_RECORDING_LIST_POSITION, 0);
             connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
         }
@@ -368,6 +373,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).count = 
                 app.getSeriesRecordings().size();
+        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).count = 
+                app.getTimerRecordings().size();
         drawerAdapter.getItemById(MENU_FAILED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         drawerAdapter.notifyDataSetChanged();
@@ -527,6 +534,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         outState.putInt(Constants.COMPLETED_RECORDING_LIST_POSITION, completedRecordingListPosition);
         outState.putInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, scheduledRecordingListPosition);
         outState.putInt(Constants.SERIES_RECORDING_LIST_POSITION, seriesRecordingListPosition);
+        outState.putInt(Constants.TIMER_RECORDING_LIST_POSITION, timerRecordingListPosition);
         outState.putInt(Constants.FAILED_RECORDING_LIST_POSITION, failedRecordingListPosition);
         outState.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
         super.onSaveInstanceState(outState);
@@ -745,6 +753,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             showFragment(SeriesRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
+        case MENU_TIMER_RECORDINGS:
+            // Show timer recordings
+            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            showFragment(TimerRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+            break;
+
         case MENU_FAILED_RECORDINGS:
             // Show failed recordings
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
@@ -804,6 +818,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case MENU_COMPLETED_RECORDINGS:
         case MENU_SCHEDULED_RECORDINGS:
         case MENU_SERIES_RECORDINGS:
+        case MENU_TIMER_RECORDINGS:
         case MENU_FAILED_RECORDINGS:
             if (isDualPane) {
                 mainLayoutWeight = 6;
@@ -981,7 +996,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Only show the menu for the recording types if the server supports it
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show && (app.getProtocolVersion() > 17) && false);
+        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show && (app.getProtocolVersion() > 17));
         drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (app.getProtocolVersion() > 12));
 
         // Replace the adapter contents so the views get updated
@@ -1228,6 +1243,35 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     @Override
+    public void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag) {
+        // Save the position of the selected recording type so it can be
+        // restored after an orientation change
+        switch (menuPosition) {
+        case MENU_TIMER_RECORDINGS:
+            timerRecordingListPosition = position;
+            break;
+        }
+        // When a timer recording has been selected from the recording list fragment,
+        // show its details. In dual mode they are shown as a separate fragment
+        // to the right of the series recording list, otherwise replace the recording
+        // list with the details fragment.
+        if (timerRecording != null) {
+            Bundle args = new Bundle();
+            args.putString(Constants.BUNDLE_TIMER_RECORDING_ID, timerRecording.id);
+            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
+
+            if (isDualPane) {
+                // Create and show the fragment
+                showFragment(TimerRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
+            } else {
+                // Create the fragment and show it as a dialog.
+                DialogFragment newFragment = TimerRecordingDetailsFragment.newInstance(args);
+                newFragment.show(getSupportFragmentManager(), "dialog");
+            }
+        }
+    }
+
+    @Override
     public void onListItemSelected(final int position, final Program program, final String tag) {
         if (program != null) {
             Bundle args = new Bundle();
@@ -1292,6 +1336,18 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof SeriesRecordingListFragment && f instanceof FragmentControlInterface) {
                     ((FragmentControlInterface) f).setInitialSelection(seriesRecordingListPosition);
+                }
+            }
+            break;
+
+        case MENU_TIMER_RECORDINGS:
+            // When the recording list fragment is done loading and dual pane is
+            // active, preselect a recording from the list to show the details
+            // of this recording on the right side.
+            if (isDualPane) {
+                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f instanceof TimerRecordingListFragment && f instanceof FragmentControlInterface) {
+                    ((FragmentControlInterface) f).setInitialSelection(timerRecordingListPosition);
                 }
             }
             break;
