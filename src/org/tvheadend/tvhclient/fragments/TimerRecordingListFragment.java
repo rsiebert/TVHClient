@@ -310,14 +310,14 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     }
                 }
             });
-        } else if (action.equals(Constants.ACTION_SERIES_DVR_ADD)) {
+        } else if (action.equals(Constants.ACTION_TIMER_DVR_ADD)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((TimerRecording) obj);
                     adapter.notifyDataSetChanged();
                 }
             });
-        } else if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
+        } else if (action.equals(Constants.ACTION_TIMER_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Get the position of the recording that is shown before
@@ -332,7 +332,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     setInitialSelection(previousPosition);
                 }
             });
-        } else if (action.equals(Constants.ACTION_SERIES_DVR_UPDATE)) {
+        } else if (action.equals(Constants.ACTION_TIMER_DVR_UPDATE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.update((TimerRecording) obj);
