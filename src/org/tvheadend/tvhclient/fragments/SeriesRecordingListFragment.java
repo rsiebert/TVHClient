@@ -193,7 +193,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, null, adapter.getSelectedItem());
+            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
             return true;
 
         case R.id.menu_record_remove_all:
@@ -226,7 +226,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeRecording(activity, null, adapter.getItem(i));
+                    Utils.removeRecording(activity, adapter.getItem(i).id, Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
@@ -284,7 +284,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, null, srec);
+            Utils.confirmRemoveRecording(activity, srec);
             return true;
 
         default:
