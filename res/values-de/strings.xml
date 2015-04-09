@@ -278,7 +278,7 @@
     <string name="record_from_to_time">Aufnehmen von %1$s bis %2$s</string>
     <string name="recording_time">Aufnahmezeit</string>
     <string name="series_recording_add_error">Kann die Serienaufnahme nicht hinzufügen.\nDer Titel darf nicht leer sein!</string>
-    <string name="time_recording_add_error">Kann diese Aufnahme nicht hinzufügen.\nDer Titel darf nicht leer sein!</string>
+    <string name="timer_recording_add_error">Kann diese Aufnahme nicht hinzufügen.\nDer Titel darf nicht leer sein!</string>
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>
