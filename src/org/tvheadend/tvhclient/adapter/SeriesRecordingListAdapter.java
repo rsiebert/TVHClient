@@ -125,11 +125,12 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             }
 
             if (holder.isEnabled != null) {
-                if (srec.enabled) {
-                    holder.isEnabled.setText(R.string.recording_enabled);
-                } else {
-                    holder.isEnabled.setText(R.string.recording_disabled);
-                }
+                holder.isEnabled.setVisibility(View.GONE);
+//                if (srec.enabled) {
+//                    holder.isEnabled.setText(R.string.recording_enabled);
+//                } else {
+//                    holder.isEnabled.setText(R.string.recording_disabled);
+//                }
             }
         }
         return view;
