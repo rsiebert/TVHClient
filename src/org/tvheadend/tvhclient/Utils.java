@@ -223,11 +223,11 @@ public class Utils {
         new AlertDialog.Builder(context)
         .setTitle(R.string.menu_record_remove)
         .setMessage(message)
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 removeRecording(context, id, type);
             }
-        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // NOP
             }
