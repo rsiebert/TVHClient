@@ -61,7 +61,6 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         public ImageView state;
         public TextView daysOfWeek;
         public TextView approxTime;
-        public TextView description;
         public ImageView dual_pane_list_item_selection;
     }
 
@@ -79,7 +78,6 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             holder.state = (ImageView) view.findViewById(R.id.state);
             holder.daysOfWeek = (TextView) view.findViewById(R.id.daysOfWeek);
             holder.approxTime = (TextView) view.findViewById(R.id.approxTime);
-            holder.description = (TextView) view.findViewById(R.id.description);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
