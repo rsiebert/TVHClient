@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <ImageView
         android:id="@+id/icon"
@@ -19,31 +19,13 @@
         android:paddingRight="16dp"
         android:paddingStart="0dp" >
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/title"
+            style="?attr/TitleFont"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/title"
-                style="?attr/TitleFont"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.9"
-                android:ellipsize="end"
-                android:paddingEnd="16dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="16dp"
-                android:paddingStart="0dp"
-                android:text="@string/title" />
-
-            <ImageView
-                android:id="@+id/state"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:contentDescription="@null"
-                android:scaleType="fitCenter" />
-        </LinearLayout>
+            android:ellipsize="end"
+            android:text="@string/title" />
 
         <TextView
             android:id="@+id/channel"
@@ -70,14 +52,21 @@
                 android:text="@string/date" />
 
             <TextView
-                android:id="@+id/approxTime"
+                android:id="@+id/start"
                 style="?attr/ContentFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:gravity="end"
-                android:text="@string/time" />
+                android:text="@null" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/enabled"
+            style="?attr/ContentFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recording_enabled" />
     </LinearLayout>
 
 </merge>
