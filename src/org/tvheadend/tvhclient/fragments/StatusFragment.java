@@ -44,6 +44,8 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView failedRec;
 	private TextView seriesRecLabel;
 	private TextView seriesRec;
+	private TextView timerRecLabel;
+    private TextView timerRec;
 
     private String connectionStatus = "";
     private String freeDiscSpace = "";
@@ -79,6 +81,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
         seriesRecLabel = (TextView) v.findViewById(R.id.series_recording_label);
         seriesRec = (TextView) v.findViewById(R.id.series_recordings);
+        timerRecLabel = (TextView) v.findViewById(R.id.timer_recording_label);
+        timerRec = (TextView) v.findViewById(R.id.timer_recordings);
         return v;
     }
 
@@ -205,6 +209,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setVisibility(View.GONE);
         seriesRecLabel.setVisibility(View.GONE);
         seriesRec.setVisibility(View.GONE);
+        timerRecLabel.setVisibility(View.GONE);
+        timerRec.setVisibility(View.GONE);
 	}
 
     /**
@@ -356,6 +362,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setVisibility(View.VISIBLE);
         seriesRecLabel.setVisibility(View.VISIBLE);
         seriesRec.setVisibility(View.VISIBLE);
+        timerRecLabel.setVisibility(View.VISIBLE);
+        timerRec.setVisibility(View.VISIBLE);
 
         // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
@@ -368,5 +376,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         upcomingRec.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, scheduledRecCount, scheduledRecCount));
         failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, failedRecCount, failedRecCount));
         seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
+        timerRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
     }
 }
