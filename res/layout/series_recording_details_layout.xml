@@ -105,6 +105,22 @@
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
             android:text="@string/days_of_week" />
+
+        <TextView
+            android:id="@+id/priority_label"
+            style="?attr/TitleFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@string/priority" />
+
+        <TextView
+            android:id="@+id/priority"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/priority" />
     </LinearLayout>
 
 </ScrollView>

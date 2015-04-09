@@ -4,7 +4,6 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
@@ -18,7 +17,7 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class SeriesRecordingDetailsFragment extends DialogFragment implements HTSListener {
+public class SeriesRecordingDetailsFragment extends DialogFragment {
 
     @SuppressWarnings("unused")
     private final static String TAG = SeriesRecordingDetailsFragment.class.getSimpleName();
@@ -32,6 +31,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
     private TextView maxDuration;
     private TextView daysOfWeek;
     private TextView channelName;
+    private TextView priority;
 
     private LinearLayout playerLayout;
     private TextView recordRemove;
@@ -79,6 +79,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
         minDuration = (TextView) v.findViewById(R.id.minimum_duration);
         maxDuration = (TextView) v.findViewById(R.id.maximum_duration);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
+        priority = (TextView) v.findViewById(R.id.priority);
 
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
@@ -122,6 +123,13 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
 
         Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);
 
+        if (priority != null) {
+            String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
+            if (srec.priority >= 0 && srec.priority < priorityItems.length) {
+                priority.setText(priorityItems[(int) (srec.priority)]);
+            }
+        }
+
         if (minDuration != null && srec.minDuration > 0) {
             minDuration.setText(getString(R.string.minutes, (int) srec.minDuration));
         }
@@ -151,28 +159,5 @@ public class SeriesRecordingDetailsFragment extends DialogFragment implements HT
                 }
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        app.addListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        app.removeListener(this);
-    }
-
-    /**
-     * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the correct action will then be executed here.
-     */
-    @Override
-    public void onMessage(String action, Object obj) {
-        // NOP
     }
 }
