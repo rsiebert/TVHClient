@@ -35,8 +35,8 @@
     <string name="select_connection">Seleziona connessione</string>
     <string name="add_connection">Aggiungi connessione</string>
     <string name="confirm_cancel">Annullare le modifiche? Tutte le modifiche non salvate andranno perdute.</string>
-    <string name="cancel">Cancellare</string>
-    <string name="remove">Rimuovere</string>
+    <string name="cancel">Annulla</string>
+    <string name="remove">Rimuovi</string>
     <string name="delete">Elimina</string>
     <string name="delete_connection">Vuoi veramente cancellare la connessione \'%s\'?</string>
     <string name="delete_recording">Vuoi veramente cancellare la registrazione \'%s\'?</string>
@@ -168,6 +168,7 @@
     <string name="err_connect">Impossibile connettersi al server</string>
     <string name="err_con_lost">Connessione con il server persa</string>
     <string name="err_con_timeout">Connessione scaduta</string>
+    <string name="err_loading_profiles">Impossibile caricare i profili dal server\n%s</string>
 
     <string name="recording_file_missing">File di registrazione mancante</string>
     <string name="recording_time_missed">Programmazione della registrazione mancata</string>
@@ -271,7 +272,6 @@
     <string name="episode">Episodio</string>
     <string name="part">Parte</string>
     <string name="progress">%1$d%% del programma già trasmesso</string>
-
     <string name="next_program">Prossimo programma: %s</string>
 
     <string name="server">Server</string>
