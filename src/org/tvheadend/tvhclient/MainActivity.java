@@ -996,8 +996,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Only show the menu for the recording types if the server supports it
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show && (app.getProtocolVersion() > 17));
-        drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (app.getProtocolVersion() > 12));
+        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show && (app
+                .getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS));
+        drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (app
+                .getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS));
 
         // Replace the adapter contents so the views get updated
         drawerList.setAdapter(null);

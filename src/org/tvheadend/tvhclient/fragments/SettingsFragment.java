@@ -57,7 +57,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         Preference prefMenuProfiles = findPreference("pref_menu_profiles");
         if (prefMenuProfiles != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            if (app.getProtocolVersion() <= Constants.MIN_API_VERSION_PROFILES) {
+            if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
                 prefMenuProfiles.setEnabled(false);
                 prefMenuProfiles.setSummary(R.string.feature_not_supported_by_server);
 //            } else if (!app.isUnlocked()) {

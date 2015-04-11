@@ -9,8 +9,11 @@ public class Constants {
     // Amount of programs of a channel that shall be loaded from the server
     public static final int PREF_PROGRAMS_TO_LOAD = 15;
 
-    // Minimum API version for certain functionalities
-    public static final int MIN_API_VERSION_PROFILES = 15;
+    // Minimum API version to enable or disable certain functionalities. A more
+    // granular check is available in the service classes or where required. 
+    public static final int MIN_API_VERSION_PROFILES = 16;
+    public static final int MIN_API_VERSION_TIMER_RECORDINGS = 17;
+    public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
 
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";

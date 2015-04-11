@@ -395,8 +395,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
 
         // Not all fields can be set with default values, so check if the server
-        // provides a supported htsp API version
-        if (connection.getProtocolVersion() > 12) {
+        // provides a supported HTSP API version. These entries are available
+        // only on version 13 and higher
+        if (connection.getProtocolVersion() >= 13) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
             rec.startExtra = msg.getDate("startExtra");
@@ -436,8 +437,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.title = msg.getString("title", rec.title);
 
         // Not all fields can be set with default values, so check if the server
-        // provides a supported htsp API version
-        if (connection.getProtocolVersion() > 12) {
+        // provides a supported HTSP API version. These entries are available
+        // only on version 13 and higher
+        if (connection.getProtocolVersion() >= 13) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
             rec.startExtra = msg.getDate("startExtra");
@@ -472,7 +474,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         TimerRecording rec = new TimerRecording();
         rec.id = msg.getString("id", "");
-        rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        
         rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
         rec.retention = msg.getLong("retention", 0);
         rec.priority = msg.getLong("priority", 0);
@@ -480,10 +482,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.stop = msg.getLong("stop");
         rec.title = msg.getString("title", "");
         rec.name = msg.getString("name", "");
-        rec.directory = msg.getString("directory", "");
-        rec.owner = msg.getString("owner", "");
-        rec.creator = msg.getString("creator", "");
         rec.channel = app.getChannel(msg.getLong("channel", 0));
+
+        // The enabled flag was added in HTSP API version 18. The support for
+        // timer recordings are available since version 17.
+        if (connection.getProtocolVersion() >= 18) {
+            rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        }
         app.addTimerRecording(rec);
     }
 
@@ -494,7 +499,6 @@ public class HTSService extends Service implements HTSConnectionListener {
             return;
         }
 
-        rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
         rec.daysOfWeek = msg.getLong("daysOfWeek", rec.daysOfWeek);
         rec.retention = msg.getLong("retention", rec.retention);
         rec.priority = msg.getLong("priority", rec.priority);
@@ -502,10 +506,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.stop = msg.getLong("stop", rec.stop);
         rec.title = msg.getString("title", rec.title);
         rec.name = msg.getString("name", rec.name);
-        rec.directory = msg.getString("directory", rec.directory);
-        rec.owner = msg.getString("owner", rec.owner);
-        rec.creator = msg.getString("creator", rec.creator);
         rec.channel = app.getChannel(msg.getLong("channel", 0));
+
+        // The enabled flag was added in HTSP API version 18. The support for
+        // timer recordings are available since version 17.
+        if (connection.getProtocolVersion() >= 18) {
+            rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        }
         app.updateTimerRecording(rec);
     }
 
@@ -799,7 +806,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         
         if (url.startsWith("http")) {
         	is = new BufferedInputStream(new URL(url).openStream());
-        } else if (connection.getProtocolVersion() > 9){
+        } else if (connection.getProtocolVersion() > 9) {
         	is = new HTSFileInputStream(connection, url);
         } else {
         	Log.d(TAG, "Unhandled url: " + url);
