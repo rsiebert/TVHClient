@@ -59,36 +59,36 @@
             android:text="@string/channel" />
 
         <TextView
-            android:id="@+id/start_time_label"
+            android:id="@+id/recording_time_label"
             style="?attr/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:text="@string/start_time" />
+            android:text="@string/recording_time" />
 
         <TextView
-            android:id="@+id/start_time"
+            android:id="@+id/time"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
-            android:text="@string/start_time" />
+            android:text="@string/recording_time" />
 
         <TextView
-            android:id="@+id/stop_time_label"
+            android:id="@+id/duration_label"
             style="?attr/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:text="@string/stop_time" />
+            android:text="@string/duration" />
 
         <TextView
-            android:id="@+id/stop_time"
+            android:id="@+id/duration"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
-            android:text="@string/stop_time" />
+            android:text="@string/duration" />
 
         <TextView
             android:id="@+id/days_of_week_label"

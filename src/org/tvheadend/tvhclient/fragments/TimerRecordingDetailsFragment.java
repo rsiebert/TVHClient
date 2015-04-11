@@ -31,8 +31,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private TimerRecording trec;
 
     private TextView isEnabled;
-    private TextView startTime;
-    private TextView stopTime;
+    private TextView time;
+    private TextView duration;
     private TextView daysOfWeek;
     private TextView channelName;
     private TextView priority;
@@ -77,11 +77,11 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         trec = app.getTimerRecording(recId);
 
         // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
+        View v = inflater.inflate(R.layout.timer_recording_details_layout, container, false);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
-        startTime = (TextView) v.findViewById(R.id.start_time);
-        stopTime = (TextView) v.findViewById(R.id.stop_time);
+        time = (TextView) v.findViewById(R.id.time);
+        duration = (TextView) v.findViewById(R.id.duration);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
 
@@ -133,15 +133,14 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
                 priority.setText(priorityItems[(int) (trec.priority)]);
             }
         }
-
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-        if (startTime != null && trec.start > 0) {
+        if (time != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
             String start = formatter.format(new Date(trec.start * 60L * 1000L));
-            startTime.setText(getString(R.string.minutes, start));
-        }
-        if (stopTime != null && trec.stop > 0) {
             String stop = formatter.format(new Date(trec.stop * 60L * 1000L));
-            stopTime.setText(getString(R.string.minutes, stop));
+            time.setText(getString(R.string.from_to_time, start, stop));
+        }
+        if (duration != null) {
+            duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));
         }
     }
 

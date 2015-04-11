@@ -117,7 +117,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
                 String start = formatter.format(new Date(trec.start * 60L * 1000L));
                 String stop = formatter.format(new Date(trec.stop * 60L * 1000L));
-                holder.time.setText(start + " - " + stop);
+                holder.time.setText(context.getString(R.string.from_to_time, start, stop));
             }
             if (holder.isEnabled != null) {
                 holder.isEnabled.setVisibility(View.GONE);

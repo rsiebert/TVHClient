@@ -50,7 +50,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     // This is the default view for the channel list adapter. Other views can be
     // passed to the adapter to show less information. This is used in the
     // program guide where only the channel icon is relevant.
-    private int adapterLayout = R.layout.series_recording_list_widget;
+    private int adapterLayout = R.layout.timer_recording_list_widget;
 
     protected boolean isDualPane;
 
@@ -171,7 +171,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.series_recordings), TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.timer_recordings), TAG);
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
             actionBarInterface.setActionBarSubtitle(items, TAG);
             actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
@@ -219,7 +219,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     }
 
     /**
-     * Calls the service to remove the series recordings. The service is
+     * Calls the service to remove the timer recordings. The service is
      * called in a certain interval to prevent too many calls to the interface.
      */
     private void removeAllRecordings() {
@@ -230,7 +230,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
-                        Log.d(TAG, "Error removing all series recordings, " + e.getLocalizedMessage());
+                        Log.d(TAG, "Error removing all timer recordings, " + e.getLocalizedMessage());
                     }
                 }
             }
@@ -247,13 +247,22 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.series_recording_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.recording_context_menu, menu);
 
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         TimerRecording srec = adapter.getItem(info.position);
         menu.setHeaderTitle(srec.title);
+
+        // Get the menu items so they can be shown 
+        // or hidden depending on the recording state
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+
+        // Disable these menus as a default
+        recordCancelMenuItem.setVisible(false);
+        playMenuItem.setVisible(false);
     }
 
     @Override
