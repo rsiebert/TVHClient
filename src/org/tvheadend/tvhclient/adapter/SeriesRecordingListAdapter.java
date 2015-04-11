@@ -1,10 +1,7 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -62,7 +59,6 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         public TextView title;
         public TextView channel;
         public TextView daysOfWeek;
-        public TextView start;
         public TextView isEnabled;
         public ImageView dual_pane_list_item_selection;
     }
@@ -79,7 +75,6 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.daysOfWeek = (TextView) view.findViewById(R.id.daysOfWeek);
-            holder.start = (TextView) view.findViewById(R.id.start);
             holder.isEnabled = (TextView) view.findViewById(R.id.enabled);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
@@ -112,17 +107,6 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             }
             Utils.setChannelIcon(holder.icon, null, srec.channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);
-
-            if (holder.start != null) {
-                if (srec.start >= 0) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-                    String start = formatter.format(new Date(srec.start * 60L * 1000L));
-                    holder.start.setText(start);
-                    holder.start.setVisibility(View.VISIBLE);
-                } else {
-                    holder.start.setVisibility(View.GONE);
-                }
-            }
 
             if (holder.isEnabled != null) {
                 holder.isEnabled.setVisibility(View.GONE);
