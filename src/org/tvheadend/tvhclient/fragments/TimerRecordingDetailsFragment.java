@@ -115,6 +115,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         showPlayerControls();
 
         if (isEnabled != null) {
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            isEnabled.setVisibility((app.getProtocolVersion() >= 18) ? View.VISIBLE : View.GONE);
             if (trec.enabled) {
                 isEnabled.setText(R.string.recording_enabled);
             } else {
