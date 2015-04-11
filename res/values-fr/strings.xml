@@ -250,7 +250,7 @@
     <string name="extra_stop_time">Minutes après la fin (post-time)</string>
     <string name="min_duration">Durée minimum</string>
     <string name="max_duration">Durée maximum</string>
-    <string name="record_from_to_time">Enregistrer de %1$s a %2$s</string>
+    <string name="from_to_time">De %1$s a %2$s</string>
     <string name="recording_time">Temps d\'enregistrement</string>
     <string name="series_recording_add_error">Impossible d\'ajouter cet enregistrement auto.\nLe titre ne peut pas être vide!</string>
     <string name="time_recording_add_error">Impossible d\'ajouter cet enregistrement programmé.\nLe titre ne peut pas être vide!</string>

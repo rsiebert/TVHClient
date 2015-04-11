@@ -258,7 +258,7 @@
     <string name="extra_stop_time">Extra stoppminuter (post-tid)</string>
     <string name="min_duration">Minsta varaktighet</string>
     <string name="max_duration">Maximal varaktighet</string>
-    <string name="record_from_to_time">Spela in från %1$s till %2$s</string>
+    <string name="from_to_time">Från %1$s till %2$s</string>
     <string name="recording_time">Inspelningstid</string>
     <string name="series_recording_add_error">Kan inte lägga till denna serieinspelning. Titeln får inte vara tom!</string>
     <string name="time_recording_add_error">Kan inte lägga till denna tidsinspelning. Titeln får inte vara tom!</string>
