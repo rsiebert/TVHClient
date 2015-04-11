@@ -218,7 +218,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
-        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override

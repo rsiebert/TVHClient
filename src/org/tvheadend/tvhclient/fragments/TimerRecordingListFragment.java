@@ -241,7 +241,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
-        Utils.setRecordingMenuIcons(activity, menu);
     }
 
     @Override
