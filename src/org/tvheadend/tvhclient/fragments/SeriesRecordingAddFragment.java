@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -105,12 +106,28 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         minDuration = (EditText) v.findViewById(R.id.minimum_duration);
         maxDuration = (EditText) v.findViewById(R.id.maximum_duration);
 
+        // Show only 1 letter when the screen is below 600 and only two when
+        // below 800. Show all 3 letters on all larger screen sizes
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        final int displayWidth = displaymetrics.widthPixels;
+
         daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
         String[] shortDays = getResources().getStringArray(R.array.day_short_names);
         for (int i = 0; i < 7; i++) {
             final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
-            dayButton.setTextOn(shortDays[i]);
-            dayButton.setTextOff(shortDays[i]);
+
+            if (displayWidth < 800) {
+                dayButton.setTextOn(shortDays[i].subSequence(0, 1));
+                dayButton.setTextOff(shortDays[i].subSequence(0, 1));
+            } else if (displayWidth < 1000) {
+                dayButton.setTextOn(shortDays[i].subSequence(0, 2));
+                dayButton.setTextOff(shortDays[i].subSequence(0, 2));
+            } else {
+                dayButton.setTextOn(shortDays[i]);
+                dayButton.setTextOff(shortDays[i]);
+            }
+
             daysOfWeekLayout.addView(dayButton);
             daysOfWeekButtons[i] = dayButton;
         }
@@ -203,12 +220,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         // Set the correct days as checked or not depending on the given value.
         // For each day shift the daysOfWeekValue by one to the right and check
         // if the bit at this position is one. 
-        int result = 127;
-        int position = 0;
         for (int i = 0; i < 7; i++) {
-            daysOfWeekButtons[i].setChecked((daysOfWeekValue >> position) == result);
-            position++;
-            result = result / 2;
+            int checked = (((int) daysOfWeekValue >> i) & 1);
+            daysOfWeekButtons[i].setChecked(checked == 1);
         }
 
         if (title != null) {
@@ -254,10 +268,10 @@ public class SeriesRecordingAddFragment extends DialogFragment {
      * 
      */
     private void save() {
-        // title is mandatory and must be set
+        // The title must not be empty
         if (title.length() == 0) {
             Toast.makeText(activity,
-                    getString(R.string.series_recording_add_error),
+                    getString(R.string.error_empty_title),
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -346,11 +360,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
      */
     public long getDayOfWeekValue() {
         long value = 0;
-        int position = 0;
         for (int i = 0; i < 7; i++) {
             if (daysOfWeekButtons[i].isChecked()) {
-                value += (1 << position);
-                position++;
+                value += (1 << i);
             }
         }
         return value;
