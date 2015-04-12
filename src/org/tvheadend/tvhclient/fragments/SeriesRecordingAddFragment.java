@@ -60,6 +60,11 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private boolean enabledValue;
     private int channelSelectionValue;
 
+    private static final int DEFAULT_MIN_DURATION = 30;
+    private static final int DEFAULT_MAX_DURATION = 60;
+    private static final int DEFAULT_START_EXTRA = 2;
+    private static final int DEFAULT_STOP_EXTRA = 2;
+
     public static SeriesRecordingAddFragment newInstance(Bundle args) {
         SeriesRecordingAddFragment f = new SeriesRecordingAddFragment();
         f.setArguments(args);
@@ -82,12 +87,13 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        getValues();
         outState.putLong("priorityValue", priorityValue);
         outState.putLong("minDurationValue", minDurationValue);
         outState.putLong("maxDurationValue", maxDurationValue);
         outState.putLong("startTimeValue", startTimeValue);
         outState.putLong("stopTimeValue", stopTimeValue);
-        outState.putLong("daysOfWeekValue", getDayOfWeekValue());
+        outState.putLong("daysOfWeekValue", daysOfWeekValue);
         outState.putString("titleValue", titleValue);
         outState.putBoolean("enabledValue", enabledValue);
         outState.putInt("channelNameValue", channelSelectionValue);
@@ -106,8 +112,10 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         minDuration = (EditText) v.findViewById(R.id.minimum_duration);
         maxDuration = (EditText) v.findViewById(R.id.maximum_duration);
 
-        // Show only 1 letter when the screen is below 600 and only two when
-        // below 800. Show all 3 letters on all larger screen sizes
+        // For the shown days in each toggle button the array with the short
+        // names is used. If the screen width is not large enough then the short
+        // names of all seven days would not fit. Therefore reduce the number of
+        // shown letters for each day depending on the screen width.
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         final int displayWidth = displaymetrics.widthPixels;
@@ -117,6 +125,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         for (int i = 0; i < 7; i++) {
             final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
 
+            // Show only one character on width below 800, two characters below
+            // 1000 and all characters on all remaining ones
             if (displayWidth < 800) {
                 dayButton.setTextOn(shortDays[i].subSequence(0, 1));
                 dayButton.setTextOff(shortDays[i].subSequence(0, 1));
@@ -128,6 +138,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 dayButton.setTextOff(shortDays[i]);
             }
 
+            // Add the button to the layout and store it in the list to have
+            // access to it later 
             daysOfWeekLayout.addView(dayButton);
             daysOfWeekButtons[i] = dayButton;
         }
@@ -137,6 +149,10 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         priority = (Spinner) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
+        // If the savedInstanceState is null then the fragment was created for
+        // the first time. Either get the given id to edit the recording or
+        // create new one. Otherwise an orientation change has occurred and the
+        // saved values must be applied to the user input elements.
         if (savedInstanceState == null) {
             String recId = "";
             Bundle bundle = getArguments();
@@ -156,21 +172,22 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
                 enabledValue = rec.enabled;
-
                 int pos = app.getChannels().indexOf(rec.channel);
                 channelSelectionValue = (pos >= 0 ? pos : 0);
             } else {
+                // No recording was given, set default values
                 priorityValue = 2;
-                minDurationValue = 30;
-                maxDurationValue = 60;
-                startTimeValue = 0;
-                stopTimeValue = 0;
+                minDurationValue = DEFAULT_MIN_DURATION;
+                maxDurationValue = DEFAULT_MAX_DURATION;
+                startTimeValue = DEFAULT_START_EXTRA;
+                stopTimeValue = DEFAULT_STOP_EXTRA;
                 daysOfWeekValue = 127;
                 titleValue = "";
                 enabledValue = true;
                 channelSelectionValue = 0;
             }
         } else {
+            // Restore the values before the orientation change
             priorityValue = savedInstanceState.getLong("priorityValue");
             minDurationValue = savedInstanceState.getLong("minDurationValue");
             maxDurationValue = savedInstanceState.getLong("maxDurationValue");
@@ -189,6 +206,12 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (isEnabled != null) {
+            isEnabled.setChecked(enabledValue);
+        }
+        if (title != null) {
+            title.setText(titleValue);
+        }
         if (channelName != null) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             List<String> channels = new ArrayList<String>();
@@ -225,15 +248,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             daysOfWeekButtons[i].setChecked(checked == 1);
         }
 
-        if (title != null) {
-            title.setText(titleValue);
-        }
-        if (isEnabled != null) {
-            isEnabled.setChecked(enabledValue);
-        }
-        if (getDialog() != null) {
-            getDialog().setTitle(R.string.add_series_recording);
-        }
         if (toolbar != null) {
             toolbar.inflateMenu(R.menu.save_cancel_menu);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -242,6 +256,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                     return onToolbarItemSelected(item);
                 }
             });
+        }
+        if (getDialog() != null) {
+            getDialog().setTitle(R.string.add_series_recording);
         }
     }
 
@@ -264,46 +281,71 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     }
 
     /**
-     * 
+     * Retrieves and checks the values from the user input elements and stores
+     * them in internal variables. These are used to remember the values during
+     * an orientation change or when the recording shall be saved.
+     */
+    private void getValues() {
+        try {
+            minDurationValue = Long.valueOf(minDuration.getText().toString());
+        } catch (NumberFormatException ex) {
+            minDurationValue = DEFAULT_MIN_DURATION;
+        }
+        try {
+            maxDurationValue = Long.valueOf(maxDuration.getText().toString());
+        } catch (NumberFormatException ex) {
+            maxDurationValue = DEFAULT_MAX_DURATION;
+        }
+        try {
+            startTimeValue = Long.valueOf(startTime.getText().toString());
+        } catch (NumberFormatException ex) {
+            startTimeValue = DEFAULT_START_EXTRA;
+        }
+        try {
+            stopTimeValue = Long.valueOf(stopTime.getText().toString());
+        } catch (NumberFormatException ex) {
+            stopTimeValue = DEFAULT_STOP_EXTRA;
+        }
+        titleValue = title.getText().toString();
+        daysOfWeekValue = getDayOfWeekValue();
+        priorityValue = priority.getSelectedItemPosition();
+        enabledValue = isEnabled.isChecked();
+        channelSelectionValue = channelName.getSelectedItemPosition();
+    }
+
+    /**
+     * Checks certain given values for plausibility and if everything is fine
+     * creates the intent that will be passed to the service to save the newly
+     * created recording.
      */
     private void save() {
+        getValues();
+
         // The title must not be empty
-        if (title.length() == 0) {
+        if (titleValue.length() == 0) {
             Toast.makeText(activity,
                     getString(R.string.error_empty_title),
                     Toast.LENGTH_LONG).show();
             return;
         }
+        // The maximum duration must be larger than the minimum duration
+        if (maxDurationValue <= maxDurationValue) {
+            maxDurationValue = maxDurationValue + 1;
+        }
 
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
-        intent.putExtra("title", title.getText().toString());
+        intent.putExtra("title", titleValue);
+        intent.putExtra("minDuration", minDurationValue);
+        intent.putExtra("maxDuration", maxDurationValue);
+        intent.putExtra("startExtra", startTimeValue);
+        intent.putExtra("stopExtra", stopTimeValue);
+        intent.putExtra("daysOfWeek", daysOfWeekValue);
+        intent.putExtra("priority", priorityValue);
+        intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
 
-        try {
-            long min = Long.valueOf(minDuration.getText().toString());
-            intent.putExtra("minDuration", min);
-        } catch (NumberFormatException ex) {
-            intent.putExtra("minDuration", 60);
-        }
-        try {
-            long max = Long.valueOf(maxDuration.getText().toString());
-            intent.putExtra("maxDuration", max);
-        } catch (NumberFormatException ex) {
-            intent.putExtra("maxDuration", 120);
-        }
-        try {
-            long max = Long.valueOf(startTime.getText().toString());
-            intent.putExtra("startExtra", max);
-        } catch (NumberFormatException ex) {
-            intent.putExtra("startExtra", 0);
-        }
-        try {
-            long max = Long.valueOf(stopTime.getText().toString());
-            intent.putExtra("stopExtra", max);
-        } catch (NumberFormatException ex) {
-            intent.putExtra("stopExtra", 0);
-        }
-
+        // The id must be passed on to the server, not the name. So go through
+        // all available channels and get the id for the selected channel name.
         String cname = (String) channelName.getSelectedItem();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         for (Channel c : app.getChannels()) {
@@ -313,9 +355,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             }
         }
 
-        intent.putExtra("daysOfWeek", getDayOfWeekValue());
-        intent.putExtra("priority", (long) priority.getSelectedItemPosition());
-        intent.putExtra("enabled", (long) ((isEnabled.isChecked() ? 1 : 0)));
         activity.startService(intent);
 
         if (getDialog() != null) {
@@ -325,7 +364,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
     /**
      * Asks the user to confirm canceling the current activity. If no is
-     * chosen the user can continue to add or edit the connection. Otherwise
+     * chosen the user can continue to add or edit the recording. Otherwise
      * the input will be discarded and the activity will be closed.
      */
     public void cancel() {
@@ -354,8 +393,10 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     }
 
     /**
+     * Returns a number where each bit position is one day. If the bit position
+     * is one then the day was selected.
      * 
-     * @return
+     * @return Number with the selected day on each bit position
      */
     public long getDayOfWeekValue() {
         long value = 0;
