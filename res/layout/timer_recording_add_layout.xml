@@ -114,59 +114,7 @@
                     android:orientation="horizontal"
                     android:paddingBottom="16dp" >
 
-                    <CheckBox
-                        android:id="@+id/monday"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/tuesday"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/wednesday"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/thursday"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/friday"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/saturday"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/sunday"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <!-- The days of week toggle buttons are added programatically -->
                 </LinearLayout>
 
                 <!-- Below are additional input fields -->

@@ -24,8 +24,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class SeriesRecordingAddFragment extends DialogFragment {
 
@@ -38,15 +40,10 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
     private CheckBox isEnabled;
     private Spinner priority;
-    private CheckBox monday;
-    private CheckBox tuesday;
-    private CheckBox wednesday;
-    private CheckBox thursday;
-    private CheckBox friday;
-    private CheckBox saturday;
-    private CheckBox sunday;
     private EditText minDuration;
     private EditText maxDuration;
+    private LinearLayout daysOfWeekLayout;
+    private ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
     private EditText startTime;
     private EditText stopTime;
     private EditText title;
@@ -107,13 +104,17 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         title = (EditText) v.findViewById(R.id.title);
         minDuration = (EditText) v.findViewById(R.id.minimum_duration);
         maxDuration = (EditText) v.findViewById(R.id.maximum_duration);
-        monday = (CheckBox) v.findViewById(R.id.monday);
-        tuesday = (CheckBox) v.findViewById(R.id.tuesday);
-        wednesday = (CheckBox) v.findViewById(R.id.wednesday);
-        thursday = (CheckBox) v.findViewById(R.id.thursday);
-        friday = (CheckBox) v.findViewById(R.id.friday);
-        saturday = (CheckBox) v.findViewById(R.id.saturday);
-        sunday = (CheckBox) v.findViewById(R.id.sunday);
+
+        daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
+        String[] shortDays = getResources().getStringArray(R.array.day_short_names);
+        for (int i = 0; i < 7; i++) {
+            final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
+            dayButton.setTextOn(shortDays[i]);
+            dayButton.setTextOff(shortDays[i]);
+            daysOfWeekLayout.addView(dayButton);
+            daysOfWeekButtons[i] = dayButton;
+        }
+
         startTime = (EditText) v.findViewById(R.id.start_extra);
         stopTime = (EditText) v.findViewById(R.id.stop_extra);
         priority = (Spinner) v.findViewById(R.id.priority);
@@ -198,27 +199,18 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         if (stopTime != null) {
             stopTime.setText(String.valueOf(stopTimeValue));
         }
-        if (monday != null) {
-            monday.setChecked((daysOfWeekValue >> 0) == 127);
+
+        // Set the correct days as checked or not depending on the given value.
+        // For each day shift the daysOfWeekValue by one to the right and check
+        // if the bit at this position is one. 
+        int result = 127;
+        int position = 0;
+        for (int i = 0; i < 7; i++) {
+            daysOfWeekButtons[i].setChecked((daysOfWeekValue >> position) == result);
+            position++;
+            result = result / 2;
         }
-        if (tuesday != null) {
-            tuesday.setChecked((daysOfWeekValue >> 1) == 63);
-        }
-        if (wednesday != null) {
-            wednesday.setChecked((daysOfWeekValue >> 2) == 31);
-        }
-        if (thursday != null) {
-            thursday.setChecked((daysOfWeekValue >> 3) == 15);
-        }
-        if (friday != null) {
-            friday.setChecked((daysOfWeekValue >> 4) == 7);
-        }
-        if (saturday != null) {
-            saturday.setChecked((daysOfWeekValue >> 5) == 3);
-        }
-        if (sunday != null) {
-            sunday.setChecked((daysOfWeekValue >> 6) == 1);
-        }
+
         if (title != null) {
             title.setText(titleValue);
         }
@@ -354,26 +346,12 @@ public class SeriesRecordingAddFragment extends DialogFragment {
      */
     public long getDayOfWeekValue() {
         long value = 0;
-        if (monday.isChecked()) {
-            value += (1 << 0);
-        }
-        if (tuesday.isChecked()) {
-            value += (1 << 1);
-        }
-        if (wednesday.isChecked()) {
-            value += (1 << 2);
-        }
-        if (thursday.isChecked()) {
-            value += (1 << 3);
-        }
-        if (friday.isChecked()) {
-            value += (1 << 4);
-        }
-        if (saturday.isChecked()) {
-            value += (1 << 5);
-        }
-        if (sunday.isChecked()) {
-            value += (1 << 6);
+        int position = 0;
+        for (int i = 0; i < 7; i++) {
+            if (daysOfWeekButtons[i].isChecked()) {
+                value += (1 << position);
+                position++;
+            }
         }
         return value;
     }
