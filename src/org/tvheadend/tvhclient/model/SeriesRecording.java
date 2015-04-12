@@ -19,7 +19,6 @@ public class SeriesRecording implements Comparable<SeriesRecording> {
 
     public long start;
     public long startWindow;
-    public String name;
 
     // Required only when a new timer recording is added
     public String configName;
