@@ -24,6 +24,26 @@
         <item>Kanalnummer</item>
     </string-array>
 
+    <string-array name="day_short_names">
+        <item>Mån</item>
+        <item>Tis</item>
+        <item>Ons</item>
+        <item>Tor</item>
+        <item>Fre</item>
+        <item>Lör</item>
+        <item>Sön</item>
+    </string-array>
+
+    <string-array name="day_long_names">
+        <item>Måndag</item>
+        <item>Tisdag</item>
+        <item>Onsdag</item>
+        <item>Torsdag</item>
+        <item>Fredag</item>
+        <item>Lördag</item>
+        <item>Söndag</item>
+    </string-array>
+
     <string-array name="pr_content_type0">
         <item>Film/Drama</item>
         <item>Nyheter/Aktualitet</item>
