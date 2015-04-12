@@ -229,7 +229,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
                             // Set the time from the two values. Prepend leading zeros to the
                             // hours or minutes in case they are lower then ten.
                             String hours = selectedHour < 10 ? ("0" + String.valueOf(selectedHour)) : String.valueOf(selectedHour);
-                            String minutes = selectedHour < 10 ? ("0" + String.valueOf(selectedMinute)) : String.valueOf(selectedMinute);
+                            String minutes = selectedMinute < 10 ? ("0" + String.valueOf(selectedMinute)) : String.valueOf(selectedMinute);
                             startTime.setText(hours + ":" + minutes);
                         }
                     }, hour, minute, true);
@@ -265,7 +265,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
                             // Set the time from the two values. Prepend leading zeros to the
                             // hours or minutes in case they are lower then ten.
                             String hours = selectedHour < 10 ? ("0" + String.valueOf(selectedHour)) : String.valueOf(selectedHour);
-                            String minutes = selectedHour < 10 ? ("0" + String.valueOf(selectedMinute)) : String.valueOf(selectedMinute);
+                            String minutes = selectedMinute < 10 ? ("0" + String.valueOf(selectedMinute)) : String.valueOf(selectedMinute);
                             stopTime.setText(hours + ":" + minutes);
                         }
                     }, hour, minute, true);
