@@ -23,9 +23,6 @@ public class Recording implements Comparable<Recording> {
     public long retention;
     public long priority;
     public long contentType;
-    public String owner;
-    public String creator;
-    public String path;
     public List<DvrCutpoint> dvrCutPoints = new ArrayList<DvrCutpoint>();
 
     @Override
