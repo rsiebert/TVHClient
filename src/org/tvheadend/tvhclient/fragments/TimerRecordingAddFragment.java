@@ -1,10 +1,8 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -15,19 +13,24 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class TimerRecordingAddFragment extends DialogFragment {
@@ -35,7 +38,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
     @SuppressWarnings("unused")
     private final static String TAG = TimerRecordingAddFragment.class.getSimpleName();
 
-    private Activity activity;
+    private ActionBarActivity activity;
     private TimerRecording rec;
     private Toolbar toolbar;
 
@@ -48,8 +51,8 @@ public class TimerRecordingAddFragment extends DialogFragment {
     private CheckBox friday;
     private CheckBox saturday;
     private CheckBox sunday;
-    private Spinner startTime;
-    private Spinner stopTime;
+    private TextView startTime;
+    private TextView stopTime;
     private EditText title;
     private Spinner channelName;
 
@@ -70,7 +73,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (Activity) activity;
+        this.activity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -109,8 +112,8 @@ public class TimerRecordingAddFragment extends DialogFragment {
         friday = (CheckBox) v.findViewById(R.id.friday);
         saturday = (CheckBox) v.findViewById(R.id.saturday);
         sunday = (CheckBox) v.findViewById(R.id.sunday);
-        startTime = (Spinner) v.findViewById(R.id.start_time);
-        stopTime = (Spinner) v.findViewById(R.id.stop_time);
+        startTime = (TextView) v.findViewById(R.id.start_time);
+        stopTime = (TextView) v.findViewById(R.id.stop_time);
         priority = (Spinner) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
@@ -155,7 +158,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
 
         return v;
     }
-
+    
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -180,24 +183,79 @@ public class TimerRecordingAddFragment extends DialogFragment {
             priority.setSelection((int) priorityValue);
         }
 
-        if (startTime != null && stopTime != null) {
-            // Converts the value in minutes into a time format
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-
-            // Fill the list with the time values from 0:00 to 23:50
-            List<String> timeList = new ArrayList<String>();
-            for (int i = 0; i <= 1430; i += 10) {
-                String time = formatter.format(new Date(i * 60L * 1000L));
-                timeList.add(time);
+        if (startTime != null) {
+            // Set the time from the long value. Prepend leading zeros to the
+            // hours or minutes in case they are lower then ten.
+            String minutes = String.valueOf(startTimeValue % 60);
+            if (minutes.length() == 1) {
+                minutes = "0" + minutes;
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, timeList);
-            startTime.setAdapter(adapter);
-            stopTime.setAdapter(adapter);
+            String hours = String.valueOf(startTimeValue / 60);
+            if (hours.length() == 1) {
+                hours = "0" + hours;
+            }
+            startTime.setText(hours + ":" + minutes);
 
-            String start = formatter.format(new Date(startTimeValue * 60L * 1000L));
-            String stop = formatter.format(new Date(stopTimeValue * 60L * 1000L));
-            startTime.setSelection(adapter.getPosition(start));
-            stopTime.setSelection(adapter.getPosition(stop));
+            // Show the time picker dialog so the user can select a new starting time
+            startTime.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Calendar time = Calendar.getInstance();
+                    int hour = time.get(Calendar.HOUR_OF_DAY);
+                    int minute = time.get(Calendar.MINUTE);
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            // Save the given value in seconds. This values will be passed to the server
+                            startTimeValue = (long) (selectedHour * 60 + selectedMinute);
+                            // Set the time from the two values. Prepend leading zeros to the
+                            // hours or minutes in case they are lower then ten.
+                            String hours = selectedHour < 10 ? ("0" + String.valueOf(selectedHour)) : String.valueOf(selectedHour);
+                            String minutes = selectedHour < 10 ? ("0" + String.valueOf(selectedMinute)) : String.valueOf(selectedMinute);
+                            startTime.setText(hours + ":" + minutes);
+                        }
+                    }, hour, minute, true);
+                    mTimePicker.setTitle(R.string.select_start_time);
+                    mTimePicker.show();
+                }
+            });
+        }
+        if (stopTime != null) {
+            // Set the time from the long value. Prepend leading zeros to the
+            // hours or minutes in case they are lower then ten.
+            String minutes = String.valueOf(stopTimeValue % 60);
+            if (minutes.length() == 1) {
+                minutes = "0" + minutes;
+            }
+            String hours = String.valueOf(stopTimeValue / 60);
+            if (hours.length() == 1) {
+                hours = "0" + hours;
+            }
+            stopTime.setText(hours + ":" + minutes);
+            stopTime.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Calendar time = Calendar.getInstance();
+                    int hour = time.get(Calendar.HOUR_OF_DAY);
+                    int minute = time.get(Calendar.MINUTE);
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            // Save the given value in seconds. This values will be passed to the server
+                            stopTimeValue = (long) (selectedHour * 60 + selectedMinute);
+                            // Set the time from the two values. Prepend leading zeros to the
+                            // hours or minutes in case they are lower then ten.
+                            String hours = selectedHour < 10 ? ("0" + String.valueOf(selectedHour)) : String.valueOf(selectedHour);
+                            String minutes = selectedHour < 10 ? ("0" + String.valueOf(selectedMinute)) : String.valueOf(selectedMinute);
+                            stopTime.setText(hours + ":" + minutes);
+                        }
+                    }, hour, minute, true);
+                    mTimePicker.setTitle(R.string.select_stop_time);
+                    mTimePicker.show();
+                }
+            });
         }
 
         if (monday != null) {
@@ -272,8 +330,8 @@ public class TimerRecordingAddFragment extends DialogFragment {
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
         intent.putExtra("title", title.getText().toString());
-        intent.putExtra("start", (long) (startTime.getSelectedItemPosition() * 10));
-        intent.putExtra("stop", (long) (stopTime.getSelectedItemPosition() * 10));
+        intent.putExtra("start", startTimeValue);
+        intent.putExtra("stop", stopTimeValue);
 
         String cname = (String) channelName.getSelectedItem();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();

@@ -300,6 +300,8 @@
     <string name="ready">Bereit</string>
     <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
     <string name="currently_recording">Laufende Aufnahmen</string>
+    <string name="select_start_time">Startzeit auswählen</string>
+    <string name="select_stop_time">Endzeit auswählen</string>
 
     <string name="no_connection_available_advice">Keine Verbindung definiert. Mindestens eine muss vorhanden sein. In den Einstellungen kannst Du eine neue hinzufügen.</string>
     <string name="no_connection_available">Keine Verbindung verfügbar</string>
