@@ -24,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -98,10 +97,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if (getDialog() != null) {
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
-
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
         channelName = (Spinner) v.findViewById(R.id.channel);
@@ -165,8 +160,12 @@ public class TimerRecordingAddFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        if (isEnabled != null) {
+            isEnabled.setVisibility((app.getProtocolVersion() >= 18) ? View.VISIBLE : View.GONE);
+            isEnabled.setChecked(enabledValue);
+        }
         if (channelName != null) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             List<String> channels = new ArrayList<String>();
             for (Channel c : app.getChannels()) {
                 channels.add(c.name);
@@ -225,13 +224,10 @@ public class TimerRecordingAddFragment extends DialogFragment {
         if (title != null) {
             title.setText(titleValue);
         }
-        if (isEnabled != null) {
-            isEnabled.setChecked(enabledValue);
+        if (getDialog() != null) {
+            getDialog().setTitle(R.string.add_timer_recording);
         }
         if (toolbar != null) {
-            if (rec != null) {
-                toolbar.setTitle((rec.name.length() > 0) ? rec.name : rec.title);
-            }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -240,7 +236,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
             });
             // Inflate a menu to be displayed in the toolbar
             toolbar.inflateMenu(R.menu.save_cancel_menu);
-            toolbar.setTitle(R.string.add_timer_recording);
         }
     }
 
@@ -266,11 +261,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
      * 
      */
     private void save() {
-
-        // TODO check for invalid integers
-        // TODO highlight the title field with text if its empty, no toast
-        // TODO difference between title and name
-
         // title is mandatory and must be set
         if (title.length() == 0) {
             Toast.makeText(activity,
@@ -281,7 +271,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
 
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
-
         intent.putExtra("title", title.getText().toString());
         intent.putExtra("start", (long) (startTime.getSelectedItemPosition() * 10));
         intent.putExtra("stop", (long) (stopTime.getSelectedItemPosition() * 10));
@@ -295,7 +284,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
             }
         }
 
-        intent.putExtra("configName", "");
         intent.putExtra("daysOfWeek", getDayOfWeekValue());
         intent.putExtra("priority", (long) priority.getSelectedItemPosition());
         intent.putExtra("enabled", (long) ((isEnabled.isChecked() ? 1 : 0)));

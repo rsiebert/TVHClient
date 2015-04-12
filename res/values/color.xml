@@ -43,8 +43,8 @@
     <color name="menu_text_selected_dark">#66bebebe</color>
 
     <!-- Toolbar background -->
-    <color name="toolbar_background_color_light">#ffbdbdbd</color>
-    <color name="toolbar_background_color_dark">#ff212121</color>
+    <color name="toolbar_background_color_light">#88bdbdbd</color>
+    <color name="toolbar_background_color_dark">#77212121</color>
 
     <!-- Theme colors -->
     <color name="window_background_color_light">#fff5f5f5</color>

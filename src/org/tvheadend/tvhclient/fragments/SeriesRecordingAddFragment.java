@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -100,10 +99,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        if (getDialog() != null) {
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_add_layout, container, false);
@@ -230,10 +225,10 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         if (isEnabled != null) {
             isEnabled.setChecked(enabledValue);
         }
+        if (getDialog() != null) {
+            getDialog().setTitle(R.string.add_series_recording);
+        }
         if (toolbar != null) {
-            if (rec != null) {
-                toolbar.setTitle((rec.name.length() > 0) ? rec.name : rec.title);
-            }
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -242,7 +237,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             });
             // Inflate a menu to be displayed in the toolbar
             toolbar.inflateMenu(R.menu.save_cancel_menu);
-            toolbar.setTitle(R.string.add_series_recording);
         }
     }
 
@@ -268,11 +262,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
      * 
      */
     private void save() {
-
-        // TODO check for invalid integers
-        // TODO highlight the title field with text if its empty, no toast
-        // TODO difference between title and name
-
         // title is mandatory and must be set
         if (title.length() == 0) {
             Toast.makeText(activity,
@@ -283,12 +272,32 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
-
         intent.putExtra("title", title.getText().toString());
-        intent.putExtra("minDuration", Long.valueOf(minDuration.getText().toString()));
-        intent.putExtra("maxDuration", Long.valueOf(maxDuration.getText().toString()));
-        intent.putExtra("startExtra", Long.valueOf(startTime.getText().toString()));
-        intent.putExtra("stopExtra", Long.valueOf(stopTime.getText().toString()));
+
+        try {
+            long min = Long.valueOf(minDuration.getText().toString());
+            intent.putExtra("minDuration", min);
+        } catch (NumberFormatException ex) {
+            intent.putExtra("minDuration", 60);
+        }
+        try {
+            long max = Long.valueOf(maxDuration.getText().toString());
+            intent.putExtra("maxDuration", max);
+        } catch (NumberFormatException ex) {
+            intent.putExtra("maxDuration", 120);
+        }
+        try {
+            long max = Long.valueOf(startTime.getText().toString());
+            intent.putExtra("startExtra", max);
+        } catch (NumberFormatException ex) {
+            intent.putExtra("startExtra", 0);
+        }
+        try {
+            long max = Long.valueOf(stopTime.getText().toString());
+            intent.putExtra("stopExtra", max);
+        } catch (NumberFormatException ex) {
+            intent.putExtra("stopExtra", 0);
+        }
 
         String cname = (String) channelName.getSelectedItem();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
@@ -299,7 +308,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             }
         }
 
-        intent.putExtra("configName", "");
         intent.putExtra("daysOfWeek", getDayOfWeekValue());
         intent.putExtra("priority", (long) priority.getSelectedItemPosition());
         intent.putExtra("enabled", (long) ((isEnabled.isChecked() ? 1 : 0)));
