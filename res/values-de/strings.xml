@@ -269,7 +269,7 @@
     <string name="approx_time">Minuten nach Mitternacht</string>
 
     <string name="start_time">Startzeit</string>
-    <string name="stop_time">Stoppzeit</string>
+    <string name="stop_time">Endzeit</string>
     <string name="start_window">Startfenster</string>
     <string name="extra_start_time">Zusätzliche Minuten (Vorlaufzeit)</string>
     <string name="extra_stop_time">Zusätzliche Minuten (Nachlaufzeit)</string>
