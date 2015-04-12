@@ -235,14 +235,13 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             getDialog().setTitle(R.string.add_series_recording);
         }
         if (toolbar != null) {
+            toolbar.inflateMenu(R.menu.save_cancel_menu);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     return onToolbarItemSelected(item);
                 }
             });
-            // Inflate a menu to be displayed in the toolbar
-            toolbar.inflateMenu(R.menu.save_cancel_menu);
         }
     }
 
