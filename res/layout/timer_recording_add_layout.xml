@@ -48,7 +48,7 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
+                    android:hint="@null"
                     android:inputType="text"
                     android:paddingBottom="16dp" />
 
@@ -75,12 +75,13 @@
                     android:paddingTop="16dp"
                     android:text="@string/start_time" />
 
-                <Spinner
+                <TextView
                     android:id="@+id/start_time"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp" />
+                    android:paddingBottom="16dp"
+                    android:text="@string/not_set" />
 
                 <TextView
                     android:id="@+id/stop_time_label"
@@ -90,12 +91,13 @@
                     android:paddingTop="16dp"
                     android:text="@string/stop_time" />
 
-                <Spinner
+                <TextView
                     android:id="@+id/stop_time"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp" />
+                    android:paddingBottom="16dp"
+                    android:text="@string/not_set" />
 
                 <TextView
                     android:id="@+id/days_of_week_label"
