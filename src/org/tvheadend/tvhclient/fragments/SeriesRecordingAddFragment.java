@@ -143,8 +143,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 channelSelectionValue = (pos >= 0 ? pos : 0);
             } else {
                 priorityValue = 2;
-                minDurationValue = 0;
-                maxDurationValue = 0;
+                minDurationValue = 30;
+                maxDurationValue = 60;
                 startTimeValue = 0;
                 stopTimeValue = 0;
                 daysOfWeekValue = 127;
