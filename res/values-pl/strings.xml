@@ -260,8 +260,9 @@
     <string name="max_duration">Maksymalny czas</string>
     <string name="from_to_time">Od %1$s do %2$s</string>
     <string name="recording_time">Czas nagrywania</string>
-    <string name="series_recording_add_error">Możesz\Nie możesz dodać seryjnego nagrywania.\nTytuł nie może być pusty!</string>
-    <string name="time_recording_add_error">Możesz\Nie mozesz dodać czasowe nagrywanie.\nTytuł nie może być pusty!</string>
+    <string name="series_recording_add_error">Możesz\Nie możesz dodać seryjnego nagrywania.</string>
+    <string name="time_recording_add_error">Możesz\Nie mozesz dodać czasowe nagrywanie.</string>
+    <string name="error_empty_title">Tytuł nie może być pusty!</string>
 
     <string name="nothing">Brak</string>
     <string name="loading">Wczytywanie&#8230;</string>

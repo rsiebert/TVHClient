@@ -329,6 +329,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
         // The title must not be empty
         if (titleValue.length() == 0) {
             Toast.makeText(activity,
+                    getString(R.string.time_recording_add_error) + "\n" +
                     getString(R.string.error_empty_title),
                     Toast.LENGTH_LONG).show();
             return;
@@ -336,6 +337,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
         // The stop time must be later then the start time 
         if (startTimeValue >= stopTimeValue) {
             Toast.makeText(activity,
+                    getString(R.string.time_recording_add_error) + "\n" +
                     getString(R.string.error_start_stop_time),
                     Toast.LENGTH_LONG).show();
             return;

@@ -252,8 +252,9 @@
     <string name="max_duration">Durée maximum</string>
     <string name="from_to_time">De %1$s a %2$s</string>
     <string name="recording_time">Temps d\'enregistrement</string>
-    <string name="series_recording_add_error">Impossible d\'ajouter cet enregistrement auto.\nLe titre ne peut pas être vide!</string>
-    <string name="time_recording_add_error">Impossible d\'ajouter cet enregistrement programmé.\nLe titre ne peut pas être vide!</string>
+    <string name="series_recording_add_error">Impossible d\'ajouter cet enregistrement auto.</string>
+    <string name="time_recording_add_error">Impossible d\'ajouter cet enregistrement programmé.</string>
+    <string name="error_empty_title">Le titre ne peut pas être vide!</string>
 
     <string name="nothing">Rien</string>
     <string name="loading">Chargement&#8230;</string>

@@ -187,8 +187,6 @@
     <string name="err_con_lost">Lost connection to server</string>
     <string name="err_con_timeout">Connection timeout</string>
     <string name="err_loading_profiles">Error loading profiles from server\n%s</string>
-    <string name="error_empty_title">The title must no be empty!</string>
-    <string name="error_start_stop_time">The stop time must be after the start time!</string>
 
     <string name="recording_file_missing">Recorded file is missing</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>
@@ -280,6 +278,10 @@
     <string name="max_duration">Maximum duration of the program</string>
     <string name="from_to_time">From %1$s to %2$s</string>
     <string name="recording_time">Recording Time</string>
+    <string name="series_recording_add_error">Can\'t add this series recording.</string>
+    <string name="time_recording_add_error">Can\'t add this manual recording.</string>
+    <string name="error_empty_title">The title must no be empty!</string>
+    <string name="error_start_stop_time">The stop time must be after the start time!</string>
 
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>

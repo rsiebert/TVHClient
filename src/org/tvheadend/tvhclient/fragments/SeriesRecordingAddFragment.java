@@ -323,7 +323,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         // The title must not be empty
         if (titleValue.length() == 0) {
-            Toast.makeText(activity,
+            Toast.makeText(activity, 
+                    getString(R.string.series_recording_add_error) + "\n" +
                     getString(R.string.error_empty_title),
                     Toast.LENGTH_LONG).show();
             return;

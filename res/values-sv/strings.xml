@@ -260,9 +260,10 @@
     <string name="max_duration">Maximal varaktighet</string>
     <string name="from_to_time">Från %1$s till %2$s</string>
     <string name="recording_time">Inspelningstid</string>
-    <string name="series_recording_add_error">Kan inte lägga till denna serieinspelning. Titeln får inte vara tom!</string>
-    <string name="time_recording_add_error">Kan inte lägga till denna tidsinspelning. Titeln får inte vara tom!</string>
-    
+    <string name="series_recording_add_error">Kan inte lägga till denna serieinspelning.</string>
+    <string name="time_recording_add_error">Kan inte lägga till denna tidsinspelning.</string>
+    <string name="error_empty_title">Titeln får inte vara tom!</string>
+
     <string name="nothing">Ingen</string>
     <string name="loading">Laddar&#8230;</string>
     <string name="loading_channel">Laddar kanal %s</string>

@@ -187,8 +187,6 @@
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
     <string name="err_con_timeout">Zeitüberschreitung beim Verbinden zum Server.</string>
     <string name="err_loading_profiles">Fehler beim Laden der Profile vom Server\n%s</string>
-    <string name="error_empty_title">Bitte einen Aufnahmetitel angeben!</string>
-    <string name="error_start_stop_time">Die Endzeit darf nicht vor der Startzeit liegen!</string>
 
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
@@ -280,6 +278,10 @@
     <string name="max_duration">Maximale Dauer der Sendung</string>
     <string name="from_to_time">Von %1$s bis %2$s</string>
     <string name="recording_time">Aufnahmezeit</string>
+    <string name="series_recording_add_error">Kann diese Serienaufnahme nicht hinzufügen.</string>
+    <string name="time_recording_add_error">Kann diese manuelle Aufnahme nicht hinzufügen.</string>
+    <string name="error_empty_title">Bitte einen Aufnahmetitel angeben!</string>
+    <string name="error_start_stop_time">Die Endzeit darf nicht vor der Startzeit liegen!</string>
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>

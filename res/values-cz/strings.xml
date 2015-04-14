@@ -260,8 +260,9 @@
     <string name="max_duration">Maximální trvání</string>
     <string name="from_to_time">Od %1$s do %2$s</string>
     <string name="recording_time">Čas nahrávání</string>
-    <string name="series_recording_add_error">Nelze přidat toto opakované nahrávání. Název nesmí být prázdný!</string>
-    <string name="time_recording_add_error">Nelze přidat toto časové nahrávání. Název nesmí být prázdný!</string>
+    <string name="series_recording_add_error">Nelze přidat toto opakované nahrávání.</string>
+    <string name="time_recording_add_error">Nelze přidat toto časové nahrávání.</string>
+    <string name="error_empty_title">Název nesmí být prázdný!</string>
 
     <string name="nothing">Žádné</string>
     <string name="loading">Načítám&#8230;</string>
