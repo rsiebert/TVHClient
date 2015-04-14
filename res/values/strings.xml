@@ -49,6 +49,7 @@
     <string name="remove_all_recordings">Do you really want to remove ALL recordings?</string>
     <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
     <string name="cancel_all_recordings">Do you really want to remove ALL scheduled recordings?</string>
+    <string name="add_title">Please add the title of the recording</string>
 
     <string name="add_recording">Add new recording</string>
     <string name="cancel_add_recording">Cancel adding a new recording? All values will be lost.</string>
@@ -275,8 +276,8 @@
     <string name="start_window">Start window</string>
     <string name="extra_start_time">Extra start minutes (pre-time)</string>
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>
-    <string name="min_duration">Minimum duration</string>
-    <string name="max_duration">Maximum duration</string>
+    <string name="min_duration">Minimum duration of the program</string>
+    <string name="max_duration">Maximum duration of the program</string>
     <string name="from_to_time">From %1$s to %2$s</string>
     <string name="recording_time">Recording Time</string>
 

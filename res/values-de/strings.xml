@@ -49,6 +49,7 @@
     <string name="remove_all_recordings">Alle Aufnahmen entfernen?</string>
     <string name="cancel_recording">Geplante Aufnahme \'%s\' entfernen?</string>
     <string name="cancel_all_recordings">Alle geplanten Aufnahmen entfernen?</string>
+    <string name="add_title">Gewünschten Titel eingeben</string>
 
     <string name="add_recording">Neue Aufnahme hinzufügen</string>
     <string name="cancel_add_recording">Hinzufügen der Aufnahme verwerfen? Alle Eingaben gehen verloren.</string>
@@ -275,8 +276,8 @@
     <string name="start_window">Startfenster</string>
     <string name="extra_start_time">Zusätzliche Minuten (Vorlaufzeit)</string>
     <string name="extra_stop_time">Zusätzliche Minuten (Nachlaufzeit)</string>
-    <string name="min_duration">Minimale Dauer</string>
-    <string name="max_duration">Maximale Dauer</string>
+    <string name="min_duration">Minimale Dauer der Sendung</string>
+    <string name="max_duration">Maximale Dauer der Sendung</string>
     <string name="from_to_time">Von %1$s bis %2$s</string>
     <string name="recording_time">Aufnahmezeit</string>
 
