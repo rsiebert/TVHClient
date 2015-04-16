@@ -592,7 +592,7 @@ public class Utils {
             // 16 = Friday, 32 = Saturday, 64 = Sunday
             for (int i = 0; i < 7; ++i) {
                 if ((dow & 1) == 1) {
-                    dowValue += dayNames[i] + ",";
+                    dowValue += dayNames[i] + ", ";
                 }
                 dow = (dow >> 1);
             }
