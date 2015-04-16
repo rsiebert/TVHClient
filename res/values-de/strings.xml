@@ -297,6 +297,7 @@
     <string name="server">Server</string>
     <string name="connection">Verbindung</string>
     <string name="disc_space">Speicherplatz</string>
+    <string name="server_api_version">Server API Version</string>
     <string name="total">Total</string>
     <string name="available">Verfügbar</string>
     <string name="unknown">Unbekannt</string>

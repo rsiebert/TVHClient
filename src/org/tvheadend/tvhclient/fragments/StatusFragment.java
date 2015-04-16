@@ -46,6 +46,8 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView seriesRec;
 	private TextView timerRecLabel;
     private TextView timerRec;
+    private TextView serverApiVersionLabel;
+    private TextView serverApiVersion;
 
     private String connectionStatus = "";
     private String freeDiscSpace = "";
@@ -83,6 +85,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         seriesRec = (TextView) v.findViewById(R.id.series_recordings);
         timerRecLabel = (TextView) v.findViewById(R.id.timer_recording_label);
         timerRec = (TextView) v.findViewById(R.id.timer_recordings);
+        serverApiVersionLabel = (TextView) v.findViewById(R.id.server_api_version_label);
+        serverApiVersion = (TextView) v.findViewById(R.id.server_api_version);
         return v;
     }
 
@@ -211,6 +215,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         seriesRec.setVisibility(View.GONE);
         timerRecLabel.setVisibility(View.GONE);
         timerRec.setVisibility(View.GONE);
+        serverApiVersionLabel.setVisibility(View.GONE);
+        serverApiVersion.setVisibility(View.GONE);
 	}
 
     /**
@@ -364,6 +370,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         seriesRec.setVisibility(View.VISIBLE);
         timerRecLabel.setVisibility(View.VISIBLE);
         timerRec.setVisibility(View.VISIBLE);
+        serverApiVersionLabel.setVisibility(View.VISIBLE);
+        serverApiVersion.setVisibility(View.VISIBLE);
 
         // Show either the program being currently recorded or an different string
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
@@ -377,5 +385,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, failedRecCount, failedRecCount));
         seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
         timerRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
+        serverApiVersion.setText(app.getProtocolVersion());
     }
 }

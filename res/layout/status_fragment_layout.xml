@@ -158,6 +158,21 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/unknown" />
+        
+        <TextView
+            android:id="@+id/server_api_version_label"
+            style="?attr/TitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@string/server_api_version" />
+
+        <TextView
+            android:id="@+id/server_api_version"
+            style="?attr/ContentFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unknown" />
     </LinearLayout>
 
 </ScrollView>
