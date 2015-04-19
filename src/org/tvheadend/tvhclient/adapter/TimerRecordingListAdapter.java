@@ -1,10 +1,8 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -63,6 +61,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         public TextView channel;
         public TextView daysOfWeek;
         public TextView time;
+        public TextView duration;
         public TextView isEnabled;
         public ImageView dual_pane_list_item_selection;
     }
@@ -80,6 +79,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.daysOfWeek = (TextView) view.findViewById(R.id.daysOfWeek);
             holder.time = (TextView) view.findViewById(R.id.time);
+            holder.duration = (TextView) view.findViewById(R.id.duration);
             holder.isEnabled = (TextView) view.findViewById(R.id.enabled);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
@@ -113,12 +113,11 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             Utils.setChannelIcon(holder.icon, null, trec.channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, trec.daysOfWeek);
 
-            if (holder.time != null) {
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-                String start = formatter.format(new Date(trec.start * 60L * 1000L));
-                String stop = formatter.format(new Date(trec.stop * 60L * 1000L));
-                holder.time.setText(context.getString(R.string.from_to_time, start, stop));
-            }
+            Date start = new Date(trec.start * 60L * 1000L);
+            Date stop = new Date(trec.stop * 60L * 1000L);
+            Utils.setTime(holder.time, start, stop);
+            Utils.setDuration(holder.duration, start, stop);
+
             if (holder.isEnabled != null) {
                 holder.isEnabled.setVisibility(View.GONE);
 //                if (trec.enabled) {
