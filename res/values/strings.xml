@@ -19,6 +19,7 @@
     <string name="menu_add">Add</string>
     <string name="menu_save">Save</string>
     <string name="menu_cancel">Cancel</string>
+    <string name="menu_purchase">Purchase</string>
     <string name="menu_set_active">Activate</string>
     <string name="menu_set_not_active">Deactivate</string>
     <string name="menu_edit">Edit</string>
@@ -142,8 +143,10 @@
     <string name="pref_misc">Miscellaneous</string>
     <string name="pref_clear_search_history">Clear search history</string>
     <string name="pref_clear_icon_cache">Clear channel icon cache</string>
-    <string name="pref_unlocker">Enable all features</string>
+    <string name="pref_unlocker">Additional features</string>
     <string name="pref_unlocker_sum">Enable access to additional features and support the development by buying this application.</string>
+    <string name="pref_unlocker_exists">All additional features enabled</string>
+    <string name="pref_unlocker_exists_sum">You have bought the unlocked version of TVHClient. Thank you for your support!</string>
 
     <string name="pref_menu_visibility">Menu visibility</string>
     <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>

@@ -151,6 +151,11 @@
             android:key="pref_clear_icon_cache"
             android:title="@string/pref_clear_icon_cache" >
         </Preference>
+        <Preference
+            android:key="pref_unlocker"
+            android:summary="@string/pref_unlocker_sum"
+            android:title="@string/pref_unlocker" >
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory 
         android:title="@string/pref_information" >

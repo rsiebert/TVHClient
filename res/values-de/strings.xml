@@ -19,6 +19,7 @@
     <string name="menu_add">Hinzufügen</string>
     <string name="menu_save">Speichern</string>
     <string name="menu_cancel">Abbrechen</string>
+    <string name="menu_purchase">Kaufen</string>
     <string name="menu_set_active">Aktivieren</string>
     <string name="menu_set_not_active">Deaktivieren</string>
     <string name="menu_edit">Bearbeiten</string>
