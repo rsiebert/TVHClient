@@ -336,13 +336,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             });
         }
 
-        showDrawerMenu(true);
-
         // If the saved instance is not null then we return from an orientation
         // change. The drawer menu could be open, so update the recording
         // counts. Also get any saved values from the bundle.
         if (savedInstanceState != null) {
-            updateDrawerMenu();
             menuStack = savedInstanceState.getIntegerArrayList(Constants.MENU_STACK);
             menuPosition = savedInstanceState.getInt(Constants.MENU_POSITION, MENU_UNKNOWN);
             channelListPosition = savedInstanceState.getInt(Constants.CHANNEL_LIST_POSITION, 0);
@@ -365,6 +362,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         if (conn != null && serverName != null) {
             serverName.setText(conn.name);
         }
+        // Show the full menu
+        showDrawerMenu(true);
+
         // Update the number of recordings in each category
         TVHClientApplication app = (TVHClientApplication) getApplication();
         drawerAdapter.getItemById(MENU_COMPLETED_RECORDINGS).count = 
@@ -373,7 +373,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).count = 
                 app.getSeriesRecordings().size();
-        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).count = 
+        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).count =
                 app.getTimerRecordings().size();
         drawerAdapter.getItemById(MENU_FAILED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
@@ -450,11 +450,16 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // Get the connection status
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, Constants.ACTION_CONNECTION_STATE_OK);
+
+        // Update the full drawer menu so that all available menu items are
+        // shown in case the user has activated the unlocked version
+        updateDrawerMenu();
     }
 
     @Override
     public void onPostResume() {
         super.onPostResume();
+
         // Show the change log once when the application was upgraded. Otherwise
         // start normally. This is handled in the other method.
         if (changeLogDialog.firstRun() && !changeLogDialogShown) {
@@ -881,6 +886,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     }
                 }
             }
+        } else {
+            // No custom request code was returned, nothing to to 
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -996,8 +1004,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Only show the menu for the recording types if the server supports it
         TVHClientApplication app = (TVHClientApplication) getApplication();
-        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show && (app
-                .getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS));
+        drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show
+                && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS));
+
         drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (app
                 .getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS));
 
