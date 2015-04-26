@@ -152,6 +152,10 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
+
+        // Show the add button only when the application is unlocked
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
     }
 
     /**

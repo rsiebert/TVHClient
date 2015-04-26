@@ -35,7 +35,9 @@ public class PlaybackSelectionActivity extends Activity {
         if (ch != null) {
             // Pass on the program profile name, if allowed and available
             Profile p = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
-            if (p != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES) { // && app.isUnlocked()) {
+            if (p != null 
+                    && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                    && app.isUnlocked()) {
                 intent.putExtra("profile", p.name);
             }
             // Pass on the channel id and the other settings
@@ -50,7 +52,9 @@ public class PlaybackSelectionActivity extends Activity {
         } else if (rec != null) {
             // Pass on the recording profile name, if allowed and available
             Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
-            if (p != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES) { // && app.isUnlocked()) {
+            if (p != null 
+                    && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                    && app.isUnlocked()) {
                 intent.putExtra("profile", p.name);
             }
             // Pass on the recording id and the other settings
