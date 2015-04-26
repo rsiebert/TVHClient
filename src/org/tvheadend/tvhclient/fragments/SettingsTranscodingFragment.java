@@ -183,6 +183,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
         if (conn == null) {
             if (settingsInterface != null) {
                 settingsInterface.done(Activity.RESULT_CANCELED);
+                return;
             }
         }
 
