@@ -16,7 +16,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,7 +117,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         // Upon resume show the actual status. If the connection is OK show the
         // full status or that stuff is loading, otherwise hide certain
         // information and show the cause of the connection problem. 
-        Log.d(TAG, "connectionStatus " + connectionStatus);
         hideStatus();
         if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
             onMessage(Constants.ACTION_LOADING, app.isLoading());
@@ -157,7 +155,8 @@ public class StatusFragment extends Fragment implements HTSListener {
 	            || action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
+                || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
 	        activity.runOnUiThread(new Runnable() {
                 public void run() {
                     connectionStatus = action;
@@ -238,11 +237,10 @@ public class StatusFragment extends Fragment implements HTSListener {
         // none is selected or available
         if (conn == null) {
             if (noConnectionsDefined) {
-                connection.setText(getString(R.string.no_connection_available));
+                connection.setText(getString(R.string.no_connection_available_advice));
             } else {
-                connection.setText(getString(R.string.no_connection_active));
+                connection.setText(getString(R.string.no_connection_active_advice));
             }
-            status.setText(getString(R.string.unknown));
         } else {
             if (conn != null) {
                 connection.setText(conn.name + " (" + conn.address + ")");
@@ -261,7 +259,8 @@ public class StatusFragment extends Fragment implements HTSListener {
             status.setText(R.string.err_connect);
         } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
             status.setText(R.string.err_auth);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)) {
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)
+                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
             status.setText(getString(R.string.unknown));
         }
     }
@@ -368,8 +367,11 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setVisibility(View.VISIBLE);
         seriesRecLabel.setVisibility(View.VISIBLE);
         seriesRec.setVisibility(View.VISIBLE);
-        timerRecLabel.setVisibility(View.VISIBLE);
-        timerRec.setVisibility(View.VISIBLE);
+
+        if (app.isUnlocked()) {
+            timerRecLabel.setVisibility(View.VISIBLE);
+            timerRec.setVisibility(View.VISIBLE);
+        }
         serverApiVersionLabel.setVisibility(View.VISIBLE);
         serverApiVersion.setVisibility(View.VISIBLE);
 
@@ -385,6 +387,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, failedRecCount, failedRecCount));
         seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
         timerRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
-        serverApiVersion.setText(app.getProtocolVersion());
+        serverApiVersion.setText(String.valueOf(app.getProtocolVersion()));
     }
 }

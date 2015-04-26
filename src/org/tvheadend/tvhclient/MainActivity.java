@@ -295,10 +295,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Add a listener to the server name to allow changing the current
         // connection. A drop down menu with all connections will be displayed.
-        ImageView serverName = (ImageView) drawerList.findViewById(R.id.server_selection);
-        if (serverName != null) {
+        ImageView serverSelection = (ImageView) drawerList.findViewById(R.id.server_selection);
+        if (serverSelection != null) {
             final Context context = this;
-            serverName.setOnClickListener(new OnClickListener() {
+            serverSelection.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     // Create a list of available connections names that the alert dialog will display
@@ -349,6 +349,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             timerRecordingListPosition = savedInstanceState.getInt(Constants.TIMER_RECORDING_LIST_POSITION, 0);
             failedRecordingListPosition = savedInstanceState.getInt(Constants.FAILED_RECORDING_LIST_POSITION, 0);
             connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
+            connectionSettingsShown = savedInstanceState.getBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN);
         }
     }
 
@@ -356,14 +357,26 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * 
      */
     private void updateDrawerMenu() {
-        // Update the server name if it has been changed
+
         TextView serverName = (TextView) drawerList.findViewById(R.id.server_name);
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        if (conn != null && serverName != null) {
-            serverName.setText(conn.name);
+        ImageView serverSelection = (ImageView) drawerList.findViewById(R.id.server_selection);
+
+        if (serverName != null && serverSelection != null) {
+            final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+            if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
+                // TODO string update
+                serverName.setText(R.string.no_connection_available);
+                serverSelection.setVisibility(View.GONE);
+            } else if (conn == null) {
+                serverName.setText(R.string.no_connection_active);
+                serverSelection.setVisibility(View.GONE);
+            } else {
+                serverName.setText(conn.name);
+                serverSelection.setVisibility(View.VISIBLE);
+            }
         }
         // Show the full menu
-        showDrawerMenu(true);
+        showDrawerMenu();
 
         // Update the number of recordings in each category
         TVHClientApplication app = (TVHClientApplication) getApplication();
@@ -450,6 +463,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // Get the connection status
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, Constants.ACTION_CONNECTION_STATE_OK);
+        connectionSettingsShown = prefs.getBoolean(Constants.LAST_CONNECTION_SETTINGS_SHOWN, false);
 
         // Update the full drawer menu so that all available menu items are
         // shown in case the user has activated the unlocked version
@@ -474,19 +488,15 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * Determines what shall be done when the change log dialog has been closed
      * or the the application has been resumed. If no connection is available or
      * not active, go to the settings screen screen once. If this is still the
-     * case after the user has left the setting screen, go to the status screen
-     * instead. If a connection is present and selected, register so we can
-     * listen for connection status updates. Then connect to the server but do
-     * not reload all data.
+     * case after the user has left the setting screen or the connection state
+     * is not fine, go to the status screen. Otherwise show the defined menu
      */
     private void reconnectAndResume() {
-        if (DatabaseHelper.getInstance() != null
+        if (!connectionSettingsShown
                 && (DatabaseHelper.getInstance().getConnections().isEmpty() 
                         || DatabaseHelper.getInstance().getSelectedConnection() == null)) {
-            // No connection is present or active
-            final int menu = (connectionSettingsShown) ? MENU_STATUS : MENU_CONNECTIONS;
             connectionSettingsShown = true;
-            handleMenuSelection(menu);
+            handleMenuSelection(MENU_CONNECTIONS);
         } else {
             // Connection exists and is active
             TVHClientApplication app = (TVHClientApplication) getApplication();
@@ -497,9 +507,16 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // is not set, use the the default one defined in the settings
             int pos = (menuPosition == MENU_UNKNOWN) ? defaultMenuPosition : menuPosition;
 
-            // If the connection status is fine go to the previous selected
-            // connection or the default. If it contains a state then show
-            // the status fragment.
+            // Set the connection state to unknown if no connection was added
+            // when the connection fragment was shown. The status fragment is
+            // then shown with the information that no connection is available
+            if (DatabaseHelper.getInstance().getConnections().isEmpty() 
+                    || DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                connectionStatus = Constants.ACTION_CONNECTION_STATE_NONE;
+            }
+
+            // Show the defined fragment from the menu position or the status if
+            // the connection state is not fine
             handleMenuSelection((connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) ? pos : MENU_STATUS);
         }
     }
@@ -509,11 +526,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         super.onPause();
         TVHClientApplication app = (TVHClientApplication) getApplication();
         app.removeListener(this);
-        
+
         // Save the previously active connection status
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.LAST_CONNECTION_STATE, connectionStatus);
+        editor.putBoolean(Constants.LAST_CONNECTION_SETTINGS_SHOWN, connectionSettingsShown);
         editor.commit();
     }
 
@@ -542,6 +560,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         outState.putInt(Constants.TIMER_RECORDING_LIST_POSITION, timerRecordingListPosition);
         outState.putInt(Constants.FAILED_RECORDING_LIST_POSITION, failedRecordingListPosition);
         outState.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
+        outState.putBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN, connectionSettingsShown);
         super.onSaveInstanceState(outState);
     }
 
@@ -963,10 +982,18 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 }
             });
         } else if (action.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
+            connectionStatus = action;
             runOnUiThread(new Runnable() {
                 public void run() {
-                    showDrawerMenu(true);
-                    connectionStatus = action;
+                    showDrawerMenu();
+                }
+            });
+        } else if (action.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
+            connectionStatus = action;
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    showDrawerMenu();
+                    handleMenuSelection(MENU_STATUS);
                 }
             });
         } else if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
@@ -974,13 +1001,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
-            // Only show the new connection status if the last status was fine
+            connectionStatus = action;
+            // Go to the status screen if an error has occurred from a previously
+            // working connection
             if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        showDrawerMenu(false);
-                        connectionStatus = action;
                         channelLoadingList.clear();
+                        showDrawerMenu();
                         handleMenuSelection(MENU_STATUS);
                     }
                 });
@@ -994,7 +1022,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * 
      * @param show
      */
-    private void showDrawerMenu(boolean show) {
+    private void showDrawerMenu() {
+        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK);
+
         // Enable the main menus in the drawer
         drawerAdapter.getItemById(MENU_CHANNELS).isVisible = show;
         drawerAdapter.getItemById(MENU_COMPLETED_RECORDINGS).isVisible = show;
@@ -1005,7 +1035,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // Only show the menu for the recording types if the server supports it
         TVHClientApplication app = (TVHClientApplication) getApplication();
         drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show
-                && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS));
+                && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS)
+                && app.isUnlocked());
 
         drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (app
                 .getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS));

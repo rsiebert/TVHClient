@@ -33,6 +33,7 @@ public class Constants {
     public static final String BUNDLE_EPG_END_TIME = "epgEndTime";
     public static final String BUNDLE_EPG_HOURS_TO_SHOW = "epgHoursToShow";
     public static final String BUNDLE_EPG_INDEX = "showControls";
+    public static final String BUNDLE_CONNECTION_SETTINGS_SHOWN = "connectionSettingsShown";
     public static final String BUNDLE_CONNECTION_STATUS = "connectionStatus";
     public static final String BUNDLE_CONNECTION_ID = "connectionId";
     public static final String BUNDLE_MANAGE_CONNECTIONS = "manageConnections";
@@ -57,6 +58,7 @@ public class Constants {
     public static final String TIMER_RECORDING_LIST_POSITION = "timer_recording_list_position";
     public static final String FAILED_RECORDING_LIST_POSITION = "failed_recording_list_position";
     public static final String LAST_CONNECTION_STATE = "last_connection_state";
+    public static final String LAST_CONNECTION_SETTINGS_SHOWN = "last_connection_settings_shown";
 
     // Default values for the program guide
     public static final String EPG_DEFAULT_MAX_DAYS = "7";
