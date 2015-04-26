@@ -144,13 +144,13 @@ public class Utils {
      * @param force
      */
     public static void connect(final Context context, final boolean force) {
-        Intent intent = null;
-        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        // Create an intent and pass on the connection details
+        Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(Constants.ACTION_CONNECT);
+
+        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
-            // Create an intent and pass on the connection details
-            intent = new Intent(context, HTSService.class);
-            intent.setAction(Constants.ACTION_CONNECT);
             intent.putExtra("hostname", conn.address);
             intent.putExtra("port", conn.port);
             intent.putExtra("username", conn.username);

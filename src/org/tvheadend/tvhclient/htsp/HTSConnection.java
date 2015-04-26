@@ -66,7 +66,13 @@ public class HTSConnection extends Thread {
 
     // synchronized, blocking connect
     public void open(String hostname, int port) {
+
         if (running) {
+            return;
+        }
+
+        if (hostname == null) {
+            listener.onError(Constants.ACTION_CONNECTION_STATE_NONE);
             return;
         }
 
