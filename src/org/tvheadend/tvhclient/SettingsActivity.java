@@ -79,8 +79,8 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onPostResume() {
+        super.onPostResume();
         // When the orientation was changed the last visible fragment is
         // available from the manager. If this is the case get it and show it
         // again.
