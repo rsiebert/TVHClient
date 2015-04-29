@@ -4,16 +4,19 @@ import java.io.File;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.UnlockerActivity;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -21,14 +24,14 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();
     
-    private Activity activity;
+    private ActionBarActivity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
 
@@ -53,38 +56,46 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
         });
 
-        // Add a listener so that the profiles and play and recording options can be set
-        Preference prefMenuProfiles = findPreference("pref_menu_profiles");
+        // Add a listener so that the streaming profiles can be selected.
+        final Preference prefMenuProfiles = findPreference("pref_menu_profiles");
         if (prefMenuProfiles != null) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
-                prefMenuProfiles.setEnabled(false);
-                prefMenuProfiles.setSummary(R.string.feature_not_supported_by_server);
-//            } else if (!app.isUnlocked()) {
-//                prefMenuProfiles.setEnabled(false);
-//                prefMenuProfiles.setSummary(R.string.feature_not_available_in_free_version);
-            } else {
-                prefMenuProfiles.setSummary(R.string.pref_profiles_sum);
-                prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
+            prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+                    if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
+                        Toast.makeText(activity, getString(R.string.no_connection_available_advice), Toast.LENGTH_SHORT).show();
+                    } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                        Toast.makeText(activity, getString(R.string.no_connection_active_advice), Toast.LENGTH_SHORT).show();
+                    } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                        Toast.makeText(activity, getString(R.string.feature_not_supported_by_server), Toast.LENGTH_SHORT).show();
+                    } else if (!app.isUnlocked()) {
+                        Toast.makeText(activity, getString(R.string.feature_not_available_in_free_version), Toast.LENGTH_SHORT).show();
+                    } else {
                         if (settingsInterface != null) {
                             settingsInterface.showProfiles();
                         }
-                        return false;
                     }
-                });
-            }
+                    return false;
+                }
+            });
         }
 
-        // Add a listener so that the profiles and play and recording options can be set
+        // Add a listener so that the transcoding parameters for the programs
+        // and recordings can be set
         Preference prefMenuTranscoding = findPreference("pref_menu_transcoding");
         if (prefMenuTranscoding != null) {
             prefMenuTranscoding.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    if (settingsInterface != null) {
-                        settingsInterface.showTranscodingSettings();
+                    if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
+                        Toast.makeText(activity, getString(R.string.no_connection_available_advice), Toast.LENGTH_SHORT).show();
+                    } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                        Toast.makeText(activity, getString(R.string.no_connection_active_advice), Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (settingsInterface != null) {
+                            settingsInterface.showTranscodingSettings();
+                        }
                     }
                     return false;
                 }
@@ -103,12 +114,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
         });
         
-        // Add a listener to the clear search history preference so that it can be cleared.
+        // Add a listener to the preference so that the user can clear the search history
         Preference prefClearSearchHistory = findPreference("pref_clear_search_history");
         prefClearSearchHistory.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                // Show a confirmation dialog before deleting the recording
+                // Show a confirmation dialog before clearing the search history
                 new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.clear_search_history)
                 .setMessage(getString(R.string.clear_search_history_sum))
@@ -127,12 +138,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
         });
 
-        // Add a listener to the clear icon cache preference so that it can be cleared.
+        // Add a listener to the preference so that the channel icon cache can be cleared.
         Preference prefClearIconCache = findPreference("pref_clear_icon_cache");
         prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                // Show a confirmation dialog before deleting the recording
+                // Show a confirmation dialog before clearing the icon cache
                 new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.clear_icon_cache)
                 .setMessage(getString(R.string.clear_icon_cache_sum))
@@ -157,11 +168,31 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 return false;
             }
         });
+
+        // Add a listener to the preference to show the activity with the
+        // information about the extra features that can be unlocked
+        Preference prefPurchaseUnlocker = findPreference("pref_unlocker");
+        if (prefPurchaseUnlocker != null) {
+            prefPurchaseUnlocker.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+                    if (app.isUnlocked()) {
+                        Toast.makeText(getActivity(), getString(R.string.unlocker_already_purchased), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent settingsIntent = new Intent(activity, UnlockerActivity.class);
+                        startActivity(settingsIntent);
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
@@ -177,7 +208,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -188,7 +219,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     public void onResume() {
-        super.onResume();       
+        super.onResume();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
