@@ -4,8 +4,9 @@
     android:versionCode="31"
     android:versionName="1.7.6" >
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
     
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="21" />
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="21" />
     <application 
         android:allowBackup="true"
         android:name="org.tvheadend.tvhclient.TVHClientApplication" 
@@ -35,6 +36,7 @@
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
+        <activity android:name="org.tvheadend.tvhclient.UnlockerActivity"/>
         <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
         <activity android:name="org.tvheadend.tvhclient.PlaybackSelectionActivity" />
         <activity android:name="org.tvheadend.tvhclient.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
