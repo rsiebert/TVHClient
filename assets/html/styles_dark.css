@@ -1,0 +1,25 @@
+div.title { 
+	color:rgba(255,255,255,0.8);
+	font-size:1.2em;
+	margin-left:0.4em;
+	margin-right:0.4em;
+	margin-top:0.7em;
+	margin-bottom:0.4em;
+	text-align:left;
+}
+div.subtitle {
+	color:rgba(255,255,255,0.67);
+	margin-left:0.6em; 
+	margin-bottom:0.0em; 
+	text-align:left;
+}
+div.content { 
+	color:rgba(255,255,255,0.5);
+	margin-left:0.4em;
+	margin-right:0.4em;
+	margin-top:0.7em;
+	margin-bottom:0.4em;
+}
+div.list { 
+	color:rgba(255,255,255,0.5);
+}
