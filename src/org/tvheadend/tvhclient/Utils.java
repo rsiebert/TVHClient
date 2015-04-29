@@ -1,5 +1,8 @@
 package org.tvheadend.tvhclient;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,6 +36,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -44,6 +48,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class Utils {
+
+    @SuppressWarnings("unused")
+    private final static String TAG = Utils.class.getSimpleName();
 
     // Constants required for the date calculation
     private static final int twoDays = 1000 * 3600 * 24 * 2;
@@ -1060,4 +1067,76 @@ public class Utils {
 	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return Integer.parseInt(prefs.getString("sortChannelsPref", String.valueOf(Constants.CHANNEL_SORT_DEFAULT)));
 	}
+
+    /**
+     * Returns the public key that is required to make in-app purchases. The key
+     * which is ciphered is located in the assets folder.
+     * 
+     * @return
+     */
+	public static String getPublicKey(Context context) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            String keyData;
+            InputStream is = context.getAssets().open("public_key");
+            BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            while ((keyData = in.readLine()) != null) {
+                sb.append(keyData);
+            }
+            in.close();
+        } catch (Exception ex) {
+            // NOP
+        }
+
+        final String SALT = "rsiebert80@gmail.com";
+
+        // Note that this is not plain public key but public key encoded with
+        // x() method. As symmetric ciphering is used in x() the same method is
+        // used for both ciphering and deciphering. Additionally result of the
+        // ciphering is converted to Base64 string => for deciphering with need
+        // to convert it back. Generally, x(fromBase64(toBase64(x(PK, salt))),
+        // salt) == PK To cipher use toX(), to decipher - fromX()
+        return fromX(sb.toString(), SALT);
+    }
+
+    /**
+     * Method deciphers previously ciphered message
+     * @param message ciphered message
+     * @param salt salt which was used for ciphering
+     * @return deciphered message
+     */
+    static String fromX(String message, String salt) {
+        return x(new String(Base64.decode(message, 0)), salt);
+    }
+
+    /**
+     * Method ciphers message. Later {@link #fromX} method might be used for deciphering
+     * @param message message to be ciphered
+     * @param salt salt to be used for ciphering
+     * @return ciphered message
+     */
+    static String toX(String message, String salt) {
+        return new String(Base64.encode(x(message, salt).getBytes(), 0));
+    }
+
+    /**
+     * Symmetric algorithm used for ciphering/deciphering. Note that in your application you probably want to modify
+     * the algorithm used for ciphering/deciphering.
+     * @param message message
+     * @param salt salt
+     * @return ciphered/deciphered message
+     */
+    static String x(String message, String salt) {
+        final char[] m = message.toCharArray();
+        final char[] s = salt.toCharArray();
+
+        final int ml = m.length;
+        final int sl = s.length;
+        final char[] result = new char[ml];
+
+        for (int i = 0; i < ml; i++) {
+            result[i] = (char) (m[i] ^ s[i % sl]);
+        }
+        return new String(result);
+    }
 }

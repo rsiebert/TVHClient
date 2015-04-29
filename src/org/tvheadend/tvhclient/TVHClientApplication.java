@@ -21,8 +21,15 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 import android.app.Application;
 import android.content.Context;
 import android.util.SparseArray;
+import android.widget.Toast;
 
-public class TVHClientApplication extends Application {
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.TransactionDetails;
+
+public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
+
+    @SuppressWarnings("unused")
+    private final static String TAG = TVHClientApplication.class.getSimpleName();
 
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
@@ -35,7 +42,14 @@ public class TVHClientApplication extends Application {
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
     private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
 
+    // This handles all billing related activities like purchasing and checking
+    // if a purchase was made 
+    private BillingProcessor bp;
+
+    // Indication that data is being loaded
     private volatile boolean loading = false;
+
+    // The default protocol version that is assumed the server supports
     private int protocolVersion = 10;
 
     // Holds a list of channels that are not allowed to load because the EPG
@@ -903,5 +917,65 @@ public class TVHClientApplication extends Application {
 
     public List<Profiles> getProfiles() {
         return profiles;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        bp = new BillingProcessor(this, Utils.getPublicKey(this), this);
+    }
+
+    /**
+     * Checks if the user has purchased the unlocker from the play store. If yes
+     * then all extra features shall be accessible. The application is unlocked.
+     * 
+     * @return True if the application is unlocked otherwise false
+     */
+    public boolean isUnlocked() {
+        return (bp.isInitialized() && bp.isPurchased(Constants.UNLOCKER));
+    }
+
+    @Override
+    public void onTerminate() {
+        if (bp != null) {
+            bp.release();
+        }
+        super.onTerminate();
+    }
+
+    /**
+     * Returns the billing processor object that can be used by other classes to
+     * access billing related features
+     * 
+     * @return
+     */
+    public BillingProcessor getBillingProcessor() {
+        return bp;
+    }
+
+    @Override
+    public void onBillingError(int errorCode, Throwable error) {
+        // NOP
+    }
+
+    @Override
+    public void onBillingInitialized() {
+        // NOP
+    }
+
+    @Override
+    public void onProductPurchased(String productId, TransactionDetails details) {
+        if (bp.isValid(details)) {
+            Toast.makeText(getApplicationContext(), 
+                    getString(R.string.unlocker_purchase_successful), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), 
+                    getString(R.string.unlocker_purchase_not_successful), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onPurchaseHistoryRestored() {
+        // NOP
     }
 }
