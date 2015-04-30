@@ -1,11 +1,14 @@
 package org.tvheadend.tvhclient;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -51,11 +54,25 @@ public class UnlockerActivity extends ActionBarActivity {
             }
             sb.append("</head><body>");
 
+            // Open the HTML file of the defined language. This is determined by
+            // the locale. If the file doesn't exist, open the default (English)
+            InputStream is = null;
+            try {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String locale = prefs.getString("languagePref", "en").substring(0, 2);
+                is = getAssets().open("html/features_" + locale.substring(0, 2) + ".html");
+            } catch (IOException ex1) {
+                try {
+                    is = getAssets().open("html/features_en.html");
+                } catch (IOException ex2) {
+                    
+                }
+            }
+
             // Try to parse the HTML contents from the given asset file. It
             // contains the feature description with the required HTML tags.
             try {
                 String htmlData;
-                InputStream is = getAssets().open("html/features.html");
                 BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
                 while ((htmlData = in.readLine()) != null) {
                     sb.append(htmlData);
