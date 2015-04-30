@@ -6,9 +6,5 @@
         android:id="@+id/menu_purchase"
         android:title="@string/purchase"
         app:showAsAction="ifRoom|withText"/>
-    <item
-        android:id="@+id/menu_discard"
-        android:title="@string/discard"
-        app:showAsAction="ifRoom|withText"/>
 
 </menu>

@@ -117,10 +117,6 @@ public class UnlockerActivity extends ActionBarActivity {
             }
             return true;
 
-        case R.id.menu_discard:
-            finish();
-            return true;
-
         default:
             return super.onOptionsItemSelected(item);
         }
