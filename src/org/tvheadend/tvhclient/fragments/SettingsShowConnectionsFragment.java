@@ -129,7 +129,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         adapter.sort();
         adapter.notifyDataSetChanged();
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.menu_settings), TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
             actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
         }
     }
@@ -222,7 +222,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             // Show confirmation dialog to cancel 
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setMessage(getString(R.string.delete_connection, c.name));
-            builder.setTitle(getString(R.string.menu_delete));
+            builder.setTitle(getString(R.string.delete));
             // Define the action of the yes button
             builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {

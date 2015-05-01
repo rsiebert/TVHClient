@@ -78,7 +78,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(R.string.menu_search);
+        actionBar.setTitle(R.string.search);
         actionBar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
 
         listView = (ListView) findViewById(R.id.item_list);

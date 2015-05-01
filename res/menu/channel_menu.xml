@@ -6,16 +6,16 @@
         android:id="@+id/menu_play"
         android:icon="?attr/ic_menu_play"
         android:orderInCategory="2"
-        android:title="@string/menu_play"
+        android:title="@string/play"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_tags"
         android:icon="?attr/ic_menu_tags"
         android:orderInCategory="5"
-        android:title="@string/menu_tags"/>
+        android:title="@string/tags"/>
     <item
         android:id="@+id/menu_genre_color_info_channels"
         android:orderInCategory="6"
-        android:title="@string/menu_genre_color_info"/>
+        android:title="@string/genre_color_info"/>
 
 </menu>

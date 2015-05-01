@@ -228,7 +228,7 @@ public class Utils {
 
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
-        .setTitle(R.string.menu_record_remove)
+        .setTitle(R.string.record_remove)
         .setMessage(message)
         .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -267,7 +267,7 @@ public class Utils {
         }
         // Show a confirmation dialog before deleting the recording
         new AlertDialog.Builder(context)
-        .setTitle(R.string.menu_record_cancel)
+        .setTitle(R.string.record_cancel)
         .setMessage(context.getString(R.string.cancel_recording, rec.title))
         .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

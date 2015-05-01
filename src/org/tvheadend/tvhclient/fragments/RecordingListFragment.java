@@ -136,7 +136,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         case R.id.menu_record_remove_all:
             // Show a confirmation dialog before deleting all recordings
             new AlertDialog.Builder(activity)
-                    .setTitle(R.string.menu_record_remove_all)
+                    .setTitle(R.string.record_remove_all)
                     .setMessage(getString(R.string.remove_all_recordings))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -157,7 +157,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         case R.id.menu_record_cancel_all:
             // Show a confirmation dialog before canceling all recordings
             new AlertDialog.Builder(activity)
-                    .setTitle(R.string.menu_record_cancel_all)
+                    .setTitle(R.string.record_cancel_all)
                     .setMessage(getString(R.string.cancel_all_recordings))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {

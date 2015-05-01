@@ -169,7 +169,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Create the dialog with the available channel tags
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.menu_tags);
+        builder.setTitle(R.string.tags);
 
         tagAdapter = new ChannelTagListAdapter(activity, new ArrayList<ChannelTag>());
         builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {

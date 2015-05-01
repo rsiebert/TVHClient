@@ -13,6 +13,6 @@
         android:id="@+id/menu_refresh"
         android:icon="?attr/ic_menu_refresh"
         android:orderInCategory="10"
-        android:title="@string/menu_refresh"/>
+        android:title="@string/refresh"/>
 
 </menu>

@@ -2,42 +2,34 @@
 <resources>
     <string name="app_name">TVHClient</string>
 
-    <string name="menu_settings">Ustawienia</string>
-    <string name="menu_refresh">Odśwież</string>
-    <string name="menu_tags">Tagi</string>
-
-    <string name="menu_play">Odtwórz</string>
-    <string name="menu_search">Szukaj</string>
-    <string name="menu_record_once">Nagraj</string>
-    <string name="menu_record_series">Nagrywanie serii(Autorec)</string>
-    <string name="menu_record_cancel">Anuluj nagrywanie</string>
-    <string name="menu_record_cancel_all">Anuluj wszystkie nagrywania</string>
-    <string name="menu_record_remove">Usuń nagranie</string>
-    <string name="menu_record_remove_all">Usuń wszystkie nagrania</string>
-    <string name="menu_search_imdb">Szukaj na IMDB</string>
-    <string name="menu_search_epg">Szukaj w przewodniku programów</string>
-    <string name="menu_add">Dodaj</string>
-    <string name="menu_save">Zapisz</string>
-    <string name="menu_cancel">Anuluj</string>
-    <string name="menu_set_active">Aktywuj</string>
-    <string name="menu_set_not_active">Dezaktywuj</string>
-    <string name="menu_edit">Edycja</string>
-    <string name="menu_delete">Usuń</string>
-    <string name="menu_connections">Połączenia</string>
-    <string name="menu_timeframe">Ramy czasowe</string>
-    <string name="menu_genre_color_info">Objaśnienie rodzaju kolorów</string>
-    <string name="menu_send_wol">Wybudzenie</string>
-    
-    <string name="pref_manage_connections">Zarządzanie połączeniami</string>
-    <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
-    <string name="pref_connection_details">Connection details</string>
-    <string name="pref_connection_wol">Wake on LAN</string>
+    <string name="settings">Ustawienia</string>
+    <string name="refresh">Odśwież</string>
+    <string name="tags">Tagi</string>
+    <string name="play">Odtwórz</string>
+    <string name="search">Szukaj</string>
+    <string name="record_once">Nagraj</string>
+    <string name="record_series">Nagrywanie serii(Autorec)</string>
+    <string name="record_cancel">Anuluj nagrywanie</string>
+    <string name="record_cancel_all">Anuluj wszystkie nagrywania</string>
+    <string name="record_remove">Usuń nagranie</string>
+    <string name="record_remove_all">Usuń wszystkie nagrania</string>
+    <string name="search_imdb">Szukaj na IMDB</string>
+    <string name="search_epg">Szukaj w przewodniku programów</string>
+    <string name="add">Dodaj</string>
+    <string name="save">Zapisz</string>
+    <string name="cancel">Anuluj</string>
+    <string name="set_active">Aktywuj</string>
+    <string name="set_not_active">Dezaktywuj</string>
+    <string name="edit">Edycja</string>
+    <string name="delete">Usuń</string>
+    <string name="connections">Połączenia</string>
+    <string name="timeframe">Ramy czasowe</string>
+    <string name="genre_color_info">Objaśnienie rodzaju kolorów</string>
+    <string name="send_wol">Wybudzenie</string>
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
     <string name="confirm_cancel">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
-    <string name="cancel">Anuluj</string>
     <string name="remove">Usuń</string>
-    <string name="delete">Kasować</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="remove_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>
     <string name="remove_series_recording">Czy na pewno chcesz usunąć nagrywanie serii \'%s\'?\n\nTo usunie wszystkie zaplanowane nagrania, które należą do tej zasady nagrywania serii.</string>
@@ -48,6 +40,10 @@
     <string name="add_recording">Dodaj nowe nagrywanie</string>
     <string name="cancel_add_recording">Anulować dodawanie nowego nagrywania? Wszystkie wartości zostaną utracone.</string>
 
+    <string name="pref_manage_connections">Zarządzanie połączeniami</string>
+    <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
+    <string name="pref_connection_details">Connection details</string>
+    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="pref_connections">Połączenia</string>
     <string name="pref_name">Nazwa połączenia</string>
     <string name="pref_name_sum">Wpisz unikalną nazwę połączenia</string>
@@ -77,7 +73,6 @@
     <string name="pref_wol_broadcast">Użyj rozgłaszania</string>
     <string name="pref_wol_broadcast_sum">Wyślij pakiet WOL w transmisji. Niektóre routery nie pozwalają na transmisję WOL.</string>
     <string name="pref_wol_address_invalid">MAC adres jest nieprawidłowy.\nMusi mieć postać \'01:24:67:9a:cd:ef\' i może zawierać tylko znaki w systemie szesnastkowym \'0\-9\' i \'a\-f\' i separatory \':\' lub \'-\'.</string>
-
     <string name="pref_user_interface">Interfejs użytkownika</string>
     <string name="pref_icons">Ikony kanałów</string>
     <string name="pref_icons_sum">Pokaż ikony kanałów</string>
@@ -101,13 +96,11 @@
     <string name="pref_scodec_sum">Kodek napisów użyty przy transkodowaniu.</string>
     <string name="pref_container">Kontener mediów</string>
     <string name="pref_container_sum">Definiuje kontener mediów używany do transkodowania strumienia audio i video. Matroshka jest zwykle najlepszym wyborem.</string>
-
     <string name="pref_playback">Odtwarzanie</string>
     <string name="pref_playback_programs_sum">Opcje konfiguracji odtwarzania dla programów telewizji na żywo.</string>
     <string name="pref_playback_recordings_sum">Opcje konfiguracji odtwarzania dla nagranych programów.</string>
     <string name="pref_transcode">Transkodowanie strumienia</string>
     <string name="pref_transcode_sum">Konwersja programu lub nagrania na inny format podczas odtwarzania. (Opcja musi być obsługiwana przez serwer TVHeadend)</string>
-
     <string name="pref_information">Informacja</string>
     <string name="pref_changelog">Historia zmian</string>
     <string name="pref_changelog_sum">Pokaż listę funkcji i zmian dla poszczególnych wersji aplikacji.</string>
@@ -135,15 +128,12 @@
     <string name="pref_clear_icon_cache">Wyczyść cache ikon kanałów</string>
     <string name="pref_unlocker">Włacz wszystkie opcję</string>
     <string name="pref_unlocker_sum">Włącz dostęp do zaawansowanych opcji i wspieraj rozwój przez zakup tej aplikacji.</string>
-    
     <string name="pref_menu_visibility">Widoczność menu</string>
     <string name="pref_menu_visibility_sum">Ukryj lub pokaż niektóre elemnty menu.</string>
     <string name="pref_hide_menu_delete_all_recordings">Ukryj w menu \'Usuń wszystkie nagrania\'</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Nie pokazuj tego menu, aby zapobiec przypadkowemu usunięciu wszystkich nagranych programów.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Ukryj w menu \'Anuluj wszystkie nagrania\'</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Nie pokazuj tego menu, aby zapobiec przypadkowemu anulowaniu wszystkich zaplanowanych nagrań programów.</string>
-
-    <string name="loading_profiles">Ładowanie profili</string>
     <string name="pref_profiles">Profile</string>
     <string name="pref_profiles_sum">Określ parametry lub profil (jeśli jest obsługiwany), jak programy będą nagrywane lub jak nagrania będą odtwarzane.</string>
     <string name="pref_recording_profiles">Profile nagrywania</string>
@@ -156,10 +146,11 @@
     <string name="pref_show_next_program_sum">Nazwa zbliżającego się programu jest wyświetlana na liście kanałów. Nazwa jest wyświetlana poniżej paska postępu nadawanego programu.</string>
     <string name="pref_programs">Programy</string>
 
+    <string name="loading_profiles">Ładowanie profili</string>
+
     <string name="clear_search_history">Wyczyścić historię wyszukiwania?</string>
     <string name="clear_search_history_sum">Jesteś pewny, że chcesz usunąć wszystkie wpisy z historii wyszukiwania?</string>
     <string name="clear_search_history_done">Historia wyszukiwania wyczyszczona</string>
-
     <string name="clear_icon_cache">Wyczyścić cache ikon kanałów?</string>
     <string name="clear_icon_cache_sum">Jesteś pewny, że chcesz usunąć wszystkie ikony kanałów? Możesz to zrobić aby pobrać zaktualizowane ikony kanałów z serwera.</string>
     <string name="clear_icon_cache_done">Cache ikon kanałów wyczyszczony</string>

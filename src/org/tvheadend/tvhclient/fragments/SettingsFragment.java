@@ -200,7 +200,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             settingsInterface = (SettingsInterface) activity;
         }
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.menu_settings), TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
             actionBarInterface.setActionBarSubtitle("", TAG);
         }
     }

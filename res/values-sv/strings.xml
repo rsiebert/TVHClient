@@ -2,42 +2,34 @@
 <resources>
     <string name="app_name">TVHClient</string>
 
-    <string name="menu_settings">Inställningar</string>
-    <string name="menu_refresh">Uppdatera</string>
-    <string name="menu_tags">Taggar</string>
-
-    <string name="menu_play">Spela</string>
-    <string name="menu_search">Sök</string>
-    <string name="menu_record_once">Spela in</string>
-    <string name="menu_record_series">Spela in (Autorec)</string>
-    <string name="menu_record_cancel">Avbryt inspelning</string>
-    <string name="menu_record_cancel_all">Avbryt alla inspelningar</string>
-    <string name="menu_record_remove">Ta bort inspelning</string>
-    <string name="menu_record_remove_all">Ta bort alla inspelningar</string>
-    <string name="menu_search_imdb">Sök på IMDB</string>
-    <string name="menu_search_epg">Sök i EPG</string>
-    <string name="menu_add">Lägg till</string>
-    <string name="menu_save">Spara</string>
-    <string name="menu_cancel">Avbryt</string>
-    <string name="menu_set_active">Aktivera</string>
-    <string name="menu_set_not_active">Avaktivera</string>
-    <string name="menu_edit">Editera</string>
-    <string name="menu_delete">Ta bort</string>
-    <string name="menu_connections">Anslutningar</string>
-    <string name="menu_timeframe">Tidsram</string>
-    <string name="menu_genre_color_info">Förklara genrefärger</string>
-    <string name="menu_send_wol">Vakna upp</string>
-
-    <string name="pref_manage_connections">Hantera anslutningar</string>
-    <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
-    <string name="pref_connection_details">Detaljer om ansluting</string>
-    <string name="pref_connection_wol">Wake on LAN</string>
+    <string name="settings">Inställningar</string>
+    <string name="refresh">Uppdatera</string>
+    <string name="tags">Taggar</string>
+    <string name="play">Spela</string>
+    <string name="search">Sök</string>
+    <string name="record_once">Spela in</string>
+    <string name="record_series">Spela in (Autorec)</string>
+    <string name="record_cancel">Avbryt inspelning</string>
+    <string name="record_cancel_all">Avbryt alla inspelningar</string>
+    <string name="record_remove">Ta bort inspelning</string>
+    <string name="record_remove_all">Ta bort alla inspelningar</string>
+    <string name="search_imdb">Sök på IMDB</string>
+    <string name="search_epg">Sök i EPG</string>
+    <string name="add">Lägg till</string>
+    <string name="save">Spara</string>
+    <string name="cancel">Avbryt</string>
+    <string name="set_active">Aktivera</string>
+    <string name="set_not_active">Avaktivera</string>
+    <string name="edit">Editera</string>
+    <string name="delete">Ta bort</string>
+    <string name="connections">Anslutningar</string>
+    <string name="timeframe">Tidsram</string>
+    <string name="genre_color_info">Förklara genrefärger</string>
+    <string name="send_wol">Vakna upp</string>
     <string name="select_connection">Välj anslutning</string>
     <string name="add_connection">Lägg till anslutning</string>
     <string name="confirm_cancel">Kassera värden? Alla ändringar kommer att försvinna.</string>
-    <string name="cancel">Avboka</string>
     <string name="remove">Avlägsna</string>
-    <string name="delete">Ta bort</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
     <string name="remove_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
     <string name="remove_series_recording">Vill du verkligen ta bort serieinspelningen \'%s\'?\n\nDetta kommer ta bort alla schemalagda inspelningar som tillhör denna serieinspelningsregel.</string>
@@ -48,6 +40,10 @@
     <string name="add_recording">Lägg till inspelning</string>
     <string name="cancel_add_recording">Ångra lägg till ny inspelning? Alla värden går förlorade.</string>
 
+    <string name="pref_manage_connections">Hantera anslutningar</string>
+    <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
+    <string name="pref_connection_details">Detaljer om ansluting</string>
+    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="pref_connections">Anslutningar</string>
     <string name="pref_name">Anslutningsnamn</string>
     <string name="pref_name_sum">Fyll i ett unikt namn på anslutningen</string>
@@ -77,7 +73,6 @@
     <string name="pref_wol_broadcast">Använd Broadcast</string>
     <string name="pref_wol_broadcast_sum">Skicka WOL paket som broadcast. Vissa routrar stödjer inte denna typ av WOL.</string>
     <string name="pref_wol_address_invalid">MAC adressen är ogiltig.\nDen måste skrivas enligt mönster \'01:24:67:9a:cd:ef\' och får endast innehålla hexadecimala tecknen 0\-9 och a\-f samt separeras med \':\' eller \'\-\'.</string>
-
     <string name="pref_user_interface">Användargränssnitt</string>
     <string name="pref_icons">Kanalikoner</string>
     <string name="pref_icons_sum">Visa kanalikoner?</string>
@@ -101,13 +96,11 @@
     <string name="pref_scodec_sum">Definiera undertextformat som transkoderingen skall använda.</string>
     <string name="pref_container">Mediakontainer</string>
     <string name="pref_container_sum">Definiera mediakontainer som skall användas för ljud och videoströmmar. Matroska är normalt det föredragna alternativet.</string>
-    
     <string name="pref_playback">Uppspelning</string>
     <string name="pref_playback_programs_sum">Konfigurera uppspelningsval för Live-TV.</string>
     <string name="pref_playback_recordings_sum">Konfigurera uppspelningsval för inspelningar.</string>
     <string name="pref_transcode">Transkodera ström</string>
     <string name="pref_transcode_sum">Konvertera Live-TV eller inspelning till ett annat format under uppspelning. (Stöd för detta i TVHeadend-servern krävs)</string>
-
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Ändringslogg</string>
     <string name="pref_changelog_sum">Visa en lista på funktioner och ändringar i de olika versionerna av applikationen.</string>
@@ -135,15 +128,12 @@
     <string name="pref_clear_icon_cache">Rensa kanalikon cache</string>
     <string name="pref_unlocker">Aktivera alla funktioner</string>
     <string name="pref_unlocker_sum">Aktivera tillgång till ytterligare funktioner och stödja utvecklingen genom att köpa det här programmet.</string>
-
     <string name="pref_menu_visibility">Menysynlighet</string>
     <string name="pref_menu_visibility_sum">Göm eller visa vissa menyposter.</string>
     <string name="pref_hide_menu_delete_all_recordings">Göm \'Ta bort alla inspelningar\' menyn</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Visa inte denna meny för att undvika att alla inspelade program tas bort av misstag.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Göm \'Avbryt alla inspelningar\' menyn</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Visa inte denna meny för att undvika att avbryta alla schemalagda inspelningar.</string>
-    
-    <string name="loading_profiles">Laddar profiler</string>
     <string name="pref_profiles">Profiler</string>
     <string name="pref_profiles_sum">Definera parametrar eller profiler (om det stöds) för hur program ska spelas in eller hur inspelningar ska spelas upp.</string>
     <string name="pref_recording_profiles">Inspelningsprofiler</string>
@@ -156,10 +146,11 @@
     <string name="pref_show_next_program_sum">Namnet på programmet som kommer näst visas i kanallistan. Det visas under förloppsindikatorn.</string>
     <string name="pref_programs">Program</string>
 
+    <string name="loading_profiles">Laddar profiler</string>
+
     <string name="clear_search_history">Rensa sökhistorik?</string>
     <string name="clear_search_history_sum">Är du säker på att du vill ta bort all sökhistorik?</string>
     <string name="clear_search_history_done">Sökhistorik rensad</string>
-
     <string name="clear_icon_cache">Rensa kanalikon cache?</string>
     <string name="clear_icon_cache_sum">Är du säker på att du vill ta bort alla kanalikoner? Du kan göra detta för att uppdatera ikonerna från servern.</string>
     <string name="clear_icon_cache_done">Kanalikon cache rensad</string>

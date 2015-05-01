@@ -10,6 +10,6 @@
         app:actionViewClass="android.support.v7.widget.SearchView"/>
     <item
         android:id="@+id/menu_genre_color_info"
-        android:title="@string/menu_genre_color_info"/>
+        android:title="@string/genre_color_info"/>
 
 </menu>

@@ -24,6 +24,26 @@
         <item>Kanaal nummer</item>
     </string-array>
 
+    <string-array name="day_short_names">
+        <item>Maa</item>
+        <item>Din</item>
+        <item>Woe</item>
+        <item>Don</item>
+        <item>Vri</item>
+        <item>Zat</item>
+        <item>Zon</item>
+    </string-array>
+
+    <string-array name="day_long_names">
+        <item>Maandag</item>
+        <item>Dinsdag</item>
+        <item>Woensdag</item>
+        <item>Donderdag</item>
+        <item>Vrijdag</item>
+        <item>Zaterdag</item>
+        <item>Zondag</item>
+    </string-array>
+
     <string-array name="pr_content_type0">
         <item>Film/Drama</item>
         <item>Nieuws/Actuele items</item>

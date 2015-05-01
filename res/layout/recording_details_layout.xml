@@ -31,7 +31,7 @@
                 android:drawableStart="?attr/ic_menu_play"
                 android:gravity="center_vertical"
                 android:padding="8dp"
-                android:text="@string/menu_play" />
+                android:text="@string/play" />
 
             <TextView
                 android:id="@+id/menu_record_cancel"
@@ -44,7 +44,7 @@
                 android:drawableStart="?attr/ic_menu_record_cancel"
                 android:gravity="center_vertical"
                 android:padding="8dp"
-                android:text="@string/menu_record_cancel"
+                android:text="@string/record_cancel"
                 android:visibility="gone" />
 
             <TextView
@@ -56,7 +56,7 @@
                 android:drawableStart="?attr/ic_menu_record_remove"
                 android:gravity="center_vertical"
                 android:padding="8dp"
-                android:text="@string/menu_record_remove"
+                android:text="@string/record_remove"
                 android:visibility="gone" />
         </LinearLayout>
 

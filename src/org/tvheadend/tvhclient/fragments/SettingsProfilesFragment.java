@@ -337,7 +337,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 public void run() {
                     // Loading is done, remove the loading subtitle
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarTitle(getString(R.string.menu_settings), TAG);
+                        actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
                     }
 
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
@@ -368,7 +368,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 public void run() {
                     // Loading is done, remove the loading subtitle
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarTitle(getString(R.string.menu_settings), TAG);
+                        actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
                     }
 
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();

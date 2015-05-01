@@ -2,42 +2,34 @@
 <resources>
     <string name="app_name">TVHClient</string>
 
-    <string name="menu_settings">Nastavení</string>
-    <string name="menu_refresh">Obnovit</string>
-    <string name="menu_tags">Štítky</string>
-
-    <string name="menu_play">Přehrát</string>
-    <string name="menu_search">Hledat</string>
-    <string name="menu_record_once">Nahrát</string>
-    <string name="menu_record_series">Nahrát (Autorec)</string>
-    <string name="menu_record_cancel">Zrušit nahrávání</string>
-    <string name="menu_record_cancel_all">Zrušit všechna nahrávání</string>
-    <string name="menu_record_remove">Smazat nahrávku</string>
-    <string name="menu_record_remove_all">Smazat všechny nahrávky</string>
-    <string name="menu_search_imdb">Hledat v IMDB</string>
-    <string name="menu_search_epg">Hledat v programovém průvodci</string>
-    <string name="menu_add">Přidat</string>
-    <string name="menu_save">Uložit</string>
-    <string name="menu_cancel">Zrušit</string>
-    <string name="menu_set_active">Aktivovat</string>
-    <string name="menu_set_not_active">Deaktivovat</string>
-    <string name="menu_edit">Upravit</string>
-    <string name="menu_delete">Smazat</string>
-    <string name="menu_connections">Připojení</string>
-    <string name="menu_timeframe">Časový rámec</string>
-    <string name="menu_genre_color_info">Vysvětlit barvy žánrů</string>
-    <string name="menu_send_wol">Probudit</string>
-
-    <string name="pref_manage_connections">Spravovat připojení</string>
-    <string name="pref_manage_connections_sum">Nastavit Vaše aktivní připojení k TVHeadend serveru nebo přidat, odebrat a upravit již existující připojení.</string>
-    <string name="pref_connection_details">Podrobnosti připojení</string>
-    <string name="pref_connection_wol">Wake on LAN</string>
+    <string name="settings">Nastavení</string>
+    <string name="refresh">Obnovit</string>
+    <string name="tags">Štítky</string>
+    <string name="play">Přehrát</string>
+    <string name="search">Hledat</string>
+    <string name="record_once">Nahrát</string>
+    <string name="record_series">Nahrát (Autorec)</string>
+    <string name="record_cancel">Zrušit nahrávání</string>
+    <string name="record_cancel_all">Zrušit všechna nahrávání</string>
+    <string name="record_remove">Smazat nahrávku</string>
+    <string name="record_remove_all">Smazat všechny nahrávky</string>
+    <string name="search_imdb">Hledat v IMDB</string>
+    <string name="search_epg">Hledat v programovém průvodci</string>
+    <string name="add">Přidat</string>
+    <string name="save">Uložit</string>
+    <string name="cancel">Zrušit</string>
+    <string name="set_active">Aktivovat</string>
+    <string name="set_not_active">Deaktivovat</string>
+    <string name="edit">Upravit</string>
+    <string name="delete">Smazat</string>
+    <string name="connections">Připojení</string>
+    <string name="timeframe">Časový rámec</string>
+    <string name="genre_color_info">Vysvětlit barvy žánrů</string>
+    <string name="send_wol">Probudit</string>
     <string name="select_connection">Vybrat připojení</string>
     <string name="add_connection">Přidat připojení</string>
     <string name="confirm_cancel">Opravdu chcete zrušit? Všechny změny budou ztraceny!</string>
-    <string name="cancel">Zrušit</string>
     <string name="remove">Odstranit</string>
-    <string name="delete">Smazat</string>
     <string name="delete_connection">Opravdu chcete odstranit připojení \'%s\'?</string>
     <string name="remove_recording">Opravdu chcete smazat nahrávku \'%s\'?</string>
     <string name="remove_series_recording">Opravdu chcete smazat opakované nahrávání \'%s\'?\n\nTím budou odstraněna všechna plánovaná nahrávání patřící do tohoto pravidla pro opakovaného nahrávání.</string>
@@ -48,6 +40,10 @@
     <string name="add_recording">Přidat nové nahrávání</string>
     <string name="cancel_add_recording">Zrušit přidávání nového nahrávání? Všechny hodnoty budou ztraceny.</string>
 
+    <string name="pref_manage_connections">Spravovat připojení</string>
+    <string name="pref_manage_connections_sum">Nastavit Vaše aktivní připojení k TVHeadend serveru nebo přidat, odebrat a upravit již existující připojení.</string>
+    <string name="pref_connection_details">Podrobnosti připojení</string>
+    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="pref_connections">Připojení</string>
     <string name="pref_name">Jméno připojení</string>
     <string name="pref_name_sum">Zadejte unikátní jméno tohoto připojení</string>
@@ -77,7 +73,6 @@
     <string name="pref_wol_broadcast">Použít broadcast</string>
     <string name="pref_wol_broadcast_sum">Poslat WOL paket jako broadcast. Některé routery tento druh WOL nepodporují.</string>
     <string name="pref_wol_address_invalid">MAC adresa je neplatná. \nAdresa musí odpovídat vzoru \'01:24:67:9a:cd:ef\' a může obsahovat pouze hexadecimální čísla 0\-9 a a\-f a oddělovač \':\' nebo \'\-\'.</string>
-    
     <string name="pref_user_interface">Uživatelské rozhraní</string>
     <string name="pref_icons">Ikony kanálů</string>
     <string name="pref_icons_sum">Zobrazit ikony kanálů.</string>
@@ -101,13 +96,11 @@
     <string name="pref_scodec_sum">Určete typ titulků, které použije transcoder.</string>
     <string name="pref_container">Média kontejner</string>
     <string name="pref_container_sum">Určete kontejner média, který se použije pro přepravu audio a video streamů. Matroska je obvykle preferovanou volbou.</string>
-    
     <string name="pref_playback">Přehrávání</string>
     <string name="pref_playback_programs_sum">Konfigurace možností přehrávání pro Live-TV programy.</string>
     <string name="pref_playback_recordings_sum">Konfigurace možností přehrávání nahraných programů.</string>
     <string name="pref_transcode">Překódovat stream</string>
     <string name="pref_transcode_sum">Konvertovat program nebo nahrávku do jiného formátu v průběhu přehrávání (toto musí podporovat TVHeadend server).</string>
-
     <string name="pref_information">Informace</string>
     <string name="pref_changelog">Seznam změn</string>
     <string name="pref_changelog_sum">Zobrazit seznam funkcí a změn v jednotlivých verzí aplikace.</string>
@@ -135,15 +128,12 @@
     <string name="pref_clear_icon_cache">Vymazat cache ikon kanálů</string>
     <string name="pref_unlocker">Povolit všechny funkce</string>
     <string name="pref_unlocker_sum">Povolit přístup k dalším funkcím a podpořit vývoj zakoupením této aplikace.</string>
-
     <string name="pref_menu_visibility">Viditelnost částí menu</string>
     <string name="pref_menu_visibility_sum">Skrytí nebo zobrazení některých položek v menu.</string>
     <string name="pref_hide_menu_delete_all_recordings">Skrýt menu \'Smazat všechny nahrávky\'</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Skrýt tuto položku v menu, aby se zabránilo nechtěnému smazání všech nahraných programů.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Skrýt menu \'Zrušit všechna nahrávání\'</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Skrýt tuto položku v menu, aby se zabránilo nechtěnému zrušení všech naplánovaných nahrávání.</string>
-    
-    <string name="loading_profiles">Natahují se profily</string>
     <string name="pref_profiles">Profily</string>
     <string name="pref_profiles_sum">Určuje parametry nebo profily (pokud jsou podporovány) jak mají být programy nahrávány nebo nahrávky přehrávány.</string>
     <string name="pref_recording_profiles">Profily pro nahrávání</string>
@@ -156,10 +146,10 @@
     <string name="pref_show_next_program_sum">Název následujícího programu je zobrazen v seznamu kanálů. Je uveden vedle ukazatele průběhu.</string>
     <string name="pref_programs">Programy</string>
 
+    <string name="loading_profiles">Natahují se profily</string>
     <string name="clear_search_history">Vymazat historii vyhledávání?</string>
     <string name="clear_search_history_sum">Jste si jisti, že chcete odstranit všechny položky z historie vyhledávání?</string>
     <string name="clear_search_history_done">Historie vyhledávání byla vymazána.</string>
-
     <string name="clear_icon_cache">Vymazat cache ikon kanálů?</string>
     <string name="clear_icon_cache_sum">Jste si jisti, že chcete odstranit všechny ikony kanálů? Tímto můžete vynutit nové načtení ikon ze serveru.</string>
     <string name="clear_icon_cache_done">Cache ikon kanálů byla vymazána</string>
