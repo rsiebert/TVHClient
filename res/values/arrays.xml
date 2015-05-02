@@ -49,12 +49,14 @@
         <item>mpegts</item>
         <item>mpegps</item>
         <item>pass</item>
+        <item>webm</item>
     </string-array>
     <string-array name="pref_container_list_display" translatable="false">
         <item>Matroska</item>
         <item>MPEG-TS</item>
         <item>MPEG-PS</item>
         <item>Pass-through</item>
+        <item>WebM</item>
     </string-array>
 
     <string-array name="pref_language_list" translatable="false">
