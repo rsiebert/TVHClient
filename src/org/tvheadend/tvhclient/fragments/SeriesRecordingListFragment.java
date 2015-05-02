@@ -37,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+@SuppressWarnings("deprecation")
 public class SeriesRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     public static String TAG = SeriesRecordingListFragment.class.getSimpleName();

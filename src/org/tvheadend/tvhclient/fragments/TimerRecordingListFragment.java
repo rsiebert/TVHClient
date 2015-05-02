@@ -37,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+@SuppressWarnings("deprecation")
 public class TimerRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     public static String TAG = TimerRecordingListFragment.class.getSimpleName();

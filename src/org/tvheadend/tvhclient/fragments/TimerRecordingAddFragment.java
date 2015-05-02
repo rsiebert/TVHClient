@@ -39,6 +39,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+@SuppressWarnings("deprecation")
 public class TimerRecordingAddFragment extends DialogFragment {
 
     @SuppressWarnings("unused")

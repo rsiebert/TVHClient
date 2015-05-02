@@ -27,6 +27,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();

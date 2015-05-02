@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.PreferenceFragment;
@@ -9,6 +10,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,6 +29,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class SettingsManageConnectionFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
     private final static String TAG = SettingsManageConnectionFragment.class.getSimpleName();

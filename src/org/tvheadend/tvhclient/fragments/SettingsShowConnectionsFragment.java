@@ -28,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+@SuppressWarnings("deprecation")
 public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
 
     private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();

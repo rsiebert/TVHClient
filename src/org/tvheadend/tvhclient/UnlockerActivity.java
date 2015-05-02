@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class UnlockerActivity extends ActionBarActivity {
 
     @SuppressWarnings("unused")
