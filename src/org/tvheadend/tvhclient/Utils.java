@@ -17,6 +17,7 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
+import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
@@ -305,11 +306,11 @@ public class Utils {
      * @param program
      * @param useSeriesRecording
      */
-    public static void recordProgram(final Context context, final Program program, final boolean useSeriesRecording) {
+    public static void recordProgram(final Activity activity, final Program program, final boolean useSeriesRecording) {
         if (program == null || program.channel == null) {
             return;
         }
-        Intent intent = new Intent(context, HTSService.class);
+        Intent intent = new Intent(activity, HTSService.class);
         if (!useSeriesRecording) {
             intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
             intent.putExtra("eventId", program.id);
@@ -317,8 +318,20 @@ public class Utils {
             intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
             intent.putExtra("title", program.title);
         }
+
+        // Add the recording profile if available and enabled
+        final TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+        if (p != null 
+                && p.enabled
+                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && app.isUnlocked()) {
+            intent.putExtra("configName", p.name);
+        }
+
         intent.putExtra("channelId", program.channel.id);
-        context.startService(intent);
+        activity.startService(intent);
     }
 
     /**

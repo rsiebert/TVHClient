@@ -118,7 +118,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (action.equals(Constants.ACTION_ADD_DVR_ENTRY)) {
             TVHClientApplication app = (TVHClientApplication) getApplication();
             Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
-            addDvrEntry(ch, intent.getLongExtra("eventId", 0));
+            addDvrEntry(ch, intent.getLongExtra("eventId", 0), intent.getStringExtra("configName"));
 
         } else if (action.equals(Constants.ACTION_DELETE_DVR_ENTRY)) {
             deleteDvrEntry(intent.getLongExtra("id", 0));
@@ -135,7 +135,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("retention", 0),
                     intent.getLongExtra("daysOfWeek", 0),
                     intent.getLongExtra("priority", 0),
-                    intent.getLongExtra("enabled", 0));
+                    intent.getLongExtra("enabled", 0),
+                    intent.getStringExtra("configName"));
 
         } else if (action.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
             deleteTimerRecEntry(intent.getStringExtra("id"));
@@ -206,7 +207,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("priority", 0),
                     intent.getLongExtra("enabled", 1),
                     intent.getLongExtra("startExtra", 0),
-                    intent.getLongExtra("stopExtra", 0));
+                    intent.getLongExtra("stopExtra", 0),
+                    intent.getStringExtra("configName"));
 
         } else if (action.equals(Constants.ACTION_DELETE_SERIES_DVR_ENTRY)) {
             String id = intent.getStringExtra("id");
@@ -1034,11 +1036,16 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void addDvrEntry(final Channel ch, final long eventId) {
+    private void addDvrEntry(final Channel ch, final long eventId, String configName) {
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
         request.putField("eventId", eventId);
         request.putField("retention", 0);
+        
+        if (configName != null) {
+            request.putField("configName", configName);
+        }
+
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (response.getInt("success", 0) == 1) {
@@ -1079,17 +1086,15 @@ public class HTSService extends Service implements HTSConnectionListener {
      * @param start
      * @param stop
      * @param channelId
-     * @param configName
      * @param retention
      * @param daysOfWeek
      * @param priority
      * @param enabled
-     * @param name
-     * @param directory
+     * @param configName
      */
     private void addTimerRecEntry(String title, long start, long stop,
                 long channelId, long retention, long daysOfWeek,
-                long priority, long enabled) {
+                long priority, long enabled, String configName) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addTimerecEntry");
@@ -1101,6 +1106,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
         request.putField("enabled", enabled);
+
+        if (configName != null) {
+            request.putField("configName", configName);
+        }
+
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
@@ -1262,7 +1272,6 @@ public class HTSService extends Service implements HTSConnectionListener {
      * 
      * @param title
      * @param channelId
-     * @param configName
      * @param maxDuration
      * @param minDuration
      * @param retention
@@ -1271,12 +1280,11 @@ public class HTSService extends Service implements HTSConnectionListener {
      * @param enabled
      * @param startExtra
      * @param stopExtra
-     * @param name
-     * @param directory
+     * @param configName
      */
     private void addAutorecEntry(String title, long channelId, long maxDuration,
             long minDuration, long retention, long daysOfWeek, long priority, long enabled,
-            long startExtra, long stopExtra) {
+            long startExtra, long stopExtra, String configName) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
@@ -1290,6 +1298,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("enabled", enabled);
         request.putField("startExtra", startExtra);
         request.putField("stopExtra", stopExtra);
+
+        if (configName != null) {
+            request.putField("configName", configName);
+        }
+
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")

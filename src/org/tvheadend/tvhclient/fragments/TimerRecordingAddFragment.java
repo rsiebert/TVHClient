@@ -5,10 +5,13 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
@@ -361,6 +364,16 @@ public class TimerRecordingAddFragment extends DialogFragment {
                 intent.putExtra("channelId", c.id);
                 break;
             }
+        }
+
+        // Add the recording profile if available and enabled
+        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+        if (p != null 
+                && p.enabled
+                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && app.isUnlocked()) {
+            intent.putExtra("configName", p.name);
         }
 
         activity.startService(intent);
