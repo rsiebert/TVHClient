@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.fragments;
 import java.util.ArrayList;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.PlaybackSelectionActivity;
+import org.tvheadend.tvhclient.ExternalPlaybackActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
@@ -123,7 +123,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             // Open a new activity that starts playing the selected recording
             Recording rec = adapter.getSelectedItem();
             if (rec != null) {
-                Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+                Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
                 intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
                 startActivity(intent);
             }
@@ -272,7 +272,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_play:
-            Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+            Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
             intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
             startActivity(intent);
             return true;

@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.fragments;
 import java.util.Date;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.PlaybackSelectionActivity;
+import org.tvheadend.tvhclient.ExternalPlaybackActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -241,7 +241,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             public void onClick(View v) {
                 // Open a new activity that starts playing the program
                 if (program != null && program.channel != null) {
-                    Intent intent = new Intent(activity, PlaybackSelectionActivity.class);
+                    Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
                     intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
                     startActivity(intent);
                 }
