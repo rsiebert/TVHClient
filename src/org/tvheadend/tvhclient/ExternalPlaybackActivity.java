@@ -68,12 +68,12 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
 
         TVHClientApplication app = (TVHClientApplication) getApplication();
         final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        final Profile profile = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
+        Profile profile = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
 
         // Set default values if no profile was specified
         if (profile == null) {
             Log.d(TAG, "No profile was set for the selected connection.");
-            return;
+            profile = new Profile();
         }
 
         // Set the correct MIME type. For 'pass' we assume MPEG-TS
