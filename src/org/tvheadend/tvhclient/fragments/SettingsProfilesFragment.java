@@ -269,6 +269,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         if (!settingsHaveChanged) {
             if (settingsInterface != null) {
                 settingsInterface.done(Activity.RESULT_CANCELED);
+                return;
             }
         }
         // Show confirmation dialog to cancel
