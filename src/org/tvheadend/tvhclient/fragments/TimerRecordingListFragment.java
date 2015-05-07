@@ -192,7 +192,12 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return true;
 
         case R.id.menu_edit:
-            
+            // Create the fragment and show it as a dialog.
+            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance(null);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, adapter.getSelectedItem().id);
+            editFragment.setArguments(bundle);
+            editFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
         case R.id.menu_record_remove:
@@ -277,6 +282,15 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         final TimerRecording trec = adapter.getItem(info.position);
 
         switch (item.getItemId()) {
+        case R.id.menu_edit:
+            // Create the fragment and show it as a dialog.
+            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance(null);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, trec.id);
+            editFragment.setArguments(bundle);
+            editFragment.show(activity.getSupportFragmentManager(), "dialog");
+            return true;
+
         case R.id.menu_search_imdb:
             startActivity(new SearchIMDbIntent(activity, trec.title));
             return true;

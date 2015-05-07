@@ -347,6 +347,16 @@ public class TimerRecordingAddFragment extends DialogFragment {
             return;
         }
 
+        // If the timer recording is being edited, remove it before adding it
+        // again, because the API does not provide an edit call.
+        if (rec.id.length() > 0) {
+            Intent intent = new Intent(activity, HTSService.class);
+            intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
+            intent.putExtra("id", rec.id);
+            activity.startService(intent);
+        }
+
+        // Add the new or edited timer recording
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
         intent.putExtra("title", titleValue);

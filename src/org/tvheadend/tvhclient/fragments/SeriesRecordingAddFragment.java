@@ -333,10 +333,20 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             return;
         }
         // The maximum duration must be larger than the minimum duration
-        if (maxDurationValue <= maxDurationValue) {
-            maxDurationValue = maxDurationValue + 1;
+        if (minDurationValue > 0 && maxDurationValue > 0 && maxDurationValue < minDurationValue) {
+            maxDurationValue = minDurationValue;
         }
 
+        // If the series recording is being edited, remove it before adding it
+        // again, because the API does not provide an edit call. 
+        if (rec.id.length() > 0) {
+            Intent intent = new Intent(activity, HTSService.class);
+            intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
+            intent.putExtra("id", rec.id);
+            activity.startService(intent);
+        }
+
+        // Add the new or edited series recording
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
         intent.putExtra("title", titleValue);
