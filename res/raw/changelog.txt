@@ -1,3 +1,14 @@
+$ 1.7.7
+  % VERSION 1.7.7
+  _ 07.05.2015
+    * Minimum Android version is now 9 to support in-app billing and chromecast
+    * Additional features can be enabled in the settings for a small fee. (All existing features remain free)
+    * Playback and recording parameters are now configurable per connection
+    * The newer streaming profiles are now supported per connection. (Only available in the unlocked version and the server must support this feature)
+    * Support to add custom series recordings with more options (Only available in the unlocked version)
+    * Support for timer recordings (Only available in the unlocked version and the server must support this feature)
+    * Show the scheduled indicator for programs that are scheduled by a series recording 
+    * Show the server API version on the status screen
 $ 1.7.6
   % VERSION 1.7.6
   _ 29.03.2015
