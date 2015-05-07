@@ -144,10 +144,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // mode these menus are handled by the recording details details fragment.
         if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+            (menu.findItem(R.id.menu_edit)).setVisible(false);
         }
-        (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
@@ -191,6 +189,10 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             // Create the fragment and show it as a dialog.
             DialogFragment newFragment = TimerRecordingAddFragment.newInstance(null);
             newFragment.show(activity.getSupportFragmentManager(), "dialog");
+            return true;
+
+        case R.id.menu_edit:
+            
             return true;
 
         case R.id.menu_record_remove:
@@ -241,28 +243,19 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_menu, menu);
+        inflater.inflate(R.menu.timer_recording_menu, menu);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.recording_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.timer_recording_context_menu, menu);
 
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         TimerRecording srec = adapter.getItem(info.position);
         menu.setHeaderTitle(srec.title);
-
-        // Get the menu items so they can be shown 
-        // or hidden depending on the recording state
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-
-        // Disable these menus as a default
-        recordCancelMenuItem.setVisible(false);
-        playMenuItem.setVisible(false);
     }
 
     @Override

@@ -145,9 +145,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         }
-        (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
@@ -157,6 +154,10 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Show the add button only when the application is unlocked
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
+
+        if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
+            (menu.findItem(R.id.menu_edit)).setVisible(false);
+        }
     }
 
     /**
@@ -173,7 +174,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Show the newest scheduled recordings first 
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
-        
+
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.series_recordings), TAG);
@@ -195,6 +196,10 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             // Create the fragment and show it as a dialog.
             DialogFragment newFragment = SeriesRecordingAddFragment.newInstance(null);
             newFragment.show(activity.getSupportFragmentManager(), "dialog");
+            return true;
+
+        case R.id.menu_edit:
+            
             return true;
 
         case R.id.menu_record_remove:
@@ -245,28 +250,19 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_menu, menu);
+        inflater.inflate(R.menu.series_recording_menu, menu);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.recording_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.series_recording_context_menu, menu);
 
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         SeriesRecording srec = adapter.getItem(info.position);
         menu.setHeaderTitle(srec.title);
-
-        // Get the menu items so they can be shown 
-        // or hidden depending on the recording state
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-
-        // Disable these menus as a default
-        recordCancelMenuItem.setVisible(false);
-        playMenuItem.setVisible(false);
     }
 
     @Override
