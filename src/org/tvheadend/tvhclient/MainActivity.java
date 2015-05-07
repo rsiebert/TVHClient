@@ -72,6 +72,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+@SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
 
     @SuppressWarnings("unused")
@@ -1068,7 +1069,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void setActionBarIcon(final Bitmap bitmap, final String tag) {
         if (actionBarIcon != null && bitmap != null) {
