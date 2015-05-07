@@ -14,8 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
-        android:text="@string/summary"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:text="@string/summary" />
 
     <TextView
         android:id="@+id/series_info_label"
@@ -47,8 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
-        android:text="@string/description"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:text="@string/description" />
 
     <TextView
         android:id="@+id/time_date_label"
@@ -97,8 +95,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
-        android:text="@string/duration"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:text="@string/duration" />
 
     <TextView
         android:id="@+id/progress"
@@ -122,8 +119,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
-        android:text="@string/channel"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:text="@string/channel" />
 
     <TextView
         android:id="@+id/content_type_label"
