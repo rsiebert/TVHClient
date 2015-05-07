@@ -30,5 +30,5 @@ proguard/
 
 # Other files
 Thumbs.db
-+assets/public_key
-+assets/fonts/
+assets/public_key
+assets/fonts/
