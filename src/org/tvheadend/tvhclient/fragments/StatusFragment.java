@@ -111,7 +111,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
 
         // Upon resume show the actual status. If the connection is OK show the
@@ -128,7 +128,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -184,7 +184,7 @@ public class StatusFragment extends Fragment implements HTSListener {
                 }
             });
         } else if (action.equals(Constants.ACTION_DISC_SPACE)) {
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 @SuppressWarnings("unchecked")
                 public void run() {
                 	calculateDiscSpace((Map<String, String>) obj);
@@ -270,9 +270,9 @@ public class StatusFragment extends Fragment implements HTSListener {
      * loading indication for these fields are shown.
      */
     protected void getDiscSpaceStatus() {
-        Intent intent = new Intent(getActivity(), HTSService.class);
+        Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_GET_DISC_SPACE);
-        getActivity().startService(intent);
+        activity.startService(intent);
 
         discspaceLabel.setVisibility(View.VISIBLE);
         freediscspace.setVisibility(View.VISIBLE);
@@ -335,7 +335,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * Shows the information how many channels are available.
      */
     private void showChannelStatus() {
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         channelLabel.setVisibility(View.VISIBLE);
         channels.setVisibility(View.VISIBLE);
         channels.setText(app.getChannels().size() + " " + getString(R.string.available));
@@ -348,7 +348,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     private void showRecordingStatus() {
         String currentRecText = "";
 
-        TVHClientApplication app = (TVHClientApplication) getActivity().getApplication();
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         for (Recording rec : app.getRecordings()) {
             // Add the information what is currently being recorded.
             if (rec.isRecording() == true) {
