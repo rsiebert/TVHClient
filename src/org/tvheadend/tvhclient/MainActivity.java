@@ -1450,6 +1450,25 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     @Override
+    public void listDataInvalid(String tag) {
+        switch (menuPosition) {
+        case MENU_SERIES_RECORDINGS:
+        case MENU_TIMER_RECORDINGS:
+            // Clear all data from the series or timer recording list fragment
+            // and add all items to the list. This is required when a series or
+            // timer recording has been edited because this involves deleting
+            // the old one and adding it again. To prevent having two identical
+            // entries the list needs to be refreshed.
+            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+            if ((f instanceof SeriesRecordingListFragment || f instanceof TimerRecordingListFragment)
+                    && f instanceof FragmentControlInterface) {
+                ((FragmentControlInterface) f).reloadData();
+            }
+            break;
+        }
+    }
+
+    @Override
     public boolean onQueryTextChange(String text) {
         return false;
     }

@@ -9,6 +9,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -21,7 +22,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -39,13 +39,11 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-@SuppressWarnings("deprecation")
 public class TimerRecordingAddFragment extends DialogFragment {
 
-    @SuppressWarnings("unused")
     private final static String TAG = TimerRecordingAddFragment.class.getSimpleName();
 
-    private ActionBarActivity activity;
+    private Activity activity;
     private TimerRecording rec;
     private Toolbar toolbar;
 
@@ -75,7 +73,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
+        this.activity = activity;
     }
 
     @Override
@@ -390,6 +388,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
         activity.startService(intent);
 
         if (getDialog() != null) {
+            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
             getDialog().dismiss();
         }
     }

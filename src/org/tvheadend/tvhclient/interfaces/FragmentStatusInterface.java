@@ -96,4 +96,12 @@ public interface FragmentStatusInterface {
      * @param tag
      */
     public void channelTagChanged(String tag);
+
+    /**
+     * Informs the activity that the data in the list view is not valid anymore.
+     * The main activity can then force a refresh or something else.
+     * 
+     * @param tag
+     */
+    public void listDataInvalid(final String tag);
 }

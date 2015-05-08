@@ -337,7 +337,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((SeriesRecording) obj);
-                    adapter.notifyDataSetChanged();
+                    populateList();
                 }
             });
         } else if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
@@ -367,7 +367,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
     @Override
     public void reloadData() {
-        // NOP
+        populateList();
     }
 
     @Override

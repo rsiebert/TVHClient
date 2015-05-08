@@ -330,7 +330,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     adapter.add((TimerRecording) obj);
-                    adapter.notifyDataSetChanged();
+                    populateList();
                 }
             });
         } else if (action.equals(Constants.ACTION_TIMER_DVR_DELETE)) {
@@ -360,7 +360,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
 
     @Override
     public void reloadData() {
-        // NOP
+        populateList();
     }
 
     @Override

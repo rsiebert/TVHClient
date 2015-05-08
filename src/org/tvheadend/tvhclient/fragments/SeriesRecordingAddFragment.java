@@ -8,6 +8,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -35,7 +36,6 @@ import android.widget.ToggleButton;
 
 public class SeriesRecordingAddFragment extends DialogFragment {
 
-    @SuppressWarnings("unused")
     private final static String TAG = SeriesRecordingAddFragment.class.getSimpleName();
 
     private Activity activity;
@@ -77,7 +77,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (Activity) activity;
+        this.activity = activity;
     }
 
     @Override
@@ -382,6 +382,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         activity.startService(intent);
 
         if (getDialog() != null) {
+            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
             getDialog().dismiss();
         }
     }
