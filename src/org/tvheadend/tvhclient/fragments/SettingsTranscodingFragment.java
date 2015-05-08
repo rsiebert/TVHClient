@@ -21,6 +21,7 @@ package org.tvheadend.tvhclient.fragments;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
@@ -41,10 +42,10 @@ import android.view.MenuItem;
 
 public class SettingsTranscodingFragment extends PreferenceFragment implements OnPreferenceChangeListener, BackPressedInterface {
 
-    @SuppressWarnings("unused")
     private final static String TAG = SettingsTranscodingFragment.class.getSimpleName();
 
     private Activity activity;
+    private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
 
     private Connection conn = null;
@@ -164,12 +165,19 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
     @Override
     public void onDetach() {
         settingsInterface = null;
+        actionBarInterface = null;
         super.onDetach();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.pref_transcoding), TAG);
+        }
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;
         }
@@ -184,6 +192,10 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
             if (settingsInterface != null) {
                 settingsInterface.done(Activity.RESULT_CANCELED);
                 return;
+            }
+        } else {
+            if (actionBarInterface != null) {
+                actionBarInterface.setActionBarSubtitle(conn.name, TAG);
             }
         }
 

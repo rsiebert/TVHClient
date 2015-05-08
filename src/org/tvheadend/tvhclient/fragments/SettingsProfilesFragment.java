@@ -184,6 +184,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             if (settingsInterface != null) {
                 settingsInterface.done(Activity.RESULT_CANCELED);
             }
+        } else {
+            if (actionBarInterface != null) {
+                actionBarInterface.setActionBarSubtitle(conn.name, TAG);
+            }
         }
 
         prefEnableProgProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
@@ -320,7 +324,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
         // Set the loading indication
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.loading_profiles), TAG);
+            actionBarInterface.setActionBarSubtitle(getString(R.string.loading_profiles), TAG);
         }
 
         // Get the available profiles from the server
@@ -338,7 +342,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 public void run() {
                     // Loading is done, remove the loading subtitle
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
+                        actionBarInterface.setActionBarSubtitle(conn.name, TAG);
                     }
 
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
@@ -369,7 +373,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 public void run() {
                     // Loading is done, remove the loading subtitle
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
+                        actionBarInterface.setActionBarSubtitle(conn.name, TAG);
                     }
 
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
