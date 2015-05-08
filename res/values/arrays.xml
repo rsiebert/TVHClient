@@ -40,8 +40,8 @@
         <item>NONE</item>
     </string-array>
     <string-array name="pref_scodec_list_display">
-        <item>Pass-through</item>
-        <item>None</item>
+        <item>Segun fuente</item>
+        <item>Ninguno</item>
     </string-array>
 
     <string-array name="pref_container_list" translatable="false">
@@ -67,6 +67,7 @@
         <item>pl</item>
         <item>sv</item>
         <item>cz</item>
+        <item>sp</item>
     </string-array>
     <string-array name="pref_language_list_display" translatable="false">
         <item>Default</item>
@@ -78,6 +79,7 @@
         <item>Polski</item>
         <item>Svenska</item>
         <item>Česky</item>
+        <item>Español</item>
     </string-array>
 
     <string-array name="pref_menu_ids" translatable="false">
@@ -94,16 +96,16 @@
     </string-array>
 
     <string-array name="pref_menu_names">
-        <item>Channels</item>
-        <item>Completed Recordings</item>
-        <item>Scheduled Recordings</item>
-        <item>Series Recordings</item>
-        <item>Timer Recordings</item>
-        <item>Failed Recordings</item>
-        <item>Program Guide</item>
-        <item>Status</item>
-        <item>Settings</item>
-        <item>Connections</item>
+        <item>Canales</item>
+        <item>Grabaciones completadas</item>
+        <item>Grabaciones programadas</item>
+        <item>Grabaciones en serie</item>
+        <item>Programar grabaciones</item>
+        <item>Grabaciones fallidas</item>
+        <item>Guía de programas</item>
+        <item>Estado</item>
+        <item>Ajustes</item>
+        <item>Conexiones</item>
     </string-array>
 
     <string-array name="pref_sort_channels_ids" translatable="false">
@@ -113,163 +115,163 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Defined by the server</item>
-        <item>Channel name</item>
-        <item>Channel number</item>
+        <item>Definidos en el servidor</item>
+        <item>Nombre de canal</item>
+        <item>Número de canal</item>
     </string-array>
 
     <string-array name="day_short_names">
-        <item>Mon</item>
-        <item>Tue</item>
-        <item>Wed</item>
-        <item>Thu</item>
-        <item>Fri</item>
-        <item>Sat</item>
-        <item>Sun</item>
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mie</item>
+        <item>Jue</item>
+        <item>Vie</item>
+        <item>Sab</item>
+        <item>Dom</item>
     </string-array>
 
     <string-array name="day_long_names">
-        <item>Monday</item>
-        <item>Tuesday</item>
-        <item>Wednesday</item>
-        <item>Thursday</item>
-        <item>Friday</item>
-        <item>Saturday</item>
-        <item>Sunday</item>
+        <item>Lunes</item>
+        <item>Martes</item>
+        <item>Miércoles</item>
+        <item>Jueves</item>
+        <item>Viernes</item>
+        <item>Sábado</item>
+        <item>Domingo</item>
     </string-array>
 
     <string-array name="dvr_priorities">
-        <item>Important</item>
-        <item>High</item>
+        <item>Importante</item>
+        <item>Alta</item>
         <item>Normal</item>
-        <item>Low</item>
-        <item>Unimportant</item>
-        <item>Not set</item>
+        <item>Baja</item>
+        <item>Sin importancia</item>
+        <item>Sin ajustar</item>
     </string-array>
     
     <string-array name="pr_content_type0">
-        <item>Movie/Drama</item>
-        <item>News/Current affairs</item>
-        <item>Show/Game show</item>
-        <item>Sports</item>
-        <item>Children\'s/Youth</item>
-        <item>Music/Ballet/Dance</item>
-        <item>Arts/Culture</item>
-        <item>Social/Political issues/Economics</item>
-        <item>Education/Science/Factual</item>
-        <item>Leisure hobbies</item>
-        <item>Misc</item>
+        <item>Película/Drama</item>
+        <item>Noticias/Actualidad</item>
+        <item>Espectáculos/Juegos</item>
+        <item>Deportes</item>
+        <item>Niños/Jóvenes</item>
+        <item>Música/Ballet/Danza</item>
+        <item>Artes/Cultura</item>
+        <item>Sociedad/Política/Economía</item>
+        <item>Educación/Ciencia/Hechos</item>
+        <item>Ocio y entretenimiento</item>
+        <item>Miscelánea</item>
     </string-array>
 
     <string-array name="pr_content_type1">
-        <item>Movie/Drama</item>
-        <item>Detective/Thriller</item>
-        <item>Adventure/Western/War</item>
-        <item>Science Fiction/Fantasy/Horror</item>
-        <item>Comedy</item>
-        <item>Soap/Melodrama/Folkloric</item>
-        <item>Romance</item>
-        <item>Serious/ClassicalReligion/Historical</item>
-        <item>Adult Movie/Drama</item>
+        <item>Película/Drama</item>
+        <item>Detectives/Thriller</item>
+        <item>Aventuras/Western/Bélica</item>
+        <item>Ciencia Ficción/Fantástica/Terror</item>
+        <item>Comedia</item>
+        <item>Novela/Melodrama/Tradicional</item>
+        <item>Romántica</item>
+        <item>Seria/Clasica religiosa/Histórica</item>
+        <item>Película para adultos/Drama</item>
     </string-array>
 
     <string-array name="pr_content_type2">
-        <item>News/Current affairs</item>
-        <item>News/Weather Report</item>
-        <item>Magazine</item>
-        <item>Documentary</item>
-        <item>Discussion/Interview/Debate</item>
+        <item>Noticias/Actualidad</item>
+        <item>Noticias/Información Meteorológica</item>
+        <item>Magacine</item>
+        <item>Documental</item>
+        <item>Discusión/Entrevista/Debate</item>
     </string-array>
 
     <string-array name="pr_content_type3">
-        <item>Show/Game show</item>
-        <item>Game show/Quiz/Contest</item>
-        <item>Variety</item>
-        <item>Talk</item>
+        <item>Espectáculos/Juegos</item>
+        <item>Juegos/Concursos</item>
+        <item>Variedades</item>
+        <item>Talk show</item>
     </string-array>
     
     <string-array name="pr_content_type4">
-        <item>Sports</item>
-        <item>Special Event</item>
-        <item>Magazine</item>
-        <item>Football/Soccer</item>
-        <item>Tennis/Squash</item>
-        <item>Team sports</item>
-        <item>Athletics</item>
-        <item>Motor Sport</item>
-        <item>Water Sport</item>
-        <item>Winter Sports</item>
-        <item>Equestrian</item>
-        <item>Martial sports</item>
+        <item>Deportes</item>
+        <item>Eventos especiales</item>
+        <item>Magacine</item>
+        <item>Fútbol</item>
+        <item>Tenis/Squash</item>
+        <item>Deportes de equipo</item>
+        <item>Atletismo</item>
+        <item>Deportes de motor</item>
+        <item>Deportes de agua</item>
+        <item>Deportes de invierno</item>
+        <item>Hípica</item>
+        <item>Artes marciales</item>
     </string-array>
 
     <string-array name="pr_content_type5">
-        <item>Children\'s/Youth</item>
-        <item>Pre-school</item>
-        <item>Entertainment (6 to 14 year-olds)</item>
-        <item>Entertainment (10 to 16 year-olds)</item>
-        <item>Informational/Educational/Schools</item>
-        <item>Cartoons/Puppets</item>
+        <item>Niños/Jóvenes</item>
+        <item>Pre-escolar</item>
+        <item>Entretenimiento (6 a 14 años)</item>
+        <item>Entretenimiento (10 a 16 años)</item>
+        <item>Informativo/Educativo/Escolar</item>
+        <item>Dibujos animados/Marionetas</item>
     </string-array>
     
     <string-array name="pr_content_type6">
-        <item>Music/Ballet/Dance</item>
+        <item>Música/Ballet/Danza</item>
         <item>Rock/Pop</item>
-        <item>Serious music/Classical Music</item>
-        <item>Folk/Traditional music</item>
+        <item>Seria/Clásica</item>
+        <item>Folclórica/Tradicional</item>
         <item>Jazz</item>
         <item>Musical/Opera</item>
         <item>Ballet</item>
     </string-array>
 
     <string-array name="pr_content_type7">
-        <item>Arts/Culture</item>
-        <item>Performing Arts</item>
-        <item>Fine Arts</item>
+        <item>Arte/Cultura</item>
+        <item>Artes escénicas</item>
+        <item>Bellas artes</item>
         <item>Religion</item>
-        <item>Popular Culture/Tradital Arts</item>
-        <item>Literature</item>
-        <item>Film/Cinema</item>
-        <item>Experimental Film/Video</item>
-        <item>Broadcasting/Press</item>
-        <item>New Media</item>
-        <item>Magazine</item>
-        <item>Fashion</item>
+        <item>Cultura popular/Tradicionales</item>
+        <item>Literatura</item>
+        <item>Cine</item>
+        <item>Cine experimental/Video</item>
+        <item>Retransmisiones/Prensa</item>
+        <item>Nuevos medios</item>
+        <item>Magacine</item>
+        <item>Moda</item>
     </string-array>
 
     <string-array name="pr_content_type8">
-        <item>Social/Political issues/Economics</item>
-        <item>Magazine/Report/Domentary</item>
-        <item>Economics/Social Advisory</item>
-        <item>Remarkable People</item>
+        <item>Social/Política/Economia</item>
+        <item>Magacine/Reportaje/Documental</item>
+        <item>Ciencias económicas/Asesor social</item>
+        <item>Personas notables</item>
     </string-array>
  
     <string-array name="pr_content_type9">
-        <item>Education/Science/Factual</item>        
-        <item>Nature/Animals/Environment</item>
-        <item>Technology/Natural sciences</item>
-        <item>Medicine/Physiology/Psychology</item>
-        <item>Foreign Countries/Expeditions</item>
-        <item>Social/Spiritual Sciences</item>
-        <item>Further Education</item>
-        <item>Languages</item>
+        <item>Educación/Ciencia/Hechos</item>        
+        <item>Naturaleza/Animales/Entorno</item>
+        <item>Tecnología/Ciencias naturales</item>
+        <item>Medicina/Fisiología/Psicología</item>
+        <item>Paises extranjeros/Expediciones</item>
+        <item>Social/Ciencias espirituales</item>
+        <item>Educación superior</item>
+        <item>Idiomas</item>
     </string-array>
 
     <string-array name="pr_content_type10">
-        <item>Leisure hobbies</item>
-        <item>Tourism/Travel</item>
-        <item>Handicraft</item>
-        <item>Motoring</item>
-        <item>Fitness and Health</item>
-        <item>Cooking</item>
-        <item>Advertisement/Shopping</item>
-        <item>Gardening</item>
+        <item>Ocio</item>
+        <item>Turismo/Viajes</item>
+        <item>Artesanía</item>
+        <item>Automovilismo</item>
+        <item>Deporte y Salud</item>
+        <item>Cocina</item>
+        <item>Publicidad/Compras</item>
+        <item>Jardinería</item>
     </string-array>
 
     <string-array name="pr_content_type11">
-        <item>Misc</item>
-        <item>Black and White</item>
-        <item>Unpublished</item>
-        <item>Live Broadcast</item>
+        <item>Miscelánea</item>
+        <item>Blanco y negro</item>
+        <item>Inédito</item>
+        <item>Retransmisión en vivo</item>
     </string-array>
 </resources>
