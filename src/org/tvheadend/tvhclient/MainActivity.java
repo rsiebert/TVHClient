@@ -1328,6 +1328,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void onListPopulated(final String tag) {
+
         switch (menuPosition) {
         case MENU_CHANNELS:
             // When the channel list fragment is done loading and dual pane is 
@@ -1349,8 +1350,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case MENU_COMPLETED_RECORDINGS:
             // When the recording list fragment is done loading and dual pane is
             // active, preselect a recording from the list to show the details
-            // of this recording on the right side.
+            // of this recording on the right side. Before doing that remove the
+            // right fragment in case the list in the main fragment is
+            // empty to avoid showing invalid data.
             if (isDualPane) {
+                final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+                if (rf != null) {
+                    getSupportFragmentManager().beginTransaction().remove(rf).commit();
+                }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof CompletedRecordingListFragment && f instanceof FragmentControlInterface) {
                     ((FragmentControlInterface) f).setInitialSelection(completedRecordingListPosition);
@@ -1361,8 +1368,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case MENU_SCHEDULED_RECORDINGS:
             // When the recording list fragment is done loading and dual pane is
             // active, preselect a recording from the list to show the details
-            // of this recording on the right side.
+            // of this recording on the right side. Before doing that remove the
+            // right fragment in case the list in the main fragment is
+            // empty to avoid showing invalid data.
             if (isDualPane) {
+                final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+                if (rf != null) {
+                    getSupportFragmentManager().beginTransaction().remove(rf).commit();
+                }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof ScheduledRecordingListFragment && f instanceof FragmentControlInterface) {
                     ((FragmentControlInterface) f).setInitialSelection(scheduledRecordingListPosition);
@@ -1373,8 +1386,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case MENU_SERIES_RECORDINGS:
             // When the recording list fragment is done loading and dual pane is
             // active, preselect a recording from the list to show the details
-            // of this recording on the right side.
+            // of this recording on the right side. Before doing that remove the
+            // right fragment in case the list in the main fragment is
+            // empty to avoid showing invalid data.
             if (isDualPane) {
+                final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+                if (rf != null) {
+                    getSupportFragmentManager().beginTransaction().remove(rf).commit();
+                }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof SeriesRecordingListFragment && f instanceof FragmentControlInterface) {
                     ((FragmentControlInterface) f).setInitialSelection(seriesRecordingListPosition);
@@ -1385,8 +1404,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case MENU_TIMER_RECORDINGS:
             // When the recording list fragment is done loading and dual pane is
             // active, preselect a recording from the list to show the details
-            // of this recording on the right side.
+            // of this recording on the right side. Before doing that remove the
+            // right fragment in case the list in the main fragment is
+            // empty to avoid showing invalid data.
             if (isDualPane) {
+                final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+                if (rf != null) {
+                    getSupportFragmentManager().beginTransaction().remove(rf).commit();
+                }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof TimerRecordingListFragment && f instanceof FragmentControlInterface) {
                     ((FragmentControlInterface) f).setInitialSelection(timerRecordingListPosition);
@@ -1397,8 +1422,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case MENU_FAILED_RECORDINGS:
             // When the recording list fragment is done loading and dual pane is
             // active, preselect a recording from the list to show the details
-            // of this recording on the right side.
+            // of this recording on the right side. Before doing that remove the
+            // right fragment in case the list in the main fragment is
+            // empty to avoid showing invalid data.
             if (isDualPane) {
+                final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+                if (rf != null) {
+                    getSupportFragmentManager().beginTransaction().remove(rf).commit();
+                }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof FailedRecordingListFragment && f instanceof FragmentControlInterface) {
                     ((FragmentControlInterface) f).setInitialSelection(failedRecordingListPosition);
