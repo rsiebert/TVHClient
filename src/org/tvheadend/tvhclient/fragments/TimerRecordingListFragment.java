@@ -180,6 +180,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.onListPopulated(TAG);
         }
+        activity.supportInvalidateOptionsMenu();
     }
 
     @Override
@@ -193,7 +194,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
 
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance(null);
+            DialogFragment editFragment = TimerRecordingAddFragment.newInstance(null);
             Bundle bundle = new Bundle();
             bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, adapter.getSelectedItem().id);
             editFragment.setArguments(bundle);
@@ -284,7 +285,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         switch (item.getItemId()) {
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance(null);
+            DialogFragment editFragment = TimerRecordingAddFragment.newInstance(null);
             Bundle bundle = new Bundle();
             bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, trec.id);
             editFragment.setArguments(bundle);
