@@ -187,6 +187,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.onListPopulated(TAG);
         }
+        activity.supportInvalidateOptionsMenu();
     }
 
     @Override
