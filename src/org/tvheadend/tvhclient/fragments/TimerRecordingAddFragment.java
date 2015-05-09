@@ -161,7 +161,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
             if (rec != null) {
                 priorityValue = rec.priority;
                 startTimeValue = rec.start;
-                stopTimeValue = rec.start;
+                stopTimeValue = rec.stop;
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
                 enabledValue = rec.enabled;
