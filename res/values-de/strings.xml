@@ -46,6 +46,8 @@
     <string name="cancel_add_recording">Hinzufügen der Aufnahme verwerfen? Alle Eingaben gehen verloren.</string>
     <string name="add_series_recording">Neue Serienaufnahme hinzufügen</string>
     <string name="add_timer_recording">Neue manuelle Aufnahme hinzufügen</string>
+    <string name="edit_series_recording">Serienaufnahme bearbeiten</string>
+    <string name="edit_timer_recording">Manuelle Aufnahme bearbeiten</string>
     <string name="activate_recording">Aufnahme aktivieren</string>
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>

@@ -261,7 +261,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             });
         }
         if (getDialog() != null) {
-            getDialog().setTitle(R.string.add_series_recording);
+            getDialog().setTitle(rec != null ? R.string.edit_series_recording : R.string.add_series_recording);
         }
     }
 
@@ -339,7 +339,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         // If the series recording is being edited, remove it before adding it
         // again, because the API does not provide an edit call. 
-        if (rec.id.length() > 0) {
+        if (rec != null && rec.id != null && rec.id.length() > 0) {
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
             intent.putExtra("id", rec.id);
@@ -392,7 +392,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
      * chosen the user can continue to add or edit the recording. Otherwise
      * the input will be discarded and the activity will be closed.
      */
-    public void cancel() {
+    private void cancel() {
         // Show confirmation dialog to cancel
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(getString(R.string.cancel_add_recording));
@@ -423,7 +423,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
      * 
      * @return Number with the selected day on each bit position
      */
-    public long getDayOfWeekValue() {
+    private long getDayOfWeekValue() {
         long value = 0;
         for (int i = 0; i < 7; i++) {
             if (daysOfWeekButtons[i].isChecked()) {
