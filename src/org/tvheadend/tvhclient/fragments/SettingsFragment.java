@@ -181,8 +181,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                     if (app.isUnlocked()) {
                         Toast.makeText(getActivity(), getString(R.string.unlocker_already_purchased), Toast.LENGTH_SHORT).show();
                     } else {
-                        Intent settingsIntent = new Intent(activity, UnlockerActivity.class);
-                        startActivity(settingsIntent);
+                        Intent unlockerIntent = new Intent(activity, UnlockerActivity.class);
+                        startActivity(unlockerIntent);
                     }
                     return false;
                 }
