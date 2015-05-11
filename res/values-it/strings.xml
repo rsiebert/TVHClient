@@ -29,7 +29,7 @@
     <string name="select_connection">Seleziona connessione</string>
     <string name="add_connection">Aggiungi connessione</string>
     <string name="confirm_cancel">Annullare le modifiche? Tutte le modifiche non salvate andranno perdute.</string>
-    <string name="remove">Rimuovere</string>
+    <string name="remove">Rimuovi</string>
     <string name="delete_connection">Vuoi veramente cancellare la connessione \'%s\'?</string>
     <string name="remove_recording">Vuoi veramente cancellare la registrazione \'%s\'?</string>
     <string name="remove_series_recording">Vuoi veramente cancellare la registrazione della serie \'%s\'?\n\nQuesto rimuoverà tutte le registrazioni programmate che appartengono a quella regola di registrazione della serie.</string>
@@ -159,6 +159,7 @@
     <string name="err_connect">Impossibile connettersi al server</string>
     <string name="err_con_lost">Connessione con il server persa</string>
     <string name="err_con_timeout">Connessione scaduta</string>
+    <string name="err_loading_profiles">Impossibile caricare i profili dal server\n%s</string>
 
     <string name="recording_file_missing">File di registrazione mancante</string>
     <string name="recording_time_missed">Programmazione della registrazione mancata</string>

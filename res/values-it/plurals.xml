@@ -14,15 +14,15 @@
         <item quantity="other">%d Registrazioni</item>
     </plurals>
     <plurals name="completed_recordings">
-        <item quantity="one">%d Registrazioni completate</item>
+        <item quantity="one">%d Registrazione completata</item>
         <item quantity="other">%d Registrazioni completate</item>
     </plurals>
     <plurals name="upcoming_recordings">
-        <item quantity="one">%d Registrazioni programmate</item>
+        <item quantity="one">%d Registrazione programmata</item>
         <item quantity="other">%d Registrazioni programmate</item>
     </plurals>
     <plurals name="failed_recordings">
-        <item quantity="one">%d Registrazioni fallite</item>
+        <item quantity="one">%d Registrazione fallita</item>
         <item quantity="other">%d Registrazioni fallite</item>
     </plurals>
 
