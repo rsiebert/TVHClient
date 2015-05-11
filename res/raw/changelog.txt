@@ -1,14 +1,15 @@
 $ 1.7.7
   % VERSION 1.7.7
   _ 07.05.2015
-    * Minimum Android version is now 8 to support in-app billing
     * Additional features can be enabled in the settings for a small fee (All existing features remain free)
-    * Playback and recording parameters are now configurable per connection
-    * The newer streaming profiles are now supported per connection. (Only available in the unlocked version and the server must support this feature)
-    * Support to add custom series recordings with more options (Only available in the unlocked version)
+    * Existing playback and recording parameters are now configurable per connection
+    * New playback and recording profiles are now available per connection. (Only available in the unlocked version and the server must support this feature)
+    * Support to add custom series recordings with more parameters (Only available in the unlocked version)
     * Support for timer recordings (Only available in the unlocked version and the server must support this feature)
     * Show the scheduled indicator for programs that are scheduled by a series recording 
     * Show the server API version on the status screen
+    * Added first part of the Spanish translation
+    * Minimum Android SDK version is now 8 to support in-app billing
 $ 1.7.6
   % VERSION 1.7.6
   _ 29.03.2015
