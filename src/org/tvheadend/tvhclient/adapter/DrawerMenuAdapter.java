@@ -26,6 +26,11 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
     private int selectedPosition;
     private boolean lightTheme;
 
+    private RelativeLayout itemLayout;
+    private ImageView icon;
+    private TextView title;
+    private TextView count;
+
     public DrawerMenuAdapter(Activity context, List<DrawerMenuItem> list) {
         super(context, R.layout.list_layout, list);
         this.context = context;
@@ -39,43 +44,27 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
         selectedPosition = pos;
     }
 
-    static class ViewHolder {
-        public View divider;
-        public RelativeLayout itemLayout;
-        public ImageView icon;
-        public TextView title;
-        public TextView count;
-    }
-
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        ViewHolder holder = null;
-
         final DrawerMenuItem m = getItem(position);
-        if (view == null) {
-            // Inflate the section layout if a section shall be shown, otherwise
-            // inflate the regular menu item layout or one that has no contents
-            // and is pretty much invisible
-            if (m.isSection) {
-                view = context.getLayoutInflater().inflate(R.layout.drawer_list_section, parent, false);
-            } else {
-                if (m.isVisible) {
-                    view = context.getLayoutInflater().inflate(R.layout.drawer_list_item, parent, false);
-                } else {
-                    view = context.getLayoutInflater().inflate(R.layout.drawer_list_item_empty, parent, false);
-                }
-            }
-            holder = new ViewHolder();
-            holder.divider = (View) view.findViewById(R.id.divider);
-            holder.itemLayout = (RelativeLayout) view.findViewById(R.id.item_layout);
-            holder.icon = (ImageView) view.findViewById(R.id.icon);
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.count = (TextView) view.findViewById(R.id.count);
-            view.setTag(holder);
+
+        // Inflate the section layout if a section shall be shown, otherwise
+        // inflate the regular menu item layout or one that has no contents
+        // and is pretty much invisible
+        if (m.isSection) {
+            view = context.getLayoutInflater().inflate(R.layout.drawer_list_section, parent, false);
         } else {
-            holder = (ViewHolder) view.getTag();
+            if (m.isVisible) {
+                view = context.getLayoutInflater().inflate(R.layout.drawer_list_item, parent, false);
+            } else {
+                view = context.getLayoutInflater().inflate(R.layout.drawer_list_item_empty, parent, false);
+            }
         }
+        itemLayout = (RelativeLayout) view.findViewById(R.id.item_layout);
+        icon = (ImageView) view.findViewById(R.id.icon);
+        title = (TextView) view.findViewById(R.id.title);
+        count = (TextView) view.findViewById(R.id.count);
 
         // Highlight the selected position with a different color. This can't be
         // done with the list position because the section menu items mess up
@@ -85,13 +74,13 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
             final int color = (lightTheme) ? context.getResources().getColor(
                     R.color.drawer_selected_light) : context.getResources().getColor(
                     R.color.drawer_selected_dark);
-            if (holder.itemLayout != null) {
-                holder.itemLayout.setBackgroundColor(color);
+            if (itemLayout != null) {
+                itemLayout.setBackgroundColor(color);
             }
         } else {
             final int color = context.getResources().getColor(android.R.color.transparent);
-            if (holder.itemLayout != null) {
-                holder.itemLayout.setBackgroundColor(color);
+            if (itemLayout != null) {
+                itemLayout.setBackgroundColor(color);
             }
         }
         
@@ -102,16 +91,16 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
                 view.setOnLongClickListener(null);
                 view.setLongClickable(false);
             } 
-            if (holder.icon != null) {
-                holder.icon.setImageResource(m.icon);
-                holder.icon.setVisibility((m.icon != 0) ? ImageView.VISIBLE : ImageView.GONE);
+            if (icon != null) {
+                icon.setImageResource(m.icon);
+                icon.setVisibility((m.icon != 0) ? ImageView.VISIBLE : ImageView.GONE);
             }
-            if (holder.title != null) {
-                holder.title.setText(m.title);
+            if (title != null) {
+                title.setText(m.title);
             }
-            if (holder.count != null) {
-                holder.count.setText(String.valueOf(m.count));
-                holder.count.setVisibility((m.count > 0) ? View.VISIBLE : View.GONE);
+            if (count != null) {
+                count.setText(String.valueOf(m.count));
+                count.setVisibility((m.count > 0) ? View.VISIBLE : View.GONE);
             }
         }
         return view;
