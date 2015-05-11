@@ -72,18 +72,6 @@
                 android:padding="8dp"
                 android:text="@string/record_cancel"
                 android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/menu_record_remove"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:background="?attr/menu_text_selector"
-                android:drawableLeft="?attr/ic_menu_record_remove"
-                android:drawableStart="?attr/ic_menu_record_remove"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:text="@string/record_remove"
-                android:visibility="gone" />
         </LinearLayout>
 
         <include layout="@layout/program_details_layout_item" />
