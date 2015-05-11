@@ -34,6 +34,25 @@
                 android:text="@string/play" />
 
             <TextView
+                android:id="@+id/menu_record_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="?attr/menu_text_selector"
+                android:drawableLeft="?attr/ic_menu_record_cancel"
+                android:drawableStart="?attr/ic_menu_record_cancel"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:text="@string/record_cancel"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="16dp" >
+
+            <TextView
                 android:id="@+id/menu_record_once"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
@@ -56,25 +75,6 @@
                 android:gravity="center_vertical"
                 android:padding="8dp"
                 android:text="@string/record_series" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="16dp" >
-
-            <TextView
-                android:id="@+id/menu_record_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:background="?attr/menu_text_selector"
-                android:drawableLeft="?attr/ic_menu_record_cancel"
-                android:drawableStart="?attr/ic_menu_record_cancel"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:text="@string/record_cancel"
-                android:visibility="gone" />
         </LinearLayout>
 
         <include layout="@layout/program_details_layout_item" />
