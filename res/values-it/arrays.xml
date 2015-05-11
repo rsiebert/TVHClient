@@ -16,6 +16,7 @@
         <item>Stato</item>
         <item>Impostazioni</item>
         <item>Connessioni</item>
+        <item>Abilita extra</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">

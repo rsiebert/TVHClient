@@ -16,6 +16,7 @@
         <item>Stav</item>
         <item>Nastavení</item>
         <item>Připojení</item>
+        <item>Povolit doplňky</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">

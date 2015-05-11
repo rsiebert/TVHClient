@@ -69,6 +69,7 @@
         <item>pl</item>
         <item>sv</item>
         <item>cz</item>
+        <item>sp</item>
     </string-array>
     <string-array name="pref_language_list_display" translatable="false">
         <item>Default</item>
@@ -80,6 +81,7 @@
         <item>Polski</item>
         <item>Svenska</item>
         <item>Česky</item>
+        <item>Español</item>
     </string-array>
 
     <string-array name="pref_menu_ids" translatable="false">
@@ -93,6 +95,7 @@
         <item>7</item>
         <item>8</item>
         <item>9</item>
+        <item>10</item>
     </string-array>
 
     <string-array name="pref_menu_names">
@@ -106,6 +109,7 @@
         <item>Status</item>
         <item>Settings</item>
         <item>Connections</item>
+        <item>Enable Extras</item>
     </string-array>
 
     <string-array name="pref_sort_channels_ids" translatable="false">
