@@ -121,7 +121,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             addDvrEntry(ch, intent.getLongExtra("eventId", 0), intent.getStringExtra("configName"));
 
         } else if (action.equals(Constants.ACTION_DELETE_DVR_ENTRY)) {
-            deleteDvrEntry(intent.getLongExtra("id", 0));
+            try {
+                deleteDvrEntry(Long.valueOf(intent.getStringExtra("id")));
+            } catch (NumberFormatException ex) {
+                // NOP
+            }
 
         } else if (action.equals(Constants.ACTION_CANCEL_DVR_ENTRY)) {
             cancelDvrEntry(intent.getLongExtra("id", 0));
