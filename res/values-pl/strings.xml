@@ -137,9 +137,9 @@
     <string name="pref_profiles">Profile</string>
     <string name="pref_profiles_sum">Określ parametry lub profil (jeśli jest obsługiwany), jak programy będą nagrywane lub jak nagrania będą odtwarzane.</string>
     <string name="pref_recording_profiles">Profile nagrywania</string>
-    <string name="pref_recording_profiles_sum">Wybierz profil, który serwer wykorzystuje do nagrywania zaplanowanego programu.</string>
+    <string name="pref_recording_profiles_sum">Wybierz profil, który serwer będzie wykorzystywać do nagrywania zaplanowanego programu.</string>
     <string name="pref_playback_profiles">Profile odtwarzania</string>
-    <string name="pref_playback_profiles_sum">Wybierz profil, który będzie uzywany do odtwarzania nagranego programu.</string>
+    <string name="pref_playback_profiles_sum">Wybierz profil, który będzie używany do odtwarzania nagranego programu.</string>
     <string name="pref_show_notifications">Pokazuj powiadomienia</string>
     <string name="pref_show_notifications_sum">Informuje użytkownika gdy nagrywanie zostało rozpoczęte lub zostało zakończone. Wymaga to uruchomionej usługi w tle.</string>
     <string name="pref_show_next_program">Pokazuj następny program na liście kanałów</string>
