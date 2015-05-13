@@ -369,6 +369,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 // TODO string update
                 serverName.setText(R.string.no_connection_available);
                 serverSelection.setVisibility(View.GONE);
+            } else if (DatabaseHelper.getInstance().getConnections().size() == 1) {
+                serverName.setText(conn.name);
+                serverSelection.setVisibility(View.GONE);
             } else if (conn == null) {
                 serverName.setText(R.string.no_connection_active);
                 serverSelection.setVisibility(View.GONE);
