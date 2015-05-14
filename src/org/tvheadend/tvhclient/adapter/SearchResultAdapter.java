@@ -1,7 +1,9 @@
 package org.tvheadend.tvhclient.adapter;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
@@ -11,19 +13,24 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class SearchResultAdapter extends ArrayAdapter<Program> {
+public class SearchResultAdapter extends ArrayAdapter<Program> implements Filterable {
 
     private final static String TAG = SearchResultAdapter.class.getSimpleName();
-    Activity context;
-    List<Program> list;
+    private Activity context;
+    private List<Program> originalData = null; //new ArrayList<Program>();
+    private List<Program> filteredData = null; //new ArrayList<Program>();
+    private ItemFilter mFilter = new ItemFilter();
 
     public SearchResultAdapter(Activity context, List<Program> list) {
         super(context, R.layout.search_result_widget, list);
         this.context = context;
-        this.list = list;
+        originalData = list;
+        filteredData = list;
     }
 
     public void sort() {
@@ -93,19 +100,77 @@ public class SearchResultAdapter extends ArrayAdapter<Program> {
     }
 
     public void update(Program p) {
-        int length = list.size();
-
-        // Go through the list of programs and find the
-        // one with the same id. If its been found, replace it.
-        for (int i = 0; i < length; ++i) {
-            if (list.get(i).id == p.id) {
-                list.set(i, p);
-                break;
+        synchronized(originalData) {
+            final int length = originalData.size();
+            // Go through the list of programs and find the
+            // one with the same id. If its been found, replace it.
+            for (int i = 0; i < length; ++i) {
+                if (originalData.get(i).id == p.id) {
+                    originalData.set(i, p);
+                    break;
+                }
             }
         }
     }
 
+    public Program getItem(int position) {
+        return filteredData.get(position);
+    }
+
+    public int getFullCount() {
+        if (originalData != null) {
+            return originalData.size();
+        }
+        return 0;
+    }
+
+    public int getCount() {
+        if (filteredData != null) {
+            return filteredData.size();
+        }
+        return 0;
+    }
+
+    public List<Program> getFullList() {
+        return originalData;
+    }
+
     public List<Program> getList() {
-        return list;
+        return filteredData;
+    }
+
+    public Filter getFilter() {
+        return mFilter;
+    }
+
+    private class ItemFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            final String filterString = constraint.toString().toLowerCase(Locale.getDefault());
+            FilterResults results = new FilterResults();
+
+            final List<Program> list = originalData;
+            final int count = list.size();
+            final ArrayList<Program> newList = new ArrayList<Program>(count);
+
+            Program p;
+            for (int i = 0; i < count; i++) {
+                p = list.get(i);
+                if (p.title.toLowerCase(Locale.getDefault()).contains(filterString)) {
+                    newList.add(p);
+                }
+            }
+
+            results.values = newList;
+            return results;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            filteredData = (ArrayList<Program>) results.values;
+            notifyDataSetChanged();
+        }
     }
 }

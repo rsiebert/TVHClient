@@ -21,7 +21,6 @@ package org.tvheadend.tvhclient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
@@ -33,9 +32,13 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -43,6 +46,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -53,7 +57,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 @SuppressWarnings("deprecation")
-public class SearchResultActivity extends ActionBarActivity implements HTSListener {
+public class SearchResultActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, HTSListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = SearchResultActivity.class.getSimpleName();
@@ -61,34 +65,33 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
     private ActionBar actionBar = null;
     private SearchResultAdapter adapter;
     private ListView listView;
-    private Pattern pattern;
     private Channel channel;
-    // The currently selected program
     private Program program;
-
+    private MenuItem searchMenuItem = null;
     private Runnable updateTask;
+    private Runnable finishTask;
     private Handler updateHandler = new Handler();
+    private boolean handlerRunning = false;
+
+    // Contains the search string from the search input field 
+    private String query;
+
+    private SearchView searchView;
 
     @Override
-    public void onCreate(Bundle icicle) {
+    public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
-        super.onCreate(icicle);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.list_layout);
-        
+
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle(R.string.search);
-        actionBar.setSubtitle(getIntent().getStringExtra(SearchManager.QUERY));
 
         listView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(listView);
-        
-        List<Program> list = new ArrayList<Program>();
-        adapter = new SearchResultAdapter(this, list);
-        adapter.sort();
-        listView.setAdapter(adapter);
 
         // Show the details of the program when the user has selected one
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -108,7 +111,79 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             }
         });
 
-        onNewIntent(getIntent());
+        // This is the list with the initial data from the program guide. It
+        // will be passed to the search adapter. 
+        List<Program> list = new ArrayList<Program>();
+
+        // If no channel is given go through the list of programs in all
+        // channels and add it to the list. If a channel was given search
+        // through the list of programs in the given channel.
+        if (channel == null) {
+            TVHClientApplication app = (TVHClientApplication) getApplication();
+            for (Channel ch : app.getChannels()) {
+                if (ch != null) {
+                    synchronized(ch.epg) {
+                        for (Program p : ch.epg) {
+                            if (p != null && p.title != null && p.title.length() > 0) {
+                                list.add(p);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            if (channel.epg != null) {
+                synchronized(channel.epg) {
+                    for (Program p : channel.epg) {
+                        if (p != null && p.title != null && p.title.length() > 0) {
+                            list.add(p);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Create the adapter with the given initial program guide data
+        adapter = new SearchResultAdapter(this, list);
+        listView.setAdapter(adapter);
+
+        // Create the runnable that will filter the data from the adapter. It
+        // also updates the action bar with the number of available program that
+        // will be searched 
+        updateTask = new Runnable() {
+            public void run() {
+                adapter.getFilter().filter(query.toString());
+                actionBar.setSubtitle(getString(R.string.searching_programs, adapter.getFullCount()));
+                handlerRunning  = false;
+            }
+        };
+
+        // Create the runnable that will show the final search results
+        finishTask = new Runnable() {
+            public void run() {
+                actionBar.setSubtitle(getResources().getQuantityString(
+                        R.plurals.results, adapter.getCount(),
+                        adapter.getCount()));
+            }
+        };
+
+        Intent intent = getIntent();
+
+        // If the screen has been rotated then overwrite the original query in
+        // the intent with the one that has been saved before the rotation. 
+        if (savedInstanceState != null) {
+            query = savedInstanceState.getString(SearchManager.QUERY);
+            intent.removeExtra(SearchManager.QUERY);
+            intent.putExtra(SearchManager.QUERY, query);
+        }
+
+        onNewIntent(intent);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(SearchManager.QUERY, query);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -121,7 +196,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             return;
         }
 
-        // Get the possible channel
+        // Get the channel id if given, to limit the search to a channel
         TVHClientApplication app = (TVHClientApplication) getApplication();
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
@@ -130,17 +205,19 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             channel = null;
         }
 
-        // Create the intent with the search options 
-        String query = intent.getStringExtra(SearchManager.QUERY);
-        pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
-        intent = new Intent(SearchResultActivity.this, HTSService.class);
+        // Get the given search query
+        query = intent.getStringExtra(SearchManager.QUERY);
+
+        // Create the intent that will be used to fetch all program data from
+        // the service. The results will be searched. 
+        intent = new Intent(this, HTSService.class);
         intent.setAction(Constants.ACTION_EPG_QUERY);
-        intent.putExtra("query", query);
+        intent.putExtra("query", "");
         if (channel != null) {
             intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
         }
-        
-        // Save the query so it can be shown again
+
+        // Save the query so it can be shown again.
         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                 SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
         suggestions.saveRecentQuery(query, null);
@@ -148,57 +225,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         // Now call the service with the query to get results
         startService(intent);
 
-        // Clear the previous results before adding new ones
-        adapter.clear();
-
-        // If no channel is given go through the list of programs in all
-        // channels and search if the desired program exists. If a channel was
-        // given search through the list of programs in the given channel. 
-        if (channel == null) {
-            for (Channel ch : app.getChannels()) {
-                if (ch != null) {
-                    synchronized(ch.epg) {
-                        for (Program p : ch.epg) {
-                            if (p != null && p.title != null && p.title.length() > 0) {
-                                // Check if the program name matches the search pattern
-                                if (pattern.matcher(p.title).find()) {
-                                    adapter.add(p);
-                                    adapter.sort();
-                                    adapter.notifyDataSetChanged();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            if (channel.epg != null) {
-                synchronized(channel.epg) {
-                    for (Program p : channel.epg) {
-                        if (p != null && p.title != null && p.title.length() > 0) {
-                            // Check if the program name matches the search pattern
-                            if (pattern.matcher(p.title).find()) {
-                                adapter.add(p);
-                                adapter.sort();
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        actionBar.setTitle(android.R.string.search_go);
-        actionBar.setSubtitle(getString(R.string.loading));
-
-        // Create the runnable that will initiate the update of the adapter and
-        // indicates that we are done when nothing has happened after 2s. 
-        updateTask = new Runnable() {
-            public void run() {
-                adapter.notifyDataSetChanged();
-                actionBar.setSubtitle(adapter.getCount() + " " + getString(R.string.results));
-            }
-        };
+        startQuickAdapterUpdate();
     }
 
     @Override
@@ -224,9 +251,21 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @SuppressLint("NewApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.search_menu, menu);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            searchMenuItem = menu.findItem(R.id.menu_search); 
+            searchView = (SearchView) searchMenuItem.getActionView();
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setIconifiedByDefault(true);
+            searchView.setOnQueryTextListener(this);
+            searchView.setOnSuggestionListener(this);
+        }
         return true;
     }
 
@@ -238,7 +277,9 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             return true;
 
         case R.id.menu_search:
-            onSearchRequested();
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                onSearchRequested();
+            }
             return true;
 
         case R.id.menu_genre_color_info:
@@ -297,21 +338,39 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
         Utils.setProgramMenu(menu, program);
     }
 
+    /**
+     * Starts two timers that will update the search list view when expired. The
+     * timer is only started when it is not running. The second timer shows the
+     * final search results. If this timer is called while it is running, it
+     * will be restarted. This ensures that this timer will be called only once
+     * at the end.
+     */
+    private void startAdapterUpdate(int updateTaskTime, int finishTaskTime) {
+        if (!handlerRunning) {
+            // Show that the loading is still active
+            updateHandler.postDelayed(updateTask, 500);
+
+            // Show the final result when loading is done. This is called only
+            // once when the startDelayedAdapterUpdate method is called for the
+            // last time.
+            updateHandler.removeCallbacks(finishTask);
+            updateHandler.postDelayed(finishTask, 1500);
+            handlerRunning = true;
+        }
+    }
 
     /**
-     * Starts a timer that will update the search list view when expired. If
-     * this method is called while the timer is running, the timer will be
-     * restarted. This will prevent calls adapter.notifyDataSetChanged() until
-     * all data has been loaded and nothing has happened for 2s.
+     * Calls the two timers with the default timeout values.
      */
     private void startDelayedAdapterUpdate() {
-        updateHandler.removeCallbacks(updateTask);
-        updateHandler.postDelayed(updateTask, 2000);
-        
-        // Show that we are still loading
-        actionBar.setSubtitle(getString(R.string.loading)
-                + "... (" + adapter.getCount() 
-                + " " + getString(R.string.results) + ")");
+        startAdapterUpdate(500, 2000);
+    }
+
+    /**
+     * Calls the two timers with shorter timeout values.
+     */
+    private void startQuickAdapterUpdate() {
+        startAdapterUpdate(10, 50);
     }
 
     /**
@@ -325,11 +384,8 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                 public void run() {
                     Program p = (Program) obj;
                     if (p != null && p.title != null && p.title.length() > 0) {
-                        if (pattern != null && pattern.matcher(p.title).find()) {
-                            adapter.add(p);
-                            adapter.sort();
-                            startDelayedAdapterUpdate();
-                        }
+                        adapter.add(p);
+                        startDelayedAdapterUpdate();
                     }
                 }
             });
@@ -354,7 +410,7 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
             runOnUiThread(new Runnable() {
                 public void run() {
                     Recording rec = (Recording) obj;
-                    for (Program p : adapter.getList()) {
+                    for (Program p : adapter.getFullList()) {
                         if (rec == p.recording) {
                             adapter.update(p);
                             startDelayedAdapterUpdate();
@@ -364,5 +420,52 @@ public class SearchResultActivity extends ActionBarActivity implements HTSListen
                 }
             });
         }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String text) {
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        if (text.length() >= 3 && app.isUnlocked()) {
+            query = text;
+            startQuickAdapterUpdate();
+        }
+        return true;
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public boolean onQueryTextSubmit(String text) {
+        query = text;
+        startQuickAdapterUpdate();
+
+        // Close the search view and show the action bar again
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            searchMenuItem.collapseActionView();
+        }
+        return true;
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public boolean onSuggestionClick(int position) {
+        // Get the text of the selected suggestion
+        Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getCursor();
+        query = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+        startQuickAdapterUpdate();
+
+        // Close the search view and show the action bar again
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            searchMenuItem.collapseActionView();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onSuggestionSelect(int position) {
+        // Get the text of the selected suggestion
+        Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getCursor();
+        query = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+        startQuickAdapterUpdate();
+        return true;
     }
 }

@@ -25,5 +25,9 @@
         <item quantity="one">%d Fehlerhafte Aufnahme</item>
         <item quantity="other">%d Fehlerhafte Aufnahmen</item>
     </plurals>
+    <plurals name="results">
+        <item quantity="one">%d Ergebnis</item>
+        <item quantity="other">%d Ergebnisse</item>
+    </plurals>
 
 </resources>
