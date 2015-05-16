@@ -13,6 +13,7 @@
     <string name="record_cancel_all">Annulla tutte registrazioni</string>
     <string name="record_remove">Elimina registrazione</string>
     <string name="record_remove_all">Elimina tutte registrazioni</string>
+    <string name="record_edit">Modifica registrazione</string>
     <string name="search_imdb">Cerca su IMDB</string>
     <string name="search_epg">Cerca nella guida programmi</string>
     <string name="add">Aggiungi</string>

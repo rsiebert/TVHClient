@@ -13,6 +13,7 @@
     <string name="record_cancel_all">Alle Aufnahmen entfernen</string>
     <string name="record_remove">Aufnahme entfernen</string>
     <string name="record_remove_all">Alle Aufnahmen entfernen</string>
+    <string name="record_edit">Aufnahme bearbeiten</string>
     <string name="search_imdb">Suche auf der IMDB Webseite</string>
     <string name="search_epg">Suche im TV-Programm</string>
     <string name="add">Hinzufügen</string>

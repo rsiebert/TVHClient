@@ -9,6 +9,7 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,12 +18,13 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+@SuppressWarnings("deprecation")
 public class SeriesRecordingDetailsFragment extends DialogFragment {
 
     @SuppressWarnings("unused")
     private final static String TAG = SeriesRecordingDetailsFragment.class.getSimpleName();
 
-    private Activity activity;
+    private ActionBarActivity activity;
     private boolean showControls = false;
     private SeriesRecording srec;
 
@@ -35,6 +37,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
 
     private LinearLayout playerLayout;
     private TextView recordRemove;
+    private TextView recordEdit;
 
     public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
@@ -54,7 +57,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (Activity) activity;
+        this.activity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -84,6 +87,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
         recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
+        recordEdit = (TextView) v.findViewById(R.id.menu_record_edit);
         return v;
     }
 
@@ -144,6 +148,9 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private void showPlayerControls() {
         playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
         recordRemove.setVisibility(View.VISIBLE);
+
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        recordEdit.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -154,6 +161,21 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Utils.confirmRemoveRecording(activity, srec);
+                if (getDialog() != null) {
+                    getDialog().dismiss();
+                }
+            }
+        });
+        recordEdit.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create the fragment and show it as a dialog.
+                DialogFragment editFragment = SeriesRecordingAddFragment.newInstance(null);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, srec.id);
+                editFragment.setArguments(bundle);
+                editFragment.show(activity.getSupportFragmentManager(), "dialog");
+
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

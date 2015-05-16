@@ -12,6 +12,7 @@
     <string name="record_cancel_all">Annuleer alle opnames</string>
     <string name="record_remove">Verwijder opname</string>
     <string name="record_remove_all">Verwijder alle opnames</string>
+    <string name="record_edit">Bewerken opname</string>
     <string name="search_imdb">Zoek op IMDB</string>
     <string name="search_epg">Zoek in programma gids</string>
     <string name="add">Toevoegen</string>

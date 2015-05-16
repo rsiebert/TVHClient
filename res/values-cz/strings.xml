@@ -13,6 +13,7 @@
     <string name="record_cancel_all">Zrušit všechna nahrávání</string>
     <string name="record_remove">Smazat nahrávku</string>
     <string name="record_remove_all">Smazat všechny nahrávky</string>
+    <string name="record_edit">Upravit nahrávku</string>
     <string name="search_imdb">Hledat v IMDB</string>
     <string name="search_epg">Hledat v programovém průvodci</string>
     <string name="add">Přidat</string>

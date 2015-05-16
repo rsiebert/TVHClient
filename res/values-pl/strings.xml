@@ -13,6 +13,7 @@
     <string name="record_cancel_all">Anuluj wszystkie nagrywania</string>
     <string name="record_remove">Usuń nagranie</string>
     <string name="record_remove_all">Usuń wszystkie nagrania</string>
+    <string name="record_edit">Edycja nagrywanie</string>
     <string name="search_imdb">Szukaj na IMDB</string>
     <string name="search_epg">Szukaj w przewodniku programów</string>
     <string name="add">Dodaj</string>

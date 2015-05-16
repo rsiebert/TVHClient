@@ -13,6 +13,7 @@
     <string name="record_cancel_all">Avbryt alla inspelningar</string>
     <string name="record_remove">Ta bort inspelning</string>
     <string name="record_remove_all">Ta bort alla inspelningar</string>
+    <string name="record_edit">Redigera inspelning</string>
     <string name="search_imdb">Sök på IMDB</string>
     <string name="search_epg">Sök i EPG</string>
     <string name="add">Lägg till</string>
