@@ -25,9 +25,7 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -47,6 +45,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 public class Utils {
 
@@ -228,18 +228,21 @@ public class Utils {
         }
 
         // Show a confirmation dialog before deleting the recording
-        new AlertDialog.Builder(context)
-        .setTitle(R.string.record_remove)
-        .setMessage(message)
-        .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                removeRecording(context, id, type);
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // NOP
-            }
-        }).show();
+        new MaterialDialog.Builder(context)
+                .title(R.string.record_remove)
+                .content(message).positiveText(R.string.remove)
+                .negativeText(R.string.cancel)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        removeRecording(context, id, type);
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        // NOP
+                    }
+                }).show();
     }
 
     /**
@@ -267,18 +270,23 @@ public class Utils {
             return;
         }
         // Show a confirmation dialog before deleting the recording
-        new AlertDialog.Builder(context)
-        .setTitle(R.string.record_cancel)
-        .setMessage(context.getString(R.string.cancel_recording, rec.title))
-        .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                cancelRecording(context, rec);
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // NOP
-            }
-        }).show();
+        // Show a confirmation dialog before deleting the recording
+        new MaterialDialog.Builder(context)
+                .title(R.string.record_cancel)
+                .content(context.getString(R.string.cancel_recording, rec.title))
+                .positiveText(R.string.remove)
+                .negativeText(R.string.cancel)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        cancelRecording(context, rec);
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        // NOP
+                    }
+                }).show();
     }
 
     /**
@@ -933,12 +941,10 @@ public class Utils {
         }
 
         // Create the dialog and set the adapter
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.genre_color_list);
-        builder.setAdapter(new GenreColorDialogAdapter(context, items), null);
-
-        AlertDialog genreColorDialog = builder.create();
-        genreColorDialog.show();
+        new MaterialDialog.Builder(context)
+                .title(R.string.genre_color_list)
+                .adapter(new GenreColorDialogAdapter(context, items), null)
+                .show();
     }
 
     /**

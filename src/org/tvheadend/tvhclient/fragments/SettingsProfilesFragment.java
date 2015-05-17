@@ -35,8 +35,6 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Profiles;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -51,6 +49,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.enums.SnackbarType;
@@ -280,25 +279,20 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             }
         }
         // Show confirmation dialog to cancel
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(getString(R.string.confirm_discard_profile));
-
-        // Define the action of the yes button
-        builder.setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                activity.finish();
-            }
-        });
-        // Define the action of the no button
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        new MaterialDialog.Builder(activity)
+                .content(R.string.confirm_discard_profile)
+                .positiveText(getString(R.string.discard))
+                .negativeText(getString(R.string.cancel))
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        activity.finish();
+                    }
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.cancel();
+                    }
+                }).show();
     }
 
     /**

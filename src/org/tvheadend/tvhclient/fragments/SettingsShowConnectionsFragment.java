@@ -12,8 +12,6 @@ import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -27,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 @SuppressWarnings("deprecation")
 public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
@@ -220,34 +220,31 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             return true;
 
         case R.id.menu_delete:
-            // Show confirmation dialog to cancel 
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setMessage(getString(R.string.delete_connection, c.name));
-            builder.setTitle(getString(R.string.delete));
-            // Define the action of the yes button
-            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    if (DatabaseHelper.getInstance().removeConnection(c.id)) {
-                        adapter.remove(c);
-                        adapter.notifyDataSetChanged();
-                        adapter.sort();
-                        if (actionBarInterface != null) {
-                            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
+            // Show confirmation dialog to cancel
+            new MaterialDialog.Builder(activity)
+                    .content(getString(R.string.delete_connection, c.name))
+                    .positiveText(getString(R.string.delete))
+                    .negativeText(getString(android.R.string.no))
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            if (DatabaseHelper.getInstance().removeConnection(c.id)) {
+                                adapter.remove(c);
+                                adapter.notifyDataSetChanged();
+                                adapter.sort();
+                                if (actionBarInterface != null) {
+                                    actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
+                                }
+                                if (settingsInterface != null) {
+                                    settingsInterface.reconnect();
+                                }
+                            }
                         }
-                        if (settingsInterface != null) {
-                            settingsInterface.reconnect();
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
+                            dialog.cancel();
                         }
-                    }
-                }
-            });
-            // Define the action of the no button
-            builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
+                    }).show();
             mode.finish();
             return true;
 

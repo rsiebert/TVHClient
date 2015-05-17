@@ -16,8 +16,6 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -36,6 +34,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 @SuppressWarnings("deprecation")
 public class TimerRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
@@ -207,16 +207,18 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
 
         case R.id.menu_record_remove_all:
             // Show a confirmation dialog before deleting all recordings
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.record_remove_all)
-                    .setMessage(getString(R.string.remove_all_recordings))
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+            new MaterialDialog.Builder(activity)
+                    .title(R.string.record_remove_all)
+                    .content(R.string.remove_all_recordings)
+                    .positiveText(getString(android.R.string.yes))
+                    .negativeText(getString(android.R.string.no))
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
                             removeAllRecordings();
                         }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
                             // NOP
                         }
                     }).show();

@@ -36,10 +36,8 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -71,6 +69,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
@@ -312,28 +312,32 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             items[i] = connList.get(i).name;
                         }
                         // Now show the dialog to select a new connection
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle(R.string.select_connection).setItems(items,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Connection oldConn = DatabaseHelper.getInstance().getSelectedConnection();
-                                        Connection newConn = connList.get(which);
+                        new MaterialDialog.Builder(context)
+                            .title(R.string.select_connection)
+                            .items(items)
+                            .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                                @Override
+                                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                    Connection oldConn = DatabaseHelper.getInstance().getSelectedConnection();
+                                    Connection newConn = connList.get(which);
 
-                                        // Only if a new connection has been selected
-                                        // switch the selection status and reconnect
-                                        if (oldConn != null && newConn != null && oldConn.id != newConn.id) {
-                                            // Close the menu when a new connection has been selected
-                                            drawerLayout.closeDrawers();
-                                            // Set the new connection as the active one
-                                            newConn.selected = true;
-                                            oldConn.selected = false;
-                                            DatabaseHelper.getInstance().updateConnection(oldConn);
-                                            DatabaseHelper.getInstance().updateConnection(newConn);
-                                            Utils.connect(context, true);
-                                        }
+                                    // Only if a new connection has been selected
+                                    // switch the selection status and reconnect
+                                    if (oldConn != null && newConn != null && oldConn.id != newConn.id) {
+                                        // Close the menu when a new connection has been selected
+                                        drawerLayout.closeDrawers();
+                                        // Set the new connection as the active one
+                                        newConn.selected = true;
+                                        oldConn.selected = false;
+                                        DatabaseHelper.getInstance().updateConnection(oldConn);
+                                        DatabaseHelper.getInstance().updateConnection(newConn);
+                                        Utils.connect(context, true);
                                     }
-                                });
-                        builder.create().show();
+                                    return true;
+                                }
+                            })
+                            .positiveText(R.string.select_connection)
+                            .show();
                     }
                 }
             });

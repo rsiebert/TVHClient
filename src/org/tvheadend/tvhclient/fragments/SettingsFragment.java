@@ -13,13 +13,7 @@ import org.tvheadend.tvhclient.UnlockerActivity;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -30,6 +24,11 @@ import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
 
 @SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
@@ -133,20 +132,25 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 // Show a confirmation dialog before clearing the search history
-                new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.clear_search_history)
-                .setMessage(getString(R.string.clear_search_history_sum))
-                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
-                        suggestions.clearHistory();
-                        Toast.makeText(getActivity(), getString(R.string.clear_search_history_done), Toast.LENGTH_SHORT).show();
-                    }
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // NOP
-                    }
-                }).show();
+                new MaterialDialog.Builder(activity)
+                        .title(R.string.clear_search_history)
+                        .content(R.string.clear_search_history_sum)
+                        .positiveText(getString(R.string.delete))
+                        .negativeText(getString(R.string.cancel))
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+                                suggestions.clearHistory();
+                                SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                                        .type(SnackbarType.MULTI_LINE)
+                                        .text(getString(R.string.clear_search_history_done)), activity);
+                            }
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                // NOP
+                            }
+                        }).show();
                 return false;
             }
         });
@@ -157,27 +161,32 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 // Show a confirmation dialog before clearing the icon cache
-                new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.clear_icon_cache)
-                .setMessage(getString(R.string.clear_icon_cache_sum))
-                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        File[] files = activity.getCacheDir().listFiles();
-                        for (File file : files) {
-                            if (file.toString().endsWith(".png")) {
-                                file.delete();
-                                if (settingsInterface != null) {
-                                    settingsInterface.reconnect();
+                new MaterialDialog.Builder(activity)
+                        .title(R.string.clear_icon_cache)
+                        .content(R.string.clear_icon_cache_sum)
+                        .positiveText(getString(R.string.delete))
+                        .negativeText(getString(R.string.cancel))
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                File[] files = activity.getCacheDir().listFiles();
+                                for (File file : files) {
+                                    if (file.toString().endsWith(".png")) {
+                                        file.delete();
+                                        if (settingsInterface != null) {
+                                            settingsInterface.reconnect();
+                                        }
+                                    }
                                 }
+                                SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                                        .type(SnackbarType.MULTI_LINE)
+                                        .text(getString(R.string.clear_icon_cache_done)), activity);
                             }
-                        }
-                        Toast.makeText(getActivity(), getString(R.string.clear_icon_cache_done), Toast.LENGTH_SHORT).show();
-                    }
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // NOP
-                    }
-                }).show();
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                // NOP
+                            }
+                        }).show();
                 return false;
             }
         });

@@ -16,9 +16,7 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -38,6 +36,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.Snackbar.SnackbarDuration;
 import com.nispok.snackbar.SnackbarManager;
@@ -332,6 +331,8 @@ public class TimerRecordingAddFragment extends DialogFragment {
     private void save() {
         getValues();
 
+        // TODO snackbar is not  
+
         // The title must not be empty
         if (titleValue.length() == 0) {
             SnackbarManager.show(
@@ -406,27 +407,22 @@ public class TimerRecordingAddFragment extends DialogFragment {
      */
     private void cancel() {
         // Show confirmation dialog to cancel
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(getString(R.string.cancel_add_recording));
-
-        // Define the action of the yes button
-        builder.setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
-            }
-        });
-        // Define the action of the no button
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        new MaterialDialog.Builder(activity)
+                .content(R.string.cancel_add_recording)
+                .positiveText(getString(R.string.discard))
+                .negativeText(getString(R.string.cancel))
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        if (getDialog() != null) {
+                            getDialog().dismiss();
+                        }
+                    }
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.cancel();
+                    }
+                }).show();
     }
 
     /**

@@ -22,8 +22,6 @@ import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,6 +42,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
@@ -55,7 +55,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     private ChannelListAdapter adapter;
     ArrayAdapter<ChannelTag> tagAdapter;
-    private AlertDialog tagDialog;
+    private MaterialDialog tagDialog;
     private ListView listView;
 
     // This is the default view for the channel list adapter. Other views can be
@@ -168,20 +168,21 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         });
 
         // Create the dialog with the available channel tags
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.tags);
-
         tagAdapter = new ChannelTagListAdapter(activity, new ArrayList<ChannelTag>());
-        builder.setAdapter(tagAdapter, new android.content.DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int pos) {
-                Utils.setChannelTagId(pos);
+        tagDialog = new MaterialDialog.Builder(activity)
+        .title(R.string.tags)
+        .adapter(tagAdapter, new MaterialDialog.ListCallback() {
+            @Override
+            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                Utils.setChannelTagId(which);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.channelTagChanged(TAG);
                 }
+                tagDialog.dismiss();
             }
-        });
-        tagDialog = builder.create();
-        
+        })
+        .build();
+
         // Only enable the context menu when the full fragment is shown and not
         // only the channels
         if (!showOnlyChannels) {

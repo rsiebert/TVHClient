@@ -16,8 +16,6 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,6 +31,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 public class RecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
@@ -135,16 +135,19 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         case R.id.menu_record_remove_all:
             // Show a confirmation dialog before deleting all recordings
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.record_remove_all)
-                    .setMessage(getString(R.string.remove_all_recordings))
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+            new MaterialDialog.Builder(activity)
+                    .title(R.string.record_remove_all)
+                    .content(R.string.remove_all_recordings)
+                    .positiveText(getString(android.R.string.yes))
+                    .negativeText(getString(android.R.string.no))
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
                             removeAllRecordings();
                         }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
                             // NOP
                         }
                     }).show();
@@ -156,16 +159,19 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         case R.id.menu_record_cancel_all:
             // Show a confirmation dialog before canceling all recordings
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.record_cancel_all)
-                    .setMessage(getString(R.string.cancel_all_recordings))
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+            new MaterialDialog.Builder(activity)
+                    .title(R.string.record_cancel_all)
+                    .content(R.string.cancel_all_recordings)
+                    .positiveText(getString(android.R.string.yes))
+                    .negativeText(getString(android.R.string.no))
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
                             cancelAllRecordings();
                         }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+        
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
                             // NOP
                         }
                     }).show();

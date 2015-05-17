@@ -12,8 +12,6 @@ import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -31,6 +29,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface {
 
     @SuppressWarnings("unused")
@@ -41,7 +41,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private ProgramGuidePagerAdapter adapter = null;
 
     // The dialog that allows the user to select a certain time frame
-    private AlertDialog programGuideTimeDialog;
+    private MaterialDialog programGuideTimeDialog;
 
     // This is the width in pixels from the icon in the program_guide_list.xml
     // We need to subtract this value from the window width to get the real
@@ -161,16 +161,16 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         }
 
         // Create the dialog and set the adapter
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.select_timeframe);
-        builder.setAdapter(
-                new ProgramGuideTimeDialogAdapter(activity, times),
-                new android.content.DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int pos) {
-                        viewPager.setCurrentItem(pos);
-                    }
-                });
-        programGuideTimeDialog = builder.create();
+        programGuideTimeDialog = new MaterialDialog.Builder(activity)
+        .title(R.string.select_timeframe)
+        .adapter(new ProgramGuideTimeDialogAdapter(activity, times), new MaterialDialog.ListCallback() {
+            @Override
+            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                viewPager.setCurrentItem(which);
+                programGuideTimeDialog.dismiss();
+            }
+        })
+        .build();
     }
 
     /**
