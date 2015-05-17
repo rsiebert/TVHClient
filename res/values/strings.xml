@@ -83,7 +83,7 @@
     <string name="pref_wol_port_sum">Port %d will be used to wake up the server. The default is 9.</string>
     <string name="pref_wol_broadcast">Use Broadcast</string>
     <string name="pref_wol_broadcast_sum">Send the WOL packet as a broadcast. Some routers do not allow this kind of WOL.</string>
-    <string name="pref_wol_address_invalid">The MAC address is invalid.\nIt must have the pattern \'01:24:67:9a:cd:ef\' and may only contain the hexadecimal digits 0\-9 and a\-f and the separators \':\' and \'\-\'.</string>
+    <string name="pref_wol_address_invalid">The MAC address is invalid.\nIt must have the pattern \'01:24:67:9a:cd:ef\'.</string>
     
     <string name="pref_user_interface">User interface</string>
     <string name="pref_icons">Channel icons</string>
@@ -303,15 +303,15 @@
 
     <!-- Connection related -->
     <string name="no_connection_available">No connection available</string>
-    <string name="no_connection_available_advice">No connection is available. You need to add at least one from the settings menu</string>
+    <string name="no_connection_available_advice">No connection available. At least one is required.</string>
     <string name="no_connection_active">No connection activated</string>
-    <string name="no_connection_active_advice">At least one connection is defined, but was not activated</string>
+    <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
     <string name="number_of_connections">%d connection(s) available</string>
 
     <!-- Unlcoker related -->
     <string name="unlocker_purchase_successful">Purchase successful! Thank you for support! All features are now available.</string>
     <string name="unlocker_purchase_not_successful">Unfortunately the purchase was not successful. Please contact the developer.</string>
-    <string name="feature_not_available_in_free_version">This feature is not available in the free version! You can unlock this feature and support further development by buying the application from the play store.</string>
+    <string name="feature_not_available_in_free_version">This feature is not available in the free version!</string>
     <string name="unlocker_already_purchased">All additional features are available! Thank you for your support!</string>
     <string name="purchase">Purchase</string>
 

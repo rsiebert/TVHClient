@@ -83,7 +83,7 @@
     <string name="pref_wol_port_sum">Port %d wird zum Wecken des Servers verwendet. Der Standardport ist 9.</string>
     <string name="pref_wol_broadcast">Sende Broadcast</string>
     <string name="pref_wol_broadcast_sum">Falls gesetzt, wird die Wake on LAN Information als Broadcast an alle Rechner gesendet. Einige Router blockieren diese Art von Wake on LAN.</string>
-    <string name="pref_wol_address_invalid">Die MAC-Adresse ist ungültig.\nSie muss z.B. das Format \'01:24:67:9a:cd:ef\' haben und darf neben \':\' und \'\-\' nur 0\-9 und a\-z enthalten.</string>
+    <string name="pref_wol_address_invalid">Die MAC-Adresse ist ungültig.\nDas Format ist \'01:24:67:9a:cd:ef\'.</string>
     <string name="pref_user_interface">Benutzeroberfläche</string>
     <string name="pref_icons">Senderlogos</string>
     <string name="pref_icons_sum">Zeigt zu jedem Sender (falls verfügbar) das dazugehörige Logo als Icon an.</string>
@@ -302,16 +302,16 @@
 
     <!-- Connection related -->
     <string name="no_connection_available">Keine Verbindung verfügbar</string>
-    <string name="no_connection_available_advice">Keine Verbindung definiert. Mindestens eine muss vorhanden sein. In den Einstellungen kannst Du eine neue hinzufügen.</string>
+    <string name="no_connection_available_advice">Keine Verbindung definiert. Mindestens eine muss vorhanden sein.</string>
     <string name="no_connection_active">Keine Verbindung aktiv</string>
-    <string name="no_connection_active_advice">Mindestens eine Verbindung zu einem Server wurde gefunden, ist aber nicht aktiviert.</string>
+    <string name="no_connection_active_advice">Mindestens eine Verbindung existiert, ist aber nicht aktiviert.</string>
     <string name="number_of_connections">%d Verbindung(en) verfügbar</string>
 
     <!-- Unlcoker related -->
-    <string name="unlocker_purchase_successful">Kauf erfolgreich! Danke für die Unterstützung! Alle Funktionen sind nun freigeschaltet.</string>
+    <string name="unlocker_purchase_successful">Kauf erfolgreich! Vielen Dank! Alle Funktionen sind nun freigeschaltet.</string>
     <string name="unlocker_purchase_not_successful">Der Kauf war nicht erfolgreich. Bitte kontaktiere den Entwickler.</string>
-    <string name="feature_not_available_in_free_version">Diese Funktion ist in der kostenlosen Version nicht enthalten! Du kannst sie für einen kleinen Betrag freischalten und die weitere Entwicklung unterstützen.</string>
-    <string name="unlocker_already_purchased">Alle zusätzlichen Funktionen sind bereits aktiviert. Danke für die Unterstützung!</string>
+    <string name="feature_not_available_in_free_version">Diese Funktion ist in der kostenlosen Version nicht enthalten!</string>
+    <string name="unlocker_already_purchased">Alle zusätzlichen Funktionen sind bereits aktiviert. Vielen Dank!</string>
     <string name="purchase">Kaufen</string>
 
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>

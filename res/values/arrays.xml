@@ -96,6 +96,7 @@
         <item>8</item>
         <item>9</item>
         <item>10</item>
+        <item>11</item>
     </string-array>
 
     <string-array name="pref_menu_names">
@@ -109,6 +110,7 @@
         <item>Status</item>
         <item>Settings</item>
         <item>Connections</item>
+        <item>Info \u0026 Help</item>
         <item>Enable Extras</item>
     </string-array>
 

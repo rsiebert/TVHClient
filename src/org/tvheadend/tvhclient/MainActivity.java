@@ -114,7 +114,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private static final int MENU_STATUS = 7;
     private static final int MENU_SETTINGS = 8;
     private static final int MENU_CONNECTIONS = 9;
-    private static final int MENU_UNLOCKER = 10;
+    private static final int MENU_INFORMATION = 10;
+    private static final int MENU_UNLOCKER = 11;
 
     // Holds the stack of menu items
     public ArrayList<Integer> menuStack = new ArrayList<Integer>();
@@ -437,9 +438,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[9],
                 (lightTheme) ? R.drawable.ic_menu_connections_light
                         : R.drawable.ic_menu_connections_dark));
+        list.add(new DrawerMenuItem(MENU_INFORMATION, menuItems[10],
+                (lightTheme) ? R.drawable.ic_menu_info_light
+                        : R.drawable.ic_menu_info_dark));
 
         list.add(new DrawerMenuItem(""));
-        list.add(new DrawerMenuItem(MENU_UNLOCKER, menuItems[10],
+        list.add(new DrawerMenuItem(MENU_UNLOCKER, menuItems[11],
                 (lightTheme) ? R.drawable.item_active_light
                         : R.drawable.item_active_dark));
         return list;
@@ -830,6 +834,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             Intent unlockerIntent = new Intent(this, UnlockerActivity.class);
             startActivity(unlockerIntent);
             break;
+
+        case MENU_INFORMATION:
+            menuPosition = defaultMenuPosition;
+            Intent infoIntent = new Intent(this, InfoActivity.class);
+            startActivity(infoIntent);
+            break;
         }
     }
 
@@ -1058,6 +1068,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 .getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS));
 
         drawerAdapter.getItemById(MENU_UNLOCKER).isVisible = !app.isUnlocked();
+
+        // Hide the connection menu
+        drawerAdapter.getItemById(MENU_CONNECTIONS).isVisible = false;
 
         // Replace the adapter contents so the views get updated
         drawerList.setAdapter(null);
