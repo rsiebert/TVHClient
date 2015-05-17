@@ -307,15 +307,20 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     // Create a list of available connections names that the alert dialog will display
                     final List<Connection> connList = DatabaseHelper.getInstance().getConnections();
                     if (connList != null) {
+                        int currentConnectionListPosition = -1;
+                        Connection currentConnection = DatabaseHelper.getInstance().getSelectedConnection();
                         String[] items = new String[connList.size()];
                         for (int i = 0; i < connList.size(); i++) {
                             items[i] = connList.get(i).name;
+                            if (currentConnection != null && currentConnection.id == connList.get(i).id) {
+                                currentConnectionListPosition = i;
+                            }
                         }
                         // Now show the dialog to select a new connection
                         new MaterialDialog.Builder(context)
                             .title(R.string.select_connection)
                             .items(items)
-                            .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                            .itemsCallbackSingleChoice(currentConnectionListPosition, new MaterialDialog.ListCallbackSingleChoice() {
                                 @Override
                                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                     Connection oldConn = DatabaseHelper.getInstance().getSelectedConnection();
@@ -336,7 +341,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                                     return true;
                                 }
                             })
-                            .positiveText(R.string.select_connection)
                             .show();
                     }
                 }
@@ -1031,7 +1035,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
-            connectionStatus = action;
             // Go to the status screen if an error has occurred from a previously
             // working connection
             if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
@@ -1043,6 +1046,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     }
                 });
             }
+            connectionStatus = action;
         }
     }
 
