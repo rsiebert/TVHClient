@@ -32,7 +32,7 @@ public class UnlockerActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.unlocker_layout);
+        setContentView(R.layout.webview_layout);
         Utils.setLanguage(this);
 
         // Setup the action bar and show the title
