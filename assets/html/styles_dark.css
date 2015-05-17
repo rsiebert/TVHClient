@@ -16,7 +16,8 @@ div.content {
 	margin-bottom:0.8em;
 }
 li {
-    color:rgba(255,255,255,0.67);
+	color:rgba(255,255,255,0.5);
+	font-size:0.9em;
 }
 div.list_title {
 	font-size:1.0em;
@@ -34,4 +35,8 @@ div.list_content {
 	margin-right:0.4em;
 	margin-top:0.2em;
 	margin-bottom:0.8em;
+}
+a {
+	color:rgba(255,255,255,0.5);
+	font-size:1.0em;
 }
