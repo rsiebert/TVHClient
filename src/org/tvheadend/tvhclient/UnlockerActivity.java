@@ -14,7 +14,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
-import android.widget.Toast;
+
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
 
 @SuppressWarnings("deprecation")
 public class UnlockerActivity extends ActionBarActivity {
@@ -113,7 +116,9 @@ public class UnlockerActivity extends ActionBarActivity {
             // here because this activity is not information about any changes
             // via the billing event interface. 
             if (app.getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
-                Toast.makeText(this, getString(R.string.unlocker_already_purchased), Toast.LENGTH_SHORT).show();
+                SnackbarManager.show(Snackbar.with(getApplicationContext())
+                        .type(SnackbarType.MULTI_LINE)
+                        .text(R.string.unlocker_already_purchased), this);
                 finish();
             }
             return true;

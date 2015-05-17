@@ -13,6 +13,10 @@ import org.tvheadend.tvhclient.UnlockerActivity;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -65,13 +69,21 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 public boolean onPreferenceClick(Preference preference) {
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                     if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
-                        Toast.makeText(activity, getString(R.string.no_connection_available_advice), Toast.LENGTH_SHORT).show();
+                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                                .type(SnackbarType.MULTI_LINE)
+                                .text(R.string.no_connection_available_advice), activity);
                     } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
-                        Toast.makeText(activity, getString(R.string.no_connection_active_advice), Toast.LENGTH_SHORT).show();
+                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                                .type(SnackbarType.MULTI_LINE)
+                                .text(R.string.no_connection_active_advice), activity);
                     } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
-                        Toast.makeText(activity, getString(R.string.feature_not_supported_by_server), Toast.LENGTH_SHORT).show();
+                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                                .type(SnackbarType.MULTI_LINE)
+                                .text(R.string.feature_not_supported_by_server), activity);
                     } else if (!app.isUnlocked()) {
-                        Toast.makeText(activity, getString(R.string.feature_not_available_in_free_version), Toast.LENGTH_SHORT).show();
+                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(R.string.feature_not_available_in_free_version), activity);
                     } else {
                         if (settingsInterface != null) {
                             settingsInterface.showProfiles();

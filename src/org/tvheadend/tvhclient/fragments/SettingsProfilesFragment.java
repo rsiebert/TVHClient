@@ -50,7 +50,10 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
 
 public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, OnPreferenceChangeListener, BackPressedInterface {
 
@@ -318,7 +321,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final String connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, "");
         if (!connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            Toast.makeText(activity, getString(R.string.err_connect), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(R.string.err_connect), activity);
             return;
         }
 

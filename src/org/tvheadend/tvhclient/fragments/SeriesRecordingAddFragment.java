@@ -31,8 +31,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.Snackbar.SnackbarDuration;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
 
 public class SeriesRecordingAddFragment extends DialogFragment {
 
@@ -325,11 +329,12 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         getValues();
 
         // The title must not be empty
-        if (titleValue.length() == 0) {
-            Toast.makeText(activity, 
-                    getString(R.string.series_recording_add_error) + "\n" +
-                    getString(R.string.error_empty_title),
-                    Toast.LENGTH_LONG).show();
+        if (titleValue.length() == 0) { 
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .duration(SnackbarDuration.LENGTH_LONG)
+                            .text(R.string.error_empty_title), activity);
             return;
         }
         // The maximum duration must be larger than the minimum duration

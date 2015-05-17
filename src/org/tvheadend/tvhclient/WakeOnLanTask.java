@@ -8,10 +8,13 @@ import java.util.regex.Pattern;
 
 import org.tvheadend.tvhclient.model.Connection;
 
-import android.content.Context;
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
 
 public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
@@ -23,11 +26,11 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private final static int WOL_ERROR = 3;
 
     private Connection conn;
-    private Context context;
+    private Activity activity;
     private Exception exception;
 
-    public WakeOnLanTask(Context context, Connection conn) {
-        this.context = context;
+    public WakeOnLanTask(Activity context, Connection conn) {
+        this.activity = context;
         this.conn = conn;
     }
 
@@ -124,14 +127,32 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if (result == WOL_SEND) {
-            Toast.makeText(context, context.getString(R.string.wol_send, conn.address), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(activity.getString(R.string.wol_send,
+                                    conn.address)), activity);
         } else if (result == WOL_SEND_BROADCAST) {
-            Toast.makeText(context, context.getString(R.string.wol_send_broadcast, conn.address), Toast.LENGTH_SHORT).show();
+            SnackbarManager
+                    .show(Snackbar
+                            .with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(activity.getString(
+                                    R.string.wol_send_broadcast, conn.address)),
+                            activity);
         } else if (result == WOL_INVALID_MAC) {
-            Toast.makeText(context, context.getString(R.string.wol_address_invalid), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(R.string.wol_address_invalid),
+                    activity);
         } else {
             final String msg = exception.getLocalizedMessage();
-            Toast.makeText(context, context.getString(R.string.wol_error, conn.address, msg), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(activity.getString(R.string.wol_error,
+                                    conn.address, msg)), activity);
         }
     }
 }

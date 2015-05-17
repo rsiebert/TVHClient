@@ -21,10 +21,12 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 import android.app.Application;
 import android.content.Context;
 import android.util.SparseArray;
-import android.widget.Toast;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
 
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
 
@@ -966,11 +968,13 @@ public class TVHClientApplication extends Application implements BillingProcesso
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
         if (bp.isValid(details)) {
-            Toast.makeText(getApplicationContext(), 
-                    getString(R.string.unlocker_purchase_successful), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(Snackbar.with(getApplicationContext())
+                    .type(SnackbarType.MULTI_LINE)
+                    .text(getString(R.string.unlocker_purchase_successful)));
         } else {
-            Toast.makeText(getApplicationContext(), 
-                    getString(R.string.unlocker_purchase_not_successful), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(Snackbar.with(getApplicationContext())
+                    .type(SnackbarType.MULTI_LINE)
+                    .text(getString(R.string.unlocker_purchase_not_successful)));
         }
     }
 

@@ -27,7 +27,10 @@ import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
 
 @SuppressWarnings("deprecation")
 public class SettingsManageConnectionFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
@@ -407,7 +410,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
         Matcher matcher = pattern.matcher(conn.wol_address);
         if (!matcher.matches()) {
-            Toast.makeText(getActivity(), getString(R.string.pref_wol_address_invalid), Toast.LENGTH_LONG).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(R.string.pref_wol_address_invalid), activity);
             return false;
         }
         return true;
@@ -426,7 +432,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         // Do not allow an empty address
         if (conn.name.length() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.pref_name_error_empty), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .text(R.string.pref_name_error_empty), activity);
             return false;
         }
 
@@ -434,7 +442,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
         Matcher matcher = pattern.matcher(conn.name);
         if (!matcher.matches()) {
-            Toast.makeText(getActivity(), getString(R.string.pref_name_error_invalid), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .text(R.string.pref_name_error_invalid), activity);
             return false;
         }
         return true;
@@ -455,7 +465,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         // Do not allow an empty address
         if (conn.address.length() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.pref_host_error_empty), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .text(R.string.pref_host_error_empty), activity);
             return false;
         }
 
@@ -463,7 +475,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
         Matcher matcher = pattern.matcher(conn.address);
         if (!matcher.matches()) {
-            Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .text(R.string.pref_host_error_invalid), activity);
             return false;
         }
 
@@ -476,7 +490,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             pattern = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) ? Patterns.IP_ADDRESS : Pattern.compile(IP_ADDRESS);
             matcher = pattern.matcher(conn.address);
             if (!matcher.matches()) {
-                Toast.makeText(getActivity(), getString(R.string.pref_host_error_invalid), Toast.LENGTH_SHORT).show();
+                SnackbarManager.show(
+                        Snackbar.with(activity.getApplicationContext())
+                                .text(R.string.pref_host_error_invalid), activity);
                 return false;
             }
         }
@@ -492,12 +508,16 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private boolean validatePort() {
         if (prefPort.getText().length() == 0 || 
                 prefStreamingPort.getText().length() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.pref_port_error_empty), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .text(R.string.pref_port_error_empty), activity);
             return false;
         }
         if ((conn.port <= 0 || conn.port > 65535) ||
                 (conn.streaming_port <= 0 || conn.streaming_port > 65535)) {
-            Toast.makeText(getActivity(), getString(R.string.pref_port_error_invalid), Toast.LENGTH_SHORT).show();
+            SnackbarManager.show(
+                    Snackbar.with(activity.getApplicationContext())
+                            .text(R.string.pref_port_error_invalid), activity);
             return false;
         }
         return true;
