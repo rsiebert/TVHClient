@@ -9,13 +9,13 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 public class ExternalPlaybackActivity extends Activity implements HTSListener {
 
@@ -125,27 +125,30 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
                     Log.e(TAG, "Can't execute external media player", t);
 
                     // Show a confirmation dialog before deleting the recording
-                    new AlertDialog.Builder(context)
-                    .setTitle(R.string.no_media_player)
-                    .setMessage(R.string.show_play_store)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                Log.d(TAG, "Starting play store to download external players");
-                                Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                                installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
-                                startActivity(installIntent);
-                            } catch (Throwable t2) {
-                                Log.e(TAG, "Could not start google play store", t2);
-                            } finally {
+                    new MaterialDialog.Builder(context)
+                        .title(R.string.no_media_player)
+                        .content(R.string.show_play_store)
+                        .positiveText(getString(android.R.string.yes))
+                        .negativeText(getString(android.R.string.no))
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                try {
+                                    Log.d(TAG, "Starting play store to download external players");
+                                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                                    installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
+                                    startActivity(installIntent);
+                                } catch (Throwable t2) {
+                                    Log.e(TAG, "Could not start google play store", t2);
+                                } finally {
+                                    finish();
+                                }
+                            }
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
                                 finish();
                             }
-                        }
-                    }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    }).show();
+                        }).show();
                 }
             }
         });
