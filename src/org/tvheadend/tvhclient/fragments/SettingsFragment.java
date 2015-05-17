@@ -23,7 +23,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBarActivity;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
@@ -101,9 +100,13 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
-                        Toast.makeText(activity, getString(R.string.no_connection_available_advice), Toast.LENGTH_SHORT).show();
+                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                                .type(SnackbarType.MULTI_LINE)
+                                .text(getString(R.string.no_connection_available_advice)), activity);
                     } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
-                        Toast.makeText(activity, getString(R.string.no_connection_active_advice), Toast.LENGTH_SHORT).show();
+                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                                .type(SnackbarType.MULTI_LINE)
+                                .text(getString(R.string.no_connection_active_advice)), activity);
                     } else {
                         if (settingsInterface != null) {
                             settingsInterface.showTranscodingSettings();
@@ -200,7 +203,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 public boolean onPreferenceClick(Preference preference) {
                     TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                     if (app.isUnlocked()) {
-                        Toast.makeText(getActivity(), getString(R.string.unlocker_already_purchased), Toast.LENGTH_SHORT).show();
+                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                                .type(SnackbarType.MULTI_LINE)
+                                .text(getString(R.string.unlocker_already_purchased)), activity);
                     } else {
                         Intent unlockerIntent = new Intent(activity, UnlockerActivity.class);
                         startActivity(unlockerIntent);
