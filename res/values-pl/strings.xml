@@ -74,6 +74,7 @@
     <string name="pref_wol_broadcast">Użyj rozgłaszania</string>
     <string name="pref_wol_broadcast_sum">Wyślij pakiet WOL w transmisji. Niektóre routery nie pozwalają na transmisję WOL.</string>
     <string name="pref_wol_address_invalid">MAC adres jest nieprawidłowy.\nMusi mieć postać \'01:24:67:9a:cd:ef\' i może zawierać tylko znaki w systemie szesnastkowym \'0\-9\' i \'a\-f\' i separatory \':\' lub \'-\'.</string>
+    
     <string name="pref_user_interface">Interfejs użytkownika</string>
     <string name="pref_icons">Ikony kanałów</string>
     <string name="pref_icons_sum">Pokaż ikony kanałów</string>
@@ -141,12 +142,20 @@
     <string name="pref_recording_profiles_sum">Wybierz profil, który serwer będzie wykorzystywać do nagrywania zaplanowanego programu.</string>
     <string name="pref_playback_profiles">Profile odtwarzania</string>
     <string name="pref_playback_profiles_sum">Wybierz profil, który będzie używany do odtwarzania nagranego programu.</string>
+    <string name="pref_enable_recording_profiles">Włącz profile nagrywania</string>
+    <string name="pref_enable_recording_profiles_sum">Użyj nowej funkcjonalności serwera profili dla nagrywania. To zastępuje dowolne parametry video i audio dla nagrań i zaplanowanych programów.</string>
+    <string name="pref_enable_playback_profiles">Włącz profile odtwarzania</string>
+    <string name="pref_enable_playback_profiles_sum">Użyj nowej funkcjonalności serwera profili dla programów. To zastępuje dowolne parametry video i audio dla odtwarzanych programów.</string>
     <string name="pref_show_notifications">Pokazuj powiadomienia</string>
     <string name="pref_show_notifications_sum">Informuje użytkownika gdy nagrywanie zostało rozpoczęte lub zostało zakończone. Wymaga to uruchomionej usługi w tle.</string>
     <string name="pref_show_next_program">Pokazuj następny program na liście kanałów</string>
     <string name="pref_show_next_program_sum">Nazwa zbliżającego się programu jest wyświetlana na liście kanałów. Nazwa jest wyświetlana poniżej paska postępu nadawanego programu.</string>
     <string name="pref_programs">Programy</string>
+    <string name="pref_playback_and_recording">Odtwarzanie i nagrywanie</string>
+    <string name="pref_transcoding">Parametry Video i Audio</string>
+    <string name="pref_transcoding_sum">Zdefiniuj parametry video i audio jak programy mają być zapisywane lub jak powinny być odtwarzane nagrania.</string>
 
+    <string name="feature_not_supported_by_server">Serwer TVHeadend nie wspiera tej funkcji. Wymagana jest nowsza wersja.</string>
     <string name="loading_profiles">Ładowanie profili</string>
 
     <string name="clear_search_history">Wyczyścić historię wyszukiwania?</string>
