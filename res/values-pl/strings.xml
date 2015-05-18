@@ -29,8 +29,12 @@
     <string name="send_wol">Wybudzenie</string>
     <string name="select_connection">Wybierz połączenie</string>
     <string name="add_connection">Dodaj połączenie</string>
+    <string name="edit_connection">Edytuj poaczenie</string>
     <string name="confirm_cancel">Odrzucić wartości? Wszystkie zmieny zostaną utracone.</string>
     <string name="remove">Usuń</string>
+    <string name="discard">Odrzuć</string>
+    <string name="confirm_discard_profile">Odrzucić wartości profilu? Wszystkie zmiany zostaną utracone.</string>
+    <string name="confirm_discard_connection">Odrzucić wartoci poczenia? Wszystkie zmiany zostaną utracone.</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
     <string name="remove_recording">Jesteś pewny że chcesz usunąć nagranie \'%s\'?</string>
     <string name="remove_series_recording">Czy na pewno chcesz usunąć nagrywanie serii \'%s\'?\n\nTo usunie wszystkie zaplanowane nagrania, które należą do tej zasady nagrywania serii.</string>
@@ -38,8 +42,14 @@
     <string name="remove_all_recordings">Jesteś pewny że chcesz usunąć wszystkie nagrania?</string>
     <string name="cancel_recording">Jesteś pewny że chcesz anulować zaplanowane nagrywanie \'%s\'?</string>
     <string name="cancel_all_recordings">Jesteś pewny że chcesz anulować wszystkie nagrywania?</string>
+    <string name="add_title">Proszę dodać tytuł nagrania</string>
     <string name="add_recording">Dodaj nowe nagrywanie</string>
     <string name="cancel_add_recording">Anulować dodawanie nowego nagrywania? Wszystkie wartości zostaną utracone.</string>
+    <string name="add_series_recording">Dodaj nową serie nagrań</string>
+    <string name="add_timer_recording">Dodaj nowe ręczne nagranie</string>
+    <string name="edit_series_recording">Edytuj serie nagrań</string>
+    <string name="edit_timer_recording">Edytuj ręczne nagranie</string>
+    <string name="activate_recording">Aktywuj nagrywanie</string>
 
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
