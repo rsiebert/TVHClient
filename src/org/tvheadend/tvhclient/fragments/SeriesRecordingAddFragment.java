@@ -252,7 +252,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 				@Override
 				public void onClick(View view) {
 					new MaterialDialog.Builder(activity)
-		            .title(R.string.select_channel)
+		            .title(R.string.select_priority)
 		            .items(priorityList)
 		            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
 		                @Override
