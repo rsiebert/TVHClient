@@ -7,13 +7,21 @@ div.title {
 	margin-bottom:0.8em;
 	text-align:left;
 }
+div.subtitle {
+	color:rgba(0,0,0,0.7);
+	font-size:1.0em;
+	margin-left:0.4em;
+	margin-right:0.4em;
+	margin-top:0.6em;
+	margin-bottom:0.6em;
+}
 div.content {
 	color:rgba(0,0,0,0.5);
 	font-size:0.9em;
 	margin-left:0.4em;
 	margin-right:0.4em;
-	margin-top:0.8em;
-	margin-bottom:0.8em;
+	margin-top:0.6em;
+	margin-bottom:0.6em;
 }
 li {
 	color:rgba(0,0,0,0.5);
@@ -21,7 +29,7 @@ li {
 }
 div.list_title {
 	font-size:1.0em;
-	color:rgba(0,0,0,0.67);
+	color:rgba(0,0,0,0.7);
 	margin-top:0.8em;
 	margin-bottom:0.2em;
 	margin-left:0.6em;
