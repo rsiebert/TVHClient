@@ -60,12 +60,18 @@
                     android:paddingTop="16dp"
                     android:text="@string/channel" />
 
-                <Spinner
+                <TextView
                     android:id="@+id/channel"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp" />
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/not_set" />
 
                 <TextView
                     android:id="@+id/minimum_duration_label"
@@ -163,12 +169,18 @@
                     android:paddingTop="16dp"
                     android:text="@string/priority" />
 
-                <Spinner
+                <TextView
                     android:id="@+id/priority"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp" />
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/not_set" />
             </LinearLayout>
         </ScrollView>
 

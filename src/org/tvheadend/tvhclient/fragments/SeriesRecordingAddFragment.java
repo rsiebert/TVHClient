@@ -1,8 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
@@ -23,12 +20,12 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -46,7 +43,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private Toolbar toolbar;
 
     private CheckBox isEnabled;
-    private Spinner priority;
+    private TextView priority;
     private EditText minDuration;
     private EditText maxDuration;
     private LinearLayout daysOfWeekLayout;
@@ -54,7 +51,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private EditText startTime;
     private EditText stopTime;
     private EditText title;
-    private Spinner channelName;
+    private TextView channelName;
 
     private long priorityValue;
     private long minDurationValue;
@@ -65,6 +62,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private String titleValue;
     private boolean enabledValue;
     private int channelSelectionValue;
+
+    String[] channelList;
+    String[] priorityList;
 
     private static final int DEFAULT_MIN_DURATION = 30;
     private static final int DEFAULT_MAX_DURATION = 60;
@@ -112,7 +112,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_add_layout, container, false);
-        channelName = (Spinner) v.findViewById(R.id.channel);
+        channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
         title = (EditText) v.findViewById(R.id.title);
         minDuration = (EditText) v.findViewById(R.id.minimum_duration);
@@ -152,8 +152,17 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         startTime = (EditText) v.findViewById(R.id.start_extra);
         stopTime = (EditText) v.findViewById(R.id.stop_extra);
-        priority = (Spinner) v.findViewById(R.id.priority);
+        priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+
+    	// Create the list of channels that the user can select
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        channelList = new String[app.getChannels().size()];
+        for (int i = 0; i < app.getChannels().size(); i++) {
+        	channelList[i] = app.getChannels().get(i).name;
+        }
+
+        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
         // If the savedInstanceState is null then the fragment was created for
         // the first time. Either get the given id to edit the recording or
@@ -167,7 +176,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             }
 
             // Get the recording so we can show its details
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             rec = app.getSeriesRecording(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
@@ -219,19 +227,44 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             title.setText(titleValue);
         }
         if (channelName != null) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            List<String> channels = new ArrayList<String>();
-            for (Channel c : app.getChannels()) {
-                channels.add(c.name);
-            }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, channels);
-            channelName.setAdapter(adapter);
-            channelName.setSelection(channelSelectionValue);
+        	channelName.setText(channelList[channelSelectionValue]);
+            channelName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					new MaterialDialog.Builder(activity)
+		            .title(R.string.select_channel)
+		            .items(channelList)
+		            .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
+		                @Override
+		                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+		                	channelName.setText(channelList[which]);
+		                	channelSelectionValue = which;
+		                    return true;
+		                }
+		            })
+		            .show();
+				}
+            });
         }
         if (priority != null) {
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity, R.array.dvr_priorities, android.R.layout.simple_spinner_item);
-            priority.setAdapter(adapter);
-            priority.setSelection((int) priorityValue);
+            priority.setText(priorityList[(int) priorityValue]);
+            priority.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					new MaterialDialog.Builder(activity)
+		            .title(R.string.select_channel)
+		            .items(priorityList)
+		            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
+		                @Override
+		                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+		                	priority.setText(priorityList[which]);
+		                	priorityValue = which;
+		                    return true;
+		                }
+		            })
+		            .show();
+				}
+            });
         }
         if (minDuration != null) {
             minDuration.setText(String.valueOf(minDurationValue));
@@ -314,9 +347,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         }
         titleValue = title.getText().toString();
         daysOfWeekValue = getDayOfWeekValue();
-        priorityValue = priority.getSelectedItemPosition();
         enabledValue = isEnabled.isChecked();
-        channelSelectionValue = channelName.getSelectedItemPosition();
     }
 
     /**
@@ -364,10 +395,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         // The id must be passed on to the server, not the name. So go through
         // all available channels and get the id for the selected channel name.
-        String cname = (String) channelName.getSelectedItem();
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         for (Channel c : app.getChannels()) {
-            if (c.name.equals(cname)) {
+            if (c.name.equals(channelName.getText().toString())) {
                 intent.putExtra("channelId", c.id);
                 break;
             }
