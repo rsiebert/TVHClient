@@ -598,7 +598,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 || menuPosition == MENU_COMPLETED_RECORDINGS 
                 || menuPosition == MENU_SCHEDULED_RECORDINGS
                 || menuPosition == MENU_FAILED_RECORDINGS
-                || menuPosition == MENU_SERIES_RECORDINGS ) {
+                || menuPosition == MENU_SERIES_RECORDINGS
+                || menuPosition == MENU_TIMER_RECORDINGS) {
             (menu.findItem(R.id.menu_search)).setVisible(false);
         }
         return super.onPrepareOptionsMenu(menu);
