@@ -159,6 +159,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public List<ChannelTag> getChannelTags() {
         synchronized (tags) {
+            Collections.sort(tags, ChannelTag.ChannelTagNameSortor);
             return tags;
         }
     }
