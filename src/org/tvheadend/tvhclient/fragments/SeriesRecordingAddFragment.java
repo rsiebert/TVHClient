@@ -12,11 +12,14 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -298,8 +301,24 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         }
         if (getDialog() != null) {
             getDialog().setTitle(rec != null ? R.string.edit_series_recording : R.string.add_series_recording);
+            getDialog().setCanceledOnTouchOutside(false);
         }
     }
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		getDialog().setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				if ((keyCode == android.view.KeyEvent.KEYCODE_BACK)) {
+					getDialog().setOnKeyListener(null);
+					cancel();
+				}
+				return true;
+			}
+		});
+	}
 
     /**
      * 
