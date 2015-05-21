@@ -114,13 +114,18 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
 
         setHasOptionsMenu(true);
     }
-
+    
+    @SuppressLint("NewApi")
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu if no genre colors shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsGuidePref", false);
         (menu.findItem(R.id.menu_genre_color_info_epg)).setVisible(showGenreColors);
+        
+        if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {        
+        menu.findItem(R.id.menu_timeframe).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        }
     }
 
     @Override
