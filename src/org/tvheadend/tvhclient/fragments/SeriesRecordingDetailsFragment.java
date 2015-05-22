@@ -121,8 +121,12 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
                 isEnabled.setText(R.string.recording_disabled);
             }
         }
-        if (channelName != null && srec.channel != null) {
-            channelName.setText(srec.channel.name);
+        if (channelName != null) {
+            if (srec.channel != null) {
+                channelName.setText(srec.channel.name);
+            } else {
+                channelName.setText(R.string.all_channels);
+            }
         }
 
         Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);

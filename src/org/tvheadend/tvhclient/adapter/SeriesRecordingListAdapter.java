@@ -102,8 +102,12 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         SeriesRecording srec = getItem(position);
         if (srec != null) {
             holder.title.setText(srec.title);
-            if (holder.channel != null && srec.channel != null) {
-                holder.channel.setText(srec.channel.name);
+            if (holder.channel != null) {
+                if (srec.channel != null) {
+                    holder.channel.setText(srec.channel.name);
+                } else {
+                    holder.channel.setText(R.string.all_channels);
+                }
             }
             Utils.setChannelIcon(holder.icon, null, srec.channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);

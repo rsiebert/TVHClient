@@ -158,11 +158,13 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
-    	// Create the list of channels that the user can select
+        // Create the list of channels that the user can select. The very first
+        // entry is a placeholder to select no record on all channels
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        channelList = new String[app.getChannels().size()];
-        for (int i = 0; i < app.getChannels().size(); i++) {
-        	channelList[i] = app.getChannels().get(i).name;
+        channelList = new String[app.getChannels().size() + 1];
+        channelList[0] = activity.getString(R.string.all_channels);
+        for (int i = 1; i < app.getChannels().size(); i++) {
+            channelList[i] = app.getChannels().get(i).name;
         }
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
@@ -412,13 +414,18 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         intent.putExtra("priority", priorityValue);
         intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
 
-        // The id must be passed on to the server, not the name. So go through
-        // all available channels and get the id for the selected channel name.
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        for (Channel c : app.getChannels()) {
-            if (c.name.equals(channelName.getText().toString())) {
-                intent.putExtra("channelId", c.id);
-                break;
+
+        // If the all channels placeholder was selected, do not add the channel
+        // id but assume the user wants to record on all channels
+        if (channelSelectionValue > 0) {
+            // The id must be passed on to the server, not the name. So go through
+            // all available channels and get the id for the selected channel name.
+            for (Channel c : app.getChannels()) {
+                if (c.name.equals(channelName.getText().toString())) {
+                    intent.putExtra("channelId", c.id);
+                    break;
+                }
             }
         }
 

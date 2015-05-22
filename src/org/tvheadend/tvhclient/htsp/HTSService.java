@@ -1293,7 +1293,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
         request.putField("title", title);
-        request.putField("channelId", channelId);
+
+        // Don't add the channel id if none was given. Assume the user wants to
+        // record on all channels 
+        if (channelId > 0) {
+            request.putField("channelId", channelId);
+        }
+
         request.putField("minDuration", minDuration);
         request.putField("maxDuration", maxDuration);
         request.putField("retention", retention);
