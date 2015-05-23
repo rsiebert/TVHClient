@@ -18,7 +18,9 @@ import org.tvheadend.tvhclient.model.Recording;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -34,11 +36,12 @@ import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+@SuppressWarnings("deprecation")
 public class RecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     public static String TAG = RecordingListFragment.class.getSimpleName();
 
-    protected Activity activity;
+    protected ActionBarActivity activity;
     protected ActionBarInterface actionBarInterface;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected RecordingListAdapter adapter;
@@ -74,7 +77,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = activity;
+        this.activity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -127,6 +130,15 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
                 startActivity(intent);
             }
+            return true;
+
+        case R.id.menu_edit:
+            // Create the fragment and show it as a dialog.
+            DialogFragment editFragment = RecordingAddFragment.newInstance(null);
+            Bundle bundle = new Bundle();
+            bundle.putLong(Constants.BUNDLE_RECORDING_ID, adapter.getSelectedItem().id);
+            editFragment.setArguments(bundle);
+            editFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
         case R.id.menu_record_remove:
@@ -281,6 +293,15 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
             intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
             startActivity(intent);
+            return true;
+
+        case R.id.menu_edit:
+            // Create the fragment and show it as a dialog.
+            DialogFragment editFragment = RecordingAddFragment.newInstance(null);
+            Bundle bundle = new Bundle();
+            bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+            editFragment.setArguments(bundle);
+            editFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
         default:

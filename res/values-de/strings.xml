@@ -44,7 +44,9 @@
     <string name="cancel_all_recordings">Alle geplanten Aufnahmen entfernen?</string>
     <string name="add_title">Gewünschten Titel eingeben</string>
     <string name="add_recording">Neue Aufnahme hinzufügen</string>
-    <string name="cancel_add_recording">Hinzufügen der Aufnahme verwerfen? Alle Eingaben gehen verloren.</string>
+    <string name="edit_recording">Aufnahme bearbeiten</string>
+    <string name="cancel_add_recording">Hinzufügen der Aufnahme abbrechen? Alle Eingaben gehen verloren.</string>
+    <string name="cancel_edit_recording">Bearbeiten der Aufnahme abbrechen? All values will be lost.</string>
     <string name="add_series_recording">Neue Serienaufnahme hinzufügen</string>
     <string name="add_timer_recording">Neue manuelle Aufnahme hinzufügen</string>
     <string name="edit_series_recording">Serienaufnahme bearbeiten</string>
@@ -183,6 +185,7 @@
     <string name="err_loading_profiles">Fehler beim Laden der Profile vom Server\n%s</string>
     <string name="error_adding_recording">Aufnahme konnte nicht erstellt werden! %s</string>
     <string name="error_removing_recording">Aufnahme konnte nicht entfernt werden! %s</string>
+    <string name="error_updating_recording">Aufnahme konnte nicht aktualisiert werden! %s</string>
 
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>

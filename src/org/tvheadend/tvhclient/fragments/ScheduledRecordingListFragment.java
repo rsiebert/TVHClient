@@ -46,13 +46,19 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         }
         (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_add)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+        }
+
+        // Show the edit button only when the application is unlocked and a
+        // recording was selected
+        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
+            (menu.findItem(R.id.menu_edit)).setVisible(false);
         }
     }
 

@@ -132,6 +132,7 @@ public class Constants {
     public static final String ACTION_FEEDBACK = "FEEDBACK";
     public static final String ACTION_GET_TICKET = "GET_TICKET";
     public static final String ACTION_ADD_DVR_ENTRY = "ADD_DVR_ENTRY";
+    public static final String ACTION_UPDATE_DVR_ENTRY = "UPDATE_DVR_ENTRY";
     public static final String ACTION_CANCEL_DVR_ENTRY = "CANCEL_DVR_ENTRY";
     public static final String ACTION_DELETE_DVR_ENTRY = "DELETE_DVR_ENTRY";
     public static final String ACTION_ADD_TIMER_REC_ENTRY = "ADD_TIMER_REC_ENTRY";

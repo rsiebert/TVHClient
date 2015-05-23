@@ -9,10 +9,10 @@
         android:title="@string/play"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
-        android:id="@+id/menu_add"
-        android:icon="?attr/ic_menu_add"
+        android:id="@+id/menu_edit"
+        android:icon="?attr/ic_menu_edit"
         android:orderInCategory="3"
-        android:title="@string/add"
+        android:title="@string/edit"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_remove"

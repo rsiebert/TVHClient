@@ -117,9 +117,21 @@ public class HTSService extends Service implements HTSConnectionListener {
             getEvents(ch, intent.getLongExtra("eventId", 0), intent.getIntExtra("count", 10));
 
         } else if (action.equals(Constants.ACTION_ADD_DVR_ENTRY)) {
-            TVHClientApplication app = (TVHClientApplication) getApplication();
-            Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
-            addDvrEntry(ch, intent.getLongExtra("eventId", 0), intent.getStringExtra("configName"));
+            addDvrEntry(intent.getLongExtra("channelId", 0),
+                    intent.getLongExtra("eventId", 0),
+                    intent.getStringExtra("configName"));
+
+        } else if (action.equals(Constants.ACTION_UPDATE_DVR_ENTRY)) {
+            updateDvrEntry(intent.getLongExtra("eventId", 0),
+                    intent.getLongExtra("start", 0),
+                    intent.getLongExtra("stop", 0),
+                    intent.getLongExtra("retention", 0),
+                    intent.getLongExtra("priority", 0),
+                    intent.getLongExtra("startExtra", 0),
+                    intent.getLongExtra("stopExtra", 0),
+                    intent.getStringExtra("title"),
+                    intent.getStringExtra("description"),
+                    intent.getStringExtra("configName"));
 
         } else if (action.equals(Constants.ACTION_DELETE_DVR_ENTRY)) {
             try {
@@ -401,8 +413,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (connection.getProtocolVersion() >= 13) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getDate("startExtra");
-            rec.stopExtra = msg.getDate("stopExtra");
+            rec.startExtra = msg.getLong("startExtra");
+            rec.stopExtra = msg.getLong("stopExtra");
             rec.retention = msg.getLong("retention");
             rec.priority = msg.getLong("priority");
             rec.contentType = msg.getLong("contentType");
@@ -443,8 +455,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (connection.getProtocolVersion() >= 13) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getDate("startExtra");
-            rec.stopExtra = msg.getDate("stopExtra");
+            rec.startExtra = msg.getLong("startExtra");
+            rec.stopExtra = msg.getLong("stopExtra");
             rec.retention = msg.getLong("retention");
             rec.priority = msg.getLong("priority");
             rec.contentType = msg.getLong("contentType");
@@ -1023,8 +1035,47 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
+                if (!success) {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.error_removing_recording,
+                            response.getString("error", "")));
+                }
+            }
+        });
+    }
+
+    private void updateDvrEntry(final long eventId, long start,
+            long stop, long retention, long priority, long startExtra,
+            long stopExtra, String title, String description, String configName) {
+
+        HTSMessage request = new HTSMessage();
+        request.setMethod("updateDvrEntry");
+        request.putField("eventId", eventId);
+        request.putField("start", start);
+        request.putField("stop", stop);
+        request.putField("retention", retention);
+        request.putField("priority", priority);
+        request.putField("startExtra", startExtra);
+        request.putField("stopExtra", stopExtra);
+        if (title != null) {
+            request.putField("title", title);
+        }
+        if (description != null) {
+            request.putField("description", description);
+        }
+        if (configName != null) {
+            request.putField("configName", configName);
+        }
+
+        connection.sendMessage(request, new HTSResponseHandler() {
+            public void handleResponse(HTSMessage response) {
+                boolean success = response.getInt("success", 0) == 1;
+                if (!success) {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.error_updating_recording,
+                            response.getString("error", "")));
+                }
             }
         });
     }
@@ -1045,20 +1096,24 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void addDvrEntry(final Channel ch, final long eventId, String configName) {
+    private void addDvrEntry(final long channelId, final long eventId, String configName) {
+
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
         request.putField("eventId", eventId);
-        request.putField("retention", 0);
-        
         if (configName != null) {
             request.putField("configName", configName);
         }
 
+        // Get the channel from the id to update the program list of the channel
+        // when the recording was added.
+        TVHClientApplication app = (TVHClientApplication) getApplication();
+        final Channel ch = app.getChannel(channelId);
+
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
-                if (success) {
+                if (success && ch != null) {
                     for (Program p : ch.epg) {
                         if (p.id == eventId) {
                             TVHClientApplication app = (TVHClientApplication) getApplication();
