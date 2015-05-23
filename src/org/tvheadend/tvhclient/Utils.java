@@ -690,21 +690,26 @@ public class Utils {
      * @param ch
      */
     public static void setChannelIcon(ImageView icon, TextView iconText, final Channel ch) {
-        if (icon != null && ch != null) {
+        if (icon != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
             final boolean showIcons = prefs.getBoolean("showIconPref", true);
 
-            // Show the channels icon if available. If not hide the view. 
-            if (icon != null) {
-                icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
-                icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
-            }
-            
-            // If the channel icon is not available show the channel name as a placeholder.
-            if (iconText != null) {
-                iconText.setText(ch.name);
-                iconText.setVisibility((showIcons && ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
+            if (ch != null) {
+                // Show the channels icon if available. If not hide the view. 
+                if (icon != null) {
+                    icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
+                    icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
+                }
+                // If the channel icon is not available show the channel name as a placeholder.
+                if (iconText != null) {
+                    iconText.setText(ch.name);
+                    iconText.setVisibility((showIcons && ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
+                }
+            } else {
+                // Show a blank icon if no channel icon exists and they shall be shown. 
+                icon.setImageBitmap(null);
+                icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
         }
     }
