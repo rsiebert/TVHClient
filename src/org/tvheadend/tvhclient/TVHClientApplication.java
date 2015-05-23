@@ -159,6 +159,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public List<ChannelTag> getChannelTags() {
         synchronized (tags) {
+            Collections.sort(tags, ChannelTag.ChannelTagNameSortor);
             return tags;
         }
     }
@@ -899,6 +900,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     public void addDvrConfigs(List<Profiles> list) {
         dvrConfigs.clear();
+        Collections.sort(list, Profiles.ProfilesNameSortor);
         dvrConfigs.addAll(list);
         if (!loading) {
             broadcastMessage(Constants.ACTION_GET_DVR_CONFIG, null);
@@ -911,6 +913,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     public void addProfiles(List<Profiles> list) {
         profiles.clear();
+        Collections.sort(list, Profiles.ProfilesNameSortor);
         profiles.addAll(list);
         if (!loading) {
             broadcastMessage(Constants.ACTION_GET_PROFILES, null);
