@@ -113,6 +113,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
         }
     }
 
+    public void showMessage(String msg) {
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_SHOW_MESSAGE, msg);
+        }
+    }
+
     /**
      * Informs all listeners about the current connection state.
      */

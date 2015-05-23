@@ -71,6 +71,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.enums.SnackbarType;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
@@ -1048,6 +1051,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 });
             }
             connectionStatus = action;
+        } else if (action.equals(Constants.ACTION_SHOW_MESSAGE)) {
+            final String msg = (String) obj;
+            SnackbarManager.show(Snackbar.with(this)
+                    .type(SnackbarType.MULTI_LINE)
+                    .text(msg));
         }
     }
 

@@ -19,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.model.Channel;
@@ -1034,8 +1035,12 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
+                if (!success) {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.error_removing_recording,
+                            response.getString("error", "")));
+                }
             }
         });
     }
@@ -1052,7 +1057,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                if (response.getInt("success", 0) == 1) {
+                boolean success = response.getInt("success", 0) == 1;
+                if (success) {
                     for (Program p : ch.epg) {
                         if (p.id == eventId) {
                             TVHClientApplication app = (TVHClientApplication) getApplication();
@@ -1062,8 +1068,12 @@ public class HTSService extends Service implements HTSConnectionListener {
                         }
                     }
                 }
-                @SuppressWarnings("unused")
-                String error = response.getString("error", null);
+
+                if (!success) {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.error_adding_recording,
+                            response.getString("error", "")));
+                }
             }
         });
     }
@@ -1073,13 +1083,18 @@ public class HTSService extends Service implements HTSConnectionListener {
      * @param id
      */
     private void deleteTimerRecEntry(String id) {
+        Log.d(TAG, "deleteTimerRecEntry id " + id);
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteTimerecEntry");
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
+                if (!success) {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.error_removing_recording, 
+                            response.getString("error", "")));
+                }
             }
         });
     }
@@ -1117,10 +1132,12 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
-                @SuppressWarnings("unused")
-                String error = response.getString("error", "");
+                if (!success) {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.error_adding_recording, 
+                            response.getString("error", "")));
+                }
             }
         });
     }
@@ -1266,8 +1283,12 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
+                if (!success) {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.error_removing_recording, 
+                            response.getString("error", "")));
+                }
             }
         });
     }
@@ -1316,7 +1337,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
+                String id = response.getString("id", "");
                 boolean success = response.getInt("success", 0) == 1;
+                if (!success) {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.error_adding_recording, 
+                            response.getString("error", "")));
+                }
             }
         });
     }

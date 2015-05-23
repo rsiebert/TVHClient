@@ -179,6 +179,8 @@
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
     <string name="err_con_timeout">Zeitüberschreitung beim Verbinden zum Server.</string>
     <string name="err_loading_profiles">Fehler beim Laden der Profile vom Server\n%s</string>
+    <string name="error_adding_recording">Aufnahme konnte nicht erstellt werden! %s</string>
+    <string name="error_removing_recording">Aufnahme konnte nicht entfernt werden! %s</string>
 
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
