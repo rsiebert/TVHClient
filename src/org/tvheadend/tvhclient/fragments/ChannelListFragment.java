@@ -192,7 +192,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // shall be available to set
         setHasOptionsMenu(true);
     }
-
+    
+    @SuppressLint("NewApi")
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu in dual pane mode or if no genre colors
@@ -205,6 +206,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // single pane mode, because no channel is preselected.
         if (!showOnlyChannels || !isDualPane) {
             (menu.findItem(R.id.menu_play)).setVisible(false);
+        }
+
+        if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {        
+            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
     }
 

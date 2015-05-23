@@ -146,6 +146,8 @@
     <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
+    <string name="pref_visible_menu_icon_tags">Show the \'Tags Icon\' menu</string>
+    <string name="pref_visible_menu_icon_tags_sum">Show the Tags Icon to direct access from ActionBar.</string>
     <string name="pref_profiles">Profiles</string>
     <string name="pref_profiles_sum">Define the parameters or the profiles (if supported) how programs shall be recorded or how recordings shall be played.</string>
     <string name="pref_recording_profiles">Recording profiles</string>
