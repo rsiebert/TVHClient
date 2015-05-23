@@ -145,6 +145,8 @@
     <string name="pref_hide_menu_delete_all_recordings_sum">Versteckt den Menüeintrag um ein versehentliches Löschen aller aufgenommenen Programme zu vermeiden.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Menü \'Alle Aufnahmen abbrechen\' ausblenden</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Versteckt den Menüeintrag um ein versehentliches Abbrechen aller geplanter Aufnahmen zu vermeiden.</string>
+    <string name="pref_visible_menu_icon_tags">Menü \'Anzeige filtern\' immer anzeigen</string>
+    <string name="pref_visible_menu_icon_tags_sum">Zeige das Menü immer in der Actionbar an. Damit wird verhindert, dass der Menüeintrag ausgeblendet wird und in das \'Drei Punkte Menü\' wandert, wenn nicht genug Platz vorhanden ist.</string>
     <string name="pref_profiles">Profile</string>
     <string name="pref_profiles_sum">Auswahl eines verfügbaren Serverprofils, mit denen Programme aufgenommen oder Aufnahmen abgespielt werden.</string>
     <string name="pref_recording_profiles">Aufnahmeprofile</string>

@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.ExternalPlaybackActivity;
 import org.tvheadend.tvhclient.R;
@@ -20,10 +19,11 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -41,7 +41,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 
 public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface {
@@ -193,6 +192,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         setHasOptionsMenu(true);
     }
 
+    @SuppressLint({ "InlinedApi", "NewApi" })
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu in dual pane mode or if no genre colors
@@ -205,6 +205,14 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // single pane mode, because no channel is preselected.
         if (!showOnlyChannels || !isDualPane) {
             (menu.findItem(R.id.menu_play)).setVisible(false);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
+                menu.findItem(R.id.menu_tags).setShowAsActionFlags(
+                        MenuItem.SHOW_AS_ACTION_ALWAYS
+                                | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+            }
         }
     }
 

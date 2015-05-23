@@ -146,6 +146,8 @@
     <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
+    <string name="pref_visible_menu_icon_tags">Always show the \'Channel Tags\' menu</string>
+    <string name="pref_visible_menu_icon_tags_sum">Keep the channel tag menu visible in the action bar. Prevents the menu from being moved into the three dot menu if there is not enough space.</string>
     <string name="pref_profiles">Profiles</string>
     <string name="pref_profiles_sum">Define the parameters or the profiles (if supported) how programs shall be recorded or how recordings shall be played.</string>
     <string name="pref_recording_profiles">Recording profiles</string>

@@ -3,16 +3,16 @@ package org.tvheadend.tvhclient.fragments;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramGuideTimeDialogAdapter;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -28,7 +28,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 
 public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface {
@@ -115,12 +114,21 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         setHasOptionsMenu(true);
     }
 
+    @SuppressLint({ "InlinedApi", "NewApi" })
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu if no genre colors shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsGuidePref", false);
         (menu.findItem(R.id.menu_genre_color_info_epg)).setVisible(showGenreColors);
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
+                menu.findItem(R.id.menu_timeframe).setShowAsActionFlags(
+                        MenuItem.SHOW_AS_ACTION_ALWAYS
+                                | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+            }
+        }
     }
 
     @Override
