@@ -43,6 +43,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView duration;
     private TextView failed_reason;
     private TextView is_series_recording;
+    private TextView is_timer_recording;
 
     private LinearLayout playerLayout;
     private TextView play;
@@ -99,6 +100,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         duration = (TextView) v.findViewById(R.id.duration);
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
         is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
+        is_timer_recording = (TextView) v.findViewById(R.id.is_timer_recording);
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
@@ -150,6 +152,13 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 is_series_recording.setVisibility(ImageView.VISIBLE);
             } else {
                 is_series_recording.setVisibility(ImageView.GONE);
+            }
+        }
+        if (is_timer_recording != null) {
+            if (rec.timerecId != null && showControls) {
+                is_timer_recording.setVisibility(ImageView.VISIBLE);
+            } else {
+                is_timer_recording.setVisibility(ImageView.GONE);
             }
         }
     }
