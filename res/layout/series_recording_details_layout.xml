@@ -24,6 +24,8 @@
                 android:id="@+id/menu_record_remove"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
                 android:background="?attr/menu_text_selector"
                 android:drawableLeft="?attr/ic_menu_record_remove"
                 android:drawableStart="?attr/ic_menu_record_remove"
