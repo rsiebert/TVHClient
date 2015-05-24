@@ -124,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/extra_stop_time" />
+                    android:text="@string/extra_start_time" />
 
                 <EditText
                     android:id="@+id/start_extra"
@@ -140,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/extra_start_time" />
+                    android:text="@string/extra_stop_time" />
 
                 <EditText
                     android:id="@+id/stop_extra"

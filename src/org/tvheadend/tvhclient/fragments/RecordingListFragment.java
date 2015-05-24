@@ -280,15 +280,20 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 // The recording is available, it can be played and removed
                 recordRemoveMenuItem.setVisible(true);
                 playMenuItem.setVisible(true);
+
             } else if (rec.isRecording()) {
                 // The recording is recording it can be played or cancelled
                 recordCancelMenuItem.setVisible(true);
                 playMenuItem.setVisible(true);
+                TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+                editMenuItem.setVisible(app.isUnlocked());
+
             } else if (rec.isScheduled()) {
                 // The recording is scheduled, it can only be cancelled
                 recordCancelMenuItem.setVisible(true);
                 TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                 editMenuItem.setVisible(app.isUnlocked());
+
             } else if (rec.error != null || rec.state.equals("missed")) {
                 // The recording has failed or has been missed, allow removal
                 recordRemoveMenuItem.setVisible(true);

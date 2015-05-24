@@ -131,7 +131,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("stopExtra", 0),
                     intent.getStringExtra("title"),
                     intent.getStringExtra("description"),
-                    intent.getStringExtra("configName"));
+                    intent.getStringExtra("configName"),
+                    intent.getBooleanExtra("isRecording", false));
 
         } else if (action.equals(Constants.ACTION_DELETE_DVR_ENTRY)) {
             try {
@@ -1045,27 +1046,36 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void updateDvrEntry(final long id, long start,
-            long stop, long retention, long priority, long startExtra,
-            long stopExtra, String title, String description, String configName) {
+    private void updateDvrEntry(final long id, long start, long stop,
+            long retention, long priority, long startExtra, long stopExtra,
+            String title, String description, String configName,
+            boolean isRecording) {
+
+        Log.i(TAG, "updateDvrEntry isRecording " + isRecording);
 
         HTSMessage request = new HTSMessage();
         request.setMethod("updateDvrEntry");
         request.putField("id", id);
-        request.putField("start", start);
         request.putField("stop", stop);
-        request.putField("retention", retention);
-        request.putField("priority", priority);
-        request.putField("startExtra", startExtra);
         request.putField("stopExtra", stopExtra);
-        if (title != null) {
-            request.putField("title", title);
-        }
-        if (description != null) {
-            request.putField("description", description);
-        }
-        if (configName != null) {
-            request.putField("configName", configName);
+
+        // Only add these fields when the recording is only scheduled and not
+        // being recorded
+        if (isRecording) {
+            request.putField("start", start);
+            request.putField("retention", retention);
+            request.putField("priority", priority);
+            request.putField("startExtra", startExtra);
+
+            if (title != null) {
+                request.putField("title", title);
+            }
+            if (description != null) {
+                request.putField("description", description);
+            }
+            if (configName != null) {
+                request.putField("configName", configName);
+            }
         }
 
         connection.sendMessage(request, new HTSResponseHandler() {

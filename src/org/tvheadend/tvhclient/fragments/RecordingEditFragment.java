@@ -107,27 +107,7 @@ public class RecordingEditFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.recording_edit_layout, container, false);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        title = (EditText) v.findViewById(R.id.title);
-        description = (EditText) v.findViewById(R.id.description);
-        startExtra = (EditText) v.findViewById(R.id.start_extra);
-        stopExtra = (EditText) v.findViewById(R.id.stop_extra);
-        startTime = (TextView) v.findViewById(R.id.start_time);
-        stopTime = (TextView) v.findViewById(R.id.stop_time);
-        priority = (TextView) v.findViewById(R.id.priority);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-
-        // Create the list of channels that the user can select. The very first
-        // entry is a placeholder to select no record on all channels
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        channelList = new String[app.getChannels().size()];
-        for (int i = 0; i < app.getChannels().size(); i++) {
-            channelList[i] = app.getChannels().get(i).name;
-        }
-
-        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
         // If the savedInstanceState is null then the fragment was created for
         // the first time. Either get the given id to edit the recording or
@@ -165,6 +145,31 @@ public class RecordingEditFragment extends DialogFragment {
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
 
+        // Show only the title, stop and extra stop time when the recording is
+        // already being recorded
+        View v = inflater.inflate(
+                (rec.isRecording() ? R.layout.recording_edit_recording_layout
+                        : R.layout.recording_edit_scheduled_layout), container, false);
+
+        // Initialize all the widgets from the layout
+        channelName = (TextView) v.findViewById(R.id.channel);
+        title = (EditText) v.findViewById(R.id.title);
+        description = (EditText) v.findViewById(R.id.description);
+        startExtra = (EditText) v.findViewById(R.id.start_extra);
+        stopExtra = (EditText) v.findViewById(R.id.stop_extra);
+        startTime = (TextView) v.findViewById(R.id.start_time);
+        stopTime = (TextView) v.findViewById(R.id.stop_time);
+        priority = (TextView) v.findViewById(R.id.priority);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+
+        // Create the list of channels that the user can select. The very first
+        // entry is a placeholder to select no record on all channels
+        channelList = new String[app.getChannels().size()];
+        for (int i = 0; i < app.getChannels().size(); i++) {
+            channelList[i] = app.getChannels().get(i).name;
+        }
+
+        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
         return v;
     }
 
@@ -286,6 +291,7 @@ public class RecordingEditFragment extends DialogFragment {
                 }
             });
         }
+
         if (getDialog() != null) {
             getDialog().setTitle(R.string.edit_recording);
             getDialog().setCanceledOnTouchOutside(false);
@@ -332,17 +338,25 @@ public class RecordingEditFragment extends DialogFragment {
      */
     private void getValues() {
         try {
-            startExtraValue = Long.valueOf(startExtra.getText().toString());
+            if (startExtra != null) {
+                startExtraValue = Long.valueOf(startExtra.getText().toString());
+            }
         } catch (NumberFormatException ex) {
             startExtraValue = DEFAULT_START_EXTRA;
         }
         try {
-            stopExtraValue = Long.valueOf(stopExtra.getText().toString());
+            if (stopExtra != null) {
+                stopExtraValue = Long.valueOf(stopExtra.getText().toString());
+            }
         } catch (NumberFormatException ex) {
             stopExtraValue = DEFAULT_STOP_EXTRA;
         }
-        titleValue = title.getText().toString();
-        descriptionValue = description.getText().toString();
+        if (title != null) {
+            titleValue = title.getText().toString();
+        }
+        if (description != null) {
+            descriptionValue = description.getText().toString();
+        }
     }
 
     /**
@@ -356,33 +370,38 @@ public class RecordingEditFragment extends DialogFragment {
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_UPDATE_DVR_ENTRY);
         intent.putExtra("id", rec.id);
-        intent.putExtra("title", titleValue);
-        intent.putExtra("description", descriptionValue);
-        intent.putExtra("startExtra", startExtraValue);
         intent.putExtra("stopExtra", stopExtraValue);
-        intent.putExtra("start", startTimeValue);
         intent.putExtra("stop", stopTimeValue);
-        intent.putExtra("priority", priorityValue);
+        intent.putExtra("isRecording", rec.isRecording());
 
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        // Only add the additional field when the recording is scheduled. When
+        // it is already being recorded only the stop times can be changed.
+        if (!rec.isRecording()) {
+            intent.putExtra("title", titleValue);
+            intent.putExtra("description", descriptionValue);
+            intent.putExtra("startExtra", startExtraValue);
+            intent.putExtra("start", startTimeValue);
+            intent.putExtra("priority", priorityValue);
 
-        // The id must be passed on to the server, not the name. So go through
-        // all available channels and get the id for the selected channel name.
-        for (Channel c : app.getChannels()) {
-            if (c.name.equals(channelName.getText().toString())) {
-                intent.putExtra("channelId", c.id);
-                break;
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+
+            // The id must be passed on to the server, not the name. So go through
+            // all available channels and get the id for the selected channel name.
+            for (Channel c : app.getChannels()) {
+                if (c.name.equals(channelName.getText().toString()) && !rec.isRecording()) {
+                    intent.putExtra("channelId", c.id);
+                    break;
+                }
             }
-        }
-
-        // Add the recording profile if available and enabled
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
-        if (p != null 
-                && p.enabled
-                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                && app.isUnlocked()) {
-            intent.putExtra("configName", p.name);
+            // Add the recording profile if available and enabled
+            final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+            final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+            if (p != null 
+                    && p.enabled
+                    && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                    && app.isUnlocked()) {
+                intent.putExtra("configName", p.name);
+            }
         }
 
         activity.startService(intent);

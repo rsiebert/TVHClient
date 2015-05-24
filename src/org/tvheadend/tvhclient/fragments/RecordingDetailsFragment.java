@@ -173,6 +173,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             // The recording is recording it can be played or cancelled
             recordCancel.setVisibility(View.VISIBLE);
             play.setVisibility(View.VISIBLE);
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            if (app.isUnlocked()) {
+                edit.setVisibility(View.VISIBLE);
+            }
         } else if (rec.isScheduled()) {
             // The recording is scheduled, it can only be cancelled
             recordCancel.setVisibility(View.VISIBLE);
