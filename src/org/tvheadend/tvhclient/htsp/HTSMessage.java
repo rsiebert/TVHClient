@@ -15,7 +15,7 @@ public class HTSMessage extends HashMap<String, Object> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final long HTSP_VERSION = 8;
+    public static final long HTSP_VERSION = 17;
     private static final byte HMF_MAP = 1;
     private static final byte HMF_S64 = 2;
     private static final byte HMF_STR = 3;
