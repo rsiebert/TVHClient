@@ -122,11 +122,11 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getStringExtra("configName"));
 
         } else if (action.equals(Constants.ACTION_UPDATE_DVR_ENTRY)) {
-            updateDvrEntry(intent.getLongExtra("eventId", 0),
+            updateDvrEntry(intent.getLongExtra("id", 0),
                     intent.getLongExtra("start", 0),
                     intent.getLongExtra("stop", 0),
-                    intent.getLongExtra("retention", 0),
-                    intent.getLongExtra("priority", 0),
+                    intent.getLongExtra("retention", 120),
+                    intent.getLongExtra("priority", 2),
                     intent.getLongExtra("startExtra", 0),
                     intent.getLongExtra("stopExtra", 0),
                     intent.getStringExtra("title"),
@@ -151,7 +151,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("channelId", 0),
                     intent.getLongExtra("retention", 0),
                     intent.getLongExtra("daysOfWeek", 0),
-                    intent.getLongExtra("priority", 0),
+                    intent.getLongExtra("priority", 2),
                     intent.getLongExtra("enabled", 0),
                     intent.getStringExtra("configName"));
 
@@ -219,9 +219,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("channelId", 0),
                     intent.getLongExtra("maxDuration", 0),
                     intent.getLongExtra("minDuration", 0),
-                    intent.getLongExtra("retention", 0),
+                    intent.getLongExtra("retention", 120),
                     intent.getLongExtra("daysOfWeek", 127),
-                    intent.getLongExtra("priority", 0),
+                    intent.getLongExtra("priority", 2),
                     intent.getLongExtra("enabled", 1),
                     intent.getLongExtra("startExtra", 0),
                     intent.getLongExtra("stopExtra", 0),
@@ -1045,13 +1045,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void updateDvrEntry(final long eventId, long start,
+    private void updateDvrEntry(final long id, long start,
             long stop, long retention, long priority, long startExtra,
             long stopExtra, String title, String description, String configName) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("updateDvrEntry");
-        request.putField("eventId", eventId);
+        request.putField("id", id);
         request.putField("start", start);
         request.putField("stop", stop);
         request.putField("retention", retention);
@@ -1096,7 +1096,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void addDvrEntry(final long channelId, final long eventId, String configName) {
+    private void addDvrEntry(final long channelId, final long eventId,
+            String configName) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
@@ -1138,7 +1139,6 @@ public class HTSService extends Service implements HTSConnectionListener {
      * @param id
      */
     private void deleteTimerRecEntry(String id) {
-        Log.d(TAG, "deleteTimerRecEntry id " + id);
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteTimerecEntry");
         request.putField("id", id);

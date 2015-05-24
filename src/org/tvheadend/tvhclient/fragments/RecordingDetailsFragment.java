@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,12 +22,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+@SuppressWarnings("deprecation")
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
-    private Activity activity;
+    private ActionBarActivity activity;
     private boolean showControls = false;
     private Recording rec;
 
@@ -44,6 +46,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
     private LinearLayout playerLayout;
     private TextView play;
+    private TextView edit;
     private TextView recordCancel;
     private TextView recordRemove;
 
@@ -65,7 +68,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (Activity) activity;
+        this.activity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -100,6 +103,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
         play = (TextView) v.findViewById(R.id.menu_play);
+        edit = (TextView) v.findViewById(R.id.menu_edit);
         recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
         recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
 
@@ -156,6 +160,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private void showPlayerControls() {
         playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
         play.setVisibility(View.GONE);
+        edit.setVisibility(View.GONE);
         recordCancel.setVisibility(View.GONE);
         recordRemove.setVisibility(View.GONE);
 
@@ -171,6 +176,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         } else if (rec.isScheduled()) {
             // The recording is scheduled, it can only be cancelled
             recordCancel.setVisibility(View.VISIBLE);
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            if (app.isUnlocked()) {
+                edit.setVisibility(View.VISIBLE);
+            }
         } else if (rec.error != null || rec.state.equals("missed")) {
             // The recording has failed or has been missed, allow removal
             recordRemove.setVisibility(View.VISIBLE);
@@ -189,6 +198,22 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                     Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
                     intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
                     startActivity(intent);
+                }
+            }
+        });
+        edit.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open a new activity that starts playing the program
+                if (rec != null) {
+                    DialogFragment editFragment = RecordingEditFragment.newInstance(null);
+                    Bundle bundle = new Bundle();
+                    bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+                    editFragment.setArguments(bundle);
+                    editFragment.show(activity.getSupportFragmentManager(), "dialog");
+                }
+                if (getDialog() != null) {
+                    getDialog().dismiss();
                 }
             }
         });

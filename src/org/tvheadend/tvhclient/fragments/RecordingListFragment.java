@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.ExternalPlaybackActivity;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
@@ -134,7 +135,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = RecordingAddFragment.newInstance(null);
+            DialogFragment editFragment = RecordingEditFragment.newInstance(null);
             Bundle bundle = new Bundle();
             bundle.putLong(Constants.BUNDLE_RECORDING_ID, adapter.getSelectedItem().id);
             editFragment.setArguments(bundle);
@@ -251,7 +252,48 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         // Set the title of the context menu and show or hide 
         // the menu items depending on the recording state
         menu.setHeaderTitle(rec.title);
-        Utils.setRecordingMenu(menu, rec);
+
+        // Get the menu items so they can be shown 
+        // or hidden depending on the recording state
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem editMenuItem = menu.findItem(R.id.menu_edit);
+        MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
+        MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
+
+        // Disable these menus as a default
+        recordCancelMenuItem.setVisible(false);
+        recordRemoveMenuItem.setVisible(false);
+        playMenuItem.setVisible(false);
+        editMenuItem.setVisible(false);
+        searchMenuItemEpg.setVisible(false);
+        searchMenuItemImdb.setVisible(false);
+
+        // Exit if the recording is not valid
+        if (rec != null) {
+            // Allow searching the recordings
+            searchMenuItemEpg.setVisible(true);
+            searchMenuItemImdb.setVisible(true);
+
+            if (rec.error == null && rec.state.equals("completed")) {
+                // The recording is available, it can be played and removed
+                recordRemoveMenuItem.setVisible(true);
+                playMenuItem.setVisible(true);
+            } else if (rec.isRecording()) {
+                // The recording is recording it can be played or cancelled
+                recordCancelMenuItem.setVisible(true);
+                playMenuItem.setVisible(true);
+            } else if (rec.isScheduled()) {
+                // The recording is scheduled, it can only be cancelled
+                recordCancelMenuItem.setVisible(true);
+                TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+                editMenuItem.setVisible(app.isUnlocked());
+            } else if (rec.error != null || rec.state.equals("missed")) {
+                // The recording has failed or has been missed, allow removal
+                recordRemoveMenuItem.setVisible(true);
+            }
+        }
     }
 
     @Override
@@ -297,7 +339,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = RecordingAddFragment.newInstance(null);
+            DialogFragment editFragment = RecordingEditFragment.newInstance(null);
             Bundle bundle = new Bundle();
             bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
             editFragment.setArguments(bundle);
@@ -315,6 +357,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
      */
     @Override
     public void onMessage(String action, final Object obj) {
+        Log.i(TAG, "onMessage " + action);
         if (action.equals(Constants.ACTION_DVR_ADD)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {

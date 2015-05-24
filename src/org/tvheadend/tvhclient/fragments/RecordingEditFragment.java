@@ -37,9 +37,9 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
 @SuppressWarnings("deprecation")
-public class RecordingAddFragment extends DialogFragment {
+public class RecordingEditFragment extends DialogFragment {
 
-    private final static String TAG = RecordingAddFragment.class.getSimpleName();
+    private final static String TAG = RecordingEditFragment.class.getSimpleName();
 
     private ActionBarActivity activity;
     private Recording rec;
@@ -69,8 +69,8 @@ public class RecordingAddFragment extends DialogFragment {
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
 
-    public static RecordingAddFragment newInstance(Bundle args) {
-        RecordingAddFragment f = new RecordingAddFragment();
+    public static RecordingEditFragment newInstance(Bundle args) {
+        RecordingEditFragment f = new RecordingEditFragment();
         f.setArguments(args);
         return f;
     }
@@ -108,7 +108,7 @@ public class RecordingAddFragment extends DialogFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.recording_add_layout, container, false);
+        View v = inflater.inflate(R.layout.recording_edit_layout, container, false);
         channelName = (TextView) v.findViewById(R.id.channel);
         title = (EditText) v.findViewById(R.id.title);
         description = (EditText) v.findViewById(R.id.description);
@@ -353,9 +353,9 @@ public class RecordingAddFragment extends DialogFragment {
     private void save() {
         getValues();
 
-        // Add the new or edited series recording
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_UPDATE_DVR_ENTRY);
+        intent.putExtra("id", rec.id);
         intent.putExtra("title", titleValue);
         intent.putExtra("description", descriptionValue);
         intent.putExtra("startExtra", startExtraValue);
