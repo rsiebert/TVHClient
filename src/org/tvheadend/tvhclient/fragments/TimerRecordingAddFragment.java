@@ -182,9 +182,10 @@ public class TimerRecordingAddFragment extends DialogFragment {
                 channelSelectionValue = (pos >= 0 ? pos : 0);
             } else {
                 // No recording was given, set default values
+                Calendar cal = Calendar.getInstance();
                 priorityValue = 2;
-                startTimeValue = 0;
-                stopTimeValue = 0;
+                startTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+                stopTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
                 daysOfWeekValue = 127;
                 titleValue = "";
                 enabledValue = true;
@@ -262,9 +263,9 @@ public class TimerRecordingAddFragment extends DialogFragment {
             startTime.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Calendar time = Calendar.getInstance();
-                    int hour = time.get(Calendar.HOUR_OF_DAY);
-                    int minute = time.get(Calendar.MINUTE);
+                    int hour = (int) (startTimeValue / 60);
+                    int minute = (int) (startTimeValue % 60);
+
                     TimePickerDialog mTimePicker;
                     mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
                         @Override
@@ -285,9 +286,9 @@ public class TimerRecordingAddFragment extends DialogFragment {
             stopTime.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Calendar time = Calendar.getInstance();
-                    int hour = time.get(Calendar.HOUR_OF_DAY);
-                    int minute = time.get(Calendar.MINUTE);
+                    int hour = (int) (stopTimeValue / 60);
+                    int minute = (int) (stopTimeValue % 60);
+
                     TimePickerDialog mTimePicker;
                     mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
                         @Override
