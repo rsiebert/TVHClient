@@ -8,7 +8,6 @@ import org.tvheadend.tvhclient.model.Recording;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.Menu;
-import android.view.MenuItem;
 
 public class CompletedRecordingListFragment extends RecordingListFragment {
 
@@ -47,10 +46,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
             (menu.findItem(R.id.menu_play)).setVisible(false);
         }
-        MenuItem editMenu = menu.findItem(R.id.menu_edit);
-        if (editMenu != null) {
-            editMenu.setVisible(false);
-        }
+        (menu.findItem(R.id.menu_edit)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
 

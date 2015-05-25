@@ -38,7 +38,7 @@
                     android:padding="8dp"
                     android:text="@string/play" />
 
-           <!-- <TextView
+                <TextView
                     android:id="@+id/menu_edit"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
@@ -50,7 +50,7 @@
                     android:gravity="center_vertical"
                     android:padding="8dp"
                     android:text="@string/edit"
-                    android:visibility="gone" /> -->
+                    android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout
@@ -70,7 +70,7 @@
                     android:drawableStart="?attr/ic_menu_record_cancel"
                     android:gravity="center_vertical"
                     android:padding="8dp"
-                    android:text="@string/record_cancel"
+                    android:text="@string/cancel"
                     android:visibility="gone" />
 
                 <TextView
@@ -82,7 +82,7 @@
                     android:drawableStart="?attr/ic_menu_record_remove"
                     android:gravity="center_vertical"
                     android:padding="8dp"
-                    android:text="@string/record_remove"
+                    android:text="@string/remove"
                     android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>

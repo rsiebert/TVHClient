@@ -311,7 +311,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 }
                 TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                 if (editMenuItem != null) {
-                    editMenuItem.setVisible(app.isUnlocked());
+                    editMenuItem.setVisible(app.isUnlocked() && Constants.ENABLE_RECORDING_EDIT_MODE);
                 }
 
             } else if (rec.isScheduled()) {
@@ -321,7 +321,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                 }
                 TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                 if (editMenuItem != null) {
-                    editMenuItem.setVisible(app.isUnlocked());
+                    editMenuItem.setVisible(app.isUnlocked() && Constants.ENABLE_RECORDING_EDIT_MODE);
                 }
 
             } else if (rec.error != null || rec.state.equals("missed")) {

@@ -2,6 +2,10 @@ package org.tvheadend.tvhclient;
 
 public class Constants {
 
+    // Enables the functionality to edit a recording. Currently disabled because
+    // the server has issues with updating a dvr
+    public static final boolean ENABLE_RECORDING_EDIT_MODE = false;
+
     // Product id for the in-app billing item to unlock the application
     public static final String UNLOCKER = "unlocker";
 

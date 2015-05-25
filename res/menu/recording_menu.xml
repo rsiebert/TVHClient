@@ -8,12 +8,12 @@
         android:orderInCategory="2"
         android:title="@string/play"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
-<!-- <item
+    <item
         android:id="@+id/menu_edit"
         android:icon="?attr/ic_menu_edit"
         android:orderInCategory="3"
         android:title="@string/edit"
-        app:showAsAction="ifRoom|collapseActionView|withText"/> -->
+        app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"

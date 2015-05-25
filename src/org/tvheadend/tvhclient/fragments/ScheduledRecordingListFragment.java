@@ -8,7 +8,6 @@ import org.tvheadend.tvhclient.model.Recording;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.Menu;
-import android.view.MenuItem;
 
 public class ScheduledRecordingListFragment extends RecordingListFragment {
 
@@ -47,6 +46,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         }
         (menu.findItem(R.id.menu_play)).setVisible(false);
+        (menu.findItem(R.id.menu_edit)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
 
@@ -58,11 +58,8 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // Show the edit button only when the application is unlocked and a
         // recording was selected
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
-            MenuItem editMenu = menu.findItem(R.id.menu_edit);
-            if (editMenu != null) {
-                editMenu.setVisible(false);
-            }
+        if (isDualPane && adapter.getCount() > 0 && app.isUnlocked() && Constants.ENABLE_RECORDING_EDIT_MODE) {
+            (menu.findItem(R.id.menu_edit)).setVisible(true);
         }
     }
 
