@@ -31,7 +31,7 @@
                 android:drawableStart="?attr/ic_menu_record_remove"
                 android:gravity="center_vertical"
                 android:padding="8dp"
-                android:text="@string/record_remove"
+                android:text="@string/remove"
                 android:visibility="gone" />
 
             <TextView
@@ -43,7 +43,7 @@
                 android:drawableStart="?attr/ic_menu_edit"
                 android:gravity="center_vertical"
                 android:padding="8dp"
-                android:text="@string/record_edit"
+                android:text="@string/edit"
                 android:visibility="gone" />
         </LinearLayout>
 
