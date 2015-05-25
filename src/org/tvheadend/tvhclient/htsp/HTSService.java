@@ -421,6 +421,13 @@ public class HTSService extends Service implements HTSConnectionListener {
             rec.contentType = msg.getLong("contentType");
         }
 
+        // Not all fields can be set with default values, so check if the server
+        // provides a supported HTSP API version. These entries are available
+        // only on version 17 and higher
+        if (connection.getProtocolVersion() >= 17) {
+            rec.timerecId = msg.getString("timerecId");
+        }
+
         if (rec.channel != null && rec.channel.epg != null) {
             for (Program p : rec.channel.epg) {
                 if (p != null 
@@ -462,6 +469,14 @@ public class HTSService extends Service implements HTSConnectionListener {
             rec.priority = msg.getLong("priority");
             rec.contentType = msg.getLong("contentType");
         }
+
+        // Not all fields can be set with default values, so check if the server
+        // provides a supported HTSP API version. These entries are available
+        // only on version 17 and higher
+        if (connection.getProtocolVersion() >= 17) {
+            rec.timerecId = msg.getString("timerecId");
+        }
+
         app.updateRecording(rec);
     }
 
