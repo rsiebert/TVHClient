@@ -30,6 +30,8 @@ public class HTSConnection extends Thread {
     private String clientName;
     private String clientVersion;
     private int protocolVersion;
+    private String serverName;
+    private String serverVersion;
     private String webRoot;
     
     private HTSConnectionListener listener;
@@ -150,11 +152,12 @@ public class HTSConnection extends Thread {
         sendMessage(helloMessage, new HTSResponseHandler() {
 
             public void handleResponse(HTSMessage response) {
-            	
-            	protocolVersion = response.getInt("htspversion");
-            	webRoot = response.getString("webroot", "");
-            	Log.d(TAG, "HTSP protocol version is " + protocolVersion);
-            	
+
+                protocolVersion = response.getInt("htspversion");
+                serverName = response.getString("servername");
+                serverVersion = response.getString("serverversion");
+                webRoot = response.getString("webroot", "");
+
                 MessageDigest md;
                 try {
                     md = MessageDigest.getInstance("SHA1");
@@ -312,7 +315,15 @@ public class HTSConnection extends Thread {
     public int getProtocolVersion() {
     	return this.protocolVersion;
     }
-    
+
+    public String getServerName() {
+        return this.serverName;
+    }
+
+    public String getServerVersion() {
+        return this.serverVersion;
+    }
+
     public String getWebRoot() {
     	return this.webRoot;
     }

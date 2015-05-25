@@ -387,6 +387,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, failedRecCount, failedRecCount));
         seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
         timerRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
-        serverApiVersion.setText(String.valueOf(app.getProtocolVersion()));
+        serverApiVersion.setText(String.valueOf(app.getProtocolVersion())
+                + "   (" + getString(R.string.server) + ": "
+                + app.getServerName() + " " + app.getServerVersion() + ")");
     }
 }

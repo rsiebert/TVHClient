@@ -547,6 +547,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.setLoading(false);
         app.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
         app.setProtocolVersion(connection.getProtocolVersion());
+        app.setServerName(connection.getServerName());
+        app.setServerVersion(connection.getServerVersion());
     }
 
     private void onSubscriptionStart(HTSMessage msg) {

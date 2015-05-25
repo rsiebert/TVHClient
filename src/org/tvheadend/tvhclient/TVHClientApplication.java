@@ -53,6 +53,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     // The default protocol version that is assumed the server supports
     private int protocolVersion = 10;
+    private String serverName = "";
+    private String serverVersion = "";
 
     // Holds a list of channels that are not allowed to load because the EPG
     // size did not change after the last loading call.
@@ -137,6 +139,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
         protocolVersion = version;
     }
 
+    public void setServerName(String name) {
+        serverName = name;
+    }
+
+    public void setServerVersion(String version) {
+        serverVersion = version;
+    }
+
     /**
      * Returns the protocol version of the currently active connection. This is
      * required to determine if the server supports series recordings and other
@@ -146,6 +156,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public int getProtocolVersion() {
         return protocolVersion;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public String getServerVersion() {
+        return serverVersion;
     }
 
     /**
