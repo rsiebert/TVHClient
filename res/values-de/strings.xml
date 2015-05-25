@@ -11,8 +11,10 @@
     <string name="record_series">Automatisch Aufnehmen</string>
     <string name="record_cancel">Aufnahme entfernen</string>
     <string name="record_cancel_all">Alle Aufnahmen entfernen</string>
+    <string name="confirm_cancel_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
     <string name="record_remove">Aufnahme entfernen</string>
     <string name="record_remove_all">Alle Aufnahmen entfernen</string>
+    <string name="confirm_remove_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
     <string name="record_edit">Aufnahme bearbeiten</string>
     <string name="search_imdb">Suche auf der IMDB Webseite</string>
     <string name="search_epg">Suche im TV-Programm</string>

@@ -150,7 +150,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             // Show a confirmation dialog before deleting all recordings
             new MaterialDialog.Builder(activity)
                     .title(R.string.record_remove_all)
-                    .content(R.string.remove_all_recordings)
+                    .content(R.string.confirm_remove_all)
                     .positiveText(getString(android.R.string.yes))
                     .negativeText(getString(android.R.string.no))
                     .callback(new MaterialDialog.ButtonCallback() {
@@ -174,7 +174,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             // Show a confirmation dialog before canceling all recordings
             new MaterialDialog.Builder(activity)
                     .title(R.string.record_cancel_all)
-                    .content(R.string.cancel_all_recordings)
+                    .content(R.string.confirm_cancel_all)
                     .positiveText(getString(android.R.string.yes))
                     .negativeText(getString(android.R.string.no))
                     .callback(new MaterialDialog.ButtonCallback() {

@@ -11,8 +11,10 @@
     <string name="record_series">Record (Autorec)</string>
     <string name="record_cancel">Cancel recording</string>
     <string name="record_cancel_all">Cancel all recordings</string>
+    <string name="confirm_cancel_all">Are you sure you want to cancel all recordings?</string>
     <string name="record_remove">Remove recording</string>
     <string name="record_remove_all">Remove all recordings</string>
+    <string name="confirm_remove_all">Are you sure you want to remove all recordings?</string>
     <string name="record_edit">Edit recording</string>
     <string name="search_imdb">Search on IMDB</string>
     <string name="search_epg">Search the program guide</string>
