@@ -8,6 +8,7 @@ import org.tvheadend.tvhclient.model.Recording;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.Menu;
+import android.view.MenuItem;
 
 public class ScheduledRecordingListFragment extends RecordingListFragment {
 
@@ -58,7 +59,10 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // recording was selected
         TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
-            (menu.findItem(R.id.menu_edit)).setVisible(false);
+            MenuItem editMenu = menu.findItem(R.id.menu_edit);
+            if (editMenu != null) {
+                editMenu.setVisible(false);
+            }
         }
     }
 
