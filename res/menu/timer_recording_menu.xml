@@ -18,7 +18,7 @@
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:orderInCategory="5"
-        android:title="@string/record_remove"
+        android:title="@string/remove"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_remove_all"

@@ -18,7 +18,7 @@
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:orderInCategory="4"
-        android:title="@string/record_remove"
+        android:title="@string/remove"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_remove_all"
@@ -30,7 +30,7 @@
         android:id="@+id/menu_record_cancel"
         android:icon="?attr/ic_menu_record_cancel"
         android:orderInCategory="6"
-        android:title="@string/record_cancel"
+        android:title="@string/cancel"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_cancel_all"
