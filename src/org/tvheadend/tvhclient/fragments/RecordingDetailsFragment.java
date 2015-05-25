@@ -46,10 +46,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView is_timer_recording;
 
     private LinearLayout playerLayout;
-    private TextView play;
-    private TextView edit;
-    private TextView recordCancel;
-    private TextView recordRemove;
+    private TextView playRecordingButton;
+    private TextView editRecordingButton;
+    private TextView cancelRecordingButton;
+    private TextView removeRecordingButton;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -104,10 +104,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        play = (TextView) v.findViewById(R.id.menu_play);
-        edit = (TextView) v.findViewById(R.id.menu_edit);
-        recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
-        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
+        playRecordingButton = (TextView) v.findViewById(R.id.menu_play);
+        editRecordingButton = (TextView) v.findViewById(R.id.menu_edit);
+        cancelRecordingButton = (TextView) v.findViewById(R.id.menu_record_cancel);
+        removeRecordingButton = (TextView) v.findViewById(R.id.menu_record_remove);
 
         return v;
     }
@@ -167,35 +167,57 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
      * 
      */
     private void showPlayerControls() {
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        play.setVisibility(View.GONE);
-        edit.setVisibility(View.GONE);
-        recordCancel.setVisibility(View.GONE);
-        recordRemove.setVisibility(View.GONE);
+        if (playerLayout != null) {
+            playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
+        }
+        if (playRecordingButton != null) {
+            playRecordingButton.setVisibility(View.GONE);
+        }
+        if (editRecordingButton != null) {
+            editRecordingButton.setVisibility(View.GONE);
+        }
+        if (cancelRecordingButton != null) {
+            cancelRecordingButton.setVisibility(View.GONE);
+        }
+        if (removeRecordingButton != null) {
+            removeRecordingButton.setVisibility(View.GONE);
+        }
 
         // Show the play menu items
         if (rec.error == null && rec.state.equals("completed")) {
             // The recording is available, it can be played and removed
-            recordRemove.setVisibility(View.VISIBLE);
-            play.setVisibility(View.VISIBLE);
+            if (removeRecordingButton != null) {
+                removeRecordingButton.setVisibility(View.VISIBLE);
+            }
+            if (playRecordingButton != null) {
+                playRecordingButton.setVisibility(View.VISIBLE);
+            }
         } else if (rec.isRecording()) {
             // The recording is recording it can be played or cancelled
-            recordCancel.setVisibility(View.VISIBLE);
-            play.setVisibility(View.VISIBLE);
+            if (cancelRecordingButton != null) {
+                cancelRecordingButton.setVisibility(View.VISIBLE);
+            }
+            if (playRecordingButton != null) {
+                playRecordingButton.setVisibility(View.VISIBLE);
+            }
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            if (app.isUnlocked()) {
-                edit.setVisibility(View.VISIBLE);
+            if (editRecordingButton != null && app.isUnlocked()) {
+                editRecordingButton.setVisibility(View.VISIBLE);
             }
         } else if (rec.isScheduled()) {
             // The recording is scheduled, it can only be cancelled
-            recordCancel.setVisibility(View.VISIBLE);
+            if (cancelRecordingButton != null) {
+                cancelRecordingButton.setVisibility(View.VISIBLE);
+            }
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            if (app.isUnlocked()) {
-                edit.setVisibility(View.VISIBLE);
+            if (editRecordingButton != null && app.isUnlocked()) {
+                editRecordingButton.setVisibility(View.VISIBLE);
             }
         } else if (rec.error != null || rec.state.equals("missed")) {
             // The recording has failed or has been missed, allow removal
-            recordRemove.setVisibility(View.VISIBLE);
+            if (removeRecordingButton != null) {
+                removeRecordingButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -203,51 +225,59 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
      * 
      */
     private void addPlayerControlListeners() {
-        play.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open a new activity that starts playing the program
-                if (rec != null) {
-                    Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
-                    intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-                    startActivity(intent);
+        if (playRecordingButton != null) {
+            playRecordingButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Open a new activity that starts playing the program
+                    if (rec != null) {
+                        Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
+                        intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
-        edit.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open a new activity that starts playing the program
-                if (rec != null) {
-                    DialogFragment editFragment = RecordingEditFragment.newInstance(null);
-                    Bundle bundle = new Bundle();
-                    bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
-                    editFragment.setArguments(bundle);
-                    editFragment.show(activity.getSupportFragmentManager(), "dialog");
+            });
+        }
+        if (editRecordingButton != null) {
+            editRecordingButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Open a new activity that starts playing the program
+                    if (rec != null) {
+                        DialogFragment editFragment = RecordingEditFragment.newInstance(null);
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+                        editFragment.setArguments(bundle);
+                        editFragment.show(activity.getSupportFragmentManager(), "dialog");
+                    }
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
                 }
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+            });
+        }
+        if (cancelRecordingButton != null) {
+            cancelRecordingButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.confirmCancelRecording(activity, rec);
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
                 }
-            }
-        });
-        recordCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.confirmCancelRecording(activity, rec);
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+            });
+        }
+        if (removeRecordingButton != null) {
+            removeRecordingButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.confirmRemoveRecording(activity, rec);
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
                 }
-            }
-        });
-        recordRemove.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.confirmRemoveRecording(activity, rec);
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
-            }
-        });
+            });
+        }
     }
 
     @Override

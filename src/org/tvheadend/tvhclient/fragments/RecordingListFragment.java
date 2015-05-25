@@ -263,40 +263,72 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
 
         // Disable these menus as a default
-        recordCancelMenuItem.setVisible(false);
-        recordRemoveMenuItem.setVisible(false);
-        playMenuItem.setVisible(false);
-        editMenuItem.setVisible(false);
-        searchMenuItemEpg.setVisible(false);
-        searchMenuItemImdb.setVisible(false);
+        if (recordCancelMenuItem != null) {
+            recordCancelMenuItem.setVisible(false);
+        }
+        if (recordRemoveMenuItem != null) {
+            recordRemoveMenuItem.setVisible(false);
+        }
+        if (playMenuItem != null) {
+            playMenuItem.setVisible(false);
+        }
+        if (editMenuItem != null) {
+            editMenuItem.setVisible(false);
+        }
+        if (searchMenuItemEpg != null) {
+            searchMenuItemEpg.setVisible(false);
+        }
+        if (searchMenuItemImdb != null) {
+            searchMenuItemImdb.setVisible(false);
+        }
 
         // Exit if the recording is not valid
         if (rec != null) {
             // Allow searching the recordings
-            searchMenuItemEpg.setVisible(true);
-            searchMenuItemImdb.setVisible(true);
+            if (searchMenuItemEpg != null) {
+                searchMenuItemEpg.setVisible(true);
+            }
+            if (searchMenuItemImdb != null) {
+                searchMenuItemImdb.setVisible(true);
+            }
 
             if (rec.error == null && rec.state.equals("completed")) {
                 // The recording is available, it can be played and removed
-                recordRemoveMenuItem.setVisible(true);
-                playMenuItem.setVisible(true);
+                if (recordRemoveMenuItem != null) {
+                    recordRemoveMenuItem.setVisible(true);
+                }
+                if (playMenuItem != null) {
+                    playMenuItem.setVisible(true);
+                }
 
             } else if (rec.isRecording()) {
                 // The recording is recording it can be played or cancelled
-                recordCancelMenuItem.setVisible(true);
-                playMenuItem.setVisible(true);
+                if (recordCancelMenuItem != null) {
+                    recordCancelMenuItem.setVisible(true);
+                }
+                if (playMenuItem != null) {
+                    playMenuItem.setVisible(true);
+                }
                 TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                editMenuItem.setVisible(app.isUnlocked());
+                if (editMenuItem != null) {
+                    editMenuItem.setVisible(app.isUnlocked());
+                }
 
             } else if (rec.isScheduled()) {
                 // The recording is scheduled, it can only be cancelled
-                recordCancelMenuItem.setVisible(true);
+                if (recordCancelMenuItem != null) {
+                    recordCancelMenuItem.setVisible(true);
+                }
                 TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                editMenuItem.setVisible(app.isUnlocked());
+                if (editMenuItem != null) {
+                    editMenuItem.setVisible(app.isUnlocked());
+                }
 
             } else if (rec.error != null || rec.state.equals("missed")) {
                 // The recording has failed or has been missed, allow removal
-                recordRemoveMenuItem.setVisible(true);
+                if (recordRemoveMenuItem != null) {
+                    recordRemoveMenuItem.setVisible(true);
+                }
             }
         }
     }
