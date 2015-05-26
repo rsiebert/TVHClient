@@ -2,14 +2,18 @@ package org.tvheadend.tvhclient.fragments;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
 
-public class CompletedRecordingListFragment extends RecordingListFragment {
+public class CompletedRecordingListFragment extends RecordingListFragment implements FragmentControlInterface {
 
     /**
      * Sets the correct tag. This is required for logging and especially for the
@@ -23,7 +27,6 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
             populateList();
@@ -33,19 +36,20 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Do not show the remove and play menu in single mode. No recording
-        // is preselected so the behavior would be undefined. In dual pane
-        // mode these menus are handled by the recording details details fragment.
+        super.onPrepareOptionsMenu(menu);
+
+        // Do not show this menu in single mode. No recording is
+        // preselected which could be removed.
         if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
             (menu.findItem(R.id.menu_play)).setVisible(false);
         }
+
         (menu.findItem(R.id.menu_edit)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
@@ -56,6 +60,19 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         }
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        // Get the selected program from the list where the context menu was opened
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        Recording rec = adapter.getItem(info.position);
+        if (rec != null && (rec.error == null && rec.state.equals("completed"))) {
+            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
+            (menu.findItem(R.id.menu_play)).setVisible(true);
+        }
+    }
+
     /**
      * Fills the list with the available recordings. Only the recordings that
      * are completed are added to the list.
@@ -63,14 +80,14 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
             adapter.add(rec);
         }
+
         // Show the newest completed recordings first
         adapter.sort(Constants.RECORDING_SORT_ASCENDING);
         adapter.notifyDataSetChanged();
-        
+
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.completed_recordings), TAG);
@@ -78,16 +95,20 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
             actionBarInterface.setActionBarSubtitle(items, TAG);
             actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
         }
-        // Inform the listeners that the channel list is populated.
-        // They could then define the preselected list item.
+
+        // Inform the activity that the channel list has been populated. It will
+        // then select a list item if dual pane mode is active.
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.onListPopulated(TAG);
         }
     }
     
     /**
-     * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the correct action will then be executed here.
+     * This method is part of the HTSListener interface. Whenever a recording
+     * was added, updated or removed the view with the recordings will be
+     * refreshed. The adding, updating and removing of the recordings in the
+     * adapter itself is done in the parent class because the parent class has
+     * no access to the methods of the child class.
      */
     @Override
     public void onMessage(String action, final Object obj) {
@@ -112,5 +133,30 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
                 }
             });
         }
+    }
+
+    @Override
+    public void reloadData() {
+        // NOP
+    }
+
+    @Override
+    public void setSelection(int position, int index) {
+        setSelection(position, index);
+    }
+    
+    @Override
+    public void setInitialSelection(int position) {
+        setInitialSelection(position);
+    }
+
+    @Override
+    public Object getSelectedItem() {
+        return adapter.getSelectedItem();
+    }
+
+    @Override
+    public int getItemCount() {
+        return adapter.getCount();
     }
 }
