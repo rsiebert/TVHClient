@@ -3,12 +3,13 @@ package org.tvheadend.tvhclient.fragments;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramGuideTimeDialogAdapter;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -28,6 +29,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface {
@@ -117,12 +119,9 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     @SuppressLint({ "InlinedApi", "NewApi" })
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Hide the genre color menu if no genre colors shall be shown
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final boolean showGenreColors = prefs.getBoolean("showGenreColorsGuidePref", false);
-        (menu.findItem(R.id.menu_genre_color_info_epg)).setVisible(showGenreColors);
-        
+        // Prevent the time frame menu item from going into the overlay menu
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
                 menu.findItem(R.id.menu_timeframe).setShowAsActionFlags(
                         MenuItem.SHOW_AS_ACTION_ALWAYS
@@ -142,10 +141,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         switch (item.getItemId()) {
         case R.id.menu_timeframe:
             programGuideTimeDialog.show();
-            return true;
-            
-        case R.id.menu_genre_color_info_epg:
-            Utils.showGenreColorDialog(activity);
             return true;
 
         default:

@@ -124,8 +124,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
         listView.setAdapter(adapter);
-        
-        // Inform the activity when a channel has been selected
+
+        // Inform the activity when a channel has been selected. The activity
+        // will then either show the program list fragment in single pane mode
+        // or show the program details in dual pane mode.
         if (!showOnlyChannels) {
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -143,30 +145,32 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Inform the activity when the channel list is scrolling or has
         // finished scrolling. This is only valid in the program guide
         // where only the channels are shown.
-        listView.setOnScrollListener(new OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
-                    enableScrolling = true;
-                } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
-                    if (fragmentScrollInterface != null) {
-                        enableScrolling = false;
-                        fragmentScrollInterface.onScrollStateIdle(TAG);
+        if (showOnlyChannels) {
+            listView.setOnScrollListener(new OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                        enableScrolling = true;
+                    } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
+                        if (fragmentScrollInterface != null) {
+                            enableScrolling = false;
+                            fragmentScrollInterface.onScrollStateIdle(TAG);
+                        }
                     }
                 }
-            }
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (fragmentScrollInterface != null && enableScrolling) {
-                    int position = view.getFirstVisiblePosition();
-                    View v = view.getChildAt(0);
-                    int offset = (v == null) ? 0 : v.getTop();
-                    fragmentScrollInterface.onScrollingChanged(position, offset, TAG);
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    if (fragmentScrollInterface != null && enableScrolling) {
+                        int position = view.getFirstVisiblePosition();
+                        View v = view.getChildAt(0);
+                        int offset = (v == null) ? 0 : v.getTop();
+                        fragmentScrollInterface.onScrollingChanged(position, offset, TAG);
+                    }
                 }
-            }
-        });
+            });
+        }
 
-        // Create the dialog with the available channel tags
+        // Create the dialog that will list the available channel tags
         tagAdapter = new ChannelTagListAdapter(activity, new ArrayList<ChannelTag>());
         tagDialog = new MaterialDialog.Builder(activity)
         .title(R.string.tags)
@@ -182,24 +186,22 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         })
         .build();
 
-        // Only enable the context menu when the full fragment is shown and not
-        // only the channels
+        // Disable the context menu when the channels are shown only. The
+        // functionality behind the context menu shall not be available when the
+        // program guide is displayed
         if (!showOnlyChannels) {
             registerForContextMenu(listView);
         }
-        // Enable the action bar menu. Even in the channel only mode the tags
-        // shall be available to set
+        // Enable the action bar menu
         setHasOptionsMenu(true);
     }
 
     @SuppressLint({ "InlinedApi", "NewApi" })
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Hide the genre color menu in dual pane mode or if no genre colors
-        // shall be shown or only channels shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final boolean showGenreColors = prefs.getBoolean("showGenreColorsChannelsPref", false);
-        (menu.findItem(R.id.menu_genre_color_info_channels)).setVisible(!showOnlyChannels && showGenreColors);
+        (menu.findItem(R.id.menu_genre_color_info_channels)).setVisible(showGenreColors);
 
         // Playing a channel shall not be available in channel only mode or in
         // single pane mode, because no channel is preselected.
@@ -207,6 +209,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             (menu.findItem(R.id.menu_play)).setVisible(false);
         }
 
+        // Prevent the channel tag menu item from going into the overlay menu 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
                 menu.findItem(R.id.menu_tags).setShowAsActionFlags(
