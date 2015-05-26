@@ -57,12 +57,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     protected TVHClientApplication app;
 
     @Override
-    public void onStart() {
-        super.onStart();
-        app = (TVHClientApplication) activity.getApplication();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         // Return if frame for this fragment doesn't exist because the fragment
@@ -86,6 +80,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
