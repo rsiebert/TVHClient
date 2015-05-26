@@ -58,13 +58,12 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }
 
-        // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
         if (bundle != null) {
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);

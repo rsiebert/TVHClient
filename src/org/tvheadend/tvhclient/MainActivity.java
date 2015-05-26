@@ -962,9 +962,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     boolean loading = (Boolean) obj;
                     if (loading) {
                         actionBar.setSubtitle(R.string.loading);
-                        // Remove any fragments on the right during update to
-                        // prevent seeing old data. These fragments could be the
-                        // program list or the recording details. 
+                        // When in dual pane mode remove the fragment on the
+                        // right to avoid seeing invalid data while the
+                        // application is loading data from the server.
                         if (isDualPane) {
                             Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
                             if (rf != null) {
@@ -975,18 +975,16 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 }
             });
         } else if (action.equals(Constants.ACTION_CHANNEL_UPDATE)) {
-            // If a channel has been updated (usually by a call to load more
-            // data) remove it from the loading queue and continue loading the
-            // next one.
             runOnUiThread(new Runnable() {
                 public void run() {
                     final Channel ch = (Channel) obj;
-
-                    // Check that the number of EPG entries has changed
                     if (ch != null && ch.epg != null) {
                         if (channelEpgCountList.containsKey(ch.id)) {
-                            // If the EPG count has not changed, block the
-                            // channel. Otherwise unblock it
+                            // If the program count of the channel has not
+                            // changed assume that no more programs have been
+                            // loaded. Add the channel to the blocking list to
+                            // avoid making unnecessary loading calls. Otherwise
+                            // remove the channel from the blocking list
                             if (ch.epg.size() == channelEpgCountList.get(ch.id)) {
                                 app.blockChannel(ch);
                             } else {
@@ -998,16 +996,20 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                         }
                     }
 
+                    // The channel has been updated (usually by a call to load
+                    // more data) so remove it from the loading queue and
+                    // continue with the next one.
                     channelLoadingList.remove(ch);
                     isLoadingChannels = false;
 
+                    // Load more programs if the list contains more channels,
+                    // otherwise display the number of channels. 
                     if (!channelLoadingList.isEmpty()) {
                         loadMorePrograms();
                     } else {
-                        // Display the number of items because the loading is
-                        // done. We need to get the number from the program
-                        // guide pager fragment because it holds the channel
-                        // fragment which in turn knows the channel count. 
+                        // Get the number of channels from the program guide
+                        // pager fragment because it holds the channel fragment
+                        // which in turn knows the channel count. 
                         Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                         if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
                             int count = ((FragmentControlInterface) f).getItemCount();
@@ -1025,7 +1027,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 }
             });
         } else if (action.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
-
+            // Go to the status screen if an error has occurred while trying to
+            // connect to a server for the first time. Additionally show the
+            // error message
             if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
                 showMessage(getString(R.string.err_connect));
             }
@@ -1033,6 +1037,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             connectionStatus = action;
             runOnUiThread(new Runnable() {
                 public void run() {
+                    channelLoadingList.clear();
                     showDrawerMenu();
                     handleMenuSelection(MENU_STATUS);
                 }
@@ -1080,8 +1085,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     /**
-     * Depending on the given variable the navigation menu items on the left
-     * side are either displayed or hidden.
+     * Depending on the connection state and server capabilities show or hide
+     * certain navigation menu items.
      * 
      * @param show
      */
@@ -1095,20 +1100,24 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         drawerAdapter.getItemById(MENU_FAILED_RECORDINGS).isVisible = show;
         drawerAdapter.getItemById(MENU_PROGRAM_GUIDE).isVisible = show;
 
-        // Only show the menu for the recording types if the server supports it
+        // Only show the series recording menu if the server supports it
+        drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (app
+                .getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS));
+
+        // Only show the timer recording menu if the server supports it and the
+        // application is unlocked
         drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show
                 && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS)
                 && app.isUnlocked());
 
-        drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (app
-                .getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS));
-
+        // Show the menu item to unlock the application if it was not yet purchased
         drawerAdapter.getItemById(MENU_UNLOCKER).isVisible = !app.isUnlocked();
 
+        // TODO Remove the connection from the menu list and string arrays 
         // Hide the connection menu
         drawerAdapter.getItemById(MENU_CONNECTIONS).isVisible = false;
 
-        // Replace the adapter contents so the views get updated
+        // Replace the adapter contents so the view will be updated
         drawerList.setAdapter(null);
         drawerList.setAdapter(drawerAdapter);
     }
@@ -1125,6 +1134,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public void setActionBarSubtitle(final String subtitle, final String tag) {
         if (actionBar != null && actionBarSubtitle != null) {
             actionBarSubtitle.setText(subtitle);
+            // If no subtitle string is given hide it from the view and center
+            // the title vertically, otherwise place it below the title
             if (subtitle.length() == 0) {
                 actionBarSubtitle.setVisibility(View.GONE);
                 actionBarTitle.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
@@ -1138,9 +1149,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @Override
     public void setActionBarIcon(final Bitmap bitmap, final String tag) {
         if (actionBarIcon != null && bitmap != null) {
-            // Only show the channel tag icon in the channels and program guide
-            // fragments. In the other ones the recordings could be from any channel
-            // group so it would make no sense to show the tag icon there.
+            // Only show the channel tag icon in the channel and program guide
+            // screens. In all other screens hide it because it makes no sense
+            // to show the tag icon. For example the completed recordings could
+            // be from channels from different channel tags.
             if (selectedMenuPosition == MENU_CHANNELS || selectedMenuPosition == MENU_PROGRAM_GUIDE) {
                 actionBarIcon.setVisibility(Utils.showChannelTagIcon(this) ? View.VISIBLE : View.GONE);
                 actionBarIcon.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
@@ -1153,9 +1165,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @Override
     public void setActionBarIcon(final int resource, final String tag) {
         if (actionBarIcon != null) {
-            // Only show the channel tag icon in the channels and program guide
-            // fragments. In the other ones the recordings could be from any channel
-            // group so it would make no sense to show the tag icon there.
+            // Only show the channel tag icon in the channel and program guide
+            // screens. In all other screens hide it because it makes no sense
+            // to show the tag icon. For example the completed recordings could
+            // be from channels from different channel tags.
             if (selectedMenuPosition == MENU_CHANNELS || selectedMenuPosition == MENU_PROGRAM_GUIDE) {
                 actionBarIcon.setVisibility(Utils.showChannelTagIcon(this) ? View.VISIBLE : View.GONE);
                 actionBarIcon.setBackgroundResource(resource);
@@ -1255,11 +1268,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // after an orientation change
             channelListPosition = position;
 
-            // Show the program list fragment, in dual pane mode show the
-            // program list on the right side of the channel list, otherwise
-            // replace the channel list.
+            // Show the program list fragment. In dual pane mode the program
+            // list shall be shown on the right side of the channel list,
+            // otherwise replace the channel list.
             if (channel != null) {
-                // Create the fragment with the required information
                 Bundle bundle = new Bundle();
                 bundle.putLong(Constants.BUNDLE_CHANNEL_ID, channel.id);
                 bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
@@ -1273,7 +1285,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             break;
 
         case MENU_PROGRAM_GUIDE:
-            // If the channel was clicked in the program guide then start
+            // If a channel was selected in the program guide screen, start
             // playing the selected channel
             if (channel != null) {
                 Intent intent = new Intent(this, ExternalPlaybackActivity.class);
@@ -1300,7 +1312,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             break;
         }
         // When a recording has been selected from the recording list fragment,
-        // show its details. In dual mode they are shown as a separate fragment
+        // show its details. In dual mode these are shown in a separate fragment
         // to the right of the recording list, otherwise replace the recording
         // list with the details fragment.
         if (recording != null) {
@@ -1309,10 +1321,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
             if (isDualPane) {
-                // Create and show the fragment
                 showFragment(RecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
             } else {
-                // Create the fragment and show it as a dialog.
                 DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
                 newFragment.show(getSupportFragmentManager(), "dialog");
             }
@@ -1329,7 +1339,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             break;
         }
         // When a series recording has been selected from the recording list fragment,
-        // show its details. In dual mode they are shown as a separate fragment
+        // show its details. In dual mode these are shown in a separate fragment
         // to the right of the series recording list, otherwise replace the recording
         // list with the details fragment.
         if (seriesRecording != null) {
@@ -1338,10 +1348,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
             if (isDualPane) {
-                // Create and show the fragment
                 showFragment(SeriesRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
             } else {
-                // Create the fragment and show it as a dialog.
                 DialogFragment newFragment = SeriesRecordingDetailsFragment.newInstance(args);
                 newFragment.show(getSupportFragmentManager(), "dialog");
             }
@@ -1358,7 +1366,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             break;
         }
         // When a timer recording has been selected from the recording list fragment,
-        // show its details. In dual mode they are shown as a separate fragment
+        // show its details. In dual mode these are shown in a separate fragment
         // to the right of the series recording list, otherwise replace the recording
         // list with the details fragment.
         if (timerRecording != null) {
@@ -1367,10 +1375,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
             if (isDualPane) {
-                // Create and show the fragment
                 showFragment(TimerRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
             } else {
-                // Create the fragment and show it as a dialog.
                 DialogFragment newFragment = TimerRecordingDetailsFragment.newInstance(args);
                 newFragment.show(getSupportFragmentManager(), "dialog");
             }
@@ -1379,12 +1385,15 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void onListItemSelected(final int position, final Program program, final String tag) {
+        // When a program has been selected from the program list fragment,
+        // show its details. In single or dual pane mode these are shown in a
+        // separate dialog fragment
         if (program != null) {
             Bundle args = new Bundle();
             args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
             args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
-            // Create the fragment and show it as a dialog.
+
             DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
             newFragment.show(getSupportFragmentManager(), "dialog");
         }
@@ -1519,8 +1528,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public void channelTagChanged(final String tag) {
         switch (selectedMenuPosition) {
         case MENU_CHANNELS:
-            // Clear all data from the channel list fragment and show only the
-            // channels with the selected tag
+            // Inform the channel list fragment to clear all data from its
+            // channel list and show only the channels with the selected tag
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
             if (f instanceof ChannelListFragment && f instanceof FragmentControlInterface) {
                 ((FragmentControlInterface) f).reloadData();
@@ -1528,14 +1537,15 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             break;
 
         case MENU_PROGRAM_GUIDE:
-            // Clear all data from the channel list fragment and show only the
-            // channels with the selected tag
+            // Inform the channel list fragment to clear all data from its
+            // channel list and show only the channels with the selected tag
             final Fragment cf = getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
             if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
                 ((FragmentControlInterface) cf).reloadData();
             }
-            // Clear all data from the program guide list fragment and show 
-            // only the program data of the channels with the selected tag
+            // Additionally inform the program guide fragment to clear all data
+            // from its list and show only the programs of the channels that are
+            // part of the selected tag
             final Fragment pgf = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
             if (pgf instanceof ProgramGuidePagerFragment && pgf instanceof FragmentControlInterface) {
                 ((FragmentControlInterface) pgf).reloadData();
@@ -1549,11 +1559,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         switch (selectedMenuPosition) {
         case MENU_SERIES_RECORDINGS:
         case MENU_TIMER_RECORDINGS:
-            // Clear all data from the series or timer recording list fragment
-            // and add all items to the list. This is required when a series or
-            // timer recording has been edited because this involves deleting
-            // the old one and adding it again. To prevent having two identical
-            // entries the list needs to be refreshed.
+            // Inform the defined fragment to reload and update all data in its
+            // list view. This is currently only required in the timer and
+            // series recording fragments because there is no update service
+            // call. So the old recording needs to be removed before the new is
+            // added, to avoid having two identical entries the list. 
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
             if ((f instanceof SeriesRecordingListFragment || f instanceof TimerRecordingListFragment)
                     && f instanceof FragmentControlInterface) {

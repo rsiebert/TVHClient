@@ -66,6 +66,8 @@ public class RecordingEditFragment extends DialogFragment {
     String[] channelList;
     String[] priorityList;
 
+    private TVHClientApplication app;
+
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
 
@@ -79,6 +81,7 @@ public class RecordingEditFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -106,8 +109,6 @@ public class RecordingEditFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
 
         // If the savedInstanceState is null then the fragment was created for
         // the first time. Either get the given id to edit the recording or
@@ -382,8 +383,6 @@ public class RecordingEditFragment extends DialogFragment {
             intent.putExtra("startExtra", startExtraValue);
             intent.putExtra("start", startTimeValue);
             intent.putExtra("priority", priorityValue);
-
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
 
             // The id must be passed on to the server, not the name. So go through
             // all available channels and get the id for the selected channel name.

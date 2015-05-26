@@ -79,8 +79,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }

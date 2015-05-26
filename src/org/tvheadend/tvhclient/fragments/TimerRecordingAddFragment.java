@@ -69,6 +69,8 @@ public class TimerRecordingAddFragment extends DialogFragment {
     String[] channelList;
     String[] priorityList;
 
+    private TVHClientApplication app;
+
     public static TimerRecordingAddFragment newInstance(Bundle args) {
         TimerRecordingAddFragment f = new TimerRecordingAddFragment();
         f.setArguments(args);
@@ -79,6 +81,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -150,7 +153,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
     	// Create the list of channels that the user can select
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         channelList = new String[app.getChannels().size()];
         for (int i = 0; i < app.getChannels().size(); i++) {
         	channelList[i] = app.getChannels().get(i).name;
@@ -209,100 +211,92 @@ public class TimerRecordingAddFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        if (isEnabled != null) {
-            isEnabled.setVisibility((app.getProtocolVersion() >= 18) ? View.VISIBLE : View.GONE);
-            isEnabled.setChecked(enabledValue);
-        }
-        if (title != null) {
-            title.setText(titleValue);
-        }
-        if (channelName != null) {
-        	channelName.setText(channelList[channelSelectionValue]);
-            channelName.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					new MaterialDialog.Builder(activity)
-		            .title(R.string.select_channel)
-		            .items(channelList)
-		            .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
-		                @Override
-		                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-		                	channelName.setText(channelList[which]);
-		                	channelSelectionValue = which;
-		                    return true;
-		                }
-		            })
-		            .show();
-				}
-            });
-        }
-        if (priority != null) {
-            priority.setText(priorityList[(int) priorityValue]);
-            priority.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					new MaterialDialog.Builder(activity)
-		            .title(R.string.select_priority)
-		            .items(priorityList)
-		            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
-		                @Override
-		                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-		                	priority.setText(priorityList[which]);
-		                	priorityValue = which;
-		                    return true;
-		                }
-		            })
-		            .show();
-				}
-            });
-        }
-        if (startTime != null) {
-            startTime.setText(getTimeStringFromValue(startTimeValue));
-            // Show the time picker dialog so the user can select a new starting time
-            startTime.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int hour = (int) (startTimeValue / 60);
-                    int minute = (int) (startTimeValue % 60);
+        // TODO use a constant here
+        isEnabled.setVisibility((app.getProtocolVersion() >= 18) ? View.VISIBLE : View.GONE);
+        isEnabled.setChecked(enabledValue);
+        title.setText(titleValue);
 
-                    TimePickerDialog mTimePicker;
-                    mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                            // Save the given value in seconds. This values will be passed to the server
-                            startTimeValue = (long) (selectedHour * 60 + selectedMinute);
-                            startTime.setText(getTimeStringFromValue(startTimeValue));
-                        }
-                    }, hour, minute, true);
-                    mTimePicker.setTitle(R.string.select_start_time);
-                    mTimePicker.show();
-                }
-            });
-        }
-        if (stopTime != null) {
-            stopTime.setText(getTimeStringFromValue(stopTimeValue));
-            // Show the time picker dialog so the user can select a new starting time
-            stopTime.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int hour = (int) (stopTimeValue / 60);
-                    int minute = (int) (stopTimeValue % 60);
+        channelName.setText(channelList[channelSelectionValue]);
+        channelName.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				new MaterialDialog.Builder(activity)
+	            .title(R.string.select_channel)
+	            .items(channelList)
+	            .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
+	                @Override
+	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        channelName.setText(channelList[which]);
+                        channelSelectionValue = which;
+	                    return true;
+	                }
+	            })
+	            .show();
+			}
+        });
 
-                    TimePickerDialog mTimePicker;
-                    mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                            // Save the given value in seconds. This values will be passed to the server
-                            stopTimeValue = (long) (selectedHour * 60 + selectedMinute);
-                            stopTime.setText(getTimeStringFromValue(stopTimeValue));
-                        }
-                    }, hour, minute, true);
-                    mTimePicker.setTitle(R.string.select_stop_time);
-                    mTimePicker.show();
-                }
-            });
-        }
+        priority.setText(priorityList[(int) priorityValue]);
+        priority.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				new MaterialDialog.Builder(activity)
+	            .title(R.string.select_priority)
+	            .items(priorityList)
+	            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
+	                @Override
+	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        priority.setText(priorityList[which]);
+                        priorityValue = which;
+	                    return true;
+	                }
+	            })
+	            .show();
+			}
+        });
+
+        startTime.setText(getTimeStringFromValue(startTimeValue));
+        // Show the time picker dialog so the user can select a new starting time
+        startTime.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int hour = (int) (startTimeValue / 60);
+                int minute = (int) (startTimeValue % 60);
+
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        // Save the given value in seconds. This values will be passed to the server
+                        startTimeValue = (long) (selectedHour * 60 + selectedMinute);
+                        startTime.setText(getTimeStringFromValue(startTimeValue));
+                    }
+                }, hour, minute, true);
+                mTimePicker.setTitle(R.string.select_start_time);
+                mTimePicker.show();
+            }
+        });
+
+        stopTime.setText(getTimeStringFromValue(stopTimeValue));
+        // Show the time picker dialog so the user can select a new starting time
+        stopTime.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int hour = (int) (stopTimeValue / 60);
+                int minute = (int) (stopTimeValue % 60);
+
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        // Save the given value in seconds. This values will be passed to the server
+                        stopTimeValue = (long) (selectedHour * 60 + selectedMinute);
+                        stopTime.setText(getTimeStringFromValue(stopTimeValue));
+                    }
+                }, hour, minute, true);
+                mTimePicker.setTitle(R.string.select_stop_time);
+                mTimePicker.show();
+            }
+        });
 
         // Set the correct days as checked or not depending on the given value.
         // For each day shift the daysOfWeekValue by one to the right and check
@@ -369,8 +363,8 @@ public class TimerRecordingAddFragment extends DialogFragment {
      */
     private void getValues() {
         titleValue = title.getText().toString();
-        daysOfWeekValue = getDayOfWeekValue();
         enabledValue = isEnabled.isChecked();
+        daysOfWeekValue = getDayOfWeekValue();
     }
 
     /**
@@ -381,7 +375,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
     private void save() {
         getValues();
 
-        // TODO snackbar is not  
+        // TODO snackbar is currently dimmed
 
         // The title must not be empty
         if (titleValue.length() == 0) {
@@ -402,8 +396,9 @@ public class TimerRecordingAddFragment extends DialogFragment {
             return;
         }
 
-        // If the timer recording is being edited, remove it before adding it
-        // again, because the API does not provide an edit call.
+        // If the timer recording has been edited, remove it before adding it
+        // again with the updated values. This is required because the API does
+        // not provide an edit service call.
         if (rec != null && rec.id != null && rec.id.length() > 0) {
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
@@ -423,7 +418,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
 
         // The id must be passed on to the server, not the name. So go through
         // all available channels and get the id for the selected channel name.
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         for (Channel c : app.getChannels()) {
             if (c.name.equals(channelName.getText().toString())) {
                 intent.putExtra("channelId", c.id);

@@ -55,18 +55,19 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private boolean isDualPane = false;
     private boolean allowLoading = false;
 
+    private TVHClientApplication app;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
             isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
@@ -80,6 +81,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -148,7 +150,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
             populateList();
@@ -193,7 +194,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
         listView.setOnScrollListener(null);
     }

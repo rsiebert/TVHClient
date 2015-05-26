@@ -55,11 +55,13 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
     protected boolean isDualPane;
 
+    private TVHClientApplication app;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }
@@ -79,6 +81,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -123,7 +126,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
             populateList();
@@ -133,7 +135,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -152,7 +153,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
 
         // Show the add button only when the application is unlocked
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
 
         if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
@@ -167,7 +167,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         for (SeriesRecording srec : app.getSeriesRecordings()) {
             adapter.add(srec);
         }

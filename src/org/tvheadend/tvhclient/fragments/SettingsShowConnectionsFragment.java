@@ -32,16 +32,16 @@ import com.afollestad.materialdialogs.MaterialDialog;
 public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
 
     private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();
-    
+
     private ActionBarActivity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
-    
+
     private ConnectionListAdapter adapter;
     private ListView listView;
     private List<Connection> connList;
     private ActionMode actionMode;
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -50,12 +50,12 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         if (container == null) {
             return null;
         }
-     
+
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
-    
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -68,23 +68,23 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         settingsInterface = null;
         super.onDetach();
     }
-    
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;
         }
-        
+
         connList = new ArrayList<Connection>();
         adapter = new ConnectionListAdapter(activity, connList);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        
+
         // Show the available menu options when the user clicks on a connection.
         // The options are realized by using the action mode instead of a
         // regular context menu. 
@@ -102,7 +102,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                 return;
             }
         });
-        
+
         setHasOptionsMenu(true);
     }
 
@@ -184,7 +184,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         // Get the currently selected program from the list
         int position = listView.getCheckedItemPosition();
         final Connection c = adapter.getItem(position);
-        
+
         switch (item.getItemId()) {
         case R.id.menu_set_active:
             if (!c.selected && settingsInterface != null) {
@@ -285,7 +285,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         } else {
             menu.getItem(2).setVisible(false);
         }
-        
+
         mode.setTitle(c.name);
         return true;
     }

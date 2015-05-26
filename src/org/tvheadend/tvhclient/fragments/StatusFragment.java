@@ -51,12 +51,14 @@ public class StatusFragment extends Fragment implements HTSListener {
     private String connectionStatus = "";
     private String freeDiscSpace = "";
     private String totalDiscSpace = "";
-	
+
+    private TVHClientApplication app;
+
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }
@@ -93,6 +95,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -111,7 +114,6 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
 
         // Upon resume show the actual status. If the connection is OK show the
@@ -128,7 +130,6 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -194,7 +195,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         }
 	}
 
-	    /**
+	/**
      * Hides all status fields. Each field will be made visible by other methods
      * when it is required.
      */
@@ -335,7 +336,6 @@ public class StatusFragment extends Fragment implements HTSListener {
      * Shows the information how many channels are available.
      */
     private void showChannelStatus() {
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         channelLabel.setVisibility(View.VISIBLE);
         channels.setVisibility(View.VISIBLE);
         channels.setText(app.getChannels().size() + " " + getString(R.string.available));
@@ -348,7 +348,6 @@ public class StatusFragment extends Fragment implements HTSListener {
     private void showRecordingStatus() {
         String currentRecText = "";
 
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         for (Recording rec : app.getRecordings()) {
             // Add the information what is currently being recorded.
             if (rec.isRecording() == true) {

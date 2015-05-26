@@ -140,8 +140,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             // Otherwise create a new connection with default values.
             if (connId > 0) {
                 conn = DatabaseHelper.getInstance().getConnection(connId);
-                actionBarInterface.setActionBarTitle(getString(R.string.edit_connection), TAG);
-                actionBarInterface.setActionBarSubtitle(conn != null ? conn.name : "", TAG);
+                if (actionBarInterface != null) {
+                    actionBarInterface.setActionBarTitle(getString(R.string.edit_connection), TAG);
+                    actionBarInterface.setActionBarSubtitle(conn != null ? conn.name : "", TAG);
+                }
             } else {
                 setPreferenceDefaults();
             }

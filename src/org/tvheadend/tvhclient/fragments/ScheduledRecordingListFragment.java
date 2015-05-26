@@ -63,11 +63,13 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         // recording was selected. Additionally the HTSP version must be at
         // least 20 to assume the server is up to date and contains the required
         // fixes to support this feature.    
-        if (isDualPane && adapter.getCount() > 0 && app.isUnlocked() && Constants.ENABLE_RECORDING_EDIT_MODE) {
+        if (isDualPane
+                && adapter.getCount() > 0
+                && app.isUnlocked()
+                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDINGS) {
             (menu.findItem(R.id.menu_edit)).setVisible(true);
         }
     }
-
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -80,12 +82,16 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         if (rec != null && rec.isRecording()) {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
-            (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked() && Constants.ENABLE_RECORDING_EDIT_MODE);
+            (menu.findItem(R.id.menu_edit))
+                    .setVisible(app.isUnlocked()
+                            && app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDINGS);
         }
-        
+
         if (rec != null && rec.isScheduled()) {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
-            (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked() && Constants.ENABLE_RECORDING_EDIT_MODE);
+            (menu.findItem(R.id.menu_edit))
+                    .setVisible(app.isUnlocked()
+                            && app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDINGS);
         }
     }
 

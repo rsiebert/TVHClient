@@ -2,10 +2,6 @@ package org.tvheadend.tvhclient;
 
 public class Constants {
 
-    // Enables the functionality to edit a recording. Currently disabled because
-    // the server has issues with updating a dvr
-    public static final boolean ENABLE_RECORDING_EDIT_MODE = false;
-
     // Product id for the in-app billing item to unlock the application
     public static final String UNLOCKER = "unlocker";
 
@@ -21,6 +17,8 @@ public class Constants {
     public static final int MIN_API_VERSION_PROFILES = 16;
     public static final int MIN_API_VERSION_TIMER_RECORDINGS = 17;
     public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
+    public static final int MIN_API_VERSION_EDIT_RECORDINGS = 21;
+    public static final int MIN_API_VERSION_SERIES_RECORDING_ON_ALL_CHANNELS = 21;
 
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";
