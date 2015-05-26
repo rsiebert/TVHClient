@@ -94,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private boolean isDualPane = false;
 
     // Default navigation drawer menu position and the list positions
-    private int menuPosition = MENU_UNKNOWN;
+    private int selectedMenuPosition = MENU_UNKNOWN;
     private int defaultMenuPosition = MENU_UNKNOWN;
     private int channelListPosition = 0;
     private int completedRecordingListPosition = 0;
@@ -120,7 +120,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private static final int MENU_INFORMATION = 10;
     private static final int MENU_UNLOCKER = 11;
 
-    // Holds the stack of menu items
+    // Holds the list of selected menu items so the previous fragment can be
+    // shown again when the user has pressed the back key.
     public ArrayList<Integer> menuStack = new ArrayList<Integer>();
 
     // Indicates that a loading channel data is in progress, the next channel
@@ -134,30 +135,30 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @SuppressLint("UseSparseArrays")
     public Map<Long, Integer> channelEpgCountList = new HashMap<Long, Integer>();
 
-    // If the saved instance is not null then we return from an orientation
-    // change and we do not require to recreate the fragments
-    private boolean orientationChangeOccurred = false;
-
-    // When the main activity starts for the first time and no connections are
-    // configured or active the connection settings activity will be shown once.
-    // This variable controls that. 
+    // Remember if the connection setting screen was already shown. When the
+    // main activity starts for the first time and no connections are configured
+    // or active the connection settings activity will be shown once.
     private boolean connectionSettingsShown = false;
 
-    // When the main activity starts for the first time the change log dialog is
-    // shown. The setting that it was shown is stored when the activity is quit.
-    // So we need to save the information here. 
+    // Remember if the change log dialog was shown when the main activity has
+    // started for the first time and the application version has changed.
     private boolean changeLogDialogShown = false;
     
     // Contains the information about the current connection state.
     private String connectionStatus = Constants.ACTION_CONNECTION_STATE_UNKNOWN;
 
+    // The list of available menu items in the navigation drawer
     private String[] menuItems;
 
     private TextView actionBarTitle;
     private TextView actionBarSubtitle;
     private ImageView actionBarIcon;
 
+    // Required to start the search when the user has selected a value from the
+    // search suggestion list
     private MenuItem searchMenuItem = null;
+
+    private TVHClientApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -173,6 +174,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         DatabaseHelper.init(this.getApplicationContext());
         changeLogDialog = new ChangeLogDialog(this);
+
         actionBar = getSupportActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(R.layout.actionbar_title);
@@ -270,7 +272,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(drawerToggle);
 
-        // Add a header view to the drawer menu
+        // Add a header view to the drawer menu. 
         LayoutInflater inflater = getLayoutInflater();
         View header = (View) inflater.inflate(R.layout.drawer_list_header, drawerList, false);
         drawerList.addHeaderView(header, null, false);
@@ -289,11 +291,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 // We can't just use the list position for the menu position
                 // because the list might contain separators. So we need to get
                 // the id if the list item which is the menu position. 
-                if (item != null) {
-                    if (item.id != MENU_UNKNOWN && menuPosition != item.id) {
-                        menuStack.add(menuPosition);
-                        handleMenuSelection(item.id);
-                    }
+                if (item != null && (item.id != MENU_UNKNOWN && selectedMenuPosition != item.id)) {
+                    menuStack.add(selectedMenuPosition);
+                    handleMenuSelection(item.id);
                 }
                 drawerLayout.closeDrawer(drawerList);
             }
@@ -307,7 +307,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             serverSelection.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Create a list of available connections names that the alert dialog will display
+
+                    // Create a list of available connections names that the
+                    // selection dialog can display. Additionally preselect the
+                    // current active connection.
                     final List<Connection> connList = DatabaseHelper.getInstance().getConnections();
                     if (connList != null) {
                         int currentConnectionListPosition = -1;
@@ -319,6 +322,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                                 currentConnectionListPosition = i;
                             }
                         }
+
                         // Now show the dialog to select a new connection
                         new MaterialDialog.Builder(context)
                             .title(R.string.select_connection)
@@ -329,8 +333,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                                     Connection oldConn = DatabaseHelper.getInstance().getSelectedConnection();
                                     Connection newConn = connList.get(which);
 
-                                    // Only if a new connection has been selected
-                                    // switch the selection status and reconnect
+                                    // Switch the active connection and reconnect  
+                                    // only if a new connection has been selected
                                     if (oldConn != null && newConn != null && oldConn.id != newConn.id) {
                                         // Close the menu when a new connection has been selected
                                         drawerLayout.closeDrawers();
@@ -350,12 +354,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             });
         }
 
+        app = (TVHClientApplication) getApplication();
+
         // If the saved instance is not null then we return from an orientation
         // change. The drawer menu could be open, so update the recording
         // counts. Also get any saved values from the bundle.
         if (savedInstanceState != null) {
             menuStack = savedInstanceState.getIntegerArrayList(Constants.MENU_STACK);
-            menuPosition = savedInstanceState.getInt(Constants.MENU_POSITION, MENU_UNKNOWN);
+            selectedMenuPosition = savedInstanceState.getInt(Constants.MENU_POSITION, MENU_UNKNOWN);
             channelListPosition = savedInstanceState.getInt(Constants.CHANNEL_LIST_POSITION, 0);
             completedRecordingListPosition = savedInstanceState.getInt(Constants.COMPLETED_RECORDING_LIST_POSITION, 0);
             scheduledRecordingListPosition = savedInstanceState.getInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, 0);
@@ -368,17 +374,19 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     /**
-     * 
+     * Shows or hides the allowed main menu entries depending on the app status
+     * and server capabilities. Also updates the server connection status and
+     * the recording counts in the main menu.
      */
     private void updateDrawerMenu() {
 
         TextView serverName = (TextView) drawerList.findViewById(R.id.server_name);
         ImageView serverSelection = (ImageView) drawerList.findViewById(R.id.server_selection);
 
+        // Update the server connection status
         if (serverName != null && serverSelection != null) {
             final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
             if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
-                // TODO string update
                 serverName.setText(R.string.no_connection_available);
                 serverSelection.setVisibility(View.GONE);
             } else if (DatabaseHelper.getInstance().getConnections().size() == 1) {
@@ -392,11 +400,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 serverSelection.setVisibility(View.VISIBLE);
             }
         }
-        // Show the full menu
+
+        // Show or hide certain menu entries
         showDrawerMenu();
 
         // Update the number of recordings in each category
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         drawerAdapter.getItemById(MENU_COMPLETED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
         drawerAdapter.getItemById(MENU_SCHEDULED_RECORDINGS).count = 
@@ -411,8 +419,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     /**
+     * Creates the list of available main menu items. The menu name and a light
+     * or dark icon depending on the selected theme is set. Additionally
+     * separators between a group of menu items is also specified.
      * 
-     * @return
+     * @return List of main menu items
      */
     private List<DrawerMenuItem> getDrawerMenu() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -460,19 +471,18 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         return list;
     }
 
+    /**
+     * Check if the current fragment is a program list fragment. In case single
+     * mode is active we need to return to the channel list fragment otherwise
+     * show the fragment that belongs to the previously selected menu item.
+     */
     @Override
     public void onBackPressed() {
-        // Get the current fragment and check if it is a program list fragment.
-        // If yes then we need to pop the stack so we can see the channel list
-        // fragment again.
         final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-
         if (!isDualPane && (f instanceof ProgramListFragment)) {
             getSupportFragmentManager().popBackStack();
         } else {
             if (menuStack.size() > 0) {
-                // Show the previous menu item and the this as the new current
-                // menu back to the stack
                 handleMenuSelection(menuStack.remove(menuStack.size() - 1));
             } else {
                 super.onBackPressed();
@@ -480,27 +490,25 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             }
         }
     }
-    
-    @SuppressLint("NewApi")
+
     @Override
     public void onResume() {
         super.onResume();
-        // Get the connection status
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, Constants.ACTION_CONNECTION_STATE_OK);
         connectionSettingsShown = prefs.getBoolean(Constants.LAST_CONNECTION_SETTINGS_SHOWN, false);
 
-        // Update the full drawer menu so that all available menu items are
-        // shown in case the user has activated the unlocked version
+        // Update the drawer menu so that all available menu items are
+        // shown in case the recording counts have changed or the user has
+        // bought the unlocked version to enable all features
         updateDrawerMenu();
     }
 
     @Override
     public void onPostResume() {
         super.onPostResume();
-
-        // Show the change log once when the application was upgraded. Otherwise
-        // start normally. This is handled in the other method.
+        // Show the change log once when the application was upgraded
         if (changeLogDialog.firstRun() && !changeLogDialogShown) {
             changeLogDialogShown = true;
             changeLogDialog.getLogDialog().show();
@@ -523,14 +531,16 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             connectionSettingsShown = true;
             handleMenuSelection(MENU_CONNECTIONS);
         } else {
-            // Connection exists and is active
-            TVHClientApplication app = (TVHClientApplication) getApplication();
+            // A connection exists and is active, register to receive
+            // information from the server and connect to the server
             app.addListener(this);
             Utils.connect(this, false);
 
+            // TODO Go to status screen and when the connection is fine go to the selected menu?
+
             // Show the contents of the last selected menu position. In case it
             // is not set, use the the default one defined in the settings
-            int pos = (menuPosition == MENU_UNKNOWN) ? defaultMenuPosition : menuPosition;
+            int pos = (selectedMenuPosition == MENU_UNKNOWN) ? defaultMenuPosition : selectedMenuPosition;
 
             // Set the connection state to unknown if no connection was added
             // when the connection fragment was shown. The status fragment is
@@ -549,10 +559,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         app.removeListener(this);
 
-        // Save the previously active connection status
+        // Save the previously active connection status and if the connection
+        // settings have been already shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.LAST_CONNECTION_STATE, connectionStatus);
@@ -577,7 +587,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putIntegerArrayList(Constants.MENU_STACK, menuStack);
-        outState.putInt(Constants.MENU_POSITION, menuPosition);
+        outState.putInt(Constants.MENU_POSITION, selectedMenuPosition);
         outState.putInt(Constants.CHANNEL_LIST_POSITION, channelListPosition);
         outState.putInt(Constants.COMPLETED_RECORDING_LIST_POSITION, completedRecordingListPosition);
         outState.putInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, scheduledRecordingListPosition);
@@ -591,21 +601,23 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
         // If the navigation drawer is open, hide all menu items
         boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
         for (int i = 0; i < menu.size(); i++) {
             menu.getItem(i).setVisible(!drawerOpen);
         }
-        // No search is available in the these menus
-        if (menuPosition == MENU_STATUS 
-                || menuPosition == MENU_COMPLETED_RECORDINGS 
-                || menuPosition == MENU_SCHEDULED_RECORDINGS
-                || menuPosition == MENU_FAILED_RECORDINGS
-                || menuPosition == MENU_SERIES_RECORDINGS
-                || menuPosition == MENU_TIMER_RECORDINGS) {
+        // Do not show the search menu on these screens
+        if (selectedMenuPosition == MENU_STATUS 
+                || selectedMenuPosition == MENU_COMPLETED_RECORDINGS 
+                || selectedMenuPosition == MENU_SCHEDULED_RECORDINGS
+                || selectedMenuPosition == MENU_FAILED_RECORDINGS
+                || selectedMenuPosition == MENU_SERIES_RECORDINGS
+                || selectedMenuPosition == MENU_TIMER_RECORDINGS) {
             (menu.findItem(R.id.menu_search)).setVisible(false);
         }
-        return super.onPrepareOptionsMenu(menu);
+        return true;
     }
 
     @SuppressLint("NewApi")
@@ -642,12 +654,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             return true;
 
         case R.id.menu_refresh:
+            // Clear all available data and all channels that are currently
+            // loading, reconnect to the server and reload all data
             channelLoadingList.clear();
             channelEpgCountList.clear();
-            TVHClientApplication app = (TVHClientApplication) getApplication();
             app.unblockAllChannels();
-
-            // Reconnect to the server and reload all data
             Utils.connect(this, true);
             return true;
         }
@@ -656,19 +667,15 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     /**
      * This method is called when the user wants to search for programs. In case
-     * the channel list is visible search only within the selected channel,
-     * otherwise search within the entire available program data.
+     * the program list of one channel is visible search only within this
+     * channel, otherwise search within the entire available program data.
      */
     @Override
     public boolean onSearchRequested() {
         Bundle bundle = new Bundle();
         if (!isDualPane) {
-            // If dual pane is not active and the program list is only shown,
-            // search only the current channel, otherwise if the channel list is
-            // shown search all channels
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
             if (f instanceof ProgramListFragment && f instanceof FragmentControlInterface) {
-                // Get the selected channel, to limit the search to this channel
                 Object o = ((FragmentControlInterface) f).getSelectedItem();
                 if (o instanceof Channel) {
                     final Channel ch = (Channel) o;
@@ -682,7 +689,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     /**
      * Creates the fragment with the given name and shows it on the given
-     * layout. If a bundle was given, it will be passed to the fragment.
+     * layout. If a bundle was given, it will be passed to the fragment. If
+     * required the created fragment will be stored on the back stack so it can
+     * be shown later when the user has pressed the back button.
      * 
      * @param name
      * @param layout
@@ -719,29 +728,25 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     /**
-     * Before the fragments are shown by the menu selection ensure that the
-     * correct layout weights are determined and set.
+     * Before the new fragments that belong to the selected menu item will be
+     * shown, ensure that the old visible fragment is removed from the view and
+     * that the correct layout weights are set.
      * 
      * @param position
      */
     private void preHandleMenuSelection(int position) {
-        // Set the correct weights of the main layouts
         setLayoutWeights(position);
 
-        // Do not recreate the fragments if an orientation change occurred.
-        if (orientationChangeOccurred) {
-            orientationChangeOccurred = false;
-            return;
-        }
-        // Highlight the selected item
+        // Highlight the selected menu item
         if (drawerLayout.isDrawerOpen(drawerList)) {
             drawerList.setItemChecked(position, true);
         }
 
-        // Remove any previously active fragment on the right side. In case the
-        // connection can't be established the screen is blank. The main
-        // fragment does not need to be removed, because it will be replaced
-        // with a fragment from the selected menu.
+        // Remove the current fragment on the right side in case dual pane mode
+        // is active. In case the connection can't be established the area on
+        // the right side shall be blank, so that no invalid data is displayed.
+        // The main fragment does not need to be removed, because it will be
+        // replaced with a fragment from the selected menu.
         if (isDualPane) {
             Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
             if (rf != null) {
@@ -749,9 +754,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             }
         }
 
-        // Remove any channel list fragment that was available in the layout for
-        // the program guide. When another menu item is called this layout will
-        // be set invisible.
+        // Remove the channel list fragment that is shown on the left side when
+        // the program guide is visible. When another menu item is called the
+        // reserved layout space for the channel list fragment will be
+        // invisible.
         Fragment cf = getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
         if (cf != null) {
             getSupportFragmentManager().beginTransaction().remove(cf).commit();
@@ -759,8 +765,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     /**
-     * When a menu item from the navigation drawer was selected this method is
-     * called. It loads and shows the correct fragment depending on the selected
+     * Called when a menu item from the navigation drawer was selected. It loads
+     * and shows the correct fragment or fragments depending on the selected
      * menu item.
      * 
      * @param position
@@ -769,86 +775,82 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         preHandleMenuSelection(position);
 
         // Save the menu position so we know which one was selected
-        menuPosition = position;
+        selectedMenuPosition = position;
 
         // Update the drawer menu so the correct item gets highlighted
-        drawerAdapter.setPosition(menuPosition);
+        drawerAdapter.setPosition(selectedMenuPosition);
         drawerAdapter.notifyDataSetChanged();
 
         Bundle bundle = new Bundle();
 
         switch (position) {
         case MENU_CHANNELS:
-            // Show the channel list fragment. In this case it shall not be used
-            // in the program guide, so pass over that information
+            // Show the channel list fragment. If the information to show only
+            // the channels as required in the program guide is not passed then
+            // the full channel list fragment will be shown.
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, null);
             break;
 
         case MENU_COMPLETED_RECORDINGS:
-            // Show completed recordings
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             showFragment(CompletedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_SCHEDULED_RECORDINGS:
-            // Show scheduled recordings
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             showFragment(ScheduledRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_SERIES_RECORDINGS:
-            // Show series recordings
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             showFragment(SeriesRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_TIMER_RECORDINGS:
-            // Show timer recordings
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             showFragment(TimerRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_FAILED_RECORDINGS:
-            // Show failed recordings
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
             showFragment(FailedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_PROGRAM_GUIDE:
-            // Show the program guide on the right side
+            // Show the program guide. This fragment will then trigger the
+            // display of the channel list fragment on the left side.
             showFragment(ProgramGuidePagerFragment.class.getName(), R.id.main_fragment, null);
             break;
 
         case MENU_STATUS:
-            // Show the status fragment
             bundle.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
             showFragment(StatusFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_SETTINGS:
-            // Show the settings
-            menuPosition = defaultMenuPosition;
+            // Show the settings, but do not remember the selected position
+            // because it would trigger the settings fragment again
+            selectedMenuPosition = defaultMenuPosition;
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivityForResult(settingsIntent, Constants.RESULT_CODE_SETTINGS);
             break;
 
         case MENU_CONNECTIONS:
-            // Show the connections
-            menuPosition = defaultMenuPosition;
+            selectedMenuPosition = defaultMenuPosition;
             Intent connIntent = new Intent(this, SettingsActivity.class);
             connIntent.putExtra(Constants.BUNDLE_MANAGE_CONNECTIONS, true);
             startActivityForResult(connIntent, Constants.RESULT_CODE_SETTINGS);
             break;
 
         case MENU_UNLOCKER:
-            menuPosition = defaultMenuPosition;
+            selectedMenuPosition = defaultMenuPosition;
             Intent unlockerIntent = new Intent(this, UnlockerActivity.class);
             startActivity(unlockerIntent);
             break;
 
         case MENU_INFORMATION:
-            menuPosition = defaultMenuPosition;
+            selectedMenuPosition = defaultMenuPosition;
             Intent infoIntent = new Intent(this, InfoActivity.class);
             startActivity(infoIntent);
             break;
@@ -856,9 +858,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     /**
-     * Sets the different weights of the three available layouts from the
-     * mainLayout.xml file depending on the menu selection. The availability of
-     * the layouts are dependent on the on the screen size.
+     * Sets the different weights of the three available layouts from the main
+     * layout file depending on the menu selection. The availability of the
+     * layouts depend on the on the screen size. This is determined
+     * automatically
      * 
      * @param menuPosition
      */
@@ -899,13 +902,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             break;
         }
 
-        // This is the layout for the main content. It is always available
+        // This is the layout for the main content. It is always visible
         FrameLayout mainLayout = (FrameLayout) findViewById(R.id.main_fragment);
         if (mainLayout != null) {
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mainLayout.getLayoutParams();
             layoutParams.weight = mainLayoutWeight;
         }
-        // This is the layout for the details on the right side. It is always
+
+        // This is the layout for the details on the right side. It is only
         // available on large tablets and on smaller tablets in landscape mode.
         FrameLayout rightLayout = (FrameLayout) findViewById(R.id.right_fragment);
         if (rightLayout != null) {
@@ -915,26 +919,22 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     /**
-     * This method is called when an activity has quit and was called with
-     * startActivityForResult and this one is now the active one again.
-     * Depending on the given request and result code certain action can be
-     * done.
+     * Called when an activity has quit that was called with the method
+     * startActivityForResult. Depending on the given request and result code
+     * certain action can be done.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.RESULT_CODE_SETTINGS) {
             if (resultCode == RESULT_OK) {
-                // Restart the activity because certain settings have changed
-                // like the theme. The reload will be done in the onResume
-                // method
+                // Restart the activity when certain settings have changed
                 if (data.getBooleanExtra(Constants.BUNDLE_RESTART, false)) {
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);
                 } else {
                     // Reconnect to the server and reload all data if a
-                    // connection or some values of the existing one have
-                    // changed.
+                    // connection or certain settings have changed.
                     if (data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false)) {
                         Utils.connect(this, true);
                         Intent intent = getIntent();
@@ -988,11 +988,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             // If the EPG count has not changed, block the
                             // channel. Otherwise unblock it
                             if (ch.epg.size() == channelEpgCountList.get(ch.id)) {
-                                TVHClientApplication app = (TVHClientApplication) getApplication();
                                 app.blockChannel(ch);
                             } else {
                                 channelEpgCountList.put(ch.id, ch.epg.size());
-                                TVHClientApplication app = (TVHClientApplication) getApplication();
                                 app.unblockChannel(ch);
                             }
                         } else {
@@ -1027,6 +1025,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 }
             });
         } else if (action.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
+
+            if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
+                showMessage(getString(R.string.err_connect));
+            }
+
             connectionStatus = action;
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -1040,8 +1043,21 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
             // Go to the status screen if an error has occurred from a previously
-            // working connection
+            // working connection. Additionally show the error message
             if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
+
+                if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
+                    showMessage(getString(R.string.err_connect));
+                } else if (action.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
+                    showMessage(getString(R.string.err_con_lost));
+                } else if (action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
+                    showMessage(getString(R.string.err_con_timeout));
+                } else if (action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)) {
+                    showMessage(getString(R.string.err_auth));
+                } else if (action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
+                    showMessage(getString(R.string.err_auth));
+                }
+
                 runOnUiThread(new Runnable() {
                     public void run() {
                         channelLoadingList.clear();
@@ -1053,10 +1069,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             connectionStatus = action;
         } else if (action.equals(Constants.ACTION_SHOW_MESSAGE)) {
             final String msg = (String) obj;
-            SnackbarManager.show(Snackbar.with(this)
-                    .type(SnackbarType.MULTI_LINE)
-                    .text(msg));
+            showMessage(msg);
         }
+    }
+
+    private void showMessage(final String msg) {
+        SnackbarManager.show(Snackbar.with(this)
+                .type(SnackbarType.MULTI_LINE)
+                .text(msg));
     }
 
     /**
@@ -1076,7 +1096,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         drawerAdapter.getItemById(MENU_PROGRAM_GUIDE).isVisible = show;
 
         // Only show the menu for the recording types if the server supports it
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show
                 && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS)
                 && app.isUnlocked());
@@ -1122,7 +1141,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // Only show the channel tag icon in the channels and program guide
             // fragments. In the other ones the recordings could be from any channel
             // group so it would make no sense to show the tag icon there.
-            if (menuPosition == MENU_CHANNELS || menuPosition == MENU_PROGRAM_GUIDE) {
+            if (selectedMenuPosition == MENU_CHANNELS || selectedMenuPosition == MENU_PROGRAM_GUIDE) {
                 actionBarIcon.setVisibility(Utils.showChannelTagIcon(this) ? View.VISIBLE : View.GONE);
                 actionBarIcon.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
             } else {
@@ -1137,7 +1156,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // Only show the channel tag icon in the channels and program guide
             // fragments. In the other ones the recordings could be from any channel
             // group so it would make no sense to show the tag icon there.
-            if (menuPosition == MENU_CHANNELS || menuPosition == MENU_PROGRAM_GUIDE) {
+            if (selectedMenuPosition == MENU_CHANNELS || selectedMenuPosition == MENU_PROGRAM_GUIDE) {
                 actionBarIcon.setVisibility(Utils.showChannelTagIcon(this) ? View.VISIBLE : View.GONE);
                 actionBarIcon.setBackgroundResource(resource);
             } else {
@@ -1148,7 +1167,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void onScrollingChanged(final int position, final int offset, final String tag) {
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_CHANNELS:
             // Save the position of the selected channel so it can be restored
             // after an orientation change
@@ -1175,7 +1194,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void onScrollStateIdle(final String tag) {
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_PROGRAM_GUIDE:
             if (tag.equals(ProgramGuideListFragment.class.getSimpleName()) 
                     || tag.equals(ChannelListFragment.class.getSimpleName())) {
@@ -1202,7 +1221,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public void moreDataRequired(final Channel channel, final String tag) {
         // Do not load a channel when it is already being loaded to avoid
         // loading the same or too many data.
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         if (app.isLoading() || channel == null || channelLoadingList.contains(channel)) {
             return;
         }
@@ -1219,7 +1237,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // already being loaded
         if (!channelLoadingList.isEmpty() && !isLoadingChannels) {
             final Channel ch = channelLoadingList.get(0);
-            TVHClientApplication app = (TVHClientApplication) getApplication();
             if (!app.isChannelBlocked(ch)) {
                 isLoadingChannels = true;
                 if (actionBar != null) {
@@ -1232,7 +1249,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void onListItemSelected(final int position, final Channel channel, final String tag) {
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_CHANNELS:
             // Save the position of the selected channel so it can be restored
             // after an orientation change
@@ -1271,7 +1288,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public void onListItemSelected(final int position, final Recording recording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_COMPLETED_RECORDINGS:
             completedRecordingListPosition = position;
             break;
@@ -1306,7 +1323,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_SERIES_RECORDINGS:
             seriesRecordingListPosition = position;
             break;
@@ -1335,7 +1352,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_TIMER_RECORDINGS:
             timerRecordingListPosition = position;
             break;
@@ -1376,7 +1393,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @Override
     public void onListPopulated(final String tag) {
 
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_CHANNELS:
             // When the channel list fragment is done loading and dual pane is 
             // active, preselect a channel so that the program list on the right
@@ -1500,7 +1517,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void channelTagChanged(final String tag) {
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_CHANNELS:
             // Clear all data from the channel list fragment and show only the
             // channels with the selected tag
@@ -1529,7 +1546,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void listDataInvalid(String tag) {
-        switch (menuPosition) {
+        switch (selectedMenuPosition) {
         case MENU_SERIES_RECORDINGS:
         case MENU_TIMER_RECORDINGS:
             // Clear all data from the series or timer recording list fragment
