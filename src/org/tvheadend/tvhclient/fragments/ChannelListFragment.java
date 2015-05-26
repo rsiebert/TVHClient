@@ -74,6 +74,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     private boolean isDualPane = false;
 
+    private TVHClientApplication app = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -83,15 +85,16 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return null;
         }
 
-        // Check if only channels shall be visible. This is only the case when
-        // this fragment is part of the program guide view.
+        // Check if only channels without any program information shall be
+        // visible. This is only the case when this fragment is part of the
+        // program guide view.
         Bundle bundle = getArguments();
         if (bundle != null) {
             showOnlyChannels = bundle.getBoolean(Constants.BUNDLE_SHOWS_ONLY_CHANNELS, false);
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
-        // When only channels shall be seen, a reduced adapter and list view
-        // layout is used.
+        // When only channels shall be seen, a reduced adapter layout and list
+        // view layout is used.
         if (showOnlyChannels) {
             viewLayout = R.layout.program_guide_channel_list_layout;
             adapterLayout = R.layout.program_guide_channel_item;
@@ -106,6 +109,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -213,8 +217,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
                 menu.findItem(R.id.menu_tags).setShowAsActionFlags(
-                        MenuItem.SHOW_AS_ACTION_ALWAYS
-                                | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+                        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
             }
         }
     }
@@ -234,8 +237,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             Channel channel = adapter.getSelectedItem();
             if (channel != null) {
                 intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
+                startActivity(intent);
             }
-            startActivity(intent);
             return true;
 
         case R.id.menu_tags:
@@ -256,18 +259,21 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         if (getUserVisibleHint() == false) {
             return false;
         }
-        // Get the currently selected channel. Also get the program that is
-        // currently being transmitting by this channel.
+
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Program program = null;
-        Channel channel = null;
-        
-        // Check for a valid adapter size and objects
-        if (info == null || adapter == null || adapter.getCount() <= info.position) {
+
+        // Check for a valid adapter, its size and if the context menu call came
+        // from the list in this fragment (needed to support multiple fragments
+        // in one screen)
+        if (info == null || adapter == null || (adapter.getCount() <= info.position)
+                || (info.targetView.getParent() != getView().findViewById(R.id.item_list))) {
             return super.onContextItemSelected(item);
         }
 
-        channel = adapter.getItem(info.position);
+        // Get the currently selected channel. Also get the program that is
+        // currently being transmitting by this channel.
+        Program program = null;
+        final Channel channel = adapter.getItem(info.position);
         if (channel != null) {
             synchronized(channel.epg) {
                 Iterator<Program> it = channel.epg.iterator();
@@ -277,15 +283,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             }
         }
 
-        // Stop if the program is still null. this should't happen because the
-        // user has selected the context menu of an available program. 
+        // Return if the program is null. This is just a precaution and should
+        // not happen because the user has selected the context menu of an
+        // available program.
         if (program == null) {
-            return super.onContextItemSelected(item);
-        }
-
-        // Check if the context menu call came from the list in this fragment
-        // (needed for support for multiple fragments in one screen)
-        if (info.targetView.getParent() != getView().findViewById(R.id.item_list)) {
             return super.onContextItemSelected(item);
         }
 
@@ -352,12 +353,13 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     /**
      * Fills the adapter with the available channel data. Only those channels
-     * that added to the adapter that are part of the selected channel tag.
+     * will be added to the adapter that contain the selected channel tag.
+     * Populates the channel tag adapter so the user can select a new one.
+     * Additionally some status information will be shown in the action bar.
      */
-    public void populateList() {
-        // Clear the list and add the channels that contain the selected tag
+    private void populateList() {
+        // Add only those channels that contain the selected tag
         adapter.clear();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         ChannelTag currentTag = Utils.getChannelTag(app);
         for (Channel ch : app.getChannels()) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
@@ -367,21 +369,19 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         adapter.sort(Utils.getChannelSortOrder(activity));
         adapter.notifyDataSetChanged();
 
-        // Fill the tag adapter with the available tags so the dialog can
-        // actually show some.
+        // Fill the tag adapter with the available tags
         tagAdapter.clear();
         for (ChannelTag t : app.getChannelTags()) {
             tagAdapter.add(t);
         }
 
-        // Inform the activity to show the currently visible number of the
-        // channels that are in the selected channel tag and that the channel
-        // list has been filled with data.
+        // Show the name of the selected channel tag and the number of channels
+        // in the action bar. If enabled show also the channel tag icon.
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
             actionBarInterface.setActionBarSubtitle(items, TAG);
-            // If activated show the the channel tag icon
+
             if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
                     && currentTag != null 
                     && currentTag.id != 0) {
@@ -390,6 +390,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
             }
         }
+
+        // Inform the activity that the channel list has been populated. The
+        // activity will then inform the fragment to select the first item in
+        // the list or scroll to the previously selected one in case the
+        // orientation has changed
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.onListPopulated(TAG);
         }
@@ -398,7 +403,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
             populateList();
@@ -408,7 +412,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -502,13 +505,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void setInitialSelection(final int position) {
         setSelection(position, 0);
-        // Set the position in the adapter so that we can show the selected
-        // channel in the theme with the arrow.
+
         if (adapter != null && adapter.getCount() > position) {
             adapter.setPosition(position);
-            // Simulate a click in the list item to inform the activity
-            Channel ch = (Channel) adapter.getItem(position);
+
             if (fragmentStatusInterface != null) {
+                final Channel ch = (Channel) adapter.getItem(position);
                 fragmentStatusInterface.onListItemSelected(position, ch, TAG);
             }
         }

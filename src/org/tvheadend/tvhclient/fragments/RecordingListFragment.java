@@ -362,11 +362,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * edge of the ListView.
      * 
      * @param position
-     * @param index
+     * @param offset
      */
-    protected void setSelection(int position, int index) {
+    protected void setSelection(int position, int offset) {
         if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelectionFromTop(position, index);
+            listView.setSelectionFromTop(position, offset);
         }
     }
 
@@ -385,7 +385,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             adapter.setPosition(position);
 
             if (isDualPane) {
-                Recording recording = (Recording) adapter.getItem(position);
+                final Recording recording = (Recording) adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, recording, TAG);
                 }

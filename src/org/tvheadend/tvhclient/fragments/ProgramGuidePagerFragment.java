@@ -124,8 +124,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
                 menu.findItem(R.id.menu_timeframe).setShowAsActionFlags(
-                        MenuItem.SHOW_AS_ACTION_ALWAYS
-                                | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+                        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
             }
         }
     }
