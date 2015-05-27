@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.fragments;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
@@ -14,10 +16,12 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
@@ -33,7 +37,7 @@ import com.nispok.snackbar.enums.SnackbarType;
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();
-    
+
     private ActionBarActivity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
@@ -45,6 +49,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuProfiles;
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
+    private ListPreference prefDefaultMenu;
 
     private TVHClientApplication app;
 
@@ -63,6 +68,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefClearSearchHistory = findPreference("pref_clear_search_history");
         prefClearIconCache = findPreference("pref_clear_icon_cache");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
+        prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
     }
 
     @Override
@@ -79,6 +85,25 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
             actionBarInterface.setActionBarSubtitle("", TAG);
         }
+
+        // Get the available menu names and id values and add only those entries
+        // that are above the status menu and add the series and timer recording
+        // menus only if these are supported by the server.
+        final String[] e = getResources().getStringArray(R.array.pref_menu_names);
+        final String[] ev = getResources().getStringArray(R.array.pref_menu_ids);
+        List<String> menuEntries = new ArrayList<String>();
+        List<String> menuEntryValues = new ArrayList<String>();
+
+        for (int i = 0; i < e.length; i++) {
+            if (i < 8 || (i == 3 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS)
+                    || (i == 4 && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS && app.isUnlocked()))) {
+                menuEntries.add(e[i]);
+                menuEntryValues.add(ev[i]);
+            }
+        }
+
+        prefDefaultMenu.setEntries(menuEntries.toArray(new CharSequence[menuEntries.size()]));
+        prefDefaultMenu.setEntryValues(menuEntryValues.toArray(new CharSequence[menuEntryValues.size()]));
 
         // Add a listener to the connection preference so that the 
         // SettingsManageConnectionsActivity can be shown.
@@ -260,6 +285,15 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         super.onPause();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.unregisterOnSharedPreferenceChangeListener(this);
+
+        // Close the menu dialog if it is visible to avoid crashing or showing
+        // wrong values after an orientation. 
+        if (prefDefaultMenu.getDialog() != null) {
+            Dialog dlg = prefDefaultMenu.getDialog();
+            if (dlg.isShowing()) {
+                dlg.cancel();
+            }
+        }
     }
 
     /**
