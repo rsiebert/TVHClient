@@ -20,6 +20,8 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.SparseArray;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -1008,5 +1010,19 @@ public class TVHClientApplication extends Application implements BillingProcesso
     @Override
     public void onPurchaseHistoryRestored() {
         // NOP
+    }
+
+    /**
+     * Check if wifi or mobile network is available. If none of these two are
+     * available show the status page otherwise continue and show the desired
+     * screen.
+     * 
+     * @return
+     */
+    public boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        return (wifi.isConnected() || mobile.isConnected());
     }
 }

@@ -96,7 +96,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 // Since this is blocking, spawn to a new thread
                 execService.execute(new Runnable() {
                     public void run() {
-                        connection.open(hostname, port);
+                        connection.open(hostname, port, app.isConnected());
                         connection.authenticate(username, password);
                     }
                 });

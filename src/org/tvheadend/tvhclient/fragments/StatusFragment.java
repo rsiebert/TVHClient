@@ -114,12 +114,12 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onResume();
         app.addListener(this);
 
-        // Upon resume show the actual status. If the connection is OK show the
-        // full status or that stuff is loading, otherwise hide certain
-        // information and show the cause of the connection problem. 
+        // Upon resume show the actual status. If stuff is loading hide certain
+        // information, otherwise show the connection status and the cause of
+        // possible connection problems. 
         additionalInformationLayout.setVisibility(View.GONE);
-        if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            onMessage(Constants.ACTION_LOADING, app.isLoading());
+        if (app.isLoading()) {
+            onMessage(Constants.ACTION_LOADING, true);
         } else {
             onMessage(connectionStatus, false);
         }
@@ -161,7 +161,8 @@ public class StatusFragment extends Fragment implements HTSListener {
                 || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
+                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)) {
 	        activity.runOnUiThread(new Runnable() {
                 public void run() {
                     connectionStatus = action;
@@ -219,6 +220,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * timeouts or other errors.
      */
     protected void showConnectionStatus() {
+
         // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
@@ -242,17 +244,20 @@ public class StatusFragment extends Fragment implements HTSListener {
         // Show a textual description about the connection state
         if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
             status.setText(getString(R.string.ready));
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)
-                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
+            status.setText(R.string.err_connect);
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
             status.setText(R.string.err_con_lost);
         } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
             status.setText(R.string.err_con_timeout);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)) {
-            status.setText(R.string.err_connect);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED) 
+                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
             status.setText(R.string.err_auth);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)
-                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)) {
+            status.setText(getString(R.string.err_no_network));
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)) {
+            status.setText(getString(R.string.no_connection_available));
+        } else {
             status.setText(getString(R.string.unknown));
         }
     }

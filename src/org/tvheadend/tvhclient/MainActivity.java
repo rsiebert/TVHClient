@@ -522,7 +522,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * or the the application has been resumed. If no connection is available or
      * not active, go to the settings screen screen once. If this is still the
      * case after the user has left the setting screen or the connection state
-     * is not fine, go to the status screen. Otherwise show the defined menu
+     * is not fine, check if the Internet access is available, if not go to the
+     * status screen. Otherwise show the defined menu.
      */
     private void reconnectAndResume() {
         if (!connectionSettingsShown
@@ -531,28 +532,34 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             connectionSettingsShown = true;
             handleMenuSelection(MENU_CONNECTIONS);
         } else {
-            // A connection exists and is active, register to receive
-            // information from the server and connect to the server
-            app.addListener(this);
-            Utils.connect(this, false);
+            if (!app.isConnected()) {
+                connectionStatus = Constants.ACTION_CONNECTION_STATE_NO_NETWORK;
+                handleMenuSelection(MENU_STATUS);
+            } else {
+                // Show the contents of the last selected menu position. In case it
+                // is not set, use the the default one defined in the settings
+                int pos = (selectedMenuPosition == MENU_UNKNOWN) ? defaultMenuPosition : selectedMenuPosition;
 
-            // TODO Go to status screen and when the connection is fine go to the selected menu?
+                // Set the connection state to unknown if no connection was added
+                // when the connection fragment was shown. The status fragment is
+                // then shown with the information that no connection is available
+                if (DatabaseHelper.getInstance().getConnections().isEmpty() 
+                        || DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                    connectionStatus = Constants.ACTION_CONNECTION_STATE_NO_CONNECTION;
+                    handleMenuSelection(MENU_STATUS);
+                } else {
+                    // A connection exists and is active, register to receive
+                    // information from the server and connect to the server
+                    app.addListener(this);
+                    Utils.connect(this, false);
 
-            // Show the contents of the last selected menu position. In case it
-            // is not set, use the the default one defined in the settings
-            int pos = (selectedMenuPosition == MENU_UNKNOWN) ? defaultMenuPosition : selectedMenuPosition;
-
-            // Set the connection state to unknown if no connection was added
-            // when the connection fragment was shown. The status fragment is
-            // then shown with the information that no connection is available
-            if (DatabaseHelper.getInstance().getConnections().isEmpty() 
-                    || DatabaseHelper.getInstance().getSelectedConnection() == null) {
-                connectionStatus = Constants.ACTION_CONNECTION_STATE_NONE;
+                    // Show the defined fragment from the menu position or the
+                    // status if the connection state is not fine
+                    handleMenuSelection((connectionStatus
+                            .equals(Constants.ACTION_CONNECTION_STATE_OK)) ? pos
+                            : MENU_STATUS);
+                }
             }
-
-            // Show the defined fragment from the menu position or the status if
-            // the connection state is not fine
-            handleMenuSelection((connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) ? pos : MENU_STATUS);
         }
     }
 
@@ -599,6 +606,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         super.onSaveInstanceState(outState);
     }
 
+    @SuppressLint({ "InlinedApi", "NewApi" })
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -608,6 +616,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         for (int i = 0; i < menu.size(); i++) {
             menu.getItem(i).setVisible(!drawerOpen);
         }
+
         // Do not show the search menu on these screens
         if (selectedMenuPosition == MENU_STATUS 
                 || selectedMenuPosition == MENU_COMPLETED_RECORDINGS 
@@ -616,6 +625,15 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 || selectedMenuPosition == MENU_SERIES_RECORDINGS
                 || selectedMenuPosition == MENU_TIMER_RECORDINGS) {
             (menu.findItem(R.id.menu_search)).setVisible(false);
+        }
+
+        // Prevent the refresh menu item from going into the overlay menu when
+        // the status page is shown
+        if (selectedMenuPosition == MENU_STATUS
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            menu.findItem(R.id.menu_refresh).setShowAsActionFlags(
+                    MenuItem.SHOW_AS_ACTION_ALWAYS
+                            | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
         return true;
     }
@@ -1026,52 +1044,46 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     showDrawerMenu();
                 }
             });
-        } else if (action.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
-            // Go to the status screen if an error has occurred while trying to
-            // connect to a server for the first time. Additionally show the
-            // error message
-            if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
-                showMessage(getString(R.string.err_connect));
-            }
-
-            connectionStatus = action;
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    channelLoadingList.clear();
-                    showDrawerMenu();
-                    handleMenuSelection(MENU_STATUS);
-                }
-            });
         } else if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
-            // Go to the status screen if an error has occurred from a previously
-            // working connection. Additionally show the error message
-            if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
+                || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)) {
 
-                if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
+            // Go to the status screen if an error has occurred from a previously
+            // working connection or no connection at all. Additionally show the
+            // error message
+            if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) || 
+                    connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)) {
+
+                // Show a textual description about the connection state
+                if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
                     showMessage(getString(R.string.err_connect));
-                } else if (action.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
+                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
                     showMessage(getString(R.string.err_con_lost));
-                } else if (action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
+                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
                     showMessage(getString(R.string.err_con_timeout));
-                } else if (action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)) {
+                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED) || 
+                        connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
                     showMessage(getString(R.string.err_auth));
-                } else if (action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
-                    showMessage(getString(R.string.err_auth));
+                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)) {
+                    showMessage(getString(R.string.err_no_network));
+                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)) {
+                    showMessage(getString(R.string.no_connection_available));
                 }
 
                 runOnUiThread(new Runnable() {
                     public void run() {
                         channelLoadingList.clear();
                         showDrawerMenu();
+                        connectionStatus = action;
                         handleMenuSelection(MENU_STATUS);
                     }
                 });
             }
-            connectionStatus = action;
+
         } else if (action.equals(Constants.ACTION_SHOW_MESSAGE)) {
             final String msg = (String) obj;
             showMessage(msg);
