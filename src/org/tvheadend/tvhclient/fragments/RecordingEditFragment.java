@@ -5,14 +5,10 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
@@ -54,16 +50,18 @@ public class RecordingEditFragment extends DialogFragment {
     private EditText description;
     private TextView channelName;
 
+    // Extra pre- and postrecording times in seconds
     private long startExtraValue;
     private long stopExtraValue;
+
+    // Start and end recording times in milliseconds. Need to be converted to
+    // seconds when passed to the service
     private long startTimeValue;
     private long stopTimeValue;
     private long priorityValue;
     private String titleValue;
     private String descriptionValue;
-    private int channelSelectionValue;
 
-    String[] channelList;
     String[] priorityList;
 
     private TVHClientApplication app;
@@ -102,7 +100,6 @@ public class RecordingEditFragment extends DialogFragment {
         outState.putLong("stopExtraValue", stopExtraValue);
         outState.putString("titleValue", titleValue);
         outState.putString("descriptionValue", descriptionValue);
-        outState.putInt("channelNameValue", channelSelectionValue);
         super.onSaveInstanceState(outState);
     }
 
@@ -131,8 +128,6 @@ public class RecordingEditFragment extends DialogFragment {
                 stopTimeValue = rec.stop.getTime();
                 titleValue = rec.title;
                 descriptionValue = rec.description;
-                int pos = app.getChannels().indexOf(rec.channel);
-                channelSelectionValue = (pos >= 0 ? pos : 0);
             }
         } else {
             // Restore the values before the orientation change
@@ -143,7 +138,6 @@ public class RecordingEditFragment extends DialogFragment {
             stopTimeValue = savedInstanceState.getLong("stopTimeValue");
             titleValue = savedInstanceState.getString("titleValue");
             descriptionValue = savedInstanceState.getString("descriptionValue");
-            channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
 
         // Show only the title, stop and extra stop time when the recording is
@@ -163,13 +157,6 @@ public class RecordingEditFragment extends DialogFragment {
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
-        // Create the list of channels that the user can select. The very first
-        // entry is a placeholder to select no record on all channels
-        channelList = new String[app.getChannels().size()];
-        for (int i = 0; i < app.getChannels().size(); i++) {
-            channelList[i] = app.getChannels().get(i).name;
-        }
-
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
         return v;
     }
@@ -186,26 +173,6 @@ public class RecordingEditFragment extends DialogFragment {
         }
         if (description != null) {
             description.setText(descriptionValue);
-        }
-        if (channelName != null) {
-            channelName.setText(channelList[channelSelectionValue]);
-            channelName.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    new MaterialDialog.Builder(activity)
-                    .title(R.string.select_channel)
-                    .items(channelList)
-                    .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            channelName.setText(channelList[which]);
-                            channelSelectionValue = which;
-                            return true;
-                        }
-                    })
-                    .show();
-                }
-            });
         }
         if (priority != null) {
             priority.setText(priorityList[(int) priorityValue]);
@@ -309,7 +276,7 @@ public class RecordingEditFragment extends DialogFragment {
 					getDialog().setOnKeyListener(null);
 					cancel();
 				}
-				return true;
+				return false;
 			}
 		});
 	}
@@ -371,37 +338,20 @@ public class RecordingEditFragment extends DialogFragment {
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_UPDATE_DVR_ENTRY);
         intent.putExtra("id", rec.id);
+        intent.putExtra("title", titleValue);
         intent.putExtra("stopExtra", stopExtraValue);
-        intent.putExtra("stop", stopTimeValue);
-        intent.putExtra("isRecording", rec.isRecording());
+        intent.putExtra("stop", stopTimeValue / 1000); // Pass on seconds not milliseconds
 
         // Only add the additional field when the recording is scheduled. When
-        // it is already being recorded only the stop times can be changed.
-        if (!rec.isRecording()) {
-            intent.putExtra("title", titleValue);
-            intent.putExtra("description", descriptionValue);
-            intent.putExtra("startExtra", startExtraValue);
-            intent.putExtra("start", startTimeValue);
-            intent.putExtra("priority", priorityValue);
+        // it is already being recorded only the title, stop and stopExtra will
+        // be accepted. All other entries will be ignored and not sent
+        intent.putExtra("isRecording", rec.isRecording());
 
-            // The id must be passed on to the server, not the name. So go through
-            // all available channels and get the id for the selected channel name.
-            for (Channel c : app.getChannels()) {
-                if (c.name.equals(channelName.getText().toString()) && !rec.isRecording()) {
-                    intent.putExtra("channelId", c.id);
-                    break;
-                }
-            }
-            // Add the recording profile if available and enabled
-            final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-            final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
-            if (p != null 
-                    && p.enabled
-                    && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                    && app.isUnlocked()) {
-                intent.putExtra("configName", p.name);
-            }
-        }
+        intent.putExtra("title", titleValue);
+        intent.putExtra("description", descriptionValue);
+        intent.putExtra("startExtra", startExtraValue);
+        intent.putExtra("start", startTimeValue / 1000); // Pass on seconds not milliseconds
+        intent.putExtra("priority", priorityValue);
 
         activity.startService(intent);
 

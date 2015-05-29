@@ -185,10 +185,14 @@
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
     <string name="err_con_timeout">Connection timeout</string>
+    <string name="err_no_network">No network connection active</string>
     <string name="err_loading_profiles">Error loading profiles from server\n%s</string>
     <string name="error_adding_recording">Recording was not added! %s</string>
     <string name="error_removing_recording">Recording was not removed! %s</string>
     <string name="error_updating_recording">Recording was not updated! %s</string>
+    <string name="success_adding_recording">Recording has been added.</string>
+    <string name="success_removing_recording">Recording has been removed.</string>
+    <string name="success_updating_recording">Recording has been updated.</string>
 
     <string name="recording_file_missing">Recorded file is missing</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>

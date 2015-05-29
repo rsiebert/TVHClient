@@ -125,13 +125,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             updateDvrEntry(intent.getLongExtra("id", 0),
                     intent.getLongExtra("start", 0),
                     intent.getLongExtra("stop", 0),
-                    intent.getLongExtra("retention", 120),
+                    intent.getLongExtra("retention", 0),
                     intent.getLongExtra("priority", 2),
                     intent.getLongExtra("startExtra", 0),
                     intent.getLongExtra("stopExtra", 0),
                     intent.getStringExtra("title"),
                     intent.getStringExtra("description"),
-                    intent.getStringExtra("configName"),
                     intent.getBooleanExtra("isRecording", false));
 
         } else if (action.equals(Constants.ACTION_DELETE_DVR_ENTRY)) {
@@ -444,6 +443,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void onDvrEntryUpdate(HTSMessage msg) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
+        Log.i(TAG, "updateDvrEntry id " + msg.getLong("id"));
         Recording rec = app.getRecording(msg.getLong("id"));
         if (rec == null) {
             return;
@@ -452,9 +452,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.description = msg.getString("description", rec.description);
         rec.summary = msg.getString("summary", rec.summary);
         rec.error = msg.getString("error", rec.error);
+        
+        Log.i(TAG, "onDvrEntryUpdate start " + msg.getLong("start"));
         rec.start = msg.getDate("start");
         rec.state = msg.getString("state", rec.state);
+        Log.i(TAG, "onDvrEntryUpdate stop " + msg.getLong("stop"));
         rec.stop = msg.getDate("stop");
+        
+        Log.i(TAG, "onDvrEntryUpdate title " + msg.getString("title"));
         rec.title = msg.getString("title", rec.title);
 
         // Not all fields can be set with default values, so check if the server
@@ -1058,6 +1063,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.showMessage(getString(R.string.error_removing_recording,
                             response.getString("error", "")));
+                } else {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1065,10 +1073,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void updateDvrEntry(final long id, long start, long stop,
             long retention, long priority, long startExtra, long stopExtra,
-            String title, String description, String configName,
-            boolean isRecording) {
-
-        Log.i(TAG, "updateDvrEntry isRecording " + isRecording);
+            String title, String description, boolean isRecording) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("updateDvrEntry");
@@ -1078,7 +1083,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         // Only add these fields when the recording is only scheduled and not
         // being recorded
-        if (isRecording) {
+        if (!isRecording) {
             request.putField("start", start);
             request.putField("retention", retention);
             request.putField("priority", priority);
@@ -1090,9 +1095,6 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (description != null) {
                 request.putField("description", description);
             }
-            if (configName != null) {
-                request.putField("configName", configName);
-            }
         }
 
         connection.sendMessage(request, new HTSResponseHandler() {
@@ -1102,6 +1104,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.showMessage(getString(R.string.error_updating_recording,
                             response.getString("error", "")));
+                } else {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.success_updating_recording));
                 }
             }
         });
@@ -1118,6 +1123,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.showMessage(getString(R.string.error_removing_recording,
                             response.getString("error", "")));
+                } else {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1156,6 +1164,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.showMessage(getString(R.string.error_adding_recording,
                             response.getString("error", "")));
+                } else {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.success_adding_recording));
                 }
             }
         });
@@ -1176,6 +1187,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.showMessage(getString(R.string.error_removing_recording, 
                             response.getString("error", "")));
+                } else {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1219,6 +1233,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.showMessage(getString(R.string.error_adding_recording, 
                             response.getString("error", "")));
+                } else {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.success_adding_recording));
                 }
             }
         });
@@ -1370,6 +1387,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.showMessage(getString(R.string.error_removing_recording, 
                             response.getString("error", "")));
+                } else {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1425,6 +1445,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     TVHClientApplication app = (TVHClientApplication) getApplication();
                     app.showMessage(getString(R.string.error_adding_recording, 
                             response.getString("error", "")));
+                } else {
+                    TVHClientApplication app = (TVHClientApplication) getApplication();
+                    app.showMessage(getString(R.string.success_adding_recording));
                 }
             }
         });

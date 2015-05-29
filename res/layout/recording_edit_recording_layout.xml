@@ -44,6 +44,23 @@
                     android:paddingBottom="16dp" />
 
                 <TextView
+                    android:id="@+id/description_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/description" />
+
+                <EditText
+                    android:id="@+id/description"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/not_set"
+                    android:inputType="text"
+                    android:paddingBottom="16dp" />
+
+                <TextView
                     android:id="@+id/stop_time_label"
                     style="?attr/TitleFont"
                     android:layout_width="wrap_content"
@@ -58,8 +75,6 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/not_set"
                     android:paddingBottom="16dp" />
-
-                <!-- Below are additional input fields -->
 
                 <TextView
                     android:id="@+id/stop_extra_label"
