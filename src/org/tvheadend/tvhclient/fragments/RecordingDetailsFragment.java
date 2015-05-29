@@ -176,13 +176,13 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             // The recording is recording it can be played or cancelled
             cancelRecordingButton.setVisibility(View.VISIBLE);
             playRecordingButton.setVisibility(View.VISIBLE);
-            if (app.isUnlocked() && app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDINGS) {
+            if (app.isUnlocked()) {
                 editRecordingButton.setVisibility(View.VISIBLE);
             }
         } else if (rec.isScheduled()) {
             // The recording is scheduled, it can only be cancelled
             cancelRecordingButton.setVisibility(View.VISIBLE);
-            if (app.isUnlocked() && app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDINGS) {
+            if (app.isUnlocked()) {
                 editRecordingButton.setVisibility(View.VISIBLE);
             }
         } else if (rec.error != null || rec.state.equals("missed")) {

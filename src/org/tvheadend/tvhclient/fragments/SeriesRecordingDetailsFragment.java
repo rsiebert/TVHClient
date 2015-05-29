@@ -139,8 +139,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private void showPlayerControls() {
         playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
         recordRemoveButton.setVisibility(View.VISIBLE);
-        recordEditButton.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDINGS 
-                && app.isUnlocked()) ? View.VISIBLE : View.GONE);
+        recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
     }
 
     /**

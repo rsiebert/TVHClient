@@ -17,7 +17,6 @@ public class Constants {
     public static final int MIN_API_VERSION_PROFILES = 16;
     public static final int MIN_API_VERSION_TIMER_RECORDINGS = 17;
     public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
-    public static final int MIN_API_VERSION_EDIT_RECORDINGS = 21;
     public static final int MIN_API_VERSION_SERIES_RECORDING_ON_ALL_CHANNELS = 21;
 
     // Strings used to identify the information passed via a bundle
