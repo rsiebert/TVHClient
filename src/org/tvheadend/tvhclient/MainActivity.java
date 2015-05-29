@@ -478,6 +478,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      */
     @Override
     public void onBackPressed() {
+        drawerLayout.closeDrawers();
         final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
         if (!isDualPane && (f instanceof ProgramListFragment)) {
             getSupportFragmentManager().popBackStack();
