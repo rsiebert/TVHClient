@@ -48,7 +48,6 @@ public class RecordingEditFragment extends DialogFragment {
     private EditText stopExtra;
     private EditText title;
     private EditText description;
-    private TextView channelName;
 
     // Extra pre- and postrecording times in seconds
     private long startExtraValue;
@@ -147,7 +146,6 @@ public class RecordingEditFragment extends DialogFragment {
                         : R.layout.recording_edit_scheduled_layout), container, false);
 
         // Initialize all the widgets from the layout
-        channelName = (TextView) v.findViewById(R.id.channel);
         title = (EditText) v.findViewById(R.id.title);
         description = (EditText) v.findViewById(R.id.description);
         startExtra = (EditText) v.findViewById(R.id.start_extra);
@@ -165,13 +163,14 @@ public class RecordingEditFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (channelName != null && rec != null && rec.channel != null) {
-            channelName.setText(rec.channel.name);
-        }
+        final boolean editTitleSupported = (app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDING_TITLE);
+
         if (title != null) {
+            title.setVisibility(editTitleSupported ? View.VISIBLE : View.GONE);
             title.setText(titleValue);
         }
         if (description != null) {
+            description.setVisibility(editTitleSupported ? View.VISIBLE : View.GONE);
             description.setText(descriptionValue);
         }
         if (priority != null) {
