@@ -78,7 +78,6 @@ import com.nispok.snackbar.enums.SnackbarType;
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
 
-    @SuppressWarnings("unused")
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private ListView drawerList;
@@ -980,7 +979,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 public void run() {
                     boolean loading = (Boolean) obj;
                     if (loading) {
-                        actionBar.setSubtitle(R.string.loading);
+                        setActionBarSubtitle(getString(R.string.loading), TAG);
                         // When in dual pane mode remove the fragment on the
                         // right to avoid seeing invalid data while the
                         // application is loading data from the server.
@@ -1033,7 +1032,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                         if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
                             int count = ((FragmentControlInterface) f).getItemCount();
                             String items = getResources().getQuantityString(R.plurals.items, count, count);
-                            actionBar.setSubtitle(items);
+                            setActionBarSubtitle(items, TAG);
                         }
                     }
                 }
@@ -1265,9 +1264,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             final Channel ch = channelLoadingList.get(0);
             if (!app.isChannelBlocked(ch)) {
                 isLoadingChannels = true;
-                if (actionBar != null) {
-                    actionBar.setSubtitle(getString(R.string.loading_channel, ch.name));
-                }
+                setActionBarSubtitle(getString(R.string.loading_channel, ch.name), TAG);
                 Utils.loadMorePrograms(this, ch);
             }
         }
