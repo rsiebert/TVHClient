@@ -331,7 +331,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
 					getDialog().setOnKeyListener(null);
 					cancel();
 				}
-				return true;
+				return false;
 			}
 		});
 	}

@@ -317,7 +317,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 					getDialog().setOnKeyListener(null);
 					cancel();
 				}
-				return true;
+				return false;
 			}
 		});
 	}
