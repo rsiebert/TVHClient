@@ -1020,9 +1020,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return
      */
     public boolean isConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        return (wifi.isConnected() || mobile.isConnected());
+        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        final NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        final boolean wifiConnected = ((wifi != null) ? wifi.isConnected() : false);
+        final boolean mobileConnected = ((mobile != null) ? mobile.isConnected() : false);
+
+        return (wifiConnected || mobileConnected);
     }
 }
