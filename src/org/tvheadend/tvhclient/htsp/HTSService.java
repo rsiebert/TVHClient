@@ -430,7 +430,6 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onDvrEntryUpdate(HTSMessage msg) {
-        Log.i(TAG, "updateDvrEntry id " + msg.getLong("id"));
         Recording rec = app.getRecording(msg.getLong("id"));
         if (rec == null) {
             return;
@@ -439,20 +438,15 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.description = msg.getString("description", rec.description);
         rec.summary = msg.getString("summary", rec.summary);
         rec.error = msg.getString("error", rec.error);
-        
-        Log.i(TAG, "onDvrEntryUpdate start " + msg.getLong("start"));
         rec.start = msg.getDate("start");
         rec.state = msg.getString("state", rec.state);
-        Log.i(TAG, "onDvrEntryUpdate stop " + msg.getLong("stop"));
         rec.stop = msg.getDate("stop");
-        
-        Log.i(TAG, "onDvrEntryUpdate title " + msg.getString("title"));
         rec.title = msg.getString("title", rec.title);
 
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 13 and higher
-        if (connection.getProtocolVersion() >= 13) {
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
             rec.startExtra = msg.getLong("startExtra");
@@ -465,7 +459,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 17 and higher
-        if (connection.getProtocolVersion() >= 17) {
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
             rec.timerecId = msg.getString("timerecId");
         }
 
@@ -739,6 +733,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     public void onMessage(HTSMessage msg) {
         String method = msg.getMethod();
+        Log.i(TAG, "onMessage method " + method);
         if (method.equals("tagAdd")) {
             onTagAdd(msg);
         } else if (method.equals("tagUpdate")) {
@@ -1054,11 +1049,15 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("priority", priority);
             request.putField("startExtra", startExtra);
 
-            if (title != null) {
-                request.putField("title", title);
-            }
-            if (description != null) {
-                request.putField("description", description);
+            // Do not add these fields if not supported by the server. Updating
+            // these strings was fixed in server version v4.1-111-g807b9c8 
+            if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDING_TITLE) {
+                if (title != null) {
+                    request.putField("title", title);
+                }
+                if (description != null) {
+                    request.putField("description", description);
+                }
             }
         }
 
