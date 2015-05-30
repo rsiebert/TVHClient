@@ -1,15 +1,14 @@
 $ 1.7.8
   % VERSION 1.7.8
-  _ 25.05.2015
-    * Allow editing a scheduled recording (Only available in the unlocked version)
+  _ 30.05.2015
+    * Allow editing a scheduled recording (Only available in the unlocked version, server must support this)
     * Allow editing a timer or series recording when its details dialog is shown on a smartphone
-    * Replaced standard dialogs with material design dialogs
-    * Replaced standard popups with material design popups
+    * Material design for dialogs and popups
     * Show an information when a recording could not be added or deleted
     * Added an option to make the channel tag menu item always visible in the actionbar
     * Channel tags and profiles are sorted by name in their selection lists
     * Removed connection entry from the main menu
-    * Added new entry to the main menu to show some information and credits
+    * Added new entry to the main menu to show information and credits
 $ 1.7.7
   % VERSION 1.7.7
   _ 15.05.2015
