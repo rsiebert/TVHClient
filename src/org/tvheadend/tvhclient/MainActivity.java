@@ -78,6 +78,7 @@ import com.nispok.snackbar.enums.SnackbarType;
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private ListView drawerList;
@@ -979,7 +980,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 public void run() {
                     boolean loading = (Boolean) obj;
                     if (loading) {
-                        setActionBarSubtitle(getString(R.string.loading), TAG);
+                        setActionBarSubtitle(getString(R.string.loading));
                         // When in dual pane mode remove the fragment on the
                         // right to avoid seeing invalid data while the
                         // application is loading data from the server.
@@ -1032,7 +1033,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                         if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
                             int count = ((FragmentControlInterface) f).getItemCount();
                             String items = getResources().getQuantityString(R.plurals.items, count, count);
-                            setActionBarSubtitle(items, TAG);
+                            setActionBarSubtitle(items);
                         }
                     }
                 }
@@ -1135,7 +1136,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void setActionBarTitle(final String title, final String tag) {
+    public void setActionBarTitle(final String title) {
         if (actionBar != null && actionBarTitle != null) {
             actionBarTitle.setText(title);
         }
@@ -1143,7 +1144,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @SuppressLint("RtlHardcoded")
     @Override
-    public void setActionBarSubtitle(final String subtitle, final String tag) {
+    public void setActionBarSubtitle(final String subtitle) {
         if (actionBar != null && actionBarSubtitle != null) {
             actionBarSubtitle.setText(subtitle);
             // If no subtitle string is given hide it from the view and center
@@ -1159,7 +1160,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void setActionBarIcon(final Bitmap bitmap, final String tag) {
+    public void setActionBarIcon(final Bitmap bitmap) {
         if (actionBarIcon != null && bitmap != null) {
             // Only show the channel tag icon in the channel and program guide
             // screens. In all other screens hide it because it makes no sense
@@ -1175,7 +1176,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void setActionBarIcon(final int resource, final String tag) {
+    public void setActionBarIcon(final int resource) {
         if (actionBarIcon != null) {
             // Only show the channel tag icon in the channel and program guide
             // screens. In all other screens hide it because it makes no sense
@@ -1264,7 +1265,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             final Channel ch = channelLoadingList.get(0);
             if (!app.isChannelBlocked(ch)) {
                 isLoadingChannels = true;
-                setActionBarSubtitle(getString(R.string.loading_channel, ch.name), TAG);
+                setActionBarSubtitle(getString(R.string.loading_channel, ch.name));
                 Utils.loadMorePrograms(this, ch);
             }
         }

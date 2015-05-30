@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 public class StatusFragment extends Fragment implements HTSListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = StatusFragment.class.getSimpleName();
 
     private Activity activity;
@@ -104,8 +105,8 @@ public class StatusFragment extends Fragment implements HTSListener {
             actionBarInterface = (ActionBarInterface) activity;
         }
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
-            actionBarInterface.setActionBarSubtitle("", TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.status));
+            actionBarInterface.setActionBarSubtitle("");
         }
     }
 
@@ -179,7 +180,7 @@ public class StatusFragment extends Fragment implements HTSListener {
                     boolean loading = (Boolean) obj;
                     if (actionBarInterface != null) {
                         final String updating = (loading ? getString(R.string.updating) : "");
-                        actionBarInterface.setActionBarSubtitle(updating, TAG);
+                        actionBarInterface.setActionBarSubtitle(updating);
                     }
 
                     // Show that data is being loaded from the server and hide

@@ -31,6 +31,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 @SuppressWarnings("deprecation")
 public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();
 
     private ActionBarActivity activity;
@@ -130,8 +131,8 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         adapter.sort();
         adapter.notifyDataSetChanged();
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
-            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.settings));
+            actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections));
         }
     }
 
@@ -233,7 +234,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                                 adapter.notifyDataSetChanged();
                                 adapter.sort();
                                 if (actionBarInterface != null) {
-                                    actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections), TAG);
+                                    actionBarInterface.setActionBarSubtitle(adapter.getCount() + " " + getString(R.string.pref_connections));
                                 }
                                 if (settingsInterface != null) {
                                     settingsInterface.reconnect();

@@ -34,6 +34,7 @@ import com.nispok.snackbar.enums.SnackbarType;
 @SuppressWarnings("deprecation")
 public class SettingsManageConnectionFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsManageConnectionFragment.class.getSimpleName();
     
     private ActionBarActivity activity;
@@ -117,8 +118,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             settingsInterface = (SettingsInterface) activity;
         }
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.add_connection), TAG);
-            actionBarInterface.setActionBarSubtitle("", TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.add_connection));
+            actionBarInterface.setActionBarSubtitle("");
         }
         
         // Initially the connection has no been changed
@@ -141,8 +142,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             if (connId > 0) {
                 conn = DatabaseHelper.getInstance().getConnection(connId);
                 if (actionBarInterface != null) {
-                    actionBarInterface.setActionBarTitle(getString(R.string.edit_connection), TAG);
-                    actionBarInterface.setActionBarSubtitle(conn != null ? conn.name : "", TAG);
+                    actionBarInterface.setActionBarTitle(getString(R.string.edit_connection));
+                    actionBarInterface.setActionBarSubtitle(conn != null ? conn.name : "");
                 }
             } else {
                 setPreferenceDefaults();

@@ -378,16 +378,16 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Show the name of the selected channel tag and the number of channels
         // in the action bar. If enabled show also the channel tag icon.
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name, TAG);
+            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
-            actionBarInterface.setActionBarSubtitle(items, TAG);
+            actionBarInterface.setActionBarSubtitle(items);
 
             if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
                     && currentTag != null 
                     && currentTag.id != 0) {
-                actionBarInterface.setActionBarIcon(currentTag.iconBitmap, TAG);
+                actionBarInterface.setActionBarIcon(currentTag.iconBitmap);
             } else {
-                actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
+                actionBarInterface.setActionBarIcon(R.drawable.ic_launcher);
             }
         }
 

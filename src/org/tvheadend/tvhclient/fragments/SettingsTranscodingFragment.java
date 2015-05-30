@@ -42,6 +42,7 @@ import android.view.MenuItem;
 
 public class SettingsTranscodingFragment extends PreferenceFragment implements OnPreferenceChangeListener, BackPressedInterface {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsTranscodingFragment.class.getSimpleName();
 
     private Activity activity;
@@ -176,7 +177,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
             actionBarInterface = (ActionBarInterface) activity;
         }
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_transcoding), TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.pref_transcoding));
         }
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;
@@ -195,7 +196,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
             }
         } else {
             if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(conn.name, TAG);
+                actionBarInterface.setActionBarSubtitle(conn.name);
             }
         }
 

@@ -36,6 +36,7 @@ import com.nispok.snackbar.enums.SnackbarType;
 @SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
     private ActionBarActivity activity;
@@ -82,8 +83,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             settingsInterface = (SettingsInterface) activity;
         }
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
-            actionBarInterface.setActionBarSubtitle("", TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.settings));
+            actionBarInterface.setActionBarSubtitle("");
         }
 
         // Get the available menu names and id values and add only those entries

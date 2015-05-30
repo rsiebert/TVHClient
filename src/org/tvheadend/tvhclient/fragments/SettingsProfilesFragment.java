@@ -56,6 +56,7 @@ import com.nispok.snackbar.enums.SnackbarType;
 
 public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, OnPreferenceChangeListener, BackPressedInterface {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsProfilesFragment.class.getSimpleName();
 
     private Activity activity;
@@ -145,7 +146,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             actionBarInterface = (ActionBarInterface) activity;
         }
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_profiles), TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.pref_profiles));
         }
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;
@@ -192,7 +193,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             }
         } else {
             if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(conn.name, TAG);
+                actionBarInterface.setActionBarSubtitle(conn.name);
             }
         }
 
@@ -327,7 +328,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
         // Set the loading indication
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(getString(R.string.loading_profiles), TAG);
+            actionBarInterface.setActionBarSubtitle(getString(R.string.loading_profiles));
         }
 
         // Get the available profiles from the server
@@ -345,7 +346,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 public void run() {
                     // Loading is done, remove the loading subtitle
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(conn.name, TAG);
+                        actionBarInterface.setActionBarSubtitle(conn.name);
                     }
 
                     if (prefRecProfiles != null && prefEnableRecProfiles != null) {
@@ -375,7 +376,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 public void run() {
                     // Loading is done, remove the loading subtitle
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(conn.name, TAG);
+                        actionBarInterface.setActionBarSubtitle(conn.name);
                     }
 
                     if (prefProgProfiles != null && prefEnableProgProfiles != null) {

@@ -174,14 +174,14 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // Inform the activity to show the currently visible number of the
         // programs and that the program list has been filled with data.
         if (actionBarInterface != null && channel != null) {
-            actionBarInterface.setActionBarTitle(channel.name, TAG);
+            actionBarInterface.setActionBarTitle(channel.name);
             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-            actionBarInterface.setActionBarSubtitle(items, TAG);
+            actionBarInterface.setActionBarSubtitle(items);
             if (!isDualPane) {
                 if (Utils.showChannelIcons(activity)) {
-                    actionBarInterface.setActionBarIcon(channel.iconBitmap, TAG);
+                    actionBarInterface.setActionBarIcon(channel.iconBitmap);
                 } else {
-                    actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
+                    actionBarInterface.setActionBarIcon(R.drawable.ic_launcher);
                 }
             }
         }
@@ -349,7 +349,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                         adapter.sort();
                         if (actionBarInterface != null) {
                             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                            actionBarInterface.setActionBarSubtitle(items, TAG);
+                            actionBarInterface.setActionBarSubtitle(items);
                         }
                     }
                 }
@@ -361,7 +361,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     adapter.notifyDataSetChanged();
                     if (actionBarInterface != null) {
                         String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                        actionBarInterface.setActionBarSubtitle(items, TAG);
+                        actionBarInterface.setActionBarSubtitle(items);
                     }
                 }
             });
