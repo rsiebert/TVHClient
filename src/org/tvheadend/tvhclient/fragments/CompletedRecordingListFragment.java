@@ -7,6 +7,7 @@ import org.tvheadend.tvhclient.model.Recording;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -78,6 +79,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
      * are completed are added to the list.
      */
     private void populateList() {
+        Log.i(TAG, "populateList");
         // Clear the list and add the recordings
         adapter.clear();
         for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
@@ -99,6 +101,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
         // Inform the activity that the channel list has been populated. It will
         // then select a list item if dual pane mode is active.
         if (fragmentStatusInterface != null) {
+            Log.i(TAG, "call onListPopulated");
             fragmentStatusInterface.onListPopulated(TAG);
         }
     }
@@ -142,12 +145,12 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
 
     @Override
     public void setSelection(int position, int index) {
-        setSelection(position, index);
+        super.setSelection(position, index);
     }
     
     @Override
     public void setInitialSelection(int position) {
-        setInitialSelection(position);
+        super.setInitialSelection(position);
     }
 
     @Override

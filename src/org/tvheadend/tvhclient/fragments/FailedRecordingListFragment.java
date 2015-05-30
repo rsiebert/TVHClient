@@ -140,12 +140,12 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
 
     @Override
     public void setSelection(int position, int index) {
-        setSelection(position, index);
+        super.setSelection(position, index);
     }
     
     @Override
     public void setInitialSelection(int position) {
-        setInitialSelection(position);
+        super.setInitialSelection(position);
     }
 
     @Override
