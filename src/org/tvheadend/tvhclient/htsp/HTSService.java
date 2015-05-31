@@ -733,7 +733,6 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     public void onMessage(HTSMessage msg) {
         String method = msg.getMethod();
-        Log.i(TAG, "onMessage method " + method);
         if (method.equals("tagAdd")) {
             onTagAdd(msg);
         } else if (method.equals("tagUpdate")) {
