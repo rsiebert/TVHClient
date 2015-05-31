@@ -13,8 +13,8 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
@@ -29,13 +29,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.Snackbar.SnackbarDuration;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 public class SeriesRecordingAddFragment extends DialogFragment {
 
@@ -379,15 +376,10 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private void save() {
         getValues();
 
-        // TODO snackbar is currently dimmed
-
         // The title must not be empty
-        if (titleValue.length() == 0) { 
-            SnackbarManager.show(
-                    Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .duration(SnackbarDuration.LENGTH_LONG)
-                            .text(R.string.error_empty_title), activity);
+        if (titleValue.length() == 0) {
+            Toast.makeText(activity, getString(R.string.error_empty_title),
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         // The maximum duration must be at least the minimum duration

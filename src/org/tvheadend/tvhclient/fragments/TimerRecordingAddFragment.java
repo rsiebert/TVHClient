@@ -33,13 +33,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.Snackbar.SnackbarDuration;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 public class TimerRecordingAddFragment extends DialogFragment {
 
@@ -375,24 +372,16 @@ public class TimerRecordingAddFragment extends DialogFragment {
     private void save() {
         getValues();
 
-        // TODO snackbar is currently dimmed
-
         // The title must not be empty
         if (titleValue.length() == 0) {
-            SnackbarManager.show(
-                    Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .duration(SnackbarDuration.LENGTH_LONG)
-                            .text(R.string.error_empty_title), activity);
+            Toast.makeText(activity, getString(R.string.error_empty_title),
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         // The stop time must be later then the start time 
         if (startTimeValue >= stopTimeValue) {
-            SnackbarManager.show(
-                    Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .duration(SnackbarDuration.LENGTH_LONG)
-                            .text(R.string.error_start_stop_time), activity);
+            Toast.makeText(activity, getString(R.string.error_start_stop_time),
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
