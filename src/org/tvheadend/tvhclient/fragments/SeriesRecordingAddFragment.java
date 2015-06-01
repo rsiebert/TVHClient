@@ -15,6 +15,7 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -95,6 +97,13 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         super.onAttach(activity);
         this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
 
     @Override
@@ -328,6 +337,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         }
 
         if (toolbar != null) {
+            toolbar.setTitle(rec != null ? R.string.edit_series_recording : R.string.add_series_recording);
             toolbar.inflateMenu(R.menu.save_cancel_menu);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -337,7 +347,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             });
         }
         if (getDialog() != null) {
-            getDialog().setTitle(rec != null ? R.string.edit_series_recording : R.string.add_series_recording);
             getDialog().setCanceledOnTouchOutside(false);
         }
     }

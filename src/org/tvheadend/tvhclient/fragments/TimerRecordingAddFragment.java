@@ -15,6 +15,7 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -80,6 +82,13 @@ public class TimerRecordingAddFragment extends DialogFragment {
         super.onAttach(activity);
         this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
 
     @Override
@@ -183,9 +192,10 @@ public class TimerRecordingAddFragment extends DialogFragment {
             } else {
                 // No recording was given, set default values
                 Calendar cal = Calendar.getInstance();
+                long currentTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
                 priorityValue = 2;
-                startTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-                stopTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+                startTimeValue = currentTime;
+                stopTimeValue = currentTime + 30;
                 daysOfWeekValue = 127;
                 titleValue = "";
                 enabledValue = true;
@@ -305,6 +315,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
         }
 
         if (toolbar != null) {
+            toolbar.setTitle(rec != null ? R.string.edit_timer_recording : R.string.add_timer_recording);
             toolbar.inflateMenu(R.menu.save_cancel_menu);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -314,7 +325,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
             });
         }
         if (getDialog() != null) {
-            getDialog().setTitle(rec != null ? R.string.edit_timer_recording : R.string.add_timer_recording);
             getDialog().setCanceledOnTouchOutside(false);
         }
     }
