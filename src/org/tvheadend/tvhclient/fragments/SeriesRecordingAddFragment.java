@@ -6,6 +6,7 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
@@ -293,7 +294,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         minDuration.setText(String.valueOf(minDurationValue));
         maxDuration.setText(String.valueOf(maxDurationValue));
 
-        startTime.setText(getTimeStringFromValue(startTimeValue));
+        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
         // Show the time picker dialog so the user can select a new starting time
         startTime.setOnClickListener(new OnClickListener() {
             @Override
@@ -307,7 +308,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         // Save the given value in seconds. This values will be passed to the server
                         startTimeValue = (long) (selectedHour * 60 + selectedMinute);
-                        startTime.setText(getTimeStringFromValue(startTimeValue));
+                        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
                     }
                 }, hour, minute, true);
                 mTimePicker.setTitle(R.string.select_start_time);
@@ -516,23 +517,5 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             }
         }
         return value;
-    }
-
-    /**
-     * Set the time from the long value. Prepend leading zeros to the hours or
-     * minutes in case they are lower then ten.
-     * 
-     * @return time in hh:mm format
-     */
-    private String getTimeStringFromValue(long time) {
-        String minutes = String.valueOf(time % 60);
-        if (minutes.length() == 1) {
-            minutes = "0" + minutes;
-        }
-        String hours = String.valueOf(time / 60);
-        if (hours.length() == 1) {
-            hours = "0" + hours;
-        }
-        return (hours + ":" + minutes);
     }
 }

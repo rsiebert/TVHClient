@@ -135,7 +135,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             maxDuration.setText(getString(R.string.minutes, (int) srec.maxDuration));
         }
         if (srec.start > 0) {
-            startTime.setText(getTimeStringFromValue(srec.start));
+            startTime.setText(Utils.getTimeStringFromValue(srec.start));
         }
     }
 
@@ -176,23 +176,5 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
                 }
             }
         });
-    }
-
-    /**
-     * Set the time from the long value. Prepend leading zeros to the hours or
-     * minutes in case they are lower then ten.
-     * 
-     * @return time in hh:mm format
-     */
-    private String getTimeStringFromValue(long time) {
-        String minutes = String.valueOf(time % 60);
-        if (minutes.length() == 1) {
-            minutes = "0" + minutes;
-        }
-        String hours = String.valueOf(time / 60);
-        if (hours.length() == 1) {
-            hours = "0" + hours;
-        }
-        return (hours + ":" + minutes);
     }
 }

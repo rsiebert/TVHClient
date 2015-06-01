@@ -1049,6 +1049,24 @@ public class Utils {
 	}
 
     /**
+     * Set the time from the long value. Prepend leading zeros to the hours or
+     * minutes in case they are lower then ten.
+     * 
+     * @return time in hh:mm format
+     */
+    public static String getTimeStringFromValue(final long time) {
+        String minutes = String.valueOf(time % 60);
+        if (minutes.length() == 1) {
+            minutes = "0" + minutes;
+        }
+        String hours = String.valueOf(time / 60);
+        if (hours.length() == 1) {
+            hours = "0" + hours;
+        }
+        return (hours + ":" + minutes);
+    }
+
+    /**
      * Returns the public key that is required to make in-app purchases. The key
      * which is ciphered is located in the assets folder.
      * 

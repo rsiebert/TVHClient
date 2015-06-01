@@ -6,6 +6,7 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
@@ -251,7 +252,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
 			}
         });
 
-        startTime.setText(getTimeStringFromValue(startTimeValue));
+        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
         // Show the time picker dialog so the user can select a new starting time
         startTime.setOnClickListener(new OnClickListener() {
             @Override
@@ -265,7 +266,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         // Save the given value in seconds. This values will be passed to the server
                         startTimeValue = (long) (selectedHour * 60 + selectedMinute);
-                        startTime.setText(getTimeStringFromValue(startTimeValue));
+                        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
                     }
                 }, hour, minute, true);
                 mTimePicker.setTitle(R.string.select_start_time);
@@ -273,7 +274,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
             }
         });
 
-        stopTime.setText(getTimeStringFromValue(stopTimeValue));
+        stopTime.setText(Utils.getTimeStringFromValue(stopTimeValue));
         // Show the time picker dialog so the user can select a new starting time
         stopTime.setOnClickListener(new OnClickListener() {
             @Override
@@ -287,7 +288,7 @@ public class TimerRecordingAddFragment extends DialogFragment {
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         // Save the given value in seconds. This values will be passed to the server
                         stopTimeValue = (long) (selectedHour * 60 + selectedMinute);
-                        stopTime.setText(getTimeStringFromValue(stopTimeValue));
+                        stopTime.setText(Utils.getTimeStringFromValue(stopTimeValue));
                     }
                 }, hour, minute, true);
                 mTimePicker.setTitle(R.string.select_stop_time);
@@ -465,23 +466,5 @@ public class TimerRecordingAddFragment extends DialogFragment {
             }
         }
         return value;
-    }
-
-    /**
-     * Set the time from the long value. Prepend leading zeros to the hours or
-     * minutes in case they are lower then ten.
-     * 
-     * @return time in hh:mm format
-     */
-    private String getTimeStringFromValue(long time) {
-        String minutes = String.valueOf(time % 60);
-        if (minutes.length() == 1) {
-            minutes = "0" + minutes;
-        }
-        String hours = String.valueOf(time / 60);
-        if (hours.length() == 1) {
-            hours = "0" + hours;
-        }
-        return (hours + ":" + minutes);
     }
 }
