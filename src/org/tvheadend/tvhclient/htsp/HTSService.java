@@ -221,7 +221,6 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("enabled", 1),
                     intent.getLongExtra("startExtra", 0),
                     intent.getLongExtra("stopExtra", 0),
-                    intent.getLongExtra("approxTime", 0),
                     intent.getLongExtra("start", 0),
                     intent.getLongExtra("startWindow", 0),
                     intent.getStringExtra("configName"));
@@ -1357,7 +1356,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      */
     private void addAutorecEntry(String title, long channelId, long maxDuration,
             long minDuration, long retention, long daysOfWeek, long priority, long enabled,
-            long startExtra, long stopExtra, long approxTime, long start, long startWindow, String configName) {
+            long startExtra, long stopExtra, long start, long startWindow, String configName) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
@@ -1389,7 +1388,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else {
             // Minutes from midnight (up to 24*60) (window +- 15 minutes)
             // (Obsoleted from version 18)
-            request.putField("approxTime", approxTime);
+            request.putField("approxTime", start);
         }
 
         if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
