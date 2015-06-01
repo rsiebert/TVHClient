@@ -118,6 +118,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             showPlayerControls();
         }
 
+        isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
         isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
         channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
 
