@@ -163,7 +163,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
         // Determine if the server supports recording on all channels
-        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDING_ON_ALL_CHANNELS;
+        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_SREC_ADD_EMPTY_CHANNEL;
         final int offset = (allowRecordingOnAllChannels ? 1 : 0);
 
         // Create the list of channels that the user can select. If recording on
@@ -236,6 +236,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
 
         isEnabled.setChecked(enabledValue);
+        isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+
         title.setText(titleValue);
 
         channelName.setText(channelList[channelSelectionValue]);

@@ -12,14 +12,6 @@ public class Constants {
     // Amount of programs of a channel that shall be loaded from the server
     public static final int PREF_PROGRAMS_TO_LOAD = 15;
 
-    // Minimum API version to enable or disable certain functionalities. A more
-    // granular check is available in the service classes or where required. 
-    public static final int MIN_API_VERSION_PROFILES = 16;
-    public static final int MIN_API_VERSION_TIMER_RECORDINGS = 17;
-    public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
-    public static final int MIN_API_VERSION_SERIES_RECORDING_ON_ALL_CHANNELS = 21;
-    public static final int MIN_API_VERSION_EDIT_RECORDING_TITLE = 21;
-
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";
     public static final String BUNDLE_RECORDING_TYPE = "recordingType";
@@ -153,4 +145,25 @@ public class Constants {
     // The default names for the playback and recording profiles
     public static final String PROG_PROFILE_DEFAULT = "htsp";
     public static final String REC_PROFILE_DEFAULT = "(Default Profile)";
+
+    // Minimum API version to enable or disable certain functionalities. The
+    // features shall only be enabled if supported by the server. 
+    public static final int MIN_API_VERSION_PROFILES = 16;
+    public static final int MIN_API_VERSION_TIMER_RECORDINGS = 18;
+    public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
+
+    // Minimum API versions to enable or disable certain fields in the HTSP API
+    // methods. These fields shall only be visible and used if supported. 
+    public static final int MIN_API_VERSION_REC_FIELD_ENABLED = 19;
+    public static final int MIN_API_VERSION_REC_FIELD_OWNER = 18;
+    public static final int MIN_API_VERSION_REC_FIELD_CREATOR = 18;
+    public static final int MIN_API_VERSION_REC_FIELD_NEW_START_TIME = 18;
+
+    // These constants are required to check if the server contains certain bug fixes
+    // Allow selecting 'All channels' for a series recording. (http://tvheadend.org/issues/2892)
+    public static final int MIN_API_VERSION_SREC_ADD_EMPTY_CHANNEL = 21;
+    // Allow editing the title of a recording. (http://tvheadend.org/issues/2893)
+    public static final int MIN_API_VERSION_REC_FIELD_TITLE = 21;
+    // Allow editing the description of a recording. (http://tvheadend.org/issues/2893)
+    public static final int MIN_API_VERSION_REC_FIELD_DESCRIPTION = 21;
 }

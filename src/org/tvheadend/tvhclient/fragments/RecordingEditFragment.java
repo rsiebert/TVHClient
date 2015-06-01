@@ -163,14 +163,12 @@ public class RecordingEditFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final boolean editTitleSupported = (app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDING_TITLE);
-
         if (title != null) {
-            title.setVisibility(editTitleSupported ? View.VISIBLE : View.GONE);
+            title.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
             title.setText(titleValue);
         }
         if (description != null) {
-            description.setVisibility(editTitleSupported ? View.VISIBLE : View.GONE);
+            description.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
             description.setText(descriptionValue);
         }
         if (priority != null) {

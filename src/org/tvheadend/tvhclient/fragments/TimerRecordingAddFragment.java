@@ -208,9 +208,9 @@ public class TimerRecordingAddFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // TODO use a constant here
-        isEnabled.setVisibility((app.getProtocolVersion() >= 18) ? View.VISIBLE : View.GONE);
         isEnabled.setChecked(enabledValue);
+        isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+
         title.setText(titleValue);
 
         channelName.setText(channelList[channelSelectionValue]);

@@ -221,6 +221,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getLongExtra("enabled", 1),
                     intent.getLongExtra("startExtra", 0),
                     intent.getLongExtra("stopExtra", 0),
+                    intent.getLongExtra("approxTime", 0),
+                    intent.getLongExtra("start", 0),
+                    intent.getLongExtra("startWindow", 0),
                     intent.getStringExtra("configName"));
 
         } else if (action.equals(Constants.ACTION_DELETE_SERIES_DVR_ENTRY)) {
@@ -1049,14 +1052,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("startExtra", startExtra);
 
             // Do not add these fields if not supported by the server. Updating
-            // these strings was fixed in server version v4.1-111-g807b9c8 
-            if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDING_TITLE) {
-                if (title != null) {
-                    request.putField("title", title);
-                }
-                if (description != null) {
-                    request.putField("description", description);
-                }
+            // these strings was fixed in server version v4.1-111-g807b9c8
+            if (title != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
+                request.putField("title", title);
+            }
+            if (description != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION) {
+                request.putField("description", description);
             }
         }
 
@@ -1173,7 +1174,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
-        request.putField("enabled", enabled);
+
+        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+            request.putField("enabled", enabled);
+        }
 
         if (configName != null) {
             request.putField("configName", configName);
@@ -1353,7 +1357,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      */
     private void addAutorecEntry(String title, long channelId, long maxDuration,
             long minDuration, long retention, long daysOfWeek, long priority, long enabled,
-            long startExtra, long stopExtra, String configName) {
+            long startExtra, long stopExtra, long approxTime, long start, long startWindow, String configName) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
@@ -1365,15 +1369,33 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("channelId", channelId);
         }
 
+        // Minimal duration in seconds (0 = Any)
         request.putField("minDuration", minDuration);
+        // Maximal duration in seconds (0 = Any)
         request.putField("maxDuration", maxDuration);
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
-        request.putField("enabled", enabled);
         request.putField("startExtra", startExtra);
         request.putField("stopExtra", stopExtra);
 
+        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_NEW_START_TIME) {
+            // Minutes from midnight (up to 24*60) for the start of the time
+            // window (including) (Added in version 18)
+            request.putField("start", start);
+            // Minutes from midnight (up to 24*60) for the end of the time
+            // window (including, cross-noon allowed) (Added in version 18)
+            request.putField("startWindow", startWindow);
+        } else {
+            // Minutes from midnight (up to 24*60) (window +- 15 minutes)
+            // (Obsoleted from version 18)
+            request.putField("approxTime", approxTime);
+        }
+
+        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+            // Enabled flag (Added in version 19)
+            request.putField("enabled", enabled);
+        }
         if (configName != null) {
             request.putField("configName", configName);
         }
