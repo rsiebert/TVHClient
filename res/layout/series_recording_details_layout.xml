@@ -73,6 +73,22 @@
             android:text="@string/channel" />
 
         <TextView
+            android:id="@+id/start_time_label"
+            style="?attr/TitleFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@string/start_time" />
+
+        <TextView
+            android:id="@+id/start_time"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/not_set" />
+
+        <TextView
             android:id="@+id/minimum_duration_label"
             style="?attr/TitleFont"
             android:layout_width="wrap_content"

@@ -31,6 +31,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private TextView isEnabled;
     private TextView minDuration;
     private TextView maxDuration;
+    private TextView startTime;
     private TextView daysOfWeek;
     private TextView channelName;
     private TextView priority;
@@ -83,6 +84,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
         minDuration = (TextView) v.findViewById(R.id.minimum_duration);
         maxDuration = (TextView) v.findViewById(R.id.maximum_duration);
+        startTime = (TextView) v.findViewById(R.id.start_time);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
 
@@ -131,6 +133,9 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         if (srec.maxDuration > 0) {
             maxDuration.setText(getString(R.string.minutes, (int) srec.maxDuration));
         }
+        if (srec.start > 0) {
+            startTime.setText(getTimeStringFromValue(srec.start));
+        }
     }
 
     /**
@@ -170,5 +175,23 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
                 }
             }
         });
+    }
+
+    /**
+     * Set the time from the long value. Prepend leading zeros to the hours or
+     * minutes in case they are lower then ten.
+     * 
+     * @return time in hh:mm format
+     */
+    private String getTimeStringFromValue(long time) {
+        String minutes = String.valueOf(time % 60);
+        if (minutes.length() == 1) {
+            minutes = "0" + minutes;
+        }
+        String hours = String.valueOf(time / 60);
+        if (hours.length() == 1) {
+            hours = "0" + hours;
+        }
+        return (hours + ":" + minutes);
     }
 }
