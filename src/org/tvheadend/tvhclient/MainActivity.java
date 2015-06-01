@@ -980,7 +980,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 public void run() {
                     boolean loading = (Boolean) obj;
                     if (loading) {
-                        setActionBarSubtitle(getString(R.string.loading));
+                        setActionBarTitle(getString(R.string.loading));
+                        setActionBarSubtitle("");
                         // When in dual pane mode remove the fragment on the
                         // right to avoid seeing invalid data while the
                         // application is loading data from the server.
