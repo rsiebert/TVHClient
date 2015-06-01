@@ -972,6 +972,11 @@ public class Utils {
         return pixelsPerMinute;
     }
 
+    /**
+     * Returns the id of the channel tag that is saved in the current connection
+     * 
+     * @return
+     */
     public static int getChannelTagId() {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
