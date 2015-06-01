@@ -378,12 +378,6 @@ public class TimerRecordingAddFragment extends DialogFragment {
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        // The stop time must be later then the start time 
-        if (startTimeValue >= stopTimeValue) {
-            Toast.makeText(activity, getString(R.string.error_start_stop_time),
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         // If the timer recording has been edited, remove it before adding it
         // again with the updated values. This is required because the API does
