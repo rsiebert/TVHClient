@@ -710,6 +710,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.daysOfWeek = msg.getLong("daysOfWeek");
         srec.approxTime = msg.getLong("approxTime");
         srec.priority = msg.getLong("priority");
+        srec.approxTime = msg.getLong("approxTime");
+        srec.start = msg.getLong("start");
+        srec.startWindow = msg.getLong("startWindow");
         srec.startExtra = msg.getDate("startExtra");
         srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title", srec.title);
@@ -726,6 +729,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.daysOfWeek = msg.getLong("daysOfWeek");
         srec.approxTime = msg.getLong("approxTime");
         srec.priority = msg.getLong("priority");
+        srec.approxTime = msg.getLong("approxTime");
+        srec.start = msg.getLong("start");
+        srec.startWindow = msg.getLong("startWindow");
         srec.startExtra = msg.getDate("startExtra");
         srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title");
