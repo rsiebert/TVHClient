@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.fragments;
 
+import java.util.Calendar;
+
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
@@ -12,6 +14,7 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
@@ -29,6 +32,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -48,8 +52,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private EditText maxDuration;
     private LinearLayout daysOfWeekLayout;
     private ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
-    private EditText startTime;
-    private EditText stopTime;
+    private TextView startTime;
+    private EditText startExtraTime;
+    private EditText stopExtraTime;
     private EditText title;
     private TextView channelName;
 
@@ -57,7 +62,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private long minDurationValue;
     private long maxDurationValue;
     private long startTimeValue;
-    private long stopTimeValue;
+    private long startExtraTimeValue;
+    private long stopExtraTimeValue;
     private long daysOfWeekValue;
     private String titleValue;
     private boolean enabledValue;
@@ -105,7 +111,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         outState.putLong("minDurationValue", minDurationValue);
         outState.putLong("maxDurationValue", maxDurationValue);
         outState.putLong("startTimeValue", startTimeValue);
-        outState.putLong("stopTimeValue", stopTimeValue);
+        outState.putLong("startExtraTimeValue", startExtraTimeValue);
+        outState.putLong("stopExtraTimeValue", stopExtraTimeValue);
         outState.putLong("daysOfWeekValue", daysOfWeekValue);
         outState.putString("titleValue", titleValue);
         outState.putBoolean("enabledValue", enabledValue);
@@ -157,8 +164,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             daysOfWeekButtons[i] = dayButton;
         }
 
-        startTime = (EditText) v.findViewById(R.id.start_extra);
-        stopTime = (EditText) v.findViewById(R.id.stop_extra);
+        startTime = (TextView) v.findViewById(R.id.start_time);
+        startExtraTime = (EditText) v.findViewById(R.id.start_extra);
+        stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
@@ -197,7 +205,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 minDurationValue = rec.minDuration;
                 maxDurationValue = rec.maxDuration;
                 startTimeValue = rec.start;
-                stopTimeValue = rec.start;
+                startExtraTimeValue = rec.startExtra.getTime();
+                stopExtraTimeValue = rec.stopExtra.getTime();
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
                 enabledValue = rec.enabled;
@@ -205,11 +214,13 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 channelSelectionValue = (pos >= 0 ? pos : 0);
             } else {
                 // No recording was given, set default values
+                Calendar cal = Calendar.getInstance();
                 priorityValue = 2;
                 minDurationValue = DEFAULT_MIN_DURATION;
                 maxDurationValue = DEFAULT_MAX_DURATION;
-                startTimeValue = DEFAULT_START_EXTRA;
-                stopTimeValue = DEFAULT_STOP_EXTRA;
+                startTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+                startExtraTimeValue = DEFAULT_START_EXTRA;
+                stopExtraTimeValue = DEFAULT_STOP_EXTRA;
                 daysOfWeekValue = 127;
                 titleValue = "";
                 enabledValue = true;
@@ -221,7 +232,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             minDurationValue = savedInstanceState.getLong("minDurationValue");
             maxDurationValue = savedInstanceState.getLong("maxDurationValue");
             startTimeValue = savedInstanceState.getLong("startTimeValue");
-            stopTimeValue = savedInstanceState.getLong("stopTimeValue");
+            startExtraTimeValue = savedInstanceState.getLong("startExtraTimeValue");
+            stopExtraTimeValue = savedInstanceState.getLong("stopExtraTimeValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
             titleValue = savedInstanceState.getString("titleValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
@@ -280,8 +292,31 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         minDuration.setText(String.valueOf(minDurationValue));
         maxDuration.setText(String.valueOf(maxDurationValue));
-        startTime.setText(String.valueOf(startTimeValue));
-        stopTime.setText(String.valueOf(stopTimeValue));
+
+        startTime.setText(getTimeStringFromValue(startTimeValue));
+        // Show the time picker dialog so the user can select a new starting time
+        startTime.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int hour = (int) (startTimeValue / 60);
+                int minute = (int) (startTimeValue % 60);
+
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        // Save the given value in seconds. This values will be passed to the server
+                        startTimeValue = (long) (selectedHour * 60 + selectedMinute);
+                        startTime.setText(getTimeStringFromValue(startTimeValue));
+                    }
+                }, hour, minute, true);
+                mTimePicker.setTitle(R.string.select_start_time);
+                mTimePicker.show();
+            }
+        });
+
+        startExtraTime.setText(String.valueOf(startExtraTimeValue));
+        stopExtraTime.setText(String.valueOf(stopExtraTimeValue));
 
         // Set the correct days as checked or not depending on the given value.
         // For each day shift the daysOfWeekValue by one to the right and check
@@ -356,14 +391,14 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             maxDurationValue = DEFAULT_MAX_DURATION;
         }
         try {
-            startTimeValue = Long.valueOf(startTime.getText().toString());
+            startExtraTimeValue = Long.valueOf(startExtraTime.getText().toString());
         } catch (NumberFormatException ex) {
-            startTimeValue = DEFAULT_START_EXTRA;
+            startExtraTimeValue = DEFAULT_START_EXTRA;
         }
         try {
-            stopTimeValue = Long.valueOf(stopTime.getText().toString());
+            stopExtraTimeValue = Long.valueOf(stopExtraTime.getText().toString());
         } catch (NumberFormatException ex) {
-            stopTimeValue = DEFAULT_STOP_EXTRA;
+            stopExtraTimeValue = DEFAULT_STOP_EXTRA;
         }
         titleValue = title.getText().toString();
         enabledValue = isEnabled.isChecked();
@@ -405,8 +440,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         intent.putExtra("title", titleValue);
         intent.putExtra("minDuration", minDurationValue);
         intent.putExtra("maxDuration", maxDurationValue);
-        intent.putExtra("startExtra", startTimeValue);
-        intent.putExtra("stopExtra", stopTimeValue);
+        intent.putExtra("start", startTimeValue);
+        intent.putExtra("startExtra", startExtraTimeValue);
+        intent.putExtra("stopExtra", stopExtraTimeValue);
         intent.putExtra("daysOfWeek", daysOfWeekValue);
         intent.putExtra("priority", priorityValue);
         intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
@@ -480,5 +516,23 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             }
         }
         return value;
+    }
+
+    /**
+     * Set the time from the long value. Prepend leading zeros to the hours or
+     * minutes in case they are lower then ten.
+     * 
+     * @return time in hh:mm format
+     */
+    private String getTimeStringFromValue(long time) {
+        String minutes = String.valueOf(time % 60);
+        if (minutes.length() == 1) {
+            minutes = "0" + minutes;
+        }
+        String hours = String.valueOf(time / 60);
+        if (hours.length() == 1) {
+            hours = "0" + hours;
+        }
+        return (hours + ":" + minutes);
     }
 }
