@@ -49,6 +49,12 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         }
 
+        // Show the add button to create a custom recording only when the
+        // application is unlocked
+        if (app.isUnlocked()) {
+            (menu.findItem(R.id.menu_add)).setVisible(true);
+        }
+
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);

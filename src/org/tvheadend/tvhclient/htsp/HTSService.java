@@ -119,6 +119,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (action.equals(Constants.ACTION_ADD_DVR_ENTRY)) {
             addDvrEntry(intent.getLongExtra("channelId", 0),
                     intent.getLongExtra("eventId", 0),
+                    intent.getLongExtra("start", 0),
+                    intent.getLongExtra("stop", 0),
+                    intent.getLongExtra("retention", 0),
+                    intent.getLongExtra("priority", 2),
+                    intent.getLongExtra("startExtra", 0),
+                    intent.getLongExtra("stopExtra", 0),
+                    intent.getStringExtra("title"),
+                    intent.getStringExtra("description"),
                     intent.getStringExtra("configName"));
 
         } else if (action.equals(Constants.ACTION_UPDATE_DVR_ENTRY)) {
@@ -1097,11 +1105,31 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void addDvrEntry(final long channelId, final long eventId,
+            long start, long stop, long retention, long priority,
+            long startExtra, long stopExtra, String title, String description,
             String configName) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
-        request.putField("eventId", eventId);
+
+        // If the eventId is set then an existing program from the program guide
+        // shall be recorded. The server will then ignore the other fields
+        // automatically.
+        request.putField("eventId", eventId);        
+        request.putField("channelId", channelId);
+        request.putField("start", start);
+        request.putField("stop", stop);
+        request.putField("startExtra", startExtra);
+        request.putField("stopExtra", stopExtra);
+        request.putField("retention", retention);
+        request.putField("priority", priority);
+        if (title != null) {
+            request.putField("title", title);
+        }
+        if (description != null) {
+            request.putField("description", description);
+        }
+
         if (configName != null) {
             request.putField("configName", configName);
         }

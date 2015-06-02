@@ -1049,8 +1049,9 @@ public class Utils {
 	}
 
     /**
-     * Set the time from the long value. Prepend leading zeros to the hours or
-     * minutes in case they are lower then ten.
+     * Converts the given time in milliseconds to a human readable time value.
+     * Adds leading zeros to the hour or minute values in case they are lower
+     * then ten.
      * 
      * @return time in hh:mm format
      */
@@ -1064,6 +1065,17 @@ public class Utils {
             hours = "0" + hours;
         }
         return (hours + ":" + minutes);
+    }
+
+    /**
+     * Converts the given time in milliseconds to a human readable date and time
+     * string value
+     * 
+     * @return time in the 'dd.MM.yyyy, HH:mm' format
+     */
+    public static String getDateTimeStringFromValue(long time) {
+        SimpleDateFormat smf =  new SimpleDateFormat("dd.MM.yyyy, HH:mm", Locale.getDefault());
+        return smf.format(new Date(time));
     }
 
     /**

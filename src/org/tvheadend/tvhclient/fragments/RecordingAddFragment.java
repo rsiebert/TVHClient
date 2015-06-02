@@ -1,17 +1,21 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
@@ -25,17 +29,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
 @SuppressWarnings("deprecation")
-public class RecordingEditFragment extends DialogFragment {
+public class RecordingAddFragment extends DialogFragment {
 
-    private final static String TAG = RecordingEditFragment.class.getSimpleName();
+    private final static String TAG = RecordingAddFragment.class.getSimpleName();
 
     private ActionBarActivity activity;
     private Recording rec;
@@ -48,6 +54,7 @@ public class RecordingEditFragment extends DialogFragment {
     private EditText stopExtra;
     private EditText title;
     private EditText description;
+    private TextView channelName;
 
     // Extra pre- and postrecording times in seconds
     private long startExtraValue;
@@ -60,7 +67,9 @@ public class RecordingEditFragment extends DialogFragment {
     private long priorityValue;
     private String titleValue;
     private String descriptionValue;
+    private int channelSelectionValue;
 
+    String[] channelList;
     String[] priorityList;
 
     private TVHClientApplication app;
@@ -68,8 +77,8 @@ public class RecordingEditFragment extends DialogFragment {
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
 
-    public static RecordingEditFragment newInstance(Bundle args) {
-        RecordingEditFragment f = new RecordingEditFragment();
+    public static RecordingAddFragment newInstance(Bundle args) {
+        RecordingAddFragment f = new RecordingAddFragment();
         f.setArguments(args);
         return f;
     }
@@ -79,6 +88,13 @@ public class RecordingEditFragment extends DialogFragment {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
         app = (TVHClientApplication) activity.getApplication();
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
 
     @Override
@@ -99,6 +115,7 @@ public class RecordingEditFragment extends DialogFragment {
         outState.putLong("stopExtraValue", stopExtraValue);
         outState.putString("titleValue", titleValue);
         outState.putString("descriptionValue", descriptionValue);
+        outState.putInt("channelNameValue", channelSelectionValue);
         super.onSaveInstanceState(outState);
     }
 
@@ -127,6 +144,18 @@ public class RecordingEditFragment extends DialogFragment {
                 stopTimeValue = rec.stop.getTime();
                 titleValue = rec.title;
                 descriptionValue = rec.description;
+                int pos = app.getChannels().indexOf(rec.channel);
+                channelSelectionValue = (pos >= 0 ? pos : 0);
+            } else {
+                Date date = new Date();
+                priorityValue = 2;
+                startExtraValue = 0;
+                stopExtraValue = 0;
+                startTimeValue = date.getTime();
+                stopTimeValue = date.getTime() + 30 * 60 * 1000;
+                titleValue = "";
+                descriptionValue = "";
+                channelSelectionValue = 0;
             }
         } else {
             // Restore the values before the orientation change
@@ -137,25 +166,37 @@ public class RecordingEditFragment extends DialogFragment {
             stopTimeValue = savedInstanceState.getLong("stopTimeValue");
             titleValue = savedInstanceState.getString("titleValue");
             descriptionValue = savedInstanceState.getString("descriptionValue");
+            channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
 
-        // Show only the title, stop and extra stop time when the recording is
-        // already being recorded
-        View v = inflater.inflate(
-                (rec.isRecording() ? R.layout.recording_edit_recording_layout
-                        : R.layout.recording_edit_scheduled_layout), container, false);
+        // Create the list of channels that the user can select
+        channelList = new String[app.getChannels().size()];
+        for (int i = 0; i < app.getChannels().size(); i++) {
+            channelList[i] = app.getChannels().get(i).name;
+        }
+
+        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
+
+        // Assume a new recording shall be added. If a recording was given then
+        // show the layouts to edit it. If the recording is already being
+        // recorded show only the title, stop and extra stop times.
+        int layout = R.layout.recording_add_layout;
+        if (rec != null) {
+            layout = (rec.isRecording() ? R.layout.recording_edit_recording_layout
+                    : R.layout.recording_edit_scheduled_layout);
+        }
+        View v = inflater.inflate(layout, container, false);
 
         // Initialize all the widgets from the layout
         title = (EditText) v.findViewById(R.id.title);
         description = (EditText) v.findViewById(R.id.description);
+        channelName = (TextView) v.findViewById(R.id.channel);
         startExtra = (EditText) v.findViewById(R.id.start_extra);
         stopExtra = (EditText) v.findViewById(R.id.stop_extra);
         startTime = (TextView) v.findViewById(R.id.start_time);
         stopTime = (TextView) v.findViewById(R.id.stop_time);
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-
-        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
         return v;
     }
 
@@ -171,6 +212,28 @@ public class RecordingEditFragment extends DialogFragment {
             description.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
             description.setText(descriptionValue);
         }
+
+        if (channelName != null) {
+            channelName.setText(channelList[channelSelectionValue]);
+            channelName.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new MaterialDialog.Builder(activity)
+                    .title(R.string.select_channel)
+                    .items(channelList)
+                    .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                            channelName.setText(channelList[which]);
+                            channelSelectionValue = which;
+                            return true;
+                        }
+                    })
+                    .show();
+                }
+            });
+        }
+
         if (priority != null) {
             priority.setText(priorityList[(int) priorityValue]);
             priority.setOnClickListener(new OnClickListener() {
@@ -192,7 +255,7 @@ public class RecordingEditFragment extends DialogFragment {
             });
         }
         if (startTime != null) {
-            startTime.setText(getTimeStringFromValue(startTimeValue));
+            startTime.setText(Utils.getDateTimeStringFromValue(startTimeValue));
             // Show the time picker dialog so the user can select a new starting time
             startTime.setOnClickListener(new OnClickListener() {
                 @Override
@@ -203,7 +266,7 @@ public class RecordingEditFragment extends DialogFragment {
                                 @Override
                                 public void onDateTimeSet(Date date) {
                                     startTimeValue = date.getTime();
-                                    startTime.setText(getTimeStringFromValue(startTimeValue));
+                                    startTime.setText(Utils.getDateTimeStringFromValue(startTimeValue));
                                 }
                                 @Override
                                 public void onDateTimeCancel() {
@@ -217,7 +280,7 @@ public class RecordingEditFragment extends DialogFragment {
             });
         }
         if (stopTime != null) {
-            stopTime.setText(getTimeStringFromValue(stopTimeValue));
+            stopTime.setText(Utils.getDateTimeStringFromValue(stopTimeValue));
             // Show the time picker dialog so the user can select a new starting time
             stopTime.setOnClickListener(new OnClickListener() {
                 @Override
@@ -228,7 +291,7 @@ public class RecordingEditFragment extends DialogFragment {
                                 @Override
                                 public void onDateTimeSet(Date date) {
                                     stopTimeValue = date.getTime();
-                                    stopTime.setText(getTimeStringFromValue(stopTimeValue));
+                                    stopTime.setText(Utils.getDateTimeStringFromValue(stopTimeValue));
                                 }
                                 @Override
                                 public void onDateTimeCancel() {
@@ -248,6 +311,7 @@ public class RecordingEditFragment extends DialogFragment {
             stopExtra.setText(String.valueOf(stopExtraValue));
         }
         if (toolbar != null) {
+            toolbar.setTitle(rec != null ? R.string.edit_recording : R.string.add_recording);
             toolbar.inflateMenu(R.menu.save_cancel_menu);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -258,7 +322,6 @@ public class RecordingEditFragment extends DialogFragment {
         }
 
         if (getDialog() != null) {
-            getDialog().setTitle(R.string.edit_recording);
             getDialog().setCanceledOnTouchOutside(false);
         }
     }
@@ -332,23 +395,56 @@ public class RecordingEditFragment extends DialogFragment {
     private void save() {
         getValues();
 
+        // The title must not be empty
+        if (titleValue.length() == 0) {
+            Toast.makeText(activity, getString(R.string.error_empty_title),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Intent intent = new Intent(activity, HTSService.class);
-        intent.setAction(Constants.ACTION_UPDATE_DVR_ENTRY);
-        intent.putExtra("id", rec.id);
-        intent.putExtra("title", titleValue);
-        intent.putExtra("stopExtra", stopExtraValue);
-        intent.putExtra("stop", stopTimeValue / 1000); // Pass on seconds not milliseconds
 
-        // Only add the additional field when the recording is scheduled. When
-        // it is already being recorded only the title, stop and stopExtra will
-        // be accepted. All other entries will be ignored and not sent
-        intent.putExtra("isRecording", rec.isRecording());
+        // If the recording id was provided, then an existing recording was
+        // edited and not a new one was added
+        if (rec != null && rec.id > 0) {
+            intent.setAction(Constants.ACTION_UPDATE_DVR_ENTRY);
+            intent.putExtra("id", rec.id);
+        } else {
+            intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+
+            // Add the recording profile if available and enabled
+            final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+            final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+            if (p != null 
+                    && p.enabled
+                    && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                    && app.isUnlocked()) {
+                intent.putExtra("configName", p.name);
+            }
+            // The id must be passed on to the server, not the name. So go through
+            // all available channels and get the id for the selected channel name.
+            for (Channel c : app.getChannels()) {
+                if (c.name.equals(channelName.getText().toString())) {
+                    intent.putExtra("channelId", c.id);
+                    break;
+                }
+            }
+        }
 
         intent.putExtra("title", titleValue);
-        intent.putExtra("description", descriptionValue);
-        intent.putExtra("startExtra", startExtraValue);
         intent.putExtra("start", startTimeValue / 1000); // Pass on seconds not milliseconds
+        intent.putExtra("stop", stopTimeValue / 1000); // Pass on seconds not milliseconds
+        intent.putExtra("startExtra", startExtraValue);
+        intent.putExtra("stopExtra", stopExtraValue);
+        intent.putExtra("description", descriptionValue);
         intent.putExtra("priority", priorityValue);
+
+        // Pass on the information if a recording is already recording. When it
+        // is already being recorded only the title, stop and stopExtra will be
+        // accepted. All other entries will be ignored and not sent
+        if (rec != null) {
+            intent.putExtra("isRecording", rec.isRecording());
+        }
 
         activity.startService(intent);
 
@@ -381,16 +477,5 @@ public class RecordingEditFragment extends DialogFragment {
                         dialog.cancel();
                     }
                 }).show();
-    }
-
-    /**
-     * Set the time from the long value. Prepend leading zeros to the hours or
-     * minutes in case they are lower then ten.
-     * 
-     * @return time in hh:mm format
-     */
-    private String getTimeStringFromValue(long time) {
-        SimpleDateFormat smf =  new SimpleDateFormat("HH:mm, dd.MM.yyyy", Locale.getDefault());
-        return smf.format(new Date(time));
     }
 }
