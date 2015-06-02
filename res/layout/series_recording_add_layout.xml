@@ -60,12 +60,21 @@
                     android:paddingTop="16dp"
                     android:text="@string/channel" />
 
-                <Spinner
+                <TextView
                     android:id="@+id/channel"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp" />
+                    android:drawableEnd="?attr/ic_arrow_drop_down"
+                    android:drawablePadding="8dp"
+                    android:drawableRight="?attr/ic_arrow_drop_down"
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/not_set" />
 
                 <TextView
                     android:id="@+id/minimum_duration_label"
@@ -127,7 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/extra_stop_time" />
+                    android:text="@string/extra_start_time" />
 
                 <EditText
                     android:id="@+id/start_extra"
@@ -144,7 +153,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/extra_start_time" />
+                    android:text="@string/extra_stop_time" />
 
                 <EditText
                     android:id="@+id/stop_extra"
@@ -163,12 +172,21 @@
                     android:paddingTop="16dp"
                     android:text="@string/priority" />
 
-                <Spinner
+                <TextView
                     android:id="@+id/priority"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp" />
+                    android:drawableEnd="?attr/ic_arrow_drop_down"
+                    android:drawablePadding="8dp"
+                    android:drawableRight="?attr/ic_arrow_drop_down"
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/not_set" />
             </LinearLayout>
         </ScrollView>
 

@@ -19,44 +19,48 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class StatusFragment extends Fragment implements HTSListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = StatusFragment.class.getSimpleName();
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
 
+    private LinearLayout additionalInformationLayout;
+
+	// This information is always available
     private TextView connection;
     private TextView status;
-    private TextView discspaceLabel;
-	private TextView freediscspace;
-	private TextView totaldiscspace;
-	private TextView channelLabel;
-	private TextView channels;
-	private TextView currentlyRecLabel;
+    private TextView channels;
 	private TextView currentlyRec;
-	private TextView recLabel;
 	private TextView completedRec;
 	private TextView upcomingRec;
 	private TextView failedRec;
+    private TextView freediscspace;
+    private TextView totaldiscspace;
+    private TextView serverApiVersion;
+
+    // This information depends on the server capabilities
 	private TextView seriesRecLabel;
 	private TextView seriesRec;
 	private TextView timerRecLabel;
     private TextView timerRec;
-    private TextView serverApiVersionLabel;
-    private TextView serverApiVersion;
 
     private String connectionStatus = "";
     private String freeDiscSpace = "";
     private String totalDiscSpace = "";
-	
+
+    private TVHClientApplication app;
+
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }
@@ -69,23 +73,20 @@ public class StatusFragment extends Fragment implements HTSListener {
         View v = inflater.inflate(R.layout.status_fragment_layout, container, false);
         connection = (TextView) v.findViewById(R.id.connection);
         status = (TextView) v.findViewById(R.id.status);
-        discspaceLabel = (TextView) v.findViewById(R.id.discspace_label);
-        freediscspace = (TextView) v.findViewById(R.id.free_discspace);
-        totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
-        channelLabel = (TextView) v.findViewById(R.id.channel_label);
+        additionalInformationLayout = (LinearLayout) v.findViewById(R.id.additional_information_layout);
         channels = (TextView) v.findViewById(R.id.channels);
-        currentlyRecLabel = (TextView) v.findViewById(R.id.currently_recording_label);
         currentlyRec = (TextView) v.findViewById(R.id.currently_recording);
-        recLabel = (TextView) v.findViewById(R.id.recording_label);
         completedRec = (TextView) v.findViewById(R.id.completed_recordings);
         upcomingRec = (TextView) v.findViewById(R.id.upcoming_recordings);
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
+        freediscspace = (TextView) v.findViewById(R.id.free_discspace);
+        totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
         seriesRecLabel = (TextView) v.findViewById(R.id.series_recording_label);
         seriesRec = (TextView) v.findViewById(R.id.series_recordings);
         timerRecLabel = (TextView) v.findViewById(R.id.timer_recording_label);
         timerRec = (TextView) v.findViewById(R.id.timer_recordings);
-        serverApiVersionLabel = (TextView) v.findViewById(R.id.server_api_version_label);
         serverApiVersion = (TextView) v.findViewById(R.id.server_api_version);
+
         return v;
     }
 
@@ -93,6 +94,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -103,23 +105,22 @@ public class StatusFragment extends Fragment implements HTSListener {
             actionBarInterface = (ActionBarInterface) activity;
         }
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.status), TAG);
-            actionBarInterface.setActionBarSubtitle("", TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.status));
+            actionBarInterface.setActionBarSubtitle("");
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
 
-        // Upon resume show the actual status. If the connection is OK show the
-        // full status or that stuff is loading, otherwise hide certain
-        // information and show the cause of the connection problem. 
-        hideStatus();
-        if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            onMessage(Constants.ACTION_LOADING, app.isLoading());
+        // Upon resume show the actual status. If stuff is loading hide certain
+        // information, otherwise show the connection status and the cause of
+        // possible connection problems. 
+        additionalInformationLayout.setVisibility(View.GONE);
+        if (app.isLoading()) {
+            onMessage(Constants.ACTION_LOADING, true);
         } else {
             onMessage(connectionStatus, false);
         }
@@ -128,7 +129,6 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -144,10 +144,16 @@ public class StatusFragment extends Fragment implements HTSListener {
 	        activity.runOnUiThread(new Runnable() {
                 public void run() {
                     connectionStatus = action;
+
+                    // The connection to the server is fine again, therefore
+                    // show the additional information again
+                    additionalInformationLayout.setVisibility(View.VISIBLE);
                     showConnectionStatus();
-                    showChannelStatus();
+                    channels.setText(app.getChannels().size() + " " + getString(R.string.available));
                     showRecordingStatus();
-                    getDiscSpaceStatus();
+
+                    // Also get the disc space in case it was not yet retrieved
+                    getDiscSpace();
                 }
             });
 	    } else if (action.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)
@@ -156,11 +162,15 @@ public class StatusFragment extends Fragment implements HTSListener {
                 || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
                 || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
+                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)
+                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)) {
 	        activity.runOnUiThread(new Runnable() {
                 public void run() {
                     connectionStatus = action;
-                    hideStatus();
+
+                    // Hide the additional status information because the
+                    // connection to the server is not OK
+                    additionalInformationLayout.setVisibility(View.GONE);
                     showConnectionStatus();
                 }
             });
@@ -170,16 +180,27 @@ public class StatusFragment extends Fragment implements HTSListener {
                     boolean loading = (Boolean) obj;
                     if (actionBarInterface != null) {
                         final String updating = (loading ? getString(R.string.updating) : "");
-                        actionBarInterface.setActionBarSubtitle(updating, TAG);
+                        actionBarInterface.setActionBarSubtitle(updating);
                     }
 
+                    // Show that data is being loaded from the server and hide
+                    // the additional information, because this information is
+                    // outdated. If the data has been loaded from the server,
+                    // show the additional status layout again and display the
+                    // available information. 
                     if (loading) {
                         status.setText(getString(R.string.loading));
+                        additionalInformationLayout.setVisibility(View.GONE);
                     } else {
+                        additionalInformationLayout.setVisibility(View.VISIBLE);
                         showConnectionStatus();
-                        showChannelStatus();
+                        channels.setText(app.getChannels().size() + " " + getString(R.string.available));
                         showRecordingStatus();
-                        getDiscSpaceStatus();
+
+                        // After the data has been loaded, the server accepts
+                        // new service calls, get the disc space information 
+                        // from the server 
+                        getDiscSpace();
                     }
                 }
             });
@@ -187,35 +208,10 @@ public class StatusFragment extends Fragment implements HTSListener {
             activity.runOnUiThread(new Runnable() {
                 @SuppressWarnings("unchecked")
                 public void run() {
-                	calculateDiscSpace((Map<String, String>) obj);
-                	showDiscSpaceStatus();
+                	showDiscSpace((Map<String, String>) obj);
                 }
             });
         }
-	}
-
-	    /**
-     * Hides all status fields. Each field will be made visible by other methods
-     * when it is required.
-     */
-	protected void hideStatus() {
-	    discspaceLabel.setVisibility(View.GONE);
-        freediscspace.setVisibility(View.GONE);
-        totaldiscspace.setVisibility(View.GONE);
-        channelLabel.setVisibility(View.GONE);
-        channels.setVisibility(View.GONE);
-        currentlyRecLabel.setVisibility(View.GONE);
-        currentlyRec.setVisibility(View.GONE);
-        recLabel.setVisibility(View.GONE);
-        completedRec.setVisibility(View.GONE);
-        upcomingRec.setVisibility(View.GONE);
-        failedRec.setVisibility(View.GONE);
-        seriesRecLabel.setVisibility(View.GONE);
-        seriesRec.setVisibility(View.GONE);
-        timerRecLabel.setVisibility(View.GONE);
-        timerRec.setVisibility(View.GONE);
-        serverApiVersionLabel.setVisibility(View.GONE);
-        serverApiVersion.setVisibility(View.GONE);
 	}
 
     /**
@@ -225,6 +221,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * timeouts or other errors.
      */
     protected void showConnectionStatus() {
+
         // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
@@ -242,60 +239,41 @@ public class StatusFragment extends Fragment implements HTSListener {
                 connection.setText(getString(R.string.no_connection_active_advice));
             }
         } else {
-            if (conn != null) {
-                connection.setText(conn.name + " (" + conn.address + ")");
-            }
+            connection.setText(conn.name + " (" + conn.address + ")");
         }
 
         // Show a textual description about the connection state
         if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
             status.setText(getString(R.string.ready));
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)
-                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
+            status.setText(R.string.err_connect);
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
             status.setText(R.string.err_con_lost);
         } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
             status.setText(R.string.err_con_timeout);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)) {
-            status.setText(R.string.err_connect);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED) 
+                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
             status.setText(R.string.err_auth);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)
-                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NONE)) {
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)) {
+            status.setText(getString(R.string.err_no_network));
+        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)) {
+            status.setText(getString(R.string.no_connection_available));
+        } else {
             status.setText(getString(R.string.unknown));
         }
     }
 
     /**
-     * Calls the service to get the free and total disc space. Additionally the
-     * loading indication for these fields are shown.
+     * Calls the service to get the available disc space information from the
+     * server. Additionally sets the text views to loading until the data has
+     * been received.
      */
-    protected void getDiscSpaceStatus() {
+    private void getDiscSpace() {
+        freediscspace.setText(getString(R.string.loading));
+        totaldiscspace.setText(getString(R.string.loading));
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_GET_DISC_SPACE);
         activity.startService(intent);
-
-        discspaceLabel.setVisibility(View.VISIBLE);
-        freediscspace.setVisibility(View.VISIBLE);
-        totaldiscspace.setVisibility(View.VISIBLE);
-        freediscspace.setText(getString(R.string.loading));
-        totaldiscspace.setText(getString(R.string.loading));
-    }
-
-    /**
-     * Shows the available disc space if at least one of the two fields have an
-     * actual value. If both fields are empty, hide the indications and the free
-     * disc space description.
-     */
-    protected void showDiscSpaceStatus() {
-        int visible = View.VISIBLE;
-        if (freeDiscSpace.length() == 0 && totalDiscSpace.length() == 0) {
-            visible = View.GONE;
-        }
-        discspaceLabel.setVisibility(visible);
-        freediscspace.setVisibility(visible);
-        totaldiscspace.setVisibility(visible);
-        freediscspace.setText(freeDiscSpace);
-        totaldiscspace.setText(totalDiscSpace);
     }
 
     /**
@@ -304,8 +282,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * 
      * @param obj
      */
-    protected void calculateDiscSpace(Map<String, String> obj) {
-        Map<String, String> list = obj;
+    private void showDiscSpace(final Map<String, String> list) {
         try {
             // Get the disc space values and convert them to megabytes
             long free = (Long.parseLong(list.get("freediskspace")) / 1000000);
@@ -332,25 +309,14 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     /**
-     * Shows the information how many channels are available.
-     */
-    private void showChannelStatus() {
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        channelLabel.setVisibility(View.VISIBLE);
-        channels.setVisibility(View.VISIBLE);
-        channels.setText(app.getChannels().size() + " " + getString(R.string.available));
-    }
-
-    /**
      * Shows the program that is currently being recorded and the summary about
      * the available, scheduled and failed recordings.
      */
     private void showRecordingStatus() {
         String currentRecText = "";
 
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+        // Get the programs that are currently being recorded
         for (Recording rec : app.getRecordings()) {
-            // Add the information what is currently being recorded.
             if (rec.isRecording() == true) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
                 if (rec.channel != null) {
@@ -359,34 +325,46 @@ public class StatusFragment extends Fragment implements HTSListener {
             }
         }
 
-        currentlyRecLabel.setVisibility(View.VISIBLE);
-        currentlyRec.setVisibility(View.VISIBLE);
-        recLabel.setVisibility(View.VISIBLE);
-        completedRec.setVisibility(View.VISIBLE);
-        upcomingRec.setVisibility(View.VISIBLE);
-        failedRec.setVisibility(View.VISIBLE);
-        seriesRecLabel.setVisibility(View.VISIBLE);
-        seriesRec.setVisibility(View.VISIBLE);
+        // Show which programs are being recorded
+        currentlyRec.setText(currentRecText.length() > 0 ? currentRecText
+                : getString(R.string.nothing));
 
-        if (app.isUnlocked()) {
-            timerRecLabel.setVisibility(View.VISIBLE);
-            timerRec.setVisibility(View.VISIBLE);
+        final int completedRecCount = app.getRecordingsByType(
+                Constants.RECORDING_TYPE_COMPLETED).size();
+        final int scheduledRecCount = app.getRecordingsByType(
+                Constants.RECORDING_TYPE_SCHEDULED).size();
+        final int failedRecCount = app.getRecordingsByType(
+                Constants.RECORDING_TYPE_FAILED).size();
+
+        // Show how many different recordings are available
+        completedRec.setText(getResources().getQuantityString(
+                R.plurals.completed_recordings, completedRecCount,
+                completedRecCount));
+        upcomingRec.setText(getResources().getQuantityString(
+                R.plurals.upcoming_recordings, scheduledRecCount,
+                scheduledRecCount));
+        failedRec.setText(getResources().getQuantityString(
+                R.plurals.failed_recordings, failedRecCount, failedRecCount));
+
+        // Show how many series recordings are available
+        if (app.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+            seriesRecLabel.setVisibility(View.GONE);
+            seriesRec.setVisibility(View.GONE);
+        } else {
+            seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
         }
-        serverApiVersionLabel.setVisibility(View.VISIBLE);
-        serverApiVersion.setVisibility(View.VISIBLE);
 
-        // Show either the program being currently recorded or an different string
-        currentlyRec.setText(currentRecText.length() > 0 ? currentRecText : getString(R.string.nothing));
+        // Show how many timer recordings are available if the server supports
+        // it and the application is unlocked
+        if (app.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS || !app.isUnlocked()) {
+            timerRecLabel.setVisibility(View.GONE);
+            timerRec.setVisibility(View.GONE);
+        } else {
+            timerRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
+        }
 
-        final int completedRecCount = app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
-        final int scheduledRecCount = app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
-        final int failedRecCount = app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
-
-        completedRec.setText(getResources().getQuantityString(R.plurals.completed_recordings, completedRecCount, completedRecCount));
-        upcomingRec.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, scheduledRecCount, scheduledRecCount));
-        failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, failedRecCount, failedRecCount));
-        seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
-        timerRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
-        serverApiVersion.setText(String.valueOf(app.getProtocolVersion()));
+        serverApiVersion.setText(String.valueOf(app.getProtocolVersion())
+                + "   (" + getString(R.string.server) + ": "
+                + app.getServerName() + " " + app.getServerVersion() + ")");
     }
 }

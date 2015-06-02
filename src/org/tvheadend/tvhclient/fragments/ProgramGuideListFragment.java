@@ -74,6 +74,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     // unwanted calls to the interface. 
     private boolean enableScrolling = false;
 
+    private TVHClientApplication app;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -126,6 +128,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (FragmentActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -142,7 +145,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
 
-        // Create a scroll listener to inform the parent activity about
+        // Inform the activity when the program guide list is scrolling or has
+        // finished scrolling. Required to synchronize the scrolling of the
+        // program guide list with the channel list.
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -192,8 +197,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         };
         timer.schedule(doAsynchronousTask, 0, 60000);
 
-        // Create the runnable that will initiate the update of the adapter that
-        // will trigger the update of the program guide view
+        // This task will be called when the timer to delay the adapter update
+        // has expired. It triggers the update of the program guide view. The
+        // timer is started in the startDelayedAdapterUpdate method.
         updateEpgTask = new Runnable() {
             public void run() {
                 adapter.notifyDataSetChanged();
@@ -214,10 +220,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
     /**
      * Fills the list with the available program guide data from the available
-     * channels. Only the channels that are part of the selected tag are shown.
+     * channels. Only the programs of those channels will be added to the
+     * adapter that contain the selected channel tag.
      */
     private void populateList() {
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         ChannelTag currentTag = Utils.getChannelTag(app);
         adapter.clear();
         for (Channel ch : app.getChannels()) {
@@ -228,8 +234,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         adapter.sort(Utils.getChannelSortOrder(activity));
         startDelayedAdapterUpdate();
 
-        // Inform the listeners that the channel list is populated.
-        // They could then define the preselected list item.
+        // Inform the activity that the program list has been populated. The
+        // activity will then inform the fragment to select the first item in
+        // the list or scroll to the previously selected one in case the
+        // orientation has changed
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.onListPopulated(TAG);
         }
@@ -238,7 +246,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
             populateList();
@@ -248,13 +255,13 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     /**
      * Shows a vertical line in the program guide to indicate the current time.
      * This line is only visible in the first screen where the current time is
-     * shown.
+     * shown. This method is called every minute.
      */
     @SuppressWarnings("deprecation")
     @SuppressLint("InlinedApi")
     private void setCurrentTimeIndication() {
         if (bundle != null && currentTimeIndication != null && activity != null) {
-            int tabIndex = bundle.getInt(Constants.BUNDLE_EPG_INDEX, -1);
+            final int tabIndex = bundle.getInt(Constants.BUNDLE_EPG_INDEX, -1);
             if (tabIndex == 0) {
                 // Get the difference between the current time and the given
                 // start time. Calculate from this value in minutes the width in
@@ -267,11 +274,13 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                 final float pixelsPerMinute = bundle.getFloat(Constants.BUNDLE_EPG_PIXELS_PER_MINUTE, 0);
                 final int offset = (int) (durationTime * pixelsPerMinute);
 
-                // Get the height of the pager title layout
+                // Get the height of the title layout
                 Rect titleLayoutRect = new Rect();
                 titleLayout.getLocalVisibleRect(titleLayoutRect);
 
-                // Set the left and top margins of the time indication
+                // Set the left and top margins of the time indication so it
+                // starts in the actual program guide and not in the channel
+                // list or time line.
                 final int layout = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) ? LayoutParams.MATCH_PARENT : LayoutParams.FILL_PARENT;
                 RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(3, layout);
                 parms.setMargins(offset, titleLayoutRect.height(), 0, 0);
@@ -285,7 +294,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -381,8 +389,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                     final Channel ch = (Channel) obj;
                     adapter.update(ch);
 
-                    // Only update the channel if is not blocked
-                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+                    // Only update the channel if it is not already being loaded
+                    // or if it is queued for loading
                     if (!app.isChannelBlocked(ch)) {
                         startDelayedAdapterUpdate();
                     }
@@ -408,15 +416,15 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     }
 
     @Override
-    public void setInitialSelection(final int position) {
-        setSelection(position, 0);
-    }
-
-    @Override
     public void setSelection(final int position, final int offset) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, offset);
         }
+    }
+
+    @Override
+    public void setInitialSelection(final int position) {
+        setSelection(position, 0);
     }
 
     @Override

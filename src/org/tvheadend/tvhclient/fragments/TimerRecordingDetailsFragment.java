@@ -43,6 +43,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private TextView recordRemove;
     private TextView recordEdit;
 
+    private TVHClientApplication app;
+
     public static TimerRecordingDetailsFragment newInstance(Bundle args) {
         TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
         f.setArguments(args);
@@ -62,6 +64,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -76,7 +79,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         }
 
         // Get the recording so we can show its details 
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         trec = app.getTimerRecording(recId);
 
         // Initialize all the widgets from the layout
@@ -118,36 +120,27 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         }
         showPlayerControls();
 
-        if (isEnabled != null) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            isEnabled.setVisibility((app.getProtocolVersion() >= 18) ? View.VISIBLE : View.GONE);
-            if (trec.enabled) {
-                isEnabled.setText(R.string.recording_enabled);
-            } else {
-                isEnabled.setText(R.string.recording_disabled);
-            }
-        }
-        if (channelName != null && trec.channel != null) {
+        // TODO use a constant here
+        isEnabled.setVisibility((app.getProtocolVersion() >= 18) ? View.VISIBLE : View.GONE);
+        isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+
+        if (trec.channel != null) {
             channelName.setText(trec.channel.name);
         }
 
         Utils.setDaysOfWeek(activity, null, daysOfWeek, trec.daysOfWeek);
 
-        if (priority != null) {
-            String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-            if (trec.priority >= 0 && trec.priority < priorityItems.length) {
-                priority.setText(priorityItems[(int) (trec.priority)]);
-            }
+        String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
+        if (trec.priority >= 0 && trec.priority < priorityItems.length) {
+            priority.setText(priorityItems[(int) (trec.priority)]);
         }
-        if (time != null) {
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-            String start = formatter.format(new Date(trec.start * 60L * 1000L));
-            String stop = formatter.format(new Date(trec.stop * 60L * 1000L));
-            time.setText(getString(R.string.from_to_time, start, stop));
-        }
-        if (duration != null) {
-            duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));
-        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+        String start = formatter.format(new Date(trec.start * 60L * 1000L));
+        String stop = formatter.format(new Date(trec.stop * 60L * 1000L));
+        time.setText(getString(R.string.from_to_time, start, stop));
+
+        duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));
     }
 
     /**
@@ -156,8 +149,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private void showPlayerControls() {
         playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
         recordRemove.setVisibility(View.VISIBLE);
-
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         recordEdit.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
     }
 

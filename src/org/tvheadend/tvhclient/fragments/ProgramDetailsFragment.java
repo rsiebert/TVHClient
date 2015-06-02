@@ -55,11 +55,13 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private RatingBar ratingBar;
 
     private LinearLayout playerLayout;
-    private TextView play;
-    private TextView recordOnce;
-    private TextView recordSeries;
-    private TextView recordCancel;
-    
+    private TextView playButton;
+    private TextView recordOnceButton;
+    private TextView recordSeriesButton;
+    private TextView recordCancelButton;
+
+    private TVHClientApplication app;
+
     public static ProgramDetailsFragment newInstance(Bundle args) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
         f.setArguments(args);
@@ -79,6 +81,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (Activity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -96,7 +99,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
         
         // Get the channel of the program
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         channel = app.getChannel(channelId);
         if (channel != null) {
             // Find the program with the given id within this channel so we can
@@ -132,10 +134,10 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        play = (TextView) v.findViewById(R.id.menu_play);
-        recordOnce = (TextView) v.findViewById(R.id.menu_record_once);
-        recordSeries = (TextView) v.findViewById(R.id.menu_record_series);
-        recordCancel = (TextView) v.findViewById(R.id.menu_record_cancel);
+        playButton = (TextView) v.findViewById(R.id.menu_play);
+        recordOnceButton = (TextView) v.findViewById(R.id.menu_record_once);
+        recordSeriesButton = (TextView) v.findViewById(R.id.menu_record_series);
+        recordCancelButton = (TextView) v.findViewById(R.id.menu_record_cancel);
 
         return v;
     }
@@ -159,11 +161,12 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
 
         // Show the player controls
+        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
         if (showControls) {
             addPlayerControlListeners();
+            showPlayerControls();
         }
-        showPlayerControls();
-        
+
         // Show the program information        
         Utils.setState(activity, state, program);
         Utils.setDate(date, program.start);
@@ -196,39 +199,38 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             return;
         }
 
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        play.setVisibility(View.VISIBLE);
-        recordOnce.setVisibility(View.VISIBLE);
-        recordSeries.setVisibility(View.VISIBLE);
-        recordCancel.setVisibility(View.VISIBLE);
-        
+        playButton.setVisibility(View.VISIBLE);
+        recordOnceButton.setVisibility(View.VISIBLE);
+        recordSeriesButton.setVisibility(View.VISIBLE);
+        recordCancelButton.setVisibility(View.VISIBLE);
+
         // Show the play menu item when the current 
         // time is between the program start and end time
         long currentTime = new Date().getTime();
         if (program.start != null && program.stop != null
                 && currentTime > program.start.getTime()
                 && currentTime < program.stop.getTime()) {
-            play.setVisibility(View.VISIBLE);
+            playButton.setVisibility(View.VISIBLE);
         } else {
-            play.setVisibility(View.GONE);
+            playButton.setVisibility(View.GONE);
         }
-        
+
         if (program.recording == null) {
             // Show the record menu
-            recordCancel.setVisibility(View.GONE);
+            recordCancelButton.setVisibility(View.GONE);
         } else if (program.isRecording()) {
             // Show the cancel menu
-            recordOnce.setVisibility(View.GONE);
-            recordSeries.setVisibility(View.GONE);
+            recordOnceButton.setVisibility(View.GONE);
+            recordSeriesButton.setVisibility(View.GONE);
         } else if (program.isScheduled()) {
             // Show the cancel and play menu
-            recordOnce.setVisibility(View.GONE);
-            recordSeries.setVisibility(View.GONE);
+            recordOnceButton.setVisibility(View.GONE);
+            recordSeriesButton.setVisibility(View.GONE);
         } else {
             // Show the delete menu
-            recordOnce.setVisibility(View.GONE);
-            recordSeries.setVisibility(View.GONE);
-            recordCancel.setVisibility(View.GONE);
+            recordOnceButton.setVisibility(View.GONE);
+            recordSeriesButton.setVisibility(View.GONE);
+            recordCancelButton.setVisibility(View.GONE);
         }
     }
 
@@ -236,57 +238,63 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
      * 
      */
     private void addPlayerControlListeners() {
-        play.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open a new activity that starts playing the program
-                if (program != null && program.channel != null) {
-                    Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
-                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-                    startActivity(intent);
+        if (playButton != null) {
+            playButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Open a new activity that starts playing the program
+                    if (program != null && program.channel != null) {
+                        Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
+                        intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
-        recordOnce.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.recordProgram(activity, program, false);
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+            });
+        }
+        if (recordOnceButton != null) {
+            recordOnceButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.recordProgram(activity, program, false);
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
                 }
-            }
-        });
-        recordSeries.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.recordProgram(activity, program, true);
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+            });
+        }
+        if (recordSeriesButton != null) {
+            recordSeriesButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.recordProgram(activity, program, true);
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
                 }
-            }
-        });
-        recordCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.confirmCancelRecording(activity, program.recording);
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+            });
+        }
+        if (recordCancelButton != null) {
+            recordCancelButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.confirmCancelRecording(activity, program.recording);
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 

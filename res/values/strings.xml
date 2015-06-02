@@ -11,8 +11,10 @@
     <string name="record_series">Record (Autorec)</string>
     <string name="record_cancel">Cancel recording</string>
     <string name="record_cancel_all">Cancel all recordings</string>
+    <string name="confirm_cancel_all">Are you sure you want to cancel all recordings?</string>
     <string name="record_remove">Remove recording</string>
     <string name="record_remove_all">Remove all recordings</string>
+    <string name="confirm_remove_all">Are you sure you want to remove all recordings?</string>
     <string name="record_edit">Edit recording</string>
     <string name="search_imdb">Search on IMDB</string>
     <string name="search_epg">Search the program guide</string>
@@ -44,7 +46,9 @@
     <string name="cancel_all_recordings">Do you really want to remove ALL scheduled recordings?</string>
     <string name="add_title">Please add the title of the recording</string>
     <string name="add_recording">Add new recording</string>
+    <string name="edit_recording">Edit recording</string>
     <string name="cancel_add_recording">Cancel adding a new recording? All values will be lost.</string>
+    <string name="cancel_edit_recording">Cancel editing existing recording? All values will be lost.</string>
     <string name="add_series_recording">Add new series recording</string>
     <string name="add_timer_recording">Add new manual recording</string>
     <string name="edit_series_recording">Edit series recording</string>
@@ -146,6 +150,8 @@
     <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
+    <string name="pref_visible_menu_icon_tags">Always show the \'Channel Tags\' menu</string>
+    <string name="pref_visible_menu_icon_tags_sum">Keep the channel tag menu visible in the action bar. Prevents the menu from being moved into the three dot menu if there is not enough space.</string>
     <string name="pref_profiles">Profiles</string>
     <string name="pref_profiles_sum">Define the parameters or the profiles (if supported) how programs shall be recorded or how recordings shall be played.</string>
     <string name="pref_recording_profiles">Recording profiles</string>
@@ -179,7 +185,14 @@
     <string name="err_connect">Can\'t connect to server</string>
     <string name="err_con_lost">Lost connection to server</string>
     <string name="err_con_timeout">Connection timeout</string>
+    <string name="err_no_network">No network connection active</string>
     <string name="err_loading_profiles">Error loading profiles from server\n%s</string>
+    <string name="error_adding_recording">Recording was not added! %s</string>
+    <string name="error_removing_recording">Recording was not removed! %s</string>
+    <string name="error_updating_recording">Recording was not updated! %s</string>
+    <string name="success_adding_recording">Recording has been added.</string>
+    <string name="success_removing_recording">Recording has been removed.</string>
+    <string name="success_updating_recording">Recording has been updated.</string>
 
     <string name="recording_file_missing">Recorded file is missing</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>
@@ -300,6 +313,8 @@
     <string name="currently_recording">Currently recording</string>
     <string name="select_start_time">Select start time</string>
     <string name="select_stop_time">Select end time</string>
+    <string name="select_channel">Select channel</string>
+    <string name="select_priority">Select priority</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">No connection available</string>

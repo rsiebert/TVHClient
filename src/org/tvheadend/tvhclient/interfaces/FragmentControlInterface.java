@@ -23,9 +23,9 @@ public interface FragmentControlInterface {
      * of two fragments shall be synchronized.
      * 
      * @param position
-     * @param index
+     * @param offset
      */
-    void setSelection(final int position, final int index);
+    void setSelection(final int position, final int offset);
 
     /**
      * Returns the currently selected item from the adapter

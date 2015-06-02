@@ -127,6 +127,13 @@
             android:text="@string/is_series_recording" />
 
         <TextView
+            android:id="@+id/is_timer_recording"
+            style="?attr/SubtitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/is_timer_recording" />
+
+        <TextView
             android:id="@+id/failed_reason"
             style="?attr/SubtitleFont"
             android:layout_width="fill_parent"

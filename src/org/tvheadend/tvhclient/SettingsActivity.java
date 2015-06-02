@@ -163,7 +163,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     }
 
     @Override
-    public void setActionBarTitle(final String title, final String tag) {
+    public void setActionBarTitle(final String title) {
         if (actionBar != null && actionBarTitle != null) {
             actionBarTitle.setText(title);
         }
@@ -171,7 +171,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
     @SuppressLint("RtlHardcoded")
     @Override
-    public void setActionBarSubtitle(final String subtitle, final String tag) {
+    public void setActionBarSubtitle(final String subtitle) {
         if (actionBar != null && actionBarSubtitle != null) {
             actionBarSubtitle.setText(subtitle);
             if (subtitle.length() == 0) {
@@ -185,12 +185,12 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     }
 
     @Override
-    public void setActionBarIcon(Bitmap bitmap, String tag) {
+    public void setActionBarIcon(Bitmap bitmap) {
         // NOP
     }
 
     @Override
-    public void setActionBarIcon(int resource, String tag) {
+    public void setActionBarIcon(int resource) {
         // NOP
     }
 

@@ -55,18 +55,19 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private boolean isDualPane = false;
     private boolean allowLoading = false;
 
+    private TVHClientApplication app;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
             isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
@@ -80,6 +81,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -148,7 +150,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
             populateList();
@@ -173,14 +174,14 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // Inform the activity to show the currently visible number of the
         // programs and that the program list has been filled with data.
         if (actionBarInterface != null && channel != null) {
-            actionBarInterface.setActionBarTitle(channel.name, TAG);
+            actionBarInterface.setActionBarTitle(channel.name);
             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-            actionBarInterface.setActionBarSubtitle(items, TAG);
+            actionBarInterface.setActionBarSubtitle(items);
             if (!isDualPane) {
                 if (Utils.showChannelIcons(activity)) {
-                    actionBarInterface.setActionBarIcon(channel.iconBitmap, TAG);
+                    actionBarInterface.setActionBarIcon(channel.iconBitmap);
                 } else {
-                    actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
+                    actionBarInterface.setActionBarIcon(R.drawable.ic_launcher);
                 }
             }
         }
@@ -193,7 +194,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
         listView.setOnScrollListener(null);
     }
@@ -349,7 +349,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                         adapter.sort();
                         if (actionBarInterface != null) {
                             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                            actionBarInterface.setActionBarSubtitle(items, TAG);
+                            actionBarInterface.setActionBarSubtitle(items);
                         }
                     }
                 }
@@ -361,7 +361,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     adapter.notifyDataSetChanged();
                     if (actionBarInterface != null) {
                         String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                        actionBarInterface.setActionBarSubtitle(items, TAG);
+                        actionBarInterface.setActionBarSubtitle(items);
                     }
                 }
             });

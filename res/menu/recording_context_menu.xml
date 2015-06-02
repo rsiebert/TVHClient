@@ -8,14 +8,19 @@
         android:title="@string/play"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/menu_edit"
+        android:icon="?attr/ic_menu_edit"
+        android:title="@string/edit"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/menu_record_cancel"
         android:icon="?attr/ic_menu_record_cancel"
-        android:title="@string/record_cancel"
+        android:title="@string/cancel"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
-        android:title="@string/record_remove"
+        android:title="@string/remove"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_search_imdb"

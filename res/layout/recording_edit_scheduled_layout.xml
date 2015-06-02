@@ -26,15 +26,6 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp" >
 
-                <CheckBox
-                    android:id="@+id/is_enabled"
-                    style="?attr/SubtitleFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/activate_recording" />
-
                 <TextView
                     android:id="@+id/title_label"
                     style="?attr/TitleFont"
@@ -48,33 +39,26 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/add_title"
+                    android:hint="@string/not_set"
                     android:inputType="text"
                     android:paddingBottom="16dp" />
 
                 <TextView
-                    android:id="@+id/channel_label"
+                    android:id="@+id/description_label"
                     style="?attr/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/channel" />
+                    android:text="@string/description" />
 
-                <TextView
-                    android:id="@+id/channel"
+                <EditText
+                    android:id="@+id/description"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="?attr/ic_arrow_drop_down"
-                    android:drawablePadding="8dp"
-                    android:drawableRight="?attr/ic_arrow_drop_down"
-                    android:paddingBottom="16dp"
-                    android:paddingEnd="4dp"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:paddingStart="4dp"
-                    android:paddingTop="4dp"
-                    android:text="@string/not_set" />
+                    android:hint="@string/not_set"
+                    android:inputType="text"
+                    android:paddingBottom="16dp" />
 
                 <TextView
                     android:id="@+id/start_time_label"
@@ -89,8 +73,8 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
-                    android:text="@string/not_set" />
+                    android:hint="@string/not_set"
+                    android:paddingBottom="16dp" />
 
                 <TextView
                     android:id="@+id/stop_time_label"
@@ -105,28 +89,40 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
-                    android:text="@string/not_set" />
+                    android:hint="@string/not_set"
+                    android:paddingBottom="16dp" />
 
                 <TextView
-                    android:id="@+id/days_of_week_label"
+                    android:id="@+id/start_extra_label"
                     style="?attr/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/days_of_week" />
+                    android:text="@string/extra_start_time" />
 
-                <LinearLayout
-                    android:id="@+id/days_of_week_layout"
-                    android:layout_width="fill_parent"
+                <EditText
+                    android:id="@+id/start_extra"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp" >
+                    android:inputType="numberDecimal|numberSigned"
+                    android:paddingBottom="16dp" />
 
-                    <!-- The days of week toggle buttons are added programatically -->
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/stop_extra_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/extra_stop_time" />
 
-                <!-- Below are additional input fields -->
+                <EditText
+                    android:id="@+id/stop_extra"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:paddingBottom="16dp" />
 
                 <TextView
                     android:id="@+id/priority_label"

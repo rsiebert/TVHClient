@@ -36,8 +36,10 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private TextView priority;
 
     private LinearLayout playerLayout;
-    private TextView recordRemove;
-    private TextView recordEdit;
+    private TextView recordRemoveButton;
+    private TextView recordEditButton;
+
+    private TVHClientApplication app;
 
     public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
@@ -58,6 +60,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -72,7 +75,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         }
 
         // Get the recording so we can show its details 
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         srec = app.getSeriesRecording(srecId);
 
         // Initialize all the widgets from the layout
@@ -86,8 +88,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
 
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
-        recordEdit = (TextView) v.findViewById(R.id.menu_record_edit);
+        recordRemoveButton = (TextView) v.findViewById(R.id.menu_record_remove);
+        recordEditButton = (TextView) v.findViewById(R.id.menu_record_edit);
         return v;
     }
 
@@ -111,33 +113,22 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         // Show the player controls
         if (showControls) {
             addPlayerControlListeners();
+            showPlayerControls();
         }
-        showPlayerControls();
 
-        if (isEnabled != null) {
-            if (srec.enabled) {
-                isEnabled.setText(R.string.recording_enabled);
-            } else {
-                isEnabled.setText(R.string.recording_disabled);
-            }
-        }
-        if (channelName != null && srec.channel != null) {
-            channelName.setText(srec.channel.name);
-        }
+        isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+        channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
 
         Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);
 
-        if (priority != null) {
-            String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-            if (srec.priority >= 0 && srec.priority < priorityItems.length) {
-                priority.setText(priorityItems[(int) (srec.priority)]);
-            }
+        String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
+        if (srec.priority >= 0 && srec.priority < priorityItems.length) {
+            priority.setText(priorityItems[(int) (srec.priority)]);
         }
-
-        if (minDuration != null && srec.minDuration > 0) {
+        if (srec.minDuration > 0) {
             minDuration.setText(getString(R.string.minutes, (int) srec.minDuration));
         }
-        if (maxDuration != null && srec.maxDuration > 0) {
+        if (srec.maxDuration > 0) {
             maxDuration.setText(getString(R.string.minutes, (int) srec.maxDuration));
         }
     }
@@ -147,17 +138,15 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
      */
     private void showPlayerControls() {
         playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        recordRemove.setVisibility(View.VISIBLE);
-
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        recordEdit.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
+        recordRemoveButton.setVisibility(View.VISIBLE);
+        recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
     }
 
     /**
      * 
      */
     private void addPlayerControlListeners() {
-        recordRemove.setOnClickListener(new OnClickListener() {
+        recordRemoveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utils.confirmRemoveRecording(activity, srec);
@@ -166,7 +155,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
                 }
             }
         });
-        recordEdit.setOnClickListener(new OnClickListener() {
+        recordEditButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Create the fragment and show it as a dialog.

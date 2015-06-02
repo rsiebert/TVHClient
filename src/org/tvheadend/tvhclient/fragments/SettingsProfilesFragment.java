@@ -56,6 +56,7 @@ import com.nispok.snackbar.enums.SnackbarType;
 
 public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, OnPreferenceChangeListener, BackPressedInterface {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsProfilesFragment.class.getSimpleName();
 
     private Activity activity;
@@ -77,6 +78,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     private static final String ENABLE_REC_PROFILE = "enable_rec_profile";
     private static final String PROG_PROFILE_UUID = "prog_profile_uuid";
     private static final String REC_PROFILE_UUID = "rec_profile_uuid";
+
+    private TVHClientApplication app;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -111,6 +114,43 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             progProfile.uuid = savedInstanceState.getString(PROG_PROFILE_UUID);
             recProfile.uuid = savedInstanceState.getString(REC_PROFILE_UUID);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(ENABLE_PROG_PROFILE, prefEnableProgProfiles.isChecked());
+        outState.putBoolean(ENABLE_REC_PROFILE, prefEnableRecProfiles.isChecked());
+        outState.putString(PROG_PROFILE_UUID, prefProgProfiles.getValue());
+        outState.putString(REC_PROFILE_UUID, prefRecProfiles.getValue());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (FragmentActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
+    }
+
+    @Override
+    public void onDetach() {
+        actionBarInterface = null;
+        super.onDetach();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.pref_profiles));
+        }
+        if (activity instanceof SettingsInterface) {
+            settingsInterface = (SettingsInterface) activity;
+        }
 
         prefEnableRecProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
@@ -138,47 +178,12 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 return false;
             }
         });
-    }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(ENABLE_PROG_PROFILE, prefEnableProgProfiles.isChecked());
-        outState.putBoolean(ENABLE_REC_PROFILE, prefEnableRecProfiles.isChecked());
-        outState.putString(PROG_PROFILE_UUID, prefProgProfiles.getValue());
-        outState.putString(REC_PROFILE_UUID, prefRecProfiles.getValue());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
-    }
-
-    @Override
-    public void onDetach() {
-        actionBarInterface = null;
-        super.onDetach();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_profiles), TAG);
-        }
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
-        }
         setHasOptionsMenu(true);
     }
 
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
 
         // If no connection exists exit
@@ -188,7 +193,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             }
         } else {
             if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(conn.name, TAG);
+                actionBarInterface.setActionBarSubtitle(conn.name);
             }
         }
 
@@ -204,7 +209,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -324,7 +328,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
         // Set the loading indication
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(getString(R.string.loading_profiles), TAG);
+            actionBarInterface.setActionBarSubtitle(getString(R.string.loading_profiles));
         }
 
         // Get the available profiles from the server
@@ -342,10 +346,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 public void run() {
                     // Loading is done, remove the loading subtitle
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(conn.name, TAG);
+                        actionBarInterface.setActionBarSubtitle(conn.name);
                     }
 
-                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                     if (prefRecProfiles != null && prefEnableRecProfiles != null) {
                         addProfiles(prefRecProfiles, app.getDvrConfigs());
 
@@ -373,10 +376,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 public void run() {
                     // Loading is done, remove the loading subtitle
                     if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(conn.name, TAG);
+                        actionBarInterface.setActionBarSubtitle(conn.name);
                     }
 
-                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
                     if (prefProgProfiles != null && prefEnableProgProfiles != null) {
                         addProfiles(prefProgProfiles, app.getProfiles());
                         prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());

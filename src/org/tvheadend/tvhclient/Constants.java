@@ -17,6 +17,8 @@ public class Constants {
     public static final int MIN_API_VERSION_PROFILES = 16;
     public static final int MIN_API_VERSION_TIMER_RECORDINGS = 17;
     public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
+    public static final int MIN_API_VERSION_SERIES_RECORDING_ON_ALL_CHANNELS = 21;
+    public static final int MIN_API_VERSION_EDIT_RECORDING_TITLE = 21;
 
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";
@@ -88,7 +90,8 @@ public class Constants {
     public static final String ACTION_CONNECTION_STATE_OK = "action_connection_state_ok";
     public static final String ACTION_CONNECTION_STATE_SERVER_DOWN = "action_connection_state_server_down";
     public static final String ACTION_CONNECTION_STATE_UNKNOWN = "action_connection_state_unknown";
-    public static final String ACTION_CONNECTION_STATE_NONE = "action_connection_state_none";
+    public static final String ACTION_CONNECTION_STATE_NO_NETWORK = "action_connection_state_no_network";
+    public static final String ACTION_CONNECTION_STATE_NO_CONNECTION = "action_connection_state_no_connection";
 
     // HTSP actions that indicate that the server has sent something
     public static final String ACTION_CHANNEL_ADD = "CHANNEL_ADD";
@@ -119,6 +122,7 @@ public class Constants {
     public static final String ACTION_TICKET_ADD = "TICKET_ADD";
     public static final String ACTION_ERROR = "ERROR";
     public static final String ACTION_DISC_SPACE = "DISC_SPACE";
+    public static final String ACTION_SHOW_MESSAGE = "SHOW_MESSAGE";
 
     // HTSP service actions that are called from the client to the server
     public static final String ACTION_CONNECT = "CONNECT";
@@ -131,6 +135,7 @@ public class Constants {
     public static final String ACTION_FEEDBACK = "FEEDBACK";
     public static final String ACTION_GET_TICKET = "GET_TICKET";
     public static final String ACTION_ADD_DVR_ENTRY = "ADD_DVR_ENTRY";
+    public static final String ACTION_UPDATE_DVR_ENTRY = "UPDATE_DVR_ENTRY";
     public static final String ACTION_CANCEL_DVR_ENTRY = "CANCEL_DVR_ENTRY";
     public static final String ACTION_DELETE_DVR_ENTRY = "DELETE_DVR_ENTRY";
     public static final String ACTION_ADD_TIMER_REC_ENTRY = "ADD_TIMER_REC_ENTRY";

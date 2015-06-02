@@ -37,14 +37,20 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         case Constants.RECORDING_SORT_ASCENDING:
             sort(new Comparator<TimerRecording>() {
                 public int compare(TimerRecording x, TimerRecording y) {
-                    return (y.title.compareTo(x.title));
+                    if (x != null && y != null && x.title != null && y.title != null) {
+                        return (y.title.compareTo(x.title));
+                    }
+                    return 0;
                 }
             });
         break;
         case Constants.RECORDING_SORT_DESCENDING:
             sort(new Comparator<TimerRecording>() {
                 public int compare(TimerRecording x, TimerRecording y) {
-                    return (x.title.compareTo(y.title));
+                    if (x != null && y != null && x.title != null && y.title != null) {
+                        return (x.title.compareTo(y.title));
+                    }
+                    return 0;
                 }
             });
             break;

@@ -20,6 +20,8 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.SparseArray;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -53,6 +55,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     // The default protocol version that is assumed the server supports
     private int protocolVersion = 10;
+    private String serverName = "";
+    private String serverVersion = "";
 
     // Holds a list of channels that are not allowed to load because the EPG
     // size did not change after the last loading call.
@@ -113,6 +117,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
         }
     }
 
+    public void showMessage(String msg) {
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_SHOW_MESSAGE, msg);
+        }
+    }
+
     /**
      * Informs all listeners about the current connection state.
      */
@@ -131,6 +141,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
         protocolVersion = version;
     }
 
+    public void setServerName(String name) {
+        serverName = name;
+    }
+
+    public void setServerVersion(String version) {
+        serverVersion = version;
+    }
+
     /**
      * Returns the protocol version of the currently active connection. This is
      * required to determine if the server supports series recordings and other
@@ -140,6 +158,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public int getProtocolVersion() {
         return protocolVersion;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public String getServerVersion() {
+        return serverVersion;
     }
 
     /**
@@ -159,6 +185,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public List<ChannelTag> getChannelTags() {
         synchronized (tags) {
+            Collections.sort(tags, ChannelTag.ChannelTagNameSorter);
             return tags;
         }
     }
@@ -899,6 +926,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     public void addDvrConfigs(List<Profiles> list) {
         dvrConfigs.clear();
+        Collections.sort(list, Profiles.ProfilesNameSorter);
         dvrConfigs.addAll(list);
         if (!loading) {
             broadcastMessage(Constants.ACTION_GET_DVR_CONFIG, null);
@@ -911,6 +939,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     public void addProfiles(List<Profiles> list) {
         profiles.clear();
+        Collections.sort(list, Profiles.ProfilesNameSorter);
         profiles.addAll(list);
         if (!loading) {
             broadcastMessage(Constants.ACTION_GET_PROFILES, null);
@@ -981,5 +1010,22 @@ public class TVHClientApplication extends Application implements BillingProcesso
     @Override
     public void onPurchaseHistoryRestored() {
         // NOP
+    }
+
+    /**
+     * Check if wifi or mobile network is available. If none of these two are
+     * available show the status page otherwise continue and show the desired
+     * screen.
+     * 
+     * @return
+     */
+    public boolean isConnected() {
+        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        final NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        final boolean wifiConnected = ((wifi != null) ? wifi.isConnected() : false);
+        final boolean mobileConnected = ((mobile != null) ? mobile.isConnected() : false);
+
+        return (wifiConnected || mobileConnected);
     }
 }

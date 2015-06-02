@@ -1,8 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
@@ -15,27 +12,27 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.Snackbar.SnackbarDuration;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 public class SeriesRecordingAddFragment extends DialogFragment {
 
@@ -46,7 +43,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private Toolbar toolbar;
 
     private CheckBox isEnabled;
-    private Spinner priority;
+    private TextView priority;
     private EditText minDuration;
     private EditText maxDuration;
     private LinearLayout daysOfWeekLayout;
@@ -54,7 +51,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private EditText startTime;
     private EditText stopTime;
     private EditText title;
-    private Spinner channelName;
+    private TextView channelName;
 
     private long priorityValue;
     private long minDurationValue;
@@ -65,6 +62,15 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private String titleValue;
     private boolean enabledValue;
     private int channelSelectionValue;
+
+    String[] channelList;
+    String[] priorityList;
+
+    private TVHClientApplication app;
+
+    // Determines if an entry shall be added to the channel selection list to
+    // allow recording on all channels
+    boolean allowRecordingOnAllChannels = false;
 
     private static final int DEFAULT_MIN_DURATION = 30;
     private static final int DEFAULT_MAX_DURATION = 60;
@@ -81,6 +87,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -112,7 +119,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_add_layout, container, false);
-        channelName = (Spinner) v.findViewById(R.id.channel);
+        channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
         title = (EditText) v.findViewById(R.id.title);
         minDuration = (EditText) v.findViewById(R.id.minimum_duration);
@@ -152,8 +159,25 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         startTime = (EditText) v.findViewById(R.id.start_extra);
         stopTime = (EditText) v.findViewById(R.id.stop_extra);
-        priority = (Spinner) v.findViewById(R.id.priority);
+        priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+
+        // Determine if the server supports recording on all channels
+        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDING_ON_ALL_CHANNELS;
+        final int offset = (allowRecordingOnAllChannels ? 1 : 0);
+
+        // Create the list of channels that the user can select. If recording on
+        // all channels are available the add the 'all channels' string to
+        // the beginning of the list before adding the available channels.
+        channelList = new String[app.getChannels().size() + offset];
+        if (allowRecordingOnAllChannels) {
+            channelList[0] = activity.getString(R.string.all_channels);
+        }
+        for (int i = offset; i < app.getChannels().size(); i++) {
+            channelList[i] = app.getChannels().get(i).name;
+        }
+
+        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
         // If the savedInstanceState is null then the fragment was created for
         // the first time. Either get the given id to edit the recording or
@@ -167,7 +191,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             }
 
             // Get the recording so we can show its details
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             rec = app.getSeriesRecording(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
@@ -212,39 +235,51 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (isEnabled != null) {
-            isEnabled.setChecked(enabledValue);
-        }
-        if (title != null) {
-            title.setText(titleValue);
-        }
-        if (channelName != null) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            List<String> channels = new ArrayList<String>();
-            for (Channel c : app.getChannels()) {
-                channels.add(c.name);
-            }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, channels);
-            channelName.setAdapter(adapter);
-            channelName.setSelection(channelSelectionValue);
-        }
-        if (priority != null) {
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity, R.array.dvr_priorities, android.R.layout.simple_spinner_item);
-            priority.setAdapter(adapter);
-            priority.setSelection((int) priorityValue);
-        }
-        if (minDuration != null) {
-            minDuration.setText(String.valueOf(minDurationValue));
-        }
-        if (maxDuration != null) {
-            maxDuration.setText(String.valueOf(maxDurationValue));
-        }
-        if (startTime != null) {
-            startTime.setText(String.valueOf(startTimeValue));
-        }
-        if (stopTime != null) {
-            stopTime.setText(String.valueOf(stopTimeValue));
-        }
+        isEnabled.setChecked(enabledValue);
+        title.setText(titleValue);
+
+        channelName.setText(channelList[channelSelectionValue]);
+        channelName.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				new MaterialDialog.Builder(activity)
+	            .title(R.string.select_channel)
+	            .items(channelList)
+	            .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
+	                @Override
+	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+	                    channelName.setText(channelList[which]);
+	                    channelSelectionValue = which;
+	                    return true;
+	                }
+	            })
+	            .show();
+			}
+        });
+
+        priority.setText(priorityList[(int) priorityValue]);
+        priority.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				new MaterialDialog.Builder(activity)
+	            .title(R.string.select_priority)
+	            .items(priorityList)
+	            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
+	                @Override
+	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        priority.setText(priorityList[which]);
+                        priorityValue = which;
+	                    return true;
+	                }
+	            })
+	            .show();
+			}
+        });
+
+        minDuration.setText(String.valueOf(minDurationValue));
+        maxDuration.setText(String.valueOf(maxDurationValue));
+        startTime.setText(String.valueOf(startTimeValue));
+        stopTime.setText(String.valueOf(stopTimeValue));
 
         // Set the correct days as checked or not depending on the given value.
         // For each day shift the daysOfWeekValue by one to the right and check
@@ -265,8 +300,24 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         }
         if (getDialog() != null) {
             getDialog().setTitle(rec != null ? R.string.edit_series_recording : R.string.add_series_recording);
+            getDialog().setCanceledOnTouchOutside(false);
         }
     }
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		getDialog().setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				if ((keyCode == android.view.KeyEvent.KEYCODE_BACK)) {
+					getDialog().setOnKeyListener(null);
+					cancel();
+				}
+				return false;
+			}
+		});
+	}
 
     /**
      * 
@@ -313,10 +364,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             stopTimeValue = DEFAULT_STOP_EXTRA;
         }
         titleValue = title.getText().toString();
-        daysOfWeekValue = getDayOfWeekValue();
-        priorityValue = priority.getSelectedItemPosition();
         enabledValue = isEnabled.isChecked();
-        channelSelectionValue = channelName.getSelectedItemPosition();
+        daysOfWeekValue = getDayOfWeekValue();
     }
 
     /**
@@ -328,21 +377,19 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         getValues();
 
         // The title must not be empty
-        if (titleValue.length() == 0) { 
-            SnackbarManager.show(
-                    Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .duration(SnackbarDuration.LENGTH_LONG)
-                            .text(R.string.error_empty_title), activity);
+        if (titleValue.length() == 0) {
+            Toast.makeText(activity, getString(R.string.error_empty_title),
+                    Toast.LENGTH_SHORT).show();
             return;
         }
-        // The maximum duration must be larger than the minimum duration
+        // The maximum duration must be at least the minimum duration
         if (minDurationValue > 0 && maxDurationValue > 0 && maxDurationValue < minDurationValue) {
             maxDurationValue = minDurationValue;
         }
 
-        // If the series recording is being edited, remove it before adding it
-        // again, because the API does not provide an edit call. 
+        // If the series recording has been edited, remove it before adding it
+        // again with the updated values. This is required because the API does
+        // not provide an edit service call.
         if (rec != null && rec.id != null && rec.id.length() > 0) {
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
@@ -362,14 +409,16 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         intent.putExtra("priority", priorityValue);
         intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
 
-        // The id must be passed on to the server, not the name. So go through
-        // all available channels and get the id for the selected channel name.
-        String cname = (String) channelName.getSelectedItem();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        for (Channel c : app.getChannels()) {
-            if (c.name.equals(cname)) {
-                intent.putExtra("channelId", c.id);
-                break;
+        // If the all channels recording is not enabled or a valid channel name
+        // was selected get the channel id that needs to be passed to the
+        // server. So go through all available channels and get the id for the
+        // selected channel name.
+        if (!allowRecordingOnAllChannels || channelSelectionValue > 0) {
+            for (Channel c : app.getChannels()) {
+                if (c.name.equals(channelName.getText().toString())) {
+                    intent.putExtra("channelId", c.id);
+                    break;
+                }
             }
         }
 
@@ -397,7 +446,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
      * the input will be discarded and the activity will be closed.
      */
     private void cancel() {
-        // Show confirmation dialog to cancel
         new MaterialDialog.Builder(activity)
                 .content(R.string.cancel_add_recording)
                 .positiveText(getString(R.string.discard))

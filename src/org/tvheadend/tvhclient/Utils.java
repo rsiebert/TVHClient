@@ -404,55 +404,6 @@ public class Utils {
     }
 
     /**
-     * Shows or hides certain items from the recording menu. This depends on the
-     * current state of the recording.
-     * 
-     * @param menu
-     * @param rec
-     */
-    public static void setRecordingMenu(final Menu menu, final Recording rec) {
-        // Get the menu items so they can be shown 
-        // or hidden depending on the recording state
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
-        MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
-
-        // Disable these menus as a default
-        recordCancelMenuItem.setVisible(false);
-        recordRemoveMenuItem.setVisible(false);
-        playMenuItem.setVisible(false);
-        searchMenuItemEpg.setVisible(false);
-        searchMenuItemImdb.setVisible(false);
-
-        // Exit if the recording is not valid
-        if (rec == null) {
-            return;
-        }
-
-        // Allow searching the recordings
-        searchMenuItemEpg.setVisible(true);
-        searchMenuItemImdb.setVisible(true);
-
-        if (rec.error == null && rec.state.equals("completed")) {
-        	// The recording is available, it can be played and removed
-            recordRemoveMenuItem.setVisible(true);
-            playMenuItem.setVisible(true);
-        } else if (rec.isRecording()) {
-            // The recording is recording it can be played or cancelled
-            recordCancelMenuItem.setVisible(true);
-            playMenuItem.setVisible(true);
-        } else if (rec.isScheduled()) {
-            // The recording is scheduled, it can only be cancelled
-            recordCancelMenuItem.setVisible(true);
-        } else if (rec.error != null || rec.state.equals("missed")) {
-        	// The recording has failed or has been missed, allow removal
-        	recordRemoveMenuItem.setVisible(true);
-        }
-    }
-
-    /**
      * Shows an icon for the state of the current recording. If no recording was
      * given, the icon will be hidden.
      * 
@@ -690,21 +641,26 @@ public class Utils {
      * @param ch
      */
     public static void setChannelIcon(ImageView icon, TextView iconText, final Channel ch) {
-        if (icon != null && ch != null) {
+        if (icon != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
             final boolean showIcons = prefs.getBoolean("showIconPref", true);
 
-            // Show the channels icon if available. If not hide the view. 
-            if (icon != null) {
-                icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
-                icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
-            }
-            
-            // If the channel icon is not available show the channel name as a placeholder.
-            if (iconText != null) {
-                iconText.setText(ch.name);
-                iconText.setVisibility((showIcons && ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
+            if (ch != null) {
+                // Show the channels icon if available. If not hide the view. 
+                if (icon != null) {
+                    icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
+                    icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
+                }
+                // If the channel icon is not available show the channel name as a placeholder.
+                if (iconText != null) {
+                    iconText.setText(ch.name);
+                    iconText.setVisibility((showIcons && ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
+                }
+            } else {
+                // Show a blank icon if no channel icon exists and they shall be shown. 
+                icon.setImageBitmap(null);
+                icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
         }
     }

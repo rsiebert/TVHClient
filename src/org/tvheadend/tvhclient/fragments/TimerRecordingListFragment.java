@@ -58,13 +58,12 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }
 
-        // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
         if (bundle != null) {
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
@@ -170,10 +169,10 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.timer_recordings), TAG);
+            actionBarInterface.setActionBarTitle(getString(R.string.timer_recordings));
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
-            actionBarInterface.setActionBarSubtitle(items, TAG);
-            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher, TAG);
+            actionBarInterface.setActionBarSubtitle(items);
+            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher);
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.

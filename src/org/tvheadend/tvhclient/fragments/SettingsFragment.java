@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.fragments;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
@@ -14,10 +16,12 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
@@ -32,11 +36,23 @@ import com.nispok.snackbar.enums.SnackbarType;
 @SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsFragment.class.getSimpleName();
-    
+
     private ActionBarActivity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
+
+    private Preference prefClearIconCache;
+    private Preference prefPurchaseUnlocker;
+    private Preference prefClearSearchHistory;
+    private Preference prefManageConnections;
+    private Preference prefMenuProfiles;
+    private Preference prefMenuTranscoding;
+    private Preference prefShowChangelog;
+    private ListPreference prefDefaultMenu;
+
+    private TVHClientApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,10 +62,53 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
         addPreferencesFromResource(R.xml.preferences);
 
+        prefManageConnections = findPreference("pref_manage_connections");
+        prefMenuProfiles = findPreference("pref_menu_profiles");
+        prefMenuTranscoding = findPreference("pref_menu_transcoding");
+        prefShowChangelog = findPreference("pref_changelog");
+        prefClearSearchHistory = findPreference("pref_clear_search_history");
+        prefClearIconCache = findPreference("pref_clear_icon_cache");
+        prefPurchaseUnlocker = findPreference("pref_unlocker");
+        prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        if (activity instanceof SettingsInterface) {
+            settingsInterface = (SettingsInterface) activity;
+        }
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.settings));
+            actionBarInterface.setActionBarSubtitle("");
+        }
+
+        // Get the available menu names and id values and add only those entries
+        // that are above the status menu and add the series and timer recording
+        // menus only if these are supported by the server.
+        final String[] e = getResources().getStringArray(R.array.pref_menu_names);
+        final String[] ev = getResources().getStringArray(R.array.pref_menu_ids);
+        List<String> menuEntries = new ArrayList<String>();
+        List<String> menuEntryValues = new ArrayList<String>();
+
+        for (int i = 0; i < e.length; i++) {
+            if (i < 8 || (i == 3 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS)
+                    || (i == 4 && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS && app.isUnlocked()))) {
+                menuEntries.add(e[i]);
+                menuEntryValues.add(ev[i]);
+            }
+        }
+
+        prefDefaultMenu.setEntries(menuEntries.toArray(new CharSequence[menuEntries.size()]));
+        prefDefaultMenu.setEntryValues(menuEntryValues.toArray(new CharSequence[menuEntryValues.size()]));
+
         // Add a listener to the connection preference so that the 
         // SettingsManageConnectionsActivity can be shown.
-        Preference prefManage = findPreference("pref_manage_connections");
-        prefManage.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        prefManageConnections.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (settingsInterface != null) {
@@ -60,77 +119,57 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         });
 
         // Add a listener so that the streaming profiles can be selected.
-        final Preference prefMenuProfiles = findPreference("pref_menu_profiles");
-        if (prefMenuProfiles != null) {
-            prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                    if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
-                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                                .type(SnackbarType.MULTI_LINE)
-                                .text(R.string.no_connection_available_advice), activity);
-                    } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
-                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                                .type(SnackbarType.MULTI_LINE)
-                                .text(R.string.no_connection_active_advice), activity);
-                    } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
-                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                                .type(SnackbarType.MULTI_LINE)
-                                .text(R.string.feature_not_supported_by_server), activity);
-                    } else if (!app.isUnlocked()) {
-                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(R.string.feature_not_available_in_free_version), activity);
-                    } else {
-                        if (settingsInterface != null) {
-                            settingsInterface.showProfiles();
-                        }
-                    }
-                    return false;
-                }
-            });
-        }
-
-        // Add a listener so that the transcoding parameters for the programs
-        // and recordings can be set
-        Preference prefMenuTranscoding = findPreference("pref_menu_transcoding");
-        if (prefMenuTranscoding != null) {
-            prefMenuTranscoding.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
-                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                                .type(SnackbarType.MULTI_LINE)
-                                .text(getString(R.string.no_connection_available_advice)), activity);
-                    } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
-                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                                .type(SnackbarType.MULTI_LINE)
-                                .text(getString(R.string.no_connection_active_advice)), activity);
-                    } else {
-                        if (settingsInterface != null) {
-                            settingsInterface.showTranscodingSettings();
-                        }
-                    }
-                    return false;
-                }
-            });
-        }
-
-        // Add a listener to the connection preference so that the 
-        // ChangeLogDialog with all changes can be shown.
-        Preference prefChangelog = findPreference("pref_changelog");
-        prefChangelog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
-                cld.getFullLogDialog().show();
+                if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
+                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(R.string.no_connection_available_advice), activity);
+                } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(R.string.no_connection_active_advice), activity);
+                } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(R.string.feature_not_supported_by_server), activity);
+                } else if (!app.isUnlocked()) {
+                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                        .type(SnackbarType.MULTI_LINE)
+                        .text(R.string.feature_not_available_in_free_version), activity);
+                } else {
+                    if (settingsInterface != null) {
+                        settingsInterface.showProfiles();
+                    }
+                }
                 return false;
             }
         });
-        
+
+        // Add a listener so that the transcoding parameters for the programs
+        // and recordings can be set
+        prefMenuTranscoding.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
+                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(getString(R.string.no_connection_available_advice)), activity);
+                } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(getString(R.string.no_connection_active_advice)), activity);
+                } else {
+                    if (settingsInterface != null) {
+                        settingsInterface.showTranscodingSettings();
+                    }
+                }
+                return false;
+            }
+        });
+
         // Add a listener to the preference so that the user can clear the search history
-        Preference prefClearSearchHistory = findPreference("pref_clear_search_history");
         prefClearSearchHistory.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -159,7 +198,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         });
 
         // Add a listener to the preference so that the channel icon cache can be cleared.
-        Preference prefClearIconCache = findPreference("pref_clear_icon_cache");
         prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -196,46 +234,38 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
         // Add a listener to the preference to show the activity with the
         // information about the extra features that can be unlocked
-        Preference prefPurchaseUnlocker = findPreference("pref_unlocker");
-        if (prefPurchaseUnlocker != null) {
-            prefPurchaseUnlocker.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-                    if (app.isUnlocked()) {
-                        SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                                .type(SnackbarType.MULTI_LINE)
-                                .text(getString(R.string.unlocker_already_purchased)), activity);
-                    } else {
-                        Intent unlockerIntent = new Intent(activity, UnlockerActivity.class);
-                        startActivity(unlockerIntent);
-                    }
-                    return false;
+        prefPurchaseUnlocker.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (app.isUnlocked()) {
+                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
+                            .type(SnackbarType.MULTI_LINE)
+                            .text(getString(R.string.unlocker_already_purchased)), activity);
+                } else {
+                    Intent unlockerIntent = new Intent(activity, UnlockerActivity.class);
+                    startActivity(unlockerIntent);
                 }
-            });
-        }
-    }
+                return false;
+            }
+        });
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
-        }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.settings), TAG);
-            actionBarInterface.setActionBarSubtitle("", TAG);
-        }
+        // Add a listener to the connection preference so that the 
+        // ChangeLogDialog with all changes can be shown.
+        prefShowChangelog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
+                cld.getFullLogDialog().show();
+                return false;
+            }
+        });
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -256,6 +286,15 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         super.onPause();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.unregisterOnSharedPreferenceChangeListener(this);
+
+        // Close the menu dialog if it is visible to avoid crashing or showing
+        // wrong values after an orientation. 
+        if (prefDefaultMenu.getDialog() != null) {
+            Dialog dlg = prefDefaultMenu.getDialog();
+            if (dlg.isShowing()) {
+                dlg.cancel();
+            }
+        }
     }
 
     /**

@@ -8,8 +8,4 @@
         android:title="@string/timeframe"
         app:showAsAction="ifRoom|collapseActionView|withText"
         android:orderInCategory="2"/>
-    <item
-        android:id="@+id/menu_genre_color_info_epg"
-        android:title="@string/genre_color_info"
-        android:orderInCategory="6"/>
 </menu>

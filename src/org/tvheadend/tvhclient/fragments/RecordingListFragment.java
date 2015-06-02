@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.ExternalPlaybackActivity;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
@@ -18,7 +18,9 @@ import org.tvheadend.tvhclient.model.Recording;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -34,11 +36,12 @@ import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-public class RecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
+@SuppressWarnings("deprecation")
+public class RecordingListFragment extends Fragment implements HTSListener {
 
     public static String TAG = RecordingListFragment.class.getSimpleName();
 
-    protected Activity activity;
+    protected ActionBarActivity activity;
     protected ActionBarInterface actionBarInterface;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected RecordingListAdapter adapter;
@@ -51,11 +54,13 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
     protected boolean isDualPane;
 
+    protected TVHClientApplication app;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
+        // If the view group does not exist, the fragment would not be shown. So
+        // we can return anyway.
         if (container == null) {
             return null;
         }
@@ -74,7 +79,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = activity;
+        this.activity = (ActionBarActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -129,6 +135,15 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             }
             return true;
 
+        case R.id.menu_edit:
+            // Create the fragment and show it as a dialog.
+            DialogFragment editFragment = RecordingEditFragment.newInstance(null);
+            Bundle bundle = new Bundle();
+            bundle.putLong(Constants.BUNDLE_RECORDING_ID, adapter.getSelectedItem().id);
+            editFragment.setArguments(bundle);
+            editFragment.show(activity.getSupportFragmentManager(), "dialog");
+            return true;
+
         case R.id.menu_record_remove:
             Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
             return true;
@@ -137,7 +152,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             // Show a confirmation dialog before deleting all recordings
             new MaterialDialog.Builder(activity)
                     .title(R.string.record_remove_all)
-                    .content(R.string.remove_all_recordings)
+                    .content(R.string.confirm_remove_all)
                     .positiveText(getString(android.R.string.yes))
                     .negativeText(getString(android.R.string.no))
                     .callback(new MaterialDialog.ButtonCallback() {
@@ -161,7 +176,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             // Show a confirmation dialog before canceling all recordings
             new MaterialDialog.Builder(activity)
                     .title(R.string.record_cancel_all)
-                    .content(R.string.cancel_all_recordings)
+                    .content(R.string.confirm_cancel_all)
                     .positiveText(getString(android.R.string.yes))
                     .negativeText(getString(android.R.string.no))
                     .callback(new MaterialDialog.ButtonCallback() {
@@ -231,15 +246,22 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         super.onCreateContextMenu(menu, v, menuInfo);
         activity.getMenuInflater().inflate(R.menu.recording_context_menu, menu);
 
-        // Get the currently selected program from the list where the context
-        // menu has been triggered
+        // Get the selected program from the list where the context menu was opened
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = adapter.getItem(info.position);
 
-        // Set the title of the context menu and show or hide 
-        // the menu items depending on the recording state
+        // Hide these menus as a default, the required ones will be made visible
+        // in the derived classes
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
+        (menu.findItem(R.id.menu_play)).setVisible(false);
+        (menu.findItem(R.id.menu_edit)).setVisible(false);
+
+        // These are always visible if the recording exists
+        (menu.findItem(R.id.menu_search_epg)).setVisible(rec != null);
+        (menu.findItem(R.id.menu_search_imdb)).setVisible(rec != null);
+
         menu.setHeaderTitle(rec.title);
-        Utils.setRecordingMenu(menu, rec);
     }
 
     @Override
@@ -249,8 +271,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         if (!getUserVisibleHint()) {
             return super.onContextItemSelected(item);
         }
-        // Get the currently selected program from the list where the context
-        // menu has been triggered
+        // Get the selected program from the list where the context menu was opened
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         // Check for a valid adapter size and objects
@@ -283,14 +304,25 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             startActivity(intent);
             return true;
 
+        case R.id.menu_edit:
+            // Create the fragment to edit a recording but show it as a dialog.
+            DialogFragment df = RecordingEditFragment.newInstance(null);
+            Bundle bundle = new Bundle();
+            bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+            df.setArguments(bundle);
+            df.show(activity.getSupportFragmentManager(), "dialog");
+            return true;
+
         default:
             return super.onContextItemSelected(item);
         }
     }
 
     /**
-     * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the specified action will be executed here.
+     * This method is part of the HTSListener interface. Whenever a recording
+     * was added, updated or removed the adapter gets updated. The updating of
+     * the view itself with the contents is done in the child class, because
+     * this parent class has no access to the methods of the child class.
      */
     @Override
     public void onMessage(String action, final Object obj) {
@@ -310,8 +342,9 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     if (--previousPosition < 0) {
                         previousPosition = 0;
                     }
+                    // Remove the recording from the adapter and set the
+                    // recording below the deleted one as the newly selected one
                     adapter.remove((Recording) obj);
-                    // Set the recording below the deleted one as selected
                     setInitialSelection(previousPosition);
                 }
             });
@@ -324,45 +357,39 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         }
     }
 
-    @Override
-    public void reloadData() {
-        // NOP
-    }
-
-    @Override
-    public void setSelection(int position, int index) {
+    /**
+     * Sets the selected item and positions the selection y pixels from the top
+     * edge of the ListView.
+     * 
+     * @param position
+     * @param offset
+     */
+    protected void setSelection(int position, int offset) {
         if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelectionFromTop(position, index);
+            listView.setSelectionFromTop(position, offset);
         }
     }
-    
-    @Override
-    public void setInitialSelection(int position) {
+
+    /**
+     * Selects the given position in the adapter so that the item in the list
+     * gets selected. When the dual pane mode is active inform the activity that
+     * the list item was selected. The activity will then show the details
+     * fragment to the selected item in the right side.
+     * 
+     * @param position
+     */
+    protected void setInitialSelection(int position) {
         setSelection(position, 0);
 
-        // Set the position in the adapter so that we can show the selected
-        // recording in the theme with the arrow.
         if (adapter != null && adapter.getCount() > position) {
             adapter.setPosition(position);
-            
-            // Simulate a click in the list item to inform the activity
-            // It will then show the details fragment if dual pane is active
+
             if (isDualPane) {
-                Recording recording = (Recording) adapter.getItem(position);
+                final Recording recording = (Recording) adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, recording, TAG);
                 }
             }
         }
-    }
-
-    @Override
-    public Object getSelectedItem() {
-        return adapter.getSelectedItem();
-    }
-
-    @Override
-    public int getItemCount() {
-        return adapter.getCount();
     }
 }

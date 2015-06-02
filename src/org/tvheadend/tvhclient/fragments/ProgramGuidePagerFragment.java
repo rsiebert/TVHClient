@@ -6,13 +6,14 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramGuideTimeDialogAdapter;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -115,12 +116,17 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         setHasOptionsMenu(true);
     }
 
+    @SuppressLint({ "InlinedApi", "NewApi" })
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Hide the genre color menu if no genre colors shall be shown
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final boolean showGenreColors = prefs.getBoolean("showGenreColorsGuidePref", false);
-        (menu.findItem(R.id.menu_genre_color_info_epg)).setVisible(showGenreColors);
+        // Prevent the time frame menu item from going into the overlay menu
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+            if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
+                menu.findItem(R.id.menu_timeframe).setShowAsActionFlags(
+                        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+            }
+        }
     }
 
     @Override
@@ -134,10 +140,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         switch (item.getItemId()) {
         case R.id.menu_timeframe:
             programGuideTimeDialog.show();
-            return true;
-            
-        case R.id.menu_genre_color_info_epg:
-            Utils.showGenreColorDialog(activity);
             return true;
 
         default:

@@ -20,35 +20,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.tvheadend.tvhclient.R;
-
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 public class ChangeLogDialog {
 
     private final Context context;
     private String lastVersion, thisVersion;
     private ChangeLogDialogInterface di;
-
-    private String styleLight = 
-              "div.title { color:#AAAAAA; font-size:1.2em; margin-left:0.4em; margin-top:0.7em; margin-bottom:0.2em; text-align:left } "
-            + "div.subtitle {color:#AAAAAA; margin-left:0.6em; margin-bottom:0.0em; text-align:left }"
-            + "div.freetext { color:#333333 }"
-            + "div.list     { color:#333333 }";
-    
-    private String styleDark = 
-              "div.title { color:#DDDDDD; font-size:1.2em; margin-left:0.4em; margin-top:0.7em; margin-bottom:0.2em; text-align:left } "
-            + "div.subtitle {color:#DDDDDD; margin-left:0.6em; margin-bottom:0.0em; text-align:left }"
-            + "div.freetext { color:#AAAAAA }"
-            + "div.list     { color:#AAAAAA }";
+	private MaterialDialog dialog;
   
     // this is the key for storing the version name in SharedPreferences
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
@@ -141,43 +129,48 @@ public class ChangeLogDialog {
      *         first run of your app including ChangeLog then the full log
      *         dialog is show.
      */
-    public AlertDialog getLogDialog() {
+    public MaterialDialog getLogDialog() {
         return this.getDialog(this.firstRunEver());
     }
 
     /**
      * @return an AlertDialog with a full change log displayed
      */
-    public AlertDialog getFullLogDialog() {
+    public MaterialDialog getFullLogDialog() {
         return this.getDialog(true);
     }
 
-    private AlertDialog getDialog(boolean full) {
-        WebView wv = new WebView(this.context);
+    /**
+     * 
+     * @param full
+     * @return
+     */
+    private MaterialDialog getDialog(boolean full) {
+        dialog = new MaterialDialog.Builder(context)
+        .title(R.string.pref_changelog)
+        .customView(R.layout.webview_layout, false)
+        .positiveText(context.getString(android.R.string.ok))
+        .callback(new MaterialDialog.ButtonCallback() {
+            @Override
+            public void onPositive(MaterialDialog dialog) {
+            	updateVersionInPreferences();
+                if (di != null) {
+                	di.changeLogDialogDismissed();
+                }
+            }
+        }).build();
 
-        if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
-            wv.setBackgroundColor(Color.WHITE);
-        } else {
-            wv.setBackgroundColor(Color.BLACK);
+        View view = dialog.getCustomView();
+        WebView webview = (WebView) view.findViewById(R.id.webview);
+        if (webview != null) {
+	        if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+	            webview.setBackgroundColor(Color.WHITE);
+	        } else {
+	            webview.setBackgroundColor(Color.BLACK);
+	        }
+	        webview.loadDataWithBaseURL("file:///android_asset/", this.getLog(full), "text/html","utf-8", null);
         }
-        wv.loadDataWithBaseURL(null, this.getLog(full), "text/html", "UTF-8", null);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
-        builder.setTitle(context.getResources().getString(R.string.pref_changelog));
-        builder.setView(wv);
-        builder.setCancelable(false);
-        // OK button
-        builder.setPositiveButton(context.getResources().getString(android.R.string.ok),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        updateVersionInPreferences();
-                        if (di != null) {
-                        	di.changeLogDialogDismissed();
-                        }
-                    }
-                });
-
-        return builder.create();
+        return dialog;
     }
 
     private void updateVersionInPreferences() {
@@ -215,14 +208,13 @@ public class ChangeLogDialog {
     private String getLog(boolean full) {
         // Add the style sheet depending on the used theme
         sb = new StringBuffer();
-        sb.append("<html><head><style type=\'text/css\'>");
-        
+        sb.append("<html><head>");
         if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
-            sb.append(styleLight);
+            sb.append("<link href=\"html/styles_light.css\" type=\"text/css\" rel=\"stylesheet\"/>");
         } else {
-            sb.append(styleDark);
+            sb.append("<link href=\"html/styles_dark.css\" type=\"text/css\" rel=\"stylesheet\"/>");
         }
-        sb.append("</style></head><body>");
+        sb.append("</head><body>");
 
         // read changelog.txt file
         try {
@@ -253,27 +245,27 @@ public class ChangeLogDialog {
                     case '%':
                         // line contains version title
                         this.closeList();
-                        sb.append("<div class='title'>" + line.substring(1).trim() + "</div>\n");
+                        sb.append("<div class=\"title\">" + line.substring(1).trim() + "</div>\n");
                         break;
                     case '_':
                         // line contains version title
                         this.closeList();
-                        sb.append("<div class='subtitle'>" + line.substring(1).trim() + "</div>\n");
+                        sb.append("<div class=\"subtitle\">" + line.substring(1).trim() + "</div>\n");
                         break;
                     case '!':
                         // line contains free text
                         this.closeList();
-                        sb.append("<div class='freetext'>" + line.substring(1).trim() + "</div>\n");
+                        sb.append("<div class=\"content\">" + line.substring(1).trim() + "</div>\n");
                         break;
                     case '#':
                         // line contains numbered list item
                         this.openList(Listmode.ORDERED);
-                        sb.append("<li>" + line.substring(1).trim() + "</li>\n");
+                        sb.append("<li class=\"list_content\">" + line.substring(1).trim() + "</li>\n");
                         break;
                     case '*':
                         // line contains bullet list item
                         this.openList(Listmode.UNORDERED);
-                        sb.append("<li>" + line.substring(1).trim() + "</li>\n");
+                        sb.append("<li class=\"list_content\">" + line.substring(1).trim() + "</li>\n");
                         break;
                     default:
                         // no special character: just use line as is
@@ -296,9 +288,9 @@ public class ChangeLogDialog {
         if (this.listMode != listMode) {
             closeList();
             if (listMode == Listmode.ORDERED) {
-                sb.append("<div class='list'><ol>\n");
+                sb.append("<ol>\n");
             } else if (listMode == Listmode.UNORDERED) {
-                sb.append("<div class='list'><ul>\n");
+                sb.append("<ul>\n");
             }
             this.listMode = listMode;
         }
@@ -306,9 +298,9 @@ public class ChangeLogDialog {
 
     private void closeList() {
         if (this.listMode == Listmode.ORDERED) {
-            sb.append("</ol></div>\n");
+            sb.append("</ol>\n");
         } else if (this.listMode == Listmode.UNORDERED) {
-            sb.append("</ul></div>\n");
+            sb.append("</ul>\n");
         }
         this.listMode = Listmode.NONE;
     }
