@@ -148,6 +148,7 @@
         <item name="ic_menu_help">@drawable/ic_menu_help_dark</item>
         <item name="ic_menu_info">@drawable/ic_menu_info_dark</item>
         <item name="ic_arrow_drop_down">@drawable/ic_arrow_drop_down_dark</item>
+        <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_dark</item>
         <item name="item_active">@drawable/item_active_dark</item>
         <item name="item_not_active">@drawable/item_not_active_dark</item>
         <item name="ActionbarTitleFont">@style/ActionbarTitleFont.Dark</item>
@@ -196,6 +197,7 @@
         <item name="ic_menu_help">@drawable/ic_menu_help_light</item>
         <item name="ic_menu_info">@drawable/ic_menu_info_light</item>
         <item name="ic_arrow_drop_down">@drawable/ic_arrow_drop_down_light</item>
+        <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_light</item>
         <item name="item_active">@drawable/item_active_light</item>
         <item name="item_not_active">@drawable/item_not_active_light</item>
         <item name="ActionbarTitleFont">@style/ActionbarTitleFont.Light</item>
