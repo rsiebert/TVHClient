@@ -147,7 +147,7 @@
     <string name="pref_hide_menu_cancel_all_recordings">Ukryj w menu \'Anuluj wszystkie nagrania\'</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Nie pokazuj tego menu, aby zapobiec przypadkowemu anulowaniu wszystkich zaplanowanych nagrań programów.</string>
     <string name="pref_visible_menu_icon_tags">Pokaż \'Tagi Ikon\' menu</string>
-    <string name="pref_visible_menu_icon_tags_sum">Pokaż Tagi Ikon dla dostpu z paska akcji.</string>
+    <string name="pref_visible_menu_icon_tags_sum">Pokaż Tagi Ikon dla dostępu z paska akcji.</string>
     <string name="pref_profiles">Profile</string>
     <string name="pref_profiles_sum">Określ parametry lub profil (jeśli jest obsługiwany), jak programy będą nagrywane lub jak nagrania będą odtwarzane.</string>
     <string name="pref_recording_profiles">Profile nagrywania</string>
