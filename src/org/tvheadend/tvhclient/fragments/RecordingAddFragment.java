@@ -1,15 +1,14 @@
 package org.tvheadend.tvhclient.fragments;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
@@ -38,11 +37,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
+import com.sleepbot.datetimepicker.time.RadialPickerLayout;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 @SuppressWarnings("deprecation")
-public class RecordingAddFragment extends DialogFragment {
+public class RecordingAddFragment extends DialogFragment implements OnClickListener {
 
     private final static String TAG = RecordingAddFragment.class.getSimpleName();
 
@@ -52,6 +52,8 @@ public class RecordingAddFragment extends DialogFragment {
 
     private TextView startTime;
     private TextView stopTime;
+    private TextView startDate;
+    private TextView stopDate;
     private TextView priority;
     private EditText startExtra;
     private EditText stopExtra;
@@ -63,10 +65,11 @@ public class RecordingAddFragment extends DialogFragment {
     private long startExtraValue;
     private long stopExtraValue;
 
-    // Start and end recording times in milliseconds. Need to be converted to
-    // seconds when passed to the service
-    private long startTimeValue;
-    private long stopTimeValue;
+    // Start and end recording times. They are saved in the calendar object and
+    // will be converted to milliseconds when saved during an orientation change
+    // and converted to seconds before passed to the server.
+    private Calendar startValue = Calendar.getInstance();
+    private Calendar stopValue = Calendar.getInstance();
     private long priorityValue;
     private String titleValue;
     private String descriptionValue;
@@ -112,8 +115,8 @@ public class RecordingAddFragment extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         getValues();
         outState.putLong("priorityValue", priorityValue);
-        outState.putLong("startTimeValue", startTimeValue);
-        outState.putLong("stopTimeValue", stopTimeValue);
+        outState.putLong("startTimeValue", startValue.getTimeInMillis());
+        outState.putLong("stopTimeValue", stopValue.getTimeInMillis());
         outState.putLong("startExtraValue", startExtraValue);
         outState.putLong("stopExtraValue", stopExtraValue);
         outState.putString("titleValue", titleValue);
@@ -143,19 +146,17 @@ public class RecordingAddFragment extends DialogFragment {
                 priorityValue = rec.priority;
                 startExtraValue = rec.startExtra;
                 stopExtraValue = rec.stopExtra;
-                startTimeValue = rec.start.getTime();
-                stopTimeValue = rec.stop.getTime();
+                startValue.setTimeInMillis(rec.start.getTime());
+                stopValue.setTimeInMillis(rec.stop.getTime());
                 titleValue = rec.title;
                 descriptionValue = rec.description;
                 int pos = app.getChannels().indexOf(rec.channel);
                 channelSelectionValue = (pos >= 0 ? pos : 0);
             } else {
-                Date date = new Date();
                 priorityValue = 2;
                 startExtraValue = 0;
                 stopExtraValue = 0;
-                startTimeValue = date.getTime();
-                stopTimeValue = date.getTime() + 30 * 60 * 1000;
+                stopValue.setTimeInMillis(startValue.getTimeInMillis() + 30 * 60000); // add 30 min
                 titleValue = "";
                 descriptionValue = "";
                 channelSelectionValue = 0;
@@ -165,8 +166,8 @@ public class RecordingAddFragment extends DialogFragment {
             priorityValue = savedInstanceState.getLong("priorityValue");
             startExtraValue = savedInstanceState.getLong("startExtraValue");
             stopExtraValue = savedInstanceState.getLong("stopExtraValue");
-            startTimeValue = savedInstanceState.getLong("startTimeValue");
-            stopTimeValue = savedInstanceState.getLong("stopTimeValue");
+            startValue.setTimeInMillis(savedInstanceState.getLong("startTimeValue"));
+            stopValue.setTimeInMillis(savedInstanceState.getLong("stopTimeValue"));
             titleValue = savedInstanceState.getString("titleValue");
             descriptionValue = savedInstanceState.getString("descriptionValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
@@ -206,6 +207,8 @@ public class RecordingAddFragment extends DialogFragment {
         stopExtra = (EditText) v.findViewById(R.id.stop_extra);
         startTime = (TextView) v.findViewById(R.id.start_time);
         stopTime = (TextView) v.findViewById(R.id.stop_time);
+        startDate = (TextView) v.findViewById(R.id.start_date);
+        stopDate = (TextView) v.findViewById(R.id.stop_date);
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
@@ -265,62 +268,36 @@ public class RecordingAddFragment extends DialogFragment {
 				}
             });
         }
+
+        // Set the start and stop times and dates. Get the correct values from
+        // the calendar object and add the listener that will show the required
+        // date or time pickers. 
         if (startTime != null) {
-            startTime.setText(Utils.getDateTimeStringFromValue(startTimeValue));
-            // Show the time picker dialog so the user can select a new starting time
-            startTime.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    new SlideDateTimePicker.Builder(activity
-                            .getSupportFragmentManager())
-                            .setListener(new SlideDateTimeListener() {
-                                @Override
-                                public void onDateTimeSet(Date date) {
-                                    startTimeValue = date.getTime();
-                                    startTime.setText(Utils.getDateTimeStringFromValue(startTimeValue));
-                                }
-                                @Override
-                                public void onDateTimeCancel() {
-                                    // NOP
-                                }
-                            })
-                            .setInitialDate(new Date(startTimeValue))
-                            .setIs24HourTime(true)
-                            .build().show();
-                }
-            });
+            setTimeStringFromDate(startTime, startValue);
+            startTime.setOnClickListener(this);
+        }
+        if (startDate != null) {
+            setDateStringFromDate(startDate, startValue);
+            startDate.setOnClickListener(this);
         }
         if (stopTime != null) {
-            stopTime.setText(Utils.getDateTimeStringFromValue(stopTimeValue));
-            // Show the time picker dialog so the user can select a new starting time
-            stopTime.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    new SlideDateTimePicker.Builder(activity
-                            .getSupportFragmentManager())
-                            .setListener(new SlideDateTimeListener() {
-                                @Override
-                                public void onDateTimeSet(Date date) {
-                                    stopTimeValue = date.getTime();
-                                    stopTime.setText(Utils.getDateTimeStringFromValue(stopTimeValue));
-                                }
-                                @Override
-                                public void onDateTimeCancel() {
-                                    // NOP
-                                }
-                            })
-                            .setInitialDate(new Date(stopTimeValue))
-                            .setIs24HourTime(true)
-                            .build().show();
-                }
-            });
+            setTimeStringFromDate(stopTime, stopValue);
+            stopTime.setOnClickListener(this);
         }
+        if (stopDate != null) {
+            setDateStringFromDate(stopDate, stopValue);
+            stopDate.setOnClickListener(this);
+        }
+
+        // Add the additional pre- and postrecording values in minutes
         if (startExtra != null) {
             startExtra.setText(String.valueOf(startExtraValue));
         }
         if (stopExtra != null) {
             stopExtra.setText(String.valueOf(stopExtraValue));
         }
+
+        // Add the title and menu items to the toolbar
         if (toolbar != null) {
             toolbar.setTitle(rec != null ? R.string.edit_recording : R.string.add_recording);
             toolbar.inflateMenu(R.menu.save_cancel_menu);
@@ -332,12 +309,13 @@ public class RecordingAddFragment extends DialogFragment {
             });
         }
 
+        // Prevent the dialog from closing if the user clicks outside of it 
         if (getDialog() != null) {
             getDialog().setCanceledOnTouchOutside(false);
         }
     }
 
-	@Override
+    @Override
 	public void onResume() {
 		super.onResume();
 		getDialog().setOnKeyListener(new OnKeyListener() {
@@ -443,8 +421,8 @@ public class RecordingAddFragment extends DialogFragment {
         }
 
         intent.putExtra("title", titleValue);
-        intent.putExtra("start", startTimeValue / 1000); // Pass on seconds not milliseconds
-        intent.putExtra("stop", stopTimeValue / 1000); // Pass on seconds not milliseconds
+        intent.putExtra("start", startValue.getTimeInMillis() / 1000); // Pass on seconds not milliseconds
+        intent.putExtra("stop", stopValue.getTimeInMillis() / 1000); // Pass on seconds not milliseconds
         intent.putExtra("startExtra", startExtraValue);
         intent.putExtra("stopExtra", stopExtraValue);
         intent.putExtra("description", descriptionValue);
@@ -488,5 +466,107 @@ public class RecordingAddFragment extends DialogFragment {
                         dialog.cancel();
                     }
                 }).show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        
+        DatePickerDialog datePicker;
+        TimePickerDialog timePicker;
+        
+        switch (v.getId()) {
+        case R.id.start_time:
+            timePicker = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(RadialPickerLayout timePicker, int hour, int minute) {
+                    startValue.set(Calendar.HOUR_OF_DAY, hour);
+                    startValue.set(Calendar.MINUTE, minute);
+                    setTimeStringFromDate(startTime, startValue);
+                }
+            }, 
+            startValue.get(Calendar.HOUR_OF_DAY), 
+            startValue.get(Calendar.MINUTE), true, false);
+
+            timePicker.setCloseOnSingleTapMinute(false);
+            timePicker.show(getChildFragmentManager(), "");
+            break;
+
+        case R.id.start_date:
+            datePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+                    startValue.set(Calendar.DAY_OF_MONTH, day);
+                    startValue.set(Calendar.MONTH, month);
+                    startValue.set(Calendar.YEAR, year);
+                    setDateStringFromDate(startDate, startValue);
+                }
+            }, 
+            startValue.get(Calendar.YEAR), 
+            startValue.get(Calendar.MONTH), 
+            startValue.get(Calendar.DAY_OF_MONTH), false);
+
+            datePicker.setCloseOnSingleTapDay(false);
+            datePicker.show(getChildFragmentManager(), "");
+            break;
+
+        case R.id.stop_time:
+            timePicker = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(RadialPickerLayout timePicker, int hour, int minute) {
+                    stopValue.set(Calendar.HOUR_OF_DAY, hour);
+                    stopValue.set(Calendar.MINUTE, minute);
+                    setTimeStringFromDate(stopTime, stopValue);
+                }
+            }, 
+            stopValue.get(Calendar.HOUR_OF_DAY), 
+            stopValue.get(Calendar.MINUTE), true, false);
+
+            timePicker.setCloseOnSingleTapMinute(false);
+            timePicker.show(getChildFragmentManager(), "");
+            break;
+
+        case R.id.stop_date:
+            datePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+                    stopValue.set(Calendar.DAY_OF_MONTH, day);
+                    stopValue.set(Calendar.MONTH, month);
+                    stopValue.set(Calendar.YEAR, year);
+                    setDateStringFromDate(stopDate, stopValue);
+                }
+            }, 
+            stopValue.get(Calendar.YEAR), 
+            stopValue.get(Calendar.MONTH), 
+            stopValue.get(Calendar.DAY_OF_MONTH), false);
+
+            datePicker.setCloseOnSingleTapDay(false);
+            datePicker.show(getChildFragmentManager(), "");
+            break;
+        }
+    }
+
+    /**
+     * 
+     * @param v
+     * @param cal
+     */
+    private void setDateStringFromDate(TextView v, Calendar cal) {
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+        v.setText(((day < 10) ? "0" + day : day) + "."
+                + ((month < 10) ? "0" + month : month) + "." + year);
+    }
+
+    /**
+     * 
+     * @param v
+     * @param cal
+     */
+    private void setTimeStringFromDate(TextView v, Calendar cal) {
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        v.setText(((hour < 10) ? "0" + hour : hour) + ":"
+                + ((minute < 10) ? "0" + minute : minute));
     }
 }

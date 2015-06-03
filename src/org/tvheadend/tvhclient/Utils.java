@@ -1068,17 +1068,6 @@ public class Utils {
     }
 
     /**
-     * Converts the given time in milliseconds to a human readable date and time
-     * string value
-     * 
-     * @return time in the 'dd.MM.yyyy, HH:mm' format
-     */
-    public static String getDateTimeStringFromValue(long time) {
-        SimpleDateFormat smf =  new SimpleDateFormat("dd.MM.yyyy, HH:mm", Locale.getDefault());
-        return smf.format(new Date(time));
-    }
-
-    /**
      * Returns the public key that is required to make in-app purchases. The key
      * which is ciphered is located in the assets folder.
      * 

@@ -19,7 +19,6 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
@@ -38,11 +37,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.sleepbot.datetimepicker.time.RadialPickerLayout;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 public class TimerRecordingAddFragment extends DialogFragment {
 
@@ -282,16 +282,17 @@ public class TimerRecordingAddFragment extends DialogFragment {
                 int minute = (int) (startTimeValue % 60);
 
                 TimePickerDialog mTimePicker;
-                mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
+                mTimePicker = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
                     @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
                         // Save the given value in seconds. This values will be passed to the server
                         startTimeValue = (long) (selectedHour * 60 + selectedMinute);
                         startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
                     }
-                }, hour, minute, true);
-                mTimePicker.setTitle(R.string.select_start_time);
-                mTimePicker.show();
+                }, hour, minute, true, false);
+
+                mTimePicker.setCloseOnSingleTapMinute(false);
+                mTimePicker.show(getChildFragmentManager(), "");
             }
         });
 
@@ -304,16 +305,17 @@ public class TimerRecordingAddFragment extends DialogFragment {
                 int minute = (int) (stopTimeValue % 60);
 
                 TimePickerDialog mTimePicker;
-                mTimePicker = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
+                mTimePicker = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
                     @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
                         // Save the given value in seconds. This values will be passed to the server
                         stopTimeValue = (long) (selectedHour * 60 + selectedMinute);
                         stopTime.setText(Utils.getTimeStringFromValue(stopTimeValue));
                     }
-                }, hour, minute, true);
-                mTimePicker.setTitle(R.string.select_stop_time);
-                mTimePicker.show();
+                }, hour, minute, true, false);
+
+                mTimePicker.setCloseOnSingleTapMinute(false);
+                mTimePicker.show(getChildFragmentManager(), "");
             }
         });
 

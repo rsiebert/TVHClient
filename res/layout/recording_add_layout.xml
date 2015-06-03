@@ -92,13 +92,43 @@
                     android:paddingTop="16dp"
                     android:text="@string/start_time" />
 
-                <TextView
-                    android:id="@+id/start_time"
-                    style="?attr/ContentFont"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
-                    android:paddingBottom="16dp" />
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/start_time"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                        android:drawablePadding="4dp"
+                        android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:text="@string/not_set" />
+
+                    <TextView
+                        android:id="@+id/start_date"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                        android:drawablePadding="4dp"
+                        android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:text="@string/not_set" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/stop_time_label"
@@ -108,13 +138,43 @@
                     android:paddingTop="16dp"
                     android:text="@string/stop_time" />
 
-                <TextView
-                    android:id="@+id/stop_time"
-                    style="?attr/ContentFont"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
-                    android:paddingBottom="16dp" />
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/stop_time"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                        android:drawablePadding="4dp"
+                        android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:text="@string/not_set" />
+
+                    <TextView
+                        android:id="@+id/stop_date"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                        android:drawablePadding="4dp"
+                        android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:text="@string/not_set" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/start_extra_label"
