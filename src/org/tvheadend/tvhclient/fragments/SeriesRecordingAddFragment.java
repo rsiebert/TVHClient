@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -44,7 +45,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-public class SeriesRecordingAddFragment extends DialogFragment {
+public class SeriesRecordingAddFragment extends DialogFragment implements HTSListener {
 
     private final static String TAG = SeriesRecordingAddFragment.class.getSimpleName();
 
@@ -239,8 +240,15 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
                 enabledValue = rec.enabled;
-                int pos = app.getChannels().indexOf(rec.channel);
-                channelSelectionValue = (pos >= 0 ? pos : 0);
+
+                // Get the position of the given channel in the channelList 
+                channelSelectionValue = 0;
+                for (int i = 0; i < channelList.length; i++) {
+                    if (channelList[i].equals(rec.channel.name)) {
+                        channelSelectionValue = i;
+                        break;
+                    }
+                }
             } else {
                 // No recording was given, set default values
                 Calendar cal = Calendar.getInstance();
@@ -456,55 +464,16 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         // If the series recording has been edited, remove it before adding it
         // again with the updated values. This is required because the API does
-        // not provide an edit service call.
+        // not provide an edit service call. When the confirmation that the
+        // recording was received, add the edited one. This is done in the
+        // onMessage method. 
         if (rec != null && rec.id != null && rec.id.length() > 0) {
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
             intent.putExtra("id", rec.id);
             activity.startService(intent);
-        }
-
-        // Add the new or edited series recording
-        Intent intent = new Intent(activity, HTSService.class);
-        intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
-        intent.putExtra("title", titleValue);
-        intent.putExtra("minDuration", minDurationValue);
-        intent.putExtra("maxDuration", maxDurationValue);
-        intent.putExtra("start", startTimeValue);
-        intent.putExtra("startExtra", startExtraTimeValue);
-        intent.putExtra("stopExtra", stopExtraTimeValue);
-        intent.putExtra("daysOfWeek", daysOfWeekValue);
-        intent.putExtra("priority", priorityValue);
-        intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
-
-        // If the all channels recording is not enabled or a valid channel name
-        // was selected get the channel id that needs to be passed to the
-        // server. So go through all available channels and get the id for the
-        // selected channel name.
-        if (!allowRecordingOnAllChannels || channelSelectionValue > 0) {
-            for (Channel c : app.getChannels()) {
-                if (c.name.equals(channelName.getText().toString())) {
-                    intent.putExtra("channelId", c.id);
-                    break;
-                }
-            }
-        }
-
-        // Add the recording profile if available and enabled
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
-        if (p != null 
-                && p.enabled
-                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                && app.isUnlocked()) {
-            intent.putExtra("configName", p.name);
-        }
-
-        activity.startService(intent);
-
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
+        } else {
+            addSeriesRecording();
         }
     }
 
@@ -546,5 +515,66 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             }
         }
         return value;
+    }
+
+    @Override
+    public void onMessage(String action, Object obj) {
+        if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    addSeriesRecording();
+                }
+            });
+        }
+    }
+
+    /**
+     * Adds a new series recording with the given values. This method is also
+     * called when a recording is being edited. It adds a recording with edited
+     * values which was previously removed.
+     */
+    private void addSeriesRecording() {
+
+        Intent intent = new Intent(activity, HTSService.class);
+        intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
+        intent.putExtra("title", titleValue);
+        intent.putExtra("minDuration", minDurationValue);
+        intent.putExtra("maxDuration", maxDurationValue);
+        intent.putExtra("start", startTimeValue);
+        intent.putExtra("startExtra", startExtraTimeValue);
+        intent.putExtra("stopExtra", stopExtraTimeValue);
+        intent.putExtra("daysOfWeek", daysOfWeekValue);
+        intent.putExtra("priority", priorityValue);
+        intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
+
+        // If the all channels recording is not enabled or a valid channel name
+        // was selected get the channel id that needs to be passed to the
+        // server. So go through all available channels and get the id for the
+        // selected channel name.
+        if (!allowRecordingOnAllChannels || channelSelectionValue > 0) {
+            for (Channel c : app.getChannels()) {
+                if (c.name.equals(channelName.getText().toString())) {
+                    intent.putExtra("channelId", c.id);
+                    break;
+                }
+            }
+        }
+
+        // Add the recording profile if available and enabled
+        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+        if (p != null 
+                && p.enabled
+                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && app.isUnlocked()) {
+            intent.putExtra("configName", p.name);
+        }
+
+        activity.startService(intent);
+
+        if (getDialog() != null) {
+            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
+            getDialog().dismiss();
+        }
     }
 }

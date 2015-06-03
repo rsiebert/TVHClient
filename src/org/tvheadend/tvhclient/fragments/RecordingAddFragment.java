@@ -150,8 +150,15 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 stopValue.setTimeInMillis(rec.stop.getTime());
                 titleValue = rec.title;
                 descriptionValue = rec.description;
-                int pos = app.getChannels().indexOf(rec.channel);
-                channelSelectionValue = (pos >= 0 ? pos : 0);
+
+                // Get the position of the given channel in the channelList 
+                channelSelectionValue = 0;
+                for (int i = 0; i < channelList.length; i++) {
+                    if (channelList[i].equals(rec.channel.name)) {
+                        channelSelectionValue = i;
+                        break;
+                    }
+                }
             } else {
                 priorityValue = 2;
                 startExtraValue = 0;
