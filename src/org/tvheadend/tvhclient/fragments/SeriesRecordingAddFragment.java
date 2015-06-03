@@ -392,7 +392,14 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 				return false;
 			}
 		});
+		app.addListener(this);
 	}
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        app.removeListener(this);
+    }
 
     /**
      * 
