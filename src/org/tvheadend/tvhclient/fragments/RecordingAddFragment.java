@@ -1,6 +1,9 @@
 package org.tvheadend.tvhclient.fragments;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -174,6 +177,14 @@ public class RecordingAddFragment extends DialogFragment {
         for (int i = 0; i < app.getChannels().size(); i++) {
             channelList[i] = app.getChannels().get(i).name;
         }
+
+        // Sort the channels in the list by name
+        Arrays.sort(channelList, new Comparator<String>() {
+            public int compare(String x, String y) {
+                return x.toLowerCase(Locale.US).compareTo(
+                        y.toLowerCase(Locale.US));
+            }
+        });
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
