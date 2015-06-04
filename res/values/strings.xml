@@ -259,6 +259,7 @@
     <string name="channel_icon">Channel icon</string>
     <string name="status_icon">Status icon</string>
     <string name="title">Title</string>
+    <string name="subtitle">Subtitle</string>
     <string name="channel">Channel</string>
     <string name="time">Time</string>
     <string name="date">Date</string>

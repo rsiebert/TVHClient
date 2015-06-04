@@ -36,6 +36,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView summary;
     private TextView descLabel;
     private TextView desc;
+    private TextView subtitleLabel;
+    private TextView subtitle;
     private TextView channelLabel;
     private TextView channelName;
     private TextView date;
@@ -95,6 +97,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         summary = (TextView) v.findViewById(R.id.summary);
         descLabel = (TextView) v.findViewById(R.id.description_label);
         desc = (TextView) v.findViewById(R.id.description);
+        subtitleLabel = (TextView) v.findViewById(R.id.subtitle_label);
+        subtitle = (TextView) v.findViewById(R.id.subtitle);
         channelLabel = (TextView) v.findViewById(R.id.channel_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         date = (TextView) v.findViewById(R.id.date);
@@ -148,6 +152,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
+        Utils.setDescription(subtitleLabel, subtitle, rec.subtitle);
         Utils.setFailedReason(failed_reason, rec);
 
         // Show the information if the recording belongs to a series recording

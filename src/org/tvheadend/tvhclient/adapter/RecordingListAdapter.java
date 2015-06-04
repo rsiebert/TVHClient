@@ -57,6 +57,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     static class ViewHolder {
         public ImageView icon;
         public TextView title;
+        public TextView subtitle;
         public ImageView state;
         public TextView is_series_recording;
         public TextView is_timer_recording;
@@ -80,6 +81,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
+            holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
             holder.state = (ImageView) view.findViewById(R.id.state);
             holder.is_series_recording = (TextView) view.findViewById(R.id.is_series_recording);
             holder.is_timer_recording = (TextView) view.findViewById(R.id.is_timer_recording);
@@ -119,6 +121,14 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             if (holder.channel != null && rec.channel != null) {
                 holder.channel.setText(rec.channel.name);
             }
+
+            if (rec.subtitle != null && rec.subtitle.length() > 0) {
+                holder.subtitle.setVisibility(View.VISIBLE);
+                holder.subtitle.setText(rec.subtitle);
+            } else {
+                holder.subtitle.setVisibility(View.GONE);
+            }
+            
             Utils.setChannelIcon(holder.icon, null, rec.channel);
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);

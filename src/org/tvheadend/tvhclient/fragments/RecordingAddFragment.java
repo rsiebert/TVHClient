@@ -58,6 +58,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private EditText startExtra;
     private EditText stopExtra;
     private EditText title;
+    private EditText subtitle;
     private EditText description;
     private TextView channelName;
 
@@ -72,6 +73,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private Calendar stopValue = Calendar.getInstance();
     private long priorityValue;
     private String titleValue;
+    private String subtitleValue;
     private String descriptionValue;
     private int channelSelectionValue;
 
@@ -120,6 +122,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         outState.putLong("startExtraValue", startExtraValue);
         outState.putLong("stopExtraValue", stopExtraValue);
         outState.putString("titleValue", titleValue);
+        outState.putString("subtitleValue", subtitleValue);
         outState.putString("descriptionValue", descriptionValue);
         outState.putInt("channelNameValue", channelSelectionValue);
         super.onSaveInstanceState(outState);
@@ -165,6 +168,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 startValue.setTimeInMillis(rec.start.getTime());
                 stopValue.setTimeInMillis(rec.stop.getTime());
                 titleValue = rec.title;
+                subtitleValue = rec.subtitle;
                 descriptionValue = rec.description;
 
                 // Get the position of the given channel in the channelList 
@@ -181,6 +185,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 stopExtraValue = 0;
                 stopValue.setTimeInMillis(startValue.getTimeInMillis() + 30 * 60000); // add 30 min
                 titleValue = "";
+                subtitleValue = "";
                 descriptionValue = "";
                 channelSelectionValue = 0;
             }
@@ -192,6 +197,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             startValue.setTimeInMillis(savedInstanceState.getLong("startTimeValue"));
             stopValue.setTimeInMillis(savedInstanceState.getLong("stopTimeValue"));
             titleValue = savedInstanceState.getString("titleValue");
+            subtitleValue = savedInstanceState.getString("subtitleValue");
             descriptionValue = savedInstanceState.getString("descriptionValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
@@ -208,6 +214,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         // Initialize all the widgets from the layout
         title = (EditText) v.findViewById(R.id.title);
+        subtitle = (EditText) v.findViewById(R.id.subtitle);
         description = (EditText) v.findViewById(R.id.description);
         channelName = (TextView) v.findViewById(R.id.channel);
         startExtra = (EditText) v.findViewById(R.id.start_extra);
@@ -228,6 +235,10 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         if (title != null) {
             title.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
             title.setText(titleValue);
+        }
+        if (subtitle != null) {
+            subtitle.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
+            subtitle.setText(subtitleValue);
         }
         if (description != null) {
             description.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
@@ -378,6 +389,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         if (title != null) {
             titleValue = title.getText().toString();
         }
+        if (subtitle != null) {
+            subtitleValue = subtitle.getText().toString();
+        }
         if (description != null) {
             descriptionValue = description.getText().toString();
         }
@@ -428,6 +442,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         }
 
         intent.putExtra("title", titleValue);
+        intent.putExtra("subtitle", subtitleValue);
         intent.putExtra("start", startValue.getTimeInMillis() / 1000); // Pass on seconds not milliseconds
         intent.putExtra("stop", stopValue.getTimeInMillis() / 1000); // Pass on seconds not milliseconds
         intent.putExtra("startExtra", startExtraValue);

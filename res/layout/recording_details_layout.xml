@@ -104,6 +104,22 @@
             android:text="@string/is_timer_recording" />
 
         <TextView
+            android:id="@+id/subtitle_label"
+            style="?attr/TitleFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/subtitle" />
+
+        <TextView
+            android:id="@+id/subtitle"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingBottom="16dp"
+            android:text="@string/subtitle" />
+
+        <TextView
             android:id="@+id/summary_label"
             style="?attr/TitleFont"
             android:layout_width="wrap_content"

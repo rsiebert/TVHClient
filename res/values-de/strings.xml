@@ -258,6 +258,7 @@
     <string name="channel_icon">Senderlogo</string>
     <string name="status_icon">Statuslogo</string>
     <string name="title">Titel</string>
+    <string name="subtitle">Untertitel</string>
     <string name="channel">Sender</string>
     <string name="time">Zeit</string>
     <string name="date">Datum</string>
