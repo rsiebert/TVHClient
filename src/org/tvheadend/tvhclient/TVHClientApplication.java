@@ -2,8 +2,10 @@ package org.tvheadend.tvhclient;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -185,7 +187,19 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public List<ChannelTag> getChannelTags() {
         synchronized (tags) {
-            Collections.sort(tags, ChannelTag.ChannelTagNameSorter);
+        	Collections.sort(tags, new Comparator<ChannelTag>() {
+                public int compare(ChannelTag x, ChannelTag y) {
+                	if (x != null && y != null && x.name != null && y.name != null) {
+                    	if (y.name.equals(getString(R.string.all_channels))) {
+                    		return 1;
+                    	} else {
+                            return x.name.toLowerCase(Locale.getDefault()).compareTo(
+                                    y.name.toLowerCase(Locale.getDefault()));
+                    	}                   		
+                    }
+                    return 0;
+                }
+        	});
             return tags;
         }
     }
