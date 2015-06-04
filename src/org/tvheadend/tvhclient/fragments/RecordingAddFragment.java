@@ -58,7 +58,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private EditText startExtra;
     private EditText stopExtra;
     private EditText title;
+    private TextView titelLabel;
     private EditText description;
+    private TextView descriptionLabel;
     private TextView channelName;
 
     // Extra pre- and postrecording times in seconds
@@ -208,7 +210,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         // Initialize all the widgets from the layout
         title = (EditText) v.findViewById(R.id.title);
+        titelLabel = (TextView) v.findViewById(R.id.title_label);
         description = (EditText) v.findViewById(R.id.description);
+        descriptionLabel = (TextView) v.findViewById(R.id.description_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         startExtra = (EditText) v.findViewById(R.id.start_extra);
         stopExtra = (EditText) v.findViewById(R.id.stop_extra);
@@ -227,10 +231,12 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         if (title != null) {
             title.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
+            titelLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
             title.setText(titleValue);
         }
         if (description != null) {
             description.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
+            descriptionLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
             description.setText(descriptionValue);
         }
 
