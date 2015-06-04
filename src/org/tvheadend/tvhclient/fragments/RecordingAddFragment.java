@@ -129,6 +129,22 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        // Create the list of channels that the user can select
+        channelList = new String[app.getChannels().size()];
+        for (int i = 0; i < app.getChannels().size(); i++) {
+            channelList[i] = app.getChannels().get(i).name;
+        }
+
+        // Sort the channels in the list by name
+        Arrays.sort(channelList, new Comparator<String>() {
+            public int compare(String x, String y) {
+                return x.toLowerCase(Locale.US).compareTo(
+                        y.toLowerCase(Locale.US));
+            }
+        });
+
+        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
+
         // If the savedInstanceState is null then the fragment was created for
         // the first time. Either get the given id to edit the recording or
         // create new one. Otherwise an orientation change has occurred and the
@@ -179,22 +195,6 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             descriptionValue = savedInstanceState.getString("descriptionValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
-
-        // Create the list of channels that the user can select
-        channelList = new String[app.getChannels().size()];
-        for (int i = 0; i < app.getChannels().size(); i++) {
-            channelList[i] = app.getChannels().get(i).name;
-        }
-
-        // Sort the channels in the list by name
-        Arrays.sort(channelList, new Comparator<String>() {
-            public int compare(String x, String y) {
-                return x.toLowerCase(Locale.US).compareTo(
-                        y.toLowerCase(Locale.US));
-            }
-        });
-
-        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
         // Assume a new recording shall be added. If a recording was given then
         // show the layouts to edit it. If the recording is already being

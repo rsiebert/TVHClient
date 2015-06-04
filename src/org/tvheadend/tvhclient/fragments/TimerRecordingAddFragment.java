@@ -120,49 +120,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
-        title = (EditText) v.findViewById(R.id.title);
-
-        // For the shown days in each toggle button the array with the short
-        // names is used. If the screen width is not large enough then the short
-        // names of all seven days would not fit. Therefore reduce the number of
-        // shown letters for each day depending on the screen width.
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        final int displayWidth = displaymetrics.widthPixels;
-
-        daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
-        String[] shortDays = getResources().getStringArray(R.array.day_short_names);
-        for (int i = 0; i < 7; i++) {
-            final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
-
-            // Show only one character on width below 800, two characters below
-            // 1000 and all characters on all remaining ones
-            if (displayWidth < 800) {
-                dayButton.setTextOn(shortDays[i].subSequence(0, 1));
-                dayButton.setTextOff(shortDays[i].subSequence(0, 1));
-            } else if (displayWidth < 1000) {
-                dayButton.setTextOn(shortDays[i].subSequence(0, 2));
-                dayButton.setTextOff(shortDays[i].subSequence(0, 2));
-            } else {
-                dayButton.setTextOn(shortDays[i]);
-                dayButton.setTextOff(shortDays[i]);
-            }
-
-            // Add the button to the layout and store it in the list to have
-            // access to it later
-            daysOfWeekLayout.addView(dayButton);
-            daysOfWeekButtons[i] = dayButton;
-        }
-
-        startTime = (TextView) v.findViewById(R.id.start_time);
-        stopTime = (TextView) v.findViewById(R.id.stop_time);
-        priority = (TextView) v.findViewById(R.id.priority);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-
     	// Create the list of channels that the user can select
         channelList = new String[app.getChannels().size()];
         for (int i = 0; i < app.getChannels().size(); i++) {
@@ -231,6 +188,48 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
 
+        // Initialize all the widgets from the layout
+        View v = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
+        channelName = (TextView) v.findViewById(R.id.channel);
+        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
+        title = (EditText) v.findViewById(R.id.title);
+
+        // For the shown days in each toggle button the array with the short
+        // names is used. If the screen width is not large enough then the short
+        // names of all seven days would not fit. Therefore reduce the number of
+        // shown letters for each day depending on the screen width.
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        final int displayWidth = displaymetrics.widthPixels;
+
+        daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
+        String[] shortDays = getResources().getStringArray(R.array.day_short_names);
+        for (int i = 0; i < 7; i++) {
+            final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
+
+            // Show only one character on width below 800, two characters below
+            // 1000 and all characters on all remaining ones
+            if (displayWidth < 800) {
+                dayButton.setTextOn(shortDays[i].subSequence(0, 1));
+                dayButton.setTextOff(shortDays[i].subSequence(0, 1));
+            } else if (displayWidth < 1000) {
+                dayButton.setTextOn(shortDays[i].subSequence(0, 2));
+                dayButton.setTextOff(shortDays[i].subSequence(0, 2));
+            } else {
+                dayButton.setTextOn(shortDays[i]);
+                dayButton.setTextOff(shortDays[i]);
+            }
+
+            // Add the button to the layout and store it in the list to have
+            // access to it later
+            daysOfWeekLayout.addView(dayButton);
+            daysOfWeekButtons[i] = dayButton;
+        }
+
+        startTime = (TextView) v.findViewById(R.id.start_time);
+        stopTime = (TextView) v.findViewById(R.id.stop_time);
+        priority = (TextView) v.findViewById(R.id.priority);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
     
