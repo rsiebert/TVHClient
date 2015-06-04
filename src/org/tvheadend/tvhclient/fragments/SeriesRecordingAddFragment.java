@@ -193,8 +193,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 minDurationValue = rec.minDuration;
                 maxDurationValue = rec.maxDuration;
                 startTimeValue = (rec.start < 0) ? 0 : rec.start;
-                startExtraTimeValue = rec.startExtra.getTime();
-                stopExtraTimeValue = rec.stopExtra.getTime();
+                startExtraTimeValue = rec.startExtra;
+                stopExtraTimeValue = rec.stopExtra;
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
                 nameValue = rec.name;

@@ -682,8 +682,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.approxTime = msg.getLong("approxTime");
         srec.start = msg.getLong("start");
         srec.startWindow = msg.getLong("startWindow");
-        srec.startExtra = msg.getDate("startExtra");
-        srec.stopExtra = msg.getDate("stopExtra");
+        srec.startExtra = msg.getLong("startExtra");
+        srec.stopExtra = msg.getLong("stopExtra");
         srec.title = msg.getString("title", srec.title);
         srec.name = msg.getString("name", srec.name);
         app.updateSeriesRecording(srec);
@@ -702,8 +702,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.approxTime = msg.getLong("approxTime");
         srec.start = msg.getLong("start");
         srec.startWindow = msg.getLong("startWindow");
-        srec.startExtra = msg.getDate("startExtra");
-        srec.stopExtra = msg.getDate("stopExtra");
+        srec.startExtra = msg.getLong("startExtra");
+        srec.stopExtra = msg.getLong("stopExtra");
         srec.title = msg.getString("title");
         srec.name = msg.getString("name");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
