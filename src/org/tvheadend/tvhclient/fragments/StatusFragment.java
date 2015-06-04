@@ -168,6 +168,11 @@ public class StatusFragment extends Fragment implements HTSListener {
                 public void run() {
                     connectionStatus = action;
 
+                    if (actionBarInterface != null) {
+                        actionBarInterface.setActionBarTitle(getString(R.string.status));
+                        actionBarInterface.setActionBarSubtitle("");
+                    }
+
                     // Hide the additional status information because the
                     // connection to the server is not OK
                     additionalInformationLayout.setVisibility(View.GONE);
