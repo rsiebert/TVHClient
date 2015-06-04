@@ -31,6 +31,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private TextView isEnabled;
     private TextView minDuration;
     private TextView maxDuration;
+    private TextView startTime;
     private TextView daysOfWeek;
     private TextView channelName;
     private TextView priority;
@@ -83,6 +84,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
         minDuration = (TextView) v.findViewById(R.id.minimum_duration);
         maxDuration = (TextView) v.findViewById(R.id.maximum_duration);
+        startTime = (TextView) v.findViewById(R.id.start_time);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
 
@@ -116,6 +118,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             showPlayerControls();
         }
 
+        isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
         isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
         channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
 
@@ -130,6 +133,9 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         }
         if (srec.maxDuration > 0) {
             maxDuration.setText(getString(R.string.minutes, (int) srec.maxDuration));
+        }
+        if (srec.start > 0) {
+            startTime.setText(Utils.getTimeStringFromValue(srec.start));
         }
     }
 

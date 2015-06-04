@@ -26,15 +26,6 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp" >
 
-                <CheckBox
-                    android:id="@+id/is_enabled"
-                    style="?attr/SubtitleFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/activate_recording" />
-
                 <TextView
                     android:id="@+id/title_label"
                     style="?attr/TitleFont"
@@ -48,7 +39,24 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/add_title"
+                    android:hint="@string/not_set"
+                    android:inputType="text"
+                    android:paddingBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/description_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/description" />
+
+                <EditText
+                    android:id="@+id/description"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/not_set"
                     android:inputType="text"
                     android:paddingBottom="16dp" />
 
@@ -65,9 +73,9 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
-                    android:drawablePadding="4dp"
-                    android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                    android:drawableEnd="?attr/ic_arrow_drop_down"
+                    android:drawablePadding="8dp"
+                    android:drawableRight="?attr/ic_arrow_drop_down"
                     android:paddingBottom="16dp"
                     android:paddingEnd="4dp"
                     android:paddingLeft="4dp"
@@ -76,36 +84,24 @@
                     android:paddingTop="4dp"
                     android:text="@string/not_set" />
 
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/start_time_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/start_time" />
+
+                <LinearLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent" >
-
-                    <TextView
-                        android:id="@+id/start_time_label"
-                        style="?attr/TitleFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="16dp"
-                        android:text="@string/start_time" />
-
-                    <TextView
-                        android:id="@+id/stop_time_label"
-                        style="?attr/TitleFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="32dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_toEndOf="@+id/start_time_label"
-                        android:layout_toRightOf="@+id/start_time_label"
-                        android:paddingTop="16dp"
-                        android:text="@string/stop_time" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
 
                     <TextView
                         android:id="@+id/start_time"
                         style="?attr/ContentFont"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/start_time_label"
                         android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
                         android:drawablePadding="4dp"
                         android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
@@ -118,13 +114,10 @@
                         android:text="@string/not_set" />
 
                     <TextView
-                        android:id="@+id/stop_time"
+                        android:id="@+id/start_date"
                         style="?attr/ContentFont"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignLeft="@+id/stop_time_label"
-                        android:layout_alignStart="@+id/stop_time_label"
-                        android:layout_below="@+id/stop_time_label"
                         android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
                         android:drawablePadding="4dp"
                         android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
@@ -135,27 +128,85 @@
                         android:paddingStart="4dp"
                         android:paddingTop="4dp"
                         android:text="@string/not_set" />
-                </RelativeLayout>
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/days_of_week_label"
+                    android:id="@+id/stop_time_label"
                     style="?attr/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/days_of_week" />
+                    android:text="@string/stop_time" />
 
                 <LinearLayout
-                    android:id="@+id/days_of_week_layout"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="16dp" >
+                    android:orientation="horizontal" >
 
-                    <!-- The days of week toggle buttons are added programatically -->
+                    <TextView
+                        android:id="@+id/stop_time"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                        android:drawablePadding="4dp"
+                        android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:text="@string/not_set" />
+
+                    <TextView
+                        android:id="@+id/stop_date"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                        android:drawablePadding="4dp"
+                        android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:text="@string/not_set" />
                 </LinearLayout>
 
-                <!-- Below are additional input fields -->
+                <TextView
+                    android:id="@+id/start_extra_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/extra_start_time" />
+
+                <EditText
+                    android:id="@+id/start_extra"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:paddingBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/stop_extra_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/extra_stop_time" />
+
+                <EditText
+                    android:id="@+id/stop_extra"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:paddingBottom="16dp" />
 
                 <TextView
                     android:id="@+id/priority_label"
@@ -170,9 +221,9 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
-                    android:drawablePadding="4dp"
-                    android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                    android:drawableEnd="?attr/ic_arrow_drop_down"
+                    android:drawablePadding="8dp"
+                    android:drawableRight="?attr/ic_arrow_drop_down"
                     android:paddingBottom="16dp"
                     android:paddingEnd="4dp"
                     android:paddingLeft="4dp"

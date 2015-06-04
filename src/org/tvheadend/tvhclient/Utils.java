@@ -972,6 +972,11 @@ public class Utils {
         return pixelsPerMinute;
     }
 
+    /**
+     * Returns the id of the channel tag that is saved in the current connection
+     * 
+     * @return
+     */
     public static int getChannelTagId() {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
@@ -1042,6 +1047,25 @@ public class Utils {
 	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return Integer.parseInt(prefs.getString("sortChannelsPref", String.valueOf(Constants.CHANNEL_SORT_DEFAULT)));
 	}
+
+    /**
+     * Converts the given time in milliseconds to a human readable time value.
+     * Adds leading zeros to the hour or minute values in case they are lower
+     * then ten.
+     * 
+     * @return time in hh:mm format
+     */
+    public static String getTimeStringFromValue(final long time) {
+        String minutes = String.valueOf(time % 60);
+        if (minutes.length() == 1) {
+            minutes = "0" + minutes;
+        }
+        String hours = String.valueOf(time / 60);
+        if (hours.length() == 1) {
+            hours = "0" + hours;
+        }
+        return (hours + ":" + minutes);
+    }
 
     /**
      * Returns the public key that is required to make in-app purchases. The key

@@ -211,7 +211,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             public void onClick(View v) {
                 // Open a new activity that starts playing the program
                 if (rec != null) {
-                    DialogFragment editFragment = RecordingEditFragment.newInstance(null);
+                    DialogFragment editFragment = RecordingAddFragment.newInstance(null);
                     Bundle bundle = new Bundle();
                     bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
                     editFragment.setArguments(bundle);

@@ -120,8 +120,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         }
         showPlayerControls();
 
-        // TODO use a constant here
-        isEnabled.setVisibility((app.getProtocolVersion() >= 18) ? View.VISIBLE : View.GONE);
+        isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
         isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
 
         if (trec.channel != null) {

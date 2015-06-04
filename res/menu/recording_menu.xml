@@ -9,33 +9,39 @@
         android:title="@string/play"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
+        android:id="@+id/menu_add"
+        android:icon="?attr/ic_menu_add"
+        android:orderInCategory="3"
+        android:title="@string/add"
+        app:showAsAction="ifRoom|collapseActionView|withText"/>
+    <item
         android:id="@+id/menu_edit"
         android:icon="?attr/ic_menu_edit"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/edit"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="@string/remove"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_remove_all"
         android:icon="?attr/ic_menu_record_remove"
-        android:orderInCategory="5"
+        android:orderInCategory="6"
         android:title="@string/record_remove_all"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_cancel"
         android:icon="?attr/ic_menu_record_cancel"
-        android:orderInCategory="6"
+        android:orderInCategory="7"
         android:title="@string/cancel"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
         android:id="@+id/menu_record_cancel_all"
         android:icon="?attr/ic_menu_record_cancel"
-        android:orderInCategory="7"
+        android:orderInCategory="8"
         android:title="@string/record_cancel_all"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
 

@@ -117,21 +117,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             getEvents(ch, intent.getLongExtra("eventId", 0), intent.getIntExtra("count", 10));
 
         } else if (action.equals(Constants.ACTION_ADD_DVR_ENTRY)) {
-            addDvrEntry(intent.getLongExtra("channelId", 0),
-                    intent.getLongExtra("eventId", 0),
-                    intent.getStringExtra("configName"));
+            addDvrEntry(intent);
 
         } else if (action.equals(Constants.ACTION_UPDATE_DVR_ENTRY)) {
-            updateDvrEntry(intent.getLongExtra("id", 0),
-                    intent.getLongExtra("start", 0),
-                    intent.getLongExtra("stop", 0),
-                    intent.getLongExtra("retention", 0),
-                    intent.getLongExtra("priority", 2),
-                    intent.getLongExtra("startExtra", 0),
-                    intent.getLongExtra("stopExtra", 0),
-                    intent.getStringExtra("title"),
-                    intent.getStringExtra("description"),
-                    intent.getBooleanExtra("isRecording", false));
+            updateDvrEntry(intent);
 
         } else if (action.equals(Constants.ACTION_DELETE_DVR_ENTRY)) {
             try {
@@ -144,16 +133,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             cancelDvrEntry(intent.getLongExtra("id", 0));
 
         } else if (action.equals(Constants.ACTION_ADD_TIMER_REC_ENTRY)) {
-            addTimerRecEntry(
-                    intent.getStringExtra("title"),
-                    intent.getLongExtra("start", 0),
-                    intent.getLongExtra("stop", 0),
-                    intent.getLongExtra("channelId", 0),
-                    intent.getLongExtra("retention", 0),
-                    intent.getLongExtra("daysOfWeek", 0),
-                    intent.getLongExtra("priority", 2),
-                    intent.getLongExtra("enabled", 0),
-                    intent.getStringExtra("configName"));
+            addTimerRecEntry(intent);
 
         } else if (action.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
             deleteTimerRecEntry(intent.getStringExtra("id"));
@@ -210,18 +190,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
             
         } else if (action.equals(Constants.ACTION_ADD_SERIES_DVR_ENTRY)) {
-            addAutorecEntry(
-                    intent.getStringExtra("title"),
-                    intent.getLongExtra("channelId", 0),
-                    intent.getLongExtra("maxDuration", 0),
-                    intent.getLongExtra("minDuration", 0),
-                    intent.getLongExtra("retention", 120),
-                    intent.getLongExtra("daysOfWeek", 127),
-                    intent.getLongExtra("priority", 2),
-                    intent.getLongExtra("enabled", 1),
-                    intent.getLongExtra("startExtra", 0),
-                    intent.getLongExtra("stopExtra", 0),
-                    intent.getStringExtra("configName"));
+            addAutorecEntry(intent);
 
         } else if (action.equals(Constants.ACTION_DELETE_SERIES_DVR_ENTRY)) {
             String id = intent.getStringExtra("id");
@@ -708,6 +677,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.daysOfWeek = msg.getLong("daysOfWeek");
         srec.approxTime = msg.getLong("approxTime");
         srec.priority = msg.getLong("priority");
+        srec.approxTime = msg.getLong("approxTime");
+        srec.start = msg.getLong("start");
+        srec.startWindow = msg.getLong("startWindow");
         srec.startExtra = msg.getDate("startExtra");
         srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title", srec.title);
@@ -724,6 +696,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.daysOfWeek = msg.getLong("daysOfWeek");
         srec.approxTime = msg.getLong("approxTime");
         srec.priority = msg.getLong("priority");
+        srec.approxTime = msg.getLong("approxTime");
+        srec.start = msg.getLong("start");
+        srec.startWindow = msg.getLong("startWindow");
         srec.startExtra = msg.getDate("startExtra");
         srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title");
@@ -1013,6 +988,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
+    /**
+     * Cancels a regular recording from the server with the given id. If the
+     * cancellation was successful a positive message is shown otherwise a negative
+     * one.
+     * 
+     * @param id
+     *            The id of the regular recording that shall be cancelled
+     */
     private void cancelDvrEntry(long id) {
         HTSMessage request = new HTSMessage();
         request.setMethod("cancelDvrEntry");
@@ -1030,9 +1013,27 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void updateDvrEntry(final long id, long start, long stop,
-            long retention, long priority, long startExtra, long stopExtra,
-            String title, String description, boolean isRecording) {
+    /**
+     * Updates a regular recording on the server with the given id and values.
+     * If the update was successful a positive message is shown otherwise a
+     * negative one.
+     * 
+     * @param id
+     *            Contains the id and (un)changed parameters of the regular
+     *            recording
+     */
+    private void updateDvrEntry(final Intent intent) {
+
+        final long id = intent.getLongExtra("id", 0);
+        final long start = intent.getLongExtra("start", 0);
+        final long stop = intent.getLongExtra("stop", 0);
+        final long retention = intent.getLongExtra("retention", 0);
+        final long priority = intent.getLongExtra("priority", 2);
+        final long startExtra = intent.getLongExtra("startExtra", 0);
+        final long stopExtra = intent.getLongExtra("stopExtra", 0);
+        final String title = intent.getStringExtra("title");
+        final String description = intent.getStringExtra("description");
+        final boolean isRecording = intent.getBooleanExtra("isRecording", false);
 
         HTSMessage request = new HTSMessage();
         request.setMethod("updateDvrEntry");
@@ -1049,14 +1050,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("startExtra", startExtra);
 
             // Do not add these fields if not supported by the server. Updating
-            // these strings was fixed in server version v4.1-111-g807b9c8 
-            if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_EDIT_RECORDING_TITLE) {
-                if (title != null) {
-                    request.putField("title", title);
-                }
-                if (description != null) {
-                    request.putField("description", description);
-                }
+            // these strings was fixed in server version v4.1-111-g807b9c8
+            if (title != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
+                request.putField("title", title);
+            }
+            if (description != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION) {
+                request.putField("description", description);
             }
         }
 
@@ -1073,6 +1072,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
+    /**
+     * Deletes a regular recording from the server with the given id. If the
+     * removal was successful a positive message is shown otherwise a negative
+     * one.
+     * 
+     * @param id
+     *            The id of the regular recording that shall be deleted
+     */
     private void deleteDvrEntry(long id) {
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteDvrEntry");
@@ -1090,12 +1097,49 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void addDvrEntry(final long channelId, final long eventId,
-            String configName) {
+    /**
+     * Adds a regular recording to the server with the given values. If the
+     * adding was successful a positive message is shown otherwise a negative
+     * one.
+     * 
+     * @param id
+     *            The parameters of the recording that shall be added
+     */
+    private void addDvrEntry(final Intent intent) {
+
+        final long eventId = intent.getLongExtra("eventId", 0);
+        final long channelId = intent.getLongExtra("channelId", 0);
+        final long start = intent.getLongExtra("start", 0);
+        final long stop = intent.getLongExtra("stop", 0);
+        final long retention = intent.getLongExtra("retention", 0);
+        final long priority = intent.getLongExtra("priority", 2);
+        final long startExtra = intent.getLongExtra("startExtra", 0);
+        final long stopExtra = intent.getLongExtra("stopExtra", 0);
+        final String title = intent.getStringExtra("title");
+        final String description = intent.getStringExtra("description");
+        final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addDvrEntry");
-        request.putField("eventId", eventId);
+
+        // If the eventId is set then an existing program from the program guide
+        // shall be recorded. The server will then ignore the other fields
+        // automatically.
+        request.putField("eventId", eventId);        
+        request.putField("channelId", channelId);
+        request.putField("start", start);
+        request.putField("stop", stop);
+        request.putField("startExtra", startExtra);
+        request.putField("stopExtra", stopExtra);
+        request.putField("retention", retention);
+        request.putField("priority", priority);
+        if (title != null) {
+            request.putField("title", title);
+        }
+        if (description != null) {
+            request.putField("description", description);
+        }
+
         if (configName != null) {
             request.putField("configName", configName);
         }
@@ -1128,8 +1172,12 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     /**
+     * Deletes a manual recording from the server with the given id. If the
+     * removal was successful a positive message is shown otherwise a negative
+     * one.
      * 
      * @param id
+     *            The id of the manual recording that shall be deleted
      */
     private void deleteTimerRecEntry(String id) {
         HTSMessage request = new HTSMessage();
@@ -1149,20 +1197,25 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     /**
+     * Adds a manual recording to the server with the given values. If the
+     * adding was successful a positive message is shown otherwise a negative
+     * one.
      * 
-     * @param title
-     * @param start
-     * @param stop
-     * @param channelId
-     * @param retention
-     * @param daysOfWeek
-     * @param priority
-     * @param enabled
-     * @param configName
+     * @param intent
+     *            Contains the parameters of the manual recording that shall be
+     *            added
      */
-    private void addTimerRecEntry(String title, long start, long stop,
-                long channelId, long retention, long daysOfWeek,
-                long priority, long enabled, String configName) {
+    private void addTimerRecEntry(final Intent intent) {
+
+        final long channelId = intent.getLongExtra("channelId", 0);
+        final long start = intent.getLongExtra("start", 0);
+        final long stop = intent.getLongExtra("stop", 0);
+        final long retention = intent.getLongExtra("retention", 0);
+        final long priority = intent.getLongExtra("priority", 2);
+        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
+        final long enabled = intent.getLongExtra("enabled", 0);
+        final String title = intent.getStringExtra("title");
+        final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addTimerecEntry");
@@ -1173,7 +1226,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
-        request.putField("enabled", enabled);
+
+        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+            request.putField("enabled", enabled);
+        }
 
         if (configName != null) {
             request.putField("configName", configName);
@@ -1320,6 +1376,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
+    /**
+     * Deletes a series recording from the server with the given id. If the
+     * removal was successful a positive message is shown otherwise a negative
+     * one.
+     * 
+     * @param id
+     *            The id of the series recording that shall be deleted
+     */
     private void deleteAutorecEntry(final String id) {
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteAutorecEntry");
@@ -1338,22 +1402,29 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     /**
+     * Adds a series recording to the server with the given values. If the
+     * adding was successful a positive message is shown otherwise a negative
+     * one.
      * 
-     * @param title
-     * @param channelId
-     * @param maxDuration
-     * @param minDuration
-     * @param retention
-     * @param daysOfWeek
-     * @param priority
-     * @param enabled
-     * @param startExtra
-     * @param stopExtra
-     * @param configName
+     * @param intent
+     *            Contains the parameters of the series recording that shall be
+     *            added
      */
-    private void addAutorecEntry(String title, long channelId, long maxDuration,
-            long minDuration, long retention, long daysOfWeek, long priority, long enabled,
-            long startExtra, long stopExtra, String configName) {
+    private void addAutorecEntry(final Intent intent) {
+
+        final String title = intent.getStringExtra("title");
+        final long channelId = intent.getLongExtra("channelId", 0);
+        final long maxDuration = intent.getLongExtra("maxDuration", 0);
+        final long minDuration = intent.getLongExtra("minDuration", 0);
+        final long retention = intent.getLongExtra("retention", 0);
+        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
+        final long priority = intent.getLongExtra("priority", 2);
+        final long enabled = intent.getLongExtra("enabled", 0);
+        final long startExtra = intent.getLongExtra("startExtra", 0);
+        final long stopExtra = intent.getLongExtra("stopExtra", 0);
+        final long start = intent.getLongExtra("start", 0);
+        final long startWindow = intent.getLongExtra("startWindow", 0);
+        final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
@@ -1365,15 +1436,33 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("channelId", channelId);
         }
 
+        // Minimal duration in seconds (0 = Any)
         request.putField("minDuration", minDuration);
+        // Maximal duration in seconds (0 = Any)
         request.putField("maxDuration", maxDuration);
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
-        request.putField("enabled", enabled);
         request.putField("startExtra", startExtra);
         request.putField("stopExtra", stopExtra);
 
+        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_NEW_START_TIME) {
+            // Minutes from midnight (up to 24*60) for the start of the time
+            // window (including) (Added in version 18)
+            request.putField("start", start);
+            // Minutes from midnight (up to 24*60) for the end of the time
+            // window (including, cross-noon allowed) (Added in version 18)
+            request.putField("startWindow", startWindow);
+        } else {
+            // Minutes from midnight (up to 24*60) (window +- 15 minutes)
+            // (Obsoleted from version 18)
+            request.putField("approxTime", start);
+        }
+
+        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+            // Enabled flag (Added in version 19)
+            request.putField("enabled", enabled);
+        }
         if (configName != null) {
             request.putField("configName", configName);
         }

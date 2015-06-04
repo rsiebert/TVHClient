@@ -1,17 +1,25 @@
 package org.tvheadend.tvhclient.fragments;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Locale;
+
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
@@ -25,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -33,8 +42,10 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.sleepbot.datetimepicker.time.RadialPickerLayout;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-public class SeriesRecordingAddFragment extends DialogFragment {
+public class SeriesRecordingAddFragment extends DialogFragment implements HTSListener {
 
     private final static String TAG = SeriesRecordingAddFragment.class.getSimpleName();
 
@@ -48,8 +59,9 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private EditText maxDuration;
     private LinearLayout daysOfWeekLayout;
     private ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
-    private EditText startTime;
-    private EditText stopTime;
+    private TextView startTime;
+    private EditText startExtraTime;
+    private EditText stopExtraTime;
     private EditText title;
     private TextView channelName;
 
@@ -57,7 +69,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     private long minDurationValue;
     private long maxDurationValue;
     private long startTimeValue;
-    private long stopTimeValue;
+    private long startExtraTimeValue;
+    private long stopExtraTimeValue;
     private long daysOfWeekValue;
     private String titleValue;
     private boolean enabledValue;
@@ -91,6 +104,13 @@ public class SeriesRecordingAddFragment extends DialogFragment {
     }
 
     @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
+    @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getDialog() != null) {
@@ -105,7 +125,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         outState.putLong("minDurationValue", minDurationValue);
         outState.putLong("maxDurationValue", maxDurationValue);
         outState.putLong("startTimeValue", startTimeValue);
-        outState.putLong("stopTimeValue", stopTimeValue);
+        outState.putLong("startExtraTimeValue", startExtraTimeValue);
+        outState.putLong("stopExtraTimeValue", stopExtraTimeValue);
         outState.putLong("daysOfWeekValue", daysOfWeekValue);
         outState.putString("titleValue", titleValue);
         outState.putBoolean("enabledValue", enabledValue);
@@ -157,13 +178,14 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             daysOfWeekButtons[i] = dayButton;
         }
 
-        startTime = (EditText) v.findViewById(R.id.start_extra);
-        stopTime = (EditText) v.findViewById(R.id.stop_extra);
+        startTime = (TextView) v.findViewById(R.id.start_time);
+        startExtraTime = (EditText) v.findViewById(R.id.start_extra);
+        stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
         // Determine if the server supports recording on all channels
-        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDING_ON_ALL_CHANNELS;
+        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_SREC_ADD_EMPTY_CHANNEL;
         final int offset = (allowRecordingOnAllChannels ? 1 : 0);
 
         // Create the list of channels that the user can select. If recording on
@@ -176,6 +198,22 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         for (int i = offset; i < app.getChannels().size(); i++) {
             channelList[i] = app.getChannels().get(i).name;
         }
+
+        // Sort the channels in the list by name. Keep the all channels string
+        // always in the first position
+        Arrays.sort(channelList, new Comparator<String>() {
+            public int compare(String x, String y) {
+                if (x != null && y != null) {
+                    if (y.equals(activity.getString(R.string.all_channels))) {
+                        return 1;
+                    } else {
+                        return x.toLowerCase(Locale.US).compareTo(
+                                y.toLowerCase(Locale.US));
+                    }
+                }
+                return 0;
+            }
+        });
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
@@ -197,19 +235,29 @@ public class SeriesRecordingAddFragment extends DialogFragment {
                 minDurationValue = rec.minDuration;
                 maxDurationValue = rec.maxDuration;
                 startTimeValue = rec.start;
-                stopTimeValue = rec.start;
+                startExtraTimeValue = rec.startExtra.getTime();
+                stopExtraTimeValue = rec.stopExtra.getTime();
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
                 enabledValue = rec.enabled;
-                int pos = app.getChannels().indexOf(rec.channel);
-                channelSelectionValue = (pos >= 0 ? pos : 0);
+
+                // Get the position of the given channel in the channelList 
+                channelSelectionValue = 0;
+                for (int i = 0; i < channelList.length; i++) {
+                    if (channelList[i].equals(rec.channel.name)) {
+                        channelSelectionValue = i;
+                        break;
+                    }
+                }
             } else {
                 // No recording was given, set default values
+                Calendar cal = Calendar.getInstance();
                 priorityValue = 2;
                 minDurationValue = DEFAULT_MIN_DURATION;
                 maxDurationValue = DEFAULT_MAX_DURATION;
-                startTimeValue = DEFAULT_START_EXTRA;
-                stopTimeValue = DEFAULT_STOP_EXTRA;
+                startTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+                startExtraTimeValue = DEFAULT_START_EXTRA;
+                stopExtraTimeValue = DEFAULT_STOP_EXTRA;
                 daysOfWeekValue = 127;
                 titleValue = "";
                 enabledValue = true;
@@ -221,7 +269,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             minDurationValue = savedInstanceState.getLong("minDurationValue");
             maxDurationValue = savedInstanceState.getLong("maxDurationValue");
             startTimeValue = savedInstanceState.getLong("startTimeValue");
-            stopTimeValue = savedInstanceState.getLong("stopTimeValue");
+            startExtraTimeValue = savedInstanceState.getLong("startExtraTimeValue");
+            stopExtraTimeValue = savedInstanceState.getLong("stopExtraTimeValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
             titleValue = savedInstanceState.getString("titleValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
@@ -236,6 +285,8 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
 
         isEnabled.setChecked(enabledValue);
+        isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+
         title.setText(titleValue);
 
         channelName.setText(channelList[channelSelectionValue]);
@@ -278,8 +329,32 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         minDuration.setText(String.valueOf(minDurationValue));
         maxDuration.setText(String.valueOf(maxDurationValue));
-        startTime.setText(String.valueOf(startTimeValue));
-        stopTime.setText(String.valueOf(stopTimeValue));
+
+        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
+        // Show the time picker dialog so the user can select a new starting time
+        startTime.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int hour = (int) (startTimeValue / 60);
+                int minute = (int) (startTimeValue % 60);
+
+                TimePickerDialog mTimePicker;
+                mTimePicker = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
+                        // Save the given value in seconds. This values will be passed to the server
+                        startTimeValue = (long) (selectedHour * 60 + selectedMinute);
+                        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
+                    }
+                }, hour, minute, true, false);
+
+                mTimePicker.setCloseOnSingleTapMinute(false);
+                mTimePicker.show(getChildFragmentManager(), "");
+            }
+        });
+
+        startExtraTime.setText(String.valueOf(startExtraTimeValue));
+        stopExtraTime.setText(String.valueOf(stopExtraTimeValue));
 
         // Set the correct days as checked or not depending on the given value.
         // For each day shift the daysOfWeekValue by one to the right and check
@@ -290,6 +365,7 @@ public class SeriesRecordingAddFragment extends DialogFragment {
         }
 
         if (toolbar != null) {
+            toolbar.setTitle(rec != null ? R.string.edit_series_recording : R.string.add_series_recording);
             toolbar.inflateMenu(R.menu.save_cancel_menu);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -299,7 +375,6 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             });
         }
         if (getDialog() != null) {
-            getDialog().setTitle(rec != null ? R.string.edit_series_recording : R.string.add_series_recording);
             getDialog().setCanceledOnTouchOutside(false);
         }
     }
@@ -317,7 +392,14 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 				return false;
 			}
 		});
+		app.addListener(this);
 	}
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        app.removeListener(this);
+    }
 
     /**
      * 
@@ -354,14 +436,14 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             maxDurationValue = DEFAULT_MAX_DURATION;
         }
         try {
-            startTimeValue = Long.valueOf(startTime.getText().toString());
+            startExtraTimeValue = Long.valueOf(startExtraTime.getText().toString());
         } catch (NumberFormatException ex) {
-            startTimeValue = DEFAULT_START_EXTRA;
+            startExtraTimeValue = DEFAULT_START_EXTRA;
         }
         try {
-            stopTimeValue = Long.valueOf(stopTime.getText().toString());
+            stopExtraTimeValue = Long.valueOf(stopExtraTime.getText().toString());
         } catch (NumberFormatException ex) {
-            stopTimeValue = DEFAULT_STOP_EXTRA;
+            stopExtraTimeValue = DEFAULT_STOP_EXTRA;
         }
         titleValue = title.getText().toString();
         enabledValue = isEnabled.isChecked();
@@ -389,54 +471,16 @@ public class SeriesRecordingAddFragment extends DialogFragment {
 
         // If the series recording has been edited, remove it before adding it
         // again with the updated values. This is required because the API does
-        // not provide an edit service call.
+        // not provide an edit service call. When the confirmation that the
+        // recording was received, add the edited one. This is done in the
+        // onMessage method. 
         if (rec != null && rec.id != null && rec.id.length() > 0) {
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
             intent.putExtra("id", rec.id);
             activity.startService(intent);
-        }
-
-        // Add the new or edited series recording
-        Intent intent = new Intent(activity, HTSService.class);
-        intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
-        intent.putExtra("title", titleValue);
-        intent.putExtra("minDuration", minDurationValue);
-        intent.putExtra("maxDuration", maxDurationValue);
-        intent.putExtra("startExtra", startTimeValue);
-        intent.putExtra("stopExtra", stopTimeValue);
-        intent.putExtra("daysOfWeek", daysOfWeekValue);
-        intent.putExtra("priority", priorityValue);
-        intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
-
-        // If the all channels recording is not enabled or a valid channel name
-        // was selected get the channel id that needs to be passed to the
-        // server. So go through all available channels and get the id for the
-        // selected channel name.
-        if (!allowRecordingOnAllChannels || channelSelectionValue > 0) {
-            for (Channel c : app.getChannels()) {
-                if (c.name.equals(channelName.getText().toString())) {
-                    intent.putExtra("channelId", c.id);
-                    break;
-                }
-            }
-        }
-
-        // Add the recording profile if available and enabled
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
-        if (p != null 
-                && p.enabled
-                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                && app.isUnlocked()) {
-            intent.putExtra("configName", p.name);
-        }
-
-        activity.startService(intent);
-
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
+        } else {
+            addSeriesRecording();
         }
     }
 
@@ -478,5 +522,66 @@ public class SeriesRecordingAddFragment extends DialogFragment {
             }
         }
         return value;
+    }
+
+    @Override
+    public void onMessage(String action, Object obj) {
+        if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    addSeriesRecording();
+                }
+            });
+        }
+    }
+
+    /**
+     * Adds a new series recording with the given values. This method is also
+     * called when a recording is being edited. It adds a recording with edited
+     * values which was previously removed.
+     */
+    private void addSeriesRecording() {
+
+        Intent intent = new Intent(activity, HTSService.class);
+        intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
+        intent.putExtra("title", titleValue);
+        intent.putExtra("minDuration", minDurationValue);
+        intent.putExtra("maxDuration", maxDurationValue);
+        intent.putExtra("start", startTimeValue);
+        intent.putExtra("startExtra", startExtraTimeValue);
+        intent.putExtra("stopExtra", stopExtraTimeValue);
+        intent.putExtra("daysOfWeek", daysOfWeekValue);
+        intent.putExtra("priority", priorityValue);
+        intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
+
+        // If the all channels recording is not enabled or a valid channel name
+        // was selected get the channel id that needs to be passed to the
+        // server. So go through all available channels and get the id for the
+        // selected channel name.
+        if (!allowRecordingOnAllChannels || channelSelectionValue > 0) {
+            for (Channel c : app.getChannels()) {
+                if (c.name.equals(channelName.getText().toString())) {
+                    intent.putExtra("channelId", c.id);
+                    break;
+                }
+            }
+        }
+
+        // Add the recording profile if available and enabled
+        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+        if (p != null 
+                && p.enabled
+                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && app.isUnlocked()) {
+            intent.putExtra("configName", p.name);
+        }
+
+        activity.startService(intent);
+
+        if (getDialog() != null) {
+            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
+            getDialog().dismiss();
+        }
     }
 }

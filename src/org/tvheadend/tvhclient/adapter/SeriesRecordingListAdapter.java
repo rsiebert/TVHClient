@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
@@ -119,12 +120,9 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);
 
             if (holder.isEnabled != null) {
-                holder.isEnabled.setVisibility(View.GONE);
-//                if (srec.enabled) {
-//                    holder.isEnabled.setText(R.string.recording_enabled);
-//                } else {
-//                    holder.isEnabled.setText(R.string.recording_disabled);
-//                }
+                TVHClientApplication app = (TVHClientApplication) context.getApplication();
+                holder.isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+                holder.isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
             }
         }
         return view;

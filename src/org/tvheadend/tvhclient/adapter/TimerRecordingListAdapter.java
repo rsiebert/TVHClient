@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
@@ -125,12 +126,9 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             Utils.setDuration(holder.duration, start, stop);
 
             if (holder.isEnabled != null) {
-                holder.isEnabled.setVisibility(View.GONE);
-//                if (trec.enabled) {
-//                    holder.isEnabled.setText(R.string.recording_enabled);
-//                } else {
-//                    holder.isEnabled.setText(R.string.recording_disabled);
-//                }
+                TVHClientApplication app = (TVHClientApplication) context.getApplication();
+                holder.isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+                holder.isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
             }
         }
         return view;
