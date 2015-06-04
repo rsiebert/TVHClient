@@ -168,6 +168,12 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         for (int i = 0; i < app.getChannels().size(); i++) {
         	channelList[i] = app.getChannels().get(i).name;
         }
+        
+        Arrays.sort(channelList, new Comparator<String>() {
+            public int compare(String x, String y) {
+                return x.toLowerCase(Locale.US).compareTo(y.toLowerCase(Locale.US));
+            }
+        });        
 
         // Sort the channels in the list by name
         Arrays.sort(channelList, new Comparator<String>() {
