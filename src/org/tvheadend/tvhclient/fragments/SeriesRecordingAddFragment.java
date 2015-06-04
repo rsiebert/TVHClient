@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -63,6 +64,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private EditText startExtraTime;
     private EditText stopExtraTime;
     private EditText title;
+    private EditText name;
     private TextView channelName;
 
     private long priorityValue;
@@ -73,6 +75,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private long stopExtraTimeValue;
     private long daysOfWeekValue;
     private String titleValue;
+    private String nameValue;
     private boolean enabledValue;
     private int channelSelectionValue;
 
@@ -129,6 +132,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         outState.putLong("stopExtraTimeValue", stopExtraTimeValue);
         outState.putLong("daysOfWeekValue", daysOfWeekValue);
         outState.putString("titleValue", titleValue);
+        outState.putString("nameValue", nameValue);
         outState.putBoolean("enabledValue", enabledValue);
         outState.putInt("channelNameValue", channelSelectionValue);
         super.onSaveInstanceState(outState);
@@ -188,12 +192,15 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 priorityValue = rec.priority;
                 minDurationValue = rec.minDuration;
                 maxDurationValue = rec.maxDuration;
-                startTimeValue = rec.start;
+                startTimeValue = (rec.start < 0) ? 0 : rec.start;
                 startExtraTimeValue = rec.startExtra.getTime();
                 stopExtraTimeValue = rec.stopExtra.getTime();
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
+                nameValue = rec.name;
                 enabledValue = rec.enabled;
+
+                Log.i(TAG, "startTimeValue get " + startTimeValue);
 
                 // Get the position of the given channel in the channelList 
                 channelSelectionValue = 0;
@@ -214,6 +221,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 stopExtraTimeValue = DEFAULT_STOP_EXTRA;
                 daysOfWeekValue = 127;
                 titleValue = "";
+                nameValue = "";
                 enabledValue = true;
                 channelSelectionValue = 0;
             }
@@ -227,6 +235,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             stopExtraTimeValue = savedInstanceState.getLong("stopExtraTimeValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
             titleValue = savedInstanceState.getString("titleValue");
+            nameValue = savedInstanceState.getString("nameValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
@@ -236,6 +245,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
         title = (EditText) v.findViewById(R.id.title);
+        name = (EditText) v.findViewById(R.id.name);
         minDuration = (EditText) v.findViewById(R.id.minimum_duration);
         maxDuration = (EditText) v.findViewById(R.id.maximum_duration);
 
@@ -287,6 +297,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
 
         title.setText(titleValue);
+        name.setText(nameValue);
 
         channelName.setText(channelList[channelSelectionValue]);
         channelName.setOnClickListener(new OnClickListener() {
@@ -344,6 +355,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                         // Save the given value in seconds. This values will be passed to the server
                         startTimeValue = (long) (selectedHour * 60 + selectedMinute);
                         startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
+                        Log.i(TAG, "startTimeValue set " + startTimeValue);
                     }
                 }, hour, minute, true, false);
 
@@ -445,6 +457,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             stopExtraTimeValue = DEFAULT_STOP_EXTRA;
         }
         titleValue = title.getText().toString();
+        nameValue = name.getText().toString();
         enabledValue = isEnabled.isChecked();
         daysOfWeekValue = getDayOfWeekValue();
     }
@@ -541,12 +554,19 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
      */
     private void addSeriesRecording() {
 
+        Log.i(TAG, "startTimeValue add " + startTimeValue);
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
         intent.putExtra("title", titleValue);
+        intent.putExtra("name", nameValue);
         intent.putExtra("minDuration", minDurationValue);
         intent.putExtra("maxDuration", maxDurationValue);
-        intent.putExtra("start", startTimeValue);
+
+        // Assume no start time is specified if 0:00 is selected
+        if (startTimeValue >= 0) {
+            intent.putExtra("start", startTimeValue);
+        }
+
         intent.putExtra("startExtra", startExtraTimeValue);
         intent.putExtra("stopExtra", stopExtraTimeValue);
         intent.putExtra("daysOfWeek", daysOfWeekValue);

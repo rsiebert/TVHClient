@@ -30,6 +30,13 @@
             android:text="@string/title" />
 
         <TextView
+            android:id="@+id/name"
+            style="?attr/ContentFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end" />
+
+        <TextView
             android:id="@+id/channel"
             style="?attr/ContentFont"
             android:layout_width="fill_parent"

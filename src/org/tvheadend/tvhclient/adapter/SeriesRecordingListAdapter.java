@@ -64,6 +64,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
     static class ViewHolder {
         public ImageView icon;
         public TextView title;
+        public TextView name;
         public TextView channel;
         public TextView daysOfWeek;
         public TextView isEnabled;
@@ -80,6 +81,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
             holder.title = (TextView) view.findViewById(R.id.title);
+            holder.name = (TextView) view.findViewById(R.id.name);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.daysOfWeek = (TextView) view.findViewById(R.id.daysOfWeek);
             holder.isEnabled = (TextView) view.findViewById(R.id.enabled);
@@ -116,6 +118,14 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
                     holder.channel.setText(R.string.all_channels);
                 }
             }
+
+            if (srec.name != null && srec.name.length() > 0) {
+                holder.name.setVisibility(View.VISIBLE);
+                holder.name.setText(srec.name);
+            } else {
+                holder.name.setVisibility(View.GONE);
+            }
+
             Utils.setChannelIcon(holder.icon, null, srec.channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);
 

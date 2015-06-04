@@ -359,6 +359,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.state = msg.getString("state", null);
         rec.stop = msg.getDate("stop");
         rec.title = msg.getString("title", null);
+        rec.subtitle = msg.getString("subtitle", null);
         rec.channel = app.getChannel(msg.getLong("channel", 0));
         if (rec.channel != null) {
             rec.channel.recordings.add(rec);
@@ -367,7 +368,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 13 and higher
-        if (connection.getProtocolVersion() >= 13) {
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
             rec.startExtra = msg.getLong("startExtra");
@@ -380,7 +381,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 17 and higher
-        if (connection.getProtocolVersion() >= 17) {
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
             rec.timerecId = msg.getString("timerecId");
         }
 
@@ -411,6 +412,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.state = msg.getString("state", rec.state);
         rec.stop = msg.getDate("stop");
         rec.title = msg.getString("title", rec.title);
+        rec.subtitle = msg.getString("subtitle", rec.subtitle);
 
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
@@ -683,6 +685,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.startExtra = msg.getDate("startExtra");
         srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title", srec.title);
+        srec.name = msg.getString("name", srec.name);
         app.updateSeriesRecording(srec);
     }
 
@@ -702,6 +705,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.startExtra = msg.getDate("startExtra");
         srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title");
+        srec.name = msg.getString("name");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
         app.addSeriesRecording(srec);
     }
@@ -1032,6 +1036,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final String title = intent.getStringExtra("title");
+        final String subtitle = intent.getStringExtra("subtitle");
         final String description = intent.getStringExtra("description");
         final boolean isRecording = intent.getBooleanExtra("isRecording", false);
 
@@ -1053,6 +1058,9 @@ public class HTSService extends Service implements HTSConnectionListener {
             // these strings was fixed in server version v4.1-111-g807b9c8
             if (title != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
                 request.putField("title", title);
+            }
+            if (subtitle != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE) {
+                request.putField("subtitle", subtitle);
             }
             if (description != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION) {
                 request.putField("description", description);
@@ -1413,6 +1421,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void addAutorecEntry(final Intent intent) {
 
         final String title = intent.getStringExtra("title");
+        final String name = intent.getStringExtra("name");
         final long channelId = intent.getLongExtra("channelId", 0);
         final long maxDuration = intent.getLongExtra("maxDuration", 0);
         final long minDuration = intent.getLongExtra("minDuration", 0);
@@ -1422,13 +1431,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long enabled = intent.getLongExtra("enabled", 0);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
-        final long start = intent.getLongExtra("start", 0);
-        final long startWindow = intent.getLongExtra("startWindow", 0);
+        final long start = intent.getLongExtra("start", -1);
+        final long startWindow = intent.getLongExtra("startWindow", -1);
         final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addAutorecEntry");
         request.putField("title", title);
+        request.putField("name", name);
 
         // Don't add the channel id if none was given. Assume the user wants to
         // record on all channels 
@@ -1448,15 +1458,24 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_NEW_START_TIME) {
             // Minutes from midnight (up to 24*60) for the start of the time
-            // window (including) (Added in version 18)
-            request.putField("start", start);
+            // window (including) (Added in version 18). Do not send the value
+            // if the default of -1 (no time specified) was set
+            if (start >= 0) {
+                request.putField("start", start);
+            }
             // Minutes from midnight (up to 24*60) for the end of the time
-            // window (including, cross-noon allowed) (Added in version 18)
-            request.putField("startWindow", startWindow);
+            // window (including, cross-noon allowed) (Added in version 18). Do
+            // not send the value if the default of -1 (no time specified) was set
+            if (startWindow >= 0) {
+                request.putField("startWindow", startWindow);
+            }
         } else {
             // Minutes from midnight (up to 24*60) (window +- 15 minutes)
-            // (Obsoleted from version 18)
-            request.putField("approxTime", start);
+            // (Obsoleted from version 18). Do not send the value if the default
+            // of -1 (no time specified) was set
+            if (start >= 0) {
+                request.putField("approxTime", start);
+            }
         }
 
         if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {

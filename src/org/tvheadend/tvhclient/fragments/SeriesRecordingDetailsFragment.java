@@ -34,6 +34,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private TextView startTime;
     private TextView daysOfWeek;
     private TextView channelName;
+    private TextView nameLabel;
+    private TextView name;
     private TextView priority;
 
     private LinearLayout playerLayout;
@@ -82,6 +84,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
+        nameLabel = (TextView) v.findViewById(R.id.name_label);
+        name = (TextView) v.findViewById(R.id.name);
         minDuration = (TextView) v.findViewById(R.id.minimum_duration);
         maxDuration = (TextView) v.findViewById(R.id.maximum_duration);
         startTime = (TextView) v.findViewById(R.id.start_time);
@@ -121,6 +125,15 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
         isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
         channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
+
+        if (srec.name != null && srec.name.length() > 0) {
+            nameLabel.setVisibility(View.VISIBLE);
+            name.setVisibility(View.VISIBLE);
+            name.setText(srec.name);
+        } else {
+            nameLabel.setVisibility(View.GONE);
+            name.setVisibility(View.GONE);
+        }
 
         Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);
 

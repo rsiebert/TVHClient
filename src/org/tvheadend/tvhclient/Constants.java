@@ -153,7 +153,7 @@ public class Constants {
     public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
 
     // Minimum API versions to enable or disable certain fields in the HTSP API
-    // methods. These fields shall only be visible and used if supported. 
+    // methods. These fields shall only be visible and used if supported.
     public static final int MIN_API_VERSION_REC_FIELD_ENABLED = 19;
     public static final int MIN_API_VERSION_REC_FIELD_OWNER = 18;
     public static final int MIN_API_VERSION_REC_FIELD_CREATOR = 18;
@@ -164,6 +164,6 @@ public class Constants {
     public static final int MIN_API_VERSION_SREC_ADD_EMPTY_CHANNEL = 21;
     // Allow editing the title of a recording. (http://tvheadend.org/issues/2893)
     public static final int MIN_API_VERSION_REC_FIELD_TITLE = 21;
-    // Allow editing the description of a recording. (http://tvheadend.org/issues/2893)
+    public static final int MIN_API_VERSION_REC_FIELD_SUBTITLE = 21;
     public static final int MIN_API_VERSION_REC_FIELD_DESCRIPTION = 21;
 }

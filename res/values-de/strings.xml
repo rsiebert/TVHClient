@@ -45,6 +45,8 @@
     <string name="cancel_recording">Geplante Aufnahme \'%s\' entfernen?</string>
     <string name="cancel_all_recordings">Alle geplanten Aufnahmen entfernen?</string>
     <string name="add_title">Gewünschten Titel eingeben</string>
+    <string name="add_subtitle">Gewünschten Untertitel eingeben</string>
+    <string name="add_name">Gewünschten Namen eingeben</string>
     <string name="add_recording">Neue Aufnahme hinzufügen</string>
     <string name="edit_recording">Aufnahme bearbeiten</string>
     <string name="cancel_add_recording">Hinzufügen der Aufnahme abbrechen? Alle Eingaben gehen verloren.</string>
