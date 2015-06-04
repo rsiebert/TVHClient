@@ -1105,7 +1105,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * @param show
      */
     private void showDrawerMenu() {
-        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK);
+        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) && !app.isLoading();
 
         // Enable the main menus in the drawer
         drawerAdapter.getItemById(MENU_CHANNELS).isVisible = show;
