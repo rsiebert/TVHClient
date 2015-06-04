@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -1075,6 +1076,10 @@ public class HTSService extends Service implements HTSConnectionListener {
                             response.getString("error", "")));
                 } else {
                     app.showMessage(getString(R.string.success_updating_recording));
+
+                    // TODO Force a reconnect. This is a workaround because no
+                    // onDvrUpdate event is sent
+                    Utils.connect(app.getApplicationContext(), true);
                 }
             }
         });
