@@ -678,9 +678,9 @@ public class Utils {
             return;
         }
         description.setText(desc);
-        description.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
+        description.setVisibility((desc != null && desc.length() > 0) ? View.VISIBLE : View.GONE);
         if (descriptionLabel != null) {
-            descriptionLabel.setVisibility((desc.length() > 0) ? View.VISIBLE : View.GONE);
+            descriptionLabel.setVisibility((desc != null && desc.length() > 0) ? View.VISIBLE : View.GONE);
         }
     }
 
