@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingBottom="16dp"
-            android:paddingTop="16dp" >
+            android:paddingTop="16dp"
+            android:visibility="gone" >
 
             <TextView
                 android:id="@+id/menu_record_remove"

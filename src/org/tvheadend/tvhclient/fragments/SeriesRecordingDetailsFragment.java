@@ -119,22 +119,16 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         // Show the player controls
         if (showControls) {
             addPlayerControlListeners();
-            showPlayerControls();
+            playerLayout.setVisibility(View.VISIBLE);
+            recordRemoveButton.setVisibility(View.VISIBLE);
+            recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
         }
 
         isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
         isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
         channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
 
-        if (srec.name != null && srec.name.length() > 0) {
-            nameLabel.setVisibility(View.VISIBLE);
-            name.setVisibility(View.VISIBLE);
-            name.setText(srec.name);
-        } else {
-            nameLabel.setVisibility(View.GONE);
-            name.setVisibility(View.GONE);
-        }
-
+        Utils.setDescription(nameLabel, name, srec.name);
         Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);
 
         String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
@@ -150,15 +144,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         if (srec.start > 0) {
             startTime.setText(Utils.getTimeStringFromValue(srec.start));
         }
-    }
-
-    /**
-     * 
-     */
-    private void showPlayerControls() {
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        recordRemoveButton.setVisibility(View.VISIBLE);
-        recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
     }
 
     /**

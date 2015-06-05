@@ -117,8 +117,10 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         // Show the player controls
         if (showControls) {
             addPlayerControlListeners();
+            playerLayout.setVisibility(View.VISIBLE);
+            recordRemove.setVisibility(View.VISIBLE);
+            recordEdit.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
         }
-        showPlayerControls();
 
         isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
         isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
@@ -140,15 +142,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         time.setText(getString(R.string.from_to_time, start, stop));
 
         duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));
-    }
-
-    /**
-     * 
-     */
-    private void showPlayerControls() {
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        recordRemove.setVisibility(View.VISIBLE);
-        recordEdit.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
     }
 
     /**

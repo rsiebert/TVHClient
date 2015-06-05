@@ -136,12 +136,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             }
         }
 
-        // Show the layout with the control buttons if required
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-
         // Show the player controls
         if (showControls) {
             addPlayerControlListeners();
+            playerLayout.setVisibility(View.VISIBLE);
             showPlayerControls();
         }
 

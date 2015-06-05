@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="16dp"
-            android:paddingTop="16dp" >
+            android:paddingTop="16dp"
+            android:visibility="gone" >
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -93,6 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
+            android:paddingTop="16dp"
             android:text="@string/is_series_recording" />
 
         <TextView
@@ -101,6 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
+            android:paddingTop="16dp"
             android:text="@string/is_timer_recording" />
 
         <TextView
@@ -108,6 +111,7 @@
             style="?attr/TitleFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
             android:text="@string/subtitle" />
 
         <TextView
