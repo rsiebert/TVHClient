@@ -58,8 +58,11 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private EditText startExtra;
     private EditText stopExtra;
     private EditText title;
+    private TextView titelLabel;
     private EditText subtitle;
+    private TextView subtitleLabel;
     private EditText description;
+    private TextView descriptionLabel;
     private TextView channelName;
 
     // Extra pre- and postrecording times in seconds
@@ -225,8 +228,11 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         // Initialize all the widgets from the layout
         title = (EditText) v.findViewById(R.id.title);
+        titelLabel = (TextView) v.findViewById(R.id.title_label);
         subtitle = (EditText) v.findViewById(R.id.subtitle);
+        subtitleLabel = (TextView) v.findViewById(R.id.subtitle_label);
         description = (EditText) v.findViewById(R.id.description);
+        descriptionLabel = (TextView) v.findViewById(R.id.description_label);
         channelName = (TextView) v.findViewById(R.id.channel);
         startExtra = (EditText) v.findViewById(R.id.start_extra);
         stopExtra = (EditText) v.findViewById(R.id.stop_extra);
@@ -243,16 +249,19 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (title != null) {
+        if (title != null && titelLabel != null) {
             title.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
+            titelLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
             title.setText(titleValue);
         }
-        if (subtitle != null) {
+        if (subtitle != null && subtitleLabel != null) {
             subtitle.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
+            subtitleLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
             subtitle.setText(subtitleValue);
         }
-        if (description != null) {
+        if (description != null && descriptionLabel != null) {
             description.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
+            descriptionLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
             description.setText(descriptionValue);
         }
 
@@ -417,7 +426,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         getValues();
 
         // The title must not be empty
-        if (titleValue.length() == 0) {
+        if (titleValue.length() == 0 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
             Toast.makeText(activity, getString(R.string.error_empty_title),
                     Toast.LENGTH_SHORT).show();
             return;
