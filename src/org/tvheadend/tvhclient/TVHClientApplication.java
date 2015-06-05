@@ -84,7 +84,9 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param listener
      */
     public void addListener(HTSListener listener) {
-        listeners.add(listener);
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -93,7 +95,9 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param listener
      */
     public void removeListener(HTSListener listener) {
-        listeners.remove(listener);
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
     }
 
     /**
@@ -112,8 +116,10 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param obj
      */
     private void broadcastMessage(final String action, final Object obj) {
-        for (HTSListener l : listeners) {
-            l.onMessage(action, obj);
+        synchronized (listeners) {
+            for (HTSListener l : listeners) {
+                l.onMessage(action, obj);
+            }
         }
     }
 
