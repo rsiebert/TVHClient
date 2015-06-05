@@ -121,16 +121,24 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         super.onCreateView(inflater, container, savedInstanceState);
 
     	// Create the list of channels that the user can select
-        channelList = new String[app.getChannels().size()];
-        for (int i = 0; i < app.getChannels().size(); i++) {
+        channelList = new String[app.getChannels().size() + 1];
+        channelList[0] = activity.getString(R.string.no_channel);
+        for (int i = 1; i < app.getChannels().size(); i++) {
         	channelList[i] = app.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name
         Arrays.sort(channelList, new Comparator<String>() {
             public int compare(String x, String y) {
-                return x.toLowerCase(Locale.US).compareTo(
-                        y.toLowerCase(Locale.US));
+                if (x != null && y != null) {
+                    if (y.equals(activity.getString(R.string.no_channel))) {
+                        return 1;
+                    } else {
+                        return x.toLowerCase(Locale.US).compareTo(
+                                y.toLowerCase(Locale.US));
+                    }
+                }
+                return 0;
             }
         });
 
@@ -157,13 +165,16 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 titleValue = rec.title;
                 enabledValue = rec.enabled;
 
-                // Get the position of the given channel in the channelList 
+                // The default value is no channel
                 channelSelectionValue = 0;
-                for (int i = 0; i < channelList.length; i++) {
-                    if (channelList[i].equals(rec.channel.name)) {
-                        channelSelectionValue = i;
-                        break;
-                    }
+                // Get the position of the given channel in the channelList
+                if (rec.channel != null) {
+                    for (int i = 0; i < channelList.length; i++) {
+                        if (channelList[i].equals(rec.channel.name)) {
+                            channelSelectionValue = i;
+                            break;
+                        }
+                    }   
                 }
             } else {
                 // No recording was given, set default values
@@ -413,6 +424,13 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         // The title must not be empty
         if (titleValue.length() == 0) {
             Toast.makeText(activity, getString(R.string.error_empty_title),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // The channel must be set
+        if (channelSelectionValue == 0) {
+            Toast.makeText(activity, getString(R.string.error_no_channel),
                     Toast.LENGTH_SHORT).show();
             return;
         }

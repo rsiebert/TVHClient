@@ -291,12 +291,14 @@
     <string name="time_recording_add_error">Kann diese manuelle Aufnahme nicht hinzufügen.</string>
     <string name="error_empty_title">Bitte einen Aufnahmetitel angeben!</string>
     <string name="error_start_stop_time">Die Endzeit darf nicht vor der Startzeit liegen!</string>
+    <string name="error_no_channel">Bitte einen Sender angeben!</string>
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>
     <string name="loading_channel">Lade Sender %s</string>
     <string name="updating">Aktualisiere&#8230;</string>
     <string name="all_channels">Alle Sender</string>
+    <string name="no_channel">Kein Sender</string>
     <string name="season">Staffel</string>
     <string name="episode">Folge</string>
     <string name="part">Teil</string>

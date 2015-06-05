@@ -292,12 +292,14 @@
     <string name="time_recording_add_error">Can\'t add this manual recording.</string>
     <string name="error_empty_title">The title must no be empty!</string>
     <string name="error_start_stop_time">The stop time must be after the start time!</string>
+    <string name="error_no_channel">Please select a channel!</string>
 
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>
     <string name="loading_channel">Loading channel %s</string>
     <string name="updating">Updating&#8230;</string>
     <string name="all_channels">All channels</string>
+    <string name="no_channel">No channel</string>
     <string name="season">Season</string>
     <string name="episode">Episode</string>
     <string name="part">Part</string>

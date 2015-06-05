@@ -149,11 +149,12 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // Create the list of channels that the user can select. If recording on
         // all channels are available the add the 'all channels' string to
         // the beginning of the list before adding the available channels.
-        channelList = new String[app.getChannels().size() + offset];
+        channelList = new String[app.getChannels().size() + offset + 1];
+        channelList[0] = activity.getString(R.string.no_channel);
         if (allowRecordingOnAllChannels) {
-            channelList[0] = activity.getString(R.string.all_channels);
+            channelList[1] = activity.getString(R.string.all_channels);
         }
-        for (int i = offset; i < app.getChannels().size(); i++) {
+        for (int i = (offset + 1); i < app.getChannels().size(); i++) {
             channelList[i] = app.getChannels().get(i).name;
         }
 
@@ -162,7 +163,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         Arrays.sort(channelList, new Comparator<String>() {
             public int compare(String x, String y) {
                 if (x != null && y != null) {
-                    if (y.equals(activity.getString(R.string.all_channels))) {
+                    if (y.equals(activity.getString(R.string.no_channel))) {
+                        return 1;
+                    } else if (y.equals(activity.getString(R.string.all_channels))) {
                         return 1;
                     } else {
                         return x.toLowerCase(Locale.US).compareTo(
@@ -200,15 +203,16 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 nameValue = rec.name;
                 enabledValue = rec.enabled;
 
-                Log.i(TAG, "startTimeValue get " + startTimeValue);
-
-                // Get the position of the given channel in the channelList 
+                // The default value is no channel
                 channelSelectionValue = 0;
-                for (int i = 0; i < channelList.length; i++) {
-                    if (channelList[i].equals(rec.channel.name)) {
-                        channelSelectionValue = i;
-                        break;
-                    }
+                // Get the position of the given channel in the channelList
+                if (rec.channel != null) {
+                    for (int i = 0; i < channelList.length; i++) {
+                        if (channelList[i].equals(rec.channel.name)) {
+                            channelSelectionValue = i;
+                            break;
+                        }
+                    }   
                 }
             } else {
                 // No recording was given, set default values
@@ -476,6 +480,14 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                     Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // The channel must be set
+        if (channelSelectionValue == 0) {
+            Toast.makeText(activity, getString(R.string.error_no_channel),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // The maximum duration must be at least the minimum duration
         if (minDurationValue > 0 && maxDurationValue > 0 && maxDurationValue < minDurationValue) {
             maxDurationValue = minDurationValue;
@@ -554,7 +566,6 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
      */
     private void addSeriesRecording() {
 
-        Log.i(TAG, "startTimeValue add " + startTimeValue);
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
         intent.putExtra("title", titleValue);
@@ -577,7 +588,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // was selected get the channel id that needs to be passed to the
         // server. So go through all available channels and get the id for the
         // selected channel name.
-        if (!allowRecordingOnAllChannels || channelSelectionValue > 0) {
+        if (!allowRecordingOnAllChannels || channelSelectionValue > 1) {
             for (Channel c : app.getChannels()) {
                 if (c.name.equals(channelName.getText().toString())) {
                     intent.putExtra("channelId", c.id);
