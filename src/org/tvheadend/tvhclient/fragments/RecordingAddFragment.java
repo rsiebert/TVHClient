@@ -398,7 +398,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         getValues();
 
         // The title must not be empty
-        if (titleValue.length() == 0) {
+        if (titleValue.length() == 0 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
             Toast.makeText(activity, getString(R.string.error_empty_title),
                     Toast.LENGTH_SHORT).show();
             return;
