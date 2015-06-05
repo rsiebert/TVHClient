@@ -87,8 +87,6 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     // allow recording on all channels
     boolean allowRecordingOnAllChannels = false;
 
-    private static final int DEFAULT_MIN_DURATION = 30;
-    private static final int DEFAULT_MAX_DURATION = 60;
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
 
@@ -217,8 +215,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 // No recording was given, set default values
                 Calendar cal = Calendar.getInstance();
                 priorityValue = 2;
-                minDurationValue = DEFAULT_MIN_DURATION;
-                maxDurationValue = DEFAULT_MAX_DURATION;
+                minDurationValue = 0;
+                maxDurationValue = 0;
                 startTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
                 startExtraTimeValue = DEFAULT_START_EXTRA;
                 stopExtraTimeValue = DEFAULT_STOP_EXTRA;
@@ -340,8 +338,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 			}
         });
 
-        minDuration.setText(String.valueOf(minDurationValue));
-        maxDuration.setText(String.valueOf(maxDurationValue));
+        minDuration.setText(minDurationValue > 0 ? String.valueOf(minDurationValue) : getString(R.string.duration_sum));
+        maxDuration.setText(maxDurationValue > 0 ? String.valueOf(maxDurationValue) : getString(R.string.duration_sum));
 
         startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
         // Show the time picker dialog so the user can select a new starting time
@@ -438,26 +436,20 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
      * an orientation change or when the recording shall be saved.
      */
     private void getValues() {
-        try {
+        if (minDuration.getText().toString().length() > 0) {
             minDurationValue = Long.valueOf(minDuration.getText().toString());
-        } catch (NumberFormatException ex) {
-            minDurationValue = DEFAULT_MIN_DURATION;
+        } else {
+            minDurationValue = 0;
         }
-        try {
+        if (maxDuration.getText().toString().length() > 0) {
             maxDurationValue = Long.valueOf(maxDuration.getText().toString());
-        } catch (NumberFormatException ex) {
-            maxDurationValue = DEFAULT_MAX_DURATION;
+        } else {
+            maxDurationValue = 0;
         }
-        try {
-            startExtraTimeValue = Long.valueOf(startExtraTime.getText().toString());
-        } catch (NumberFormatException ex) {
-            startExtraTimeValue = DEFAULT_START_EXTRA;
-        }
-        try {
-            stopExtraTimeValue = Long.valueOf(stopExtraTime.getText().toString());
-        } catch (NumberFormatException ex) {
-            stopExtraTimeValue = DEFAULT_STOP_EXTRA;
-        }
+
+        startExtraTimeValue = Long.valueOf(startExtraTime.getText().toString());
+        stopExtraTimeValue = Long.valueOf(stopExtraTime.getText().toString());
+
         titleValue = title.getText().toString();
         nameValue = name.getText().toString();
         enabledValue = isEnabled.isChecked();

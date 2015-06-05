@@ -286,6 +286,7 @@
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>
     <string name="min_duration">Minimum duration of the program</string>
     <string name="max_duration">Maximum duration of the program</string>
+    <string name="duration_sum">Duration in minutes (0 = any)</string>
     <string name="from_to_time">From %1$s to %2$s</string>
     <string name="recording_time">Recording Time</string>
     <string name="series_recording_add_error">Can\'t add this series recording.</string>

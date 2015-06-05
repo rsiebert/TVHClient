@@ -130,7 +130,7 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
+                    android:hint="@string/duration_sum"
                     android:inputType="number"
                     android:paddingBottom="16dp" />
 
@@ -147,7 +147,7 @@
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/not_set"
+                    android:hint="@string/duration_sum"
                     android:inputType="number"
                     android:paddingBottom="16dp" />
 
