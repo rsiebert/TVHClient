@@ -184,8 +184,8 @@ public class StatusFragment extends Fragment implements HTSListener {
                 public void run() {
                     boolean loading = (Boolean) obj;
                     if (actionBarInterface != null) {
-                        final String updating = (loading ? getString(R.string.updating) : "");
-                        actionBarInterface.setActionBarSubtitle(updating);
+                        actionBarInterface.setActionBarTitle(getString(R.string.status));
+                        actionBarInterface.setActionBarSubtitle((loading ? getString(R.string.updating) : ""));
                     }
 
                     // Show that data is being loaded from the server and hide
