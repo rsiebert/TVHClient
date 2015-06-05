@@ -1239,10 +1239,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
-
-        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
-            request.putField("enabled", enabled);
-        }
+        // Enabled flag (Added in version 19)
+        request.putField("enabled", enabled);
 
         if (configName != null) {
             request.putField("configName", configName);
@@ -1461,32 +1459,28 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("startExtra", startExtra);
         request.putField("stopExtra", stopExtra);
 
-        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_NEW_START_TIME) {
-            // Minutes from midnight (up to 24*60) for the start of the time
-            // window (including) (Added in version 18). Do not send the value
-            // if the default of -1 (no time specified) was set
-            if (start >= 0) {
-                request.putField("start", start);
-            }
-            // Minutes from midnight (up to 24*60) for the end of the time
-            // window (including, cross-noon allowed) (Added in version 18). Do
-            // not send the value if the default of -1 (no time specified) was set
-            if (startWindow >= 0) {
-                request.putField("startWindow", startWindow);
-            }
-        } else {
-            // Minutes from midnight (up to 24*60) (window +- 15 minutes)
-            // (Obsoleted from version 18). Do not send the value if the default
-            // of -1 (no time specified) was set
-            if (start >= 0) {
-                request.putField("approxTime", start);
-            }
+        // Minutes from midnight (up to 24*60) for the start of the time
+        // window (including) (Added in version 18). Do not send the value
+        // if the default of -1 (no time specified) was set
+        if (start >= 0) {
+            request.putField("start", start);
+        }
+        // Minutes from midnight (up to 24*60) for the end of the time
+        // window (including, cross-noon allowed) (Added in version 18). Do
+        // not send the value if the default of -1 (no time specified) was set
+        if (startWindow >= 0) {
+            request.putField("startWindow", startWindow);
+        }
+        // Minutes from midnight (up to 24*60) (window +- 15 minutes)
+        // (Obsoleted from version 18). Do not send the value if the default
+        // of -1 (no time specified) was set
+        if (start >= 0) {
+            request.putField("approxTime", start);
         }
 
-        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
-            // Enabled flag (Added in version 19)
-            request.putField("enabled", enabled);
-        }
+        // Enabled flag (Added in version 19)
+        request.putField("enabled", enabled);
+
         if (configName != null) {
             request.putField("configName", configName);
         }

@@ -157,7 +157,6 @@ public class Constants {
     public static final int MIN_API_VERSION_REC_FIELD_ENABLED = 19;
     public static final int MIN_API_VERSION_REC_FIELD_OWNER = 18;
     public static final int MIN_API_VERSION_REC_FIELD_CREATOR = 18;
-    public static final int MIN_API_VERSION_REC_FIELD_NEW_START_TIME = 18;
 
     // These constants are required to check if the server contains certain bug fixes
     // Allow selecting 'All channels' for a series recording. (http://tvheadend.org/issues/2892)
