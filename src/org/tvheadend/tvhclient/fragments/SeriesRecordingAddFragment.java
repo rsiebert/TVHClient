@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -193,8 +192,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             rec = app.getSeriesRecording(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
-                minDurationValue = rec.minDuration;
-                maxDurationValue = rec.maxDuration;
+                minDurationValue = (rec.minDuration / 60);
+                maxDurationValue = (rec.maxDuration / 60);
                 startTimeValue = (rec.start < 0) ? 0 : rec.start;
                 startExtraTimeValue = rec.startExtra;
                 stopExtraTimeValue = rec.stopExtra;
@@ -359,7 +358,6 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                         // Save the given value in seconds. This values will be passed to the server
                         startTimeValue = (long) (selectedHour * 60 + selectedMinute);
                         startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
-                        Log.i(TAG, "startTimeValue set " + startTimeValue);
                     }
                 }, hour, minute, true, false);
 
@@ -570,8 +568,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
         intent.putExtra("title", titleValue);
         intent.putExtra("name", nameValue);
-        intent.putExtra("minDuration", minDurationValue);
-        intent.putExtra("maxDuration", maxDurationValue);
+        intent.putExtra("minDuration", minDurationValue * 60);
+        intent.putExtra("maxDuration", maxDurationValue * 60);
 
         // Assume no start time is specified if 0:00 is selected
         if (startTimeValue >= 0) {

@@ -136,10 +136,12 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             priority.setText(priorityItems[(int) (srec.priority)]);
         }
         if (srec.minDuration > 0) {
-            minDuration.setText(getString(R.string.minutes, (int) srec.minDuration));
+            // The minimum time is given in seconds, but we want to show it in minutes
+            minDuration.setText(getString(R.string.minutes, (int) (srec.minDuration / 60)));
         }
         if (srec.maxDuration > 0) {
-            maxDuration.setText(getString(R.string.minutes, (int) srec.maxDuration));
+            // The maximum time is given in seconds, but we want to show it in minutes
+            maxDuration.setText(getString(R.string.minutes, (int) (srec.maxDuration / 60)));
         }
         if (srec.start > 0) {
             startTime.setText(Utils.getTimeStringFromValue(srec.start));
