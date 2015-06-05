@@ -1228,11 +1228,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
         final long enabled = intent.getLongExtra("enabled", 0);
         final String title = intent.getStringExtra("title");
+        final String name = intent.getStringExtra("name");
         final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
         request.setMethod("addTimerecEntry");
         request.putField("title", title);
+        request.putField("name", name);
         request.putField("start", start);
         request.putField("stop", stop);
         request.putField("channelId", channelId);

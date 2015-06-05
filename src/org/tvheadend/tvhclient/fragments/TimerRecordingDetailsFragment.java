@@ -110,7 +110,11 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             getDialog().getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.dialog_fragment_title);
             TextView dialogTitle = (TextView) getDialog().findViewById(android.R.id.title);
             if (dialogTitle != null) {
-                dialogTitle.setText(trec.title);
+                if (trec.title != null && trec.title.length() > 0) {
+                    dialogTitle.setText(trec.title);
+                } else {
+                    dialogTitle.setText(trec.name);
+                }
                 dialogTitle.setSingleLine(false);
             }
         }

@@ -60,6 +60,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private TextView startTime;
     private TextView stopTime;
     private EditText title;
+    private EditText name;
     private TextView channelName;
 
     private long priorityValue;
@@ -67,6 +68,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private long stopTimeValue;
     private long daysOfWeekValue;
     private String titleValue;
+    private String nameValue;
     private boolean enabledValue;
     private int channelSelectionValue;
 
@@ -111,6 +113,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         outState.putLong("stopTimeValue", stopTimeValue);
         outState.putLong("daysOfWeekValue", daysOfWeekValue);
         outState.putString("titleValue", titleValue);
+        outState.putString("nameValue", nameValue);
         outState.putBoolean("enabledValue", enabledValue);
         outState.putInt("channelNameValue", channelSelectionValue);
         super.onSaveInstanceState(outState);
@@ -163,6 +166,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 stopTimeValue = rec.stop;
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
+                nameValue = rec.name;
                 enabledValue = rec.enabled;
 
                 // The default value is no channel
@@ -185,6 +189,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 stopTimeValue = currentTime + 30;
                 daysOfWeekValue = 127;
                 titleValue = "";
+                nameValue = "";
                 enabledValue = true;
                 channelSelectionValue = 0;
             }
@@ -195,6 +200,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             stopTimeValue = savedInstanceState.getLong("stopTimeValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
             titleValue = savedInstanceState.getString("titleValue");
+            nameValue = savedInstanceState.getString("nameValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
         }
@@ -204,6 +210,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
         title = (EditText) v.findViewById(R.id.title);
+        name = (EditText) v.findViewById(R.id.name);
 
         // For the shown days in each toggle button the array with the short
         // names is used. If the screen width is not large enough then the short
@@ -252,6 +259,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
 
         title.setText(titleValue);
+        name.setText(nameValue);
 
         channelName.setText(channelList[channelSelectionValue]);
         channelName.setOnClickListener(new OnClickListener() {
@@ -409,6 +417,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
      */
     private void getValues() {
         titleValue = title.getText().toString();
+        nameValue = name.getText().toString();
         enabledValue = isEnabled.isChecked();
         daysOfWeekValue = getDayOfWeekValue();
     }
@@ -512,6 +521,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
         intent.putExtra("title", titleValue);
+        intent.putExtra("name", nameValue);
         intent.putExtra("start", startTimeValue);
         intent.putExtra("stop", stopTimeValue);
         intent.putExtra("daysOfWeek", daysOfWeekValue);
