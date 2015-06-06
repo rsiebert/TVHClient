@@ -436,14 +436,14 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
      * an orientation change or when the recording shall be saved.
      */
     private void getValues() {
-        if (minDuration.getText().toString().length() > 0) {
+        try {
             minDurationValue = Long.valueOf(minDuration.getText().toString());
-        } else {
+        } catch(NumberFormatException ex) {
             minDurationValue = 0;
         }
-        if (maxDuration.getText().toString().length() > 0) {
+        try {
             maxDurationValue = Long.valueOf(maxDuration.getText().toString());
-        } else {
+        } catch(NumberFormatException ex) {
             maxDurationValue = 0;
         }
 
