@@ -9,10 +9,12 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,6 +55,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView cancelRecordingButton;
     private TextView removeRecordingButton;
 
+    private Toolbar toolbar;
+    private View toolbarShadow;
     private TVHClientApplication app;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
@@ -62,10 +66,16 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     }
 
     @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getDialog() != null) {
-            getDialog().requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
     }
@@ -107,6 +117,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
         is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
         is_timer_recording = (TextView) v.findViewById(R.id.is_timer_recording);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbarShadow = (View) v.findViewById(R.id.toolbar_shadow);
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
@@ -127,13 +139,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             return;
         }
 
+        toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         if (getDialog() != null) {
-            getDialog().getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.dialog_fragment_title);
-            TextView dialogTitle = (TextView) getDialog().findViewById(android.R.id.title);
-            if (dialogTitle != null) {
-                dialogTitle.setText(rec.title);
-                dialogTitle.setSingleLine(false);
-            }
+            toolbar.setTitle(rec.title);
         }
 
         // Show the player controls

@@ -1,230 +1,254 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="?attr/FragmentDividerLayoutStyle"
-    android:minWidth="330dp" >
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp" >
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/toolbar_background_color" />
 
-        <LinearLayout
-            android:id="@+id/player_layout"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"
-            android:visibility="gone" >
+            android:layout_height="fill_parent"
+            android:background="?attr/FragmentDividerLayoutStyle"
+            android:minWidth="330dp" >
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" >
+
+                <LinearLayout
+                    android:id="@+id/player_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:visibility="gone" >
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/menu_play"
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:background="?attr/menu_text_selector"
+                            android:drawableLeft="?attr/ic_menu_play"
+                            android:drawableStart="?attr/ic_menu_play"
+                            android:gravity="center_vertical"
+                            android:padding="8dp"
+                            android:text="@string/play" />
+
+                        <TextView
+                            android:id="@+id/menu_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:background="?attr/menu_text_selector"
+                            android:drawableLeft="?attr/ic_menu_edit"
+                            android:drawableStart="?attr/ic_menu_edit"
+                            android:gravity="center_vertical"
+                            android:padding="8dp"
+                            android:text="@string/edit"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="16dp" >
+
+                        <TextView
+                            android:id="@+id/menu_record_cancel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:background="?attr/menu_text_selector"
+                            android:drawableLeft="?attr/ic_menu_record_cancel"
+                            android:drawableStart="?attr/ic_menu_record_cancel"
+                            android:gravity="center_vertical"
+                            android:padding="8dp"
+                            android:text="@string/cancel"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/menu_record_remove"
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:background="?attr/menu_text_selector"
+                            android:drawableLeft="?attr/ic_menu_record_remove"
+                            android:drawableStart="?attr/ic_menu_record_remove"
+                            android:gravity="center_vertical"
+                            android:padding="8dp"
+                            android:text="@string/remove"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/menu_play"
+                    android:id="@+id/is_series_recording"
+                    style="?attr/SubtitleFont"
                     android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="?attr/menu_text_selector"
-                    android:drawableLeft="?attr/ic_menu_play"
-                    android:drawableStart="?attr/ic_menu_play"
-                    android:gravity="center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/play" />
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/is_series_recording" />
 
                 <TextView
-                    android:id="@+id/menu_edit"
+                    android:id="@+id/is_timer_recording"
+                    style="?attr/SubtitleFont"
                     android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="?attr/menu_text_selector"
-                    android:drawableLeft="?attr/ic_menu_edit"
-                    android:drawableStart="?attr/ic_menu_edit"
-                    android:gravity="center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/edit"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/is_timer_recording" />
+
+                <TextView
+                    android:id="@+id/subtitle_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/subtitle" />
+
+                <TextView
+                    android:id="@+id/subtitle"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:paddingBottom="16dp"
+                    android:text="@string/subtitle" />
+
+                <TextView
+                    android:id="@+id/summary_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/summary" />
+
+                <TextView
+                    android:id="@+id/summary"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:paddingBottom="16dp"
+                    android:text="@string/summary" />
+
+                <TextView
+                    android:id="@+id/description_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/description" />
+
+                <TextView
+                    android:id="@+id/description"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="@string/description" />
+
+                <TextView
+                    android:id="@+id/time_date_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/airing" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="16dp" >
+
+                    <TextView
+                        android:id="@+id/date"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="3dp"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="3dp"
+                        android:paddingStart="0dp"
+                        android:singleLine="true"
+                        android:text="@string/date" />
+
+                    <TextView
+                        android:id="@+id/time"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="0dp"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="0dp"
+                        android:paddingStart="3dp"
+                        android:singleLine="true"
+                        android:text="@string/time" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/duration_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/duration" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="@string/duration" />
+
+                <TextView
+                    android:id="@+id/channel_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/channel" />
+
+                <TextView
+                    android:id="@+id/channel"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="@string/channel" />
             </LinearLayout>
+        </ScrollView>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="16dp" >
+        <View
+            android:id="@+id/toolbar_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_elevation"
+            android:background="@drawable/toolbar_dropshadow" />
+    </FrameLayout>
 
-                <TextView
-                    android:id="@+id/menu_record_cancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="?attr/menu_text_selector"
-                    android:drawableLeft="?attr/ic_menu_record_cancel"
-                    android:drawableStart="?attr/ic_menu_record_cancel"
-                    android:gravity="center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/cancel"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/menu_record_remove"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:background="?attr/menu_text_selector"
-                    android:drawableLeft="?attr/ic_menu_record_remove"
-                    android:drawableStart="?attr/ic_menu_record_remove"
-                    android:gravity="center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/remove"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/is_series_recording"
-            style="?attr/SubtitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"
-            android:text="@string/is_series_recording" />
-
-        <TextView
-            android:id="@+id/is_timer_recording"
-            style="?attr/SubtitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"
-            android:text="@string/is_timer_recording" />
-
-        <TextView
-            android:id="@+id/subtitle_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/subtitle" />
-
-        <TextView
-            android:id="@+id/subtitle"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:paddingBottom="16dp"
-            android:text="@string/subtitle" />
-
-        <TextView
-            android:id="@+id/summary_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/summary" />
-
-        <TextView
-            android:id="@+id/summary"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:paddingBottom="16dp"
-            android:text="@string/summary" />
-
-        <TextView
-            android:id="@+id/description_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/description" />
-
-        <TextView
-            android:id="@+id/description"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/description" />
-
-        <TextView
-            android:id="@+id/time_date_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/airing" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="16dp" >
-
-            <TextView
-                android:id="@+id/date"
-                style="?attr/ContentFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="3dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="3dp"
-                android:paddingStart="0dp"
-                android:singleLine="true"
-                android:text="@string/date" />
-
-            <TextView
-                android:id="@+id/time"
-                style="?attr/ContentFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="0dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="0dp"
-                android:paddingStart="3dp"
-                android:singleLine="true"
-                android:text="@string/time" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/duration_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/duration" />
-
-        <TextView
-            android:id="@+id/duration"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/duration" />
-
-        <TextView
-            android:id="@+id/channel_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/channel" />
-
-        <TextView
-            android:id="@+id/channel"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/channel" />
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

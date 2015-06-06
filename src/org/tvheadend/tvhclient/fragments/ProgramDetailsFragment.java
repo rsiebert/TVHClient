@@ -12,9 +12,11 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -60,6 +62,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private TextView recordSeriesButton;
     private TextView recordCancelButton;
 
+    private Toolbar toolbar;
+    private View toolbarShadow;
     private TVHClientApplication app;
 
     public static ProgramDetailsFragment newInstance(Bundle args) {
@@ -69,10 +73,16 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     }
 
     @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getDialog() != null) {
-            getDialog().requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
     }
@@ -131,6 +141,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         ratingBarLabel = (TextView) v.findViewById(R.id.star_rating_label);
         ratingBarText = (TextView) v.findViewById(R.id.star_rating_text);
         ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbarShadow = (View) v.findViewById(R.id.toolbar_shadow);
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
@@ -151,13 +163,10 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             return;
         }
 
+        toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         if (getDialog() != null) {
-            getDialog().getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.dialog_fragment_title);
-            TextView dialogTitle = (TextView) getDialog().findViewById(android.R.id.title);
-            if (dialogTitle != null) {
-                dialogTitle.setText(program.title);
-                dialogTitle.setSingleLine(false);
-            }
+            toolbar.setTitle(program.title);
         }
 
         // Show the player controls

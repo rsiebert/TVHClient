@@ -11,9 +11,11 @@ import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,6 +45,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private TextView recordRemove;
     private TextView recordEdit;
 
+    private Toolbar toolbar;
+    private View toolbarShadow;
     private TVHClientApplication app;
 
     public static TimerRecordingDetailsFragment newInstance(Bundle args) {
@@ -52,10 +56,16 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     }
 
     @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getDialog() != null) {
-            getDialog().requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
     }
@@ -89,6 +99,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         duration = (TextView) v.findViewById(R.id.duration);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbarShadow = (View) v.findViewById(R.id.toolbar_shadow);
 
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
@@ -106,18 +118,16 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             return;
         }
 
+        toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         if (getDialog() != null) {
-            getDialog().getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.dialog_fragment_title);
-            TextView dialogTitle = (TextView) getDialog().findViewById(android.R.id.title);
-            if (dialogTitle != null) {
-                if (trec.title != null && trec.title.length() > 0) {
-                    dialogTitle.setText(trec.title);
-                } else {
-                    dialogTitle.setText(trec.name);
-                }
-                dialogTitle.setSingleLine(false);
+            if (trec.title != null && trec.title.length() > 0) {
+                toolbar.setTitle(trec.title);
+            } else {
+                toolbar.setTitle(trec.name);
             }
         }
+
         // Show the player controls
         if (showControls) {
             addPlayerControlListeners();
