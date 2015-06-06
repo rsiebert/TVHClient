@@ -32,76 +32,47 @@
                     android:id="@+id/player_layout"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
                     android:paddingTop="16dp"
                     android:visibility="gone" >
 
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
+                    <com.gc.materialdesign.views.ButtonFlat
+                        android:id="@+id/menu_play"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:padding="8dp"
+                        android:text="@string/play" />
 
-                        <TextView
-                            android:id="@+id/menu_play"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginRight="16dp"
-                            android:background="?attr/menu_text_selector"
-                            android:drawableLeft="?attr/ic_menu_play"
-                            android:drawableStart="?attr/ic_menu_play"
-                            android:gravity="center_vertical"
-                            android:padding="8dp"
-                            android:text="@string/play" />
+                    <com.gc.materialdesign.views.ButtonFlat
+                        android:id="@+id/menu_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:padding="8dp"
+                        android:text="@string/edit"
+                        android:visibility="gone" />
 
-                        <TextView
-                            android:id="@+id/menu_edit"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginRight="16dp"
-                            android:background="?attr/menu_text_selector"
-                            android:drawableLeft="?attr/ic_menu_edit"
-                            android:drawableStart="?attr/ic_menu_edit"
-                            android:gravity="center_vertical"
-                            android:padding="8dp"
-                            android:text="@string/edit"
-                            android:visibility="gone" />
-                    </LinearLayout>
+                    <com.gc.materialdesign.views.ButtonFlat
+                        android:id="@+id/menu_record_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:padding="8dp"
+                        android:text="@string/cancel"
+                        android:visibility="gone" />
 
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingTop="16dp" >
-
-                        <TextView
-                            android:id="@+id/menu_record_cancel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginRight="16dp"
-                            android:background="?attr/menu_text_selector"
-                            android:drawableLeft="?attr/ic_menu_record_cancel"
-                            android:drawableStart="?attr/ic_menu_record_cancel"
-                            android:gravity="center_vertical"
-                            android:padding="8dp"
-                            android:text="@string/cancel"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/menu_record_remove"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:background="?attr/menu_text_selector"
-                            android:drawableLeft="?attr/ic_menu_record_remove"
-                            android:drawableStart="?attr/ic_menu_record_remove"
-                            android:gravity="center_vertical"
-                            android:padding="8dp"
-                            android:text="@string/remove"
-                            android:visibility="gone" />
-                    </LinearLayout>
+                    <com.gc.materialdesign.views.ButtonFlat
+                        android:id="@+id/menu_record_remove"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:padding="8dp"
+                        android:text="@string/remove"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <TextView

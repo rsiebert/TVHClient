@@ -10,6 +10,8 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
+import com.gc.materialdesign.views.ButtonFlat;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -42,8 +44,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private TextView priority;
 
     private LinearLayout playerLayout;
-    private TextView recordRemove;
-    private TextView recordEdit;
+    private ButtonFlat recordRemoveButton;
+    private ButtonFlat recordEditButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -104,8 +106,14 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        recordRemove = (TextView) v.findViewById(R.id.menu_record_remove);
-        recordEdit = (TextView) v.findViewById(R.id.menu_record_edit);
+        recordRemoveButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
+        recordEditButton = (ButtonFlat) v.findViewById(R.id.menu_record_edit);
+
+        int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
+                .getColor(R.color.button_text_color_light) : getResources()
+                .getColor(R.color.button_text_color_dark);
+        recordEditButton.setBackgroundColor(bgColor);
+        recordRemoveButton.setBackgroundColor(bgColor);
         return v;
     }
 
@@ -132,8 +140,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         if (showControls) {
             addPlayerControlListeners();
             playerLayout.setVisibility(View.VISIBLE);
-            recordRemove.setVisibility(View.VISIBLE);
-            recordEdit.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
+            recordRemoveButton.setVisibility(View.VISIBLE);
+            recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
         }
 
         isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
@@ -162,7 +170,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
      * 
      */
     private void addPlayerControlListeners() {
-        recordRemove.setOnClickListener(new OnClickListener() {
+        recordRemoveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utils.confirmRemoveRecording(activity, trec);
@@ -171,7 +179,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
                 }
             }
         });
-        recordEdit.setOnClickListener(new OnClickListener() {
+        recordEditButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Create the fragment and show it as a dialog.

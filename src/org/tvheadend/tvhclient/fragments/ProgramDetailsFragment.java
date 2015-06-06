@@ -11,6 +11,8 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 
+import com.gc.materialdesign.views.ButtonFlat;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -57,10 +59,10 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private RatingBar ratingBar;
 
     private LinearLayout playerLayout;
-    private TextView playButton;
-    private TextView recordOnceButton;
-    private TextView recordSeriesButton;
-    private TextView recordCancelButton;
+    private ButtonFlat playButton;
+    private ButtonFlat recordOnceButton;
+    private ButtonFlat recordSeriesButton;
+    private ButtonFlat recordCancelButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -146,11 +148,18 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        playButton = (TextView) v.findViewById(R.id.menu_play);
-        recordOnceButton = (TextView) v.findViewById(R.id.menu_record_once);
-        recordSeriesButton = (TextView) v.findViewById(R.id.menu_record_series);
-        recordCancelButton = (TextView) v.findViewById(R.id.menu_record_cancel);
+        playButton = (ButtonFlat) v.findViewById(R.id.menu_play);
+        recordOnceButton = (ButtonFlat) v.findViewById(R.id.menu_record_once);
+        recordSeriesButton = (ButtonFlat) v.findViewById(R.id.menu_record_series);
+        recordCancelButton = (ButtonFlat) v.findViewById(R.id.menu_record_cancel);
 
+        int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
+                .getColor(R.color.button_text_color_light) : getResources()
+                .getColor(R.color.button_text_color_dark);
+        playButton.setBackgroundColor(bgColor);
+        recordOnceButton.setBackgroundColor(bgColor);
+        recordSeriesButton.setBackgroundColor(bgColor);
+        recordCancelButton.setBackgroundColor(bgColor);
         return v;
     }
 

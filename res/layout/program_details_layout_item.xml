@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <TextView
         android:id="@+id/summary_label"
         style="?attr/TitleFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="16dp"
         android:text="@string/summary" />
 
     <TextView
@@ -67,10 +68,10 @@
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="16dp"
             android:paddingEnd="16dp"
-            android:paddingStart="0dp"
             android:paddingLeft="0dp"
+            android:paddingRight="16dp"
+            android:paddingStart="0dp"
             android:text="@string/date" />
 
         <TextView

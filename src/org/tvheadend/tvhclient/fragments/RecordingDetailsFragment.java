@@ -8,6 +8,8 @@ import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
+import com.gc.materialdesign.views.ButtonFlat;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -50,10 +52,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView is_timer_recording;
 
     private LinearLayout playerLayout;
-    private TextView playRecordingButton;
-    private TextView editRecordingButton;
-    private TextView cancelRecordingButton;
-    private TextView removeRecordingButton;
+    private ButtonFlat playRecordingButton;
+    private ButtonFlat editRecordingButton;
+    private ButtonFlat cancelRecordingButton;
+    private ButtonFlat removeRecordingButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -77,6 +79,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         super.onCreate(savedInstanceState);
         if (getDialog() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
+            setStyle(DialogFragment.STYLE_NO_TITLE, Utils.getThemeId(activity));
         }
     }
 
@@ -122,11 +125,18 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        playRecordingButton = (TextView) v.findViewById(R.id.menu_play);
-        editRecordingButton = (TextView) v.findViewById(R.id.menu_edit);
-        cancelRecordingButton = (TextView) v.findViewById(R.id.menu_record_cancel);
-        removeRecordingButton = (TextView) v.findViewById(R.id.menu_record_remove);
+        playRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_play);
+        editRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_edit);
+        cancelRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_record_cancel);
+        removeRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
 
+        int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
+                .getColor(R.color.button_text_color_light) : getResources()
+                .getColor(R.color.button_text_color_dark);
+        playRecordingButton.setBackgroundColor(bgColor);
+        editRecordingButton.setBackgroundColor(bgColor);
+        cancelRecordingButton.setBackgroundColor(bgColor);
+        removeRecordingButton.setBackgroundColor(bgColor);
         return v;
     }
 

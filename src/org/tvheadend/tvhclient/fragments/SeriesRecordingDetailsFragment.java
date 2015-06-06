@@ -6,6 +6,8 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
+import com.gc.materialdesign.views.ButtonFlat;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -41,8 +43,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private TextView priority;
 
     private LinearLayout playerLayout;
-    private TextView recordRemoveButton;
-    private TextView recordEditButton;
+    private ButtonFlat recordRemoveButton;
+    private ButtonFlat recordEditButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -106,8 +108,14 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
 
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        recordRemoveButton = (TextView) v.findViewById(R.id.menu_record_remove);
-        recordEditButton = (TextView) v.findViewById(R.id.menu_record_edit);
+        recordRemoveButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
+        recordEditButton = (ButtonFlat) v.findViewById(R.id.menu_record_edit);
+
+        int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
+                .getColor(R.color.button_text_color_light) : getResources()
+                .getColor(R.color.button_text_color_dark);
+        recordRemoveButton.setBackgroundColor(bgColor);
+        recordEditButton.setBackgroundColor(bgColor);
         return v;
     }
 
