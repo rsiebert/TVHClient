@@ -149,6 +149,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
         if (trec.channel != null) {
             channelName.setText(trec.channel.name);
+        } else {
+            channelName.setText(R.string.all_channels);
         }
 
         Utils.setDaysOfWeek(activity, null, daysOfWeek, trec.daysOfWeek);

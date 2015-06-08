@@ -118,8 +118,12 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             } else {
                 holder.title.setText(trec.name);
             }
-            if (holder.channel != null && trec.channel != null) {
-                holder.channel.setText(trec.channel.name);
+            if (holder.channel != null) {
+                if (trec.channel != null) {
+                    holder.channel.setText(trec.channel.name);
+                } else {
+                    holder.channel.setText(R.string.all_channels);
+                }
             }
             Utils.setChannelIcon(holder.icon, null, trec.channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, trec.daysOfWeek);
