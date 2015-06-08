@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -71,6 +72,9 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private String nameValue;
     private boolean enabledValue;
     private int channelSelectionValue;
+
+    private Runnable addTask;
+    private Handler addHandler = new Handler();
 
     String[] channelList;
     String[] priorityList;
@@ -366,6 +370,16 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         if (getDialog() != null) {
             getDialog().setCanceledOnTouchOutside(false);
         }
+
+        addTask = new Runnable() {
+            public void run() {
+                addTimerRecording();
+
+                // Force a reload because the old entry is not removed due to
+                // the missing call of the onMessage method.
+                Utils.connect(activity, true);
+            }
+        };
     }
 
 	@Override
@@ -454,6 +468,15 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
             intent.putExtra("id", rec.id);
             activity.startService(intent);
+
+            // If no channel is defined then the server will not notify us about
+            // the deletion and thus not triggering the adding of the edited
+            // recording. In this case start the timer that will add a new
+            // recording after x seconds and reload all data from the server.
+            if (rec.channel == null) {
+                addHandler.removeCallbacks(addTask);
+                addHandler.postDelayed(addTask, 2000);
+            }
         } else {
             addTimerRecording();
         }
@@ -505,6 +528,9 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         if (action.equals(Constants.ACTION_TIMER_DVR_DELETE)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
+                    // Remove the callback to that the timer does not fire and
+                    // the recording will not be created twice.
+                    addHandler.removeCallbacks(addTask);
                     addTimerRecording();
                 }
             });

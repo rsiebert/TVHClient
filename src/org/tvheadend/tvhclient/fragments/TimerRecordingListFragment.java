@@ -55,6 +55,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
 
     protected boolean isDualPane;
 
+    private TVHClientApplication app;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -78,6 +80,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -122,7 +125,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.addListener(this);
         if (!app.isLoading()) {
             populateList();
@@ -132,7 +134,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         app.removeListener(this);
     }
 
@@ -159,7 +160,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         for (TimerRecording trec : app.getTimerRecordings()) {
             adapter.add(trec);
         }
@@ -236,7 +236,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeRecording(activity, adapter.getItem(i).id, Constants.ACTION_DELETE_TIMER_REC_ENTRY);
+                    Utils.removeRecording(activity, adapter.getItem(i).id,
+                            Constants.ACTION_DELETE_TIMER_REC_ENTRY, false);
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {

@@ -180,7 +180,8 @@ public class Utils {
         confirmRemoveRecording(context, 
                 Constants.ACTION_DELETE_DVR_ENTRY, 
                 rec.title, 
-                String.valueOf(rec.id));
+                String.valueOf(rec.id),
+                false);
     }
 
     /**
@@ -192,7 +193,8 @@ public class Utils {
         confirmRemoveRecording(context, 
                 Constants.ACTION_DELETE_SERIES_DVR_ENTRY, 
                 srec.title, 
-                srec.id);
+                srec.id,
+                false);
     }
 
     /**
@@ -204,7 +206,8 @@ public class Utils {
         confirmRemoveRecording(context, 
                 Constants.ACTION_DELETE_TIMER_REC_ENTRY, 
                 (trec.name.length() > 0 ? trec.name : trec.title), 
-                trec.id);
+                trec.id,
+                (trec.channel == null));
     }
 
     /**
@@ -216,7 +219,9 @@ public class Utils {
      * @param title
      * @param id
      */
-    public static void confirmRemoveRecording(final Context context, final String type, final String title, final String id) {
+    public static void confirmRemoveRecording(final Context context,
+            final String type, final String title, final String id,
+            final boolean reloadRequired) {
 
         String message = "";
         if (type == Constants.ACTION_DELETE_DVR_ENTRY) {
@@ -235,7 +240,7 @@ public class Utils {
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        removeRecording(context, id, type);
+                        removeRecording(context, id, type, reloadRequired);
                     }
 
                     @Override
@@ -251,11 +256,22 @@ public class Utils {
      * @param id
      * @param type
      */
-    public static void removeRecording(final Context context, final String id, final String type) {
+    public static void removeRecording(final Context context, final String id,
+            final String type, boolean reloadRequired) {
+
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(type);
         intent.putExtra("id", id);
         context.startService(intent);
+        
+
+        // If the channel is not set then the 'all channels' was set.
+        // When a recording without a channel is removed, the server
+        // does not sent a confirmation. So a full reload to refresh the
+        // recording list is required.
+        if (reloadRequired) {
+            Utils.connect(context, true);
+        }
     }
 
     /**

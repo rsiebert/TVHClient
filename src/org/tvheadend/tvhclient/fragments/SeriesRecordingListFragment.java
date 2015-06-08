@@ -243,7 +243,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeRecording(activity, adapter.getItem(i).id, Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
+                    Utils.removeRecording(activity, adapter.getItem(i).id,
+                            Constants.ACTION_DELETE_SERIES_DVR_ENTRY, false);
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
