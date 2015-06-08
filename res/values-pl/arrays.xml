@@ -27,23 +27,32 @@
     </string-array>
     
     <string-array name="day_short_names">
-        <item>Pon</item>
-        <item>Wto</item>
-        <item>śro</item>
-        <item>Czw</item>
-        <item>Pią</item>
-        <item>Sob</item>
-        <item>Nie</item>
+        <item>Pon.</item>
+        <item>Wt.</item>
+        <item>Śr.</item>
+        <item>Czw.</item>
+        <item>Pt.</item>
+        <item>Sob.</item>
+        <item>Niedz.</item>
     </string-array>
 
     <string-array name="day_long_names">
         <item>Poniedziałek</item>
         <item>Wtorek</item>
-        <item>środa</item>
+        <item>Środa</item>
         <item>Czwartek</item>
         <item>Piątek</item>
         <item>Sobota</item>
         <item>Niedziela</item>
+    </string-array>
+
+    <string-array name="dvr_priorities">
+        <item>Ważny</item>
+        <item>Wysoki</item>
+        <item>Normalny</item>
+        <item>Niski</item>
+        <item>Nieważny</item>
+        <item>Nie ustawiony</item>
     </string-array>
 
     <string-array name="pr_content_type0">
