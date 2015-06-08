@@ -151,8 +151,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         if (allowRecordingOnAllChannels) {
             channelList[1] = activity.getString(R.string.all_channels);
         }
-        for (int i = (offset + 1); i < app.getChannels().size(); i++) {
-            channelList[i] = app.getChannels().get(i).name;
+        for (int i = 0; i < app.getChannels().size(); i++) {
+            channelList[i + offset + 1] = app.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name. Keep the all channels string
@@ -210,6 +210,10 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                             break;
                         }
                     }   
+                } else {
+                    if (allowRecordingOnAllChannels) {
+                        channelSelectionValue = 1;
+                    }
                 }
             } else {
                 // No recording was given, set default values
