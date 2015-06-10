@@ -1,17 +1,16 @@
 $ 1.8.0
   % VERSION 1.8.0
-  _ 04.06.2015
-    * Additional features can be enabled in the settings for a small fee (All existing features remain free)
-    * All changes and improvements from the 1.7.7 version which was only released to 20 percent of the market 
-    * Add a one time recording in case there is no EPG data (Only available in the unlocked version)
-    * Edit a scheduled recording (Only available in the unlocked version)
+  _ 10.06.2015
+    * Unlock additional features for a small fee (All existing features remain free)
+    * Add one time recordings in case no EPG data is available (*)
+    * Add custom series and timer recordings (*)
+    * Edit scheduled, series and timer recordings (*)
+    * New playback and recording profiles (*)
     * Material design for dialogs and popups
-    * Show network connection in the status screen
-    * Show an information when a recording could not be added or deleted
-    * Added an option to make the channel tag menu item always visible in the actionbar
-    * Channel tags and profiles are sorted by name in their selection lists
-    * Removed connection entry from the main menu
-    * Added new entry to the main menu to show information and credits
+    * Added new menu entry to show information and credits
+    * Sort channel tags and profiles by name
+    * Many other improvements and bug fixes
+    * (*) Requires unlocked version and the server must support this feature (Check the API version in the status screen)
 $ 1.7.7
   % VERSION 1.7.7
   _ 15.05.2015
