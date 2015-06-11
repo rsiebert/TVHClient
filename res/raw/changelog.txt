@@ -10,7 +10,7 @@ $ 1.8.0
     * Added new menu entry to show information and credits
     * Sort channel tags and profiles by name
     * Many other improvements and bug fixes
-    * (*) Requires unlocked version and the server must support this feature (Check the API version in the status screen)
+    * (*) Requires unlocked version and the server must support this feature. (Check the API version in the status screen. It should be at least 19)
 $ 1.7.7
   % VERSION 1.7.7
   _ 15.05.2015
