@@ -80,6 +80,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     private static final String REC_PROFILE_UUID = "rec_profile_uuid";
 
     private TVHClientApplication app;
+    private DatabaseHelper dbh;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -93,13 +94,13 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         prefRecProfiles = (ListPreference) findPreference("pref_recording_profiles");
         prefProgProfiles = (ListPreference) findPreference("pref_playback_profiles");
 
-        conn = DatabaseHelper.getInstance().getSelectedConnection();
+        conn = dbh.getSelectedConnection();
         if (conn != null) {
-            progProfile = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
+            progProfile = dbh.getProfile(conn.playback_profile_id);
             if (progProfile == null) {
                 progProfile = new Profile();
             }
-            recProfile = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+            recProfile = dbh.getProfile(conn.recording_profile_id);
             if (recProfile == null) {
                 recProfile = new Profile();
             }
@@ -130,6 +131,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         super.onAttach(activity);
         this.activity = (FragmentActivity) activity;
         app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
     }
 
     @Override
@@ -248,10 +250,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (progProfile.id == 0) {
-            conn.playback_profile_id = (int) DatabaseHelper.getInstance().addProfile(progProfile);
-            DatabaseHelper.getInstance().updateConnection(conn);
+            conn.playback_profile_id = (int) dbh.addProfile(progProfile);
+            dbh.updateConnection(conn);
         } else {
-            DatabaseHelper.getInstance().updateProfile(progProfile);
+            dbh.updateProfile(progProfile);
         }
 
         // Save the values into the profile
@@ -263,10 +265,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (recProfile.id == 0) {
-            conn.recording_profile_id = (int) DatabaseHelper.getInstance().addProfile(recProfile);
-            DatabaseHelper.getInstance().updateConnection(conn);
+            conn.recording_profile_id = (int) dbh.addProfile(recProfile);
+            dbh.updateConnection(conn);
         } else {
-            DatabaseHelper.getInstance().updateProfile(recProfile);
+            dbh.updateProfile(recProfile);
         }
 
         if (settingsInterface != null) {

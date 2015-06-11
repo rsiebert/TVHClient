@@ -84,6 +84,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     String[] priorityList;
 
     private TVHClientApplication app;
+    private DatabaseHelper dbh;
 
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
@@ -99,6 +100,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
         app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
     }
 
     @Override
@@ -450,8 +452,8 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
 
             // Add the recording profile if available and enabled
-            final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-            final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+            final Connection conn = dbh.getSelectedConnection();
+            final Profile p = dbh.getProfile(conn.recording_profile_id);
             if (p != null 
                     && p.enabled
                     && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES

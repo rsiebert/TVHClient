@@ -55,6 +55,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     private String totalDiscSpace = "";
 
     private TVHClientApplication app;
+    private DatabaseHelper dbh;
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,6 +96,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onAttach(activity);
         this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
     }
 
     @Override
@@ -230,9 +232,9 @@ public class StatusFragment extends Fragment implements HTSListener {
         // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
-        if (DatabaseHelper.getInstance() != null) {
-            noConnectionsDefined = DatabaseHelper.getInstance().getConnections().isEmpty();
-            conn = DatabaseHelper.getInstance().getSelectedConnection();
+        if (dbh != null) {
+            noConnectionsDefined = dbh.getConnections().isEmpty();
+            conn = dbh.getSelectedConnection();
         }
 
         // Show the details about the current connection or an information that

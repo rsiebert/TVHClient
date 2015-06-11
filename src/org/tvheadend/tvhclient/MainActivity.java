@@ -159,6 +159,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private MenuItem searchMenuItem = null;
 
     private TVHClientApplication app;
+    private DatabaseHelper dbh;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -172,7 +173,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         View v = findViewById(R.id.right_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
-        DatabaseHelper.init(this.getApplicationContext());
+        dbh = DatabaseHelper.getInstance(this);
         changeLogDialog = new ChangeLogDialog(this);
 
         actionBar = getSupportActionBar();
@@ -311,10 +312,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     // Create a list of available connections names that the
                     // selection dialog can display. Additionally preselect the
                     // current active connection.
-                    final List<Connection> connList = DatabaseHelper.getInstance().getConnections();
+                    final List<Connection> connList = dbh.getConnections();
                     if (connList != null) {
                         int currentConnectionListPosition = -1;
-                        Connection currentConnection = DatabaseHelper.getInstance().getSelectedConnection();
+                        Connection currentConnection = dbh.getSelectedConnection();
                         String[] items = new String[connList.size()];
                         for (int i = 0; i < connList.size(); i++) {
                             items[i] = connList.get(i).name;
@@ -330,7 +331,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             .itemsCallbackSingleChoice(currentConnectionListPosition, new MaterialDialog.ListCallbackSingleChoice() {
                                 @Override
                                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                    Connection oldConn = DatabaseHelper.getInstance().getSelectedConnection();
+                                    Connection oldConn = dbh.getSelectedConnection();
                                     Connection newConn = connList.get(which);
 
                                     // Switch the active connection and reconnect  
@@ -341,8 +342,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                                         // Set the new connection as the active one
                                         newConn.selected = true;
                                         oldConn.selected = false;
-                                        DatabaseHelper.getInstance().updateConnection(oldConn);
-                                        DatabaseHelper.getInstance().updateConnection(newConn);
+                                        dbh.updateConnection(oldConn);
+                                        dbh.updateConnection(newConn);
                                         Utils.connect(context, true);
                                     }
                                     return true;
@@ -385,11 +386,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Update the server connection status
         if (serverName != null && serverSelection != null) {
-            final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-            if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
+            final Connection conn = dbh.getSelectedConnection();
+            if (dbh.getConnections().isEmpty()) {
                 serverName.setText(R.string.no_connection_available);
                 serverSelection.setVisibility(View.GONE);
-            } else if (DatabaseHelper.getInstance().getConnections().size() == 1) {
+            } else if (dbh.getConnections().size() == 1) {
                 serverName.setText(conn.name);
                 serverSelection.setVisibility(View.GONE);
             } else if (conn == null) {
@@ -528,8 +529,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      */
     private void reconnectAndResume() {
         if (!connectionSettingsShown
-                && (DatabaseHelper.getInstance().getConnections().isEmpty() 
-                        || DatabaseHelper.getInstance().getSelectedConnection() == null)) {
+                && (dbh.getConnections().isEmpty() 
+                        || dbh.getSelectedConnection() == null)) {
             connectionSettingsShown = true;
             handleMenuSelection(MENU_CONNECTIONS);
         } else {
@@ -544,8 +545,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 // Set the connection state to unknown if no connection was added
                 // when the connection fragment was shown. The status fragment is
                 // then shown with the information that no connection is available
-                if (DatabaseHelper.getInstance().getConnections().isEmpty() 
-                        || DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                if (dbh.getConnections().isEmpty() 
+                        || dbh.getSelectedConnection() == null) {
                     connectionStatus = Constants.ACTION_CONNECTION_STATE_NO_CONNECTION;
                     handleMenuSelection(MENU_STATUS);
                 } else {

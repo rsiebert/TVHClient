@@ -43,6 +43,8 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     private List<Connection> connList;
     private ActionMode actionMode;
 
+    private DatabaseHelper dbh;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -61,6 +63,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
+        dbh = DatabaseHelper.getInstance(activity);
     }
 
     @Override
@@ -122,7 +125,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
      */
     private void showConnections() {
         connList.clear();
-        List<Connection> cl = DatabaseHelper.getInstance().getConnections();
+        List<Connection> cl = dbh.getConnections();
         if (cl != null && cl.size() > 0) {
             for (int i = 0; i < cl.size(); ++i) {
                 connList.add(cl.get(i));
@@ -169,14 +172,14 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         // Switch the selection status
         c.selected = (c.selected) ? false : true;
         if (c.selected) {
-            Connection previousConn = DatabaseHelper.getInstance().getSelectedConnection();
+            Connection previousConn = dbh.getSelectedConnection();
             if (previousConn != null) {
                 previousConn.selected = false;
-                DatabaseHelper.getInstance().updateConnection(previousConn);
+                dbh.updateConnection(previousConn);
             }
         };
         // Update the currently selected connection and refresh the display
-        DatabaseHelper.getInstance().updateConnection(c);
+        dbh.updateConnection(c);
         showConnections();
     }
 
@@ -200,7 +203,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                 settingsInterface.reconnect();
             }
             c.selected = false;
-            DatabaseHelper.getInstance().updateConnection(c);
+            dbh.updateConnection(c);
             showConnections();
             mode.finish();
             return true;
@@ -229,7 +232,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
-                            if (DatabaseHelper.getInstance().removeConnection(c.id)) {
+                            if (dbh.removeConnection(c.id)) {
                                 adapter.remove(c);
                                 adapter.notifyDataSetChanged();
                                 adapter.sort();

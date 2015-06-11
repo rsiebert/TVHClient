@@ -80,6 +80,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     String[] priorityList;
 
     private TVHClientApplication app;
+    private DatabaseHelper dbh;
 
     public static TimerRecordingAddFragment newInstance(Bundle args) {
         TimerRecordingAddFragment f = new TimerRecordingAddFragment();
@@ -92,6 +93,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         super.onAttach(activity);
         this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
     }
 
     @Override
@@ -564,8 +566,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         }
 
         // Add the recording profile if available and enabled
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+        final Connection conn = dbh.getSelectedConnection();
+        final Profile p = dbh.getProfile(conn.recording_profile_id);
         if (p != null 
                 && p.enabled
                 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES

@@ -224,7 +224,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
      * adapter that contain the selected channel tag.
      */
     private void populateList() {
-        ChannelTag currentTag = Utils.getChannelTag(app);
+        ChannelTag currentTag = Utils.getChannelTag(activity);
         adapter.clear();
         for (Channel ch : app.getChannels()) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {

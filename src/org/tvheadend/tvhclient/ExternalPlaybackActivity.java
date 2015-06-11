@@ -22,14 +22,18 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
     private final static String TAG = ExternalPlaybackActivity.class.getSimpleName();
 
     private Context context;
+    private TVHClientApplication app;
+    private DatabaseHelper dbh;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
 
+        app = (TVHClientApplication) getApplication();
+        dbh = DatabaseHelper.getInstance(this);
+
         // Check that a valid channel or recording was specified
-        final TVHClientApplication app = (TVHClientApplication) getApplication();
         final Channel ch = app.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
         final Recording rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
         if (ch == null && rec == null) {
@@ -46,14 +50,12 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
     @Override
     protected void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         app.addListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         app.removeListener(this);
     }
 
@@ -66,9 +68,8 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
      */
     private void startPlayback(String path, String ticket) {
 
-        TVHClientApplication app = (TVHClientApplication) getApplication();
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        Profile profile = DatabaseHelper.getInstance().getProfile(conn.playback_profile_id);
+        final Connection conn = dbh.getSelectedConnection();
+        Profile profile = dbh.getProfile(conn.playback_profile_id);
 
         // Set default values if no profile was specified
         if (profile == null) {

@@ -87,6 +87,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     // allow recording on all channels
     boolean allowRecordingOnAllChannels = false;
 
+    private DatabaseHelper dbh;
+
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
 
@@ -101,6 +103,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         super.onAttach(activity);
         this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
     }
 
     @Override
@@ -592,8 +595,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         }
 
         // Add the recording profile if available and enabled
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+        final Connection conn = dbh.getSelectedConnection();
+        final Profile p = dbh.getProfile(conn.recording_profile_id);
         if (p != null 
                 && p.enabled
                 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES

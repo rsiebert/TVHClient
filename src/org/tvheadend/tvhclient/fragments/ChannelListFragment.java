@@ -181,7 +181,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         .adapter(tagAdapter, new MaterialDialog.ListCallback() {
             @Override
             public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                Utils.setChannelTagId(which);
+                Utils.setChannelTagId(activity, which);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.channelTagChanged(TAG);
                 }
@@ -360,7 +360,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private void populateList() {
         // Add only those channels that contain the selected tag
         adapter.clear();
-        ChannelTag currentTag = Utils.getChannelTag(app);
+        ChannelTag currentTag = Utils.getChannelTag(activity);
         for (Channel ch : app.getChannels()) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
                 adapter.add(ch);

@@ -53,6 +53,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private ListPreference prefDefaultMenu;
 
     private TVHClientApplication app;
+    private DatabaseHelper dbh;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,11 +123,11 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
+                if (dbh.getConnections().isEmpty()) {
                     SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
                             .type(SnackbarType.MULTI_LINE)
                             .text(R.string.no_connection_available_advice), activity);
-                } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                } else if (dbh.getSelectedConnection() == null) {
                     SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
                             .type(SnackbarType.MULTI_LINE)
                             .text(R.string.no_connection_active_advice), activity);
@@ -152,11 +153,11 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefMenuTranscoding.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (DatabaseHelper.getInstance().getConnections().isEmpty()) {
+                if (dbh.getConnections().isEmpty()) {
                     SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
                             .type(SnackbarType.MULTI_LINE)
                             .text(getString(R.string.no_connection_available_advice)), activity);
-                } else if (DatabaseHelper.getInstance().getSelectedConnection() == null) {
+                } else if (dbh.getSelectedConnection() == null) {
                     SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
                             .type(SnackbarType.MULTI_LINE)
                             .text(getString(R.string.no_connection_active_advice)), activity);
@@ -266,6 +267,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
         app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
     }
 
     @Override

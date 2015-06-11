@@ -156,7 +156,8 @@ public class Utils {
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction(Constants.ACTION_CONNECT);
 
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
+        final Connection conn = dbh.getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
             intent.putExtra("hostname", conn.address);
@@ -345,8 +346,9 @@ public class Utils {
 
         // Add the recording profile if available and enabled
         final TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        final Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
-        final Profile p = DatabaseHelper.getInstance().getProfile(conn.recording_profile_id);
+        final DatabaseHelper dbh = DatabaseHelper.getInstance(activity);
+        final Connection conn = dbh.getSelectedConnection();
+        final Profile p = dbh.getProfile(conn.recording_profile_id);
         if (p != null 
                 && p.enabled
                 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
@@ -993,11 +995,12 @@ public class Utils {
      * 
      * @return
      */
-    public static int getChannelTagId() {
+    public static int getChannelTagId(final Context context) {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
-    	if (DatabaseHelper.getInstance() != null) {
-	        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
+    	if (dbh != null) {
+	        Connection conn = dbh.getSelectedConnection();
 	        if (conn != null) {
 	            return conn.channelTag;
 	        }
@@ -1011,13 +1014,14 @@ public class Utils {
      * 
      * @param channelTagId
      */
-    public static void setChannelTagId(final int channelTagId) {
+    public static void setChannelTagId(final Context context, final int channelTagId) {
         // Save the selected tag for the active connection in the database
-    	if (DatabaseHelper.getInstance() != null) {
-	        Connection conn = DatabaseHelper.getInstance().getSelectedConnection();
+        final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
+    	if (dbh != null) {
+	        Connection conn = dbh.getSelectedConnection();
 	        if (conn != null) {
 	            conn.channelTag = channelTagId;
-	            DatabaseHelper.getInstance().updateConnection(conn);
+	            dbh.updateConnection(conn);
 	        }
 	    }
     }
@@ -1028,10 +1032,11 @@ public class Utils {
      * @param app
      * @return
      */
-    public static ChannelTag getChannelTag(final TVHClientApplication app) {
+    public static ChannelTag getChannelTag(final Activity activity) {
+        final TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         List<ChannelTag> ctl = app.getChannelTags();        
-        if (ctl.size() > getChannelTagId()) {
-            return ctl.get(getChannelTagId());
+        if (ctl.size() > getChannelTagId(activity)) {
+            return ctl.get(getChannelTagId(activity));
         }
         return null;
     }
