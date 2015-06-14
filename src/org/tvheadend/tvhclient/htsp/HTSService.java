@@ -1431,9 +1431,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long maxDuration = intent.getLongExtra("maxDuration", 0);
         final long minDuration = intent.getLongExtra("minDuration", 0);
         final long retention = intent.getLongExtra("retention", 0);
-        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
+        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 127);
         final long priority = intent.getLongExtra("priority", 2);
-        final long enabled = intent.getLongExtra("enabled", 0);
+        final long enabled = intent.getLongExtra("enabled", 1);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final long start = intent.getLongExtra("start", -1);
@@ -1481,6 +1481,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
 
         // Enabled flag (Added in version 19)
+        Log.i(TAG, "Enabled " + enabled);
         request.putField("enabled", enabled);
 
         if (configName != null) {
