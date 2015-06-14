@@ -138,10 +138,10 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Create the list of channels that the user can select
-        channelList = new String[app.getChannels().size() + 1];
+        channelList = new String[app.getChannels().size()+1];
         channelList[0] = activity.getString(R.string.no_channel);
-        for (int i = 1; i < app.getChannels().size(); i++) {
-            channelList[i] = app.getChannels().get(i).name;
+        for (int i = 0; i < app.getChannels().size(); i++) {
+            channelList[i+1] = app.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name
