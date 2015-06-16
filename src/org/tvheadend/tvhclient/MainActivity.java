@@ -300,61 +300,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             }
         });
 
-        // Add a listener to the server name to allow changing the current
-        // connection. A drop down menu with all connections will be displayed.
-        ImageView serverSelection = (ImageView) drawerList.findViewById(R.id.server_selection);
-        if (serverSelection != null) {
-            final Context context = this;
-            serverSelection.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    // Create a list of available connections names that the
-                    // selection dialog can display. Additionally preselect the
-                    // current active connection.
-                    final List<Connection> connList = dbh.getConnections();
-                    if (connList != null) {
-                        int currentConnectionListPosition = -1;
-                        Connection currentConnection = dbh.getSelectedConnection();
-                        String[] items = new String[connList.size()];
-                        for (int i = 0; i < connList.size(); i++) {
-                            items[i] = connList.get(i).name;
-                            if (currentConnection != null && currentConnection.id == connList.get(i).id) {
-                                currentConnectionListPosition = i;
-                            }
-                        }
-
-                        // Now show the dialog to select a new connection
-                        new MaterialDialog.Builder(context)
-                            .title(R.string.select_connection)
-                            .items(items)
-                            .itemsCallbackSingleChoice(currentConnectionListPosition, new MaterialDialog.ListCallbackSingleChoice() {
-                                @Override
-                                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                    Connection oldConn = dbh.getSelectedConnection();
-                                    Connection newConn = connList.get(which);
-
-                                    // Switch the active connection and reconnect  
-                                    // only if a new connection has been selected
-                                    if (oldConn != null && newConn != null && oldConn.id != newConn.id) {
-                                        // Close the menu when a new connection has been selected
-                                        drawerLayout.closeDrawers();
-                                        // Set the new connection as the active one
-                                        newConn.selected = true;
-                                        oldConn.selected = false;
-                                        dbh.updateConnection(oldConn);
-                                        dbh.updateConnection(newConn);
-                                        Utils.connect(context, true);
-                                    }
-                                    return true;
-                                }
-                            })
-                            .show();
-                    }
-                }
-            });
-        }
-
         app = (TVHClientApplication) getApplication();
 
         // If the saved instance is not null then we return from an orientation
@@ -375,6 +320,55 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     /**
+     * 
+     */
+    private void showConnectionSelectionDialog() {
+        // Create a list of available connections names that the
+        // selection dialog can display. Additionally preselect the
+        // current active connection.
+        final List<Connection> connList = dbh.getConnections();
+        if (connList != null) {
+            int currentConnectionListPosition = -1;
+            Connection currentConnection = dbh.getSelectedConnection();
+            String[] items = new String[connList.size()];
+            for (int i = 0; i < connList.size(); i++) {
+                items[i] = connList.get(i).name;
+                if (currentConnection != null && currentConnection.id == connList.get(i).id) {
+                    currentConnectionListPosition = i;
+                }
+            }
+    
+            // Now show the dialog to select a new connection
+            final Context context = this;
+            new MaterialDialog.Builder(this)
+                .title(R.string.select_connection)
+                .items(items)
+                .itemsCallbackSingleChoice(currentConnectionListPosition, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        Connection oldConn = dbh.getSelectedConnection();
+                        Connection newConn = connList.get(which);
+    
+                        // Switch the active connection and reconnect  
+                        // only if a new connection has been selected
+                        if (oldConn != null && newConn != null && oldConn.id != newConn.id) {
+                            // Close the menu when a new connection has been selected
+                            drawerLayout.closeDrawers();
+                            // Set the new connection as the active one
+                            newConn.selected = true;
+                            oldConn.selected = false;
+                            dbh.updateConnection(oldConn);
+                            dbh.updateConnection(newConn);
+                            Utils.connect(context, true);
+                        }
+                        return true;
+                    }
+                })
+                .show();
+        }
+    }
+
+    /**
      * Shows or hides the allowed main menu entries depending on the app status
      * and server capabilities. Also updates the server connection status and
      * the recording counts in the main menu.
@@ -386,19 +380,41 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Update the server connection status
         if (serverName != null && serverSelection != null) {
+
+            // Remove any previous listeners
+            serverName.setOnClickListener(null);
+            serverSelection.setOnClickListener(null);
+
             final Connection conn = dbh.getSelectedConnection();
             if (dbh.getConnections().isEmpty()) {
                 serverName.setText(R.string.no_connection_available);
                 serverSelection.setVisibility(View.GONE);
             } else if (dbh.getConnections().size() == 1) {
-                serverName.setText(conn.name);
+                serverName.setText(conn != null ? conn.name : "");
                 serverSelection.setVisibility(View.GONE);
             } else if (conn == null) {
                 serverName.setText(R.string.no_connection_active);
                 serverSelection.setVisibility(View.GONE);
             } else {
-                serverName.setText(conn.name);
+                serverName.setText(conn != null ? conn.name : "");
                 serverSelection.setVisibility(View.VISIBLE);
+
+                // Add a listener to the server name to allow changing the current
+                // connection. A drop down menu with all connections will be displayed.
+                serverSelection.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showConnectionSelectionDialog();
+                    }
+                });
+
+                // Also add a listener to the server name, not only to the selection icon
+                serverName.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showConnectionSelectionDialog();
+                    }
+                });
             }
         }
 
