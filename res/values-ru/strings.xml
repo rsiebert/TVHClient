@@ -100,10 +100,10 @@
     <string name="pref_container_sum">Определите медиа контейнер, который должен быть использован для транспортировки аудио и видео потоков. Matroska является предпочтительным выбором.</string>
     
     <string name="pref_playback">Воспроизведение</string>
-    <string name="pref_playback_programs_sum">Настройка воспроизведения для Live-ТВ передач.</string>
-    <string name="pref_playback_recordings_sum">Настройка воспроизведения для записанных передач.</string>
+    <string name="pref_playback_programs_sum">Настройка воспроизведения для Live-ТВ программ.</string>
+    <string name="pref_playback_recordings_sum">Настройка воспроизведения для записанных программ.</string>
     <string name="pref_transcode">Перекодировать поток</string>
-    <string name="pref_transcode_sum">Преобразование передачи или записи в другой формат во время воспроизведения. (Это должен поддерживать сервер TVHeadend)</string>
+    <string name="pref_transcode_sum">Преобразование программы или записи в другой формат во время воспроизведения. (Это должен поддерживать сервер TVHeadend)</string>
 
     <string name="pref_information">Информация</string>
     <string name="pref_changelog">Список изменений</string>
@@ -111,17 +111,17 @@
     <string name="pref_program_guide">Телепрограмма</string>
     <string name="pref_program_guide_sum">Настроить экран телепрограммы и как должны быть отображены данные.</string>
     <string name="pref_epg_hours_visible">Количество часов</string>
-    <string name="pref_epg_hours_visible_sum">Определите, сколько часов в телепрограмме должны быть показаны на одном экране. Слишком много часов будет отображать очень много передач и, таким образом загромождать экран и уменьшать читаемость.</string>
+    <string name="pref_epg_hours_visible_sum">Определите, сколько часов в телепрограмме должны быть показаны на одном экране. Слишком много часов будет отображать очень много программ и, таким образом загромождать экран и уменьшать читаемость.</string>
     <string name="pref_epg_max_days">Максимум дней для телепрограммы</string>
     <string name="pref_epg_max_days_sum">Определите максимальное количество дней программы телепередач, которые должны быть показаны.</string>
     <string name="pref_genre_colors">Цвета жанров</string>
     <string name="pref_genre_colors_sum">Укажите, на каком экране будет показан цвет жанра.</string>
     <string name="pref_genre_colors_channels">Каналы</string>
     <string name="pref_genre_colors_channels_sum">Цвет жанра будут показан в виде вертикальной линии на левой стороне экрана списка каналов.</string>
-    <string name="pref_genre_colors_programs">Передачи</string>
-    <string name="pref_genre_colors_programs_sum">Цвет жанра будут показаны в виде вертикальной линии на левой стороне списка передач и на экране подробной информации о передаче.</string>
+    <string name="pref_genre_colors_programs">Программы</string>
+    <string name="pref_genre_colors_programs_sum">Цвет жанра будут показаны в виде вертикальной линии на левой стороне списка программ и на экране подробной информации о программе.</string>
     <string name="pref_genre_colors_epg">Телепрограмма</string>
-    <string name="pref_genre_colors_epg_sum">Показывает цвет жанра в фоне каждого элемента передачи.</string>
+    <string name="pref_genre_colors_epg_sum">Показывает цвет жанра в фоне каждого элемента программы.</string>
     <string name="pref_genre_colors_search_results">Результаты поиска</string>
     <string name="pref_genre_colors_search_results_sum">Цвет жанра будет показан в виде вертикальной линии с левой стороны в списке результатов поиска.</string>
     <string name="pref_genre_colors_visibility_message">Установите видимость цветов. Более высокие значения означают более сильные цвета.</string>
@@ -136,21 +136,21 @@
     <string name="pref_menu_visibility">Видимость меню</string>
     <string name="pref_menu_visibility_sum">Скрыть или показать определенные пункты меню.</string>
     <string name="pref_hide_menu_delete_all_recordings">Скрыть \'Удалить все записи\' меню</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Больше не показывать это меню, чтобы предотвратить случайное удаление всех записанных передач.</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Больше не показывать это меню, чтобы предотвратить случайное удаление всех записанных программ.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Скрыть \'Отменить все записи\' меню</string>
-    <string name="pref_hide_menu_cancel_all_recordings_sum">Больше не показывать это меню, чтобы случайно не допустить отмены всех запланированных передач.</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Больше не показывать это меню, чтобы случайно не допустить отмены всех запланированных программ.</string>
     
     <string name="loading_profiles">Загрузка профилей</string>
     <string name="pref_profiles">Профили</string>
-    <string name="pref_profiles_sum">Определите параметры или профили (если поддерживается), как передачи должны быть записаны или как записи должны быть воспроизведены.</string>
+    <string name="pref_profiles_sum">Определите параметры или профили (если поддерживается), как программы должны быть записаны или как записи должны быть воспроизведены.</string>
     <string name="pref_recording_profiles">Профили записи</string>
-    <string name="pref_recording_profiles_sum">Выберите профиль, который сервер должен использовать для записи запланированной передачи.</string>
+    <string name="pref_recording_profiles_sum">Выберите профиль, который сервер должен использовать для записи запланированной программы.</string>
     <string name="pref_playback_profiles">Профили воспроизведения</string>
-    <string name="pref_playback_profiles_sum">Выберите профиль, который должен быть использован для воспроизведения записанной передачи.</string>
+    <string name="pref_playback_profiles_sum">Выберите профиль, который должен быть использован для воспроизведения записанной программы.</string>
     <string name="pref_show_notifications">Показывать уведомления</string>
     <string name="pref_show_notifications_sum">Информирует пользователя, когда начата или завершена запись. Это требует, чтобы служба работала в фоновом режиме.</string>
-    <string name="pref_show_next_program">Показать следующую передачу в списке каналов</string>
-    <string name="pref_show_next_program_sum">Будет отображаться следующая передача в списке каналов. Ниже будет показан индикатор прогресса.</string>
+    <string name="pref_show_next_program">Показать следующую программу в списке каналов</string>
+    <string name="pref_show_next_program_sum">Будет отображаться следующая программа в списке каналов. Ниже будет показан индикатор прогресса.</string>
 
     <string name="clear_search_history">Очистить историю поиска?</string>
     <string name="clear_search_history_sum">Вы уверены, что хотите удалить все записи из истории поиска?</string>
@@ -180,8 +180,8 @@
     <string name="wol_address_invalid">MAC-адрес не корректный. Проверьте свои настройки.</string>
     <string name="wol_error">Ошибка при отправке WOL пакета на \'%1$s\'.\n Ошибка: %2$s</string>
 
-    <string name="no_transmission">Нет передачи</string>
-    <string name="no_data">Нет данных о передаче</string>
+    <string name="no_transmission">Нет программы</string>
+    <string name="no_data">Нет данных о программе</string>
     <string name="minutes">%d минут</string>
     <string name="days">%d дней</string>
     <string name="not_set">Не установлено</string>
@@ -202,7 +202,7 @@
     <string name="all_days">Все дни</string>
     <string name="no_days">Нет дней</string>
 
-    <string name="programs">Передачи</string>
+    <string name="programs">Программы</string>
     <string name="completed_recordings">Выполненные записи</string>
     <string name="upcoming_recordings">Предстоящие записи</string>
     <string name="failed_recordings">Неудачные записи</string>
@@ -213,7 +213,7 @@
     <string name="no_channels_available">Нет доступных каналов</string>
     <string name="no_recordings_available">Нет доступных записей</string>
     <string name="no_recordings_scheduled">Нет запланированных записей</string>
-    <string name="no_programs_available">Нет доступных передач</string>
+    <string name="no_programs_available">Нет доступных программ</string>
 
     <string name="recording_enabled">Эта запись включена</string>
     <string name="recording_disabled">Эта запись отключена</string>
@@ -270,7 +270,7 @@
     <string name="episode">Эпизод</string>
     <string name="part">Часть</string>
     <string name="progress">%1$d%% уже показано</string>
-    <string name="next_program">Следущая передача: %s</string>
+    <string name="next_program">Следущая программа: %s</string>
 
     <string name="server">Сервер</string>
     <string name="connection">Подключение</string>
