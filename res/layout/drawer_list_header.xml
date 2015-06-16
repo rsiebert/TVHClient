@@ -44,12 +44,12 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:contentDescription="@null"
-        android:paddingBottom="8dp"
+        android:paddingBottom="4dp"
         android:paddingEnd="16dp"
         android:paddingLeft="0dp"
         android:paddingRight="16dp"
         android:paddingStart="0dp"
         android:scaleType="fitCenter"
-        android:src="?attr/ic_arrow_drop_down" />
+        android:src="?attr/ic_arrow_drop_down_like_spinner" />
 
 </RelativeLayout>
