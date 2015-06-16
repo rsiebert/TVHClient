@@ -152,28 +152,28 @@
     <string name="pref_show_next_program">Показать следующую передачу в списке каналов</string>
     <string name="pref_show_next_program_sum">Будет отображаться следующая программа в списке каналов. Ниже будет показан индикатор прогресса.</string>
 
-    <string name="clear_search_history">Clear search history?</string>
-    <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
-    <string name="clear_search_history_done">Search history cleared</string>
+    <string name="clear_search_history">Очистить историю поиска?</string>
+    <string name="clear_search_history_sum">Вы уверены, что хотите удалить все записи из истории поиска?</string>
+    <string name="clear_search_history_done">История поиска очищена</string>
 
-    <string name="clear_icon_cache">Clear channel icon cache?</string>
-    <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You can do this to fetch updated icons from the server.</string>
-    <string name="clear_icon_cache_done">Channel icon cache cleared</string>
+    <string name="clear_icon_cache">Очистить кэш иконок каналов?</string>
+    <string name="clear_icon_cache_sum">Вы уверены, что хотите удалить все иконки каналов? Вы можете сделать это, чтобы загрузить обновленные иконки с сервера.</string>
+    <string name="clear_icon_cache_done">Кэш иконок каналов очищен</string>
 
-    <string name="err_auth">Access denied</string>
-    <string name="err_connect">Can\'t connect to server</string>
-    <string name="err_con_lost">Lost connection to server</string>
-    <string name="err_con_timeout">Connection timeout</string>
-    <string name="err_loading_profiles">Error loading profiles from server\n%s</string>
+    <string name="err_auth">Доступ запрещен</string>
+    <string name="err_connect">Не удается подключиться к серверу</string>
+    <string name="err_con_lost">Потеряно соединение с сервером</string>
+    <string name="err_con_timeout">Время соединения истекло</string>
+    <string name="err_loading_profiles">Ошибка загрузки профилей с сервера\n%s</string>
 
-    <string name="recording_file_missing">Recorded file is missing</string>
-    <string name="recording_time_missed">Scheduled recording was missed</string>
-    <string name="recording_file_invalid">Recording is invalid</string>
-    <string name="recording_canceled">Recording has been canceled</string>
-    <string name="recording_started">Recording started</string>
-    <string name="recording_completed">Recording completed</string>
-    <string name="recording_started_text">The recording %s has been started</string>
-    <string name="recording_completed_text">The recording %s has been completed</string>
+    <string name="recording_file_missing">Записанный файл отсутствует</string>
+    <string name="recording_time_missed">Запись по расписанию отсутствует</string>
+    <string name="recording_file_invalid">Запись является недействительной</string>
+    <string name="recording_canceled">Запись была отменена</string>
+    <string name="recording_started">Запись началась</string>
+    <string name="recording_completed">Запись завершена</string>
+    <string name="recording_started_text">Запись %s началась</string>
+    <string name="recording_completed_text">Запись %s завершена</string>
 
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
