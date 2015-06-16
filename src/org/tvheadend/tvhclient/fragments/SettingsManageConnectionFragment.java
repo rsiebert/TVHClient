@@ -172,17 +172,19 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putLong(CONNECTION_ID, conn.id);
-        outState.putString(CONNECTION_NAME, conn.name);
-        outState.putString(CONNECTION_ADDRESS, conn.address);
-        outState.putInt(CONNECTION_PORT, conn.port);
-        outState.putInt(CONNECTION_STREAMING_PORT, conn.streaming_port);
-        outState.putString(CONNECTION_USERNAME, conn.username);
-        outState.putString(CONNECTION_PASSWORD, conn.password);
-        outState.putString(CONNECTION_WOL_ADDRESS, conn.wol_address);
-        outState.putInt(CONNECTION_WOL_PORT, conn.wol_port);
-        outState.putBoolean(CONNECTION_WOL_BROADCAST, conn.wol_broadcast);
-        outState.putBoolean(CONNECTION_CHANGED, connectionChanged);
+        if (conn != null) {
+            outState.putLong(CONNECTION_ID, conn.id);
+            outState.putString(CONNECTION_NAME, conn.name);
+            outState.putString(CONNECTION_ADDRESS, conn.address);
+            outState.putInt(CONNECTION_PORT, conn.port);
+            outState.putInt(CONNECTION_STREAMING_PORT, conn.streaming_port);
+            outState.putString(CONNECTION_USERNAME, conn.username);
+            outState.putString(CONNECTION_PASSWORD, conn.password);
+            outState.putString(CONNECTION_WOL_ADDRESS, conn.wol_address);
+            outState.putInt(CONNECTION_WOL_PORT, conn.wol_port);
+            outState.putBoolean(CONNECTION_WOL_BROADCAST, conn.wol_broadcast);
+            outState.putBoolean(CONNECTION_CHANGED, connectionChanged);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -228,37 +230,41 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * 
      */
     private void showPreferenceValues() {
-        prefName.setText(conn.name);
-        prefAddress.setText(conn.address);
-        prefPort.setText(String.valueOf(conn.port));
-        prefStreamingPort.setText(String.valueOf(conn.streaming_port));
-        prefUsername.setText(conn.username);
-        prefPassword.setText(conn.password);
-        prefSelected.setChecked(conn.selected);
-        prefWolAddress.setText(conn.wol_address);
-        prefWolPort.setText(String.valueOf(conn.wol_port));
-        prefWolBroadcast.setChecked(conn.wol_broadcast);
+        if (conn != null) {
+            prefName.setText(conn.name);
+            prefAddress.setText(conn.address);
+            prefPort.setText(String.valueOf(conn.port));
+            prefStreamingPort.setText(String.valueOf(conn.streaming_port));
+            prefUsername.setText(conn.username);
+            prefPassword.setText(conn.password);
+            prefSelected.setChecked(conn.selected);
+            prefWolAddress.setText(conn.wol_address);
+            prefWolPort.setText(String.valueOf(conn.wol_port));
+            prefWolBroadcast.setChecked(conn.wol_broadcast);
+        }
     }
     
     /**
      * 
      */
     private void showPreferenceSummary() {
-        prefName.setSummary(conn.name.length() == 0 ? 
-                getString(R.string.pref_name_sum) : conn.name);
-        prefAddress.setSummary(conn.address.length() == 0 ? 
-                getString(R.string.pref_host_sum) : conn.address);
-        prefPort.setSummary(conn.port == 0 ? 
-                getString(R.string.pref_port_sum) : String.valueOf(conn.port));
-        prefStreamingPort.setSummary(
-                getString(R.string.pref_streaming_port_sum, conn.streaming_port));
-        prefUsername.setSummary(conn.username.length() == 0 ? 
-                getString(R.string.pref_user_sum) : conn.username);
-        prefPassword.setSummary(conn.password.length() == 0 ? 
-                getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
-        prefWolAddress.setSummary((conn.wol_address != null && conn.wol_address.length() == 0) ? 
-                getString(R.string.pref_wol_address_sum) : conn.wol_address);
-        prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, conn.wol_port));
+        if (conn != null) {
+            prefName.setSummary(conn.name.length() == 0 ? 
+                    getString(R.string.pref_name_sum) : conn.name);
+            prefAddress.setSummary(conn.address.length() == 0 ? 
+                    getString(R.string.pref_host_sum) : conn.address);
+            prefPort.setSummary(conn.port == 0 ? 
+                    getString(R.string.pref_port_sum) : String.valueOf(conn.port));
+            prefStreamingPort.setSummary(
+                    getString(R.string.pref_streaming_port_sum, conn.streaming_port));
+            prefUsername.setSummary(conn.username.length() == 0 ? 
+                    getString(R.string.pref_user_sum) : conn.username);
+            prefPassword.setSummary(conn.password.length() == 0 ? 
+                    getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
+            prefWolAddress.setSummary((conn.wol_address != null && conn.wol_address.length() == 0) ? 
+                    getString(R.string.pref_wol_address_sum) : conn.wol_address);
+            prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, conn.wol_port));
+        }
     }
     
     @Override
@@ -291,30 +297,31 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
         connectionChanged = true;
 
-        // Update the connection object with the new values
-        conn.name = prefName.getText();
-        conn.address = prefAddress.getText();
-        try {
-            conn.port = Integer.parseInt(prefPort.getText());
-        } catch (NumberFormatException nex) {
-            conn.port = 9982;
+        if (conn != null) {
+            // Update the connection object with the new values
+            conn.name = prefName.getText();
+            conn.address = prefAddress.getText();
+            try {
+                conn.port = Integer.parseInt(prefPort.getText());
+            } catch (NumberFormatException nex) {
+                conn.port = 9982;
+            }
+            try {
+                conn.streaming_port = Integer.parseInt(prefStreamingPort.getText());
+            } catch (NumberFormatException nex) {
+                conn.port = 9981;
+            }
+            conn.username = prefUsername.getText();
+            conn.password = prefPassword.getText();
+            conn.selected = prefSelected.isChecked();
+            conn.wol_address = prefWolAddress.getText();
+            try {
+                conn.wol_port = Integer.parseInt(prefWolPort.getText());
+            } catch (NumberFormatException nex) {
+                conn.port = 9;
+            }
+            conn.wol_broadcast = prefWolBroadcast.isChecked();
         }
-        try {
-            conn.streaming_port = Integer.parseInt(prefStreamingPort.getText());
-        } catch (NumberFormatException nex) {
-            conn.port = 9981;
-        }
-        conn.username = prefUsername.getText();
-        conn.password = prefPassword.getText();
-        conn.selected = prefSelected.isChecked();
-        conn.wol_address = prefWolAddress.getText();
-        try {
-            conn.wol_port = Integer.parseInt(prefWolPort.getText());
-        } catch (NumberFormatException nex) {
-            conn.port = 9;
-        }
-        conn.wol_broadcast = prefWolBroadcast.isChecked();
-
         // Show the values from the connection object
         // in the summary text of the preferences
         showPreferenceSummary();
