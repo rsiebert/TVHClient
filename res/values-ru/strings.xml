@@ -100,10 +100,10 @@
     <string name="pref_container_sum">Определите медиа контейнер, который должен быть использован для транспортировки аудио и видео потоков. Matroska является предпочтительным выбором.</string>
     
     <string name="pref_playback">Воспроизведение</string>
-    <string name="pref_playback_programs_sum">Настройка воспроизведения для Live-ТВ программ.</string>
-    <string name="pref_playback_recordings_sum">Настройка воспроизведения для записанных программ.</string>
+    <string name="pref_playback_programs_sum">Настройка воспроизведения для Live-ТВ передач.</string>
+    <string name="pref_playback_recordings_sum">Настройка воспроизведения для записанных передач.</string>
     <string name="pref_transcode">Перекодировать поток</string>
-    <string name="pref_transcode_sum">Преобразование программы или записи в другой формат во время воспроизведения. (Это должен поддерживать сервер TVHeadend)</string>
+    <string name="pref_transcode_sum">Преобразование передачи или записи в другой формат во время воспроизведения. (Это должен поддерживать сервер TVHeadend)</string>
 
     <string name="pref_information">Информация</string>
     <string name="pref_changelog">Список изменений</string>
@@ -150,7 +150,7 @@
     <string name="pref_show_notifications">Показывать уведомления</string>
     <string name="pref_show_notifications_sum">Информирует пользователя, когда начата или завершена запись. Это требует, чтобы служба работала в фоновом режиме.</string>
     <string name="pref_show_next_program">Показать следующую передачу в списке каналов</string>
-    <string name="pref_show_next_program_sum">Будет отображаться следующая программа в списке каналов. Ниже будет показан индикатор прогресса.</string>
+    <string name="pref_show_next_program_sum">Будет отображаться следующая передача в списке каналов. Ниже будет показан индикатор прогресса.</string>
 
     <string name="clear_search_history">Очистить историю поиска?</string>
     <string name="clear_search_history_sum">Вы уверены, что хотите удалить все записи из истории поиска?</string>
@@ -261,39 +261,39 @@
     <string name="series_recording_add_error">Невозможно добавить эту запись серии.\nНазвание не должно быть пустым!</string>
     <string name="time_recording_add_error">Невозможно добавить эту запись.\nНазвание не должно быть пустым!</string>
 
-    <string name="nothing">Nothing</string>
-    <string name="loading">Loading&#8230;</string>
-    <string name="loading_channel">Loading channel %s</string>
-    <string name="updating">Updating&#8230;</string>
-    <string name="all_channels">All channels</string>
-    <string name="season">Season</string>
-    <string name="episode">Episode</string>
-    <string name="part">Part</string>
-    <string name="progress">%1$d%% of the show already shown</string>
-    <string name="next_program">Next program: %s</string>
+    <string name="nothing">Ничего</string>
+    <string name="loading">Загрузка&#8230;</string>
+    <string name="loading_channel">Закгрузка канала %s</string>
+    <string name="updating">Обновление&#8230;</string>
+    <string name="all_channels">Все каналы</string>
+    <string name="season">Сезон</string>
+    <string name="episode">Эпизод</string>
+    <string name="part">Часть</string>
+    <string name="progress">%1$d%% уже показано</string>
+    <string name="next_program">Следущая передача: %s</string>
 
-    <string name="server">Server</string>
-    <string name="connection">Connection</string>
-    <string name="disc_space">Disc space</string>
-    <string name="total">Total</string>
-    <string name="items_available">items available</string>
-    <string name="available">Available</string>
-    <string name="unknown">Unknown</string>
-    <string name="ready">Ready</string>
-    <string name="select_timeframe">Show the program guide for the selected date and time.</string>
-    <string name="currently_recording">Currently recording</string>
+    <string name="server">Сервер</string>
+    <string name="connection">Подключение</string>
+    <string name="disc_space">Дисковое пространство</string>
+    <string name="total">Всего</string>
+    <string name="items_available">пунктов доступно</string>
+    <string name="available">Доступно</string>
+    <string name="unknown">Неизвестный</string>
+    <string name="ready">Готов</string>
+    <string name="select_timeframe">Показать телепрограмму для выбранной даты и времени.</string>
+    <string name="currently_recording">Текущие записи</string>
     
-    <string name="no_connection_available_advice">No connection is available. You need to add at least one from the settings menu.</string>
-    <string name="no_connection_available">No connection available.</string>
-    <string name="no_connection_active">At least one connection is defined, but was not activated.</string>
-    <string name="number_of_connections">%d connection(s) available</string>
+    <string name="no_connection_available_advice">Нет доступных подключений. Вы должны добавить по крайней мере одно из меню настроек.</string>
+    <string name="no_connection_available">Нет доступных подключений.</string>
+    <string name="no_connection_active">По крайней мере, одно подключение определено, но не было активировано.</string>
+    <string name="number_of_connections">%d соединение(я) доступно</string>
     
-    <string name="no_media_player">No media player found</string>
-    <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
-    <string name="feature_not_available_in_free_version">This feature is not available in the free version! You can unlock this feature and support further development by buying the application from the play store.</string>
+    <string name="no_media_player">Не найден медиа-плеер</string>
+    <string name="show_play_store">Вы хотите перейти к Google Play Store, чтобы найти доступные медиа-плееры?</string>
+    <string name="feature_not_available_in_free_version">Эта функция не доступна в бесплатной версии! Вы можете разблокировать эту функцию и поддержать дальнейшее развитие путем покупки приложения из магазина Play.</string>
 
     <!-- Optional strings for the navigation drawer -->
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
+    <string name="drawer_open">Открыть панель навигации</string>
+    <string name="drawer_close">Закрыть панель навигации</string>
 
 </resources>
