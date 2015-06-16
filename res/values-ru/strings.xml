@@ -133,12 +133,12 @@
     <string name="pref_unlocker">Включить все возможности</string>
     <string name="pref_unlocker_sum">Включить доступ к дополнительным функциям и поддержать развитие путем покупки этого приложения.</string>
 
-    <string name="pref_menu_visibility">Menu visibility</string>
-    <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>
-    <string name="pref_hide_menu_delete_all_recordings">Hide the \'Delete all recordings\' menu</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
-    <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
-    <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
+    <string name="pref_menu_visibility">Видимость меню</string>
+    <string name="pref_menu_visibility_sum">Скрыть или показать определенные пункты меню.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Скрыть \'Удалить все записи\' меню</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Больше не показывать это меню, чтобы предотвратить случайное удаление всех записанных передач.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Скрыть \'Отменить все записи\' меню</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Больше не показывать это меню, чтобы случайно не допустить отмены всех запланированных передач.</string>
     
     <string name="loading_profiles">Loading profiles</string>
     <string name="pref_profiles">Profiles</string>
