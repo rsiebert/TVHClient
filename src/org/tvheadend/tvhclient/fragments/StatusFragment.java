@@ -150,6 +150,7 @@ public class StatusFragment extends Fragment implements HTSListener {
                     // The connection to the server is fine again, therefore
                     // show the additional information again
                     additionalInformationLayout.setVisibility(View.VISIBLE);
+                    showConnectionName();
                     showConnectionStatus();
                     channels.setText(app.getChannels().size() + " " + getString(R.string.available));
                     showRecordingStatus();
@@ -178,6 +179,7 @@ public class StatusFragment extends Fragment implements HTSListener {
                     // Hide the additional status information because the
                     // connection to the server is not OK
                     additionalInformationLayout.setVisibility(View.GONE);
+                    showConnectionName();
                     showConnectionStatus();
                 }
             });
@@ -198,8 +200,10 @@ public class StatusFragment extends Fragment implements HTSListener {
                     if (loading) {
                         status.setText(getString(R.string.loading));
                         additionalInformationLayout.setVisibility(View.GONE);
+                        showConnectionName();
                     } else {
                         additionalInformationLayout.setVisibility(View.VISIBLE);
+                        showConnectionName();
                         showConnectionStatus();
                         channels.setText(app.getChannels().size() + " " + getString(R.string.available));
                         showRecordingStatus();
@@ -221,15 +225,12 @@ public class StatusFragment extends Fragment implements HTSListener {
         }
 	}
 
-    /**
-     * Shows the name and address of a connection, otherwise shows an
-     * information that no connection is selected or available. Additionally the
-     * current connection status is displayed, this can be authorization,
-     * timeouts or other errors.
-     */
-    protected void showConnectionStatus() {
-
-        // Get the currently selected connection
+	/**
+	 * Shows the name and address of a connection, otherwise shows an
+     * information that no connection is selected or available. 
+	 */
+	protected void showConnectionName() {
+	    // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
         if (dbh != null) {
@@ -248,7 +249,13 @@ public class StatusFragment extends Fragment implements HTSListener {
         } else {
             connection.setText(conn.name + " (" + conn.address + ")");
         }
+	}
 
+    /**
+     * Shows the current connection status is displayed, this can be
+     * authorization, timeouts or other errors.
+     */
+    protected void showConnectionStatus() {
         // Show a textual description about the connection state
         if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
             status.setText(getString(R.string.ready));
