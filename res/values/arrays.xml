@@ -69,6 +69,7 @@
         <item>pl</item>
         <item>sv</item>
         <item>cz</item>
+        <item>sk</item>
         <item>sp</item>
     </string-array>
     <string-array name="pref_language_list_display" translatable="false">
@@ -81,6 +82,7 @@
         <item>Polski</item>
         <item>Svenska</item>
         <item>Česky</item>
+        <item>Slovensky</item>
         <item>Español</item>
     </string-array>
 
