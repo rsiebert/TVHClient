@@ -29,7 +29,7 @@
     <string name="genre_color_info">Explication des couleurs</string>
     <string name="send_wol">Allume</string>
     <string name="select_connection">choisir une connexion</string>
-    <string name="add_connection">Ajouter connexion</string>
+    <string name="add_connection">Ajouter une connexion</string>
     <string name="confirm_cancel">Effacer les valeurs? Tous les changements vont etre perdu.</string>
     <string name="remove">Supprimer</string>
     <string name="delete_connection">Voulez-vous vraiment effacer la connexion \'%s\'?</string>
@@ -82,7 +82,7 @@
     <string name="pref_tag_icon">Icone du tag de la chaine</string>
     <string name="pref_tag_icon_sum">Montre l\icône de la chaine au lieu du logo de l\application.</string>
     <string name="pref_theme">Thème soft</string>
-    <string name="pref_theme_sum">Utiliser le light thème</string>
+    <string name="pref_theme_sum">Utiliser le thème soft</string>
     <string name="pref_language">Langue</string>
     <string name="pref_language_sum">Choisir la langue que devra utiliser l\'application.</string>
     <string name="pref_default_menu">Ecran de démarrage</string>
@@ -170,7 +170,7 @@
 
     <string name="wol_send">Packet de WoL envoyé avec succés à \'%s\'</string>
     <string name="wol_send_broadcast">Packet de WoL en broadcast envoyé avec succés à \'%s\'</string>
-    <string name="wol_address_invalid">L\'addresse MAC n\'est pas valide. Veuillez verifeir vos paramétres.</string>
+    <string name="wol_address_invalid">L\'addresse MAC n\'est pas valide. Veuillez verifier vos paramétres.</string>
     <string name="wol_error">Erreur pour envoyer un packet WoL a \'%1$s\'.\n Message d\'erreur: %2$s</string>
 
     <string name="no_transmission">Aucune transmission</string>
@@ -275,8 +275,19 @@
     <string name="select_timeframe">Guide des programmes pour la date et l\'heure sélectionnée.</string>
     <string name="currently_recording">En cours d\'enregistrement</string>
 
-    <string name="no_connection_available">Aucune connexion définie. Vous devez définir une connexion dans le menu de paramétrage.</string>
-    <string name="no_connection_active">Au moins une connexion est définie, mais n\'est pas activée.</string>
+    <!-- Connection related -->
+    <string name="no_connection_available">Aucune connexion définie.</string>
+    <string name="no_connection_available_advice">Aucune connexion définie. Au moins une connexion est nécéssaire.</string>
+    <string name="no_connection_active">Aucune connexion active.</string>
+    <string name="no_connection_active_advice">Au moins une connexion est définie, mais n\'est pas activée.</string>
+
+    <!-- Unlcoker related -->
+    <string name="unlocker_purchase_successful">Achat reussi, merci de votre aide support! Toutes les fonctionalités sont maintenant disponibles.</string>
+    <string name="unlocker_purchase_not_successful">Malheureusement l\'achat ne c\'est pas bien passé. Veuillez contacter le developpeur.</string>
+    <string name="feature_not_available_in_free_version">Cette fonctionnalité n\'est pas disponible dans la version gratuite!</string>
+    <string name="unlocker_already_purchased">Toutes les fonctionalités sont maintenant disponibles. Merci de votre aide!</string>
+    <string name="purchase">Achat</string>
+
     <string name="no_media_player">Aucun lecteur de média trouvé</string>
     <string name="show_play_store">Voulez-vous utiliser Google Play Store pour trouver un lecteur de média?</string>
 
