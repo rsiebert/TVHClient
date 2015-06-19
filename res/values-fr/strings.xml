@@ -275,8 +275,19 @@
     <string name="select_timeframe">Guide des programmes pour la date et l\'heure sélectionnée.</string>
     <string name="currently_recording">En cours d\'enregistrement</string>
 
-    <string name="no_connection_available">Aucune connexion définie. Vous devez définir une connexion dans le menu de paramétrage.</string>
-    <string name="no_connection_active">Au moins une connexion est définie, mais n\'est pas activée.</string>
+ <!-- Connection related -->
+    <string name="no_connection_available">Aucune connexion définie.</string>
+     <string name="no_connection_available_advice">Aucune connexion définie. Au moins une connexion est nécéssaire.</string>
+    <string name="no_connection_active">Aucune connexion active.</string>
+     <string name="no_connection_active_advice">Au moins une connexion est définie, mais n\'est pas activée.</string>
+
+    <!-- Unlcoker related -->
+    <string name="unlocker_purchase_successful">Achat reussi, merci de votre aide support! Toutes les fonctionalités sont maintenant disponibles.</string>
+    <string name="unlocker_purchase_not_successful">Malheureusement l\'achat ne c'est pas bien passé. Veuillez contacter le developpeur.</string>
+    <string name="feature_not_available_in_free_version">Cette fonctionnalité n\'est pas disponible dans la version gratuite!</string>
+    <string name="unlocker_already_purchased">Toutes les fonctionalités sont maintenant disponibles. Merci de votre aide!</string>
+    <string name="purchase">Achat</string>
+    
     <string name="no_media_player">Aucun lecteur de média trouvé</string>
     <string name="show_play_store">Voulez-vous utiliser Google Play Store pour trouver un lecteur de média?</string>
 
