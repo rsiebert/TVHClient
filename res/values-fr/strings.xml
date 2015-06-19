@@ -29,7 +29,7 @@
     <string name="genre_color_info">Explication des couleurs</string>
     <string name="send_wol">Allume</string>
     <string name="select_connection">choisir une connexion</string>
-    <string name="add_connection">Ajouter connexion</string>
+    <string name="add_connection">Ajouter une connexion</string>
     <string name="confirm_cancel">Effacer les valeurs? Tous les changements vont etre perdu.</string>
     <string name="remove">Supprimer</string>
     <string name="delete_connection">Voulez-vous vraiment effacer la connexion \'%s\'?</string>
@@ -82,7 +82,7 @@
     <string name="pref_tag_icon">Icone du tag de la chaine</string>
     <string name="pref_tag_icon_sum">Montre l\icône de la chaine au lieu du logo de l\application.</string>
     <string name="pref_theme">Thème soft</string>
-    <string name="pref_theme_sum">Utiliser le light thème</string>
+    <string name="pref_theme_sum">Utiliser le thème soft</string>
     <string name="pref_language">Langue</string>
     <string name="pref_language_sum">Choisir la langue que devra utiliser l\'application.</string>
     <string name="pref_default_menu">Ecran de démarrage</string>
@@ -170,7 +170,7 @@
 
     <string name="wol_send">Packet de WoL envoyé avec succés à \'%s\'</string>
     <string name="wol_send_broadcast">Packet de WoL en broadcast envoyé avec succés à \'%s\'</string>
-    <string name="wol_address_invalid">L\'addresse MAC n\'est pas valide. Veuillez verifeir vos paramétres.</string>
+    <string name="wol_address_invalid">L\'addresse MAC n\'est pas valide. Veuillez verifier vos paramétres.</string>
     <string name="wol_error">Erreur pour envoyer un packet WoL a \'%1$s\'.\n Message d\'erreur: %2$s</string>
 
     <string name="no_transmission">Aucune transmission</string>
