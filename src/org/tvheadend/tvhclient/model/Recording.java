@@ -19,8 +19,8 @@ public class Recording implements Comparable<Recording> {
     public long eventId;
     public String autorecId = null;
     public String timerecId = null;
-    public long startExtra;
-    public long stopExtra;
+    public Date startExtra;
+    public Date stopExtra;
     public long retention;
     public long priority;
     public long contentType;

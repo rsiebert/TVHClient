@@ -176,8 +176,8 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             rec = app.getRecording(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
-                startExtraValue = rec.startExtra;
-                stopExtraValue = rec.stopExtra;
+                startExtraValue = rec.startExtra.getTime();
+                stopExtraValue = rec.stopExtra.getTime();
                 startValue.setTimeInMillis(rec.start.getTime());
                 stopValue.setTimeInMillis(rec.stop.getTime());
                 titleValue = rec.title;

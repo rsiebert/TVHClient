@@ -69,15 +69,17 @@ public class HTSService extends Service implements HTSConnectionListener {
     public void onCreate() {
         execService = Executors.newScheduledThreadPool(5);
         app = (TVHClientApplication) getApplication();
+
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (NameNotFoundException ex) {
-            Log.e(TAG, "Can't get package info", ex);
+            app.log(TAG, "Can't get package info", ex);
         }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
@@ -93,7 +95,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (connection == null || !connection.isConnected()) {
                 app.clearAll();
                 app.setLoading(true);
-                connection = new HTSConnection(this, packInfo.packageName, packInfo.versionName);
+                connection = new HTSConnection(app, this, packInfo.packageName, packInfo.versionName);
 
                 // Since this is blocking, spawn to a new thread
                 execService.execute(new Runnable() {
@@ -105,7 +107,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
 
         } else if (connection == null || !connection.isConnected()) {
-            Log.e(TAG, "No connection to perform " + action);
+            app.log(TAG, "No connection to perform " + action);
 
         } else if (action.equals(Constants.ACTION_DISCONNECT)) {
             connection.close();
@@ -372,8 +374,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getLong("startExtra");
-            rec.stopExtra = msg.getLong("stopExtra");
+            rec.startExtra = msg.getDate("startExtra");
+            rec.stopExtra = msg.getDate("stopExtra");
             rec.retention = msg.getLong("retention");
             rec.priority = msg.getLong("priority");
             rec.contentType = msg.getLong("contentType");
@@ -397,6 +399,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 }
             }
         }
+
         app.addRecording(rec);
     }
 
@@ -421,8 +424,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getLong("startExtra");
-            rec.stopExtra = msg.getLong("stopExtra");
+            rec.startExtra = msg.getDate("startExtra");
+            rec.stopExtra = msg.getDate("stopExtra");
             rec.retention = msg.getLong("retention");
             rec.priority = msg.getLong("priority");
             rec.contentType = msg.getLong("contentType");
@@ -683,8 +686,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.approxTime = msg.getLong("approxTime");
         srec.start = msg.getLong("start");
         srec.startWindow = msg.getLong("startWindow");
-        srec.startExtra = msg.getLong("startExtra");
-        srec.stopExtra = msg.getLong("stopExtra");
+        srec.startExtra = msg.getDate("startExtra");
+        srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title", srec.title);
         srec.name = msg.getString("name", srec.name);
         app.updateSeriesRecording(srec);
@@ -703,8 +706,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.approxTime = msg.getLong("approxTime");
         srec.start = msg.getLong("start");
         srec.startWindow = msg.getLong("startWindow");
-        srec.startExtra = msg.getLong("startExtra");
-        srec.stopExtra = msg.getLong("stopExtra");
+        srec.startExtra = msg.getDate("startExtra");
+        srec.stopExtra = msg.getDate("stopExtra");
         srec.title = msg.getString("title");
         srec.name = msg.getString("name");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
@@ -713,6 +716,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     public void onMessage(HTSMessage msg) {
         String method = msg.getMethod();
+
         if (method.equals("tagAdd")) {
             onTagAdd(msg);
         } else if (method.equals("tagUpdate")) {
