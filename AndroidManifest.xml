@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tvheadend.tvhclient"
-    android:versionCode="54"
-    android:versionName="1.8.1" >
+    android:versionCode="58"
+    android:versionName="1.8.2" >
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
@@ -18,6 +18,16 @@
         <meta-data 
             android:name="android.app.searchable" 
             android:resource="@xml/searchable" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="org.tvheadend.tvhclient.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity android:name="org.tvheadend.tvhclient.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

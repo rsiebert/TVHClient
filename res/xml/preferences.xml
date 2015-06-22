@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res/org.tvheadend.tvhclient" >
-    
-    <PreferenceCategory 
-        android:title="@string/pref_connections" >
+
+    <PreferenceCategory android:title="@string/pref_connections" >
         <Preference
             android:key="pref_manage_connections"
             android:summary="@string/pref_manage_connections_sum"
             android:title="@string/pref_manage_connections" >
         </Preference>
     </PreferenceCategory>
-
-    <PreferenceCategory 
-        android:title="@string/pref_user_interface" >
+    <PreferenceCategory android:title="@string/pref_user_interface" >
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="lightThemePref"
@@ -34,46 +30,48 @@
             android:key="showNextProgramPref"
             android:summary="@string/pref_show_next_program_sum"
             android:title="@string/pref_show_next_program" />
+
         <ListPreference
             android:name="@string/pref_language"
-            android:summary="@string/pref_language_sum"
             android:defaultValue="default"
-            android:title="@string/pref_language"
-            android:key="languagePref"
             android:dialogTitle="@string/pref_language"
             android:entries="@array/pref_language_list_display"
-            android:entryValues="@array/pref_language_list" />
+            android:entryValues="@array/pref_language_list"
+            android:key="languagePref"
+            android:summary="@string/pref_language_sum"
+            android:title="@string/pref_language" />
         <ListPreference
             android:name="@string/pref_default_menu"
-            android:summary="@string/pref_default_menu_sum"
             android:defaultValue="0"
-            android:title="@string/pref_default_menu"
-            android:key="defaultMenuPositionPref"
             android:dialogTitle="@string/pref_default_menu"
             android:entries="@array/pref_menu_names"
-            android:entryValues="@array/pref_menu_ids" />
+            android:entryValues="@array/pref_menu_ids"
+            android:key="defaultMenuPositionPref"
+            android:summary="@string/pref_default_menu_sum"
+            android:title="@string/pref_default_menu" />
         <ListPreference
             android:name="@string/pref_sort_channels"
-            android:summary="@string/pref_sort_channels_sum"
             android:defaultValue="0"
-            android:title="@string/pref_sort_channels"
-            android:key="sortChannelsPref"
             android:dialogTitle="@string/pref_sort_channels"
             android:entries="@array/pref_sort_channels_names"
-            android:entryValues="@array/pref_sort_channels_ids" />
+            android:entryValues="@array/pref_sort_channels_ids"
+            android:key="sortChannelsPref"
+            android:summary="@string/pref_sort_channels_sum"
+            android:title="@string/pref_sort_channels" />
+
         <PreferenceScreen
-            android:title="@string/pref_genre_colors" 
-            android:summary="@string/pref_genre_colors_sum" >
-	        <CheckBoxPreference
-	            android:defaultValue="false"
-	            android:key="showGenreColorsChannelsPref"
-	            android:summary="@string/pref_genre_colors_channels_sum"
-	            android:title="@string/pref_genre_colors_channels" />
-	        <CheckBoxPreference
-	            android:defaultValue="false"
-	            android:key="showGenreColorsProgramsPref"
-	            android:summary="@string/pref_genre_colors_programs_sum"
-	            android:title="@string/pref_genre_colors_programs" />
+            android:summary="@string/pref_genre_colors_sum"
+            android:title="@string/pref_genre_colors" >
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="showGenreColorsChannelsPref"
+                android:summary="@string/pref_genre_colors_channels_sum"
+                android:title="@string/pref_genre_colors_channels" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="showGenreColorsProgramsPref"
+                android:summary="@string/pref_genre_colors_programs_sum"
+                android:title="@string/pref_genre_colors_programs" />
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="showGenreColorsGuidePref"
@@ -84,38 +82,39 @@
                 android:key="showGenreColorsSearchPref"
                 android:summary="@string/pref_genre_colors_search_results_sum"
                 android:title="@string/pref_genre_colors_search_results" />
+
             <org.tvheadend.tvhclient.SliderPreference
-		        android:defaultValue="70"
-                custom:minimumValue="30"
+                android:defaultValue="70"
+                android:dialogMessage="@string/pref_genre_colors_visibility_message"
+                android:key="showGenreColorsVisibilityPref"
+                android:summary="@string/pref_genre_colors_visibility_value"
+                android:title="@string/pref_genre_colors_visibility"
                 custom:maximumValue="100"
-		        android:dialogMessage="@string/pref_genre_colors_visibility_message"
-		        android:key="showGenreColorsVisibilityPref"
-		        android:summary="@string/pref_genre_colors_visibility_value"
-		        android:title="@string/pref_genre_colors_visibility" />
+                custom:minimumValue="30" />
         </PreferenceScreen>
-	    <PreferenceScreen
-            android:title="@string/pref_program_guide"
-            android:summary="@string/pref_program_guide_sum" >
-	        <EditTextPreference
-	            android:id="@+id/pref_epg_hours_visible"
-	            android:name="@string/pref_epg_hours_visible"
-	            android:defaultValue="4"
-	            android:key="epgHoursVisible"
-	            android:numeric="integer"
-	            android:summary="@string/pref_epg_hours_visible_sum"
-	            android:title="@string/pref_epg_hours_visible" />
-	        <EditTextPreference
-	            android:id="@+id/pref_epg_max_days"
-	            android:name="@string/pref_epg_max_days"
-	            android:defaultValue="7"
-	            android:key="epgMaxDays"
-	            android:numeric="integer"
-	            android:summary="@string/pref_epg_max_days_sum"
-	            android:title="@string/pref_epg_max_days" />
-	    </PreferenceScreen>
-	    <PreferenceScreen
-            android:title="@string/pref_menu_visibility"
-            android:summary="@string/pref_menu_visibility_sum" >
+        <PreferenceScreen
+            android:summary="@string/pref_program_guide_sum"
+            android:title="@string/pref_program_guide" >
+            <EditTextPreference
+                android:id="@+id/pref_epg_hours_visible"
+                android:name="@string/pref_epg_hours_visible"
+                android:defaultValue="4"
+                android:key="epgHoursVisible"
+                android:numeric="integer"
+                android:summary="@string/pref_epg_hours_visible_sum"
+                android:title="@string/pref_epg_hours_visible" />
+            <EditTextPreference
+                android:id="@+id/pref_epg_max_days"
+                android:name="@string/pref_epg_max_days"
+                android:defaultValue="7"
+                android:key="epgMaxDays"
+                android:numeric="integer"
+                android:summary="@string/pref_epg_max_days_sum"
+                android:title="@string/pref_epg_max_days" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="@string/pref_menu_visibility_sum"
+            android:title="@string/pref_menu_visibility" >
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="hideMenuDeleteAllRecordingsPref"
@@ -130,24 +129,25 @@
                 android:defaultValue="false"
                 android:key="visibleMenuIconTagsPref"
                 android:summary="@string/pref_visible_menu_icon_tags_sum"
-                android:title="@string/pref_visible_menu_icon_tags" />                
+                android:title="@string/pref_visible_menu_icon_tags" />
         </PreferenceScreen>
     </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="@string/pref_playback_and_recording">
+    <PreferenceCategory android:title="@string/pref_playback_and_recording" >
         <PreferenceScreen
             android:key="pref_menu_profiles"
-            android:title="@string/pref_profiles"
-            android:summary="@string/pref_profiles_sum" />
+            android:summary="@string/pref_profiles_sum"
+            android:title="@string/pref_profiles" />
         <PreferenceScreen
             android:key="pref_menu_transcoding"
-            android:title="@string/pref_transcoding"
-            android:summary="@string/pref_transcoding_sum" />
+            android:summary="@string/pref_transcoding_sum"
+            android:title="@string/pref_transcoding" />
     </PreferenceCategory>
-
-    <PreferenceCategory 
-        android:title="@string/pref_misc" >
+    <PreferenceCategory android:title="@string/pref_misc" >
+        <Preference
+            android:key="pref_unlocker"
+            android:summary="@string/pref_unlocker_sum"
+            android:title="@string/pref_unlocker" >
+        </Preference>
         <Preference
             android:key="pref_clear_search_history"
             android:title="@string/pref_clear_search_history" >
@@ -156,18 +156,27 @@
             android:key="pref_clear_icon_cache"
             android:title="@string/pref_clear_icon_cache" >
         </Preference>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_debug_mode"
+            android:summary="@string/pref_debug_mode_sum"
+            android:title="@string/pref_debug_mode" >
+        </CheckBoxPreference>
+
         <Preference
-            android:key="pref_unlocker"
-            android:summary="@string/pref_unlocker_sum"
-            android:title="@string/pref_unlocker" >
+            android:dependency="pref_debug_mode"
+            android:key="pref_send_logfile"
+            android:summary="@string/pref_send_logfile_sum"
+            android:title="@string/pref_send_logfile" >
         </Preference>
     </PreferenceCategory>
-    <PreferenceCategory 
-        android:title="@string/pref_information" >
+    <PreferenceCategory android:title="@string/pref_information" >
         <Preference
             android:key="pref_changelog"
             android:summary="@string/pref_changelog_sum"
             android:title="@string/pref_changelog" >
         </Preference>
     </PreferenceCategory>
+
 </PreferenceScreen>

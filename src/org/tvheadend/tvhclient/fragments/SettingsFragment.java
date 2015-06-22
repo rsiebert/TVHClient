@@ -1,8 +1,11 @@
 package org.tvheadend.tvhclient.fragments;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
@@ -20,13 +23,16 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
@@ -36,7 +42,6 @@ import com.nispok.snackbar.enums.SnackbarType;
 @SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
-    @SuppressWarnings("unused")
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
     private ActionBarActivity activity;
@@ -50,6 +55,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuProfiles;
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
+    private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
 
     private TVHClientApplication app;
@@ -69,6 +75,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefShowChangelog = findPreference("pref_changelog");
         prefClearSearchHistory = findPreference("pref_clear_search_history");
         prefClearIconCache = findPreference("pref_clear_icon_cache");
+        prefSendLogfile = findPreference("pref_send_logfile");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
     }
@@ -257,6 +264,40 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             public boolean onPreferenceClick(Preference preference) {
                 final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
                 cld.getFullLogDialog().show();
+                return false;
+            }
+        });
+
+        // Add a listener to the user can send the internal log file to the
+        // developer. He can then use the data for debugging purposes.
+        prefSendLogfile.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Date date = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US);
+                String dateText = sdf.format(date.getTime());
+
+                Uri fileUri = null;
+                try {
+                    File logFile = new File(activity.getFilesDir(), "logs/tvhclient.log");
+                    fileUri = FileProvider.getUriForFile(activity, "org.tvheadend.tvhclient.fileprovider", logFile);
+                } catch (IllegalArgumentException e) {
+                    Log.e(TAG, "The file can't be shared, " + e.getLocalizedMessage());
+                }
+
+                if (fileUri != null) {
+                    // Create the intent with the email, some text and the log 
+                    // file attached. The user can select from a list of 
+                    // applications which he wants to use to send the mail
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rsiebert80@gmail.com"});
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "TVHClient Logfile");
+                    intent.putExtra(Intent.EXTRA_TEXT, "Logfile was sent on " + dateText);
+                    intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                    intent.setType("text/plain");
+
+                    startActivity(Intent.createChooser(intent, "Send Log File to developer"));
+                }
                 return false;
             }
         });

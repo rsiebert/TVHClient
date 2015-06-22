@@ -171,6 +171,10 @@
     <string name="pref_playback_and_recording">Wiedergabe und Aufnahme</string>
     <string name="pref_transcoding">Video- und Audio</string>
     <string name="pref_transcoding_sum">Definiert die Einstellungen mit denen Programme aufgenommen und Aufnahmen abgespielt werden.</string>
+    <string name="pref_debug_mode">Debug Modus</string>
+    <string name="pref_debug_mode_sum">Schreibt detaillierte Information in eine Log-Datei im internen Speicher. Bremst ein wenig die App wenn aktiv.</string>
+    <string name="pref_send_logfile">Sende Log-Datei an den Entwickler</string>
+    <string name="pref_send_logfile_sum">Mailt die Log-Datei an den Entwickler. Die Informationen helfen evtl. Fehler zu finden und das Program zu verbessern. Es werden nur TVHClient interne Statusdaten versendet!</string>
 
     <string name="feature_not_supported_by_server">Der TVHeadend Server unterstützt diese Funktion nicht. Eine neuere Version wird benötigt.</string>
     <string name="loading_profiles">Lade Profile</string>

@@ -1,8 +1,14 @@
 package org.tvheadend.tvhclient;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,8 +28,11 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -34,7 +43,6 @@ import com.nispok.snackbar.enums.SnackbarType;
 
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
 
-    @SuppressWarnings("unused")
     private final static String TAG = TVHClientApplication.class.getSimpleName();
 
     private final List<HTSListener> listeners = new ArrayList<HTSListener>();
@@ -51,6 +59,9 @@ public class TVHClientApplication extends Application implements BillingProcesso
     // This handles all billing related activities like purchasing and checking
     // if a purchase was made 
     private BillingProcessor bp;
+
+    private BufferedOutputStream logfileBuffer = null;
+    private final SimpleDateFormat format = new SimpleDateFormat("MM.dd.yyyy hh:mm:ss", Locale.getDefault());
 
     // Indication that data is being loaded
     private volatile boolean loading = false;
@@ -975,6 +986,31 @@ public class TVHClientApplication extends Application implements BillingProcesso
     public void onCreate() {
         super.onCreate();
         bp = new BillingProcessor(this, Utils.getPublicKey(this), this);
+
+        
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean debugMode = prefs.getBoolean("pref_debug_mode", false);
+        if (debugMode) {
+
+            final File logPath = new File(getFilesDir(), "logs");
+            final File logFile = new File(logPath, "tvhclient.log");
+
+            if (!logPath.exists()) {
+                logPath.mkdirs();
+            }
+
+            // Check if the log file is older than a day, if yes overwrite it
+            boolean appendData = false;
+
+            // Open the buffer to write data into the log file. Either append
+            // data to the file or truncate it.
+            try {
+                logfileBuffer = new BufferedOutputStream(new FileOutputStream(logFile, appendData));
+            } catch (IOException e) {
+                Log.d(TAG, "Error creating output buffer " + e.getLocalizedMessage());
+            }
+        }
     }
 
     /**
@@ -991,6 +1027,15 @@ public class TVHClientApplication extends Application implements BillingProcesso
     public void onTerminate() {
         if (bp != null) {
             bp.release();
+        }
+
+        // Close the buffer before quitting
+        if (logfileBuffer != null) {
+            try {
+                logfileBuffer.close();
+            } catch (IOException e) {
+                Log.d(TAG, "Error closing logfile " + e.getLocalizedMessage());
+            }
         }
         super.onTerminate();
     }
@@ -1048,5 +1093,36 @@ public class TVHClientApplication extends Application implements BillingProcesso
         final boolean mobileConnected = ((mobile != null) ? mobile.isConnected() : false);
 
         return (wifiConnected || mobileConnected);
+    }
+
+    /**
+     * Writes the given tag name and the message into the log file
+     * 
+     * @param tag
+     * @param msg
+     */
+    public void log(String tag, String msg) {
+        if (logfileBuffer != null) {
+            String timestamp = format.format(new Date()) + ": " + tag + ", " + msg + "\n";
+            try {
+                logfileBuffer.write(timestamp.getBytes());
+                logfileBuffer.flush();
+            } catch (IOException e) {
+                Log.d(TAG, "Error writing to logfile " + e.getLocalizedMessage());
+            }
+        }
+    }
+
+    /**
+     * Combines the given message and exception message into one string and
+     * forwards it to the other log method which writes the given tag name and
+     * message into the log file.
+     * 
+     * @param tag
+     * @param msg
+     * @param ex
+     */
+    public void log(String tag, String msg, Exception ex) {
+        log(tag, msg + ", Exception message: " + ex.getLocalizedMessage());
     }
 }
