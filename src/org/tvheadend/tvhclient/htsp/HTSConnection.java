@@ -14,9 +14,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 
-import android.util.Log;
 import android.util.SparseArray;
 
 public class HTSConnection extends Thread {
@@ -39,12 +39,14 @@ public class HTSConnection extends Thread {
     private LinkedList<HTSMessage> messageQueue;
     private boolean auth;
     private Selector selector;
+    private TVHClientApplication app;
 
-    public HTSConnection(HTSConnectionListener listener, String clientName, String clientVersion) {
-        
+    public HTSConnection(TVHClientApplication app, HTSConnectionListener listener, String clientName, String clientVersion) {
+        this.app = app;
+
         // Disable the use of IPv6
         System.setProperty("java.net.preferIPv6Addresses", "false");
-        
+
         running = false;
         lock = new ReentrantLock();
         inBuf = ByteBuffer.allocateDirect(1024 * 1024);
@@ -94,11 +96,11 @@ public class HTSConnection extends Thread {
             socketChannel.socket().setSoTimeout(5000);
             socketChannel.register(selector, SelectionKey.OP_CONNECT, signal);
             socketChannel.connect(new InetSocketAddress(hostname, port));
-
+            app.log(TAG, "Connection established");
             running = true;
             start();
         } catch (Exception ex) {
-            Log.e(TAG, "Can't open connection", ex);
+            app.log(TAG, "Can't open connection", ex);
             listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
             return;
         } finally {
@@ -109,11 +111,12 @@ public class HTSConnection extends Thread {
             try {
                 signal.wait(5000);
                 if (socketChannel.isConnectionPending()) {
+                    app.log(TAG, "Timeout waiting for connection");
                     listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
                     close();
                 }
             } catch (InterruptedException ex) {
-                Log.e(TAG, "Exception during waiting for pending connection", ex);
+                app.log(TAG, "Exception during waiting for pending connection", ex);
             }
         }
     }
@@ -140,6 +143,7 @@ public class HTSConnection extends Thread {
             public void handleResponse(HTSMessage response) {
                 auth = response.getInt("noaccess", 0) != 1;
                 if (!auth) {
+                    app.log(TAG, "User not authenticated");
                     listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
                 }
                 synchronized (authMessage) {
@@ -171,6 +175,7 @@ public class HTSConnection extends Thread {
                     authMessage.putField("digest", md.digest());
                     sendMessage(authMessage, authHandler);
                 } catch (NoSuchAlgorithmException ex) {
+                    app.log(TAG, "No SHA1 MessageDigest available", ex);
                     return;
                 }
             }
@@ -180,7 +185,8 @@ public class HTSConnection extends Thread {
             try {
                 authMessage.wait(5000);
                 if (!auth) {
-                    listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
+                    app.log(TAG, "Timeout waiting for auth response");
+                    listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
                 }
                 return;
             } catch (InterruptedException ex) {
@@ -207,7 +213,7 @@ public class HTSConnection extends Thread {
             messageQueue.add(message);
             selector.wakeup();
         } catch (Exception ex) {
-            Log.e(TAG, "Can't transmit message", ex);
+            app.log(TAG, "Can't transmit message", ex);
         } finally {
             lock.unlock();
         }
@@ -223,7 +229,7 @@ public class HTSConnection extends Thread {
             socketChannel.register(selector, 0);
             socketChannel.close();
         } catch (Exception ex) {
-            Log.e(TAG, "Can't close connection", ex);
+            app.log(TAG, "Can't close connection", ex);
         } finally {
             lock.unlock();
         }
@@ -235,7 +241,7 @@ public class HTSConnection extends Thread {
             try {
                 selector.select(5000);
             } catch (IOException ex) {
-                Log.e(TAG, "Can't select socket", ex);
+                app.log(TAG, "Can't select socket", ex);
                 listener.onError(Constants.ACTION_CONNECTION_STATE_LOST);
                 running = false;
                 continue;
@@ -257,7 +263,7 @@ public class HTSConnection extends Thread {
                 }
                 socketChannel.register(selector, ops);
             } catch (Exception ex) {
-                Log.e(TAG, "Can't read message", ex);
+                app.log(TAG, "Can't read message", ex);
                 running = false;
             } finally {
                 lock.unlock();
@@ -313,7 +319,6 @@ public class HTSConnection extends Thread {
                 return;
             }
         }
-
         listener.onMessage(msg);
     }
     
