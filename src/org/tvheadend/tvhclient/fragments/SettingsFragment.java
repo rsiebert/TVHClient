@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -55,6 +56,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuProfiles;
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
+    private CheckBoxPreference prefDebugMode;
     private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
 
@@ -75,6 +77,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefShowChangelog = findPreference("pref_changelog");
         prefClearSearchHistory = findPreference("pref_clear_search_history");
         prefClearIconCache = findPreference("pref_clear_icon_cache");
+        prefDebugMode = (CheckBoxPreference) findPreference("pref_debug_mode");
         prefSendLogfile = findPreference("pref_send_logfile");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
@@ -264,6 +267,19 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             public boolean onPreferenceClick(Preference preference) {
                 final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
                 cld.getFullLogDialog().show();
+                return false;
+            }
+        });
+
+        // Add a listener to the logger will be enabled or disabled depending on the setting
+        prefDebugMode.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (prefDebugMode.isChecked()) {
+                    app.enableLogger();
+                } else {
+                    app.disableLogger();
+                }
                 return false;
             }
         });

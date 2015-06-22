@@ -60,6 +60,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     // if a purchase was made 
     private BillingProcessor bp;
 
+    private File logPath = null;
+    private File logFile = null;
     private BufferedOutputStream logfileBuffer = null;
     private final SimpleDateFormat format = new SimpleDateFormat("MM.dd.yyyy hh:mm:ss", Locale.getDefault());
 
@@ -987,28 +989,38 @@ public class TVHClientApplication extends Application implements BillingProcesso
         super.onCreate();
         bp = new BillingProcessor(this, Utils.getPublicKey(this), this);
 
-        
-
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean debugMode = prefs.getBoolean("pref_debug_mode", false);
-        if (debugMode) {
+        if (prefs.getBoolean("pref_debug_mode", false)) {
+            enableLogger();
+        }
+    }
 
-            final File logPath = new File(getFilesDir(), "logs");
-            final File logFile = new File(logPath, "tvhclient.log");
+    public void enableLogger() {
+        Log.d(TAG, "enableLogger");
 
-            if (!logPath.exists()) {
-                logPath.mkdirs();
-            }
+        logPath = new File(getFilesDir(), "logs");
+        logFile = new File(logPath, "tvhclient.log");
 
-            // Check if the log file is older than a day, if yes overwrite it
-            boolean appendData = false;
+        if (!logPath.exists()) {
+            logPath.mkdirs();
+        }
+        try {
+            // Open the buffer to write data into the log file. Append the data.
+            logfileBuffer = new BufferedOutputStream(new FileOutputStream(logFile, true));
+        } catch (IOException e) {
+            Log.d(TAG, "Error creating output buffer " + e.getLocalizedMessage());
+        }
+    }
 
-            // Open the buffer to write data into the log file. Either append
-            // data to the file or truncate it.
+    public void disableLogger() {
+        Log.d(TAG, "disableLogger");
+        if (logfileBuffer != null) {
             try {
-                logfileBuffer = new BufferedOutputStream(new FileOutputStream(logFile, appendData));
+                logfileBuffer.flush();
+                logfileBuffer.close();
+                logfileBuffer = null;
             } catch (IOException e) {
-                Log.d(TAG, "Error creating output buffer " + e.getLocalizedMessage());
+                Log.d(TAG, "Error closing logfile " + e.getLocalizedMessage());
             }
         }
     }
@@ -1029,14 +1041,11 @@ public class TVHClientApplication extends Application implements BillingProcesso
             bp.release();
         }
 
-        // Close the buffer before quitting
-        if (logfileBuffer != null) {
-            try {
-                logfileBuffer.close();
-            } catch (IOException e) {
-                Log.d(TAG, "Error closing logfile " + e.getLocalizedMessage());
-            }
+        disableLogger();
+        if (logFile != null) {
+            logFile.delete();
         }
+
         super.onTerminate();
     }
 
@@ -1102,6 +1111,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param msg
      */
     public void log(String tag, String msg) {
+        Log.d(tag, msg);
         if (logfileBuffer != null) {
             String timestamp = format.format(new Date()) + ": " + tag + ", " + msg + "\n";
             try {
