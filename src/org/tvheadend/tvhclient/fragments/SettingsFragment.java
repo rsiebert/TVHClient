@@ -276,9 +276,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (prefDebugMode.isChecked()) {
-                    app.enableLogger();
+                    app.enableLogToFile();
                 } else {
-                    app.disableLogger();
+                    app.disableLogToFile();
                 }
                 return false;
             }
@@ -385,6 +385,18 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
             if (settingsInterface != null) {
                 settingsInterface.restart();
+            }
+        } else if (key.equals("connectionTimeout")) {
+            try {
+                int value = Integer.parseInt(prefs.getString(key, "5"));
+                if (value < 1) {
+                    prefs.edit().putString(key, "1").commit();
+                }
+                if (value > 60) {
+                    prefs.edit().putString(key, "60").commit();
+                }
+            } catch (NumberFormatException ex) {
+                prefs.edit().putString(key, "5").commit();
             }
         }
         // Reload the data to fetch the channel icons. They are not loaded
