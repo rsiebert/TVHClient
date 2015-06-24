@@ -383,6 +383,7 @@ public class Utils {
         recordRemoveMenuItem.setVisible(false);
         searchMenuItemEpg.setVisible(false);
         searchMenuItemImdb.setVisible(false);
+        playMenuItem.setVisible(false);
 
         // Exit if the recording is not valid
         if (program == null) {
@@ -400,8 +401,6 @@ public class Utils {
                 currentTime > program.start.getTime()
                 && currentTime < program.stop.getTime()) {
             playMenuItem.setVisible(true);
-        } else {
-            playMenuItem.setVisible(false);
         }
 
         if (program.recording == null) {
