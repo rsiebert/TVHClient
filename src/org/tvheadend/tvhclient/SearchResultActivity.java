@@ -66,7 +66,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     private SearchResultAdapter adapter;
     private ListView listView;
     private Channel channel;
-    private Program program;
     private MenuItem searchMenuItem = null;
     private Runnable updateTask;
     private Runnable finishTask;
@@ -97,7 +96,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                program = adapter.getItem(position);
+                final Program program = adapter.getItem(position);
                 if (program != null) {
                     Bundle args = new Bundle();
                     args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
@@ -293,6 +292,18 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+
+        // Get the currently selected program from the list where the context
+        // menu has been triggered
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        // Check for a valid adapter size and objects
+        if (info == null || adapter == null || adapter.getCount() <= info.position) {
+            return super.onContextItemSelected(item);
+        }
+
+        final Program program = adapter.getItem(info.position);
+
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
             startActivity(new SearchIMDbIntent(this, program.title));
@@ -318,6 +329,15 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             Utils.recordProgram(this, program, true);
             return true;
 
+        case R.id.menu_play:
+            // Open a new activity that starts playing the program
+            if (program != null && program.channel != null) {
+                Intent intent = new Intent(this, ExternalPlaybackActivity.class);
+                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                startActivity(intent);
+            }
+            return true;
+
         default:
             return super.onContextItemSelected(item);
         }
@@ -327,8 +347,11 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.program_context_menu, menu);
+
+        // Get the currently selected program from the list where the context
+        // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        program = adapter.getItem(info.position);
+        final Program program = adapter.getItem(info.position);
 
         // Set the title of the context menu
         if (program != null) {
