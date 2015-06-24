@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.WakeOnLanTask;
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -44,6 +45,8 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     private ActionMode actionMode;
 
     private DatabaseHelper dbh;
+    @SuppressWarnings("unused")
+    private TVHClientApplication app = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,6 +67,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         super.onAttach(activity);
         this.activity = (ActionBarActivity) activity;
         dbh = DatabaseHelper.getInstance(activity);
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -112,6 +116,9 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
 
     private void startActionMode() {
         actionMode = activity.startSupportActionMode(this);
+        if (actionMode != null) {
+            actionMode.invalidate();
+        }
     }
 
     @Override
@@ -272,6 +279,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+
         // Get the currently selected program from the list
         int position = listView.getCheckedItemPosition();
         final Connection c = adapter.getItem(position);
