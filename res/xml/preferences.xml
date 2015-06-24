@@ -148,28 +148,37 @@
             android:summary="@string/pref_unlocker_sum"
             android:title="@string/pref_unlocker" >
         </Preference>
-        <Preference
-            android:key="pref_clear_search_history"
-            android:title="@string/pref_clear_search_history" >
-        </Preference>
-        <Preference
-            android:key="pref_clear_icon_cache"
-            android:title="@string/pref_clear_icon_cache" >
-        </Preference>
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_debug_mode"
-            android:summary="@string/pref_debug_mode_sum"
-            android:title="@string/pref_debug_mode" >
-        </CheckBoxPreference>
-
-        <Preference
-            android:dependency="pref_debug_mode"
-            android:key="pref_send_logfile"
-            android:summary="@string/pref_send_logfile_sum"
-            android:title="@string/pref_send_logfile" >
-        </Preference>
+        <PreferenceScreen android:title="@string/pref_advanced_settings" >
+            <Preference
+                android:key="pref_clear_search_history"
+                android:title="@string/pref_clear_search_history" >
+            </Preference>
+            <Preference
+                android:key="pref_clear_icon_cache"
+                android:title="@string/pref_clear_icon_cache" >
+            </Preference>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref_debug_mode"
+                android:summary="@string/pref_debug_mode_sum"
+                android:title="@string/pref_debug_mode" >
+            </CheckBoxPreference>
+            <Preference
+                android:dependency="pref_debug_mode"
+                android:key="pref_send_logfile"
+                android:summary="@string/pref_send_logfile_sum"
+                android:title="@string/pref_send_logfile" >
+            </Preference>
+            <EditTextPreference
+                android:id="@+id/pref_connection_timeout"
+                android:name="@string/pref_connection_timeout"
+                android:defaultValue="5"
+                android:key="connectionTimeout"
+                android:numeric="integer"
+                android:summary="@string/pref_connection_timeout_sum"
+                android:title="@string/pref_connection_timeout" />
+        </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_information" >
         <Preference
