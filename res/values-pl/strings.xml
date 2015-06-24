@@ -173,6 +173,11 @@
     <string name="pref_transcoding">Parametry Video i Audio</string>
     <string name="pref_transcoding_sum">Zdefiniuj parametry video i audio jak programy mają być zapisywane lub jak powinny być odtwarzane nagrania.</string>
 
+	<string name="pref_debug_mode">Tryb debugowania</string>
+	<string name="pref_debug_mode_sum">Zapisuje szczegółowe informacje do pliku dziennika w pamięci wewnętrznej. Jeśli jest włączone może trochę spowolnić aplikację.</string>
+	<string name="pref_send_logfile">Wyślij log do autora</string>
+	<string name="pref_send_logfile_sum">Wysyła plik logu dziennika do autora w celu wspierania i ulepszania programu. Tylko informacje o stanie są wysyłane z TVHClient!</string>
+
     <string name="feature_not_supported_by_server">Serwer TVHeadend nie wspiera tej funkcji. Wymagana jest nowsza wersja.</string>
     <string name="loading_profiles">Ładowanie profili</string>
 
