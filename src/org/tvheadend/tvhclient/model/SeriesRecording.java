@@ -1,8 +1,5 @@
 package org.tvheadend.tvhclient.model;
 
-import java.util.Date;
-
-
 public class SeriesRecording implements Comparable<SeriesRecording> {
 
     public String id;
@@ -13,8 +10,8 @@ public class SeriesRecording implements Comparable<SeriesRecording> {
     public long daysOfWeek;
     public long approxTime;
     public long priority;
-    public Date startExtra;
-    public Date stopExtra;
+    public long startExtra;
+    public long stopExtra;
     public String title;
     public String name;
     public Channel channel;
