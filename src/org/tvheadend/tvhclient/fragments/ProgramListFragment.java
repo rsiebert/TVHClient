@@ -53,6 +53,9 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private ListView listView;
     private Channel channel;
     private boolean isDualPane = false;
+
+    // Prevents loading more data on each scroll event. Only when scrolling has
+    // stopped loading shall be allowed
     private boolean allowLoading = false;
 
     private TVHClientApplication app;
@@ -126,6 +129,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                app.log(TAG, "Scrolling, first item " + firstVisibleItem + ", visible items " + visibleItemCount + ", total item " + totalItemCount);
                 // Enable loading when the user has scrolled pretty much to the end of the list
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
                     allowLoading = true;
@@ -136,11 +140,10 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 // If loading is allowed and the scrolling has stopped, load more data 
                 if (scrollState == SCROLL_STATE_IDLE && allowLoading) {
+                    app.log(TAG, "Scrolling stopped");
+                    allowLoading = false;
                     if (fragmentStatusInterface != null) {
-                        allowLoading = false;
-                        if (fragmentStatusInterface != null) {
-                            fragmentStatusInterface.moreDataRequired(channel, TAG);
-                        }
+                        fragmentStatusInterface.moreDataRequired(channel, TAG);
                     }
                 }
             }

@@ -78,7 +78,6 @@ import com.nispok.snackbar.enums.SnackbarType;
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
 
-    @SuppressWarnings("unused")
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private ListView drawerList;
@@ -1023,12 +1022,15 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             // avoid making unnecessary loading calls. Otherwise
                             // remove the channel from the blocking list
                             if (ch.epg.size() == channelEpgCountList.get(ch.id)) {
+                                app.log(TAG, "Did not load new EPG data, blocking existing channel " + ch.name);
                                 app.blockChannel(ch);
                             } else {
+                                app.log(TAG, "Loaded new EPG data (total " + ch.epg.size() + ") for existing channel " + ch.name);
                                 channelEpgCountList.put(ch.id, ch.epg.size());
                                 app.unblockChannel(ch);
                             }
                         } else {
+                            app.log(TAG, "Loaded new EPG data (total " + ch.epg.size() + ") for new channel " + ch.name);
                             channelEpgCountList.put(ch.id, ch.epg.size());
                         }
                     }
@@ -1263,11 +1265,17 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void moreDataRequired(final Channel channel, final String tag) {
+        app.log(TAG, "Trying to load more data: " 
+                    + "App still loading " + app.isLoading() + ", " 
+                    + "Channel not null " + (channel != null) + ", "
+                    + "Channel not already loading " + !channelLoadingList.contains(channel));
+
         // Do not load a channel when it is already being loaded to avoid
         // loading the same or too many data.
         if (app.isLoading() || channel == null || channelLoadingList.contains(channel)) {
             return;
         }
+
         channelLoadingList.add(channel);
         loadMorePrograms();
     }
@@ -1282,6 +1290,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         if (!channelLoadingList.isEmpty() && !isLoadingChannels) {
             final Channel ch = channelLoadingList.get(0);
             if (!app.isChannelBlocked(ch)) {
+                app.log(TAG, "Loading more EPG data for channel " + ch.name);
+
                 isLoadingChannels = true;
                 setActionBarSubtitle(getString(R.string.loading_channel, ch.name));
                 Utils.loadMorePrograms(this, ch);
