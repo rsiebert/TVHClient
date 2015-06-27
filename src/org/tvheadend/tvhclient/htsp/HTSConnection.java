@@ -17,6 +17,8 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.SparseArray;
 
 public class HTSConnection extends Thread {
@@ -37,9 +39,10 @@ public class HTSConnection extends Thread {
     private HTSConnectionListener listener;
     private SparseArray<HTSResponseHandler> responseHandelers;
     private LinkedList<HTSMessage> messageQueue;
-    private boolean auth;
+    private boolean auth = false;
     private Selector selector;
     private TVHClientApplication app;
+    private int connectionTimeout = 5000;
 
     public HTSConnection(TVHClientApplication app, HTSConnectionListener listener, String clientName, String clientVersion) {
         this.app = app;
@@ -47,9 +50,12 @@ public class HTSConnection extends Thread {
         // Disable the use of IPv6
         System.setProperty("java.net.preferIPv6Addresses", "false");
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
+        connectionTimeout = Integer.parseInt(prefs.getString("connectionTimeout", "5")) * 1000;
+
         running = false;
         lock = new ReentrantLock();
-        inBuf = ByteBuffer.allocateDirect(1024 * 1024);
+        inBuf = ByteBuffer.allocateDirect(2048 * 2048);
         inBuf.limit(4);
         responseHandelers = new SparseArray<HTSResponseHandler>();
         messageQueue = new LinkedList<HTSMessage>();
@@ -68,18 +74,17 @@ public class HTSConnection extends Thread {
         }
     }
 
-    // synchronized, blocking connect
+    // synchronized, non blocking connect
     public void open(String hostname, int port, boolean connected) {
+        app.log(TAG, "Connecting to server");
 
         if (running) {
             return;
         }
-
         if (!connected) {
             listener.onError(Constants.ACTION_CONNECTION_STATE_NO_NETWORK);
             return;
         }
-
         if (hostname == null) {
             listener.onError(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION);
             return;
@@ -93,10 +98,9 @@ public class HTSConnection extends Thread {
             socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
             socketChannel.socket().setKeepAlive(true);
-            socketChannel.socket().setSoTimeout(5000);
+            socketChannel.socket().setSoTimeout(connectionTimeout);
             socketChannel.register(selector, SelectionKey.OP_CONNECT, signal);
             socketChannel.connect(new InetSocketAddress(hostname, port));
-            app.log(TAG, "Connection established");
             running = true;
             start();
         } catch (Exception ex) {
@@ -109,14 +113,14 @@ public class HTSConnection extends Thread {
 
         synchronized (signal) {
             try {
-                signal.wait(5000);
+                signal.wait(connectionTimeout);
                 if (socketChannel.isConnectionPending()) {
-                    app.log(TAG, "Timeout waiting for connection");
+                    app.log(TAG, "Timeout, connection still pending");
                     listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
                     close();
                 }
             } catch (InterruptedException ex) {
-                app.log(TAG, "Exception during waiting for pending connection", ex);
+                app.log(TAG, "Error waiting for connection", ex);
             }
         }
     }
@@ -130,20 +134,22 @@ public class HTSConnection extends Thread {
 
     // synchronized, blocking auth
     public void authenticate(String username, final String password) {
+
         if (auth || !running) {
             return;
         }
 
         auth = false;
+        app.log(TAG, "Starting initial async");
+
         final HTSMessage authMessage = new HTSMessage();
         authMessage.setMethod("enableAsyncMetadata");
         authMessage.putField("username", username);
         final HTSResponseHandler authHandler = new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
                 auth = response.getInt("noaccess", 0) != 1;
+                app.log(TAG, "User user authenticated " + auth);
                 if (!auth) {
-                    app.log(TAG, "User not authenticated");
                     listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
                 }
                 synchronized (authMessage) {
@@ -159,13 +165,15 @@ public class HTSConnection extends Thread {
         helloMessage.putField("htspversion", HTSMessage.HTSP_VERSION);
         helloMessage.putField("username", username);
         sendMessage(helloMessage, new HTSResponseHandler() {
-
             public void handleResponse(HTSMessage response) {
-
                 protocolVersion = response.getInt("htspversion");
                 serverName = response.getString("servername");
                 serverVersion = response.getString("serverversion");
                 webRoot = response.getString("webroot", "");
+
+                app.log(TAG, "Server name '" + serverName 
+                        + "', version '" + serverVersion
+                        + "', protocol '" + protocolVersion + "'");
 
                 MessageDigest md;
                 try {
@@ -203,7 +211,6 @@ public class HTSConnection extends Thread {
         if (!isConnected()) {
             return;
         }
-
         lock.lock();
         try {
             seq++;
@@ -220,6 +227,7 @@ public class HTSConnection extends Thread {
     }
 
     public void close() {
+        app.log(TAG, "Closing connection");
         lock.lock();
         try {
             responseHandelers.clear();
@@ -237,18 +245,19 @@ public class HTSConnection extends Thread {
 
     @Override
     public void run() {
+        app.log(TAG, "Starting connection thread");
+
         while (running) {
             try {
                 selector.select(5000);
             } catch (IOException ex) {
-                app.log(TAG, "Can't select socket", ex);
+                app.log(TAG, "Can't select socket channel", ex);
                 listener.onError(Constants.ACTION_CONNECTION_STATE_LOST);
                 running = false;
                 continue;
             }
 
             lock.lock();
-
             try {
                 Iterator<SelectionKey> it = selector.selectedKeys().iterator();
                 while (it.hasNext()) {
@@ -256,24 +265,25 @@ public class HTSConnection extends Thread {
                     it.remove();
                     processTcpSelectionKey(selKey);
                 }
-
                 int ops = SelectionKey.OP_READ;
                 if (!messageQueue.isEmpty()) {
                     ops |= SelectionKey.OP_WRITE;
                 }
                 socketChannel.register(selector, ops);
+
             } catch (Exception ex) {
-                app.log(TAG, "Can't read message", ex);
+                app.log(TAG, "Can't read message, ", ex);
                 running = false;
+
             } finally {
                 lock.unlock();
             }
         }
-
         close();
     }
 
     private void processTcpSelectionKey(SelectionKey selKey) throws IOException {
+
         if (selKey.isConnectable() && selKey.isValid()) {
             SocketChannel sChannel = (SocketChannel) selKey.channel();
             sChannel.finishConnect();
@@ -283,13 +293,12 @@ public class HTSConnection extends Thread {
             }
             sChannel.register(selector, SelectionKey.OP_READ);
         }
-
         if (selKey.isReadable() && selKey.isValid()) {
             SocketChannel sChannel = (SocketChannel) selKey.channel();
             int len = sChannel.read(inBuf);
             if (len < 0) {
                 listener.onError(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN);
-                throw new IOException("Server went down");
+                throw new IOException("Server went down (read() < 0)");
             }
 
             HTSMessage msg = HTSMessage.parse(inBuf);
