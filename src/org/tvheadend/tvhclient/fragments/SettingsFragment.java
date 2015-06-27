@@ -34,6 +34,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
@@ -59,6 +60,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private CheckBoxPreference prefDebugMode;
     private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
+
+    private String[] logfileList;
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
@@ -289,34 +292,61 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefSendLogfile.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Date date = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US);
-                String dateText = sdf.format(date.getTime());
+                app.saveLog();
 
-                Uri fileUri = null;
-                try {
-                    File logFile = new File(activity.getFilesDir(), "logs/tvhclient.log");
-                    fileUri = FileProvider.getUriForFile(activity, "org.tvheadend.tvhclient.fileprovider", logFile);
-                } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "The file can't be shared, " + e.getLocalizedMessage());
+                // Get the list of available files in the log path
+                File logPath = new File(activity.getCacheDir(), "logs");
+                File[] files = logPath.listFiles();
+
+                // Fill the items for the dialog
+                logfileList = new String[files.length];
+                for (int i = 0; i < files.length; i++) {
+                    logfileList[i] = files[i].getName();
                 }
 
-                if (fileUri != null) {
-                    // Create the intent with the email, some text and the log 
-                    // file attached. The user can select from a list of 
-                    // applications which he wants to use to send the mail
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rsiebert80@gmail.com"});
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "TVHClient Logfile");
-                    intent.putExtra(Intent.EXTRA_TEXT, "Logfile was sent on " + dateText);
-                    intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-                    intent.setType("text/plain");
-
-                    startActivity(Intent.createChooser(intent, "Send Log File to developer"));
-                }
+                // Show the dialog with the list of log files
+                new MaterialDialog.Builder(activity)
+                .title(R.string.select_log_file)
+                .items(logfileList)
+                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        mailLogfile(logfileList[which]);
+                        return true;
+                    }
+                })
+                .show();
                 return false;
             }
         });
+    }
+
+    private void mailLogfile(String filename) {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US);
+        String dateText = sdf.format(date.getTime());
+
+        Uri fileUri = null;
+        try {
+            File logFile = new File(activity.getCacheDir(), "logs/" + filename);
+            fileUri = FileProvider.getUriForFile(activity, "org.tvheadend.tvhclient.fileprovider", logFile);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "The file can't be shared, " + e.getLocalizedMessage());
+        }
+
+        if (fileUri != null) {
+            // Create the intent with the email, some text and the log 
+            // file attached. The user can select from a list of 
+            // applications which he wants to use to send the mail
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rsiebert80@gmail.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "TVHClient Logfile");
+            intent.putExtra(Intent.EXTRA_TEXT, "Logfile was sent on " + dateText);
+            intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            intent.setType("text/plain");
+
+            startActivity(Intent.createChooser(intent, "Send Log File to developer"));
+        }
     }
 
     @Override
