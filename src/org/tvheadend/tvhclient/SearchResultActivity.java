@@ -59,7 +59,6 @@ import android.widget.ListView;
 @SuppressWarnings("deprecation")
 public class SearchResultActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, HTSListener {
 
-    @SuppressWarnings("unused")
     private final static String TAG = SearchResultActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
@@ -76,12 +75,15 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     private String query;
 
     private SearchView searchView;
+    private TVHClientApplication app = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_layout);
+
+        app = (TVHClientApplication) getApplication();
 
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
@@ -118,7 +120,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         // channels and add it to the list. If a channel was given search
         // through the list of programs in the given channel.
         if (channel == null) {
-            TVHClientApplication app = (TVHClientApplication) getApplication();
             for (Channel ch : app.getChannels()) {
                 if (ch != null) {
                     synchronized(ch.epg) {
@@ -196,7 +197,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         }
 
         // Get the channel id if given, to limit the search to a channel
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
             channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
@@ -230,14 +230,12 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     @Override
     protected void onResume() {
         super.onResume();
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         app.addListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         app.removeListener(this);
     }
 
@@ -303,6 +301,10 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         }
 
         final Program program = adapter.getItem(info.position);
+        if (program == null) {
+            app.log(TAG, "Selected program is null");
+            return super.onContextItemSelected(item);
+        }
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
@@ -401,7 +403,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
      * sends a new message the correct action will then be executed here.
      */
     @Override
-    public void onMessage(String action, final Object obj) {
+    public void onMessage(final String action, final Object obj) {
         if (action.equals(Constants.ACTION_PROGRAM_ADD)) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -447,7 +449,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
 
     @Override
     public boolean onQueryTextChange(String text) {
-        TVHClientApplication app = (TVHClientApplication) getApplication();
         if (text.length() >= 3 && app.isUnlocked()) {
             query = text;
             startQuickAdapterUpdate();
