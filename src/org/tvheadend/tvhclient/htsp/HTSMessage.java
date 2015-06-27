@@ -220,21 +220,20 @@ public class HTSMessage extends HashMap<String, Object> {
         len = uIntToLong(buf.get(0), buf.get(1), buf.get(2), buf.get(3));
 
         if (len + 4 > buf.capacity()) {
-            buf.clear();
-            throw new IOException("Mesage is to long");
+            throw new IOException("Message is to long, length " + len + ", capacity " + buf.capacity());
         }
 
         if (buf.limit() == 4) {
             buf.limit((int) (4 + len));
         }
 
-        //Message not yet fully read
+        // Message not yet fully read
         if (buf.position() < len + 4) {
             return null;
         }
 
         buf.flip();
-        buf.getInt(); //drops 4 bytes
+        buf.getInt(); // drops 4 bytes
         HTSMessage msg = deserializeBinary(buf);
 
         buf.limit(4);
@@ -335,13 +334,13 @@ public class HTSMessage extends HashMap<String, Object> {
             datalen = uIntToLong(buf.get(), buf.get(), buf.get(), buf.get());
 
             if (datalen > Integer.MAX_VALUE) {
-                throw new IOException("Would get precision losses ;(");
+                throw new IOException("Would get precision losses, datalen " + datalen + ", max int " + Integer.MAX_VALUE);
             }
             if (buf.limit() < namelen + datalen) {
-                throw new IOException("Buffer limit exceeded");
+                throw new IOException("Buffer limit exceeded, limit " + buf.limit() + ", namelen " + namelen + ", datalen " + datalen);
             }
 
-            //Get the key for the map (the name)
+            // Get the key for the map (the name)
             String name = null;
             if (namelen == 0) {
                 name = Integer.toString(cnt++);
@@ -351,9 +350,9 @@ public class HTSMessage extends HashMap<String, Object> {
                 name = new String(bName);
             }
 
-            //Get the actual content
+            // Get the actual content
             Object obj = null;
-            byte[] bData = new byte[(int) datalen]; //Should be long?
+            byte[] bData = new byte[(int) datalen]; // Should be long?
             buf.get(bData);
 
             switch (type) {
@@ -384,7 +383,7 @@ public class HTSMessage extends HashMap<String, Object> {
                     break;
                 }
                 default:
-                    throw new IOException("Unknown data type");
+                    throw new IOException("Unknown data type " + type);
             }
             msg.putField(name, obj);
         }
