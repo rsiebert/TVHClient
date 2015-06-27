@@ -289,6 +289,10 @@
 
     <string name="start_time">Start time</string>
     <string name="stop_time">Stop time</string>
+    <string name="time_window">Time window for recording</string>
+    <string name="enable_time_window">Activate times for recording</string>
+    <string name="start_after_time">Start after</string>
+    <string name="start_before_time">Stop before</string>
     <string name="start_window">Start window</string>
     <string name="extra_start_time">Extra start minutes (pre-time)</string>
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>

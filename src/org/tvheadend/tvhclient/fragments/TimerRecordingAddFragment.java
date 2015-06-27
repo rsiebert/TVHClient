@@ -305,7 +305,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 			}
         });
 
-        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
+        startTime.setText(Utils.getTimeStringFromValue(activity, startTimeValue));
         // Show the time picker dialog so the user can select a new starting time
         startTime.setOnClickListener(new OnClickListener() {
             @Override
@@ -319,7 +319,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                     public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
                         // Save the given value in seconds. This values will be passed to the server
                         startTimeValue = (long) (selectedHour * 60 + selectedMinute);
-                        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
+                        startTime.setText(Utils.getTimeStringFromValue(activity, startTimeValue));
                     }
                 }, hour, minute, true, false);
 
@@ -328,7 +328,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             }
         });
 
-        stopTime.setText(Utils.getTimeStringFromValue(stopTimeValue));
+        stopTime.setText(Utils.getTimeStringFromValue(activity, stopTimeValue));
         // Show the time picker dialog so the user can select a new starting time
         stopTime.setOnClickListener(new OnClickListener() {
             @Override
@@ -342,7 +342,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                     public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
                         // Save the given value in seconds. This values will be passed to the server
                         stopTimeValue = (long) (selectedHour * 60 + selectedMinute);
-                        stopTime.setText(Utils.getTimeStringFromValue(stopTimeValue));
+                        stopTime.setText(Utils.getTimeStringFromValue(activity, stopTimeValue));
                     }
                 }, hour, minute, true, false);
 

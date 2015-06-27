@@ -60,6 +60,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private LinearLayout daysOfWeekLayout;
     private ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
     private TextView startTime;
+    private CheckBox timeEnabled;
+    private TextView startWindowTime;
     private EditText startExtraTime;
     private EditText stopExtraTime;
     private EditText title;
@@ -70,6 +72,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private long minDurationValue;
     private long maxDurationValue;
     private long startTimeValue;
+    private long startWindowTimeValue;
+    private boolean timeEnabledValue;
     private long startExtraTimeValue;
     private long stopExtraTimeValue;
     private long daysOfWeekValue;
@@ -128,6 +132,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         outState.putLong("minDurationValue", minDurationValue);
         outState.putLong("maxDurationValue", maxDurationValue);
         outState.putLong("startTimeValue", startTimeValue);
+        outState.putLong("startWindowTimeValue", startWindowTimeValue);
+        outState.putBoolean("timeEnabled", timeEnabledValue);
         outState.putLong("startExtraTimeValue", startExtraTimeValue);
         outState.putLong("stopExtraTimeValue", stopExtraTimeValue);
         outState.putLong("daysOfWeekValue", daysOfWeekValue);
@@ -195,7 +201,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 priorityValue = rec.priority;
                 minDurationValue = (rec.minDuration / 60);
                 maxDurationValue = (rec.maxDuration / 60);
-                startTimeValue = (rec.start < 0) ? 0 : rec.start;
+                timeEnabledValue = (rec.start >= 0 || rec.startWindow >= 0);
+                startTimeValue = rec.start;
+                startWindowTimeValue = rec.startWindow;
                 startExtraTimeValue = rec.startExtra;
                 stopExtraTimeValue = rec.stopExtra;
                 daysOfWeekValue = rec.daysOfWeek;
@@ -224,7 +232,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 priorityValue = 2;
                 minDurationValue = 0;
                 maxDurationValue = 0;
+                timeEnabledValue = true;
                 startTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+                startWindowTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
                 startExtraTimeValue = DEFAULT_START_EXTRA;
                 stopExtraTimeValue = DEFAULT_STOP_EXTRA;
                 daysOfWeekValue = 127;
@@ -238,7 +248,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             priorityValue = savedInstanceState.getLong("priorityValue");
             minDurationValue = savedInstanceState.getLong("minDurationValue");
             maxDurationValue = savedInstanceState.getLong("maxDurationValue");
+            timeEnabledValue = savedInstanceState.getBoolean("timeEnabledValue");
             startTimeValue = savedInstanceState.getLong("startTimeValue");
+            startWindowTimeValue = savedInstanceState.getLong("startWindowTimeValue");
             startExtraTimeValue = savedInstanceState.getLong("startExtraTimeValue");
             stopExtraTimeValue = savedInstanceState.getLong("stopExtraTimeValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
@@ -289,7 +301,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             daysOfWeekButtons[i] = dayButton;
         }
 
-        startTime = (TextView) v.findViewById(R.id.start_time);
+        startTime = (TextView) v.findViewById(R.id.start_after_time);
+        timeEnabled = (CheckBox) v.findViewById(R.id.time_enabled);
+        startWindowTime = (TextView) v.findViewById(R.id.start_before_time);
         startExtraTime = (EditText) v.findViewById(R.id.start_extra);
         stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
         priority = (TextView) v.findViewById(R.id.priority);
@@ -348,11 +362,20 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         minDuration.setText(minDurationValue > 0 ? String.valueOf(minDurationValue) : getString(R.string.duration_sum));
         maxDuration.setText(maxDurationValue > 0 ? String.valueOf(maxDurationValue) : getString(R.string.duration_sum));
 
-        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
+        startTime.setText(Utils.getTimeStringFromValue(activity, startTimeValue));
         // Show the time picker dialog so the user can select a new starting time
         startTime.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // If the time is not set avoid showing a -1 in the time picker.
+                // Use the current time 
+                if (startTimeValue < 0) {
+                    Calendar cal = Calendar.getInstance();
+                    startTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+                }
+
+                // Convert the time to the hour and minutes
                 int hour = (int) (startTimeValue / 60);
                 int minute = (int) (startTimeValue % 60);
 
@@ -362,7 +385,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                     public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
                         // Save the given value in seconds. This values will be passed to the server
                         startTimeValue = (long) (selectedHour * 60 + selectedMinute);
-                        startTime.setText(Utils.getTimeStringFromValue(startTimeValue));
+                        startTime.setText(Utils.getTimeStringFromValue(activity, startTimeValue));
                     }
                 }, hour, minute, true, false);
 
@@ -370,6 +393,51 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 mTimePicker.show(getChildFragmentManager(), "");
             }
         });
+
+        startWindowTime.setText(Utils.getTimeStringFromValue(activity, startWindowTimeValue));
+        // Show the time picker dialog so the user can select a new starting time
+        startWindowTime.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // If the time is not set avoid showing a -1 in the time picker.
+                // Use the current time 
+                if (startWindowTimeValue < 0) {
+                    Calendar cal = Calendar.getInstance();
+                    startWindowTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+                }
+
+                // Convert the time to the hour and minutes
+                int hour = (int) (startWindowTimeValue / 60);
+                int minute = (int) (startWindowTimeValue % 60);
+
+                TimePickerDialog mTimePicker;
+                mTimePicker = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
+                        // Save the given value in seconds. This values will be passed to the server
+                        startWindowTimeValue = (long) (selectedHour * 60 + selectedMinute);
+                        startWindowTime.setText(Utils.getTimeStringFromValue(activity, startWindowTimeValue));
+                    }
+                }, hour, minute, true, false);
+
+                mTimePicker.setCloseOnSingleTapMinute(false);
+                mTimePicker.show(getChildFragmentManager(), "");
+            }
+        });
+
+        timeEnabled.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean checked = timeEnabled.isChecked();
+                startTime.setEnabled(checked);
+                startTime.setText(Utils.getTimeStringFromValue(activity, (checked ? startTimeValue : -1)));
+                startWindowTime.setEnabled(checked);
+                startWindowTime.setText(Utils.getTimeStringFromValue(activity, (checked ? startWindowTimeValue : -1)));
+            }
+        });
+
+        timeEnabled.setChecked(timeEnabledValue);
 
         startExtraTime.setText(String.valueOf(startExtraTimeValue));
         stopExtraTime.setText(String.valueOf(stopExtraTimeValue));
@@ -453,6 +521,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         } catch(NumberFormatException ex) {
             maxDurationValue = 0;
         }
+
+        timeEnabledValue = timeEnabled.isChecked();
 
         startExtraTimeValue = Long.valueOf(startExtraTime.getText().toString());
         stopExtraTimeValue = Long.valueOf(stopExtraTime.getText().toString());
@@ -571,8 +641,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         intent.putExtra("maxDuration", maxDurationValue * 60);
 
         // Assume no start time is specified if 0:00 is selected
-        if (startTimeValue >= 0) {
+        if (timeEnabledValue) {
             intent.putExtra("start", startTimeValue);
+            intent.putExtra("startWindow", startWindowTimeValue);
         }
 
         intent.putExtra("startExtra", startExtraTimeValue);

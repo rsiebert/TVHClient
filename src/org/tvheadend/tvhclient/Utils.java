@@ -1075,7 +1075,10 @@ public class Utils {
      * 
      * @return time in hh:mm format
      */
-    public static String getTimeStringFromValue(final long time) {
+    public static String getTimeStringFromValue(final Activity activity, final long time) {
+        if (time < 0) {
+            return (activity.getString(R.string.not_set));
+        }
         String minutes = String.valueOf(time % 60);
         if (minutes.length() == 1) {
             minutes = "0" + minutes;

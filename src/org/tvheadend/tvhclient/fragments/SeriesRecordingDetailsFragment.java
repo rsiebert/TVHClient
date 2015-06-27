@@ -36,6 +36,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private TextView minDuration;
     private TextView maxDuration;
     private TextView startTime;
+    private TextView startWindowTime;
     private TextView daysOfWeek;
     private TextView channelName;
     private TextView nameLabel;
@@ -100,7 +101,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         name = (TextView) v.findViewById(R.id.name);
         minDuration = (TextView) v.findViewById(R.id.minimum_duration);
         maxDuration = (TextView) v.findViewById(R.id.maximum_duration);
-        startTime = (TextView) v.findViewById(R.id.start_time);
+        startTime = (TextView) v.findViewById(R.id.start_after_time);
+        startWindowTime = (TextView) v.findViewById(R.id.start_before_time);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
@@ -161,9 +163,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             // The maximum time is given in seconds, but we want to show it in minutes
             maxDuration.setText(getString(R.string.minutes, (int) (srec.maxDuration / 60)));
         }
-        if (srec.start > 0) {
-            startTime.setText(Utils.getTimeStringFromValue(srec.start));
-        }
+        startTime.setText(Utils.getTimeStringFromValue(activity, srec.start));
+        startWindowTime.setText(Utils.getTimeStringFromValue(activity, srec.startWindow));
     }
 
     /**
