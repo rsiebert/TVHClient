@@ -676,10 +676,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.minDuration = msg.getLong("minDuration");
         srec.retention = msg.getLong("retention");
         srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime", 0);
+        srec.approxTime = msg.getLong("approxTime", -1);
         srec.priority = msg.getLong("priority");
-        srec.start = msg.getLong("start", 0);
-        srec.startWindow = msg.getLong("startWindow", 0);
+        srec.start = msg.getLong("start", -1);
+        srec.startWindow = msg.getLong("startWindow", -1);
         srec.startExtra = msg.getLong("startExtra", 0);
         srec.stopExtra = msg.getLong("stopExtra", 0);
         srec.title = msg.getString("title", srec.title);
@@ -695,10 +695,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.minDuration = msg.getLong("minDuration");
         srec.retention = msg.getLong("retention");
         srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime", 0);
+        srec.approxTime = msg.getLong("approxTime", -1);
         srec.priority = msg.getLong("priority");
-        srec.start = msg.getLong("start", 0);
-        srec.startWindow = msg.getLong("startWindow", 0);
+        srec.start = msg.getLong("start", -1);
+        srec.startWindow = msg.getLong("startWindow", -1);
         srec.startExtra = msg.getLong("startExtra", 0);
         srec.stopExtra = msg.getLong("stopExtra", 0);
         srec.title = msg.getString("title");
