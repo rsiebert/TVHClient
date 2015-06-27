@@ -48,7 +48,6 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class HTSService extends Service implements HTSConnectionListener {
 
@@ -79,7 +78,6 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
@@ -374,11 +372,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getDate("startExtra");
-            rec.stopExtra = msg.getDate("stopExtra");
+            rec.startExtra = msg.getLong("startExtra", 0);
+            rec.stopExtra = msg.getLong("stopExtra", 0);
             rec.retention = msg.getLong("retention");
             rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType");
+            rec.contentType = msg.getLong("contentType", 0);
         }
 
         // Not all fields can be set with default values, so check if the server
@@ -424,11 +422,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getDate("startExtra");
-            rec.stopExtra = msg.getDate("stopExtra");
+            rec.startExtra = msg.getLong("startExtra", 0);
+            rec.stopExtra = msg.getLong("stopExtra", 0);
             rec.retention = msg.getLong("retention");
             rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType");
+            rec.contentType = msg.getLong("contentType", 0);
         }
 
         // Not all fields can be set with default values, so check if the server
@@ -466,8 +464,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
         rec.retention = msg.getLong("retention", 0);
         rec.priority = msg.getLong("priority", 0);
-        rec.start = msg.getLong("start");
-        rec.stop = msg.getLong("stop");
+        rec.start = msg.getLong("start", 0);
+        rec.stop = msg.getLong("stop", 0);
         rec.title = msg.getString("title", "");
         rec.name = msg.getString("name", "");
         rec.channel = app.getChannel(msg.getLong("channel", 0));
@@ -515,6 +513,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onInitialSyncCompleted(HTSMessage msg) {
+        app.log(TAG, "initial sync completed");
         app.setLoading(false);
         app.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
         app.setProtocolVersion(connection.getProtocolVersion());
@@ -523,8 +522,6 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onSubscriptionStart(HTSMessage msg) {
-        Log.d(TAG, "onSubscriptionStart");
-
         Subscription subscription = app.getSubscription(msg.getLong("subscriptionId"));
         if (subscription == null) {
             return;
@@ -546,7 +543,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             s.rate = sub.getInt("rate", 0);
             subscription.streams.add(s);
 
-            Log.d(TAG, "onSubscriptionStart, added stream " + s.index);
+            app.log(TAG, "onSubscriptionStart, added stream " + s.index);
         }
 
         if (msg.containsField("sourceinfo")) {
@@ -560,7 +557,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             si.service = sub.getString("service", "");
             subscription.sourceInfo = si;
 
-            Log.d(TAG, "onSubscriptionStart, added sourceinfo " + si.adapter);
+            app.log(TAG, "onSubscriptionStart, added sourceinfo " + si.adapter);
         }
     }
 
@@ -602,8 +599,6 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onSubscriptionSignalStatus(HTSMessage msg) {
-        Log.d(TAG, "onSubscriptionSignalStatus");
-
         Subscription s = app.getSubscription(msg.getLong("subscriptionId"));
         if (s == null) {
             return;
@@ -681,13 +676,12 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.minDuration = msg.getLong("minDuration");
         srec.retention = msg.getLong("retention");
         srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime");
+        srec.approxTime = msg.getLong("approxTime", 0);
         srec.priority = msg.getLong("priority");
-        srec.approxTime = msg.getLong("approxTime");
-        srec.start = msg.getLong("start");
-        srec.startWindow = msg.getLong("startWindow");
-        srec.startExtra = msg.getDate("startExtra");
-        srec.stopExtra = msg.getDate("stopExtra");
+        srec.start = msg.getLong("start", 0);
+        srec.startWindow = msg.getLong("startWindow", 0);
+        srec.startExtra = msg.getLong("startExtra", 0);
+        srec.stopExtra = msg.getLong("stopExtra", 0);
         srec.title = msg.getString("title", srec.title);
         srec.name = msg.getString("name", srec.name);
         app.updateSeriesRecording(srec);
@@ -701,13 +695,12 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.minDuration = msg.getLong("minDuration");
         srec.retention = msg.getLong("retention");
         srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime");
+        srec.approxTime = msg.getLong("approxTime", 0);
         srec.priority = msg.getLong("priority");
-        srec.approxTime = msg.getLong("approxTime");
-        srec.start = msg.getLong("start");
-        srec.startWindow = msg.getLong("startWindow");
-        srec.startExtra = msg.getDate("startExtra");
-        srec.stopExtra = msg.getDate("stopExtra");
+        srec.start = msg.getLong("start", 0);
+        srec.startWindow = msg.getLong("startWindow", 0);
+        srec.startExtra = msg.getLong("startExtra", 0);
+        srec.stopExtra = msg.getLong("stopExtra", 0);
         srec.title = msg.getString("title");
         srec.name = msg.getString("name");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
@@ -764,7 +757,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (method.equals("signalStatus")) {
             onSubscriptionSignalStatus(msg);
         } else {
-            Log.d(TAG, method.toString());
+            app.log(TAG, "Unknown method " + method.toString());
         }
     }
 
@@ -781,7 +774,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             return hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, "Can't create hash string", e);
+            app.log(TAG, "Can't create hash string, " + e);
         }
 
         return "";
@@ -795,8 +788,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (connection.getProtocolVersion() > 9) {
         	is = new HTSFileInputStream(connection, url);
         } else {
-        	Log.d(TAG, "Unhandled url: " + url);
-        	return;
+            app.log(TAG, "Unhandled url " + url + " to cache image");
+            return;
         }
         
         OutputStream os = new FileOutputStream(f);
@@ -868,7 +861,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     ch.iconBitmap = getIcon(ch.icon);
                     app.updateChannel(ch);
                 } catch (Throwable ex) {
-                    Log.e(TAG, "Can't load channel icon");
+                    app.log(TAG, "Can't load channel icon, " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -881,7 +874,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     tag.iconBitmap = getIcon(tag.icon);
                     app.updateChannelTag(tag);
                 } catch (Throwable ex) {
-                    Log.e(TAG, "Can't load tag icon");
+                    app.log(TAG, "Can't load tag icon, " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -1485,7 +1478,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
 
         // Enabled flag (Added in version 19)
-        Log.i(TAG, "Enabled " + enabled);
         request.putField("enabled", enabled);
 
         if (configName != null) {
@@ -1508,7 +1500,6 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getDvrCutpoints(final Recording rec) {
-        Log.d(TAG, "getDvrCutpoints, rec " + rec.title);
 
         HTSMessage request = new HTSMessage();
         request.setMethod("getDvrCutpoints");
@@ -1528,8 +1519,6 @@ public class HTSService extends Service implements HTSConnectionListener {
                     dc.end = sub.getInt("end");
                     dc.type = sub.getInt("type");
                     rec.dvrCutPoints.add(dc);
-
-                    Log.d(TAG, "getDvrCutpoints, added cut point for rec " + rec.title);
                 }
             }
         });
