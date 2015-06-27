@@ -329,6 +329,7 @@
     <string name="select_stop_time">Select end time</string>
     <string name="select_channel">Select channel</string>
     <string name="select_priority">Select priority</string>
+    <string name="select_log_file">Select logfile</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">No connection available</string>

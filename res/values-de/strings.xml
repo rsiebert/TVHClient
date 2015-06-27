@@ -328,6 +328,7 @@
     <string name="select_stop_time">Endzeit auswählen</string>
 	<string name="select_channel">Sender auswählen</string>
     <string name="select_priority">Priorität auswählen</string>
+    <string name="select_log_file">Log-Datei auswählen</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">Keine Verbindung verfügbar</string>
