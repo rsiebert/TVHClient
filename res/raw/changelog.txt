@@ -1,3 +1,13 @@
+$ 1.8.2
+  % VERSION 1.8.2
+  _ 27.06.2015
+    * Fixed connection issues for some users
+    * Define start and stop times or no time at all for series recordings
+    * Updated French and Polish translations
+    * Added Slovak translation
+    * Moved some settings to the new 'Advanced settings' screen
+    * Added new option in the 'Advanced settings' to enable debug mode and to sent the log file to the developer
+    * Hide WOL menu when no MAC address was given
 $ 1.8.1
   % VERSION 1.8.1
   _ 16.06.2015
