@@ -44,9 +44,9 @@
     <string name="remove_all_recordings">Do you really want to remove ALL recordings?</string>
     <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
     <string name="cancel_all_recordings">Do you really want to remove ALL scheduled recordings?</string>
-    <string name="add_title">Please add a title</string>
-    <string name="add_subtitle">Please add a subtitle</string>
-    <string name="add_name">Please add a name</string>
+    <string name="add_title">The title for the recording</string>
+    <string name="add_subtitle">The subtitle for the recording</string>
+    <string name="add_name">Name for this entry</string>
     <string name="add_recording">Add new recording</string>
     <string name="edit_recording">Edit recording</string>
     <string name="cancel_add_recording">Cancel adding a new recording? All values will be lost.</string>
@@ -289,10 +289,10 @@
 
     <string name="start_time">Start time</string>
     <string name="stop_time">Stop time</string>
-    <string name="time_window">Time window for recording</string>
+    <string name="time_window">Time window to start recording</string>
     <string name="enable_time_window">Activate times for recording</string>
-    <string name="start_after_time">Start after</string>
-    <string name="start_before_time">Stop before</string>
+    <string name="start_after_time">Beginn</string>
+    <string name="start_before_time">End</string>
     <string name="start_window">Start window</string>
     <string name="extra_start_time">Extra start minutes (pre-time)</string>
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>

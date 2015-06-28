@@ -44,9 +44,9 @@
     <string name="remove_all_recordings">Alle Aufnahmen entfernen?</string>
     <string name="cancel_recording">Geplante Aufnahme \'%s\' entfernen?</string>
     <string name="cancel_all_recordings">Alle geplanten Aufnahmen entfernen?</string>
-    <string name="add_title">Gewünschten Titel eingeben</string>
-    <string name="add_subtitle">Gewünschten Untertitel eingeben</string>
-    <string name="add_name">Gewünschten Namen eingeben</string>
+    <string name="add_title">Titel der gewünschten Aufnahme</string>
+    <string name="add_subtitle">Untertitel der gewünschten Aufnahme</string>
+    <string name="add_name">Name dieses erstellten Eintrages</string>
     <string name="add_recording">Neue Aufnahme hinzufügen</string>
     <string name="edit_recording">Aufnahme bearbeiten</string>
     <string name="cancel_add_recording">Hinzufügen der Aufnahme abbrechen? Alle Eingaben gehen verloren.</string>
@@ -288,10 +288,10 @@
 
     <string name="start_time">Startzeit</string>
     <string name="stop_time">Endzeit</string>
-    <string name="time_window">Zeitfenster für Aufnahme</string>
+    <string name="time_window">Zeitfenster für Aufnahmestart</string>
     <string name="enable_time_window">Zeiten für Aufnahme aktivieren</string>
-    <string name="start_after_time">Start vor</string>
-    <string name="start_before_time">Start bevor</string>
+    <string name="start_after_time">Beginn</string>
+    <string name="start_before_time">Ende</string>
     <string name="start_window">Startfenster</string>
     <string name="extra_start_time">Zusätzliche Minuten (Vorlaufzeit)</string>
     <string name="extra_stop_time">Zusätzliche Minuten (Nachlaufzeit)</string>
