@@ -44,9 +44,9 @@
     <string name="remove_all_recordings">Jesteś pewny że chcesz usunąć wszystkie nagrania?</string>
     <string name="cancel_recording">Jesteś pewny że chcesz anulować zaplanowane nagrywanie \'%s\'?</string>
     <string name="cancel_all_recordings">Jesteś pewny że chcesz anulować wszystkie nagrywania?</string>
-    <string name="add_title">Proszę dodać tytuł</string>
-    <string name="add_subtitle">Proszę dodać podtytuł</string>
-    <string name="add_name">Proszę dodać nazwę</string>
+    <string name="add_title">Tytu dla nagrania</string>
+    <string name="add_subtitle">Podtytu dla nagrania</string>
+    <string name="add_name">Nazwa dla tego wpisu</string>
     <string name="add_recording">Dodaj nowe nagrywanie</string>
     <string name="edit_recording">Edytuj nagranie</string>
     <string name="cancel_add_recording">Anulować dodawanie nowego nagrywania? Wszystkie wartości zostaną utracone.</string>
@@ -174,10 +174,10 @@
     <string name="pref_transcoding_sum">Zdefiniuj parametry video i audio jak programy mają być zapisywane lub jak powinny być odtwarzane nagrania.</string>
 
     <string name="pref_advanced_settings">Zaawansowane ustawienia</string>
-	<string name="pref_debug_mode">Tryb debugowania</string>
-	<string name="pref_debug_mode_sum">Zapisuje szczegółowe informacje do pliku dziennika w pamięci wewnętrznej. Jeśli jest włączone może trochę spowolnić aplikację.</string>
-	<string name="pref_send_logfile">Wyślij log do autora</string>
-	<string name="pref_send_logfile_sum">Wysyła plik logu dziennika do autora w celu wspierania i ulepszania programu. Tylko informacje o stanie są wysyłane z TVHClient!</string>
+    <string name="pref_debug_mode">Tryb debugowania</string>
+    <string name="pref_debug_mode_sum">Zapisuje szczegółowe informacje do pliku dziennika w pamięci wewnętrznej. Jeśli jest włączone może trochę spowolnić aplikację.</string>
+    <string name="pref_send_logfile">Wyślij log do autora</string>
+    <string name="pref_send_logfile_sum">Wysyła plik logu dziennika do autora w celu wspierania i ulepszania programu. Tylko informacje o stanie są wysyłane z TVHClient!</string>
 
     <string name="feature_not_supported_by_server">Serwer TVHeadend nie wspiera tej funkcji. Wymagana jest nowsza wersja.</string>
     <string name="loading_profiles">Ładowanie profili</string>
@@ -287,6 +287,10 @@
     
     <string name="start_time">Czas rozpoczęcia</string>
     <string name="stop_time">Czas zakończenia</string>
+    <string name="time_window">Ramy czasu do rozpoczcia nagrywania</string>
+    <string name="enable_time_window">Aktywuj czas dla nagrywania</string>
+    <string name="start_after_time">Pocztek</string>
+    <string name="start_before_time">Koniec</string>
     <string name="start_window">Uruchom okno</string>
     <string name="extra_start_time">Ekstra minuty rozpoczęcia (przed czasem)</string>
     <string name="extra_stop_time">Ekstra minuty zakończenia (po czasie)</string>
