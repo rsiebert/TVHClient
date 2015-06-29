@@ -219,8 +219,13 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         playButton.setVisibility(View.VISIBLE);
         recordOnceButton.setVisibility(View.VISIBLE);
-        recordSeriesButton.setVisibility(View.VISIBLE);
         recordCancelButton.setVisibility(View.VISIBLE);
+
+        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+            recordSeriesButton.setVisibility(View.VISIBLE);
+        } else {
+            recordSeriesButton.setVisibility(View.GONE);
+        }
 
         // Show the play menu item when the current 
         // time is between the program start and end time

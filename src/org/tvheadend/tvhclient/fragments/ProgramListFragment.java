@@ -283,7 +283,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // the menu items depending on the program state
         if (program != null) {
             menu.setHeaderTitle(program.title);
-            Utils.setProgramMenu(menu, program);
+            Utils.setProgramMenu(app, menu, program);
         }
     }
 

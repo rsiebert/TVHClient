@@ -58,6 +58,8 @@ public class ProgramGuideItemView extends LinearLayout {
     private long startTime;
     private long endTime;
 
+    private TVHClientApplication app;
+
     public ProgramGuideItemView(Context context) {
         super(context);
     }
@@ -66,6 +68,7 @@ public class ProgramGuideItemView extends LinearLayout {
         super(activity);
         this.activity = activity;
         this.layout = layout;
+        this.app = (TVHClientApplication) activity.getApplication();
 
         // Create the interface so we can talk to the fragment
         if (activity instanceof FragmentStatusInterface) {
@@ -163,8 +166,6 @@ public class ProgramGuideItemView extends LinearLayout {
         catch (NoSuchElementException e) {
             Log.e(TAG, "The selected channel contains no programs.");
         }
-
-        TVHClientApplication app = (TVHClientApplication) activity.getApplication();
 
         // Add the loading indication only when the channel is not blocked and
         // the program is the last one and overlaps the timeslot somehow. 
@@ -393,8 +394,8 @@ public class ProgramGuideItemView extends LinearLayout {
 	                // the menu items depending on the program state
 	                fragmentInterface.setSelectedContextItem(p);
 	                menu.setHeaderTitle(p.title);
-	                Utils.setProgramMenu(menu, p);
-	                
+	                Utils.setProgramMenu(app, menu, p);
+
                     // Add a listener to each menu item. When the menu item is
                     // called the context handler method from the fragment will
                     // be called. Without this the context menu handler from the

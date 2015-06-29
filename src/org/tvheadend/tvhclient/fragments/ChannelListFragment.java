@@ -347,7 +347,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         }
         if (program != null) {
             menu.setHeaderTitle(program.title);
-            Utils.setProgramMenu(menu, program);
+            Utils.setProgramMenu(app, menu, program);
         }
     }
 

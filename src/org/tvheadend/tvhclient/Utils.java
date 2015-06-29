@@ -367,7 +367,7 @@ public class Utils {
      * @param menu
      * @param program
      */
-    public static void setProgramMenu(final Menu menu, final Program program) {
+    public static void setProgramMenu(final TVHClientApplication app, final Menu menu, final Program program) {
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
@@ -406,7 +406,9 @@ public class Utils {
         if (program.recording == null) {
             // Show the record menu
             recordOnceMenuItem.setVisible(true);
-            recordSeriesMenuItem.setVisible(true);
+            if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+                recordSeriesMenuItem.setVisible(true);
+            }
         } else if (program.isRecording()) {
             // Show the play and cancel menu
             playMenuItem.setVisible(true);

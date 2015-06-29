@@ -359,8 +359,8 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         if (program != null) {
             menu.setHeaderTitle(program.title);
         }
-        //  Show or hide the menu items depending on the program state
-        Utils.setProgramMenu(menu, program);
+        // Show or hide the menu items depending on the program state
+        Utils.setProgramMenu(app, menu, program);
     }
 
     /**
