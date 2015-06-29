@@ -12,8 +12,10 @@
     <string name="record_series">Enregistrement auto(Autorec)</string>
     <string name="record_cancel">Annuler un enregistrement</string>
     <string name="record_cancel_all">Annuler tous les enregistrements</string>
+    <string name="confirm_cancel_all">Etes-vous sur de vouloir annuler tous les enregistrements?</string>
     <string name="record_remove">Effacer un enregistrement</string>
     <string name="record_remove_all">Effacer tous les enregistrements</string>
+    <string name="confirm_remove_all">Etes-vous sur de vouloir effacer tous les enregistrements?</string>
     <string name="record_edit">Modifier l\'enregistrement</string>
     <string name="search_imdb">Rechercher sur IMDB</string>
     <string name="search_epg">Recherche dans le guide des programmes</string>
@@ -30,8 +32,12 @@
     <string name="send_wol">Allume</string>
     <string name="select_connection">choisir une connexion</string>
     <string name="add_connection">Ajouter une connexion</string>
-    <string name="confirm_cancel">Effacer les valeurs? Tous les changements vont etre perdu.</string>
+    <string name="edit_connection">Editer la connexion</string>
+    <string name="confirm_cancel">Effacer les valeurs? Tous les changements vont être perdu.</string>
     <string name="remove">Supprimer</string>
+    <string name="discard">Abandonner</string>
+    <string name="confirm_discard_profile">Abandonner les valeurs du profil? Tous les changements seront perdus.</string>
+    <string name="confirm_discard_connection">Abandonner les valeurs de la connexion? Tous les changements seront perdus.</string>
     <string name="delete_connection">Voulez-vous vraiment effacer la connexion \'%s\'?</string>
     <string name="remove_recording">Voulez-vous vraiment effacer l\'enregistrement \'%s\'?</string>
     <string name="remove_series_recording">Voulez-vous vraiment effacer l\'enregistrement auto \'%s\'?\n\nCela va effacer tous les enregistrements auto de cette série.</string>
@@ -39,8 +45,18 @@
     <string name="remove_all_recordings">Voulez-vous vraiment effacer tous les enregistrements?</string>
     <string name="cancel_recording">Voulez-vous vraiment annuler l\'enregistrement \'%s\'?</string>
     <string name="cancel_all_recordings">Voulez-vous vraiment annuler tous les enregistrements?</string>
+    <string name="add_title">Ajouter un titre</string>
+    <string name="add_subtitle">Ajouter un sous-titre</string>
+    <string name="add_name">Ajouter un nom</string>
     <string name="add_recording">Ajouter un nouvel enregistrement</string>
+    <string name="edit_recording">Editer un enregistrement</string>
     <string name="cancel_add_recording">Annuler l\'ajout d\'un nouvel enregistrement? Toutes les valeurs seront perdues.</string>
+    <string name="cancel_edit_recording">Annuler l\'édition de l\'enregistrement existant? Toutes les valeurs seront perdues.</string>
+    <string name="add_series_recording">Ajouter une nouvelle série d\'enregistrements</string>
+    <string name="add_timer_recording">Ajouter un nouvel enregistrement manuel</string>
+    <string name="edit_series_recording">Editer une séries d\'enregistrements</string>
+    <string name="edit_timer_recording">Edit un enregistrement manuel</string>
+    <string name="activate_recording">Activer un enregistrement</string>
 
     <!-- preference related strings -->
     <string name="pref_manage_connections">Gestions des connexions</string>
@@ -69,13 +85,14 @@
     <string name="pref_pass">Mot de passe</string>
     <string name="pref_pass_sum">Entrer un mot de passe</string>
     <string name="pref_pass_set_sum">Le mot de passe est défini mais pas affiché.</string>
-    <string name="pref_wol_address">Addresse MAC</string>
-    <string name="pref_wol_address_sum">Entrer l\'addresse MAC de l\'hôte (type 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_address">Adresse MAC</string>
+    <string name="pref_wol_address_sum">Entrer l\'adresse MAC de l\'hôte (type 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Port du WoL</string>
     <string name="pref_wol_port_sum">Le port %d sera utilisé pour allumer le serveur, par défaut en 9.</string>
     <string name="pref_wol_broadcast">Utilise le Broadcast</string>
     <string name="pref_wol_broadcast_sum">Envois la commande de WOL en broadcast. Certains routeurs n\'accepte pas ce type de commande.</string>
-    <string name="pref_wol_address_invalid">L\'addresse MAC est invalide.\nElle doit etre de la forme \'01:24:67:9a:cd:ef\' et ne doit contenir que des valeurs hexadecimal 0\-9 and a\-f ainsi que les seéparateurs \':\' and \'\-\'.</string>
+    <string name="pref_wol_address_invalid">L\'adresse MAC est invalide.\nElle doit être de la forme \'01:24:67:9a:cd:ef\' et ne doit contenir que des valeurs hexadécimal 0\-9 and a\-f ainsi que les séparateurs \':\' and \'\-\'.</string>
+    
     <string name="pref_user_interface">Interface utilisateur</string>
     <string name="pref_icons">Logo des chaines</string>
     <string name="pref_icons_sum">Monter l\icône des chaines.</string>
@@ -128,36 +145,62 @@
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_misc">Divers</string>
     <string name="pref_clear_search_history">Effacer l\'historique de recherche</string>
-    <string name="pref_clear_icon_cache">Effacer le cache des icones des chaînes</string>
+    <string name="pref_clear_icon_cache">Effacer le cache des icônes des chaînes</string>
+    <string name="pref_unlocker">Fonctionnalités supplémentaires</string>
+    <string name="pref_unlocker_sum">Activer l\'accès aux fonctionnalités supplémentaires et aider au support des nouveaux développements en achetant la version complète de TVHClient.</string>
     <string name="pref_menu_visibility">Visibilité du menu</string>
     <string name="pref_menu_visibility_sum">Cache ou montre certains objets du menu.</string>
     <string name="pref_hide_menu_delete_all_recordings">Cacher \'Effacer tous les enregistrements\'</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Ne pas montrer cette option pour prevenir l\'effacement accidentel de tous les enregistrements.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Cacher \'Annuler tous les enregistrements\'</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Ne pas montrer cette option pour prevenir l\'annulation accidentel de tous les enregistrements programmés .</string>
+    <string name="pref_visible_menu_icon_tags">Toujours afficher le menu \'Tags des chaines\'</string>
+    <string name="pref_visible_menu_icon_tags_sum">Garder le menu tag des chaines visible dans la barre d\'action. Empeche le menu d'etre deplacé dans le menu trois points s\'il n\' a pas assez de place.</string>
     <string name="pref_profiles">Profils</string>
+    <string name="pref_profiles_sum">Défini les paramètres ou les profils (si supporté) de comment les programmes sont enregistrés ou comment les enregistrements sont joués.</string>
     <string name="pref_recording_profiles">Profils d\'enregistrements</string>
-    <string name="pref_recording_profiles_sum">Choisir un profil que le serveur doit utiliser pour enregistrer une emission programmée.</string>
+    <string name="pref_recording_profiles_sum">Choisir un profil que le serveur doit utiliser pour enregistrer une émission programmée.</string>
     <string name="pref_playback_profiles">Profils de lecture</string>
     <string name="pref_playback_profiles_sum">Choisir un profil qui doit utiliser pour lire un enregistrement.</string>
+    <string name="pref_enable_recording_profiles">Active les profils d\'enregistrements</string>
+    <string name="pref_enable_recording_profiles_sum">Utilise les fonctionnalités du serveur de profil le plus récent pour les enregistrements. Ceci écrase tous les paramètres audio et vidéo pour enregistrer un programme paramétré.</string>
+    <string name="pref_enable_playback_profiles">Activer les profils de lecture</string>
+    <string name="pref_enable_playback_profiles_sum">Utiliser les nouvelle fonctionnalités de profils de serveur pour les programmations. Ceci remplace tous les paramètres audio et vidéo défini pour lire une émission.</string>
     <string name="pref_show_notifications">Lister les notifications</string>
     <string name="pref_show_notifications_sum">Informe l\'utilisateur dès qu\'un enregistrement a commencé ou est fini. Cela nécessite que le service tourne en tâche de fond.</string>
+    <string name="pref_show_next_program">Affiche le programme suivant dans la liste de chaines</string>
+    <string name="pref_show_next_program_sum">Le nom du programme arrivant ensuite est affiché dans la liste des chaines. Il est affiché en dessous de l\'indicateur de progression.</string>
     <string name="pref_programs">Programmes</string>
+    <string name="pref_playback_and_recording">Lecture et enregistrements</string>
+    <string name="pref_transcoding">Paramètres et vidéo</string>
+    <string name="pref_transcoding_sum">Défini les paramètres audio et vidéo de comment sera le programme sera enregistré ou comment il sera lu.</string>
+    <string name="pref_debug_mode"> Mode debug </string>
+    <string name="pref_debug_mode_sum">Ecris les informations détaillées dans un fichier de log sur le stockage interne. Cela peut ralentir un peu l\’application si activé.</string>
+    <string name="pref_send_logfile">Envoyer les logs au développeur </string>
+    <string name="pref_send_logfile_sum">Envoyer les logs par mail au développeur afin d\’améliorer TVHClient. Seul les états de TVHClient sont envoyés!</string>
 
+    <string name="feature_not_supported_by_server">Le serveur TVHeadend ne supporte pas cette fonctionnalité. Une nouvelle version est nécessaire.</string>
     <string name="loading_profiles">Chargement des profils</string>
 
     <string name="clear_search_history">Effacer l\'historique de recherche?</string>
-    <string name="clear_search_history_sum">Etes vous sur de vouloir effacer l\'historique de recherche?</string>
+    <string name="clear_search_history_sum">Etes-vous sur de vouloir effacer l\'historique de recherche?</string>
     <string name="clear_search_history_done">Historique de recherche effacé</string>
-    <string name="clear_icon_cache">Effacer le cache des icones des chaînes?</string>
-    <string name="clear_icon_cache_sum">Etes-vous sur de vouloir effacer tousd les icones des chaînes? Vous devez le faire pour recharger les icones à jour depuis le serveur.</string>
-    <string name="clear_icon_cache_done">Cache des icones des chaînes effacé.</string>
+    <string name="clear_icon_cache">Effacer le cache des icônes des chaînes?</string>
+    <string name="clear_icon_cache_sum">Etes-vous sur de vouloir effacer tous les icones des chaînes? Vous devez le faire pour recharger les icones à jour depuis le serveur.</string>
+    <string name="clear_icon_cache_done">Cache des icônes des chaînes effacé.</string>
 
     <string name="err_auth">Accès refusé</string>
     <string name="err_connect">Impossible de se connecter au serveur</string>
     <string name="err_con_lost">Connexion au serveur perdue</string>
     <string name="err_con_timeout">Connection en erreur</string>
+    <string name="err_no_network">Pas de connexion réseau active</string>
     <string name="err_loading_profiles">Erreur lors du chargement des profils depuis le serveur\n%s</string>
+    <string name="error_adding_recording">L\'enregistrement n\'a pas été ajouté! %s</string>
+    <string name="error_removing_recording">L\'enregistrement n\'a pas été supprimé! %s</string>
+    <string name="error_updating_recording">L\'enregistrement n\'a pas été mis à jour! %s</string>
+    <string name="success_adding_recording">L\'enregistrement a été ajouté.</string>
+    <string name="success_removing_recording">L\'enregistrement a été supprimé.</string>
+    <string name="success_updating_recording">L\'enregistrement a été mis à jour.</string>
 
     <string name="recording_file_missing">L\'enregistrement est manquant</string>
     <string name="recording_time_missed">L\'heure programmée est dépassée</string>
@@ -168,18 +211,19 @@
     <string name="recording_started_text">L\'enregistrement %s est commencé</string>
     <string name="recording_completed_text">L\'enregistrement %s est terminé</string>
 
-    <string name="wol_send">Packet de WoL envoyé avec succés à \'%s\'</string>
-    <string name="wol_send_broadcast">Packet de WoL en broadcast envoyé avec succés à \'%s\'</string>
-    <string name="wol_address_invalid">L\'addresse MAC n\'est pas valide. Veuillez verifier vos paramétres.</string>
-    <string name="wol_error">Erreur pour envoyer un packet WoL a \'%1$s\'.\n Message d\'erreur: %2$s</string>
+    <string name="wol_send">Paquet de WoL envoyé avec succès à \'%s\'</string>
+    <string name="wol_send_broadcast">Paquet de WoL en broadcast envoyé avec succès à \'%s\'</string>
+    <string name="wol_address_invalid">L\'adresse MAC n\'est pas valide. Veuillez vérifier vos paramètres.</string>
+    <string name="wol_error">Erreur pour envoyer un packet WoL à \'%1$s\'.\n Message d\'erreur: %2$s</string>
 
     <string name="no_transmission">Aucune transmission</string>
-    <string name="no_data">Auncun programme disponible</string>
+    <string name="no_data">Aucun programme disponible</string>
     <string name="minutes">%d min</string>
     <string name="days">%d jours</string>
     <string name="not_set">Non défini</string>
 
     <string name="search_hint">Recherche de l\'EPG</string>
+    <string name="searching_programs">Recherche %d programmes</string>
     <string name="two_days_ago">Il y a deux jours</string>
     <string name="yesterday">Hier</string>
     <string name="today">Aujourd\'hui</string>
@@ -221,6 +265,7 @@
     <string name="channel_icon">Logo de la chaine</string>
     <string name="status_icon">Icone d\'état</string>
     <string name="title">Titre</string>
+    <string name="subtitle">Sous-titre</string>
     <string name="channel">Chaîne</string>
     <string name="time">Heure</string>
     <string name="date">Date</string>
@@ -243,49 +288,58 @@
     <string name="start_time">Heure de début</string>
     <string name="stop_time">Heure de fin</string>
     <string name="start_window">Fenêtre de démarrage</string>
-    <string name="extra_start_time">Minutes avant le débuts(pre-time)</string>
+    <string name="extra_start_time">Minutes avant le début (pre-time)</string>
     <string name="extra_stop_time">Minutes après la fin (post-time)</string>
     <string name="min_duration">Durée minimum</string>
     <string name="max_duration">Durée maximum</string>
+    <string name="duration_sum">Durée en minutes (0 = tout)</string>
     <string name="from_to_time">De %1$s a %2$s</string>
     <string name="recording_time">Temps d\'enregistrement</string>
     <string name="series_recording_add_error">Impossible d\'ajouter cet enregistrement auto.</string>
     <string name="time_recording_add_error">Impossible d\'ajouter cet enregistrement programmé.</string>
     <string name="error_empty_title">Le titre ne peut pas être vide!</string>
+    <string name="error_start_stop_time">L\'heure de fin doit être après l\'heure de début!</string>
+    <string name="error_no_channel">Veuillez sélectionner une chaine!</string>
 
     <string name="nothing">Rien</string>
     <string name="loading">Chargement&#8230;</string>
     <string name="loading_channel">Chargement de la chaine %s</string>
     <string name="updating">Mise à jour&#8230;</string>
     <string name="all_channels">Toutes les chaines</string>
+    <string name="no_channel">Pas de chaine</string>
     <string name="season">Saison</string>
     <string name="episode">Episode</string>
     <string name="part">Partie</string>
     <string name="progress">%1$d%% du programme déjà diffusé</string>
-
     <string name="next_program">Prochain programme: %s</string>
 
     <string name="server">Serveur</string>
     <string name="connection">Connexion</string>
     <string name="disc_space">Espace disque</string>
+    <string name="server_api_version">Version de l\'API serveur</string>
     <string name="total">Total</string>
     <string name="available">Disponible</string>
     <string name="unknown">Inconnu</string>
     <string name="ready">Prêt</string>
     <string name="select_timeframe">Guide des programmes pour la date et l\'heure sélectionnée.</string>
     <string name="currently_recording">En cours d\'enregistrement</string>
+    <string name="select_start_time">Sélectionner une heure de démarrage</string>
+    <string name="select_stop_time">Sélectionner une heure de fin</string>
+    <string name="select_channel">Sélectionner une chaine</string>
+    <string name="select_priority">Sélectionner une priorité</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">Aucune connexion définie.</string>
     <string name="no_connection_available_advice">Aucune connexion définie. Au moins une connexion est nécéssaire.</string>
     <string name="no_connection_active">Aucune connexion active.</string>
     <string name="no_connection_active_advice">Au moins une connexion est définie, mais n\'est pas activée.</string>
+    <string name="number_of_connections">%d connexion(s) disponible(s)</string>
 
     <!-- Unlcoker related -->
-    <string name="unlocker_purchase_successful">Achat reussi, merci de votre aide support! Toutes les fonctionalités sont maintenant disponibles.</string>
-    <string name="unlocker_purchase_not_successful">Malheureusement l\'achat ne c\'est pas bien passé. Veuillez contacter le developpeur.</string>
+    <string name="unlocker_purchase_successful">Achat réussi, merci de votre aide. Toutes les fonctionnalités sont maintenant disponibles.</string>
+    <string name="unlocker_purchase_not_successful">Malheureusement l\'achat ne c\'est pas bien passé. Veuillez contacter le développeur.</string>
     <string name="feature_not_available_in_free_version">Cette fonctionnalité n\'est pas disponible dans la version gratuite!</string>
-    <string name="unlocker_already_purchased">Toutes les fonctionalités sont maintenant disponibles. Merci de votre aide!</string>
+    <string name="unlocker_already_purchased">Toutes les fonctionnalités sont maintenant disponibles. Merci de votre aide!</string>
     <string name="purchase">Achat</string>
 
     <string name="no_media_player">Aucun lecteur de média trouvé</string>
