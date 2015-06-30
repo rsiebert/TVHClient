@@ -44,9 +44,9 @@
     <string name="remove_all_recordings">Jesteś pewny że chcesz usunąć wszystkie nagrania?</string>
     <string name="cancel_recording">Jesteś pewny że chcesz anulować zaplanowane nagrywanie \'%s\'?</string>
     <string name="cancel_all_recordings">Jesteś pewny że chcesz anulować wszystkie nagrywania?</string>
-    <string name="add_title">Proszę dodać tytuł</string>
-    <string name="add_subtitle">Proszę dodać podtytuł</string>
-    <string name="add_name">Proszę dodać nazwę</string>
+    <string name="add_title">Tytu dla nagrania</string>
+    <string name="add_subtitle">Podtytu dla nagrania</string>
+    <string name="add_name">Nazwa dla tego wpisu</string>
     <string name="add_recording">Dodaj nowe nagrywanie</string>
     <string name="edit_recording">Edytuj nagranie</string>
     <string name="cancel_add_recording">Anulować dodawanie nowego nagrywania? Wszystkie wartości zostaną utracone.</string>
@@ -90,7 +90,7 @@
     <string name="pref_wol_broadcast">Użyj rozgłaszania</string>
     <string name="pref_wol_broadcast_sum">Wyślij pakiet WOL w transmisji. Niektóre routery nie pozwalają na transmisję WOL.</string>
     <string name="pref_wol_address_invalid">MAC adres jest nieprawidłowy.\nMusi mieć postać \'01:24:67:9a:cd:ef\' i może zawierać tylko znaki w systemie szesnastkowym \'0\-9\' i \'a\-f\' i separatory \':\' lub \'-\'.</string>
-    
+
     <string name="pref_user_interface">Interfejs użytkownika</string>
     <string name="pref_icons">Ikony kanałów</string>
     <string name="pref_icons_sum">Pokaż ikony kanałów</string>
@@ -174,10 +174,10 @@
     <string name="pref_transcoding_sum">Zdefiniuj parametry video i audio jak programy mają być zapisywane lub jak powinny być odtwarzane nagrania.</string>
 
     <string name="pref_advanced_settings">Zaawansowane ustawienia</string>
-	<string name="pref_debug_mode">Tryb debugowania</string>
-	<string name="pref_debug_mode_sum">Zapisuje szczegółowe informacje do pliku dziennika w pamięci wewnętrznej. Jeśli jest włączone może trochę spowolnić aplikację.</string>
-	<string name="pref_send_logfile">Wyślij log do autora</string>
-	<string name="pref_send_logfile_sum">Wysyła plik logu dziennika do autora w celu wspierania i ulepszania programu. Tylko informacje o stanie są wysyłane z TVHClient!</string>
+    <string name="pref_debug_mode">Tryb debugowania</string>
+    <string name="pref_debug_mode_sum">Zapisuje szczegółowe informacje do pliku dziennika w pamięci wewnętrznej. Jeśli jest włączone może trochę spowolnić aplikację.</string>
+    <string name="pref_send_logfile">Wyślij log do autora</string>
+    <string name="pref_send_logfile_sum">Wysyła plik logu dziennika do autora w celu wspierania i ulepszania programu. Tylko informacje o stanie są wysyłane z TVHClient!</string>
 
     <string name="feature_not_supported_by_server">Serwer TVHeadend nie wspiera tej funkcji. Wymagana jest nowsza wersja.</string>
     <string name="loading_profiles">Ładowanie profili</string>
@@ -188,7 +188,7 @@
     <string name="clear_icon_cache">Wyczyścić cache ikon kanałów?</string>
     <string name="clear_icon_cache_sum">Jesteś pewny, że chcesz usunąć wszystkie ikony kanałów? Możesz to zrobić aby pobrać zaktualizowane ikony kanałów z serwera.</string>
     <string name="clear_icon_cache_done">Cache ikon kanałów wyczyszczony</string>
-    
+
     <string name="err_auth">Odmowa dostępu</string>
     <string name="err_connect">Nie można połączyć się z serweram</string>
     <string name="err_con_lost">Utracono połączenie z serwerem</string>
@@ -201,7 +201,7 @@
     <string name="success_adding_recording">Nagranie zostało dodane.</string>
     <string name="success_removing_recording">Nagranie zostało usunięte.</string>
     <string name="success_updating_recording">Nagranie zostało zaktualizowane.</string>
-    
+
     <string name="recording_file_missing">Nagrywany plik jest utracony</string>
     <string name="recording_time_missed">Zaplanowane nagranie zostało utracone</string>
     <string name="recording_file_invalid">Nagranie jest nieważne</string>
@@ -221,7 +221,7 @@
     <string name="minutes">%d min</string>
     <string name="days">%d dni</string>
     <string name="not_set">Nie ustawiono</string>
-    
+
     <string name="search_hint">Szukaj w EPG</string>
     <string name="searching_programs">Wyszukano %d program(ów)</string>
     <string name="two_days_ago">Dwa dni temu</string>
@@ -250,18 +250,18 @@
     <string name="no_recordings_available">Brak dostępnych nagrań</string>
     <string name="no_recordings_scheduled">Brak zaplanowanych nagrań</string>
     <string name="no_programs_available">Brak dostępnych programów</string>
-    
+
     <string name="recording_enabled">To nagrywanie jest włączone</string>
     <string name="recording_disabled">To nagrywanie jest wyłączone</string>
     <string name="days_of_week">Dni tygodnia</string>
     <string name="comment">Komentarz</string>
     <string name="name">Nazwa</string>
-    
+
     <string name="channels">Kanały</string>
     <string name="recordings">Nagrania</string>
     <string name="status">Status</string>
     <string name="results">Wyniki</string>
-    
+
     <string name="channel_icon">Ikony kanałów</string>
     <string name="status_icon">Status ikon</string>
     <string name="title">Tytuł</string>
@@ -284,9 +284,13 @@
     <string name="owner">Właściciel</string>
     <string name="creator">Twórca</string>
     <string name="approx_time">Minuty przed północą</string>
-    
+
     <string name="start_time">Czas rozpoczęcia</string>
     <string name="stop_time">Czas zakończenia</string>
+    <string name="time_window">Ramy czasu do rozpoczcia nagrywania</string>
+    <string name="enable_time_window">Aktywuj czas dla nagrywania</string>
+    <string name="start_after_time">Pocztek</string>
+    <string name="start_before_time">Koniec</string>
     <string name="start_window">Uruchom okno</string>
     <string name="extra_start_time">Ekstra minuty rozpoczęcia (przed czasem)</string>
     <string name="extra_stop_time">Ekstra minuty zakończenia (po czasie)</string>
@@ -326,24 +330,24 @@
     <string name="select_stop_time">Wybierz czas końca</string>
     <string name="select_channel">Wybierz kanał</string>
     <string name="select_priority">Wybierz priorytet</string>
-    
+
     <!-- Connection related -->
     <string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
     <string name="no_connection_available_advice">Brak połaczenia. Musisz dodać conajmniej jedno z menu ustawień.</string>
     <string name="no_connection_active">Brak aktywnych połączeń</string>
     <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefioniowane, ale nie jest aktywowane.</string>
     <string name="number_of_connections">%d połączenie(a) dostępne</string>
-    
-    <!-- Unlcoker related -->
+
+    <!-- Unlocker related -->
     <string name="unlocker_purchase_successful">Zakup udany! Dziękujemy za wsparcie! Wszystkie funkcje są teraz dostępne.</string>
     <string name="unlocker_purchase_not_successful">Niestety zakupu nie powiódł się. Prosimy o kontakt z deweloperem.</string>
     <string name="feature_not_available_in_free_version">Ta opcja nie jest dostępna w darmowej wersji!</string>
     <string name="unlocker_already_purchased">Wszystkie dodatkowe funkcje są dostępne! Dziękuję za Twoje wsparcie!</string>
     <string name="purchase">Zakup</string>
-    
+
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
     <string name="show_play_store">Czy chcesz przejść do sklepu Google Play i poszukać dostępnych odtwarzaczy?</string>
-    
+
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Otwórz szufladę nawigacji</string>
     <string name="drawer_close">Zamknij szufladę nawigacji</string>
