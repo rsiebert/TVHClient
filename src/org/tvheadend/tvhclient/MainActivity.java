@@ -644,6 +644,16 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             (menu.findItem(R.id.menu_search)).setVisible(false);
         }
 
+        // Hide the wake on lan menu from the status fragment. Only show it in
+        // the status screen and if the app is unlocked and an address is set
+        (menu.findItem(R.id.menu_wol)).setVisible(false);
+        if (selectedMenuPosition == MENU_STATUS) {
+            final Connection conn = dbh.getSelectedConnection();
+            if (app.isUnlocked() && conn != null && conn.wol_address.length() > 0) {
+                (menu.findItem(R.id.menu_wol)).setVisible(true);
+            }
+        }
+
         // Prevent the refresh menu item from going into the overlay menu when
         // the status page is shown
         if (selectedMenuPosition == MENU_STATUS
@@ -695,6 +705,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             channelEpgCountList.clear();
             app.unblockAllChannels();
             Utils.connect(this, true);
+            return true;
+
+        case R.id.menu_wol:
+            final Connection conn = dbh.getSelectedConnection();
+            if (conn != null) {
+                WakeOnLanTask task= new WakeOnLanTask(this, conn);
+                task.execute();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
