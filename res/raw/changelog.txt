@@ -1,3 +1,9 @@
+$ 1.8.3
+  % VERSION 1.8.3
+  _ 30.06.2015
+    * Fixed sending the debug log file to developer
+    * Hide series recording menus if not supported by the server
+    * Added menu to the status screen to wake up the server (Only available in the unlocked version)
 $ 1.8.2
   % VERSION 1.8.2
   _ 28.06.2015
