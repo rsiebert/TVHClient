@@ -97,7 +97,7 @@
     <string name="pref_icons">Logo des chaines</string>
     <string name="pref_icons_sum">Monter l\icône des chaines.</string>
     <string name="pref_tag_icon">Icone du tag de la chaine</string>
-    <string name="pref_tag_icon_sum">Montre l\icône de la chaine au lieu du logo de l\application.</string>
+    <string name="pref_tag_icon_sum">Montre l\'icône de la chaine au lieu du logo de l\'application.</string>
     <string name="pref_theme">Thème soft</string>
     <string name="pref_theme_sum">Utiliser le thème soft</string>
     <string name="pref_language">Langue</string>
@@ -174,10 +174,14 @@
     <string name="pref_playback_and_recording">Lecture et enregistrements</string>
     <string name="pref_transcoding">Paramètres et vidéo</string>
     <string name="pref_transcoding_sum">Défini les paramètres audio et vidéo de comment sera le programme sera enregistré ou comment il sera lu.</string>
+
+    <string name="pref_advanced_settings">Paramétrages avancés</string>
     <string name="pref_debug_mode"> Mode debug </string>
     <string name="pref_debug_mode_sum">Ecris les informations détaillées dans un fichier de log sur le stockage interne. Cela peut ralentir un peu l\’application si activé.</string>
     <string name="pref_send_logfile">Envoyer les logs au développeur </string>
     <string name="pref_send_logfile_sum">Envoyer les logs par mail au développeur afin d\’améliorer TVHClient. Seul les états de TVHClient sont envoyés!</string>
+    <string name="pref_connection_timeout">Connexion interrompue</string>
+    <string name="pref_connection_timeout_sum">Definir le temps en secondes jusqu'a ce que la connexion avec le serveur soit complètement établie. Augmenter la valeur peut améliorer la connectivité sur un réseau lent.</string>
 
     <string name="feature_not_supported_by_server">Le serveur TVHeadend ne supporte pas cette fonctionnalité. Une nouvelle version est nécessaire.</string>
     <string name="loading_profiles">Chargement des profils</string>
@@ -287,6 +291,10 @@
 
     <string name="start_time">Heure de début</string>
     <string name="stop_time">Heure de fin</string>
+    <string name="time_window">Fenetre de temps pour demarrer l\'enregistrement</string>
+    <string name="enable_time_window">Activer les horaires pour l\'enregistrement</string>
+    <string name="start_after_time">Début</string>
+    <string name="start_before_time">Fin</string>
     <string name="start_window">Fenêtre de démarrage</string>
     <string name="extra_start_time">Minutes avant le début (pre-time)</string>
     <string name="extra_stop_time">Minutes après la fin (post-time)</string>
@@ -327,6 +335,7 @@
     <string name="select_stop_time">Sélectionner une heure de fin</string>
     <string name="select_channel">Sélectionner une chaine</string>
     <string name="select_priority">Sélectionner une priorité</string>
+    <string name="select_log_file">Sélectionner le fichier de log</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">Aucune connexion définie.</string>
