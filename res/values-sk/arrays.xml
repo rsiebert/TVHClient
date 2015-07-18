@@ -9,14 +9,14 @@
         <item>Kanály</item>
         <item>Dokončené nahrávky</item>
         <item>Naplánované nahrávky</item>
-        <item>Opakované nahrávky</item>
+        <item>Sériové nahrávky</item>
         <item>Ručné nahrávky</item>
         <item>Neúspešné nahrávky</item>
         <item>Programový sprievodca</item>
         <item>Stav</item>
         <item>Nastavenia</item>
         <item>Pripojenia</item>
-        <item>Informacie a pomoc</item>
+        <item>Informácie a pomoc</item>
         <item>Povoliť doplnky</item>
     </string-array>
 
@@ -29,7 +29,7 @@
     <string-array name="day_short_names">
         <item>Pon</item>
         <item>Uto</item>
-        <item>Ste</item>
+        <item>Str</item>
         <item>Štv</item>
         <item>Pia</item>
         <item>Sob</item>
@@ -52,7 +52,7 @@
         <item>Normálna</item>
         <item>Nízka</item>
         <item>Nedôležité</item>
-        <item>Nenastavené</item>
+        <item>Nenastavená</item>
     </string-array>
     
     <string-array name="pr_content_type0">
@@ -138,7 +138,7 @@
         <item>Populárná kultúra/Tradičné umenie</item>
         <item>Literatúra</item>
         <item>Film/Kino</item>
-        <item>Experimentálny Film/Video</item>
+        <item>Experimentálny film/Video</item>
         <item>Vysielanie/Tlač</item>
         <item>Nové média</item>
         <item>Magazín</item>
