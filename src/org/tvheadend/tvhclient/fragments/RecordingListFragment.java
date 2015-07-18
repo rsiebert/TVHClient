@@ -159,8 +159,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             new MaterialDialog.Builder(activity)
                     .title(R.string.record_remove_all)
                     .content(R.string.confirm_remove_all)
-                    .positiveText(getString(android.R.string.yes))
-                    .negativeText(getString(android.R.string.no))
+                    .positiveText(getString(R.string.delete))
+                    .negativeText(getString(R.string.cancel))
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
@@ -183,8 +183,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             new MaterialDialog.Builder(activity)
                     .title(R.string.record_cancel_all)
                     .content(R.string.confirm_cancel_all)
-                    .positiveText(getString(android.R.string.yes))
-                    .negativeText(getString(android.R.string.no))
+                    .positiveText(getString(R.string.delete))
+                    .negativeText(getString(R.string.cancel))
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
