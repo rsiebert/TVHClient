@@ -129,8 +129,8 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
                     new MaterialDialog.Builder(context)
                         .title(R.string.no_media_player)
                         .content(R.string.show_play_store)
-                        .positiveText(getString(android.R.string.yes))
-                        .negativeText(getString(android.R.string.no))
+                        .positiveText(getString(R.string.delete))
+                        .negativeText(getString(R.string.cancel))
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
