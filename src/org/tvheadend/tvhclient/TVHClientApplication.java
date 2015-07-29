@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -25,7 +24,7 @@ import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.TimerRecording;
-
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,7 +36,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
-
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.nispok.snackbar.Snackbar;
@@ -1066,14 +1064,24 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @return
      */
+    @SuppressLint("InlinedApi")
     public boolean isConnected() {
         final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         final NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
         final boolean wifiConnected = ((wifi != null) ? wifi.isConnected() : false);
         final boolean mobileConnected = ((mobile != null) ? mobile.isConnected() : false);
 
-        return (wifiConnected || mobileConnected);
+        // Get the status of the Ethernet connection, some tablets can use an
+        // Ethernet cable
+        boolean ethConnected = false;
+        if (Build.VERSION.SDK_INT >= 13) {
+            final NetworkInfo eth = cm.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+            ethConnected = ((eth != null) ? eth.isConnected() : false);
+        }
+
+        return (wifiConnected || mobileConnected || ethConnected);
     }
 
     /**
