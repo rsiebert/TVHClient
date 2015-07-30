@@ -1,3 +1,8 @@
+$ 1.8.4
+  % VERSION 1.8.4
+  _ 30.07.2015
+    * Fixed problem not connecting via ethernet cable
+    * Updated Polish, French and Slovak language
 $ 1.8.3
   % VERSION 1.8.3
   _ 30.06.2015
