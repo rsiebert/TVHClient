@@ -376,7 +376,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             rec.stopExtra = msg.getLong("stopExtra", 0);
             rec.retention = msg.getLong("retention");
             rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType", 0);
+            rec.contentType = msg.getLong("contentType", -1);
         }
 
         // Not all fields can be set with default values, so check if the server
@@ -426,7 +426,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             rec.stopExtra = msg.getLong("stopExtra", 0);
             rec.retention = msg.getLong("retention");
             rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType", 0);
+            rec.contentType = msg.getLong("contentType", -1);
         }
 
         // Not all fields can be set with default values, so check if the server
