@@ -241,9 +241,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     }
 
     public void save() {
-        // Save the values into the profile
+        // Save the values into the program profile (play and streaming)
         progProfile.enabled = prefEnableProgProfiles.isChecked();
-        progProfile.name = prefProgProfiles.getEntry().toString();
+        progProfile.name = (prefProgProfiles.getEntry() != null ? prefProgProfiles.getEntry().toString() : "");
         progProfile.uuid = prefProgProfiles.getValue();
 
         // If the profile does not contain an id then it is a new one. Add it
@@ -256,9 +256,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             dbh.updateProfile(progProfile);
         }
 
-        // Save the values into the profile
+        // Save the values into the recording profile (recording)
         recProfile.enabled = prefEnableRecProfiles.isChecked();
-        recProfile.name = prefProgProfiles.getEntry().toString();
+        recProfile.name = (prefRecProfiles.getEntry() != null ? prefRecProfiles.getEntry().toString() : "");
         recProfile.uuid = prefRecProfiles.getValue();
 
         // If the profile does not contain an id then it is a new one. Add it
