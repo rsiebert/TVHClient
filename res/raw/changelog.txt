@@ -1,8 +1,9 @@
 $ 1.8.4
   % VERSION 1.8.4
-  _ 10.08.2015
+  _ 31.08.2015
     * Fixed problem not connecting via ethernet cable
     * Updated Polish, French and Slovak language
+    * Set correct default value if the programs content type is not available
 $ 1.8.3
   % VERSION 1.8.3
   _ 30.06.2015
