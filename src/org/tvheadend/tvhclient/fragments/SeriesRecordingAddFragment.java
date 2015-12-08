@@ -560,16 +560,22 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             maxDurationValue = minDurationValue;
         }
 
-        // If the series recording has been edited, remove it before adding it
-        // again with the updated values. This is required because the API does
-        // not provide an edit service call. When the confirmation that the
-        // recording was received, add the edited one. This is done in the
-        // onMessage method. 
+        // Update the timer recording if it has been edited, otherwise add a new one.
         if (rec != null && rec.id != null && rec.id.length() > 0) {
-            Intent intent = new Intent(activity, HTSService.class);
-            intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
-            intent.putExtra("id", rec.id);
-            activity.startService(intent);
+
+            if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_UPDATE_SERIES_RECORDINGS) {
+                // If the API version supports it, use the native service call method
+                updateSeriesRecording();
+            } else {
+                // Remove the recording before adding it again with the updated values. 
+                // This is required because the API does not provide an edit service call. 
+                // When the removal confirmation was received, add the edited recording. 
+                // This is done in the onMessage method. 
+                Intent intent = new Intent(activity, HTSService.class);
+                intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
+                intent.putExtra("id", rec.id);
+                activity.startService(intent);
+            }
         } else {
             addSeriesRecording();
         }
@@ -632,9 +638,36 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
      * values which was previously removed.
      */
     private void addSeriesRecording() {
-
-        Intent intent = new Intent(activity, HTSService.class);
+        Intent intent = getIntentData();
         intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
+        activity.startService(intent);
+
+        if (getDialog() != null) {
+            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
+            getDialog().dismiss();
+        }
+    }
+    
+    /**
+     * Update the series recording with the given values.
+     */
+    private void updateSeriesRecording() {
+        Intent intent = getIntentData();
+        intent.setAction(Constants.ACTION_UPDATE_SERIES_DVR_ENTRY);
+        intent.putExtra("id", rec.id);
+        activity.startService(intent);
+
+        if (getDialog() != null) {
+            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
+            getDialog().dismiss();
+        }
+    }
+
+    /**
+     * Returns an intent with the recording data 
+     */
+    private Intent getIntentData() {
+        Intent intent = new Intent(activity, HTSService.class);
         intent.putExtra("title", titleValue);
         intent.putExtra("name", nameValue);
         intent.putExtra("minDuration", minDurationValue * 60);
@@ -674,12 +707,6 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 && app.isUnlocked()) {
             intent.putExtra("configName", p.name);
         }
-
-        activity.startService(intent);
-
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
-        }
+        return intent;
     }
 }

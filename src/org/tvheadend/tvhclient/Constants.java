@@ -131,6 +131,7 @@ public class Constants {
     public static final String ACTION_CANCEL_DVR_ENTRY = "CANCEL_DVR_ENTRY";
     public static final String ACTION_DELETE_DVR_ENTRY = "DELETE_DVR_ENTRY";
     public static final String ACTION_ADD_TIMER_REC_ENTRY = "ADD_TIMER_REC_ENTRY";
+    public static final String ACTION_UPDATE_TIMER_REC_ENTRY = "UPDATE_TIMER_REC_ENTRY";
     public static final String ACTION_DELETE_TIMER_REC_ENTRY = "DELETE_TIMER_REC_ENTRY";
     public static final String ACTION_GET_DISC_SPACE = "GET_DISC_SPACE";
     public static final String ACTION_GET_DVR_CONFIG = "GET_DVR_CONFIG";
@@ -140,6 +141,7 @@ public class Constants {
     public static final String ACTION_GET_CHANNEL = "GET_CHANNEL";
     public static final String ACTION_GET_SYSTEM_TIME = "GET_SYSTEM_TIME";
     public static final String ACTION_ADD_SERIES_DVR_ENTRY = "ADD_SERIES_DVR_ENTRY";
+    public static final String ACTION_UPDATE_SERIES_DVR_ENTRY = "UPDATE_SERIES_DVR_ENTRY";
     public static final String ACTION_DELETE_SERIES_DVR_ENTRY = "DELETE_SERIES_DVR_ENTRY";
 
     // The default names for the playback and recording profiles
@@ -151,6 +153,8 @@ public class Constants {
     public static final int MIN_API_VERSION_PROFILES = 16;
     public static final int MIN_API_VERSION_TIMER_RECORDINGS = 18;
     public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
+    public static final int MIN_API_VERSION_UPDATE_TIMER_RECORDINGS = 24;
+    public static final int MIN_API_VERSION_UPDATE_SERIES_RECORDINGS = 24;
 
     // Minimum API versions to enable or disable certain fields in the HTSP API
     // methods. These fields shall only be visible and used if supported.

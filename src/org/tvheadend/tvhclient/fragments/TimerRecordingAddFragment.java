@@ -460,24 +460,30 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             return;
         }
 
-        // If the timer recording has been edited, remove it before adding it
-        // again with the updated values. This is required because the API does
-        // not provide an edit service call. When the confirmation that the
-        // recording was received, add the edited one. This is done in the
-        // onMessage method. 
+        // Update the timer recording if it has been edited, otherwise add a new one.
         if (rec != null && rec.id != null && rec.id.length() > 0) {
-            Intent intent = new Intent(activity, HTSService.class);
-            intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
-            intent.putExtra("id", rec.id);
-            activity.startService(intent);
-
-            // If no channel is defined then the server will not notify us about
-            // the deletion and thus not triggering the adding of the edited
-            // recording. In this case start the timer that will add a new
-            // recording after x seconds and reload all data from the server.
-            if (rec.channel == null) {
-                addHandler.removeCallbacks(addTask);
-                addHandler.postDelayed(addTask, 2000);
+ 
+            if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_UPDATE_TIMER_RECORDINGS) {
+                // If the API version supports it, use the native service call method
+                updateTimerRecording();
+            } else {
+                // Remove the recording before adding it again with the updated values. 
+                // This is required because the API does not provide an edit service call. 
+                // When the removal confirmation was received, add the edited recording. 
+                // This is done in the onMessage method. 
+                Intent intent = new Intent(activity, HTSService.class);
+                intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
+                intent.putExtra("id", rec.id);
+                activity.startService(intent);
+    
+                // If no channel is defined then the server will not notify us about
+                // the deletion and thus not triggering the adding of the edited
+                // recording. In this case start the timer that will add a new
+                // recording after x seconds and reload all data from the server.
+                if (rec.channel == null) {
+                    addHandler.removeCallbacks(addTask);
+                    addHandler.postDelayed(addTask, 2000);
+                }
             }
         } else {
             addTimerRecording();
@@ -545,9 +551,36 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
      * values which was previously removed.
      */
     private void addTimerRecording() {
-     
-        Intent intent = new Intent(activity, HTSService.class);
+        Intent intent = getIntentData();
         intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
+        activity.startService(intent);
+
+        if (getDialog() != null) {
+            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
+            getDialog().dismiss();
+        }
+    }
+    
+    /**
+     * Updates the timer recording with the given values.
+     */
+    private void updateTimerRecording() {
+        Intent intent = getIntentData();
+        intent.setAction(Constants.ACTION_UPDATE_TIMER_REC_ENTRY);
+        intent.putExtra("id", rec.id);
+        activity.startService(intent);
+
+        if (getDialog() != null) {
+            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
+            getDialog().dismiss();
+        }
+    }
+
+    /**
+     * Returns an intent with the recording data 
+     */
+    private Intent getIntentData() {
+        Intent intent = new Intent(activity, HTSService.class);
         intent.putExtra("title", titleValue);
         intent.putExtra("name", nameValue);
         intent.putExtra("start", startTimeValue);
@@ -574,12 +607,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 && app.isUnlocked()) {
             intent.putExtra("configName", p.name);
         }
-
-        activity.startService(intent);
-
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
-        }
+        return intent;
     }
 }
