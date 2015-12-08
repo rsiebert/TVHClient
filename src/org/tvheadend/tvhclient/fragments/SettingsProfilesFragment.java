@@ -359,7 +359,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
-                        if (recProfile.uuid.length() == 0) {
+                        if (recProfile.uuid == null || 
+                            (recProfile.uuid != null && recProfile.uuid.length() == 0)) {
                             for (Profiles p : app.getDvrConfigs()) {
                                 if (p.name.equals(Constants.REC_PROFILE_DEFAULT)) {
                                     recProfile.uuid = p.uuid;
@@ -388,7 +389,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
-                        if (progProfile.uuid.length() == 0) {
+                        if (progProfile.uuid == null ||
+                            (progProfile.uuid != null && progProfile.uuid.length() == 0)) {
                             for (Profiles p : app.getProfiles()) {
                                 if (p.name.equals(Constants.PROG_PROFILE_DEFAULT)) {
                                     progProfile.uuid = p.uuid;
