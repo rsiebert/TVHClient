@@ -165,4 +165,7 @@ public class Constants {
     public static final int MIN_API_VERSION_REC_FIELD_TITLE = 21;
     public static final int MIN_API_VERSION_REC_FIELD_SUBTITLE = 21;
     public static final int MIN_API_VERSION_REC_FIELD_DESCRIPTION = 21;
+
+    // Allow updating the channel in a recording
+    public static final int MIN_API_VERSION_REC_FIELD_UPDATE_CHANNEL = 22;
 }

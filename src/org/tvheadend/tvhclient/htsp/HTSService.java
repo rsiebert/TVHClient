@@ -1027,6 +1027,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void updateDvrEntry(final Intent intent) {
 
         final long id = intent.getLongExtra("id", 0);
+        final long channelId = intent.getLongExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 0);
         final long stop = intent.getLongExtra("stop", 0);
         final long retention = intent.getLongExtra("retention", 0);
@@ -1062,6 +1063,9 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
             if (description != null && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION) {
                 request.putField("description", description);
+            }
+            if (channelId != 0 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_UPDATE_CHANNEL) {
+                request.putField("channelId", channelId);
             }
         }
 

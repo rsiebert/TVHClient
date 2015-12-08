@@ -460,13 +460,14 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                     && app.isUnlocked()) {
                 intent.putExtra("configName", p.name);
             }
-            // The id must be passed on to the server, not the name. So go through
-            // all available channels and get the id for the selected channel name.
-            for (Channel c : app.getChannels()) {
-                if (c.name.equals(channelName.getText().toString())) {
-                    intent.putExtra("channelId", c.id);
-                    break;
-                }
+        }
+
+        // The id must be passed on to the server, not the name. So go through
+        // all available channels and get the id for the selected channel name.
+        for (Channel c : app.getChannels()) {
+            if (c.name.equals(channelName.getText().toString())) {
+                intent.putExtra("channelId", c.id);
+                break;
             }
         }
 
