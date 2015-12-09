@@ -16,7 +16,10 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -124,13 +127,22 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Recording rec = adapter.getSelectedItem();
         switch (item.getItemId()) {
         case R.id.menu_play:
             // Open a new activity that starts playing the selected recording
-            Recording rec = adapter.getSelectedItem();
             if (rec != null) {
                 Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
                 intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+                startActivity(intent);
+            }
+            return true;
+
+        case R.id.menu_download:
+            if (rec != null) {
+                Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
+                intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+                intent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
                 startActivity(intent);
             }
             return true;
@@ -264,6 +276,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
+        (menu.findItem(R.id.menu_download)).setVisible(false);
 
         // These are always visible if the recording exists
         (menu.findItem(R.id.menu_search_epg)).setVisible(rec != null);
@@ -307,9 +320,16 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_play:
-            Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
-            intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-            startActivity(intent);
+            Intent playIntent = new Intent(activity, ExternalPlaybackActivity.class);
+            playIntent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+            startActivity(playIntent);
+            return true;
+
+        case R.id.menu_download:
+            Intent dlIntent = new Intent(activity, ExternalPlaybackActivity.class);
+            dlIntent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+            dlIntent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
+            startActivity(dlIntent);
             return true;
 
         case R.id.menu_edit:
