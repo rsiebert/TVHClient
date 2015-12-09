@@ -1345,7 +1345,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // If a channel was selected in the program guide screen, start
             // playing the selected channel
             if (channel != null) {
-                Intent intent = new Intent(this, ExternalPlaybackActivity.class);
+                Intent intent = new Intent(this, ExternalActionActivity.class);
                 intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
                 startActivity(intent);
             }

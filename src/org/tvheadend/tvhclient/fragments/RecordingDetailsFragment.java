@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.fragments;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.ExternalPlaybackActivity;
+import org.tvheadend.tvhclient.ExternalActionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -222,7 +222,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             public void onClick(View v) {
                 // Open a new activity that starts playing the program
                 if (rec != null) {
-                    Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
+                    Intent intent = new Intent(activity, ExternalActionActivity.class);
                     intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
                     startActivity(intent);
                 }

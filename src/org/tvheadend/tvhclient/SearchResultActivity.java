@@ -334,7 +334,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         case R.id.menu_play:
             // Open a new activity that starts playing the program
             if (program != null && program.channel != null) {
-                Intent intent = new Intent(this, ExternalPlaybackActivity.class);
+                Intent intent = new Intent(this, ExternalActionActivity.class);
                 intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
                 startActivity(intent);
             }

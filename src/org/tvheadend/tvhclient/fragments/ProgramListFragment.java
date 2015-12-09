@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.ExternalPlaybackActivity;
+import org.tvheadend.tvhclient.ExternalActionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -258,7 +258,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         case R.id.menu_play:
             // Open a new activity that starts playing the program
             if (program != null && program.channel != null) {
-                Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
+                Intent intent = new Intent(activity, ExternalActionActivity.class);
                 intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
                 startActivity(intent);
             }
@@ -309,7 +309,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             // Open a new activity that starts playing the first program that is
             // currently transmitted over this channel 
             if (channel != null) {
-                Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
+                Intent intent = new Intent(activity, ExternalActionActivity.class);
                 intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
                 startActivity(intent);
             }

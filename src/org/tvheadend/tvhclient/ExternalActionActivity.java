@@ -20,9 +20,9 @@ import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-public class ExternalPlaybackActivity extends Activity implements HTSListener {
+public class ExternalActionActivity extends Activity implements HTSListener {
 
-    private final static String TAG = ExternalPlaybackActivity.class.getSimpleName();
+    private final static String TAG = ExternalActionActivity.class.getSimpleName();
 
     private Context context;
     private TVHClientApplication app;
@@ -47,7 +47,7 @@ public class ExternalPlaybackActivity extends Activity implements HTSListener {
         }
 
         // Start the service to get the url that shall be played
-        Intent intent = new Intent(ExternalPlaybackActivity.this, HTSService.class);
+        Intent intent = new Intent(ExternalActionActivity.this, HTSService.class);
         intent.setAction(Constants.ACTION_GET_TICKET);
         intent.putExtras(getIntent().getExtras());
         this.startService(intent);

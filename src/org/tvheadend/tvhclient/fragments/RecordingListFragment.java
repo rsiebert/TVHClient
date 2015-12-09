@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.fragments;
 import java.util.ArrayList;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.ExternalPlaybackActivity;
+import org.tvheadend.tvhclient.ExternalActionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -132,7 +132,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         case R.id.menu_play:
             // Open a new activity that starts playing the selected recording
             if (rec != null) {
-                Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
+                Intent intent = new Intent(activity, ExternalActionActivity.class);
                 intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
                 startActivity(intent);
             }
@@ -140,7 +140,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
         case R.id.menu_download:
             if (rec != null) {
-                Intent intent = new Intent(activity, ExternalPlaybackActivity.class);
+                Intent intent = new Intent(activity, ExternalActionActivity.class);
                 intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
                 intent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
                 startActivity(intent);
@@ -320,13 +320,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_play:
-            Intent playIntent = new Intent(activity, ExternalPlaybackActivity.class);
+            Intent playIntent = new Intent(activity, ExternalActionActivity.class);
             playIntent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
             startActivity(playIntent);
             return true;
 
         case R.id.menu_download:
-            Intent dlIntent = new Intent(activity, ExternalPlaybackActivity.class);
+            Intent dlIntent = new Intent(activity, ExternalActionActivity.class);
             dlIntent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
             dlIntent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
             startActivity(dlIntent);
