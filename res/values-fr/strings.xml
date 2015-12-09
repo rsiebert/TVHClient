@@ -7,6 +7,7 @@
     <string name="refresh">Rafraichir</string>
     <string name="tags">Etiquettes</string>
     <string name="play">Lancer</string>
+    <string name="download">Télécharger</string>
     <string name="search">Recherche</string>
     <string name="record_once">Enregistrer</string>
     <string name="record_series">Enregistrement auto(Autorec)</string>

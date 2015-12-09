@@ -6,6 +6,7 @@
     <string name="refresh">Ververs</string>
     <string name="tags">Tags</string>
     <string name="play">Afspelen</string>
+    <string name="download">Downloaden</string>
     <string name="search">Zoek</string>
     <string name="record_once">Opnemen</string>
     <string name="record_cancel">Stop opname</string>

@@ -6,6 +6,7 @@
     <string name="refresh">Aggiorna</string>
     <string name="tags">Etichette</string>
     <string name="play">Riproduci</string>
+    <string name="download">Scaricare</string>
     <string name="search">Ricerca</string>
     <string name="record_once">Registra</string>
     <string name="record_series">Registra serie (Autorec)</string>
