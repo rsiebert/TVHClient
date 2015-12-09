@@ -8,6 +8,11 @@
         android:title="@string/play"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/menu_download"
+        android:icon="?attr/ic_menu_download"
+        android:title="@string/download"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/menu_edit"
         android:icon="?attr/ic_menu_edit"
         android:title="@string/edit"
