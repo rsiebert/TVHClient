@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.tvheadend.tvhclient"
-    android:versionCode="63"
-    android:versionName="1.8.4" >
+    android:versionCode="64"
+    android:versionName="1.8.5" >
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="21" />
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="23" />
     <application 
         android:allowBackup="true"
         android:name="org.tvheadend.tvhclient.TVHClientApplication" 
@@ -50,7 +50,7 @@
         <activity android:name="org.tvheadend.tvhclient.UnlockerActivity"/>
         <activity android:name="org.tvheadend.tvhclient.InfoActivity"/>
         <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
-        <activity android:name="org.tvheadend.tvhclient.ExternalPlaybackActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="org.tvheadend.tvhclient.ExternalActionActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name="org.tvheadend.tvhclient.htsp.HTSService" android:enabled="true"/>
         <provider 
             android:name="org.tvheadend.tvhclient.SuggestionProvider" 
