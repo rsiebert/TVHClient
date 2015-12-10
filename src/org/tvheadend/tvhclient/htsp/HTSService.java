@@ -392,6 +392,14 @@ public class HTSService extends Service implements HTSConnectionListener {
             rec.timerecId = msg.getString("timerecId");
         }
 
+        if (msg.containsField("episode")) {
+            rec.episode = msg.getString("episode");
+        }
+
+        if (msg.containsField("episode")) {
+            rec.comment = msg.getString("comment");
+        }
+
         if (rec.channel != null && rec.channel.epg != null) {
             for (Program p : rec.channel.epg) {
                 if (p != null 
@@ -440,6 +448,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         // only on version 17 and higher
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
             rec.timerecId = msg.getString("timerecId");
+        }
+
+        if (msg.containsField("episode")) {
+            rec.episode = msg.getString("episode");
+        }
+
+        if (msg.containsField("episode")) {
+            rec.comment = msg.getString("comment");
         }
 
         app.updateRecording(rec);

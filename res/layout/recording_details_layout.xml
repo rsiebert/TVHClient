@@ -212,6 +212,38 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
                     android:text="@string/channel" />
+                
+                <TextView
+                    android:id="@+id/episode_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/episode" />
+
+                <TextView
+                    android:id="@+id/episode"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="@string/episode" />
+                
+                <TextView
+                    android:id="@+id/comment_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/comment" />
+
+                <TextView
+                    android:id="@+id/comment"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="@string/comment" />
             </LinearLayout>
         </ScrollView>
 

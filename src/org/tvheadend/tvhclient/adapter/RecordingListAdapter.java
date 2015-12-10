@@ -68,6 +68,8 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         public TextView summary;
         public TextView description;
         public TextView failed_reason;
+        public TextView episode;
+        public TextView comment;
         public ImageView dual_pane_list_item_selection;
     }
     
@@ -91,6 +93,8 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.duration = (TextView) view.findViewById(R.id.duration);
             holder.summary = (TextView) view.findViewById(R.id.summary);
             holder.description = (TextView) view.findViewById(R.id.description);
+            holder.episode = (TextView) view.findViewById(R.id.episode);
+            holder.comment = (TextView) view.findViewById(R.id.comment);
             holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
@@ -135,6 +139,8 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDuration(holder.duration, rec.start, rec.stop);
             Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
+            Utils.setDescription(null, holder.episode, rec.episode);
+            Utils.setDescription(null, holder.comment, rec.comment);
             Utils.setFailedReason(holder.failed_reason, rec);
             
             // Show only the recording icon
