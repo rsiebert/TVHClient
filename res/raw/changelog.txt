@@ -1,3 +1,11 @@
+$ 1.8.5
+  % VERSION 1.8.5
+  _ 10.12.2015
+    * Allow updating the channel of a recording (requires at least server API 22)
+    * Use the native update timer and series recording methods (requires at least server API 24)
+    * Added menu item to download a recording (Only available in the unlocked version)
+    * Show the episode, comment, file size, stream and data error fields for a recording (if available)
+    * Small bug fixes
 $ 1.8.4
   % VERSION 1.8.4
   _ 31.08.2015
