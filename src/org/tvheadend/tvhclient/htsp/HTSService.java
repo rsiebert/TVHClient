@@ -392,13 +392,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             rec.timerecId = msg.getString("timerecId");
         }
 
-        if (msg.containsField("episode")) {
-            rec.episode = msg.getString("episode");
-        }
-
-        if (msg.containsField("episode")) {
-            rec.comment = msg.getString("comment");
-        }
+        rec.episode = msg.getString("episode", null);
+        rec.comment = msg.getString("comment", null);
+        rec.subscriptionError = msg.getString("subscriptionError", null);
+        rec.streamErrors = msg.getLong("streamErrors", 0);
+        rec.dataErrors = msg.getLong("dataErrors", 0);
+        rec.dataSize = msg.getLong("dataSize", 0);
 
         if (rec.channel != null && rec.channel.epg != null) {
             for (Program p : rec.channel.epg) {
@@ -450,13 +449,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             rec.timerecId = msg.getString("timerecId");
         }
 
-        if (msg.containsField("episode")) {
-            rec.episode = msg.getString("episode");
-        }
-
-        if (msg.containsField("episode")) {
-            rec.comment = msg.getString("comment");
-        }
+        rec.episode = msg.getString("episode", null);
+        rec.comment = msg.getString("comment", null);
+        rec.subscriptionError = msg.getString("subscriptionError", null);
+        rec.streamErrors = msg.getLong("streamErrors", 0);
+        rec.dataErrors = msg.getLong("dataErrors", 0);
+        rec.dataSize = msg.getLong("dataSize", 0);
 
         app.updateRecording(rec);
     }

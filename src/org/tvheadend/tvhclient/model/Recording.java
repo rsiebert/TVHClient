@@ -27,6 +27,10 @@ public class Recording implements Comparable<Recording> {
     public String comment;
     public String episode;
     public List<DvrCutpoint> dvrCutPoints = new ArrayList<DvrCutpoint>();
+    public String subscriptionError;
+    public long streamErrors;
+    public long dataErrors;
+    public long dataSize;
 
     @Override
     public int compareTo(Recording that) {

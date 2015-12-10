@@ -308,6 +308,11 @@
     <string name="error_start_stop_time">The stop time must be after the start time!</string>
     <string name="error_no_channel">Please select a channel!</string>
 
+    <string name="subscription_error">Subscription error: %1$s</string>
+    <string name="stream_errors">Stream errors: %1$d</string>
+    <string name="data_errors">Data errors: %1$d</string>
+    <string name="data_size">File size: %1$d %2$s</string>
+
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>
     <string name="loading_channel">Loading channel %s</string>

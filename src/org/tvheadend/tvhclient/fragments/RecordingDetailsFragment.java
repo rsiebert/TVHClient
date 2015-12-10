@@ -61,6 +61,15 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private View toolbarShadow;
     private TVHClientApplication app;
 
+    private TextView episode;
+    private TextView episodeLabel;
+    private TextView comment;
+    private TextView commentLabel;
+    private TextView subscription_error;
+    private TextView stream_errors;
+    private TextView data_errors;
+    private TextView data_size;
+
     public static RecordingDetailsFragment newInstance(Bundle args) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
         f.setArguments(args);
@@ -122,7 +131,16 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         is_timer_recording = (TextView) v.findViewById(R.id.is_timer_recording);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbarShadow = (View) v.findViewById(R.id.toolbar_shadow);
-        
+
+        episode = (TextView) v.findViewById(R.id.episode);
+        episodeLabel = (TextView) v.findViewById(R.id.episode_label);
+        comment = (TextView) v.findViewById(R.id.comment);
+        commentLabel = (TextView) v.findViewById(R.id.comment_label);
+        subscription_error = (TextView) v.findViewById(R.id.subscription_error);
+        stream_errors = (TextView) v.findViewById(R.id.stream_errors);
+        data_errors = (TextView) v.findViewById(R.id.data_errors);
+        data_size = (TextView) v.findViewById(R.id.data_size);
+
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
         playRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_play);
@@ -170,12 +188,31 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
         Utils.setDescription(subtitleLabel, subtitle, rec.subtitle);
+        Utils.setDescription(episodeLabel, episode, rec.episode);
+        Utils.setDescription(commentLabel, comment, rec.comment);
         Utils.setFailedReason(failed_reason, rec);
 
         // Show the information if the recording belongs to a series recording
         // only when no dual pane is active (the controls shall be shown)
         is_series_recording.setVisibility((rec.autorecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
         is_timer_recording.setVisibility((rec.timerecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
+
+        if (rec.subscriptionError != null && rec.subscriptionError.length() > 0) {
+            subscription_error.setVisibility(View.VISIBLE);
+            subscription_error.setText(getResources().getString(
+                    R.string.subscription_error, rec.subscriptionError));
+        } else {
+            subscription_error.setVisibility(View.GONE);
+        }
+
+        stream_errors.setText(getResources().getString(R.string.stream_errors, rec.streamErrors));
+        data_errors.setText(getResources().getString(R.string.data_errors, rec.dataErrors));
+
+        if (rec.dataSize > 1048576) {
+            data_size.setText(getResources().getString(R.string.data_size, rec.dataSize / 1048576, "MB"));
+        } else {
+            data_size.setText(getResources().getString(R.string.data_size, rec.dataSize / 1024, "KB"));
+        }
     }
 
     /**

@@ -228,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
                     android:text="@string/episode" />
-                
+
                 <TextView
                     android:id="@+id/comment_label"
                     style="?attr/TitleFont"
@@ -244,6 +244,46 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
                     android:text="@string/comment" />
+
+                <TextView
+                    android:id="@+id/status_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/status" />
+
+                <TextView
+                    android:id="@+id/data_size"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="@string/data_size" />
+
+                <TextView
+                    android:id="@+id/subscription_error"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="@string/subscription_error" />
+
+                <TextView
+                    android:id="@+id/stream_errors"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="@string/stream_errors" />
+
+                <TextView
+                    android:id="@+id/data_errors"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="@string/data_errors" />
             </LinearLayout>
         </ScrollView>
 
