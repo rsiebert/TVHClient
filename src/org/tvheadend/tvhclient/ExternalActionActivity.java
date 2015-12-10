@@ -101,28 +101,29 @@ public class ExternalActionActivity extends Activity implements HTSListener {
         // the stream from the server
         String url = "http://" + conn.address + ":" + conn.streaming_port + path + "?ticket=" + ticket;
 
-        // If a profile was given, use it instead of the old values
-        if (profile.enabled
-                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                && app.isUnlocked()) {
-            url += "&profile=" + profile.name;
-        } else {
-            url += "&mux=" + profile.container;
-            if (profile.transcode) {
-                url += "&transcode=1";
-                url += "&resolution=" + profile.resolution;
-                url += "&acodec=" + profile.audio_codec;
-                url += "&vcodec=" + profile.video_codec;
-                url += "&scodec=" + profile.subtitle_codec;
-            }
-        }
-
         switch (action) {
         case Constants.EXTERNAL_ACTION_PLAY:
+            Log.d(TAG, "Playing url " + url);
+
+            // If a profile was given, use it instead of the old values
+            if (profile.enabled
+                    && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                    && app.isUnlocked()) {
+                url += "&profile=" + profile.name;
+            } else {
+                url += "&mux=" + profile.container;
+                if (profile.transcode) {
+                    url += "&transcode=1";
+                    url += "&resolution=" + profile.resolution;
+                    url += "&acodec=" + profile.audio_codec;
+                    url += "&vcodec=" + profile.video_codec;
+                    url += "&scodec=" + profile.subtitle_codec;
+                }
+            }
+
             final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
             playbackIntent.setDataAndType(Uri.parse(url), mime);
-            Log.d(TAG, "Playing url " + url);
-    
+
             // Start playing the video now in the UI thread
             this.runOnUiThread(new Runnable() {
                 public void run() {
@@ -164,9 +165,11 @@ public class ExternalActionActivity extends Activity implements HTSListener {
             break;
 
         case Constants.EXTERNAL_ACTION_DOWNLOAD:
+            Log.d(TAG, "Downloading url " + url);
+
             dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
-            Request request = new Request(Uri.parse(url));
-            //enqueue = dm.enqueue(request);
+            dm.enqueue(new Request(Uri.parse(url)));
+            finish();
             break;
         }
     }
