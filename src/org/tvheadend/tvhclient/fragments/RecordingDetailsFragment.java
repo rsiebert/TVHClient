@@ -56,6 +56,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private ButtonFlat editRecordingButton;
     private ButtonFlat cancelRecordingButton;
     private ButtonFlat removeRecordingButton;
+    private ButtonFlat downloadRecordingButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -149,6 +150,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         editRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_edit);
         cancelRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_record_cancel);
         removeRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
+        downloadRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_download);
 
         int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
                 .getColor(R.color.button_text_color_light) : getResources()
@@ -157,6 +159,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         editRecordingButton.setBackgroundColor(bgColor);
         cancelRecordingButton.setBackgroundColor(bgColor);
         removeRecordingButton.setBackgroundColor(bgColor);
+        downloadRecordingButton.setBackgroundColor(bgColor);
         return v;
     }
 
@@ -237,11 +240,15 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         editRecordingButton.setVisibility(View.GONE);
         cancelRecordingButton.setVisibility(View.GONE);
         removeRecordingButton.setVisibility(View.GONE);
+        downloadRecordingButton.setVisibility(View.GONE);
 
         if (rec.error == null && rec.state.equals("completed")) {
             // The recording is available, it can be played and removed
             removeRecordingButton.setVisibility(View.VISIBLE);
             playRecordingButton.setVisibility(View.VISIBLE);
+            if (app.isUnlocked()) {
+                downloadRecordingButton.setVisibility(View.VISIBLE);
+            }
 
         } else if (rec.isRecording()) {
             // The recording is recording it can be played or cancelled
@@ -306,6 +313,18 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             @Override
             public void onClick(View v) {
                 Utils.confirmRemoveRecording(activity, rec);
+                if (getDialog() != null) {
+                    getDialog().dismiss();
+                }
+            }
+        });
+        downloadRecordingButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, ExternalActionActivity.class);
+                intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+                intent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
+                startActivity(intent);
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

@@ -75,6 +75,14 @@
                         android:visibility="gone" />
                 </LinearLayout>
 
+                <com.gc.materialdesign.views.ButtonFlat
+                        android:id="@+id/menu_download"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:padding="8dp"
+                        android:text="@string/download"
+                        android:visibility="gone" />
+
                 <TextView
                     android:id="@+id/is_series_recording"
                     style="?attr/SubtitleFont"
