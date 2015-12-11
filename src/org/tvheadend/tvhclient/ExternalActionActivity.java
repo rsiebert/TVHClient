@@ -99,7 +99,9 @@ public class ExternalActionActivity extends Activity implements HTSListener {
 
         // Create the URL for the external media player that is required to get
         // the stream from the server
-        String url = "http://" + conn.address + ":" + conn.streaming_port + path + "?ticket=" + ticket;
+        String url = "http://" + 
+                conn.username + ":" + conn.password + "@" + 
+                conn.address + ":" + conn.streaming_port + path + "?ticket=" + ticket;
 
         switch (action) {
         case Constants.EXTERNAL_ACTION_PLAY:
