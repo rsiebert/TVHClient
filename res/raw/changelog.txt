@@ -5,7 +5,8 @@ $ 1.8.5
     * Use the native update timer and series recording methods (requires at least server API 24)
     * Added menu item to download a recording (Only available in the unlocked version)
     * Show the episode, comment, file size, stream and data error fields for a recording (if available)
-    * Small bug fixes
+    * Added application version to the information screen
+    * Fixed wrong genre colors (content type) for programs
 $ 1.8.4
   % VERSION 1.8.4
   _ 31.08.2015
