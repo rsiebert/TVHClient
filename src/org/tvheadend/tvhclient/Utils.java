@@ -844,45 +844,45 @@ public class Utils {
      * @return
      */
     public static int getGenreColor(final Context context, final int contentType, final int offset) {
-        if (contentType == 0) {
+        if (contentType < 0) {
             // Return a fully transparent color in case no genre is available
             return context.getResources().getColor(android.R.color.transparent);
         } else {
             // Get the genre color from the content type
             int color = R.color.EPG_OTHER;
-            int type = (contentType / 16) - 1;
+            int type = (contentType / 16);
             switch (type) {
-            case 1:
+            case 0:
                 color = R.color.EPG_MOVIES;
                 break;
-            case 2:
+            case 1:
                 color = R.color.EPG_NEWS;
                 break;
-            case 3:
+            case 2:
                 color = R.color.EPG_SHOWS;
                 break;
-            case 4:
+            case 3:
                 color = R.color.EPG_SPORTS;
                 break;
-            case 5:
+            case 4:
                 color = R.color.EPG_CHILD;
                 break;
-            case 6:
+            case 5:
                 color = R.color.EPG_MUSIC;
                 break;
-            case 7:
+            case 6:
                 color = R.color.EPG_ARTS;
                 break;
-            case 8:
+            case 7:
                 color = R.color.EPG_SOCIAL;
                 break;
-            case 9:
+            case 8:
                 color = R.color.EPG_SCIENCE;
                 break;
-            case 10:
+            case 9:
                 color = R.color.EPG_HOBBY;
                 break;
-            case 11:
+            case 10:
                 color = R.color.EPG_SPECIAL;
                 break;
             }
