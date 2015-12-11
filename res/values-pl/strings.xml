@@ -6,7 +6,7 @@
     <string name="refresh">Odśwież</string>
     <string name="tags">Tagi</string>
     <string name="play">Odtwórz</string>
-    <string name="download">Pobieranie</string>
+    <string name="download">Pobierz</string>
     <string name="search">Szukaj</string>
     <string name="record_once">Nagraj</string>
     <string name="record_series">Nagrywanie serii(Autorec)</string>
@@ -308,6 +308,11 @@
     <string name="error_start_stop_time">Czas zatrzymania musi być po czasie startu!</string>
     <string name="error_no_channel">Proszę wybrać kanał!</string>
 
+    <string name="subscription_error">Błędy subskrypcji: %1$s</string>
+    <string name="stream_errors">Błędy strumienia: %1$d</string>
+    <string name="data_errors">Błędy danych: %1$d</string>
+    <string name="data_size">Rozmiar pliku: %1$d %2$s</string>
+    
     <string name="nothing">Brak</string>
     <string name="loading">Wczytywanie&#8230;</string>
     <string name="loading_channel">Wczytywanie kanału %s</string>
