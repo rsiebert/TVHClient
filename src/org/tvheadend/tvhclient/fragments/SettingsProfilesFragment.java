@@ -44,15 +44,13 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, OnPreferenceChangeListener, BackPressedInterface {
 
@@ -321,10 +319,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final String connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, "");
         if (!connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            SnackbarManager.show(
-                    Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(R.string.err_connect), activity);
+            Snackbar.make(getView(), R.string.err_connect, Snackbar.LENGTH_LONG).show();
             return;
         }
 

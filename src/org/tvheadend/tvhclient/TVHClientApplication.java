@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -24,6 +25,7 @@ import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.TimerRecording;
+
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
@@ -34,13 +36,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.util.SparseArray;
+
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
 
@@ -1042,13 +1043,11 @@ public class TVHClientApplication extends Application implements BillingProcesso
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
         if (bp.isValid(details)) {
-            SnackbarManager.show(Snackbar.with(getApplicationContext())
-                    .type(SnackbarType.MULTI_LINE)
-                    .text(getString(R.string.unlocker_purchase_successful)));
+            Snackbar.make(null, getString(R.string.unlocker_purchase_successful), 
+                    Snackbar.LENGTH_LONG).show();
         } else {
-            SnackbarManager.show(Snackbar.with(getApplicationContext())
-                    .type(SnackbarType.MULTI_LINE)
-                    .text(getString(R.string.unlocker_purchase_not_successful)));
+            Snackbar.make(null, getString(R.string.unlocker_purchase_not_successful), 
+                    Snackbar.LENGTH_LONG).show();
         }
     }
 

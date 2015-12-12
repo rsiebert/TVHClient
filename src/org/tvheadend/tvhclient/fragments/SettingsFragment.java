@@ -31,15 +31,13 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 @SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
@@ -137,21 +135,17 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (dbh.getConnections().isEmpty()) {
-                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(R.string.no_connection_available_advice), activity);
+                    Snackbar.make(getView(), R.string.no_connection_available_advice, 
+                            Snackbar.LENGTH_SHORT).show();
                 } else if (dbh.getSelectedConnection() == null) {
-                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(R.string.no_connection_active_advice), activity);
+                    Snackbar.make(getView(), R.string.no_connection_active_advice, 
+                            Snackbar.LENGTH_SHORT).show();
                 } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
-                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(R.string.feature_not_supported_by_server), activity);
+                    Snackbar.make(getView(), R.string.feature_not_supported_by_server, 
+                            Snackbar.LENGTH_SHORT).show();
                 } else if (!app.isUnlocked()) {
-                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                        .type(SnackbarType.MULTI_LINE)
-                        .text(R.string.feature_not_available_in_free_version), activity);
+                    Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
+                            Snackbar.LENGTH_SHORT).show();
                 } else {
                     if (settingsInterface != null) {
                         settingsInterface.showProfiles();
@@ -167,13 +161,11 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (dbh.getConnections().isEmpty()) {
-                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(getString(R.string.no_connection_available_advice)), activity);
+                    Snackbar.make(getView(), getString(R.string.no_connection_available_advice), 
+                            Snackbar.LENGTH_SHORT).show();
                 } else if (dbh.getSelectedConnection() == null) {
-                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(getString(R.string.no_connection_active_advice)), activity);
+                    Snackbar.make(getView(), getString(R.string.no_connection_active_advice), 
+                            Snackbar.LENGTH_SHORT).show();
                 } else {
                     if (settingsInterface != null) {
                         settingsInterface.showTranscodingSettings();
@@ -198,9 +190,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                             public void onPositive(MaterialDialog dialog) {
                                 SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                                 suggestions.clearHistory();
-                                SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                                        .type(SnackbarType.MULTI_LINE)
-                                        .text(getString(R.string.clear_search_history_done)), activity);
+                                Snackbar.make(getView(), getString(R.string.clear_search_history_done), 
+                                        Snackbar.LENGTH_SHORT).show();
                             }
                             @Override
                             public void onNegative(MaterialDialog dialog) {
@@ -233,9 +224,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                         }
                                     }
                                 }
-                                SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                                        .type(SnackbarType.MULTI_LINE)
-                                        .text(getString(R.string.clear_icon_cache_done)), activity);
+                                Snackbar.make(getView(), getString(R.string.clear_icon_cache_done), 
+                                        Snackbar.LENGTH_SHORT).show();
                             }
                             @Override
                             public void onNegative(MaterialDialog dialog) {
@@ -252,9 +242,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (app.isUnlocked()) {
-                    SnackbarManager.show(Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(getString(R.string.unlocker_already_purchased)), activity);
+                    Snackbar.make(getView(), getString(R.string.unlocker_already_purchased), 
+                            Snackbar.LENGTH_SHORT).show();
                 } else {
                     Intent unlockerIntent = new Intent(activity, UnlockerActivity.class);
                     startActivity(unlockerIntent);

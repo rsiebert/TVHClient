@@ -9,15 +9,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
-
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 @SuppressWarnings("deprecation")
 public class UnlockerActivity extends ActionBarActivity {
@@ -116,9 +113,8 @@ public class UnlockerActivity extends ActionBarActivity {
             // here because this activity is not information about any changes
             // via the billing event interface. 
             if (app.getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
-                SnackbarManager.show(Snackbar.with(getApplicationContext())
-                        .type(SnackbarType.MULTI_LINE)
-                        .text(R.string.unlocker_already_purchased), this);
+                Snackbar.make(null, getString(R.string.unlocker_already_purchased), 
+                        Snackbar.LENGTH_SHORT).show();
                 finish();
             }
             return true;

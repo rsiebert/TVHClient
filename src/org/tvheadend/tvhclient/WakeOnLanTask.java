@@ -10,11 +10,8 @@ import org.tvheadend.tvhclient.model.Connection;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
-
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
@@ -127,32 +124,18 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if (result == WOL_SEND) {
-            SnackbarManager.show(
-                    Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(activity.getString(R.string.wol_send,
-                                    conn.address)), activity);
+            Snackbar.make(null, activity.getString(R.string.wol_send,
+                    conn.address), Snackbar.LENGTH_LONG).show();
         } else if (result == WOL_SEND_BROADCAST) {
-            SnackbarManager
-                    .show(Snackbar
-                            .with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(activity.getString(
-                                    R.string.wol_send_broadcast, conn.address)),
-                            activity);
+            Snackbar.make(null, activity.getString(R.string.wol_send_broadcast, 
+                    conn.address), Snackbar.LENGTH_LONG).show();
         } else if (result == WOL_INVALID_MAC) {
-            SnackbarManager.show(
-                    Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(R.string.wol_address_invalid),
-                    activity);
+            Snackbar.make(null, activity.getString(R.string.wol_address_invalid), 
+                    Snackbar.LENGTH_LONG).show();
         } else {
             final String msg = exception.getLocalizedMessage();
-            SnackbarManager.show(
-                    Snackbar.with(activity.getApplicationContext())
-                            .type(SnackbarType.MULTI_LINE)
-                            .text(activity.getString(R.string.wol_error,
-                                    conn.address, msg)), activity);
+            Snackbar.make(null, activity.getString(R.string.wol_error, 
+                    conn.address, msg), Snackbar.LENGTH_LONG).show();
         }
     }
 }

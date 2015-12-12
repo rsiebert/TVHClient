@@ -46,6 +46,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -71,9 +73,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
@@ -82,6 +81,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     private ListView drawerList;
     private DrawerLayout drawerLayout;
+    private CoordinatorLayout coordinatorLayout;
     private DrawerMenuAdapter drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
 
@@ -181,6 +181,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
+
+        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinatorLayout);
 
         // Get the widgets so we can use them later and do not need to inflate again
         actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
@@ -1130,9 +1132,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     private void showMessage(final String msg) {
-        SnackbarManager.show(Snackbar.with(this)
-                .type(SnackbarType.MULTI_LINE)
-                .text(msg));
+        Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_SHORT).show();
     }
 
     /**
