@@ -219,7 +219,9 @@ public class StatusFragment extends Fragment implements HTSListener {
             activity.runOnUiThread(new Runnable() {
                 @SuppressWarnings("unchecked")
                 public void run() {
-                	showDiscSpace((Map<String, String>) obj);
+                    if (isAdded()) {
+                        showDiscSpace((Map<String, String>) obj);
+                    }
                 }
             });
         }
@@ -297,9 +299,6 @@ public class StatusFragment extends Fragment implements HTSListener {
      * @param obj
      */
     private void showDiscSpace(final Map<String, String> list) {
-        if (isDetached()) {
-            return;
-        }
         try {
             // Get the disc space values and convert them to megabytes
             long free = (Long.parseLong(list.get("freediskspace")) / 1000000);
