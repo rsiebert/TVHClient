@@ -144,9 +144,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 if (scrollState == SCROLL_STATE_IDLE && allowLoading) {
                     app.log(TAG, "Scrolling stopped");
                     allowLoading = false;
-                    if (fragmentStatusInterface != null) {
-                        fragmentStatusInterface.moreDataRequired(channel, TAG);
-                    }
+                    Utils.loadMorePrograms(activity, channel);
                 }
             }
         });
