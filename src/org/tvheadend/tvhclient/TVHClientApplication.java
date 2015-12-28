@@ -236,7 +236,16 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public void addChannelTag(ChannelTag tag) {
         synchronized (tags) {
-            tags.add(tag);
+            boolean channelTagExists = false;
+            for (ChannelTag ct : getChannelTags()) {
+                if (ct.id == tag.id) {
+                    channelTagExists = true;
+                    break;
+                }
+            }
+            if (!channelTagExists) {
+                tags.add(tag);
+            }
         }
         if (!loading) {
             broadcastMessage(Constants.ACTION_TAG_ADD, tag);
@@ -311,7 +320,16 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public void addChannel(Channel channel) {
         synchronized (channels) {
-            channels.add(channel);
+            boolean channelExists = false;
+            for (Channel ch : getChannels()) {
+                if (ch.id == channel.id) {
+                    channelExists = true;
+                    break;
+                }
+            }
+            if (!channelExists) {
+                channels.add(channel);
+            }
         }
         if (!loading) {
             broadcastMessage(Constants.ACTION_CHANNEL_ADD, channel);
