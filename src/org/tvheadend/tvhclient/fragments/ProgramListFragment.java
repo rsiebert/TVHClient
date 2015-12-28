@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -166,9 +168,30 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // This is required because addAll is only available in API 11 and higher
         if (channel != null) {
             synchronized (channel.epg) {
-                for (Iterator<Program> iterator = channel.epg.iterator(); iterator.hasNext();) {
-                    Program p = iterator.next();
-                    adapter.add(p);
+
+                int availableProgramCount = channel.epg.size();
+                boolean currentProgramFound = false;
+                final long currentTime = new Date().getTime();
+                Iterator<Program> it = channel.epg.iterator();
+
+                // Search through the EPG and find the first program that is currently running.
+                // Also count how many programs are available without counting the ones in the past.
+                while (it.hasNext()) {
+                    Program p = it.next();
+                    if (p.start.getTime() >= currentTime || 
+                        p.stop.getTime() >= currentTime) {
+                        currentProgramFound = true;
+                        adapter.add(p);
+                    } else {
+                        availableProgramCount--;
+                    }
+                }
+
+                if (!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) {
+                    Log.d(TAG, "Loading more programs, current program found "
+                            + currentProgramFound + ", program count "
+                            + availableProgramCount);
+                    Utils.loadMorePrograms(activity, channel);
                 }
             }
         }

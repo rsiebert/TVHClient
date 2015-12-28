@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.adapter;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -15,6 +16,7 @@ import org.tvheadend.tvhclient.model.Program;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -191,15 +193,33 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             }
 
             synchronized(c.epg) {
-                // Get the iterator so we can check the channel status 
-                Iterator<Program> it = c.epg.iterator();
-                
-                // Get the program that is currently running
-                // and set all the available values
+
                 Program p = null;
-                if (it.hasNext()) {
+                int availableProgramCount = c.epg.size();
+                boolean currentProgramFound = false;
+                final long currentTime = new Date().getTime();
+                Iterator<Program> it = c.epg.iterator();
+
+                // Search through the EPG and find the first program that is currently running. 
+                // Also count how many programs are available without counting the ones in the past.
+                while (it.hasNext()) {
                     p = it.next();
+                    if (p.start.getTime() >= currentTime || 
+                        p.stop.getTime() >= currentTime) {
+                        currentProgramFound = true;
+                        break;
+                    } else {
+                        availableProgramCount--;
+                    }
                 }
+
+                if (!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) {
+                    Log.d(TAG, "Loading more programs, current program found "
+                            + currentProgramFound + ", program count "
+                            + availableProgramCount);
+                    Utils.loadMorePrograms(context, c);
+                }
+
                 Program np = null;
                 if (it.hasNext()) {
                     np = it.next();

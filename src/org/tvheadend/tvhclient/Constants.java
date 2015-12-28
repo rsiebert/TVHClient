@@ -12,6 +12,9 @@ public class Constants {
     // Amount of programs of a channel that shall be loaded from the server
     public static final int PREF_PROGRAMS_TO_LOAD = 15;
 
+    // Amount of programs that must be visible before loading more programs
+    public static final int PROGRAMS_VISIBLE_BEFORE_LOADING_MORE = 15;
+
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";
     public static final String BUNDLE_RECORDING_TYPE = "recordingType";
