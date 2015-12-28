@@ -82,6 +82,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         if (action.equals(Constants.ACTION_CONNECT)) {
             boolean force = intent.getBooleanExtra("force", false);
+            boolean clear = intent.getBooleanExtra("clear", false);
             final String hostname = intent.getStringExtra("hostname");
             final int port = intent.getIntExtra("port", 9982);
             final String username = intent.getStringExtra("username");
@@ -91,7 +92,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                 connection.close();
             }
             if (connection == null || !connection.isConnected()) {
-                app.clearAll();
+                if (clear) {
+                    app.clearAll();
+                }
                 app.setLoading(true);
                 connection = new HTSConnection(app, this, packInfo.packageName, packInfo.versionName);
 
