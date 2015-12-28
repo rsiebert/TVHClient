@@ -30,6 +30,11 @@
             android:key="showNextProgramPref"
             android:summary="@string/pref_show_next_program_sum"
             android:title="@string/pref_show_next_program" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="playChannelWhenSelectedPref"
+            android:summary="@string/pref_play_channel_when_selected_sum"
+            android:title="@string/pref_play_channel_when_selected" />
 
         <ListPreference
             android:name="@string/pref_language"

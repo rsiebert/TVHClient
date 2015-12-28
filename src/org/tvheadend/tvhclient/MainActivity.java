@@ -1329,14 +1329,25 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // list shall be shown on the right side of the channel list,
             // otherwise replace the channel list.
             if (channel != null) {
-                Bundle bundle = new Bundle();
-                bundle.putLong(Constants.BUNDLE_CHANNEL_ID, channel.id);
-                bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+                // Play the channel when the channel icon has 
+                // been clicked, otherwise show the channel details
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                if (prefs.getBoolean("playChannelWhenSelectedPref", true) && 
+                        tag.equals(Constants.TAG_CHANNEL_ICON)) {
+                    Intent intent = new Intent(this, ExternalActionActivity.class);
+                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
+                    startActivity(intent);
 
-                if (isDualPane) {
-                    showFragment(ProgramListFragment.class.getName(), R.id.right_fragment, bundle);
                 } else {
-                    showFragment(ProgramListFragment.class.getName(), R.id.main_fragment, bundle, true);
+                    Bundle bundle = new Bundle();
+                    bundle.putLong(Constants.BUNDLE_CHANNEL_ID, channel.id);
+                    bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+    
+                    if (isDualPane) {
+                        showFragment(ProgramListFragment.class.getName(), R.id.right_fragment, bundle);
+                    } else {
+                        showFragment(ProgramListFragment.class.getName(), R.id.main_fragment, bundle, true);
+                    }
                 }
             }
             break;

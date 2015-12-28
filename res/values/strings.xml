@@ -169,6 +169,8 @@
     <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed. This requires that the service is running in the background.</string>
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
+    <string name="pref_play_channel_when_selected">Play channel upon selection</string>
+    <string name="pref_play_channel_when_selected_sum">Start playing the current program when the channel icon is selected in the channel list or program guide screen.</string>
     <string name="pref_programs">Programs</string>
     <string name="pref_playback_and_recording">Playback and recording</string>
     <string name="pref_transcoding">Video and audio parameters</string>
