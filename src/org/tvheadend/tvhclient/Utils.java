@@ -180,7 +180,7 @@ public class Utils {
     public static void confirmRemoveRecording(final Context context, final Recording rec) {
         confirmRemoveRecording(context, 
                 Constants.ACTION_DELETE_DVR_ENTRY, 
-                rec.title, 
+                (rec.title != null ? rec.title : ""), 
                 String.valueOf(rec.id),
                 false);
     }
@@ -193,7 +193,7 @@ public class Utils {
     public static void confirmRemoveRecording(final Context context, final SeriesRecording srec) {
         confirmRemoveRecording(context, 
                 Constants.ACTION_DELETE_SERIES_DVR_ENTRY, 
-                srec.title, 
+                (srec.title != null ? srec.title : ""), 
                 srec.id,
                 false);
     }
