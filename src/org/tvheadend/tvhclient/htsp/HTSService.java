@@ -919,19 +919,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                 }
 
                 for (Object obj : response.getList("events")) {
-                    Program p = new Program();
                     HTSMessage sub = (HTSMessage) obj;
-                    p.id = sub.getLong("eventId", 0);
-                    p.nextId = sub.getLong("nextEventId", 0);
-                    p.description = sub.getString("description", "");
-                    p.summary = sub.getString("summary", "");
-                    p.recording = app.getRecording(sub.getLong("dvrId", 0));
-                    p.contentType = sub.getInt("contentType", -1);
-                    p.title = sub.getString("title");
-                    p.start = sub.getDate("start");
-                    p.stop = sub.getDate("stop");
-                    p.seriesInfo = buildSeriesInfo(sub);
-                    p.starRating = sub.getInt("starRating", -1);
+                    Program p = getProgramFromEventMessage(sub);
                     p.channel = ch;
 
                     if (ch.epg.add(p)) {
@@ -943,6 +932,22 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
+    private Program getProgramFromEventMessage(HTSMessage sub) {
+        Program p = new Program();
+        p.id = sub.getLong("eventId", 0);
+        p.nextId = sub.getLong("nextEventId", 0);
+        p.description = sub.getString("description", "");
+        p.summary = sub.getString("summary", "");
+        p.recording = app.getRecording(sub.getLong("dvrId", 0));
+        p.contentType = sub.getInt("contentType", -1);
+        p.title = sub.getString("title");
+        p.start = sub.getDate("start");
+        p.stop = sub.getDate("stop");
+        p.seriesInfo = buildSeriesInfo(sub);
+        p.starRating = sub.getInt("starRating", -1);
+        return p;
+    }
+
     private void getEvent(long eventId) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getEvent");
@@ -951,18 +956,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 Channel ch = app.getChannel(response.getLong("channelId"));
-                Program p = new Program();
-                p.id = response.getLong("eventId");
-                p.nextId = response.getLong("nextEventId", 0);
-                p.description = response.getString("description", "");
-                p.summary = response.getString("summary", "");
-                p.recording = app.getRecording(response.getLong("dvrId", 0));
-                p.contentType = response.getInt("contentType", -1);
-                p.title = response.getString("title");
-                p.start = response.getDate("start");
-                p.stop = response.getDate("stop");
-                p.seriesInfo = buildSeriesInfo(response);
-                p.starRating = response.getInt("starRating", -1);
+                Program p = getProgramFromEventMessage(response);
                 p.channel = ch;
 
                 if (ch.epg.add(p)) {
