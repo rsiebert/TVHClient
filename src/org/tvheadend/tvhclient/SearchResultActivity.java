@@ -47,6 +47,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -491,5 +492,12 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         query = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
         startQuickAdapterUpdate();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // Close the current connection to stop loading any EPG data.
+        Utils.connect(this, true, false);
     }
 }
