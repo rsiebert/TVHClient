@@ -291,9 +291,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         ch.isTransmitting = (currEventId != 0);
 
         if (currEventId > 0) {
-            getEvents(ch, currEventId, 5);
+            getEvents(ch, currEventId, Constants.PREF_PROGRAMS_TO_LOAD);
         } else if (nextEventId > 0) {
-            getEvents(ch, nextEventId, 5);
+            getEvents(ch, nextEventId, Constants.PREF_PROGRAMS_TO_LOAD);
         }
     }
 
