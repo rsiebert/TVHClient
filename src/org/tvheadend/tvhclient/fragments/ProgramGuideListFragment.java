@@ -388,12 +388,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                 public void run() {
                     final Channel ch = (Channel) obj;
                     adapter.update(ch);
-
-                    // Only update the channel if it is not already being loaded
-                    // or if it is queued for loading
-                    if (!app.isChannelBlocked(ch)) {
-                        startDelayedAdapterUpdate();
-                    }
+                    startDelayedAdapterUpdate();
                 }
             });
         }

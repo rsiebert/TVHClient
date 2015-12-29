@@ -77,26 +77,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
     private String serverName = "";
     private String serverVersion = "";
 
-    // Holds a list of channels that are not allowed to load because the EPG
-    // size did not change after the last loading call.
-    private List<Channel> channelBlockingList = new ArrayList<Channel>();
-
-    public void blockChannel(Channel channel) {
-        channelBlockingList.add(channel);
-    }
-    
-    public void unblockChannel(Channel channel) {
-        channelBlockingList.remove(channel);
-    }
-
-    public void unblockAllChannels() {
-        channelBlockingList.clear();
-    }
-
-    public Boolean isChannelBlocked(Channel channel) {
-        return channelBlockingList.contains(channel);
-    }
-
     /**
      * Adds a single listener to the list.
      * 

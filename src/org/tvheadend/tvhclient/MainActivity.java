@@ -2,9 +2,7 @@ package org.tvheadend.tvhclient;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.adapter.DrawerMenuAdapter;
@@ -45,6 +43,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -123,9 +122,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     // shown again when the user has pressed the back key.
     public ArrayList<Integer> menuStack = new ArrayList<Integer>();
 
-    // Holds the number of EPG entries for each channel
-    @SuppressLint("UseSparseArrays")
-    public Map<Long, Integer> channelEpgCountList = new HashMap<Long, Integer>();
+    // Holds a list of channels that are currently being loaded
+    public List<Channel> channelLoadingList = new ArrayList<Channel>();
+    private Runnable channelLoadingTask;
+    private Handler channelLoadingHandler = new Handler();
 
     // Remember if the connection setting screen was already shown. When the
     // main activity starts for the first time and no connections are configured
@@ -311,6 +311,21 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
             connectionSettingsShown = savedInstanceState.getBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN);
         }
+
+        // Resets the loading indication and updates the action 
+        // bar subtitle with the number of available channels
+        channelLoadingTask = new Runnable() {
+            public void run() {
+                // If the program guide is shown get the number of channels from the program guide
+                // pager fragment because it holds the channel fragment which in turn knows the channel count. 
+                Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+                    int count = ((FragmentControlInterface) f).getItemCount();
+                    String items = getResources().getQuantityString(R.plurals.items, count, count);
+                    setActionBarSubtitle(items);
+                }
+            }
+        };
     }
 
     /**
@@ -696,8 +711,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case R.id.menu_refresh:
             // Clear all available data and all channels that are currently
             // loading, reconnect to the server and reload all data
-            channelEpgCountList.clear();
-            app.unblockAllChannels();
+            channelLoadingList.clear();
             Utils.connect(this, true);
             return true;
 
@@ -1026,35 +1040,17 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             runOnUiThread(new Runnable() {
                 public void run() {
                     final Channel ch = (Channel) obj;
-                    if (ch != null && ch.epg != null) {
-                        if (channelEpgCountList.containsKey(ch.id)) {
-                            // If the program count of the channel has not changed, assume that no 
-                            // more programs have been loaded. Add the channel to the blocking list to
-                            // avoid unnecessary loading calls. Otherwise unblock the channel.
-                            if (ch.epg.size() == channelEpgCountList.get(ch.id)) {
-                                app.log(TAG, "Did not load new EPG data, blocking existing channel " + ch.name);
-                                app.blockChannel(ch);
-                            } else {
-                                app.log(TAG, "Loaded new EPG data (total " + ch.epg.size() + ") for existing channel " + ch.name);
-                                channelEpgCountList.put(ch.id, ch.epg.size());
-                                app.unblockChannel(ch);
-                            }
-                        } else {
-                            // Add the count to the list for the first time
-                            app.log(TAG, "Loaded new EPG data (total " + ch.epg.size() + ") for new channel " + ch.name);
-                            channelEpgCountList.put(ch.id, ch.epg.size());
-                        }
-                    }
 
-                    // Get the number of channels from the program guide
-                    // pager fragment because it holds the channel fragment
-                    // which in turn knows the channel count. 
-                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
-                        int count = ((FragmentControlInterface) f).getItemCount();
-                        String items = getResources().getQuantityString(R.plurals.items, count, count);
-                        setActionBarSubtitle(items);
-                    }
+                    // The channel has been updated (usually by a call to load
+                    // more data) so remove it from the loading queue and
+                    // continue with the next one.
+                    channelLoadingList.remove(ch);
+
+                    // Reset the loading indication either instantly or with a 
+                    // delay if there is still a channel in the loading queue
+                    channelLoadingHandler.removeCallbacks(channelLoadingTask);
+                    channelLoadingHandler.postDelayed(channelLoadingTask,
+                            (channelLoadingList.isEmpty() ? 10 : 2000));
                 }
             });
         } else if (action.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
@@ -1261,24 +1257,17 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void moreDataRequired(final Channel channel, final String tag) {
-        app.log(TAG, "Trying to load more data: " 
-                    + "App still loading " + app.isLoading() + ", " 
-                    + "Channel not null " + (channel != null) + ", "
-                    + "Channel is blocked " + app.isChannelBlocked(channel));
+        app.log(TAG, "Trying to load more programs for channel "
+                + (channel != null ? channel.name : "null") + ", "
+                + "app still initially loading " + app.isLoading());
 
         if (app.isLoading() || channel == null) {
-            app.log(TAG, "App still initially loading or channel is null");
             return;
         }
 
-        if (!app.isChannelBlocked(channel) || 
-                (app.isChannelBlocked(channel) && !tag.equals(Constants.TAG_PROGRAM_GUIDE))) {
-            app.log(TAG, "Loading more data for channel " + channel.name);
-            setActionBarSubtitle(getString(R.string.loading_channel, channel.name));
-            Utils.loadMorePrograms(this, channel);
-        } else {
-            app.log(TAG, "Channel " + channel.name + " is blocked");
-        }
+        channelLoadingList.add(channel);
+        setActionBarSubtitle(getString(R.string.loading));
+        Utils.loadMorePrograms(this, channel);
     }
 
     @Override

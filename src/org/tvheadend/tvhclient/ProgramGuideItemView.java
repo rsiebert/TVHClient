@@ -170,8 +170,7 @@ public class ProgramGuideItemView extends LinearLayout {
         // Add the loading indication only when the channel is not blocked and
         // the program is the last one and overlaps the timeslot somehow. 
         // Otherwise show that no program data is available.
-        if (!app.isChannelBlocked(channel)
-                && lastProgramFound
+        if (lastProgramFound
                 && (programType == PROGRAM_MOVES_INTO_TIMESLOT || programType == PROGRAM_IS_WITHIN_TIMESLOT)) {
             addLoadingIndication();
         } else {
@@ -181,7 +180,7 @@ public class ProgramGuideItemView extends LinearLayout {
         // If the program that was last added was added in the view and it was
         // the last program in the guide then try to load more programs.
         // Also load programs when no program at all was added.
-        if (!app.isChannelBlocked(channel) && ((programAdded && lastProgramFound) || !programAdded)) {
+        if ((programAdded && lastProgramFound) || !programAdded) {
             if (fragmentStatusInterface != null) {
                 fragmentStatusInterface.moreDataRequired(channel, Constants.TAG_PROGRAM_GUIDE);
             }
