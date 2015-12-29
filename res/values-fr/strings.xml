@@ -310,6 +310,11 @@
     <string name="error_start_stop_time">L\'heure de fin doit être après l\'heure de début!</string>
     <string name="error_no_channel">Veuillez sélectionner une chaine!</string>
 
+    <string name="subscription_error">Erreur de souscription: %1$s</string>
+    <string name="stream_errors">Erreur de flux: %1$d</string>
+    <string name="data_errors">Erreur de données: %1$d</string>
+    <string name="data_size">Taille de fichier: %1$d %2$s</string>
+
     <string name="nothing">Rien</string>
     <string name="loading">Chargement&#8230;</string>
     <string name="loading_channel">Chargement de la chaine %s</string>
