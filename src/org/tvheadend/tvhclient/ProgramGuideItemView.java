@@ -183,7 +183,7 @@ public class ProgramGuideItemView extends LinearLayout {
         // Also load programs when no program at all was added.
         if (!app.isChannelBlocked(channel) && ((programAdded && lastProgramFound) || !programAdded)) {
             if (fragmentStatusInterface != null) {
-                fragmentStatusInterface.moreDataRequired(channel, TAG);
+                fragmentStatusInterface.moreDataRequired(channel, Constants.TAG_PROGRAM_GUIDE);
             }
         }
     }

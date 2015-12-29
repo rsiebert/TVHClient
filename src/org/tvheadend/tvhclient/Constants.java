@@ -158,6 +158,7 @@ public class Constants {
 
     // Identifier that can be passed to methods that support tags to differentiate the caller
     public static final String TAG_CHANNEL_ICON = "tag_channel_icon";
+    public static final String TAG_PROGRAM_GUIDE = "tag_program_guide";
 
     // Minimum API version to enable or disable certain functionalities. The
     // features shall only be enabled if supported by the server. 

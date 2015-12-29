@@ -213,9 +213,11 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     }
                 }
 
-                if (!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) {
-                    Log.d(TAG, "Loading more programs, current program found "
-                            + currentProgramFound + ", program count "
+                if ((!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) &&
+                        layout != R.layout.program_guide_channel_item) {
+                    Log.d(TAG, "Channel '" + c.name 
+                            + "', loading programs, current program exists: "
+                            + currentProgramFound + ", epg program count: "
                             + availableProgramCount);
                     Utils.loadMorePrograms(context, c);
                 }

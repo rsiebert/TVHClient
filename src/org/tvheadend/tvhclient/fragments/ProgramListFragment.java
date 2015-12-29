@@ -144,7 +144,9 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 if (scrollState == SCROLL_STATE_IDLE && allowLoading) {
                     app.log(TAG, "Scrolling stopped");
                     allowLoading = false;
-                    Utils.loadMorePrograms(activity, channel);
+                    if (fragmentStatusInterface != null) {
+                        fragmentStatusInterface.moreDataRequired(channel, TAG);
+                    }
                 }
             }
         });
@@ -186,10 +188,13 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 }
 
                 if (!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) {
-                    Log.d(TAG, "Loading more programs, current program found "
-                            + currentProgramFound + ", program count "
+                    Log.d(TAG, "Channel '" + channel.name 
+                            + "', loading programs, current program exists: "
+                            + currentProgramFound + ", epg program count: "
                             + availableProgramCount);
-                    Utils.loadMorePrograms(activity, channel);
+                    if (fragmentStatusInterface != null) {
+                        fragmentStatusInterface.moreDataRequired(channel, TAG);
+                    }
                 }
             }
         }
