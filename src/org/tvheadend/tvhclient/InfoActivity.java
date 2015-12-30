@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
@@ -58,7 +61,8 @@ public class InfoActivity extends ActionBarActivity {
             InputStream is = null;
             try {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                String locale = prefs.getString("languagePref", "en").substring(0, 2);
+                final Locale current = getResources().getConfiguration().locale;
+                final String locale = prefs.getString("languagePref", current.getLanguage()).substring(0, 2);
                 is = getAssets().open("html/info_help_" + locale.substring(0, 2) + ".html");
             } catch (IOException ex1) {
                 try {
@@ -83,7 +87,18 @@ public class InfoActivity extends ActionBarActivity {
 
             // Add the closing HTML tags and load show the page
             sb.append("</body></html>");
-            webview.loadDataWithBaseURL("file:///android_asset/", sb.toString(), "text/html","utf-8", null);
+
+            // Replace the placeholder in the html file with the real version
+            String version = "?";
+            String s = sb.toString();
+            try {
+                version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                s = Pattern.compile("APP_VERSION").matcher(sb).replaceAll(version);
+            } catch (NameNotFoundException e) {
+
+            }
+
+            webview.loadDataWithBaseURL("file:///android_asset/", s, "text/html","utf-8", null);
         }
     }
 
