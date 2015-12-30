@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,11 +20,11 @@ import android.webkit.WebView;
 @SuppressWarnings("deprecation")
 public class UnlockerActivity extends ActionBarActivity {
 
-    @SuppressWarnings("unused")
     private final static String TAG = UnlockerActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
     private WebView webview;
+    private TVHClientApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,8 @@ public class UnlockerActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview_layout);
         Utils.setLanguage(this);
+
+        app = (TVHClientApplication) getApplication();
 
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
@@ -40,6 +43,8 @@ public class UnlockerActivity extends ActionBarActivity {
 
         webview = (WebView) findViewById(R.id.webview);
         if (webview != null) {
+            app.log(TAG, "Showing unlocker features");
+
             // Create the string that is later used to display the HTML page.
             // The string contains all feature information and HTML tags.
             // Depending on the theme the correct style sheet will be loaded
@@ -55,18 +60,24 @@ public class UnlockerActivity extends ActionBarActivity {
             }
             sb.append("</head><body>");
 
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            final Locale current = getResources().getConfiguration().locale;
+            final String locale = prefs.getString("languagePref", current.getLanguage()).substring(0, 2);
+            final String htmlFile = "html/features_" + locale.substring(0, 2) + ".html";
+            final String defaultHtmlFile = "html/features_en.html";
+
             // Open the HTML file of the defined language. This is determined by
             // the locale. If the file doesn't exist, open the default (English)
             InputStream is = null;
             try {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                String locale = prefs.getString("languagePref", "en").substring(0, 2);
-                is = getAssets().open("html/features_" + locale.substring(0, 2) + ".html");
+                app.log(TAG, "Trying to load html page " + htmlFile + ", system locale is " + current.getLanguage()); 
+                is = getAssets().open(htmlFile);
             } catch (IOException ex1) {
                 try {
-                    is = getAssets().open("html/features_en.html");
+                    app.log(TAG, "Error loading html file, loading " + defaultHtmlFile);
+                    is = getAssets().open(defaultHtmlFile);
                 } catch (IOException ex2) {
-                    
+                    app.log(TAG, "Error loading default html file");
                 }
             }
 
@@ -105,14 +116,19 @@ public class UnlockerActivity extends ActionBarActivity {
             return true;
 
         case R.id.menu_purchase:
+            app.log(TAG, "Unlocker purchase button pressed");
+
             // Open the activity where the user can actually make the purchase
             if (app.getBillingProcessor().isInitialized()) {
+                app.log(TAG, "Billing initialized, showing unlocker dialog");
                 app.getBillingProcessor().purchase(this, Constants.UNLOCKER);
             }
+
             // Check if the user has already made the purchase. We check this
             // here because this activity is not information about any changes
             // via the billing event interface. 
             if (app.getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
+                app.log(TAG, "Unlocker already purchased");
                 Snackbar.make(null, getString(R.string.unlocker_already_purchased), 
                         Snackbar.LENGTH_SHORT).show();
                 finish();
@@ -128,11 +144,13 @@ public class UnlockerActivity extends ActionBarActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         TVHClientApplication app = (TVHClientApplication) getApplication();
         if (!app.getBillingProcessor().handleActivityResult(requestCode, resultCode, data)) {
+            app.log(TAG, "Unlocker purchase dialog was not shown or closed without action");
             // The billing activity was not shown or did nothing. Nothing needs
             // to be done
             super.onActivityResult(requestCode, resultCode, data);
         }
         // Close this activity
+        app.log(TAG, "Exiting unlocker"); 
         finish();
     }
 }
