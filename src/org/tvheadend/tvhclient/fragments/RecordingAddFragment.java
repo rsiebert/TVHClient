@@ -11,6 +11,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -25,6 +26,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -64,6 +66,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private EditText description;
     private TextView descriptionLabel;
     private TextView channelName;
+    private TextView dvrConfigName;
 
     // Extra pre- and postrecording times in seconds
     private long startExtraValue;
@@ -79,9 +82,11 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private String subtitleValue;
     private String descriptionValue;
     private int channelSelectionValue;
+    private int dvrConfigNameValue;
 
     String[] channelList;
     String[] priorityList;
+    String[] dvrConfigList;
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
@@ -130,6 +135,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         outState.putString("subtitleValue", subtitleValue);
         outState.putString("descriptionValue", descriptionValue);
         outState.putInt("channelNameValue", channelSelectionValue);
+        outState.putInt("configNameValue", dvrConfigNameValue);
         super.onSaveInstanceState(outState);
     }
 
@@ -159,6 +165,12 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             }
         });
 
+        // Create the list of available configurations that the user can select from
+        dvrConfigList = new String[app.getDvrConfigs().size()];
+        for (int i = 0; i < app.getDvrConfigs().size(); i++) {
+            dvrConfigList[i] = app.getDvrConfigs().get(i).name;
+        }
+
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
         // If the savedInstanceState is null then the fragment was created for
@@ -183,6 +195,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 titleValue = rec.title;
                 subtitleValue = rec.subtitle;
                 descriptionValue = rec.description;
+                dvrConfigNameValue = 0;
 
                 // The default value is no channel
                 channelSelectionValue = 0;
@@ -195,6 +208,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                         }
                     }   
                 }
+
             } else {
                 priorityValue = 2;
                 startExtraValue = 0;
@@ -204,7 +218,21 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 subtitleValue = "";
                 descriptionValue = "";
                 channelSelectionValue = 0;
+                dvrConfigNameValue = 0;
             }
+
+            // Get the position of the selected profile in the dvrConfigList
+            final Connection conn = dbh.getSelectedConnection();
+            final Profile p = dbh.getProfile(conn.recording_profile_id);
+            if (p != null) {
+                for (int i = 0; i < dvrConfigList.length; i++) {
+                    if (dvrConfigList[i].equals(p.name)) {
+                        dvrConfigNameValue = i;
+                        break;
+                    }
+                }
+            }
+
         } else {
             // Restore the values before the orientation change
             priorityValue = savedInstanceState.getLong("priorityValue");
@@ -216,6 +244,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             subtitleValue = savedInstanceState.getString("subtitleValue");
             descriptionValue = savedInstanceState.getString("descriptionValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
+            dvrConfigNameValue = savedInstanceState.getInt("configNameValue");
         }
 
         // Assume a new recording shall be added. If a recording was given then
@@ -243,6 +272,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         startDate = (TextView) v.findViewById(R.id.start_date);
         stopDate = (TextView) v.findViewById(R.id.stop_date);
         priority = (TextView) v.findViewById(R.id.priority);
+        dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
@@ -306,6 +336,27 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 		            })
 		            .show();
 				}
+            });
+        }
+
+        if (dvrConfigName != null) {
+            dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
+            dvrConfigName.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new MaterialDialog.Builder(activity)
+                    .title(R.string.select_dvr_config)
+                    .items(dvrConfigList)
+                    .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                            dvrConfigName.setText(dvrConfigList[which]);
+                            dvrConfigNameValue = which;
+                            return true;
+                        }
+                    })
+                    .show();
+                }
             });
         }
 
@@ -458,7 +509,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                     && p.enabled
                     && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                     && app.isUnlocked()) {
-                intent.putExtra("configName", p.name);
+                // Use the selected profile. If no change was done in the 
+                // selection then the default one from the connection setting will be used
+                intent.putExtra("configName", dvrConfigName.getText().toString());
             }
         }
 

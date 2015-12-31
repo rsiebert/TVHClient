@@ -248,6 +248,30 @@
                     android:paddingStart="4dp"
                     android:paddingTop="4dp"
                     android:text="@string/not_set" />
+
+                <TextView
+                    android:id="@+id/dvr_config_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/dvr_config" />
+
+                <TextView
+                    android:id="@+id/dvr_config"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                    android:drawablePadding="4dp"
+                    android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/not_set" />
             </LinearLayout>
         </ScrollView>
 

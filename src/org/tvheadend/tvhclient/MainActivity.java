@@ -20,6 +20,7 @@ import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingListFragment;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
@@ -1018,6 +1019,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @Override
     public void onMessage(final String action, final Object obj) {
         if (action.equals(Constants.ACTION_LOADING)) {
+            final Context ctx = this;
             runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
@@ -1032,6 +1034,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             if (rf != null) {
                                 getSupportFragmentManager().beginTransaction().remove(rf).commit();
                             }
+                        }
+                    } else {
+                        // Load the available recording profiles so that they are  
+                        // available in case the user wants to add a manual recording  
+                        if (app.isUnlocked()) {
+                            Intent intent = new Intent(ctx, HTSService.class);
+                            intent.setAction(Constants.ACTION_GET_DVR_CONFIG);
+                            startService(intent);
                         }
                     }
                 }

@@ -284,6 +284,7 @@
     <string name="genre_color_list">List of genre colors and their meaning.</string>
     <string name="retention">Retention</string>
     <string name="priority">Priority</string>
+    <string name="dvr_config">Recording profile</string>
     <string name="path">Path</string>
     <string name="directory">Directory</string>
     <string name="owner">Owner</string>
@@ -341,6 +342,7 @@
     <string name="select_stop_time">Select end time</string>
     <string name="select_channel">Select channel</string>
     <string name="select_priority">Select priority</string>
+    <string name="select_dvr_config">Select recording profile</string>
     <string name="select_log_file">Select logfile</string>
 
     <!-- Connection related -->
