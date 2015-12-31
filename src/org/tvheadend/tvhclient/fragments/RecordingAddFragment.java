@@ -195,7 +195,6 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 titleValue = rec.title;
                 subtitleValue = rec.subtitle;
                 descriptionValue = rec.description;
-                dvrConfigNameValue = 0;
 
                 // The default value is no channel
                 channelSelectionValue = 0;
@@ -218,10 +217,10 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 subtitleValue = "";
                 descriptionValue = "";
                 channelSelectionValue = 0;
-                dvrConfigNameValue = 0;
             }
 
             // Get the position of the selected profile in the dvrConfigList
+            dvrConfigNameValue = 0;
             final Connection conn = dbh.getSelectedConnection();
             final Profile p = dbh.getProfile(conn.recording_profile_id);
             if (p != null) {
