@@ -67,6 +67,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private EditText title;
     private EditText name;
     private TextView channelName;
+    private TextView dvrConfigName;
 
     private long priorityValue;
     private long minDurationValue;
@@ -81,9 +82,11 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private String nameValue;
     private boolean enabledValue;
     private int channelSelectionValue;
+    private int dvrConfigNameValue;
 
     String[] channelList;
     String[] priorityList;
+    String[] dvrConfigList;
 
     private TVHClientApplication app;
 
@@ -141,6 +144,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         outState.putString("nameValue", nameValue);
         outState.putBoolean("enabledValue", enabledValue);
         outState.putInt("channelNameValue", channelSelectionValue);
+        outState.putInt("configNameValue", dvrConfigNameValue);
         super.onSaveInstanceState(outState);
     }
 
@@ -181,6 +185,12 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 return 0;
             }
         });
+
+        // Create the list of available configurations that the user can select from
+        dvrConfigList = new String[app.getDvrConfigs().size()];
+        for (int i = 0; i < app.getDvrConfigs().size(); i++) {
+            dvrConfigList[i] = app.getDvrConfigs().get(i).name;
+        }
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
@@ -243,6 +253,20 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 enabledValue = true;
                 channelSelectionValue = 0;
             }
+
+            // Get the position of the selected profile in the dvrConfigList
+            dvrConfigNameValue = 0;
+            final Connection conn = dbh.getSelectedConnection();
+            final Profile p = dbh.getProfile(conn.recording_profile_id);
+            if (p != null) {
+                for (int i = 0; i < dvrConfigList.length; i++) {
+                    if (dvrConfigList[i].equals(p.name)) {
+                        dvrConfigNameValue = i;
+                        break;
+                    }
+                }
+            }
+
         } else {
             // Restore the values before the orientation change
             priorityValue = savedInstanceState.getLong("priorityValue");
@@ -258,6 +282,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             nameValue = savedInstanceState.getString("nameValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
+            dvrConfigNameValue = savedInstanceState.getInt("configNameValue");
         }
 
         // Initialize all the widgets from the layout
@@ -307,6 +332,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         startExtraTime = (EditText) v.findViewById(R.id.start_extra);
         stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
         priority = (TextView) v.findViewById(R.id.priority);
+        dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
@@ -358,6 +384,27 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 	            .show();
 			}
         });
+
+        if (dvrConfigName != null) {
+            dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
+            dvrConfigName.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new MaterialDialog.Builder(activity)
+                    .title(R.string.select_dvr_config)
+                    .items(dvrConfigList)
+                    .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                            dvrConfigName.setText(dvrConfigList[which]);
+                            dvrConfigNameValue = which;
+                            return true;
+                        }
+                    })
+                    .show();
+                }
+            });
+        }
 
         minDuration.setText(minDurationValue > 0 ? String.valueOf(minDurationValue) : getString(R.string.duration_sum));
         maxDuration.setText(maxDurationValue > 0 ? String.valueOf(maxDurationValue) : getString(R.string.duration_sum));
@@ -705,7 +752,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 && p.enabled
                 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                 && app.isUnlocked()) {
-            intent.putExtra("configName", p.name);
+            // Use the selected profile. If no change was done in the 
+            // selection then the default one from the connection setting will be used
+            intent.putExtra("configName", dvrConfigName.getText().toString());
         }
         return intent;
     }
