@@ -6,6 +6,7 @@ $ 1.8.6
     * Updated descriptions about the available features when the app is unlocked
     * Small improvements in the search screen
     * Fixed wrong language being used in the unlocker or information screen
+    * Allow setting a different recording profile when adding a manual, series or timer recording (Only available in the unlocked version)
 $ 1.8.5
   % VERSION 1.8.5
   _ 10.12.2015
