@@ -1,10 +1,11 @@
 $ 1.8.6
   % VERSION 1.8.6
-  _ 29.12.2015
+  _ 31.12.2015
     * Fixed issue that showed old programs in the channel and program list
     * Added option to start playing a channel when the channel icon is selected
     * Updated descriptions about the available features when the app is unlocked
     * Small improvements in the search screen
+    * Fixed wrong language being used in the unlocker or information screen
 $ 1.8.5
   % VERSION 1.8.5
   _ 10.12.2015
