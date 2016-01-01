@@ -160,7 +160,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                         @Override
                         public void onClick(View v) {
                             if (context instanceof FragmentStatusInterface) {
-                                ((FragmentStatusInterface) context).onListItemSelected(position, c, TAG);
+                                ((FragmentStatusInterface) context).onListItemSelected(position, c, Constants.TAG_CHANNEL_ICON);
                             }
                         }
                     });
