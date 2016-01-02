@@ -445,26 +445,30 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
      */
     private void getValues() {
         try {
-            if (startExtra != null) {
+            if (startExtra != null && startExtra.getText() != null) {
                 startExtraValue = Long.valueOf(startExtra.getText().toString());
+            } else {
+                startExtraValue = DEFAULT_START_EXTRA;
             }
         } catch (NumberFormatException ex) {
             startExtraValue = DEFAULT_START_EXTRA;
         }
         try {
-            if (stopExtra != null) {
+            if (stopExtra != null && stopExtra.getText() != null) {
                 stopExtraValue = Long.valueOf(stopExtra.getText().toString());
+            } else {
+                stopExtraValue = DEFAULT_STOP_EXTRA;
             }
         } catch (NumberFormatException ex) {
             stopExtraValue = DEFAULT_STOP_EXTRA;
         }
-        if (title != null) {
+        if (title != null && title.getText() != null) {
             titleValue = title.getText().toString();
         }
-        if (subtitle != null) {
+        if (subtitle != null && subtitle.getText() != null) {
             subtitleValue = subtitle.getText().toString();
         }
-        if (description != null) {
+        if (description != null && description.getText() != null) {
             descriptionValue = description.getText().toString();
         }
     }
