@@ -11,7 +11,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -26,7 +25,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -521,7 +519,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         // The id must be passed on to the server, not the name. So go through
         // all available channels and get the id for the selected channel name.
         for (Channel c : app.getChannels()) {
-            if (c.name.equals(channelName.getText().toString())) {
+            if (c.name.equals(channelList[channelSelectionValue])) {
                 intent.putExtra("channelId", c.id);
                 break;
             }
