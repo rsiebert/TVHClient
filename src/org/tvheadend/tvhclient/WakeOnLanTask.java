@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
 
 public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
@@ -25,10 +26,12 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private Connection conn;
     private Activity activity;
     private Exception exception;
+    private View view;
 
-    public WakeOnLanTask(Activity context, Connection conn) {
+    public WakeOnLanTask(Activity context, Connection conn, View view) {
         this.activity = context;
         this.conn = conn;
+        this.view = view;
     }
 
     @Override
@@ -124,17 +127,17 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if (result == WOL_SEND) {
-            Snackbar.make(null, activity.getString(R.string.wol_send,
+            Snackbar.make(view, activity.getString(R.string.wol_send,
                     conn.address), Snackbar.LENGTH_LONG).show();
         } else if (result == WOL_SEND_BROADCAST) {
-            Snackbar.make(null, activity.getString(R.string.wol_send_broadcast, 
+            Snackbar.make(view, activity.getString(R.string.wol_send_broadcast, 
                     conn.address), Snackbar.LENGTH_LONG).show();
         } else if (result == WOL_INVALID_MAC) {
-            Snackbar.make(null, activity.getString(R.string.wol_address_invalid), 
+            Snackbar.make(view, activity.getString(R.string.wol_address_invalid), 
                     Snackbar.LENGTH_LONG).show();
         } else {
             final String msg = exception.getLocalizedMessage();
-            Snackbar.make(null, activity.getString(R.string.wol_error, 
+            Snackbar.make(view, activity.getString(R.string.wol_error, 
                     conn.address, msg), Snackbar.LENGTH_LONG).show();
         }
     }
