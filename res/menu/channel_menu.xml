@@ -14,8 +14,14 @@
         android:orderInCategory="5"
         android:title="@string/tags"/>
     <item
+        android:id="@+id/menu_timeframe"
+        android:icon="?attr/ic_menu_timeframe"
+        android:title="@string/timeframe"
+        app:showAsAction="ifRoom|collapseActionView"
+        android:orderInCategory="6"/>
+    <item
         android:id="@+id/menu_genre_color_info_channels"
-        android:orderInCategory="6"
+        android:orderInCategory="7"
         android:title="@string/genre_color_info"/>
 
 </menu>

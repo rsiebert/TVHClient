@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.adapter;
 
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -34,13 +33,19 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     private int layout;
     private int selectedPosition = 0;
     private SharedPreferences prefs;
+    private long currentTime;
 
-    public ChannelListAdapter(Activity context, List<Channel> list, int layout) {
+    public ChannelListAdapter(Activity context, List<Channel> list, int layout, long currentTime) {
         super(context, layout, list);
         this.context = context;
         this.layout = layout;
         this.list = list;
+        this.currentTime = currentTime;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public void setTime(final long time) {
+        this.currentTime = time;
     }
 
     public void sort(final int type) {
@@ -197,7 +202,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 Program p = null;
                 int availableProgramCount = c.epg.size();
                 boolean currentProgramFound = false;
-                final long currentTime = new Date().getTime();
                 Iterator<Program> it = c.epg.iterator();
 
                 // Search through the EPG and find the first program that is currently running. 

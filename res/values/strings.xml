@@ -336,6 +336,7 @@
     <string name="available">Available</string>
     <string name="unknown">Unknown</string>
     <string name="ready">Ready</string>
+    <string name="select_time">Show programs that are running at the selected time.</string>
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
     <string name="currently_recording">Currently recording</string>
     <string name="select_start_time">Select start time</string>

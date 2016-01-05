@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.tvheadend.tvhclient.Constants;
@@ -61,6 +63,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private MaterialDialog tagDialog;
     private ListView listView;
 
+    // The dialog that allows the user to select a certain time frame
+    private MaterialDialog channelTimeDialog;
+
     // This is the default view for the channel list adapter. Other views can be
     // passed to the adapter to show less information. This is used in the
     // program guide where only the channel icon is relevant.
@@ -81,7 +86,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private TVHClientApplication app = null;
 
     private Runnable channelUpdateTask;
-    private Handler channelUpdateHandler = new Handler();;
+    private Handler channelUpdateHandler = new Handler();
+    
+    private int channelTimeDialogSelection = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -133,8 +140,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
 
-        adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
+        adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout, new Date().getTime());
         listView.setAdapter(adapter);
+
+        createChannelTimeDialog();
 
         // Inform the activity when a channel has been selected. The activity
         // will then either show the program list fragment in single pane mode
@@ -229,6 +238,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             (menu.findItem(R.id.menu_play)).setVisible(false);
         }
 
+        (menu.findItem(R.id.menu_timeframe)).setVisible(app.isUnlocked());
+
         // Prevent the channel tag menu item from going into the overlay menu 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
@@ -259,6 +270,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_tags:
             tagDialog.show();
+            return true;
+
+        case R.id.menu_timeframe:
+            channelTimeDialog.show();
             return true;
 
         case R.id.menu_genre_color_info_channels:
@@ -546,5 +561,42 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public int getItemCount() {
         return adapter.getCount();
+    }
+
+    /**
+     * Prepares a dialog that shows certain times the user can
+     * choose from. These are usually the noon, afternoon and prime times
+     */
+    private void createChannelTimeDialog() {
+        channelTimeDialog = new MaterialDialog.Builder(activity)
+        .title(R.string.select_time)
+        .items(R.array.channel_list_times)
+        .itemsCallbackSingleChoice(channelTimeDialogSelection, new MaterialDialog.ListCallbackSingleChoice() {
+            @Override
+            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                channelTimeDialogSelection = which;
+                // Get the current time
+                Calendar c = Calendar.getInstance();
+                if (which > 0) {
+                    c.set(Calendar.MINUTE, 0);
+                    c.set(Calendar.SECOND, 0);
+                    if (which == 1) {
+                        c.set(Calendar.HOUR_OF_DAY, 12);
+                    } else if (which == 2) {
+                        c.set(Calendar.HOUR_OF_DAY, 16);
+                    }  else if (which == 3) {
+                        c.set(Calendar.HOUR_OF_DAY, 20);
+                        c.set(Calendar.MINUTE, 15);
+                    }  else if (which == 4) {
+                        c.set(Calendar.HOUR_OF_DAY, 22);
+                    }
+                }
+                adapter.setTime(c.getTimeInMillis());
+                channelTimeDialog.dismiss();
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+        })
+        .build();
     }
 }
