@@ -231,7 +231,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             new MaterialDialog.Builder(activity)
                     .content(getString(R.string.delete_connection, c.name))
                     .positiveText(getString(R.string.delete))
-                    .negativeText(getString(android.R.string.no))
+                    .negativeText(getString(R.string.cancel))
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
