@@ -789,6 +789,9 @@ public class Utils {
             percent = elapsedTime / durationTime;
         }
         int progress = (int) Math.floor(percent * 100);
+        if (progress > 100) {
+            progress = 100;
+        }
         if (progress > 0) {
             progressText.setText(progressText.getResources().getString(R.string.progress, progress));
             progressText.setVisibility(View.VISIBLE);
