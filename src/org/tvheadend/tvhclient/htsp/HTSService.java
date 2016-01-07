@@ -66,7 +66,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public void onCreate() {
-        execService = Executors.newScheduledThreadPool(5);
+        execService = Executors.newScheduledThreadPool(10);
         app = (TVHClientApplication) getApplication();
 
         try {
