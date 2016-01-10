@@ -182,6 +182,8 @@
     <string name="pref_send_logfile_sum">Mailt die Log-Datei an den Entwickler. Die Informationen helfen evtl. Fehler zu finden und das Program zu verbessern. Es werden nur TVHClient interne Statusdaten versendet!</string>
     <string name="pref_connection_timeout">Wartezeit für Verbindung</string>
     <string name="pref_connection_timeout_sum">Zeit in Sekunden in der die Verbindung zum Server hergestellt werden muss. Ein höherer Wert kann die Stabilität der Verbindung in langsamen Netzwerken verbessern.</string>
+    <string name="pref_buffer_size">Größe des Datenpuffers</string>
+    <string name="pref_buffer_size_sum">Größe des Puffers in Megabyte der die Daten vom Server speichert. Standard ist 4 MB. Können Daten nicht vollständig vom Server geladen werden, kann ein größerer Datenpuffer Abhilfe schaffen. Bei älteren Geräten kann ein zu großer Puffer evtl. zu Speicherproblemen führen.</string>
 
     <string name="feature_not_supported_by_server">Der TVHeadend Server unterstützt diese Funktion nicht. Eine neuere Version wird benötigt.</string>
     <string name="loading_profiles">Lade Profile</string>
