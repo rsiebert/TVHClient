@@ -55,6 +55,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private ListView listView;
     private Channel channel;
     private boolean isDualPane = false;
+    private long showProgramsFromTime;
 
     // Prevents loading more data on each scroll event. Only when scrolling has
     // stopped loading shall be allowed
@@ -75,6 +76,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         if (bundle != null) {
             channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
             isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+            showProgramsFromTime = bundle.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, new Date().getTime());
         }
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
@@ -171,15 +173,14 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
                 int availableProgramCount = channel.epg.size();
                 boolean currentProgramFound = false;
-                final long currentTime = new Date().getTime();
                 Iterator<Program> it = channel.epg.iterator();
 
                 // Search through the EPG and find the first program that is currently running.
                 // Also count how many programs are available without counting the ones in the past.
                 while (it.hasNext()) {
                     Program p = it.next();
-                    if (p.start.getTime() >= currentTime || 
-                        p.stop.getTime() >= currentTime) {
+                    if (p.start.getTime() >= showProgramsFromTime  || 
+                        p.stop.getTime() >= showProgramsFromTime) {
                         currentProgramFound = true;
                         adapter.add(p);
                     } else {

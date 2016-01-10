@@ -55,14 +55,6 @@
         <item>Nicht gesetzt</item>
     </string-array>
 
-    <string-array name="channel_list_times">
-        <item>Jetzt</item>
-        <item>Mittags (12:00)</item>
-        <item>Nachmittags (16:00)</item>
-        <item>Abends (20:15)</item>
-        <item>Später Abend (22:00)</item>
-    </string-array>
-
     <string-array name="pr_content_type0">
         <item>Film / Drama</item>
         <item>Nachrichten / Aktuelles</item>

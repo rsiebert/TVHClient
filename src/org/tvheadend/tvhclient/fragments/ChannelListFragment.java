@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 
 import org.tvheadend.tvhclient.Constants;
@@ -87,8 +86,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     private Runnable channelUpdateTask;
     private Handler channelUpdateHandler = new Handler();
-    
-    private int channelTimeDialogSelection = 0;
+
+    private int channelTimeSelection;
+    private long showProgramsFromTime;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,6 +106,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         if (bundle != null) {
             showOnlyChannels = bundle.getBoolean(Constants.BUNDLE_SHOWS_ONLY_CHANNELS, false);
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+            channelTimeSelection = bundle.getInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION);
+            showProgramsFromTime = bundle.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME);
         }
         // When only channels shall be seen, a reduced adapter layout and list
         // view layout is used.
@@ -140,14 +142,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
 
-        adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout, new Date().getTime());
+        adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
         listView.setAdapter(adapter);
 
-        createChannelTimeDialog();
-
-        // Inform the activity when a channel has been selected. The activity
-        // will then either show the program list fragment in single pane mode
-        // or show the program details in dual pane mode.
+        // Inform the activity when a channel has been selected.
         if (!showOnlyChannels) {
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -273,6 +271,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_timeframe:
+            createChannelTimeDialog();
             channelTimeDialog.show();
             return true;
 
@@ -398,6 +397,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             }
         }
         adapter.sort(Utils.getChannelSortOrder(activity));
+        adapter.setTime(showProgramsFromTime);
         adapter.notifyDataSetChanged();
 
         // Start updating the adapter
@@ -568,32 +568,51 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
      * choose from. These are usually the noon, afternoon and prime times
      */
     private void createChannelTimeDialog() {
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        final int hour = c.get(Calendar.HOUR_OF_DAY);
+
+        String[] times = new String[(24 - hour) / 2];
+        times[0] = getString(R.string.current_time);
+        int j = 1;
+        for (int i = 2; i < (24 - hour); i += 2) {
+            if (times.length > j) {
+                times[j] = String.valueOf(hour + i) + ":00";
+            }
+            j++;
+        }
+
         channelTimeDialog = new MaterialDialog.Builder(activity)
         .title(R.string.select_time)
-        .items(R.array.channel_list_times)
-        .itemsCallbackSingleChoice(channelTimeDialogSelection, new MaterialDialog.ListCallbackSingleChoice() {
+        .items(times)
+        .itemsCallbackSingleChoice(channelTimeSelection, new MaterialDialog.ListCallbackSingleChoice() {
             @Override
             public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                channelTimeDialogSelection = which;
-                // Get the current time
+                channelTimeSelection = which;
+
+                // Get the current time and create the new time from the selection value. 
+                // 0 is the current time, 1 is 2 hours ahead, 2 is 4 hours ahead and so on 
                 Calendar c = Calendar.getInstance();
                 if (which > 0) {
                     c.set(Calendar.MINUTE, 0);
                     c.set(Calendar.SECOND, 0);
-                    if (which == 1) {
-                        c.set(Calendar.HOUR_OF_DAY, 12);
-                    } else if (which == 2) {
-                        c.set(Calendar.HOUR_OF_DAY, 16);
-                    }  else if (which == 3) {
-                        c.set(Calendar.HOUR_OF_DAY, 20);
-                        c.set(Calendar.MINUTE, 15);
-                    }  else if (which == 4) {
-                        c.set(Calendar.HOUR_OF_DAY, 22);
+                    if (which > 0) {
+                        c.set(Calendar.HOUR_OF_DAY, hour + (which*2));
                     }
                 }
-                adapter.setTime(c.getTimeInMillis());
                 channelTimeDialog.dismiss();
+
+                showProgramsFromTime = c.getTimeInMillis();
+                adapter.setTime(showProgramsFromTime);
                 adapter.notifyDataSetChanged();
+
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.onChannelTimeSelected(channelTimeSelection, showProgramsFromTime);
+                    fragmentStatusInterface.onListPopulated(TAG);
+                }
+
                 return true;
             }
         })

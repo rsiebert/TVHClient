@@ -32,7 +32,8 @@ public interface FragmentStatusInterface {
     
     /**
      * Informs the activity that user has selected a certain channel from the
-     * list of channels. The item position within the list is also passed.
+     * list of channels. The item position within the list from 
+     * which the programs shall be shown are also passed.
      * 
      * @param position
      * @param channel
@@ -104,4 +105,14 @@ public interface FragmentStatusInterface {
      * @param tag
      */
     public void listDataInvalid(final String tag);
+
+    /**
+     * Informs the activity that a selection was made from the channel time dialog.
+     * This sets the start time for the programs that shall be shown in the channel 
+     * list and the associated program list.
+     * 
+     * @param selection
+     * @param time
+     */
+    public void onChannelTimeSelected(int selection, long time);
 }

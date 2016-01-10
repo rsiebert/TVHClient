@@ -157,14 +157,6 @@
         <item>Not set</item>
     </string-array>
 
-    <string-array name="channel_list_times">
-        <item>Current time</item>
-        <item>Noon (12:00)</item>
-        <item>Afternoon (16:00)</item>
-        <item>Evening (20:15)</item>
-        <item>Late evening (22:00)</item>
-    </string-array>
-
     <string-array name="pr_content_type0">
         <item>Movie/Drama</item>
         <item>News/Current affairs</item>

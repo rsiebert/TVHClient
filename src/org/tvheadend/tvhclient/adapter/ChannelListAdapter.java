@@ -33,19 +33,18 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     private int layout;
     private int selectedPosition = 0;
     private SharedPreferences prefs;
-    private long currentTime;
+    private long showProgramsFromTime;
 
-    public ChannelListAdapter(Activity context, List<Channel> list, int layout, long currentTime) {
+    public ChannelListAdapter(Activity context, List<Channel> list, int layout) {
         super(context, layout, list);
         this.context = context;
         this.layout = layout;
         this.list = list;
-        this.currentTime = currentTime;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void setTime(final long time) {
-        this.currentTime = time;
+        this.showProgramsFromTime = time;
     }
 
     public void sort(final int type) {
@@ -208,8 +207,8 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 // Also count how many programs are available without counting the ones in the past.
                 while (it.hasNext()) {
                     p = it.next();
-                    if (p.start.getTime() >= currentTime || 
-                        p.stop.getTime() >= currentTime) {
+                    if (p.start.getTime() >= showProgramsFromTime || 
+                        p.stop.getTime() >= showProgramsFromTime) {
                         currentProgramFound = true;
                         break;
                     } else {

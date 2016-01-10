@@ -291,6 +291,7 @@
     <string name="creator">Creator</string>
     <string name="approx_time">Minutes from midnight</string>
 
+    <string name="current_time">Current time</string>
     <string name="start_time">Start time</string>
     <string name="stop_time">Stop time</string>
     <string name="time_window">Time window to start recording</string>

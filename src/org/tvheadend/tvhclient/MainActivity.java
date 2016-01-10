@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
@@ -153,6 +154,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
+
+    private int channelTimeSelection = 0;
+    private long showProgramsFromTime = new Date().getTime();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -311,6 +315,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             failedRecordingListPosition = savedInstanceState.getInt(Constants.FAILED_RECORDING_LIST_POSITION, 0);
             connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
             connectionSettingsShown = savedInstanceState.getBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN);
+            channelTimeSelection = savedInstanceState.getInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION);
+            showProgramsFromTime = savedInstanceState.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME);
         }
 
         // Resets the loading indication and updates the action 
@@ -631,6 +637,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         outState.putInt(Constants.FAILED_RECORDING_LIST_POSITION, failedRecordingListPosition);
         outState.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
         outState.putBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN, connectionSettingsShown);
+        outState.putInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION, channelTimeSelection);
+        outState.putLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, showProgramsFromTime);
         super.onSaveInstanceState(outState);
     }
 
@@ -851,7 +859,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // the channels as required in the program guide is not passed then
             // the full channel list fragment will be shown.
             bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
-            showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, null);
+            bundle.putInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION, channelTimeSelection);
+            bundle.putLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, showProgramsFromTime);
+            showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_COMPLETED_RECORDINGS:
@@ -1305,6 +1315,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     Bundle bundle = new Bundle();
                     bundle.putLong(Constants.BUNDLE_CHANNEL_ID, channel.id);
                     bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+                    bundle.putLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, showProgramsFromTime);
     
                     if (isDualPane) {
                         showFragment(ProgramListFragment.class.getName(), R.id.right_fragment, bundle);
@@ -1630,5 +1641,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @Override
     public boolean onSuggestionSelect(int position) {
         return false;
+    }
+
+    @Override
+    public void onChannelTimeSelected(int selection, long time) {
+        channelTimeSelection = selection;
+        showProgramsFromTime = time;
     }
 }

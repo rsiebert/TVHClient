@@ -41,6 +41,8 @@ public class Constants {
     public static final String BUNDLE_EPG_PIXELS_PER_MINUTE = "pixelsPerMinute";
     public static final String BUNDLE_EPG_DISPLAY_WIDTH = "displayWidth";
     public static final String BUNDLE_EXTERNAL_ACTION = "externalAction";
+    public static final String BUNDLE_SHOW_PROGRAMS_FROM_TIME = "programsFromTime";
+    public static final String BUNDLE_CHANNEL_TIME_SELECTION = "channelTimeDialogSelection";
 
     // Defines what external action shall be done
     public static final int EXTERNAL_ACTION_PLAY = 1;
