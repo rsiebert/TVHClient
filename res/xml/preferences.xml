@@ -153,16 +153,15 @@
             android:summary="@string/pref_unlocker_sum"
             android:title="@string/pref_unlocker" >
         </Preference>
-
+        <Preference
+            android:key="pref_clear_search_history"
+            android:title="@string/pref_clear_search_history" >
+        </Preference>
+        <Preference
+            android:key="pref_clear_icon_cache"
+            android:title="@string/pref_clear_icon_cache" >
+        </Preference>
         <PreferenceScreen android:title="@string/pref_advanced_settings" >
-            <Preference
-                android:key="pref_clear_search_history"
-                android:title="@string/pref_clear_search_history" >
-            </Preference>
-            <Preference
-                android:key="pref_clear_icon_cache"
-                android:title="@string/pref_clear_icon_cache" >
-            </Preference>
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref_debug_mode"
