@@ -183,6 +183,8 @@
     <string name="pref_send_logfile_sum">Mail the log file to the developer to support him improving the program. Only status information from TVHClient is sent!</string>
     <string name="pref_connection_timeout">Connection Timeout</string>
     <string name="pref_connection_timeout_sum">Defines the time in seconds until the connection with the server must be fully established. Increasing the value can improve the connectivity on slow networks.</string>
+    <string name="pref_buffer_size">Message buffer size</string>
+    <string name="pref_buffer_size_sum">Size in MB of the buffer that stores the received data from the server. Default is 4 MB. If sometimes no data could be loaded a larger buffer size might solve the problem. Please not that a larger buffer size reduces the available memory on the device.</string>
 
     <string name="feature_not_supported_by_server">The TVHeadend server does not supported this feature. A newer version is required.</string>
     <string name="loading_profiles">Loading profiles</string>

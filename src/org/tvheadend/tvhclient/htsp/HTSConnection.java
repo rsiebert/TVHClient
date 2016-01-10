@@ -52,10 +52,11 @@ public class HTSConnection extends Thread {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
         connectionTimeout = Integer.parseInt(prefs.getString("connectionTimeout", "5")) * 1000;
+        int bufferSize = Integer.parseInt(prefs.getString("bufferSize", "0"));
 
         running = false;
         lock = new ReentrantLock();
-        inBuf = ByteBuffer.allocateDirect(2048 * 2048);
+        inBuf = ByteBuffer.allocateDirect(2048 * 2048 * (bufferSize + 1));
         inBuf.limit(4);
         responseHandelers = new SparseArray<HTSResponseHandler>();
         messageQueue = new LinkedList<HTSMessage>();
