@@ -1,12 +1,13 @@
 $ 1.8.6
   % VERSION 1.8.6
-  _ 03.01.2016
+  _ 12.01.2016
     * Fixed issue that showed old programs in the channel and program list
     * Added option to start playing a channel when the channel icon is selected
     * Updated descriptions about the available features when the app is unlocked
-    * Small improvements in the search screen
     * Fixed wrong language being used in the unlocker or information screen
     * Allow setting a different recording profile when adding a manual, series or timer recording (Only available in the unlocked version)
+    * Added option in the channel list to show programs that run in the future (like prime time) (Only available in the unlocked version)
+    * Added more options in the advanced settings
     * Small bug fixes
 $ 1.8.5
   % VERSION 1.8.5
