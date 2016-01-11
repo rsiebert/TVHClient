@@ -1213,6 +1213,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      */
     private void updateTimerRecEntry(final Intent intent) {
 
+        final String id = intent.getStringExtra("id");
         final long channelId = intent.getLongExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 0);
         final long stop = intent.getLongExtra("stop", 0);
@@ -1226,6 +1227,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("updateTimerecEntry");
+        request.putField("id", id);
         request.putField("title", title);
         request.putField("name", name);
         request.putField("start", start);
@@ -1474,6 +1476,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      */
     private void updateAutorecEntry(final Intent intent) {
 
+        final String id = intent.getStringExtra("id");
         final String title = intent.getStringExtra("title");
         final String name = intent.getStringExtra("name");
         final long channelId = intent.getLongExtra("channelId", 0);
@@ -1491,6 +1494,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("updateAutorecEntry");
+        request.putField("id", id);
         request.putField("title", title);
         request.putField("name", name);
 
