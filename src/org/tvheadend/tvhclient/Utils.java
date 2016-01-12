@@ -247,8 +247,9 @@ public class Utils {
         // Show a confirmation dialog before deleting the recording
         new MaterialDialog.Builder(context)
                 .title(R.string.record_remove)
-                .content(message).positiveText(R.string.remove)
-                .negativeText(R.string.cancel)
+                .content(message)
+                .positiveText(R.string.remove)
+                .negativeText(R.string.discard)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
@@ -302,8 +303,8 @@ public class Utils {
         new MaterialDialog.Builder(context)
                 .title(R.string.record_cancel)
                 .content(context.getString(R.string.cancel_recording, rec.title))
-                .positiveText(R.string.remove)
-                .negativeText(R.string.cancel)
+                .positiveText(R.string.cancel)
+                .negativeText(R.string.discard)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
