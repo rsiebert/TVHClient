@@ -68,6 +68,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private EditText name;
     private TextView channelName;
     private TextView dvrConfigName;
+    private TextView dvrConfigNameLabel;
 
     private long priorityValue;
     private long minDurationValue;
@@ -333,6 +334,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
         priority = (TextView) v.findViewById(R.id.priority);
         dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
+        dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
@@ -385,25 +387,32 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 			}
         });
 
-        if (dvrConfigName != null) {
-            dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
-            dvrConfigName.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    new MaterialDialog.Builder(activity)
-                    .title(R.string.select_dvr_config)
-                    .items(dvrConfigList)
-                    .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            dvrConfigName.setText(dvrConfigList[which]);
-                            dvrConfigNameValue = which;
-                            return true;
-                        }
-                    })
-                    .show();
-                }
-            });
+        if (dvrConfigName != null && dvrConfigNameLabel != null) {
+            if (rec != null && rec.id.length() > 0) {
+                dvrConfigName.setVisibility(View.GONE);
+                dvrConfigNameLabel.setVisibility(View.GONE);
+            } else {
+                dvrConfigName.setVisibility(View.VISIBLE);
+                dvrConfigNameLabel.setVisibility(View.VISIBLE);
+                dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
+                dvrConfigName.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new MaterialDialog.Builder(activity)
+                        .title(R.string.select_dvr_config)
+                        .items(dvrConfigList)
+                        .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                dvrConfigName.setText(dvrConfigList[which]);
+                                dvrConfigNameValue = which;
+                                return true;
+                            }
+                        })
+                        .show();
+                    }
+                });
+            }
         }
 
         minDuration.setText(minDurationValue > 0 ? String.valueOf(minDurationValue) : getString(R.string.duration_sum));

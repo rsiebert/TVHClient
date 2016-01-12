@@ -65,6 +65,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private TextView descriptionLabel;
     private TextView channelName;
     private TextView dvrConfigName;
+    private TextView dvrConfigNameLabel;
 
     // Extra pre- and postrecording times in seconds
     private long startExtraValue;
@@ -270,6 +271,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         stopDate = (TextView) v.findViewById(R.id.stop_date);
         priority = (TextView) v.findViewById(R.id.priority);
         dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
+        dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         return v;
     }
@@ -336,25 +338,32 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             });
         }
 
-        if (dvrConfigName != null) {
-            dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
-            dvrConfigName.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    new MaterialDialog.Builder(activity)
-                    .title(R.string.select_dvr_config)
-                    .items(dvrConfigList)
-                    .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            dvrConfigName.setText(dvrConfigList[which]);
-                            dvrConfigNameValue = which;
-                            return true;
-                        }
-                    })
-                    .show();
-                }
-            });
+        if (dvrConfigName != null && dvrConfigNameLabel != null) {
+            if (rec != null && rec.id > 0) {
+                dvrConfigName.setVisibility(View.GONE);
+                dvrConfigNameLabel.setVisibility(View.GONE);
+            } else {
+                dvrConfigName.setVisibility(View.VISIBLE);
+                dvrConfigNameLabel.setVisibility(View.VISIBLE);
+                dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
+                dvrConfigName.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new MaterialDialog.Builder(activity)
+                        .title(R.string.select_dvr_config)
+                        .items(dvrConfigList)
+                        .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                dvrConfigName.setText(dvrConfigList[which]);
+                                dvrConfigNameValue = which;
+                                return true;
+                            }
+                        })
+                        .show();
+                    }
+                });
+            }
         }
 
         // Set the start and stop times and dates. Get the correct values from
