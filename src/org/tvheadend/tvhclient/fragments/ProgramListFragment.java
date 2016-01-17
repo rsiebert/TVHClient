@@ -6,11 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.ExternalActionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -18,6 +20,8 @@ import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 
@@ -41,6 +45,8 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 public class ProgramListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
@@ -276,6 +282,52 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_record_once:
             Utils.recordProgram(activity, program, false);
+            return true;
+
+        case R.id.menu_record_once_custom_profile:
+            // Create the list of available recording profiles that the user can select from
+            String[] dvrConfigList = new String[app.getDvrConfigs().size()];
+            for (int i = 0; i < app.getDvrConfigs().size(); i++) {
+                dvrConfigList[i] = app.getDvrConfigs().get(i).name;
+            }
+
+            // Get the selected recording profile to highlight the 
+            // correct item in the list of the selection dialog
+            int dvrConfigNameValue = 0;
+            DatabaseHelper dbh = DatabaseHelper.getInstance(activity);
+            final Connection conn = dbh.getSelectedConnection();
+            final Profile p = dbh.getProfile(conn.recording_profile_id);
+            if (p != null) {
+                for (int i = 0; i < dvrConfigList.length; i++) {
+                    if (dvrConfigList[i].equals(p.name)) {
+                        dvrConfigNameValue = i;
+                        break;
+                    }
+                }
+            }
+
+            // Create new variables because the dialog needs them as final
+            final Program prog = program;
+            final String[] dcList = dvrConfigList;
+
+            // Create the dialog to show the available profiles
+            new MaterialDialog.Builder(activity)
+            .title(R.string.select_dvr_config)
+            .items(dvrConfigList)
+            .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                @Override
+                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                    // Pass over the 
+                    Intent intent = new Intent(activity, HTSService.class);
+                    intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+                    intent.putExtra("eventId", prog.id);
+                    intent.putExtra("channelId", prog.channel.id);
+                    intent.putExtra("configName", dcList[which]);
+                    activity.startService(intent);
+                    return true;
+                }
+            })
+            .show();
             return true;
 
         case R.id.menu_record_series:
