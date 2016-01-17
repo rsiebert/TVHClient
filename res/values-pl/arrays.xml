@@ -33,22 +33,6 @@
         <item>Informacje i pomoc</item>
         <item>Włącz dodatki</item>
     </string-array>
-    
-    <string-array name="pref_buffer_size_ids" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-
-    <string-array name="pref_buffer_size_names"  translatable="false">
-        <item>4 Mb</item>
-        <item>8 Mb</item>
-        <item>12 Mb</item>
-        <item>16 Mb</item>
-        <item>20 Mb</item>
-    </string-array>
 
     <string-array name="pref_sort_channels_names">
         <item>Zdefiniowane przez serwer</item>
@@ -83,14 +67,6 @@
         <item>Niski</item>
         <item>Nieważny</item>
         <item>Nie ustawiony</item>
-    </string-array>
-    
-    <string-array name="channel_list_times">
-        <item>Aktualny czas</item>
-        <item>Południe (12:00)</item>
-        <item>Popołudnie (16:00)</item>
-        <item>Wieczór (20:15)</item>
-        <item>Późny wieczór (22:00)</item>
     </string-array>
 
     <string-array name="pr_content_type0">
