@@ -167,8 +167,8 @@ public class Constants {
     public static final int MIN_API_VERSION_PROFILES = 16;
     public static final int MIN_API_VERSION_TIMER_RECORDINGS = 18;
     public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
-    public static final int MIN_API_VERSION_UPDATE_TIMER_RECORDINGS = 24;
-    public static final int MIN_API_VERSION_UPDATE_SERIES_RECORDINGS = 24;
+    public static final int MIN_API_VERSION_UPDATE_TIMER_RECORDINGS = 25;
+    public static final int MIN_API_VERSION_UPDATE_SERIES_RECORDINGS = 25;
 
     // Minimum API versions to enable or disable certain fields in the HTSP API
     // methods. These fields shall only be visible and used if supported.
