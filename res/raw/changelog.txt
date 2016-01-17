@@ -2,7 +2,7 @@ $ 1.8.6
   % VERSION 1.8.6
   _ 17.01.2016
     * Fixed issue that showed old programs in the channel and program list
-    * Added option to start playing a channel when the channel icon is selected
+    * Added option to start Live-TV or recording when the channel icon is selected
     * Updated descriptions about the available features when the app is unlocked
     * Fixed wrong language being used in the unlocker or information screen
     * Choose a different recording profile when adding a manual, series or timer recording (Only available in the unlocked version)
