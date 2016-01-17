@@ -7,6 +7,7 @@ $ 1.8.6
     * Fixed wrong language being used in the unlocker or information screen
     * Allow setting a different recording profile when adding a manual, series or timer recording (Only available in the unlocked version)
     * Added option in the channel list to show programs that run in the future (like prime time) (Only available in the unlocked version)
+    * Added menu item to select a different profile before adding a recording. (Only available in the unlocked version)
     * Added more options in the advanced settings
     * Small bug fixes
 $ 1.8.5
