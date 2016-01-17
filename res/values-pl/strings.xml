@@ -181,6 +181,8 @@
     <string name="pref_send_logfile_sum">Wysyła plik logu dziennika do autora w celu wspierania i ulepszania programu. Tylko informacje o stanie są wysyłane z TVHClient!</string>
     <string name="pref_connection_timeout">Limit czasu połączenia</string>
     <string name="pref_connection_timeout_sum">Określa czas w sekundach, po którym połączenie z serwerem musi być w pełni ustanowione. Zwiększenie wartości może poprawić łączność na wolnych sieciach.</string>
+    <string name="pref_buffer_size">Rozmiar bufora wiadomości</string>
+    <string name="pref_buffer_size_sum">Rozmiar bufora w MB, który przechowuje odebrane dane z serwera. Domyślnie jest to 4 MB. Jeśli czasami nie można załadować danych, większy rozmiar bufora może rozwiązać problem. Należy pamiętać, że zwiększenie rozmiar bufora może prowadzić do braku pamięci na starszych urządzeniach.</string>
 
     <string name="feature_not_supported_by_server">Serwer TVHeadend nie wspiera tej funkcji. Wymagana jest nowsza wersja.</string>
     <string name="loading_profiles">Ładowanie profili</string>
@@ -282,12 +284,14 @@
     <string name="genre_color_list">Lista rodzaju kolorów i ich znaczenie.</string>
     <string name="retention">Retencja</string>
     <string name="priority">Priorytet</string>
+    <string name="dvr_config">Profil nagrywania</string>
     <string name="path">Ścieżka</string>
     <string name="directory">Katalog</string>
     <string name="owner">Właściciel</string>
     <string name="creator">Twórca</string>
     <string name="approx_time">Minuty przed północą</string>
 
+    <string name="current_time">Aktualny czas</string>
     <string name="start_time">Czas rozpoczęcia</string>
     <string name="stop_time">Czas zakończenia</string>
     <string name="time_window">Ramy czasu do rozpoczcia nagrywania</string>
@@ -332,12 +336,14 @@
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>
     <string name="ready">Gotowy</string>
+    <string name="select_time">Pokaż programy uruchomione w wybranym czasie.</string>
     <string name="select_timeframe">Pokaż przewodnik po programach dla wybranej daty i czasu.</string>
     <string name="currently_recording">Aktualnie nagrywane</string>
     <string name="select_start_time">Wybierz czas startu</string>
     <string name="select_stop_time">Wybierz czas końca</string>
     <string name="select_channel">Wybierz kanał</string>
     <string name="select_priority">Wybierz priorytet</string>
+    <string name="select_dvr_config">Wybierz profil nagrywania</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
