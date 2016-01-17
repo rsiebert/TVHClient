@@ -172,8 +172,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             }
 
             if (holder.icon != null) {
-                // Add the listener to the icon so that a 
-                // click calls the program list of this channel
+                // If activated in the settings allow playing the program by selecting the channel icon 
                 holder.icon.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -6,6 +6,7 @@ import java.util.List;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
@@ -13,6 +14,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -73,7 +75,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     }
     
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ViewHolder holder = null;
 
@@ -116,7 +118,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         }
 
         // Get the program and assign all the values
-        Recording rec = getItem(position);
+        final Recording rec = getItem(position);
         if (rec != null) {
             holder.title.setText(rec.title);
             if (holder.channel != null && rec.channel != null) {
@@ -163,6 +165,21 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 } else {
                     holder.is_timer_recording.setVisibility(ImageView.GONE);
                 }
+            }
+
+            // If activated in the settings allow playing the recording by  
+            // selecting the channel icon if the recording is completed
+            if (holder.icon != null && 
+                    rec.error == null && 
+                    rec.state.equals("completed")) {
+                holder.icon.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (context instanceof FragmentStatusInterface) {
+                            ((FragmentStatusInterface) context).onListItemSelected(position, rec, Constants.TAG_CHANNEL_ICON);
+                        }
+                    }
+                });
             }
         }
         return view;

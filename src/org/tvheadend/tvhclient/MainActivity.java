@@ -1305,7 +1305,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 // Play the channel when the channel icon has 
                 // been clicked, otherwise show the channel details
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                if (prefs.getBoolean("playChannelWhenSelectedPref", true) && 
+                if (prefs.getBoolean("playWhenChannelIconSelectedPref", true) && 
                         tag.equals(Constants.TAG_CHANNEL_ICON)) {
                     Intent intent = new Intent(this, ExternalActionActivity.class);
                     intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
@@ -1353,20 +1353,31 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             failedRecordingListPosition = position;
             break;
         }
-        // When a recording has been selected from the recording list fragment,
-        // show its details. In dual mode these are shown in a separate fragment
-        // to the right of the recording list, otherwise replace the recording
-        // list with the details fragment.
-        if (recording != null) {
-            Bundle args = new Bundle();
-            args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
-            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
-            if (isDualPane) {
-                showFragment(RecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
+        if (recording != null) {
+            // If the channel icon of a recording was selected and the setting 
+            // is activated play the recording instead of showing its details
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs.getBoolean("playWhenChannelIconSelectedPref", true) && 
+                    tag.equals(Constants.TAG_CHANNEL_ICON)) {
+                Intent intent = new Intent(this, ExternalActionActivity.class);
+                intent.putExtra(Constants.BUNDLE_RECORDING_ID, recording.id);
+                startActivity(intent);
             } else {
-                DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
-                newFragment.show(getSupportFragmentManager(), "dialog");
+                // When a recording has been selected from the recording list fragment,
+                // show its details. In dual mode these are shown in a separate fragment
+                // to the right of the recording list, otherwise replace the recording
+                // list with the details fragment.
+                Bundle args = new Bundle();
+                args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
+                args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
+
+                if (isDualPane) {
+                    showFragment(RecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
+                } else {
+                    DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
+                    newFragment.show(getSupportFragmentManager(), "dialog");
+                }
             }
         }
     }
