@@ -248,8 +248,8 @@ public class Utils {
         new MaterialDialog.Builder(context)
                 .title(R.string.record_remove)
                 .content(message)
+                .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
-                .negativeText(R.string.discard)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
@@ -303,8 +303,8 @@ public class Utils {
         new MaterialDialog.Builder(context)
                 .title(R.string.record_cancel)
                 .content(context.getString(R.string.cancel_recording, rec.title))
-                .positiveText(R.string.cancel)
-                .negativeText(R.string.discard)
+                .negativeText(R.string.cancel)
+                .positiveText(R.string.remove)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
@@ -381,6 +381,7 @@ public class Utils {
      */
     public static void setProgramMenu(final TVHClientApplication app, final Menu menu, final Program program) {
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
+        MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
@@ -390,6 +391,7 @@ public class Utils {
 
         // Disable these menus as a default
         recordOnceMenuItem.setVisible(false);
+        recordOnceCustomProfileMenuItem.setVisible(false);
         recordSeriesMenuItem.setVisible(false);
         recordCancelMenuItem.setVisible(false);
         recordRemoveMenuItem.setVisible(false);
@@ -418,6 +420,7 @@ public class Utils {
         if (program.recording == null) {
             // Show the record menu
             recordOnceMenuItem.setVisible(true);
+            recordOnceCustomProfileMenuItem.setVisible(app.isUnlocked());
             if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
                 recordSeriesMenuItem.setVisible(true);
             }
