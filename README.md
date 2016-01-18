@@ -22,3 +22,20 @@ This android application allows you to interact and control the TVHeadend server
 * Light and dark theme
 
 This program is licensed under the GPLv3 (see COPYING).
+
+#How can I help?
+
+If you are a programmer, fork the project, and provide patches or enhancements via pull requests. If you don't have coding skills, you can help with translations. Otherwise, file bugs, and open enhancement requests.
+
+#Building from Source (Eclipse)
+
+* Install Android SDK (http://developer.android.com/sdk/installing/index.html?pkg=tools)
+* Install the Eclipse ADT bundle (http://stackoverflow.com/questions/27418096/where-can-i-download-eclipse-android-bundle)
+* Clone the TVHClient repository
+* Import TVHClient as existing project into Eclipse
+* Import the android-support-v7-appcompat and android-design libraries from the SDK folder
+* Download the required external libraries and import them into Eclipse
+  * Material Dialogs (https://github.com/afollestad/material-dialogs)
+  * Material Design (https://github.com/navasmdc/MaterialDesignLibrary)
+  * datetimepicker (https://github.com/flavienlaurent/datetimepicker)
+* Right click on TVHClient -> Properties -> Android and check if the five libraries are available
