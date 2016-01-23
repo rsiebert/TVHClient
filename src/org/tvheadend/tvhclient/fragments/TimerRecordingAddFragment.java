@@ -334,7 +334,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         });
 
         if (dvrConfigName != null && dvrConfigNameLabel != null) {
-            if (rec != null && rec.id.length() > 0) {
+            if ((rec != null && rec.id.length() > 0) || dvrConfigList.length == 0) {
+                dvrConfigName.setText("");
                 dvrConfigName.setVisibility(View.GONE);
                 dvrConfigNameLabel.setVisibility(View.GONE);
             } else {
@@ -659,6 +660,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         final Profile p = dbh.getProfile(conn.recording_profile_id);
         if (p != null 
                 && p.enabled
+                && (dvrConfigName.getText().length() > 0)
                 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                 && app.isUnlocked()) {
             // Use the selected profile. If no change was done in the 
