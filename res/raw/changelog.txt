@@ -1,3 +1,7 @@
+$ 1.8.7
+  % VERSION 1.8.7
+  _ 24.01.2016
+    * Fix crash when no profiles are present in the add recording dialog
 $ 1.8.6
   % VERSION 1.8.6
   _ 17.01.2016
