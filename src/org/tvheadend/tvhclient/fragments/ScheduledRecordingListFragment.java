@@ -49,14 +49,9 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         }
 
-        // Show the add button to create a custom recording only when the
-        // application is unlocked
-        if (app.isUnlocked()) {
-            (menu.findItem(R.id.menu_add)).setVisible(true);
-        }
-
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
+        (menu.findItem(R.id.menu_add)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         (menu.findItem(R.id.menu_download)).setVisible(false);
@@ -64,6 +59,12 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+        }
+
+        // Show the add button to create a custom recording only when the
+        // application is unlocked
+        if (app.isUnlocked()) {
+            (menu.findItem(R.id.menu_add)).setVisible(true);
         }
 
         // Show the edit button only when the application is unlocked and a
