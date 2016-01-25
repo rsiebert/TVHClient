@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="23" />
     <application 
@@ -56,5 +58,6 @@
             android:name="org.tvheadend.tvhclient.SuggestionProvider" 
             android:authorities="org.tvheadend.tvhclient.SuggestionProvider" 
             android:exported="false" />
+        <receiver android:name=".NotificationReceiver" ></receiver>
     </application>
 </manifest>
