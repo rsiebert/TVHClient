@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.tvheadend.tvhclient.Constants;
@@ -35,6 +36,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -219,8 +221,14 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Initiate a timer that will update the adapter every minute
         // so that the progress bars will be displayed correctly
+        // Also update the current adapter time if the current 
+        // time was selected from the channel time dialog, otherwise
+        // old programs will not be removed when they are over
         channelUpdateTask = new Runnable() {
             public void run() {
+                if (channelTimeSelection == 0) {
+                    adapter.setTime(new Date().getTime());
+                }
                 adapter.notifyDataSetChanged();
                 channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
             }
@@ -450,11 +458,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         adapter.setTime(showProgramsFromTime);
         adapter.notifyDataSetChanged();
 
-        // Start updating the adapter
-        if (!showOnlyChannels) {
-            channelUpdateHandler.post(channelUpdateTask);
-        }
-
         // Fill the tag adapter with the available tags
         tagAdapter.clear();
         for (ChannelTag t : app.getChannelTags()) {
@@ -493,12 +496,19 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         if (!app.isLoading()) {
             populateList();
         }
+
+        // Start the timer that updates the adapter so 
+        // it only shows programs within the current time
+        if (!showOnlyChannels) {
+            channelUpdateHandler.post(channelUpdateTask);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         app.removeListener(this);
+        channelUpdateHandler.removeCallbacks(channelUpdateTask);
     }
 
     @Override
@@ -506,7 +516,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         fragmentStatusInterface = null;
         fragmentScrollInterface = null;
         actionBarInterface = null;
-        channelUpdateHandler.removeCallbacks(channelUpdateTask);
         super.onDetach();
     }
 
