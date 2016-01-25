@@ -35,6 +35,11 @@
             android:key="playWhenChannelIconSelectedPref"
             android:summary="@string/pref_play_when_channel_icon_selected_sum"
             android:title="@string/pref_play_when_channel_icon_selected" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_show_notifications"
+            android:summary="@string/pref_show_notifications_sum"
+            android:title="@string/pref_show_notifications" />
 
         <ListPreference
             android:name="@string/pref_language"

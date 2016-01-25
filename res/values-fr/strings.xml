@@ -168,7 +168,7 @@
     <string name="pref_enable_playback_profiles">Activer les profils de lecture</string>
     <string name="pref_enable_playback_profiles_sum">Utiliser les nouvelle fonctionnalités de profils de serveur pour les programmations. Ceci remplace tous les paramètres audio et vidéo défini pour lire une émission.</string>
     <string name="pref_show_notifications">Lister les notifications</string>
-    <string name="pref_show_notifications_sum">Informe l\'utilisateur dès qu\'un enregistrement a commencé ou est fini. Cela nécessite que le service tourne en tâche de fond.</string>
+    <string name="pref_show_notifications_sum">Informe l\'utilisateur dès qu\'un enregistrement a commencé ou est fini.</string>
     <string name="pref_show_next_program">Affiche le programme suivant dans la liste de chaines</string>
     <string name="pref_show_next_program_sum">Le nom du programme arrivant ensuite est affiché dans la liste des chaines. Il est affiché en dessous de l\'indicateur de progression.</string>
     <string name="pref_programs">Programmes</string>

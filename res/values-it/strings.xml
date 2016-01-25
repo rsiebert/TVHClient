@@ -143,7 +143,7 @@
     <string name="pref_playback_profiles">Profili di riproduzione</string>
     <string name="pref_playback_profiles_sum">Scegli il profilo che il server userà per riprodurre i programmi registrati.</string>
     <string name="pref_show_notifications">Mostra notifiche</string>
-    <string name="pref_show_notifications_sum">Mostra una notifica quando una registrazione inizia o finisce. Richiede servizio in background.</string>
+    <string name="pref_show_notifications_sum">Mostra una notifica quando una registrazione inizia o finisce.</string>
     <string name="pref_show_next_program">Mostra il prossimo programma nella lista dei canali</string>
     <string name="pref_show_next_program_sum">Il nome del programma seguente sarà mostrato nella lista dei canali sotto l\'indicatore del progresso.</string>
     <string name="pref_programs">Programmi</string>

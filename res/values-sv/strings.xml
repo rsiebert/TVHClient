@@ -143,7 +143,7 @@
     <string name="pref_playback_profiles">Uppspelningsprofiler</string>
     <string name="pref_playback_profiles_sum">Välj en profil som ska använads för att spela upp ett inspelat program.</string>
     <string name="pref_show_notifications">Visa notifieringar</string>
-    <string name="pref_show_notifications_sum">Informarea användaren när en inspelning har startat eller är färdig. Detta kräver att servicen körs i bakgrunden.</string>
+    <string name="pref_show_notifications_sum">Informarea användaren när en inspelning har startat eller är färdig.</string>
     <string name="pref_show_next_program">Visa nästa program i kanallistan</string>
     <string name="pref_show_next_program_sum">Namnet på programmet som kommer näst visas i kanallistan. Det visas under förloppsindikatorn.</string>
     <string name="pref_programs">Program</string>

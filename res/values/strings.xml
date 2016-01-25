@@ -167,7 +167,7 @@
     <string name="pref_enable_playback_profiles">Enable playback profiles</string>
     <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
     <string name="pref_show_notifications">Show notifications</string>
-    <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed. This requires that the service is running in the background.</string>
+    <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed.</string>
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
     <string name="pref_play_when_channel_icon_selected">Channel icon plays TV or recording</string>
