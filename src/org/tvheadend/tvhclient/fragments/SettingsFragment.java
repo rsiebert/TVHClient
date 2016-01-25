@@ -56,6 +56,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
     private CheckBoxPreference prefDebugMode;
+    private CheckBoxPreference prefShowNotifications;
     private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
 
@@ -82,6 +83,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefSendLogfile = findPreference("pref_send_logfile");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
+        prefShowNotifications = (CheckBoxPreference) findPreference("pref_show_notifications");
     }
 
     @Override
@@ -306,6 +308,19 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 })
                 .show();
                 return false;
+            }
+        });
+        
+        // Add a listener so that the notifications can be selected.
+        prefShowNotifications.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (!app.isUnlocked()) {
+                    Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
+                            Snackbar.LENGTH_SHORT).show();
+                    prefShowNotifications.setChecked(false);
+                }
+                return true;
             }
         });
     }
