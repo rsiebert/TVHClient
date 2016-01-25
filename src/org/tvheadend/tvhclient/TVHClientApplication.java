@@ -27,14 +27,19 @@ import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -438,6 +443,13 @@ public class TVHClientApplication extends Application implements BillingProcesso
         }
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_ADD, rec);
+
+            // Add a notification if a new recording was scheduled
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs.getBoolean("pref_show_notifications", false)) {
+                Log.d(TAG, "New recording was scheduled, adding notification");
+                addNotification(rec.id, rec.start.getTime());
+            }
         }
     }
 
@@ -533,6 +545,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
         }
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_DELETE, rec);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs.getBoolean("pref_show_notifications", false)) {
+                Log.d(TAG, "Recording was removed, cancel notification");
+                cancelNotification(rec.id);
+            }
         }
     }
 
@@ -562,6 +580,19 @@ public class TVHClientApplication extends Application implements BillingProcesso
     public void updateRecording(Recording rec) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_UPDATE, rec);
+
+            // Remove any pending notification if the updated recording 
+            // contains errors, otherwise update the notification
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs.getBoolean("pref_show_notifications", false)) {
+                if ((rec.error != null || rec.state.equals("missed") || rec.state.equals("invalid"))) {
+                    Log.d(TAG, "Recording was updated, remoing notification");
+                    cancelNotification(rec.id);
+                } else {
+                    Log.d(TAG, "Recording was updated, adding notification");
+                    addNotification(rec.id, rec.start.getTime());
+                }
+            }
         }
     }
 
@@ -753,6 +784,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
             broadcastMessage(Constants.ACTION_LOADING, b);
         }
         loading = b;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!loading && prefs.getBoolean("pref_show_notifications", false)) {
+            Log.d(TAG, "All recordings loaded, adding all notifications");
+            addNotifications();
+        }
     }
 
     /**
@@ -1185,6 +1222,60 @@ public class TVHClientApplication extends Application implements BillingProcesso
             if (diff > 7 * 24 * 60 * 60 * 1000) {
                 files[i].delete();
             }
+        }
+    }
+
+    /**
+     * 
+     * @param id
+     * @param time
+     */
+    public void addNotification(long id, long time) {
+        if (loading) {
+            return;
+        }
+
+        Intent intent = new Intent(this, NotificationReceiver.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constants.BUNDLE_RECORDING_ID, id);
+        intent.putExtras(bundle);
+        PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, time, pi);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy, HH:mm", Locale.US);
+        String dateText = sdf.format(getRecording(id).start.getTime());
+        Log.d(TAG, "Added notification for " + getRecording(id).title + " at " + dateText);
+    }
+
+    /**
+     * 
+     * @param id
+     */
+    public void cancelNotification(long id) {
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel((int) id);
+
+        Log.d(TAG, "Cancelled notification for " + getRecording(id).title);
+    }
+
+    /**
+     * 
+     */
+    public void addNotifications() {
+        for (Recording rec : getRecordings()) {
+            if (rec.error == null && rec.state.equals("scheduled")) {
+                addNotification(rec.id, rec.start.getTime());
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    public void cancelNotifications() {
+        for (Recording rec : getRecordings()) {
+            cancelNotification(rec.id);
         }
     }
 }

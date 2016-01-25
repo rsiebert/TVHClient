@@ -320,6 +320,15 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                             Snackbar.LENGTH_SHORT).show();
                     prefShowNotifications.setChecked(false);
                 }
+
+                // If the checkbox is checked then add all 
+                // required notifications, otherwise remove them
+                if (prefShowNotifications.isChecked()) {
+                    app.addNotifications();
+                } else {
+                    app.cancelNotifications();
+                }
+
                 return true;
             }
         });
