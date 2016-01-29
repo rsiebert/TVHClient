@@ -428,8 +428,14 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         if (channel != null) {
             synchronized(channel.epg) {
                 Iterator<Program> it = channel.epg.iterator();
-                if (channel.isTransmitting && it.hasNext()) {
+                while (it.hasNext()) {
                     program = it.next();
+                    if (channel.isTransmitting && 
+                            channelTimeSelection == 0 &&
+                            program.start.getTime() >= showProgramsFromTime || 
+                            program.stop.getTime() >= showProgramsFromTime) {
+                        break;
+                    }
                 }
             }
         }
