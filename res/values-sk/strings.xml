@@ -9,6 +9,7 @@
     <string name="download">K stiahnutiu</string>
     <string name="search">Hľadať</string>
     <string name="record_once">Nahrať</string>
+    <string name="record_once_custom_profile">Nahrať s iným profilom</string>
     <string name="record_series">Nahrať (sériovo)</string>
     <string name="record_cancel">Odstrániť nahrávanie</string>
     <string name="record_cancel_all">Odstrániť všetky nahrávania</string>
@@ -169,6 +170,8 @@
     <string name="pref_show_notifications_sum">Informovať použivateľa vždy, keď nahrávanie začalo alebo bolo dokončene. Služba bežiaca na pozadí je vyžadovaná.</string>
     <string name="pref_show_next_program">Zobrazenie nasl. programu</string>
     <string name="pref_show_next_program_sum">Názov nasledujúceho programu bude zobrazený v zozname kanálov pod ukazovateľom priebehu.</string>
+	<string name="pref_play_when_channel_icon_selected">Začať prehrávanie po kliknutí na logo kanálu</string>
+    <string name="pref_play_when_channel_icon_selected_sum">Po kliknutí na logo kanálu v zozname kanálov, v programovom sprievodcovi alebo v zozname nahrávaní, začne prehrávanie aktuálneho programu alebo nahrávania.</string>
     <string name="pref_programs">Programy</string>
     <string name="pref_playback_and_recording">Prehrávanie a nahrávanie</string>
     <string name="pref_transcoding">Video a audio parametre</string>
@@ -181,6 +184,8 @@
     <string name="pref_send_logfile_sum">Poslanie log súboru pomôže pri vývoji aplikácie. Poslané sú len informácie o stave!</string>
     <string name="pref_connection_timeout">Timeout pripojenia</string>
     <string name="pref_connection_timeout_sum">Nadefinovanie času v sekundách, dokedy musí byť nadviazané pripojenie so serverom. Vyššia hodnota môže zlepšiť konektivitu na pomalších sieťach.</string>
+    <string name="pref_buffer_size">Veľkosť Message buffer-u</string>
+    <string name="pref_buffer_size_sum">Veľkosť bufferu v MB, do ktorého sa ukladajú prijaté dáta zo servera. Predvolená hodnota je 4 MB. Ak žiadne dáta neboli prijaté, problém môže vyriešiť zvýšenie bufferu. Príliš veľký buffer môže viesť k spomaleniu na starších zariadeniach.</string>
 
     <string name="feature_not_supported_by_server">TVHeadend server nepodporuje túto funkciu. Aktualizujte server na novšiu verziu.</string>
     <string name="loading_profiles">Nahrávanie profilov</string>
@@ -282,12 +287,14 @@
     <string name="genre_color_list">Zoznam farieb žánrov a ich význam.</string>
     <string name="retention">Zadržanie</string>
     <string name="priority">Priorita</string>
+    <string name="dvr_config">Nahrávací profil</string>
     <string name="path">Cesta</string>
     <string name="directory">Adresár</string>
     <string name="owner">Vlastník</string>
     <string name="creator">Tvorca</string>
     <string name="approx_time">Minúty od polnoci</string>
     
+    <string name="current_time">Aktuálny čas</string>
     <string name="start_time">Čas začiatku</string>
     <string name="stop_time">Čas konca</string>
     <string name="time_window">Časové rozpätie pre nahrávanie</string>
@@ -308,6 +315,11 @@
     <string name="error_start_stop_time">Čas ukončenia musí byť po čase začiatku!</string>
     <string name="error_no_channel">Vyberte kanál!</string>
     
+    <string name="subscription_error">Chyba Subscription: %1$s</string>
+    <string name="stream_errors">Chyby streamu: %1$d</string>
+    <string name="data_errors">Chyby dát: %1$d</string>
+    <string name="data_size">Veľkosť súboru: %1$d %2$s</string>
+	
     <string name="nothing">Žiadne</string>
     <string name="loading">Načítavanie&#8230;</string>
     <string name="loading_channel">Načítavám kanál %s</string>
@@ -328,13 +340,15 @@
     <string name="available">k dispozícii</string>
     <string name="unknown">Neznámy</string>
     <string name="ready">Pripravený</string>
+    <string name="select_time">Zobraziť programy, ktoré vyhovujú zvolenému času.</string>
     <string name="select_timeframe">Zobraziť programového sprievodcu pre zvolený dátum a čas.</string>
     <string name="currently_recording">Prebiehajúce nahrávanie</string>
-    <string name="select_start_time">Nastav čas začiatku</string>
-    <string name="select_stop_time">Nastav čas konca</string>
-    <string name="select_channel">Vyber kanál</string>
-    <string name="select_priority">Nastav prioritu</string>
-    <string name="select_log_file">Vyber log súbor</string>
+    <string name="select_start_time">Nastavte čas začiatku</string>
+    <string name="select_stop_time">Nastavte čas konca</string>
+    <string name="select_channel">Vyberte kanál</string>
+    <string name="select_priority">Nastavte prioritu</string>
+    <string name="select_dvr_config">Vyberte nahrávací profil</string>
+    <string name="select_log_file">Vyberte log súbor</string>
     
     <!-- Connection related -->
     <string name="no_connection_available_advice">Žiadne pripojenie nie je k dispozícii. Musíte pridať aspoň jedno pripojenie.</string>
