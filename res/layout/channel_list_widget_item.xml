@@ -18,7 +18,20 @@
         android:paddingLeft="16dp"
         android:paddingRight="0dp"
         android:paddingStart="16dp"
-        android:scaleType="fitStart" />
+        android:scaleType="fitStart"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/icon_large"
+        android:layout_width="72dp"
+        android:layout_height="56dp"
+        android:contentDescription="@null"
+        android:paddingEnd="0dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="0dp"
+        android:paddingStart="16dp"
+        android:scaleType="fitStart"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/icon_text"

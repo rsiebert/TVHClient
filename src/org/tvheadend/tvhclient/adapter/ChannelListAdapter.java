@@ -105,7 +105,11 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         if (view == null) {
             view = context.getLayoutInflater().inflate(layout, parent, false);
             holder = new ViewHolder();
-            holder.icon = (ImageView) view.findViewById(R.id.icon);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            final boolean bigIcon = prefs.getBoolean("showBigIconPref", false);
+            holder.icon = (ImageView) view.findViewById(bigIcon ? R.id.icon_large : R.id.icon);
+
             holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.nextTitle = (TextView) view.findViewById(R.id.next_title);
