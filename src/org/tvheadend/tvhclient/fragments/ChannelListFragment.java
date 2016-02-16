@@ -639,7 +639,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         c.set(Calendar.SECOND, 0);
         final int hour = c.get(Calendar.HOUR_OF_DAY);
 
-        String[] times = new String[(24 - hour) / 2];
+        final int size = ((24 - hour) / 2);
+        String[] times = new String[(size > 0) ? size : 1];
         times[0] = getString(R.string.current_time);
         int j = 1;
         for (int i = 2; i < (24 - hour); i += 2) {
