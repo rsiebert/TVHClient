@@ -276,9 +276,9 @@ public class Utils {
         intent.setAction(type);
         intent.putExtra("id", id);
         context.startService(intent);
-        
 
-        // If the channel is not set then the 'all channels' was set.
+        // If the channel is not set then the 'all channels' was set. 
+        // This is usually only the case in the timer recording screen.
         // When a recording without a channel is removed, the server
         // does not sent a confirmation. So a full reload to refresh the
         // recording list is required.
