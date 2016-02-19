@@ -29,6 +29,7 @@ public class ExternalActionActivity extends Activity implements HTSListener {
     private DatabaseHelper dbh;
     private DownloadManager dm;
     private int action;
+    private String title;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +43,13 @@ public class ExternalActionActivity extends Activity implements HTSListener {
         // Check that a valid channel or recording was specified
         final Channel ch = app.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
         final Recording rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+
         if (ch == null && rec == null) {
             return;
+        } else if (ch != null) {
+            title = ch.name;
+        } else if (rec != null) {
+            title = rec.title;
         }
 
         // Start the service to get the url that shall be played
@@ -125,6 +131,13 @@ public class ExternalActionActivity extends Activity implements HTSListener {
 
             final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
             playbackIntent.setDataAndType(Uri.parse(url), mime);
+
+            // Pass on the name of the channel or the recording title to the external 
+            // video players. VLC uses itemTitle and MX Player the title string.
+            if (title != null && title.length() > 0) {
+                playbackIntent.putExtra("itemTitle", title);
+                playbackIntent.putExtra("title", title);
+            }
 
             // Start playing the video now in the UI thread
             this.runOnUiThread(new Runnable() {
