@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -217,14 +216,24 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * called in a certain interval to prevent too many calls to the interface.
      */
     private void cancelAllRecordings() {
+
+        // Create a copy of all recordings from the adapter. This ensures that
+        // we still have the same id's at the correct index in the array when the
+        // adapter contents were refreshed.
+        final ArrayList<Recording> idList = new ArrayList<Recording>(); 
+        for (int i = 0; i < adapter.getCount(); ++i) {
+            idList.add(adapter.getItem(i));
+        }
+
         new Thread() {
             public void run() {
-                for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.cancelRecording(activity, adapter.getItem(i));
+                for (int i = 0; i < idList.size(); ++i) {
+                    app.log(TAG, "Cancelling recording id " + idList.get(i).title);
+                    Utils.cancelRecording(activity, idList.get(i));
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
-                        Log.d(TAG, "Error cancelling all recordings, " + e.getLocalizedMessage());
+                        app.log(TAG, "Error cancelling all recordings, " + e.getLocalizedMessage());
                     }
                 }
             }
@@ -236,16 +245,24 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * called in a certain interval to prevent too many calls to the interface.
      */
     private void removeAllRecordings() {
+
+        // Create a copy of all recordings id's from the adapter. This ensures that
+        // we still have the same id's at the correct index in the array when the
+        // adapter contents were refreshed.
+        final ArrayList<String> idList = new ArrayList<String>(); 
+        for (int i = 0; i < adapter.getCount(); ++i) {
+            idList.add(String.valueOf(adapter.getItem(i).id));
+        }
+
         new Thread() {
             public void run() {
-                for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeRecording(activity,
-                            String.valueOf(adapter.getItem(i).id),
-                            Constants.ACTION_DELETE_DVR_ENTRY, false);
+                for (int i = 0; i < idList.size(); ++i) {
+                    app.log(TAG, "Removing recording id " + idList.get(i));
+                    Utils.removeRecording(activity, idList.get(i), Constants.ACTION_DELETE_DVR_ENTRY, false);
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
-                        Log.d(TAG, "Error removing all recordings, " + e.getLocalizedMessage());
+                        app.log(TAG, "Error removing all recordings, " + e.getLocalizedMessage());
                     }
                 }
             }
