@@ -161,22 +161,22 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (!showIcons && layout == R.layout.program_guide_channel_item) {
                     holder.icon_text.setText(c.name);
                     holder.icon_text.setVisibility(ImageView.VISIBLE);
-                    
-                    // Add the listener to the icon text so that a 
-                    // click calls the program list of this channel
-                    holder.icon_text.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (context instanceof FragmentStatusInterface) {
-                                ((FragmentStatusInterface) context).onListItemSelected(position, c, Constants.TAG_CHANNEL_ICON);
-                            }
-                        }
-                    });
                 }
+                // If activated in the settings allow playing 
+                // the program by selecting the channel icon
+                holder.icon_text.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (context instanceof FragmentStatusInterface) {
+                            ((FragmentStatusInterface) context).onListItemSelected(position, c, Constants.TAG_CHANNEL_ICON);
+                        }
+                    }
+                });
             }
 
             if (holder.icon != null) {
-                // If activated in the settings allow playing the program by selecting the channel icon 
+                // If activated in the settings allow playing 
+                // the program by selecting the channel icon 
                 holder.icon.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
