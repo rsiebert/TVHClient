@@ -173,6 +173,22 @@
         <item>Not set</item>
     </string-array>
 
+    <string-array name="pref_show_notification_offset_list_display">
+        <item>Exact start time</item>
+        <item>5 minutes before</item>
+        <item>10 minutes before</item>
+        <item>15 minutes before</item>
+        <item>30 minutes before</item>
+    </string-array>
+
+    <string-array name="pref_show_notification_offset_list">
+        <item>0</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+    </string-array>
+
     <string-array name="pr_content_type0">
         <item>Movie/Drama</item>
         <item>News/Current affairs</item>

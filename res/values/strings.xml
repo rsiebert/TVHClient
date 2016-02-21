@@ -170,6 +170,8 @@
     <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
     <string name="pref_show_notifications">Show notifications</string>
     <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed.</string>
+    <string name="pref_show_notification_offset">Notification time </string>
+    <string name="pref_show_notification_offset_sum">Define the time that a notification shall be shown in advance before the actual start of a recording.</string>
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
     <string name="pref_play_when_channel_icon_selected">Channel icon plays TV or recording</string>
@@ -217,6 +219,7 @@
     <string name="recording_file_invalid">Recording is invalid</string>
     <string name="recording_canceled">Recording has been canceled</string>
     <string name="recording_started">Recording started</string>
+    <string name="recording_starts_in">Recording starts in %d min.</string>
     <string name="recording_completed">Recording completed</string>
     <string name="recording_started_text">The recording %s has been started</string>
     <string name="recording_completed_text">The recording %s has been completed</string>

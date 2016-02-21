@@ -444,11 +444,11 @@ public class TVHClientApplication extends Application implements BillingProcesso
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_ADD, rec);
 
-            // Add a notification if a new recording was scheduled
+            // Add a notification for scheduled recordings
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs.getBoolean("pref_show_notifications", false)) {
-                Log.d(TAG, "New recording was scheduled, adding notification");
-                addNotification(rec.id, rec.start.getTime());
+            if (prefs.getBoolean("pref_show_notifications", false)
+                    && rec.error == null && rec.state.equals("scheduled")) {
+                addNotification(rec.id);
             }
         }
     }
@@ -580,19 +580,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
     public void updateRecording(Recording rec) {
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_UPDATE, rec);
-
-            // Remove any pending notification if the updated recording 
-            // contains errors, otherwise update the notification
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs.getBoolean("pref_show_notifications", false)) {
-                if ((rec.error != null || rec.state.equals("missed") || rec.state.equals("invalid"))) {
-                    Log.d(TAG, "Recording was updated, remoing notification");
-                    cancelNotification(rec.id);
-                } else {
-                    Log.d(TAG, "Recording was updated, adding notification");
-                    addNotification(rec.id, rec.start.getTime());
-                }
-            }
         }
     }
 
@@ -787,8 +774,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (!loading && prefs.getBoolean("pref_show_notifications", false)) {
-            Log.d(TAG, "All recordings loaded, adding all notifications");
-            addNotifications();
+            final long offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+            addNotifications(offset);
         }
     }
 
@@ -1041,7 +1028,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return (bp.isInitialized() && bp.isPurchased(Constants.UNLOCKER));
+        return true; // (bp.isInitialized() && bp.isPurchased(Constants.UNLOCKER));
     }
 
     @Override
@@ -1226,52 +1213,97 @@ public class TVHClientApplication extends Application implements BillingProcesso
     }
 
     /**
-     * 
-     * @param id
-     * @param time
+     * Calls the actual method to add a notification for the giving recording id 
+     * and the required time that the notification shall be shown earlier.
+     *  
+     * @param id    The id of the recording
      */
-    public void addNotification(long id, long time) {
-        if (loading) {
+    private void addNotification(long id) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final long offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+        addNotification(id, offset);
+    }
+
+    /**
+     * Adds the notification of the given recording id and offset time with the
+     * notification message. Two notifications will be created, one that the
+     * recording has started and another that it has ended regardless of the
+     * recording state.
+     * 
+     * @param rec       The recording for which the notification shall be shown
+     * @param offset    Time in minutes that the notification shall be shown earlier
+     */
+    public void addNotification(final long id, final long offset) {
+
+        final Recording rec = getRecording(id);
+        if (loading || rec == null) {
             return;
         }
+
+        // The start time when the notification shall be shown
+        String msg = getString(R.string.recording_started);
+        long time = rec.start.getTime();
+        if (offset > 0) {
+            // Subtract the offset from the time when the notification shall be shown. 
+            time -= (offset * 60000);
+            msg = getString(R.string.recording_starts_in, offset);
+        }
+
+        // Create the intent for the start and stop notifications
+        createNotification(rec.id, time, msg);
+        createNotification(rec.id * 100, rec.stop.getTime(), getString(R.string.recording_completed));
+    }
+
+    /**
+     * Creates the required intent for the notification and passed 
+     * it on to the alarm manager to the notification can be shown later
+     * 
+     * @param id    The id of the recording
+     * @param time  Time when the notification shall be shown 
+     * @param msg   Message that will be displayed
+     */
+    private void createNotification(long id, long time, String msg) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy, HH.mm", Locale.US);
+        Log.d(TAG, "Creating notification for recording id " + id + ", at " + sdf.format(time) + " with msg " + msg);
 
         Intent intent = new Intent(this, NotificationReceiver.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constants.BUNDLE_RECORDING_ID, id);
+        bundle.putString(Constants.BUNDLE_NOTIFICATION_MSG, msg);
         intent.putExtras(bundle);
+
         PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, time, pi);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy, HH:mm", Locale.US);
-        String dateText = sdf.format(getRecording(id).start.getTime());
-        Log.d(TAG, "Added notification for " + getRecording(id).title + " at " + dateText);
     }
 
     /**
+     * Cancels any pending start and stop notifications with the given id
      * 
-     * @param id
+     * @param id    The id of the recording
      */
     public void cancelNotification(long id) {
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel((int) id);
-
-        Log.d(TAG, "Cancelled notification for " + getRecording(id).title);
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancel((int) id);
+        nm.cancel((int) id * 100);
     }
 
     /**
+     * Adds notifications for all recordings that are scheduled.
      * 
+     * @param offset Time in minutes that the notification shall be shown earlier
      */
-    public void addNotifications() {
+    public void addNotifications(final long offset) {
         for (Recording rec : getRecordings()) {
             if (rec.error == null && rec.state.equals("scheduled")) {
-                addNotification(rec.id, rec.start.getTime());
+                addNotification(rec.id, offset);
             }
         }
     }
 
     /**
-     * 
+     * Cancels all pending notifications related to recordings
      */
     public void cancelNotifications() {
         for (Recording rec : getRecordings()) {

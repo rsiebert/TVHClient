@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
@@ -57,6 +58,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefShowChangelog;
     private CheckBoxPreference prefDebugMode;
     private CheckBoxPreference prefShowNotifications;
+    private ListPreference prefShowNotificationOffset;
     private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
 
@@ -64,6 +66,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
         prefShowNotifications = (CheckBoxPreference) findPreference("pref_show_notifications");
+        prefShowNotificationOffset = (ListPreference) findPreference("pref_show_notification_offset");
     }
 
     @Override
@@ -324,11 +328,23 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 // If the checkbox is checked then add all 
                 // required notifications, otherwise remove them
                 if (prefShowNotifications.isChecked()) {
-                    app.addNotifications();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+                    final long offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+                    app.addNotifications(offset);
                 } else {
                     app.cancelNotifications();
                 }
 
+                return true;
+            }
+        });
+
+        prefShowNotificationOffset.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object offset) {
+                // Refresh all notifications by removing adding them again
+                app.cancelNotifications();
+                app.addNotifications(Long.valueOf((String) offset));
                 return true;
             }
         });

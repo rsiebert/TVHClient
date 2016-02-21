@@ -169,6 +169,8 @@
     <string name="pref_enable_playback_profiles_sum">Verwende die neueren Serverprofile für Programme. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
     <string name="pref_show_notifications">Zeige Benachrichtigungen</string>
     <string name="pref_show_notifications_sum">Wird eine Aufnahme gestartet oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt.</string>
+    <string name="pref_show_notification_offset">Benachrichtigungszeitpunkt</string>
+    <string name="pref_show_notification_offset_sum">Definiere den Zeitpunkt, ab wann eine Benachrichtigung für den Aufnahmestart gezeigt werden soll.</string>
     <string name="pref_show_next_program">Nachfolgende Sendung anzeigen</string>
     <string name="pref_show_next_program_sum">Zeigt den Namen der nachfolgenden Sendung in der Senderliste unter der Fortschrittsanzeige an.</string>
     <string name="pref_play_when_channel_icon_selected">Senderlogo startet Live-TV oder Aufnahme</string>
@@ -215,7 +217,8 @@
     <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
     <string name="recording_file_invalid">Aufnahme ist ungültig bzw. fehlerhaft</string>
     <string name="recording_canceled">Aufnahmen wurde abgebrochen</string>
-    <string name="recording_started">Aufnahme gestarted</string>
+    <string name="recording_started">Aufnahme gestartet</string>
+    <string name="recording_starts_in">Aufnahme startet in %d Min.</string>
     <string name="recording_completed">Aufnahme beendet</string>
     <string name="recording_started_text">Die Aufnahme %s wurde gestarted.</string>
     <string name="recording_completed_text">Die Aufnahme %s wurde beendet.</string>

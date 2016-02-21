@@ -11,8 +11,8 @@ import android.util.Log;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    @SuppressWarnings("unused")
     private final static String TAG = NotificationReceiver.class.getSimpleName();
+    private final static String GROUP_KEY = "recordings";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -21,31 +21,20 @@ public class NotificationReceiver extends BroadcastReceiver {
         // Get the recording of interest
         TVHClientApplication app = (TVHClientApplication) context.getApplicationContext();
         long recId = intent.getLongExtra(Constants.BUNDLE_RECORDING_ID, 0);
-        Recording rec = app.getRecording(recId);
+        String msg = intent.getStringExtra(Constants.BUNDLE_NOTIFICATION_MSG);
+        final Recording rec = app.getRecording(recId);
 
         if (rec != null) {
             Log.d(TAG, "Showing notification for recording " + rec.title);
-
-            String msg = "";
-            if (rec.error == null && rec.state.equals("scheduled")) {
-                msg = "Recording started";
-            }
-            if (rec.error == null && rec.state.equals("completed")) {
-                msg = "Recording completed";
-            }
-
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                     context).setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(rec.title)
                     .setContentText(msg)
-                    .setVibrate(new long[] { 0, 300, 0 })
+                    .setGroup(GROUP_KEY)
                     .setAutoCancel(true);
 
-            mBuilder.setAutoCancel(true);
-            NotificationManager mNotificationManager = (NotificationManager) context
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify((int) rec.id, mBuilder.build());
+            NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            nm.notify((int) rec.id, mBuilder.build());
         }
     }
-
 }

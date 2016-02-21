@@ -46,6 +46,16 @@
             android:key="pref_show_notifications"
             android:summary="@string/pref_show_notifications_sum"
             android:title="@string/pref_show_notifications" />
+        <ListPreference
+            android:name="@string/pref_show_notification_offset"
+            android:defaultValue="0"
+            android:dependency="pref_show_notifications"
+            android:dialogTitle="@string/pref_show_notification_offset"
+            android:entries="@array/pref_show_notification_offset_list_display"
+            android:entryValues="@array/pref_show_notification_offset_list"
+            android:key="pref_show_notification_offset"
+            android:summary="@string/pref_show_notification_offset_sum"
+            android:title="@string/pref_show_notification_offset" />
 
         <ListPreference
             android:name="@string/pref_language"
