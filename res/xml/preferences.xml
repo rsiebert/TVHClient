@@ -15,48 +15,44 @@
             android:key="lightThemePref"
             android:summary="@string/pref_theme_sum"
             android:title="@string/pref_theme" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="showIconPref"
-            android:summary="@string/pref_icons_sum"
-            android:title="@string/pref_icons" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="showBigIconPref"
-            android:summary="@string/pref_big_icons_sum"
-            android:title="@string/pref_big_icons"
-            android:dependency="showIconPref"/>
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="showTagIconPref"
-            android:summary="@string/pref_tag_icon_sum"
-            android:title="@string/pref_tag_icon" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="showNextProgramPref"
-            android:summary="@string/pref_show_next_program_sum"
-            android:title="@string/pref_show_next_program" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="playWhenChannelIconSelectedPref"
-            android:summary="@string/pref_play_when_channel_icon_selected_sum"
-            android:title="@string/pref_play_when_channel_icon_selected" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_show_notifications"
-            android:summary="@string/pref_show_notifications_sum"
-            android:title="@string/pref_show_notifications" />
-        <ListPreference
-            android:name="@string/pref_show_notification_offset"
-            android:defaultValue="0"
-            android:dependency="pref_show_notifications"
-            android:dialogTitle="@string/pref_show_notification_offset"
-            android:entries="@array/pref_show_notification_offset_list_display"
-            android:entryValues="@array/pref_show_notification_offset_list"
-            android:key="pref_show_notification_offset"
-            android:summary="@string/pref_show_notification_offset_sum"
-            android:title="@string/pref_show_notification_offset" />
-
+        <PreferenceScreen
+            android:title="@string/pref_channels" >
+	        <CheckBoxPreference
+	            android:defaultValue="true"
+	            android:key="showIconPref"
+	            android:summary="@string/pref_icons_sum"
+	            android:title="@string/pref_icons" />
+	        <CheckBoxPreference
+	            android:defaultValue="false"
+	            android:key="showBigIconPref"
+	            android:summary="@string/pref_big_icons_sum"
+	            android:title="@string/pref_big_icons"
+	            android:dependency="showIconPref"/>
+	        <ListPreference
+                android:name="@string/pref_sort_channels"
+                android:defaultValue="0"
+                android:dialogTitle="@string/pref_sort_channels"
+                android:entries="@array/pref_sort_channels_names"
+                android:entryValues="@array/pref_sort_channels_ids"
+                android:key="sortChannelsPref"
+                android:summary="@string/pref_sort_channels_sum"
+                android:title="@string/pref_sort_channels" />
+	        <CheckBoxPreference
+	            android:defaultValue="false"
+	            android:key="showTagIconPref"
+	            android:summary="@string/pref_tag_icon_sum"
+	            android:title="@string/pref_tag_icon" />
+	        <CheckBoxPreference
+	            android:defaultValue="true"
+	            android:key="showNextProgramPref"
+	            android:summary="@string/pref_show_next_program_sum"
+	            android:title="@string/pref_show_next_program" />
+	        <CheckBoxPreference
+	            android:defaultValue="true"
+	            android:key="playWhenChannelIconSelectedPref"
+	            android:summary="@string/pref_play_when_channel_icon_selected_sum"
+	            android:title="@string/pref_play_when_channel_icon_selected" />
+	    </PreferenceScreen>
         <ListPreference
             android:name="@string/pref_language"
             android:defaultValue="default"
@@ -75,15 +71,6 @@
             android:key="defaultMenuPositionPref"
             android:summary="@string/pref_default_menu_sum"
             android:title="@string/pref_default_menu" />
-        <ListPreference
-            android:name="@string/pref_sort_channels"
-            android:defaultValue="0"
-            android:dialogTitle="@string/pref_sort_channels"
-            android:entries="@array/pref_sort_channels_names"
-            android:entryValues="@array/pref_sort_channels_ids"
-            android:key="sortChannelsPref"
-            android:summary="@string/pref_sort_channels_sum"
-            android:title="@string/pref_sort_channels" />
 
         <PreferenceScreen
             android:summary="@string/pref_genre_colors_sum"
@@ -156,6 +143,24 @@
                 android:key="visibleMenuIconTagsPref"
                 android:summary="@string/pref_visible_menu_icon_tags_sum"
                 android:title="@string/pref_visible_menu_icon_tags" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:title="@string/pref_notifications" >
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref_show_notifications"
+                android:summary="@string/pref_show_notifications_sum"
+                android:title="@string/pref_show_notifications" />
+            <ListPreference
+                android:name="@string/pref_show_notification_offset"
+                android:defaultValue="0"
+                android:dependency="pref_show_notifications"
+                android:dialogTitle="@string/pref_show_notification_offset"
+                android:entries="@array/pref_show_notification_offset_list_display"
+                android:entryValues="@array/pref_show_notification_offset_list"
+                android:key="pref_show_notification_offset"
+                android:summary="@string/pref_show_notification_offset_sum"
+                android:title="@string/pref_show_notification_offset" />
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_playback_and_recording" >

@@ -93,6 +93,7 @@
     <string name="pref_wol_broadcast_sum">Falls gesetzt, wird die Wake on LAN Information als Broadcast an alle Rechner gesendet. Einige Router blockieren diese Art von Wake on LAN.</string>
     <string name="pref_wol_address_invalid">Die MAC-Adresse ist ungültig.\nDas Format ist \'01:24:67:9a:cd:ef\'.</string>
     <string name="pref_user_interface">Benutzeroberfläche</string>
+    <string name="pref_channels">Sender</string>
     <string name="pref_icons">Senderlogos</string>
     <string name="pref_icons_sum">Zeigt zu jedem Sender (falls verfügbar) das dazugehörige Logo als Icon an.</string>
     <string name="pref_big_icons">Größere Senderlogos</string>
@@ -167,6 +168,7 @@
     <string name="pref_enable_recording_profiles_sum">Verwende die neueren Serverprofile für Aufnahmen. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
     <string name="pref_enable_playback_profiles">Aktiviere Wiedergabeprofile</string>
     <string name="pref_enable_playback_profiles_sum">Verwende die neueren Serverprofile für Programme. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
+    <string name="pref_notifications">Benachrichtigungen</string>
     <string name="pref_show_notifications">Zeige Benachrichtigungen</string>
     <string name="pref_show_notifications_sum">Wird eine Aufnahme gestartet oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt.</string>
     <string name="pref_show_notification_offset">Benachrichtigungszeitpunkt</string>

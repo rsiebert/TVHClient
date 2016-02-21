@@ -94,6 +94,7 @@
     <string name="pref_wol_address_invalid">The MAC address is invalid.\nIt must have the pattern \'01:24:67:9a:cd:ef\'.</string>
     
     <string name="pref_user_interface">User interface</string>
+    <string name="pref_channels">Channels</string>
     <string name="pref_icons">Channel icons</string>
     <string name="pref_icons_sum">Show the channel icons.</string>
     <string name="pref_big_icons">Big channel icon</string>
@@ -168,6 +169,7 @@
     <string name="pref_enable_recording_profiles_sum">Use the newer server profile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
     <string name="pref_enable_playback_profiles">Enable playback profiles</string>
     <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
+    <string name="pref_notifications">Notifications</string>
     <string name="pref_show_notifications">Show notifications</string>
     <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed.</string>
     <string name="pref_show_notification_offset">Notification time </string>
