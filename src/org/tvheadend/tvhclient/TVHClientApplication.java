@@ -548,7 +548,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if (prefs.getBoolean("pref_show_notifications", false)) {
-                Log.d(TAG, "Recording was removed, cancel notification");
+                log(TAG, "Recording was removed, cancel notification");
                 cancelNotification(rec.id);
             }
         }
@@ -1265,7 +1265,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     private void createNotification(long id, long time, String msg) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy, HH.mm", Locale.US);
-        Log.d(TAG, "Creating notification for recording id " + id + ", at " + sdf.format(time) + " with msg " + msg);
+        log(TAG, "Creating notification for recording id " + id + ", at " + sdf.format(time) + " with msg " + msg);
 
         Intent intent = new Intent(this, NotificationReceiver.class);
         Bundle bundle = new Bundle();

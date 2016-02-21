@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -85,7 +84,7 @@ public class ExternalActionActivity extends Activity implements HTSListener {
 
         // Set default values if no profile was specified
         if (profile == null) {
-            Log.d(TAG, "No profile was set for the selected connection.");
+            app.log(TAG, "No profile was set for the selected connection.");
             profile = new Profile();
         }
 
@@ -111,7 +110,7 @@ public class ExternalActionActivity extends Activity implements HTSListener {
 
         switch (action) {
         case Constants.EXTERNAL_ACTION_PLAY:
-            Log.d(TAG, "Playing url " + url);
+            app.log(TAG, "Playing url " + url);
 
             // If a profile was given, use it instead of the old values
             if (profile.enabled
@@ -143,11 +142,11 @@ public class ExternalActionActivity extends Activity implements HTSListener {
             this.runOnUiThread(new Runnable() {
                 public void run() {
                     try {
-                        Log.d(TAG, "Starting external player");
+                        app.log(TAG, "Starting external player");
                         startActivity(playbackIntent);
                         finish();
                     } catch (Throwable t) {
-                        Log.e(TAG, "Can't execute external media player", t);
+                        app.log(TAG, "Can't execute external media player");
     
                         // Show a confirmation dialog before deleting the recording
                         new MaterialDialog.Builder(context)
@@ -159,12 +158,12 @@ public class ExternalActionActivity extends Activity implements HTSListener {
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
                                     try {
-                                        Log.d(TAG, "Starting play store to download external players");
+                                        app.log(TAG, "Starting play store to download external players");
                                         Intent installIntent = new Intent(Intent.ACTION_VIEW);
                                         installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
                                         startActivity(installIntent);
                                     } catch (Throwable t2) {
-                                        Log.e(TAG, "Could not start google play store", t2);
+                                        app.log(TAG, "Could not start google play store");
                                     } finally {
                                         finish();
                                     }
@@ -180,7 +179,7 @@ public class ExternalActionActivity extends Activity implements HTSListener {
             break;
 
         case Constants.EXTERNAL_ACTION_DOWNLOAD:
-            Log.d(TAG, "Downloading url " + url);
+            app.log(TAG, "Downloading url " + url);
 
             dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
             dm.enqueue(new Request(Uri.parse(url)));

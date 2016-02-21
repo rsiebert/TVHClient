@@ -16,7 +16,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "Received notification");
 
         // Get the recording of interest
         TVHClientApplication app = (TVHClientApplication) context.getApplicationContext();
@@ -25,7 +24,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         final Recording rec = app.getRecording(recId);
 
         if (rec != null) {
-            Log.d(TAG, "Showing notification for recording " + rec.title);
+            app.log(TAG, "Showing notification for recording " + rec.title);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                     context).setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(rec.title)
