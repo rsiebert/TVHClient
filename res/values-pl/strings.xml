@@ -93,8 +93,11 @@
     <string name="pref_wol_address_invalid">MAC adres jest nieprawidłowy.\nMusi mieć postać \'01:24:67:9a:cd:ef\' i może zawierać tylko znaki w systemie szesnastkowym \'0\-9\' i \'a\-f\' i separatory \':\' lub \'-\'.</string>
 
     <string name="pref_user_interface">Interfejs użytkownika</string>
+    <string name="pref_channels">Kanały</string>
     <string name="pref_icons">Ikony kanałów</string>
     <string name="pref_icons_sum">Pokaż ikony kanałów</string>
+    <string name="pref_big_icons">Duża ikona kanału</string>
+    <string name="pref_big_icons_sum">Pokaż większą wersję ikony kanału.</string>
     <string name="pref_tag_icon">Ikona tagu kanałów</string>
     <string name="pref_tag_icon_sum">Pokaż ikonę tagu kanałów zamiast logo aplikacji.</string>
     <string name="pref_theme">Lekki motyw</string>
@@ -165,10 +168,15 @@
     <string name="pref_enable_recording_profiles_sum">Użyj nowej funkcjonalności serwera profili dla nagrywania. To zastępuje dowolne parametry video i audio dla nagrań i zaplanowanych programów.</string>
     <string name="pref_enable_playback_profiles">Włącz profile odtwarzania</string>
     <string name="pref_enable_playback_profiles_sum">Użyj nowej funkcjonalności serwera profili dla programów. To zastępuje dowolne parametry video i audio dla odtwarzanych programów.</string>
+    <string name="pref_notifications">Powiadomienia</string>
     <string name="pref_show_notifications">Pokazuj powiadomienia</string>
     <string name="pref_show_notifications_sum">Informuje użytkownika gdy nagrywanie zostało rozpoczęte lub zostało zakończone.</string>
+    <string name="pref_show_notification_offset">Czas powiadomienia</string>
+    <string name="pref_show_notification_offset_sum">Określa czas, że powiadomienie zostanie pokazane wcześniej przed faktycznym rozpoczęciem nagrywania.</string>
     <string name="pref_show_next_program">Pokazuj następny program na liście kanałów</string>
     <string name="pref_show_next_program_sum">Nazwa zbliżającego się programu jest wyświetlana na liście kanałów. Nazwa jest wyświetlana poniżej paska postępu nadawanego programu.</string>
+    <string name="pref_play_when_channel_icon_selected">Ikona kanału odtwarza TV lub nagranie</string>
+    <string name="pref_play_when_channel_icon_selected_sum">Zacznij odtwarzać bieżący program lub nagranie, gdy ikona kanał jest zaznaczony na ekranie listy kanałów, przewodnika po programach lub listy nagrywania.</string>
     <string name="pref_programs">Programy</string>
     <string name="pref_playback_and_recording">Odtwarzanie i nagrywanie</string>
     <string name="pref_transcoding">Parametry Video i Audio</string>
@@ -212,6 +220,7 @@
     <string name="recording_file_invalid">Nagranie jest nieważne</string>
     <string name="recording_canceled">Nagrywanie zostało anulowane</string>
     <string name="recording_started">Nagrywanie rozpoczęte</string>
+    <string name="recording_starts_in">Nagrywanie rozpocznie się za %d min.</string>
     <string name="recording_completed">Nagrywanie zakończone</string>
     <string name="recording_started_text">Nagrywanie %s zostało rozpoczęte</string>
     <string name="recording_completed_text">Nagrywanie %s zostało zakończone</string>
