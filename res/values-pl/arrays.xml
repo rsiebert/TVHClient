@@ -6,17 +6,17 @@
     </string-array>
 
     <string-array name="pref_language_list_display">
-	<item>Domylny</item>
-	<item>Niemiecki</item>
-	<item>Angielski</item>
-	<item>Francuzki</item>
-	<item>Włoski</item>
-	<item>Holenderski</item>
-	<item>Polski</item>
-	<item>Szwedzki</item>
-	<item>Czeski</item>
-	<item>Slovensky</item>
-	<item>Hiszpański</item>
+        <item>Domylny</item>
+        <item>Niemiecki</item>
+        <item>Angielski</item>
+        <item>Francuzki</item>
+        <item>Włoski</item>
+        <item>Holenderski</item>
+        <item>Polski</item>
+        <item>Szwedzki</item>
+        <item>Czeski</item>
+        <item>Slovensky</item>
+        <item>Hiszpański</item>
 	</string-array>
 
     <string-array name="pref_menu_names">
@@ -70,20 +70,12 @@
     </string-array>
     
     <string-array name="pref_show_notification_offset_list_display">
-         <item>Dokładny czas rozpoczęcia</item>
-         <item>5 minut przed</item>
-         <item>10 minut przed</item>
-         <item>15 minut przed</item>
-         <item>30 minut przed</item>
-     </string-array>
- 
-     <string-array name="pref_show_notification_offset_list">
-         <item>0</item>
-         <item>5</item>
-         <item>10</item>
-         <item>15</item>
-         <item>30</item>
-     </string-array>
+        <item>Dokładny czas rozpoczęcia</item>
+        <item>5 minut przed</item>
+        <item>10 minut przed</item>
+        <item>15 minut przed</item>
+        <item>30 minut przed</item>
+    </string-array>
 
     <string-array name="pr_content_type0">
         <item>Film/Dramat</item>
