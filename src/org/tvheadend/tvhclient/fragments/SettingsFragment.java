@@ -31,6 +31,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
@@ -57,8 +58,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
     private CheckBoxPreference prefDebugMode;
-    private CheckBoxPreference prefShowNotifications;
-    private ListPreference prefShowNotificationOffset;
+    private Preference prefMenuNotifications;
     private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
 
@@ -86,8 +86,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefSendLogfile = findPreference("pref_send_logfile");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
-        prefShowNotifications = (CheckBoxPreference) findPreference("pref_show_notifications");
-        prefShowNotificationOffset = (ListPreference) findPreference("pref_show_notification_offset");
+        prefMenuNotifications  = (Preference) findPreference("pref_menu_notifications");
     }
 
     @Override
@@ -314,40 +313,23 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 return false;
             }
         });
-        
+
         // Add a listener so that the notifications can be selected.
-        prefShowNotifications.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        prefMenuNotifications.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (!app.isUnlocked()) {
                     Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
                             Snackbar.LENGTH_SHORT).show();
-                    prefShowNotifications.setChecked(false);
-                }
-
-                // If the checkbox is checked then add all 
-                // required notifications, otherwise remove them
-                if (prefShowNotifications.isChecked()) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-                    final long offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
-                    app.addNotifications(offset);
                 } else {
-                    app.cancelNotifications();
+                    if (settingsInterface != null) {
+                        settingsInterface.showNotifications();
+                    }
                 }
-
-                return true;
+                return false;
             }
         });
 
-        prefShowNotificationOffset.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object offset) {
-                // Refresh all notifications by removing adding them again
-                app.cancelNotifications();
-                app.addNotifications(Long.valueOf((String) offset));
-                return true;
-            }
-        });
     }
 
     private void mailLogfile(String filename) {

@@ -12,4 +12,5 @@ public interface SettingsInterface {
     void showEditConnection(long id);
     void showProfiles();
     void showTranscodingSettings();
+    void showNotifications();
 }

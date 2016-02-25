@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient;
 
 import org.tvheadend.tvhclient.fragments.SettingsFragment;
 import org.tvheadend.tvhclient.fragments.SettingsManageConnectionFragment;
+import org.tvheadend.tvhclient.fragments.SettingsNotificationFragment;
 import org.tvheadend.tvhclient.fragments.SettingsProfilesFragment;
 import org.tvheadend.tvhclient.fragments.SettingsShowConnectionsFragment;
 import org.tvheadend.tvhclient.fragments.SettingsTranscodingFragment;
@@ -45,6 +46,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     private final static int ADD_CONNECTION = 4;
     private final static int PROFILES = 5;
     private final static int TRANSCODING = 6;
+    private final static int NOTIFICATIONS = 7;
 
     private int currentSettingsMode = MAIN_SETTINGS; 
 
@@ -145,6 +147,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
         case PROFILES:
         case TRANSCODING:
+        case NOTIFICATIONS:
             getSupportFragmentManager().popBackStack();
             currentSettingsMode = MAIN_SETTINGS;
             return;
@@ -286,5 +289,15 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
             reconnect = true;
         }
         onBackPressed();
+    }
+
+    @Override
+    public void showNotifications() {
+        currentSettingsMode = TRANSCODING;
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsNotificationFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(null)
+                .commit();
     }
 }
