@@ -409,6 +409,9 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                 public void run() {
                     Program p = (Program) obj;
                     if (p != null && p.title != null && p.title.length() > 0) {
+                        // In case the program is already in the adapter 
+                        // remove it to avoid showing the same entry again
+                        adapter.remove(p);
                         adapter.add(p);
                         startDelayedAdapterUpdate();
                     }
