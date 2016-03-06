@@ -56,8 +56,8 @@
     <string name="pref_port_error_invalid">Poort nummer is niet geldig. Specificeer een nummer tussen 1 en 65535.</string>
     <string name="pref_streaming_port">Poort voor media streaming</string>
     <string name="pref_streaming_port_sum">%d zal voor media streaming worden gebruikt. De standaard poort is 9981 welke meestal goed zal zijn.</string>
-    <string name="pref_user">Gerbuikersnaam</string>
-    <string name="pref_user_sum">Type gerbuikersnaam</string>
+    <string name="pref_user">Gebruikersnaam</string>
+    <string name="pref_user_sum">Type gebruikersnaam</string>
     <string name="pref_pass">Wachtwoord</string>
     <string name="pref_pass_sum">Type wachtwoord</string>
     <string name="pref_pass_set_sum">Wachtwoord is ingesteld maar wordt niet getoond.</string>
@@ -68,7 +68,7 @@
     <string name="pref_wol_broadcast">Gebruik Broadcast</string>
     <string name="pref_wol_broadcast_sum">Verstuur het WOL pakket als een broadcast. Sommige routers staan dit type WOL niet toe.</string>
     <string name="pref_wol_address_invalid">Het MAC adres is niet juist.\nHet moet het volgende formaat hebben \'01:24:67:9a:cd:ef\' en het mag alleen de hexadecimal cijfers 0\-9 en a\-f en het scheidingsteken \':\' en \'\-\' bevatten.</string>
-    <string name="pref_user_interface">Gerbuikers interface</string>
+    <string name="pref_user_interface">Gebruikers interface</string>
     <string name="pref_icons">Kanaal iconen</string>
     <string name="pref_icons_sum">Toon kanaal iconen?</string>
     <string name="pref_theme">Licht thema</string>
