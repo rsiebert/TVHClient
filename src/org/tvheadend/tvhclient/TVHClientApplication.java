@@ -47,6 +47,8 @@ import android.util.SparseArray;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
+import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
 
@@ -1019,6 +1021,24 @@ public class TVHClientApplication extends Application implements BillingProcesso
         if (prefs.getBoolean("pref_debug_mode", false)) {
             enableLogToFile();
         }
+
+        // Build a CastConfiguration object and initialize VideoCastManager
+        CastConfiguration options = new CastConfiguration.Builder(Constants.CAST_APPLICATION_ID)
+                .enableAutoReconnect()
+                .enableCaptionManagement()
+                .enableDebug()
+                .enableLockScreen()
+                .enableNotification()
+                .enableWifiReconnection()
+                .setCastControllerImmersive(true)
+                .setLaunchOptions(false, Locale.getDefault())
+                .setNextPrevVisibilityPolicy(CastConfiguration.NEXT_PREV_VISIBILITY_POLICY_HIDDEN)
+                .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_REWIND, false)
+                .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_PLAY_PAUSE, true)
+                .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_DISCONNECT, true)
+                .setForwardStep(10)
+                .build();
+        VideoCastManager.initialize(this, options);
     }
 
     /**
