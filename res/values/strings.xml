@@ -2,6 +2,22 @@
 <resources>
     <string name="app_name">TVHClient</string>
 
+    <string name="media_route_menu_title">Play on&#8230;</string>
+    <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV\n\nPlease enable casting in the settings and check that your server is powerful enough and supports transcoding.</string>
+    <string name="connection_temp_lost">Connection to the cast device is temporarily lost</string>
+    <string name="connection_recovered">Connection to the cast device is recovered</string>
+    <string name="cast_profile_not_set">No casting profile was selected in the settings. This is required before casting can be used.</string>
+    <string name="cast_profile_invalid">The selected profile \'%s\' is not the recommended \'%s\' profile. Please note that casting might not work correctly.</string>
+    <string name="error_loading_json_data">Could not load data required for casting from the server. Please check if your connection is working and port 9981 is reachable.</string>
+    <string name="error_parsing_json_data">Could not parse received data from the server. Please contact the developer.</string>
+    <string name="proceed">Proceed</string>
+    <string name="pref_casting">Casting</string>
+    <string name="pref_casting_sum">Settings to enable and configure casting Live-TV or recordings to your TV. Please note that this requires tvheadend with transcoding enabled and a server which is powerful enough to transcode the data in realtime.</string>
+    <string name="pref_enable_casting">Enable casting</string>
+    <string name="pref_enable_casting_sum">Only enable this feature if tvheadend is able to transcode and your server is powerful enough to convert the data in realtime.</string>
+    <string name="pref_show_cast_minicontroller">Show cast controls</string>
+    <string name="pref_show_cast_minicontroller_sum">bla </string>
+
     <string name="settings">Settings</string>
     <string name="refresh">Refresh</string>
     <string name="tags">Tags</string>
@@ -165,6 +181,8 @@
     <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
     <string name="pref_playback_profiles">Playback profiles</string>
     <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
+    <string name="pref_cast_profiles">Cast playback profiles</string>
+    <string name="pref_cast_profiles_sum">Select a profile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
     <string name="pref_enable_recording_profiles">Enable recording profiles</string>
     <string name="pref_enable_recording_profiles_sum">Use the newer server profile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
     <string name="pref_enable_playback_profiles">Enable playback profiles</string>
