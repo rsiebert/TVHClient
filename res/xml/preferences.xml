@@ -155,6 +155,10 @@
             android:summary="@string/pref_profiles_sum"
             android:title="@string/pref_profiles" />
         <PreferenceScreen
+            android:key="pref_menu_casting"
+            android:summary="@string/pref_casting_sum"
+            android:title="@string/pref_casting" />
+        <PreferenceScreen
             android:key="pref_menu_transcoding"
             android:summary="@string/pref_transcoding_sum"
             android:title="@string/pref_transcoding" />
