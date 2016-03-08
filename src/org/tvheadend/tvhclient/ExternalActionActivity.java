@@ -1,5 +1,16 @@
 package org.tvheadend.tvhclient;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
@@ -10,64 +21,122 @@ import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
 import android.app.DownloadManager;
-import android.app.Service;
 import android.app.DownloadManager.Request;
-import android.content.Context;
+import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.common.images.WebImage;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
 public class ExternalActionActivity extends Activity implements HTSListener {
 
     private final static String TAG = ExternalActionActivity.class.getSimpleName();
 
-    private Context context;
     private TVHClientApplication app;
     private DatabaseHelper dbh;
+    private Connection conn;
     private DownloadManager dm;
     private int action;
-    private String title;
-    
+
+    private Channel ch;
+    private Recording rec;
+    private String baseUrl;
+
+    private String title = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.context = this;
 
         app = (TVHClientApplication) getApplication();
         dbh = DatabaseHelper.getInstance(this);
+        conn = dbh.getSelectedConnection();
         action = getIntent().getIntExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
-        final Channel ch = app.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
-        final Recording rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+        ch = app.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
+        rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
 
-        if (ch == null && rec == null) {
-            return;
-        } else if (ch != null) {
+        // Get the title from either the channel or recording
+        if (ch != null) {
             title = ch.name;
         } else if (rec != null) {
             title = rec.title;
         }
 
-        // Start the service to get the url that shall be played
-        Intent intent = new Intent(ExternalActionActivity.this, HTSService.class);
-        intent.setAction(Constants.ACTION_GET_TICKET);
-        intent.putExtras(getIntent().getExtras());
-        this.startService(intent);
+        // If the cast menu button is connected then assume playing means casting
+        if (VideoCastManager.getInstance().isConnected()) {
+            action = Constants.EXTERNAL_ACTION_CAST;
+        }
+
+        // Create the url with the credentials and the host and  
+        // port configuration. This one is fixed for all actions
+        baseUrl = "http://" + conn.username + ":" + conn.password + "@" + conn.address + ":" + conn.streaming_port;
+
+        switch (action) {
+        case Constants.EXTERNAL_ACTION_PLAY:
+            // Start the service to get the url that shall be played
+            Intent intent = new Intent(ExternalActionActivity.this, HTSService.class);
+            intent.setAction(Constants.ACTION_GET_TICKET);
+            intent.putExtras(getIntent().getExtras());
+            this.startService(intent);
+            break;
+
+        case Constants.EXTERNAL_ACTION_DOWNLOAD:
+            if (rec != null) {
+                startDownload();
+            }
+            break;
+
+        case Constants.EXTERNAL_ACTION_CAST:
+            if (ch != null) {
+                // In case a channel shall be played the channel uuid is required. 
+                // It is not provided via the HTSP API, only via the webinterface 
+                // API. Load the channel UUIDs via server:host/api/epg/events/grid.
+                if (ch.uuid != null && ch.uuid.length() > 0) {
+                    startCasting();
+                } else {
+                    new ChannelUuidLoaderTask().execute(conn);
+                }
+            } else if (rec != null) {
+                startCasting();
+            }
+            break;
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         app.addListener(this);
+        VideoCastManager.getInstance().incrementUiCounter();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         app.removeListener(this);
+        VideoCastManager.getInstance().decrementUiCounter();
+    }
+
+    /**
+     * Downloads the defined recording via the internal download manager. 
+     * The user will be notified by the system that a download is progressing.
+     */
+    private void startDownload() {
+        String downloadUrl = baseUrl + "/dvrfile/" + rec.id;
+        app.log(TAG, "Starting download from url " + baseUrl);
+
+        dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
+        dm.enqueue(new Request(Uri.parse(downloadUrl)));
+        finish();
     }
 
     /**
@@ -79,12 +148,9 @@ public class ExternalActionActivity extends Activity implements HTSListener {
      */
     private void startPlayback(String path, String ticket) {
 
-        final Connection conn = dbh.getSelectedConnection();
-        Profile profile = dbh.getProfile(conn.playback_profile_id);
-
         // Set default values if no profile was specified
+        Profile profile = dbh.getProfile(conn.playback_profile_id);
         if (profile == null) {
-            app.log(TAG, "No profile was set for the selected connection.");
             profile = new Profile();
         }
 
@@ -104,88 +170,118 @@ public class ExternalActionActivity extends Activity implements HTSListener {
 
         // Create the URL for the external media player that is required to get
         // the stream from the server
-        String url = "http://" + 
-                conn.username + ":" + conn.password + "@" + 
-                conn.address + ":" + conn.streaming_port + path + "?ticket=" + ticket;
+        String playUrl = baseUrl + path + "?ticket=" + ticket;
 
-        switch (action) {
-        case Constants.EXTERNAL_ACTION_PLAY:
-            app.log(TAG, "Playing url " + url);
-
-            // If a profile was given, use it instead of the old values
-            if (profile.enabled
-                    && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                    && app.isUnlocked()) {
-                url += "&profile=" + profile.name;
-            } else {
-                url += "&mux=" + profile.container;
-                if (profile.transcode) {
-                    url += "&transcode=1";
-                    url += "&resolution=" + profile.resolution;
-                    url += "&acodec=" + profile.audio_codec;
-                    url += "&vcodec=" + profile.video_codec;
-                    url += "&scodec=" + profile.subtitle_codec;
-                }
+        // If a profile was given, use it instead of the old values
+        if (profile != null  
+                && profile.enabled
+                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && app.isUnlocked()) {
+            playUrl += "&profile=" + profile.name;
+        } else {
+            playUrl += "&mux=" + profile.container;
+            if (profile.transcode) {
+                playUrl += "&transcode=1";
+                playUrl += "&resolution=" + profile.resolution;
+                playUrl += "&acodec=" + profile.audio_codec;
+                playUrl += "&vcodec=" + profile.video_codec;
+                playUrl += "&scodec=" + profile.subtitle_codec;
             }
+        }
 
-            final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
-            playbackIntent.setDataAndType(Uri.parse(url), mime);
+        final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
+        playbackIntent.setDataAndType(Uri.parse(playUrl), mime);
 
-            // Pass on the name of the channel or the recording title to the external 
-            // video players. VLC uses itemTitle and MX Player the title string.
-            if (title != null && title.length() > 0) {
-                playbackIntent.putExtra("itemTitle", title);
-                playbackIntent.putExtra("title", title);
-            }
+        // Pass on the name of the channel or the recording title to the external 
+        // video players. VLC uses itemTitle and MX Player the title string.
+        playbackIntent.putExtra("itemTitle", title);
+        playbackIntent.putExtra("title", title);
 
-            // Start playing the video now in the UI thread
-            this.runOnUiThread(new Runnable() {
-                public void run() {
-                    try {
-                        app.log(TAG, "Starting external player");
-                        startActivity(playbackIntent);
-                        finish();
-                    } catch (Throwable t) {
-                        app.log(TAG, "Can't execute external media player");
-    
-                        // Show a confirmation dialog before deleting the recording
-                        new MaterialDialog.Builder(context)
-                            .title(R.string.no_media_player)
-                            .content(R.string.show_play_store)
-                            .positiveText(getString(android.R.string.yes))
-                            .negativeText(getString(android.R.string.no))
-                            .callback(new MaterialDialog.ButtonCallback() {
-                                @Override
-                                public void onPositive(MaterialDialog dialog) {
-                                    try {
-                                        app.log(TAG, "Starting play store to download external players");
-                                        Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                                        installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
-                                        startActivity(installIntent);
-                                    } catch (Throwable t2) {
-                                        app.log(TAG, "Could not start google play store");
-                                    } finally {
-                                        finish();
-                                    }
-                                }
-                                @Override
-                                public void onNegative(MaterialDialog dialog) {
+        app.log(TAG, "Starting to play from url " + playUrl);
+
+        // Start playing the video now in the UI thread
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    app.log(TAG, "Starting external player");
+                    startActivity(playbackIntent);
+                    finish();
+                } catch (Throwable t) {
+                    app.log(TAG, "Can't execute external media player");
+
+                    // Show a confirmation dialog before deleting the recording
+                    new MaterialDialog.Builder(ExternalActionActivity.this)
+                        .title(R.string.no_media_player)
+                        .content(R.string.show_play_store)
+                        .positiveText(getString(android.R.string.yes))
+                        .negativeText(getString(android.R.string.no))
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                try {
+                                    app.log(TAG, "Starting play store to download external players");
+                                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                                    installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
+                                    startActivity(installIntent);
+                                } catch (Throwable t2) {
+                                    app.log(TAG, "Could not start google play store");
+                                } finally {
                                     finish();
                                 }
-                            }).show();
-                    }
+                            }
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                finish();
+                            }
+                        }).show();
                 }
-            });
-            break;
+            }
+        });
+    }
 
-        case Constants.EXTERNAL_ACTION_DOWNLOAD:
-            app.log(TAG, "Downloading url " + url);
+    /**
+     * 
+     */
+    private void startCasting() {
 
-            dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
-            dm.enqueue(new Request(Uri.parse(url)));
-            finish();
-            break;
+        String iconUrl = "";
+        String castUrl = "";
+        String subtitle = "";
+        long duration = 0;
+
+        if (ch != null) {
+            castUrl = baseUrl + "/stream/channel/" + ch.uuid;
+            iconUrl = baseUrl + "/" + ch.icon;
+        } else if (rec != null) {
+            castUrl = baseUrl + "/dvrfile/" + rec.id;
+            subtitle = (rec.subtitle.length() > 0 ? rec.subtitle : rec.summary);
+            duration = rec.stop.getTime() - rec.start.getTime();
+            iconUrl = baseUrl + "/" + (rec.channel != null ? rec.channel.icon : "");
         }
+
+        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);        
+        movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
+        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, subtitle);
+        movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
+        movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
+
+        // Check if the correct profile was set, if not try to do this
+        castUrl += "?profile=" + dbh.getProfile(conn.cast_profile_id).name;
+
+        app.log(TAG, "Cast title is " + title);
+        app.log(TAG, "Cast subtitle is " + subtitle);
+        app.log(TAG, "Cast icon is " + iconUrl);
+        app.log(TAG, "Cast url is " + castUrl);
+
+        MediaInfo mediaInfo = new MediaInfo.Builder(castUrl.toString())
+            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+            .setContentType("video/webm")
+            .setMetadata(movieMetadata)
+            .setStreamDuration(duration)
+            .build();
+
+        VideoCastManager.getInstance().startVideoCastControllerActivity(this, mediaInfo, 0, true);
+        finish();
     }
 
     /**
@@ -210,5 +306,114 @@ public class ExternalActionActivity extends Activity implements HTSListener {
             HttpTicket t = (HttpTicket) obj;
             startPlayback(t.path, t.ticket);
         }
+    }
+
+    /**
+     * Task that opens a connection to the defined URL, authenticates and
+     * downloads the available EPG data. If successful the JSON formatted
+     * data will be parsed for the available channel UUID.
+     * 
+     * @author rsiebert
+     *
+     */
+    class ChannelUuidLoaderTask extends AsyncTask<Connection, Void, String> {
+
+        protected void onPreExecute() {
+            // TODO Show loading indicator
+        }
+
+        protected String doInBackground(Connection... conns) {
+            InputStream is = null;
+            String result = "";
+            try {
+                Connection c = conns[0];
+                String url = "http://" + c.address + ":" + c.streaming_port + "/api/epg/events/grid";
+                String auth = "Basic " + Base64.encodeToString((c.username + ":" + c.password).getBytes(), Base64.NO_WRAP);
+
+                app.log(TAG, "Connecting to " + url);
+
+                HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(5000);
+                conn.setRequestProperty("Authorization", auth);
+                conn.connect();
+
+                is = conn.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                is.close();
+                result = sb.toString();
+
+            } catch (Throwable tr) {
+                app.log(TAG, tr.getLocalizedMessage());
+            } finally {
+                try {
+                    if (is != null) {
+                        is.close();
+                    }
+                } catch (IOException e) {
+                    // NOP
+                }
+            }
+            return result;
+        }
+
+        protected void onPostExecute(String result) {
+
+            if (result.length() == 0) {
+                app.log(TAG, "Error loading JSON data");
+                showErrorDialog(getString(R.string.error_loading_json_data));
+                finish();
+            }
+
+            try {
+                app.log(TAG, "Parsing JSON data");
+                JSONObject jsonObj = new JSONObject(result);
+
+                // Get the JSON array node and loop through all 
+                // entries to save the UUIDs for all channels.
+                JSONArray epgData = jsonObj.getJSONArray("entries");
+                for (int i = 0; i < epgData.length(); i++) {
+                    JSONObject epgItem = epgData.getJSONObject(i);
+                    String uuid = epgItem.getString("channelUuid");
+                    String name = epgItem.getString("channelName");
+                    for (Channel ch : app.getChannels()) {
+                        if (ch.name.equals(name)) {
+                            ch.uuid = uuid;
+                            break;
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+                app.log(TAG, e.getLocalizedMessage());
+            } finally {
+                // Either start casting with the found UUID or 
+                // show a message that the UUID could not be found
+                if (ch.uuid != null && ch.uuid.length() > 0) {
+                    startCasting();
+                } else {
+                    app.log(TAG, "Error parsing JSON data");
+                    showErrorDialog(getString(R.string.error_parsing_json_data));
+                    finish();
+                }
+            }
+        }
+    }
+
+    private void showErrorDialog(String msg) {
+        new MaterialDialog.Builder(this)
+                .content(msg)
+                .positiveText("Close")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        // NOP
+                    }
+                }).show();
     }
 }
