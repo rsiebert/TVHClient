@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient;
 
+import org.tvheadend.tvhclient.fragments.SettingsCastingFragment;
 import org.tvheadend.tvhclient.fragments.SettingsFragment;
 import org.tvheadend.tvhclient.fragments.SettingsManageConnectionFragment;
 import org.tvheadend.tvhclient.fragments.SettingsNotificationFragment;
@@ -7,10 +8,10 @@ import org.tvheadend.tvhclient.fragments.SettingsProfilesFragment;
 import org.tvheadend.tvhclient.fragments.SettingsShowConnectionsFragment;
 import org.tvheadend.tvhclient.fragments.SettingsTranscodingFragment;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     private final static int PROFILES = 5;
     private final static int TRANSCODING = 6;
     private final static int NOTIFICATIONS = 7;
+    private final static int CASTING = 8;
 
     private int currentSettingsMode = MAIN_SETTINGS; 
 
@@ -148,6 +150,14 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         case PROFILES:
         case TRANSCODING:
         case NOTIFICATIONS:
+        case CASTING:
+            // Any changes in these fragments need to be changed when the back
+            // or home key was pressed. This is only available in the activity,
+            // not in the fragment. Therefore trigger the saving from here. 
+            fragment = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+            if (fragment != null && fragment instanceof BackPressedInterface) {
+                ((BackPressedInterface) fragment).onBackPressed();
+            }
             getSupportFragmentManager().popBackStack();
             currentSettingsMode = MAIN_SETTINGS;
             return;
@@ -280,22 +290,20 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     }
 
     @Override
-    public void done(int resultCode) {
-        // This method is provided by the settings interface and is called from
-        // the profile, transcoding and connection fragments. If the result is
-        // ok then something has changed, otherwise these fragments shall just
-        // be removed. 
-        if (resultCode == Activity.RESULT_OK) {
-            reconnect = true;
-        }
-        onBackPressed();
-    }
-
-    @Override
     public void showNotifications() {
         currentSettingsMode = TRANSCODING;
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsNotificationFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void showCasting() {
+        currentSettingsMode = CASTING;
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsCastingFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commit();

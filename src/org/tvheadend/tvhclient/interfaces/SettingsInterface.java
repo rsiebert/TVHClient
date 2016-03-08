@@ -5,7 +5,6 @@ public interface SettingsInterface {
     public void restart();
     public void restartNow();
     public void reconnect();
-    public void done(int resultCode);
     
     void showConnections();
     void showAddConnection();
@@ -13,4 +12,5 @@ public interface SettingsInterface {
     void showProfiles();
     void showTranscodingSettings();
     void showNotifications();
+    void showCasting();
 }

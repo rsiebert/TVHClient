@@ -28,10 +28,8 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
@@ -55,6 +53,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefClearSearchHistory;
     private Preference prefManageConnections;
     private Preference prefMenuProfiles;
+    private Preference prefMenuCasting;
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
     private CheckBoxPreference prefDebugMode;
@@ -78,6 +77,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
         prefManageConnections = findPreference("pref_manage_connections");
         prefMenuProfiles = findPreference("pref_menu_profiles");
+        prefMenuCasting = findPreference("pref_menu_casting");
         prefMenuTranscoding = findPreference("pref_menu_transcoding");
         prefShowChangelog = findPreference("pref_changelog");
         prefClearSearchHistory = findPreference("pref_clear_search_history");
@@ -154,6 +154,31 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 } else {
                     if (settingsInterface != null) {
                         settingsInterface.showProfiles();
+                    }
+                }
+                return false;
+            }
+        });
+
+        // Add a listener so that the casting can be selected.
+        prefMenuCasting.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (dbh.getConnections().isEmpty()) {
+                    Snackbar.make(getView(), R.string.no_connection_available_advice, 
+                            Snackbar.LENGTH_SHORT).show();
+                } else if (dbh.getSelectedConnection() == null) {
+                    Snackbar.make(getView(), R.string.no_connection_active_advice, 
+                            Snackbar.LENGTH_SHORT).show();
+                } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                    Snackbar.make(getView(), R.string.feature_not_supported_by_server, 
+                            Snackbar.LENGTH_SHORT).show();
+                } else if (!app.isUnlocked()) {
+                    Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
+                            Snackbar.LENGTH_SHORT).show();
+                } else {
+                    if (settingsInterface != null) {
+                        settingsInterface.showCasting();
                     }
                 }
                 return false;
