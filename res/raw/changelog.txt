@@ -1,12 +1,19 @@
+$ 1.9.0
+  % VERSION 1.9.0
+  _ 08.03.2016
+    * Added chromecast support. Please read the information in the settings. (Only available in the unlocked version)
+    * Removed the save and cancel buttons in some setting screens for consistency reasons
+    * Bug fixes
 $ 1.8.8
   % VERSION 1.8.8
-  _ 23.02.2016
+  _ 28.02.2016
     * Show notifications about recordings (Only available in the unlocked version)
     * Show the play menu item for the currently showing program again
     * Added option to show bigger channel icons
     * Moved channel settings into own preference screen
     * Fixed option to remove all failed recordings
     * Updated Slovak and Polish translations
+    * Prevent double entries in the search results
 $ 1.8.7
   % VERSION 1.8.7
   _ 24.01.2016
