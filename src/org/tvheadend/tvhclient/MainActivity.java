@@ -30,12 +30,14 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DrawerMenuItem;
+import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +49,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -60,6 +63,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,6 +78,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.cast.ApplicationMetadata;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
+import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.google.android.libraries.cast.companionlibrary.widgets.IntroductoryOverlay;
+import com.google.android.libraries.cast.companionlibrary.widgets.MiniController;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
@@ -158,12 +167,20 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private int channelTimeSelection = 0;
     private long showProgramsFromTime = new Date().getTime();
 
+    private VideoCastManager mCastManager;
+    private VideoCastConsumerImpl mCastConsumer;
+    private MenuItem mMediaRouteMenuItem;
+    private IntroductoryOverlay mOverlay;
+    private MiniController mMiniController;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         Utils.setLanguage(this);
+
+        VideoCastManager.checkGooglePlayServices(this);
 
         // Check if dual pane mode shall be activated (two fragments at the same
         // time). This is usually available on tablets
@@ -333,6 +350,107 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 }
             }
         };
+
+        mMiniController = (MiniController) findViewById(R.id.miniController);
+
+        mCastManager = VideoCastManager.getInstance();
+        mCastManager.reconnectSessionIfPossible();
+
+        mCastConsumer = new VideoCastConsumerImpl() {
+            @Override
+            public void onFailed(int resourceId, int statusCode) {
+                String reason = "Not Available";
+                if (resourceId > 0) {
+                    reason = getString(resourceId);
+                }
+                app.log(TAG, "CastConsumer onFailed, reason:  " + reason + ", status code: " + statusCode);
+            }
+
+            @Override
+            public void onApplicationConnected(ApplicationMetadata appMetadata, String sessionId, boolean wasLaunched) {
+                invalidateOptionsMenu();
+                app.log(TAG, "CastConsumer onApplicationConnected");
+                // TODO profile warning
+
+            }
+
+            @Override
+            public void onDisconnected() {
+                app.log(TAG, "CastConsumer onDisconnected");
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onConnectionSuspended(int cause) {
+                app.log(TAG, "CastConsumer onConnectionSuspended, cause " + cause);
+                showMessage(getString(R.string.connection_temp_lost));
+            }
+
+            @Override
+            public void onConnectivityRecovered() {
+                app.log(TAG, "CastConsumer onConnectivityRecovered");
+                showMessage(getString(R.string.connection_recovered));
+            }
+
+            @Override
+            public void onCastAvailabilityChanged(boolean castPresent) {
+                app.log(TAG, "CastConsumer onCastAvailabilityChanged, is present " + castPresent);
+
+                mMediaRouteMenuItem.setVisible(false);
+
+                // Check if a connection is available, this could not be the 
+                // case after a fresh install where no connections are defined
+                // Only then continue checking if the cast menu shall be shown
+                Connection conn = dbh.getSelectedConnection();
+                if (conn != null) {
+                    Profile profile = dbh.getProfile(conn.cast_profile_id);
+
+                    if (app.isUnlocked()
+                            && castPresent
+                            && profile != null
+                            && profile.enabled
+                            && (selectedMenuPosition == MENU_CHANNELS)) {
+
+                        mMediaRouteMenuItem.setVisible(true);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                            showCastInfoOverlay();
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void showCastInfoOverlay() {
+        if (mOverlay != null) {
+            mOverlay.remove();
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mMediaRouteMenuItem.isVisible()) {
+                    mOverlay = new IntroductoryOverlay.Builder(MainActivity.this)
+                            .setMenuItem(mMediaRouteMenuItem)
+                            .setTitleText(R.string.intro_overlay_text)
+                            .setSingleTime()
+                            .setOnDismissed(new IntroductoryOverlay.OnOverlayDismissedListener() {
+                                @Override
+                                public void onOverlayDismissed() {
+                                    mOverlay = null;
+                                }
+                            })
+                            .build();
+                    mOverlay.show();
+                }
+            }
+        }, 1000);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
+        return mCastManager.onDispatchVolumeKeyEvent(event, Constants.CAST_VOLUME_INCREMENT)
+                || super.dispatchKeyEvent(event);
     }
 
     /**
@@ -530,6 +648,16 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         super.onResume();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        mCastManager = VideoCastManager.getInstance();
+        if (null != mCastManager) {
+            mCastManager.addVideoCastConsumer(mCastConsumer);
+            mCastManager.incrementUiCounter();
+            if (!prefs.getBoolean("pref_show_cast_minicontroller", false)) {
+                mCastManager.removeMiniController(mMiniController);
+            }
+        }
+
         connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, Constants.ACTION_CONNECTION_STATE_OK);
         connectionSettingsShown = prefs.getBoolean(Constants.LAST_CONNECTION_SETTINGS_SHOWN, false);
 
@@ -599,6 +727,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void onPause() {
+        mCastManager.decrementUiCounter();
+        mCastManager.removeVideoCastConsumer(mCastConsumer);
+
         super.onPause();
         app.removeListener(this);
 
@@ -681,6 +812,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     MenuItem.SHOW_AS_ACTION_ALWAYS
                             | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
+
         return true;
     }
 
@@ -689,6 +821,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        mMediaRouteMenuItem = mCastManager.addMediaRouterButton(menu, R.id.media_route_menu_item);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -1053,6 +1187,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             intent.setAction(Constants.ACTION_GET_DVR_CONFIG);
                             startService(intent);
                         }
+                        // Reload the menu. Only after the initial sync we know the server 
+                        // version which determines the visibility of the casting icon
+                        invalidateOptionsMenu();
                     }
                 }
             });
