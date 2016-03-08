@@ -147,7 +147,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
                 for (Profiles p : app.getProfiles()) {
                     if (p.uuid.equals(newValue) && !p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
                         new MaterialDialog.Builder(activity)
-                                .content(getString(R.string.cast_profile_invalid, p.name))
+                                .content(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
                                 .positiveText(android.R.string.ok)
                                 .callback(new MaterialDialog.ButtonCallback() {
                                     @Override
