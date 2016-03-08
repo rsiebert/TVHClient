@@ -50,6 +50,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 public class SettingsCastingFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
 
+    @SuppressWarnings("unused")
     private final static String TAG = SettingsCastingFragment.class.getSimpleName();
 
     private Activity activity;

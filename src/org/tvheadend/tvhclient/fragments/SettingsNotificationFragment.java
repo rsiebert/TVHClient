@@ -56,6 +56,7 @@ public class SettingsNotificationFragment extends PreferenceFragment {
         prefShowNotificationOffset = (ListPreference) findPreference("pref_show_notification_offset");
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

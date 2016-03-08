@@ -126,6 +126,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         return v;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

@@ -124,6 +124,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         return v;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
