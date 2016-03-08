@@ -5,6 +5,10 @@ public class Constants {
     // Product id for the in-app billing item to unlock the application
     public static final String UNLOCKER = "unlocker";
 
+    // Chromecast stuff
+    public static final String CAST_APPLICATION_ID = "0531DF56";
+    public static final double CAST_VOLUME_INCREMENT = 0.05;
+
     // Codes to identify the returning activity
     public static final int RESULT_CODE_SETTINGS = 101;
     public static final int RESULT_CODE_START_PLAYER = 102;
@@ -48,6 +52,7 @@ public class Constants {
     // Defines what external action shall be done
     public static final int EXTERNAL_ACTION_PLAY = 1;
     public static final int EXTERNAL_ACTION_DOWNLOAD = 2;
+    public static final int EXTERNAL_ACTION_CAST = 3;
 
     // Differentiates the different types of recordings
     public static final int RECORDING_TYPE_COMPLETED = 1;
@@ -157,6 +162,7 @@ public class Constants {
 
     // The default names for the playback and recording profiles
     public static final String PROG_PROFILE_DEFAULT = "htsp";
+    public static final String CAST_PROFILE_DEFAULT = "webtv-vp8-vorbis-webm";
     public static final String REC_PROFILE_DEFAULT = "(Default Profile)";
 
     // Identifier that can be passed to methods that support tags to differentiate the caller
