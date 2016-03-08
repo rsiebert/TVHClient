@@ -15,4 +15,5 @@ public class Connection {
     public boolean wol_broadcast;
     public int playback_profile_id;
     public int recording_profile_id;
+    public int cast_profile_id;
 }

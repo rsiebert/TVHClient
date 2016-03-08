@@ -9,6 +9,7 @@ import java.util.TreeSet;
 public class Channel implements Comparable<Channel> {
 
     public long id;
+    public String uuid;
     public String name;
     public String icon;
     public int number;
