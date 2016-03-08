@@ -3,18 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
+        android:id="@+id/media_route_menu_item"
+        android:orderInCategory="1"
+        android:title="@string/media_route_menu_title"
+        app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/menu_search"
         android:icon="?attr/ic_menu_search"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@android:string/search_go"
-        app:showAsAction="ifRoom|collapseActionView"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView"/>
     <item
         android:id="@+id/menu_wol"
         android:icon="?attr/ic_menu_wol"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/send_wol"
-        app:showAsAction="ifRoom|collapseActionView" />
+        app:showAsAction="ifRoom|collapseActionView"/>
     <item
         android:id="@+id/menu_refresh"
         android:icon="?attr/ic_menu_refresh"
