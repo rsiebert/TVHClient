@@ -23,31 +23,22 @@ import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
-import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
-public class SettingsTranscodingFragment extends PreferenceFragment implements OnPreferenceChangeListener, BackPressedInterface {
+public class SettingsTranscodingFragment extends PreferenceFragment implements BackPressedInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsTranscodingFragment.class.getSimpleName();
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
-    private SettingsInterface settingsInterface;
 
     private Connection conn = null;
     private Profile progProfile = null;
@@ -79,8 +70,6 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
     private static final String REC_PROFILE_AUDIO_CODEC = "rec_profile_audio_codec";
     private static final String REC_PROFILE_VIDEO_CODEC = "rec_profile_vodeo_codec";
     private static final String REC_PROFILE_SUBTITLE_CODEC = "rec_profile_subtitle_codec";
-
-    private boolean settingsHaveChanged = false;
 
     private DatabaseHelper dbh;
 
@@ -159,6 +148,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
         super.onSaveInstanceState(outState);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -168,7 +158,6 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
 
     @Override
     public void onDetach() {
-        settingsInterface = null;
         actionBarInterface = null;
         super.onDetach();
     }
@@ -182,25 +171,13 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.pref_transcoding));
         }
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
-        }
-        setHasOptionsMenu(true);
     }
 
     public void onResume() {
         super.onResume();
 
-        // If no connection exists the screen
-        if (conn == null) {
-            if (settingsInterface != null) {
-                settingsInterface.done(Activity.RESULT_CANCELED);
-                return;
-            }
-        } else {
-            if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(conn.name);
-            }
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarSubtitle(conn.name);
         }
 
         prefProgContainer.setValue(progProfile.container);
@@ -216,48 +193,6 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
         prefRecAudioCodec.setValue(recProfile.audio_codec);
         prefRecVideoCodec.setValue(recProfile.video_codec);
         prefRecSubtitleCodec.setValue(recProfile.subtitle_codec);
-
-        prefProgContainer.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefProgTranscode.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefProgResolution.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefProgAudioCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefProgVideoCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefProgSubtitleCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-
-        prefRecContainer.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefRecTranscode.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefRecResolution.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefRecAudioCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefRecVideoCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefRecSubtitleCodec.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-
-        settingsHaveChanged = false;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.save_cancel_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            cancel();
-            return true;
-
-        case R.id.menu_save:
-            save();
-            return true;
-
-        case R.id.menu_cancel:
-            cancel();
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
-        }
     }
 
     public void save() {
@@ -296,53 +231,10 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements O
         } else {
             dbh.updateProfile(recProfile);
         }
-
-        activity.setResult(Activity.RESULT_OK, activity.getIntent());
-        activity.finish();
-    }
-
-    public void cancel() {
-        // Quit immediately if nothing has changed 
-        if (!settingsHaveChanged) {
-            if (settingsInterface != null) {
-                settingsInterface.done(Activity.RESULT_CANCELED);
-            }
-            return;
-        }
-        // Show confirmation dialog to cancel
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(getString(R.string.confirm_discard_profile));
-
-        // Define the action of the yes button
-        builder.setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                // Connect to the server with the selected connection and do not
-                // retrieve the initial data
-                if (settingsInterface != null) {
-                    settingsInterface.done(Activity.RESULT_OK);
-                }
-            }
-        });
-        // Define the action of the no button
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
     @Override
     public void onBackPressed() {
-        cancel();
-    }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        settingsHaveChanged = true;
-        return true;
+        save();
     }
 }

@@ -29,7 +29,6 @@ import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Profiles;
@@ -41,25 +40,20 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
-public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, OnPreferenceChangeListener, BackPressedInterface {
+public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsProfilesFragment.class.getSimpleName();
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
-    private SettingsInterface settingsInterface;
 
     private Connection conn = null;
     private Profile progProfile = null;
@@ -70,10 +64,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     private ListPreference prefRecProfiles;
     private ListPreference prefProgProfiles;
 
-    private boolean settingsHaveChanged = false;
-
-    private static final String ENABLE_PROG_PROFILE = "enable_prog_profile";
-    private static final String ENABLE_REC_PROFILE = "enable_rec_profile";
     private static final String PROG_PROFILE_UUID = "prog_profile_uuid";
     private static final String REC_PROFILE_UUID = "rec_profile_uuid";
 
@@ -108,8 +98,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // the first time. If the state is not null then the screen has
         // been rotated and we have to reuse the values.
         if (savedInstanceState != null) {
-            prefEnableProgProfiles.setChecked(savedInstanceState.getBoolean(ENABLE_PROG_PROFILE));
-            prefEnableRecProfiles.setChecked(savedInstanceState.getBoolean(ENABLE_REC_PROFILE));
             progProfile.uuid = savedInstanceState.getString(PROG_PROFILE_UUID);
             recProfile.uuid = savedInstanceState.getString(REC_PROFILE_UUID);
         }
@@ -117,13 +105,12 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(ENABLE_PROG_PROFILE, prefEnableProgProfiles.isChecked());
-        outState.putBoolean(ENABLE_REC_PROFILE, prefEnableRecProfiles.isChecked());
         outState.putString(PROG_PROFILE_UUID, prefProgProfiles.getValue());
         outState.putString(REC_PROFILE_UUID, prefRecProfiles.getValue());
         super.onSaveInstanceState(outState);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -148,9 +135,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.pref_profiles));
         }
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
-        }
 
         prefEnableRecProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
@@ -166,43 +150,16 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                 return false;
             }
         });
-        prefRecProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                return false;
-            }
-        });
-        prefProgProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                return false;
-            }
-        });
-
-        setHasOptionsMenu(true);
     }
 
     public void onResume() {
         super.onResume();
         app.addListener(this);
 
-        // If no connection exists exit
-        if (conn == null) {
-            if (settingsInterface != null) {
-                settingsInterface.done(Activity.RESULT_CANCELED);
-            }
-        } else {
-            if (actionBarInterface != null) {
-                actionBarInterface.setActionBarSubtitle(conn.name);
-            }
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarSubtitle(conn.name);
         }
 
-        prefEnableProgProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefEnableRecProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefProgProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-        prefRecProfiles.setOnPreferenceChangeListener((OnPreferenceChangeListener) this);
-
-        settingsHaveChanged = false;
         loadProfiles();
     }
 
@@ -216,26 +173,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.save_cancel_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            cancel();
-            return true;
-
-        case R.id.menu_save:
-            save();
-            return true;
-
-        case R.id.menu_cancel:
-            cancel();
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
-        }
     }
 
     public void save() {
@@ -268,35 +205,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         } else {
             dbh.updateProfile(recProfile);
         }
-
-        if (settingsInterface != null) {
-            settingsInterface.done(Activity.RESULT_OK);
-        }
-    }
-
-    public void cancel() {
-        // Quit immediately if nothing has changed 
-        if (!settingsHaveChanged) {
-            if (settingsInterface != null) {
-                settingsInterface.done(Activity.RESULT_CANCELED);
-                return;
-            }
-        }
-        // Show confirmation dialog to cancel
-        new MaterialDialog.Builder(activity)
-                .content(R.string.confirm_discard_profile)
-                .positiveText(getString(R.string.discard))
-                .negativeText(getString(R.string.cancel))
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        activity.finish();
-                    }
-                    @Override
-                    public void onNegative(MaterialDialog dialog) {
-                        dialog.cancel();
-                    }
-                }).show();
     }
 
     /**
@@ -424,12 +332,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
     @Override
     public void onBackPressed() {
-        cancel();
-    }
-    
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        settingsHaveChanged = true;
-        return true;
+        save();
     }
 }
