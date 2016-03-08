@@ -396,26 +396,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             public void onCastAvailabilityChanged(boolean castPresent) {
                 app.log(TAG, "CastConsumer onCastAvailabilityChanged, is present " + castPresent);
 
-                mMediaRouteMenuItem.setVisible(false);
-
-                // Check if a connection is available, this could not be the 
-                // case after a fresh install where no connections are defined
-                // Only then continue checking if the cast menu shall be shown
-                Connection conn = dbh.getSelectedConnection();
-                if (conn != null) {
-                    Profile profile = dbh.getProfile(conn.cast_profile_id);
-
-                    if (app.isUnlocked()
-                            && castPresent
-                            && profile != null
-                            && profile.enabled
-                            && (selectedMenuPosition == MENU_CHANNELS)) {
-
-                        mMediaRouteMenuItem.setVisible(true);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                            showCastInfoOverlay();
-                        }
-                    }
+                if (mMediaRouteMenuItem != null 
+                        && castPresent 
+                        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    showCastInfoOverlay();
                 }
             }
         };
@@ -813,6 +797,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
 
+
         return true;
     }
 
@@ -822,7 +807,20 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        mMediaRouteMenuItem = mCastManager.addMediaRouterButton(menu, R.id.media_route_menu_item);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Add the cast menu button if casting is enabled and a valid profile
+        // exists. The profile could be null in case a new connection was
+        // defined and no cast profile was selected yet.
+        Connection conn = dbh.getSelectedConnection();
+        Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
+        if (app.isUnlocked() 
+                && prefs.getBoolean("pref_enable_casting", false)
+                && (selectedMenuPosition == MENU_CHANNELS)
+                && profile != null 
+                && profile.enabled) {
+            mMediaRouteMenuItem = mCastManager.addMediaRouterButton(menu, R.id.media_route_menu_item);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
