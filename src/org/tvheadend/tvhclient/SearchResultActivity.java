@@ -499,7 +499,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        // Close the current connection to stop loading any EPG data.
-        Utils.connect(this, true, false);
+        // Stop the service to stop loading any EPG data.
+        stopService(new Intent(this, HTSService.class));
     }
 }
