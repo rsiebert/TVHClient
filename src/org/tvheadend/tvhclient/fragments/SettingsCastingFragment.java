@@ -136,6 +136,9 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 prefCastProfiles.setEnabled(prefEnableCasting.isChecked());
+
+                // try to set the default profile
+                setCastProfile();
                 return false;
             }
         }));
@@ -143,7 +146,6 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         prefCastProfiles.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-
                 for (Profiles p : app.getProfiles()) {
                     if (p.uuid.equals(newValue) && !p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
                         new MaterialDialog.Builder(activity)
@@ -240,28 +242,31 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
                     }
 
                     if (prefCastProfiles != null && prefEnableCasting != null) {
-
                         addProfiles(prefCastProfiles, app.getProfiles());
                         prefCastProfiles.setEnabled(prefEnableCasting.isChecked());
                         prefEnableCasting.setEnabled(true);
-
-                        // If no uuid is set, no selected profile exists.
-                        // Preselect the default one.
-                        if (castProfile.uuid == null ||
-                            (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
-                            for (Profiles p : app.getProfiles()) {
-                                if (p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
-                                    castProfile.uuid = p.uuid;
-                                    break;
-                                }
-                            }
-                        }
-                        // show the currently selected profile name, if none is
-                        // available then the default value is used
-                        prefCastProfiles.setValue(castProfile.uuid);
+                        setCastProfile();
                     }
                 }
             });
+        }
+    }
+
+    private void setCastProfile() {
+        // If no uuid is set, no selected profile exists.
+        // Preselect the default one.
+        if (castProfile.uuid == null ||
+            (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
+
+            for (Profiles p : app.getProfiles()) {
+                if (p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
+                    castProfile.uuid = p.uuid;
+                    break;
+                }
+            }
+            // show the currently selected profile name, if none is
+            // available then the default value is used
+            prefCastProfiles.setValue(castProfile.uuid);
         }
     }
 

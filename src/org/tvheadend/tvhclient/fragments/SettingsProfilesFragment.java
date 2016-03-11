@@ -270,10 +270,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                                     break;
                                 }
                             }
+                            // show the currently selected profile name, if none is
+                            // available then the default value is used
+                            prefRecProfiles.setValue(recProfile.uuid);
                         }
-                        // show the currently selected profile name, if none is
-                        // available then the default value is used
-                        prefRecProfiles.setValue(recProfile.uuid);
                     }
                 }
             });
@@ -300,10 +300,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                                     break;
                                 }
                             }
+                            // show the currently selected profile name, if none is
+                            // available then the default value is used
+                            prefProgProfiles.setValue(progProfile.uuid);
                         }
-                        // show the currently selected profile name, if none is
-                        // available then the default value is used
-                        prefProgProfiles.setValue(progProfile.uuid);
                     }
                 }
             });
