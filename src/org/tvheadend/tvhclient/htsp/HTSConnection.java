@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.htsp;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -37,7 +38,7 @@ public class HTSConnection extends Thread {
     private String webRoot;
     
     private HTSConnectionListener listener;
-    private SparseArray<HTSResponseHandler> responseHandelers;
+    private SparseArray<HTSResponseHandler> responseHandlers;
     private LinkedList<HTSMessage> messageQueue;
     private boolean auth = false;
     private Selector selector;
@@ -58,7 +59,7 @@ public class HTSConnection extends Thread {
         lock = new ReentrantLock();
         inBuf = ByteBuffer.allocateDirect(2048 * 2048 * (bufferSize + 1));
         inBuf.limit(4);
-        responseHandelers = new SparseArray<HTSResponseHandler>();
+        responseHandlers = new SparseArray<HTSResponseHandler>();
         messageQueue = new LinkedList<HTSMessage>();
 
         this.listener = listener;
@@ -104,24 +105,28 @@ public class HTSConnection extends Thread {
             socketChannel.connect(new InetSocketAddress(hostname, port));
             running = true;
             start();
-        } catch (Exception ex) {
-            app.log(TAG, "Can't open connection", ex);
+        } catch (ClosedChannelException e1) {
+            app.log(TAG, "Can't open connection, channel closed, " + e1.getLocalizedMessage());
             listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
-            return;
+        } catch (IOException e2) {
+            app.log(TAG, "IO error while opening connection, " + e2.getLocalizedMessage());
+            listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
         } finally {
             lock.unlock();
         }
 
-        synchronized (signal) {
-            try {
-                signal.wait(connectionTimeout);
-                if (socketChannel.isConnectionPending()) {
-                    app.log(TAG, "Timeout, connection still pending");
-                    listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
-                    close();
+        if (running) {
+            synchronized (signal) {
+                try {
+                    signal.wait(connectionTimeout);
+                    if (socketChannel.isConnectionPending()) {
+                        app.log(TAG, "Timeout, connection still pending");
+                        listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
+                        close();
+                    }
+                } catch (InterruptedException ex) {
+                    app.log(TAG, "Error waiting for pending connection, " + ex.getLocalizedMessage());
                 }
-            } catch (InterruptedException ex) {
-                app.log(TAG, "Error waiting for connection", ex);
             }
         }
     }
@@ -184,7 +189,7 @@ public class HTSConnection extends Thread {
                     authMessage.putField("digest", md.digest());
                     sendMessage(authMessage, authHandler);
                 } catch (NoSuchAlgorithmException ex) {
-                    app.log(TAG, "No SHA1 MessageDigest available", ex);
+                    app.log(TAG, "No SHA1 MessageDigest available, " + ex.getLocalizedMessage());
                     return;
                 }
             }
@@ -199,6 +204,7 @@ public class HTSConnection extends Thread {
                 }
                 return;
             } catch (InterruptedException ex) {
+                app.log(TAG, "Error during waiting for response, " + ex.getLocalizedMessage());
                 return;
             }
         }
@@ -216,29 +222,30 @@ public class HTSConnection extends Thread {
         try {
             seq++;
             message.putField("seq", seq);
-            responseHandelers.put(seq, listener);
+            responseHandlers.put(seq, listener);
             socketChannel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ | SelectionKey.OP_CONNECT);
             messageQueue.add(message);
             selector.wakeup();
-        } catch (Exception ex) {
-            app.log(TAG, "Can't transmit message", ex);
+        } catch (ClosedChannelException ex) {
+            app.log(TAG, "Can't transmit message, " + ex.getLocalizedMessage());
         } finally {
             lock.unlock();
         }
     }
 
     public void close() {
-        app.log(TAG, "Closing connection");
         lock.lock();
         try {
-            responseHandelers.clear();
+            responseHandlers.clear();
             messageQueue.clear();
             auth = false;
             running = false;
             socketChannel.register(selector, 0);
             socketChannel.close();
-        } catch (Exception ex) {
-            app.log(TAG, "Can't close connection", ex);
+        } catch (ClosedChannelException e1) {
+            app.log(TAG, "Can't close connection, " + e1.getLocalizedMessage());
+        } catch (IOException e2) {
+            app.log(TAG, "Can't close connection, " + e2.getLocalizedMessage());
         } finally {
             lock.unlock();
         }
@@ -252,7 +259,7 @@ public class HTSConnection extends Thread {
             try {
                 selector.select(5000);
             } catch (IOException ex) {
-                app.log(TAG, "Can't select socket channel", ex);
+                app.log(TAG, "Can't select socket channel, " + ex.getLocalizedMessage());
                 listener.onError(Constants.ACTION_CONNECTION_STATE_LOST);
                 running = false;
                 continue;
@@ -273,7 +280,7 @@ public class HTSConnection extends Thread {
                 socketChannel.register(selector, ops);
 
             } catch (Exception ex) {
-                app.log(TAG, "Can't read message, ", ex);
+                app.log(TAG, "Can't read message, " + ex.getLocalizedMessage());
                 running = false;
 
             } finally {
@@ -319,8 +326,8 @@ public class HTSConnection extends Thread {
     private void handleMessage(HTSMessage msg) {
         if (msg.containsField("seq")) {
             int respSeq = msg.getInt("seq");
-            HTSResponseHandler handler = responseHandelers.get(respSeq);
-            responseHandelers.remove(respSeq);
+            HTSResponseHandler handler = responseHandlers.get(respSeq);
+            responseHandlers.remove(respSeq);
 
             if (handler != null) {
             	synchronized (handler) {

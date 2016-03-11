@@ -152,16 +152,6 @@ public class Utils {
      * @param force
      */
     public static void connect(final Context context, final boolean force) {
-        connect(context, force, true);
-    }
-
-    /**
-     * Connects to the server with the currently active connection.
-     * 
-     * @param context
-     * @param force
-     */
-    public static void connect(final Context context, final boolean force, final boolean clear) {
         // Create an intent and pass on the connection details
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction(Constants.ACTION_CONNECT);
@@ -175,7 +165,6 @@ public class Utils {
             intent.putExtra("username", conn.username);
             intent.putExtra("password", conn.password);
             intent.putExtra("force", force);
-            intent.putExtra("clear", clear);
         }
         // Start the service with given action and data
         if (intent != null) {

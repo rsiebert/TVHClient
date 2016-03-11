@@ -72,7 +72,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (NameNotFoundException ex) {
-            app.log(TAG, "Can't get package info", ex);
+            app.log(TAG, "Can't get package info, " + ex.getLocalizedMessage());
         }
     }
 
@@ -81,20 +81,20 @@ public class HTSService extends Service implements HTSConnectionListener {
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
+            app.log(TAG, "Connect to server requested");
             boolean force = intent.getBooleanExtra("force", false);
-            boolean clear = intent.getBooleanExtra("clear", false);
             final String hostname = intent.getStringExtra("hostname");
             final int port = intent.getIntExtra("port", 9982);
             final String username = intent.getStringExtra("username");
             final String password = intent.getStringExtra("password");
 
             if (connection != null && force) {
+                app.log(TAG, "Closing existing connection and clearing all data");
                 connection.close();
+                app.clearAll();
             }
             if (connection == null || !connection.isConnected()) {
-                if (clear) {
-                    app.clearAll();
-                }
+                app.log(TAG, "Starting to connect to server");
                 app.setLoading(true);
                 connection = new HTSConnection(app, this, packInfo.packageName, packInfo.versionName);
 
@@ -111,6 +111,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             app.log(TAG, "No connection to perform " + action);
 
         } else if (action.equals(Constants.ACTION_DISCONNECT)) {
+            app.log(TAG, "Disconnecting from server");
             connection.close();
 
         } else if (action.equals(Constants.ACTION_GET_EVENT)) {
@@ -727,6 +728,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.title = msg.getString("title");
         srec.name = msg.getString("name");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
+
         app.addSeriesRecording(srec);
     }
 
