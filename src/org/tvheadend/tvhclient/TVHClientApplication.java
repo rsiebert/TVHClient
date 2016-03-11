@@ -197,6 +197,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public List<ChannelTag> getChannelTags() {
         synchronized (tags) {
+
             // Sort the channel tags ny name, but keep the all channels always on top
             Collections.sort(tags, new Comparator<ChannelTag>() {
                 public int compare(ChannelTag x, ChannelTag y) {
@@ -441,7 +442,9 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public void addRecording(Recording rec) {
         synchronized (recordings) {
-            recordings.add(rec);
+            if (recordings.indexOf(rec) == -1) {
+                recordings.add(rec);
+            }
         }
         if (!loading) {
             broadcastMessage(Constants.ACTION_DVR_ADD, rec);
@@ -592,12 +595,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @param srec
      */
-    public void addSeriesRecording(SeriesRecording srec) {
+    public void addSeriesRecording(SeriesRecording rec) {
         synchronized (seriesRecordings) {
-            seriesRecordings.add(srec);
+            if (seriesRecordings.indexOf(rec) == -1) {
+                seriesRecordings.add(rec);
+            }
         }
         if (!loading) {
-            broadcastMessage(Constants.ACTION_SERIES_DVR_ADD, srec);
+            broadcastMessage(Constants.ACTION_SERIES_DVR_ADD, rec);
         }
     }
 
@@ -622,7 +627,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     public SeriesRecording getSeriesRecording(String id) {
         synchronized (seriesRecordings) {
             for (SeriesRecording srec : getSeriesRecordings()) {
-                if (srec.id == id) {
+                if (srec.id.equals(id)) {
                     return srec;
                 }
             }
@@ -684,7 +689,9 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public void addTimerRecording(TimerRecording rec) {
         synchronized (timerRecordings) {
-            timerRecordings.add(rec);
+            if (timerRecordings.indexOf(rec) == -1) {
+                timerRecordings.add(rec);
+            }
         }
         if (!loading) {
             broadcastMessage(Constants.ACTION_TIMER_DVR_ADD, rec);
@@ -801,11 +808,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
             s.streams.clear();
         }
         subscriptions.clear();
-
-        ChannelTag tag = new ChannelTag();
-        tag.id = 0;
-        tag.name = getString(R.string.all_channels);
-        tags.add(tag);
     }
 
     /**
@@ -1022,6 +1024,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
             enableLogToFile();
         }
 
+        // Add the default tag (all channels) to the list
+        ChannelTag tag = new ChannelTag();
+        tag.id = 0;
+        tag.name = getString(R.string.all_channels);
+        addChannelTag(tag);
+
         // Build a CastConfiguration object and initialize VideoCastManager
         CastConfiguration options = new CastConfiguration.Builder(Constants.CAST_APPLICATION_ID)
                 .enableAutoReconnect()
@@ -1141,19 +1149,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
                 Log.d(TAG, "Error writing to logfile buffer. " + e.getLocalizedMessage());
             }
         }
-    }
-
-    /**
-     * Combines the given message and exception message into one string and
-     * forwards it to the other log method which writes the given tag name and
-     * message into the log file.
-     * 
-     * @param tag
-     * @param msg
-     * @param ex
-     */
-    public void log(String tag, String msg, Exception ex) {
-        log(tag, msg + ", Exception: " + ex.getLocalizedMessage());
     }
 
     /**
