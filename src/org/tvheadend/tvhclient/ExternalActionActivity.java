@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -368,6 +367,7 @@ public class ExternalActionActivity extends Activity implements HTSListener {
                 app.log(TAG, "Error loading JSON data");
                 showErrorDialog(getString(R.string.error_loading_json_data));
                 finish();
+                return;
             }
 
             try {
@@ -400,6 +400,7 @@ public class ExternalActionActivity extends Activity implements HTSListener {
                     app.log(TAG, "Error parsing JSON data");
                     showErrorDialog(getString(R.string.error_parsing_json_data));
                     finish();
+                    return;
                 }
             }
         }
