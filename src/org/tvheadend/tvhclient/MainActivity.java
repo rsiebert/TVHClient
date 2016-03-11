@@ -457,7 +457,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             }
     
             // Now show the dialog to select a new connection
-            final Context context = this;
             new MaterialDialog.Builder(this)
                 .title(R.string.select_connection)
                 .items(items)
@@ -477,7 +476,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             oldConn.selected = false;
                             dbh.updateConnection(oldConn);
                             dbh.updateConnection(newConn);
-                            Utils.connect(context, true);
+                            Utils.connect(MainActivity.this, true);
                         }
                         return true;
                     }
@@ -1412,9 +1411,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void moreDataRequired(final Channel channel, final String tag) {
-        app.log(TAG, "Trying to load more programs for channel "
-                + (channel != null ? channel.name : "null") + ", "
-                + "app still initially loading " + app.isLoading());
+        app.log(TAG, "Initial sync not completed, skipping loading more programs for channel "
+                + (channel != null ? channel.name : "null"));
 
         if (app.isLoading() || channel == null) {
             return;
