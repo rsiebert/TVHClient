@@ -369,7 +369,6 @@ public class ExternalActionActivity extends Activity implements HTSListener {
             if (result.length() == 0) {
                 app.log(TAG, "Error loading JSON data");
                 showErrorDialog(getString(R.string.error_loading_json_data));
-                finish();
                 return;
             }
 
@@ -402,7 +401,6 @@ public class ExternalActionActivity extends Activity implements HTSListener {
                 } else {
                     app.log(TAG, "Error parsing JSON data");
                     showErrorDialog(getString(R.string.error_parsing_json_data));
-                    finish();
                     return;
                 }
             }
@@ -416,7 +414,7 @@ public class ExternalActionActivity extends Activity implements HTSListener {
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        // NOP
+                        finish();
                     }
                 }).show();
     }
