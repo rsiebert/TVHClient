@@ -808,6 +808,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
             s.streams.clear();
         }
         subscriptions.clear();
+
+        // Add the default tag (all channels) to the list
+        ChannelTag tag = new ChannelTag();
+        tag.id = 0;
+        tag.name = getString(R.string.all_channels);
+        addChannelTag(tag);
     }
 
     /**
