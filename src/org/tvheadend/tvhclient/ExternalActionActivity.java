@@ -20,7 +20,6 @@ import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
 import android.app.DownloadManager;
-import android.app.DownloadManager.Request;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
@@ -130,11 +129,15 @@ public class ExternalActionActivity extends Activity implements HTSListener {
      * The user will be notified by the system that a download is progressing.
      */
     private void startDownload() {
-        String downloadUrl = baseUrl + "/dvrfile/" + rec.id;
-        app.log(TAG, "Starting download from url " + baseUrl);
+        String downloadUrl = "http://" + conn.address + ":" + conn.streaming_port + "/dvrfile/" + rec.id;
+        String auth = "Basic " + Base64.encodeToString((conn.username + ":" + conn.password).getBytes(), Base64.NO_WRAP);
 
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
+        request.addRequestHeader("Authorization", auth);
+
+        app.log(TAG, "Starting download from url " + downloadUrl);
         dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
-        dm.enqueue(new Request(Uri.parse(downloadUrl)));
+        dm.enqueue(request);
         finish();
     }
 
