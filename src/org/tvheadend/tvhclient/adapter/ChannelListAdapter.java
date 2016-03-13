@@ -15,7 +15,6 @@ import org.tvheadend.tvhclient.model.Program;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -221,10 +220,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
                 if ((!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) &&
                         layout != R.layout.program_guide_channel_item) {
-                    Log.d(TAG, "Channel '" + c.name 
-                            + "', loading programs, current program exists: "
-                            + currentProgramFound + ", epg program count: "
-                            + availableProgramCount);
                     Utils.loadMorePrograms(context, c);
                 }
 
