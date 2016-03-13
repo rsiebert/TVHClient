@@ -796,6 +796,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
 
+        if (mMediaRouteMenuItem != null) {
+            mMediaRouteMenuItem.setVisible(showCastMenuItem());
+        }
 
         return true;
     }
@@ -806,18 +809,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // Add the cast menu button if casting is enabled and a valid profile
-        // exists. The profile could be null in case a new connection was
-        // defined and no cast profile was selected yet.
-        Connection conn = dbh.getSelectedConnection();
-        Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
-        if (app.isUnlocked() 
-                && prefs.getBoolean("pref_enable_casting", false)
-                && (selectedMenuPosition == MENU_CHANNELS)
-                && profile != null 
-                && profile.enabled) {
+        if (showCastMenuItem()) {
             mMediaRouteMenuItem = mCastManager.addMediaRouterButton(menu, R.id.media_route_menu_item);
         }
 
@@ -1791,5 +1783,27 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public void onChannelTimeSelected(int selection, long time) {
         channelTimeSelection = selection;
         showProgramsFromTime = time;
+    }
+
+    /**
+     * Returns true so that the cast menu button can be shown only if casting is
+     * enabled and valid profile exists and a valid screen is visible. The check
+     * for the profile is required because it could be null in case a new
+     * connection was defined and no cast profile was selected yet.
+     * 
+     * @return
+     */
+    private boolean showCastMenuItem() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Connection conn = dbh.getSelectedConnection();
+        Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
+        if (app.isUnlocked() 
+                && prefs.getBoolean("pref_enable_casting", false)
+                && (selectedMenuPosition != MENU_STATUS)
+                && profile != null 
+                && profile.enabled) {
+            return true;
+        }
+        return false;
     }
 }
