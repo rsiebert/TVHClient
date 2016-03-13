@@ -2,6 +2,22 @@
 <resources>
     <string name="app_name">TVHClient</string>
 
+    <string name="media_route_menu_title">Spiele auf&#8230;</string>
+    <string name="intro_overlay_text">Zeige Live-TV oder Aufnahmen auf dem Casting Gerät deiner Wahl.\n\nBitte aktiviere Casting in den Einstellungen und überprüfe, ob die dort beschriebenen Anforderungen erfüllt werden.</string>
+    <string name="connection_temp_lost">Verbindung zum Casting Gerät verloren</string>
+    <string name="connection_recovered">Verbindung zum Casting Gerät wurde wieder hergestellt</string>
+    <string name="cast_profile_not_set">Es wurde kein Casting Profil in den Einstellungen gewählt. Dies ist zwingend erforderlich.</string>
+    <string name="cast_profile_invalid">Das gewählte Profil \'%1$s\' entspricht nicht dem empfohlenden Profil \'%2$s\'. Casting wird evtl. nicht korrekt funktionieren.</string>
+    <string name="error_loading_json_data">Konnte die erforderlichen Daten zum Casten nicht vom Server laden. Bitte überprüfe die Verbindung und ob Port 9981 erreichbar ist.</string>
+    <string name="error_parsing_json_data">Konnte die vom Server empfangenen Daten nicht verarbeiten. Bitte sende ein Debug-Log an den Entwickler.</string>
+    <string name="proceed">Fortfahren</string>
+    <string name="pref_casting">Casting</string>
+    <string name="pref_casting_sum">Einstellungen für die Casting Funktionalität. Bitte beachte, dass Casting eine TVHeadend Version erfordert, die transkodieren kann. Ausserdem muss der Server leistungsstark genug sein, um die Videodaten in Echtzeit konvertieren zu können. Andernfalls wird Casting nicht funktionieren!</string>
+    <string name="pref_enable_casting">Aktiviere Casting</string>
+    <string name="pref_enable_casting_sum">Diese Funktion nur aktivieren, wenn TVHeadend transkodieren kann und der Server leistungsstark genug ist, um die Videodaten in Echtzeit zu konvertieren.</string>
+    <string name="pref_show_cast_minicontroller">Cast Ministeuerung</string>
+    <string name="pref_show_cast_minicontroller_sum">Zeigt im unteren Bildschirmbereich die wichtigsten Informationen und Steuerelemente für den aktuellen Cast an.</string>
+
     <string name="settings">Einstellungen</string>
     <string name="refresh">Aktualisieren</string>
     <string name="tags">Anzeige Filtern</string>
@@ -164,6 +180,8 @@
     <string name="pref_recording_profiles_sum">Bestimmt das Profil, dass der Server für das Aufnehmen von geplanten Programmen verwenden soll.</string>
     <string name="pref_playback_profiles">Wiedergabeprofile</string>
     <string name="pref_playback_profiles_sum">Bestimmt das Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
+    <string name="pref_cast_profiles">Cast Wiedergabeprofile</string>
+    <string name="pref_cast_profiles_sum">Bestimmt das Profil, dass der Server für Abspielen von Live-TV oder Aufnahmen auf einem Cast Gerät verwenden soll.</string>
     <string name="pref_enable_recording_profiles">Aktiviere Aufnahmeprofile</string>
     <string name="pref_enable_recording_profiles_sum">Verwende die neueren Serverprofile für Aufnahmen. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
     <string name="pref_enable_playback_profiles">Aktiviere Wiedergabeprofile</string>

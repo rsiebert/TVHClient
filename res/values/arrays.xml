@@ -72,7 +72,8 @@
         <item>sk</item>
         <item>sp</item>
     </string-array>
-    <string-array name="pref_language_list_display" translatable="false">
+
+    <string-array name="pref_language_list_display">
         <item>Default</item>
         <item>Deutsch</item>
         <item>English</item>
