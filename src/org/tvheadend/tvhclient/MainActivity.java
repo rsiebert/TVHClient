@@ -370,8 +370,24 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             public void onApplicationConnected(ApplicationMetadata appMetadata, String sessionId, boolean wasLaunched) {
                 invalidateOptionsMenu();
                 app.log(TAG, "CastConsumer onApplicationConnected");
-                // TODO profile warning
 
+                Connection conn = dbh.getSelectedConnection();
+                Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
+
+                if (profile == null || !profile.enabled || profile.uuid == null || profile.uuid.length() == 0) {
+                    app.log(TAG, "No casting profile set, disconnecting");
+                    new MaterialDialog.Builder(MainActivity.this)
+                            .content(R.string.cast_profile_not_set)
+                            .positiveText(android.R.string.ok)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    mCastManager.disconnect();
+                                }
+                            }).show();
+                } else {
+                    app.log(TAG, "Selected casting profile is " + profile.name);
+                }
             }
 
             @Override
