@@ -83,15 +83,13 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         prefProgProfiles = (ListPreference) findPreference("pref_playback_profiles");
 
         conn = dbh.getSelectedConnection();
-        if (conn != null) {
-            progProfile = dbh.getProfile(conn.playback_profile_id);
-            if (progProfile == null) {
-                progProfile = new Profile();
-            }
-            recProfile = dbh.getProfile(conn.recording_profile_id);
-            if (recProfile == null) {
-                recProfile = new Profile();
-            }
+        progProfile = dbh.getProfile(conn.playback_profile_id);
+        if (progProfile == null) {
+            progProfile = new Profile();
+        }
+        recProfile = dbh.getProfile(conn.recording_profile_id);
+        if (recProfile == null) {
+            recProfile = new Profile();
         }
 
         // If the state is null then this activity has been started for
@@ -270,10 +268,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                                     break;
                                 }
                             }
-                            // show the currently selected profile name, if none is
-                            // available then the default value is used
-                            prefRecProfiles.setValue(recProfile.uuid);
                         }
+                        // show the currently selected profile name, if none is
+                        // available then the default value is used
+                        prefRecProfiles.setValue(recProfile.uuid);
                     }
                 }
             });
@@ -300,10 +298,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                                     break;
                                 }
                             }
-                            // show the currently selected profile name, if none is
-                            // available then the default value is used
-                            prefProgProfiles.setValue(progProfile.uuid);
                         }
+                        // show the currently selected profile name, if none is
+                        // available then the default value is used
+                        prefProgProfiles.setValue(progProfile.uuid);
                     }
                 }
             });
