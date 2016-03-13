@@ -50,19 +50,16 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 public class SettingsCastingFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
 
-    @SuppressWarnings("unused")
+
     private final static String TAG = SettingsCastingFragment.class.getSimpleName();
+    private static final String CAST_PROFILE_UUID = "cast_profile_uuid";
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
-
     private Connection conn = null;
     private Profile castProfile = null;
     private CheckBoxPreference prefEnableCasting;
     private ListPreference prefCastProfiles;
-
-    private static final String CAST_PROFILE_UUID = "cast_profile_uuid";
-
     private TVHClientApplication app;
     private DatabaseHelper dbh;
 
@@ -77,11 +74,12 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         prefCastProfiles = (ListPreference) findPreference("pref_cast_profiles");
 
         conn = dbh.getSelectedConnection();
-        if (conn != null) {
-            castProfile = dbh.getProfile(conn.cast_profile_id);
-            if (castProfile == null) {
-                castProfile = new Profile();
-            }
+        castProfile = dbh.getProfile(conn.cast_profile_id);
+        if (castProfile == null) {
+            app.log(TAG, "No casting profile defined in the connection");
+            castProfile = new Profile();
+        } else {
+            app.log(TAG, "Casting profile " + castProfile.name + ", " + castProfile.uuid + " is defined in the connection");
         }
 
         // If the state is null then this activity has been started for
@@ -90,14 +88,6 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         if (savedInstanceState != null) {
             castProfile.uuid = savedInstanceState.getString(CAST_PROFILE_UUID);
         }
-        
-        prefCastProfiles.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-
-                return false;
-            }
-        });
     }
 
     @Override
@@ -253,10 +243,12 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     }
 
     private void setCastProfile() {
-        // If no uuid is set, no selected profile exists.
-        // Preselect the default one.
-        if (castProfile.uuid == null ||
-            (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
+        // If no uuid or name is set, no selected profile 
+        // exists. Preselect the default one, if it exists.
+        if (castProfile.uuid == null
+            || (castProfile.name != null && castProfile.name.length() == 0)
+            || (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
+            app.log(TAG, "No valid casting profile defined in the current connection, setting default");
 
             for (Profiles p : app.getProfiles()) {
                 if (p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
@@ -264,10 +256,11 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
                     break;
                 }
             }
-            // show the currently selected profile name, if none is
-            // available then the default value is used
-            prefCastProfiles.setValue(castProfile.uuid);
         }
+        // show the currently selected profile name, if none is
+        // available then the default value is used
+        app.log(TAG, "Setting casting profile " + castProfile.name);
+        prefCastProfiles.setValue(castProfile.uuid);
     }
 
     /**
