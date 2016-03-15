@@ -50,7 +50,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 public class Utils {
 
-    @SuppressWarnings("unused")
     private final static String TAG = Utils.class.getSimpleName();
 
     // Constants required for the date calculation
@@ -177,8 +176,8 @@ public class Utils {
      * @param context
      * @param rec
      */
-    public static void confirmRemoveRecording(final Context context, final Recording rec) {
-        confirmRemoveRecording(context, 
+    public static void confirmRemoveRecording(final Activity activity, final Recording rec) {
+        confirmRemoveRecording(activity, 
                 Constants.ACTION_DELETE_DVR_ENTRY, 
                 (rec.title != null ? rec.title : ""), 
                 String.valueOf(rec.id),
@@ -190,8 +189,8 @@ public class Utils {
      * @param context
      * @param srec
      */
-    public static void confirmRemoveRecording(final Context context, final SeriesRecording srec) {
-        confirmRemoveRecording(context, 
+    public static void confirmRemoveRecording(final Activity activity, final SeriesRecording srec) {
+        confirmRemoveRecording(activity, 
                 Constants.ACTION_DELETE_SERIES_DVR_ENTRY, 
                 (srec.title != null ? srec.title : ""), 
                 srec.id,
@@ -203,8 +202,8 @@ public class Utils {
      * @param context
      * @param trec
      */
-    public static void confirmRemoveRecording(final Context context, final TimerRecording trec) {
-        confirmRemoveRecording(context, 
+    public static void confirmRemoveRecording(final Activity activity, final TimerRecording trec) {
+        confirmRemoveRecording(activity, 
                 Constants.ACTION_DELETE_TIMER_REC_ENTRY, 
                 (trec.name.length() > 0 ? trec.name : trec.title), 
                 trec.id,
@@ -220,21 +219,21 @@ public class Utils {
      * @param title
      * @param id
      */
-    public static void confirmRemoveRecording(final Context context,
+    public static void confirmRemoveRecording(final Activity activity,
             final String type, final String title, final String id,
             final boolean reloadRequired) {
 
         String message = "";
         if (type == Constants.ACTION_DELETE_DVR_ENTRY) {
-            message = context.getString(R.string.remove_recording, title);
+            message = activity.getString(R.string.remove_recording, title);
         } else if (type == Constants.ACTION_DELETE_SERIES_DVR_ENTRY) {
-            message = context.getString(R.string.remove_series_recording, title);
+            message = activity.getString(R.string.remove_series_recording, title);
         } else if (type == Constants.ACTION_DELETE_TIMER_REC_ENTRY) {
-            message = context.getString(R.string.remove_timer_recording, title);
+            message = activity.getString(R.string.remove_timer_recording, title);
         }
 
         // Show a confirmation dialog before deleting the recording
-        new MaterialDialog.Builder(context)
+        new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
                 .content(message)
                 .negativeText(R.string.cancel)
@@ -242,7 +241,7 @@ public class Utils {
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        removeRecording(context, id, type, reloadRequired);
+                        removeRecording(activity, id, type, reloadRequired);
                     }
 
                     @Override
@@ -254,25 +253,29 @@ public class Utils {
 
     /**
      * 
-     * @param context
+     * @param activity
      * @param id
      * @param type
      */
-    public static void removeRecording(final Context context, final String id,
+    public static void removeRecording(final Activity activity, final String id,
             final String type, boolean reloadRequired) {
 
-        final Intent intent = new Intent(context, HTSService.class);
+        final Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(type);
         intent.putExtra("id", id);
-        context.startService(intent);
+        activity.startService(intent);
 
-        // If the channel is not set then the 'all channels' was set. 
+        // If the channel is not set then the 'all channels' was set.
         // This is usually only the case in the timer recording screen.
         // When a recording without a channel is removed, the server
-        // does not sent a confirmation. So a full reload to refresh the
-        // recording list is required.
+        // does not sent a confirmation. So manually remove the recording from
+        // the list.
         if (reloadRequired) {
-            Utils.connect(context, true);
+            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
+            if (type == Constants.ACTION_DELETE_TIMER_REC_ENTRY) {
+                app.log(TAG, "removeRecording, manually removing timer recording " + id);
+                app.removeTimerRecording(id);
+            }
         }
     }
 
