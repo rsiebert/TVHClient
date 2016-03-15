@@ -22,9 +22,14 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -129,16 +134,77 @@ public class ExternalActionActivity extends Activity implements HTSListener {
      * The user will be notified by the system that a download is progressing.
      */
     private void startDownload() {
+
         String downloadUrl = "http://" + conn.address + ":" + conn.streaming_port + "/dvrfile/" + rec.id;
         String auth = "Basic " + Base64.encodeToString((conn.username + ":" + conn.password).getBytes(), Base64.NO_WRAP);
 
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
         request.addRequestHeader("Authorization", auth);
+        request.setTitle(getString(R.string.download));
+        request.setDescription(rec.title);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-        app.log(TAG, "Starting download from url " + downloadUrl);
+        // Save the downloaded file in the external download storage
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("pref_download_to_external_storage", false)) {
+            app.log(TAG, "Saving the download to the external storage");
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title.replace(' ', '_'));
+        }
+
         dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
-        dm.enqueue(request);
-        finish();
+        final long id = dm.enqueue(request);
+
+        app.log(TAG, "Started download with id " + id + " from url " + downloadUrl);
+
+        // Check after a certain delay the status of the download and that for
+        // example the download has not failed due to insufficient storage
+        // space. The download manager does not sent a broadcast if this error
+        // occurs.
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(id);
+                Cursor c = dm.query(query);
+                while (c.moveToNext()) {
+                    int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                    int reason = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_REASON));
+                    app.log(TAG, "Download " + id + " status is " + status + ", reason " + reason);
+
+                    switch (status) {
+                    case DownloadManager.STATUS_FAILED:
+                        // Check the reason value if it is insufficient storage space
+                        if (reason == 1006) {
+                            app.log(TAG, "Download " + id + " failed due to insufficient storage space");
+                            showErrorDialog(getString(R.string.download_error_insufficient_space, rec.title));
+                        } else {
+                            finish();
+                        }
+                        break;
+                    case DownloadManager.STATUS_PAUSED:
+                        app.log(TAG, "Download " + id + " paused!");
+                        break;
+
+                    case DownloadManager.STATUS_PENDING:
+                        app.log(TAG, "Download " + id + " pending!");
+                        break;
+
+                    case DownloadManager.STATUS_RUNNING:
+                        app.log(TAG, "Download " + id + " in progress!");
+                        break;
+
+                    case DownloadManager.STATUS_SUCCESSFUL:
+                        app.log(TAG, "Download " + id + " complete!");
+                        break;
+
+                    default:
+                        finish();
+                        break;
+                    }
+                }
+            }
+        }, 2500);
     }
 
     /**
