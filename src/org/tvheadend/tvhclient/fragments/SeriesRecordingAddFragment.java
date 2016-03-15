@@ -160,13 +160,12 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // Create the list of channels that the user can select. If recording on
         // all channels are available the add the 'all channels' string to
         // the beginning of the list before adding the available channels.
-        channelList = new String[app.getChannels().size() + offset + 1];
-        channelList[0] = activity.getString(R.string.no_channel);
+        channelList = new String[app.getChannels().size() + offset];
         if (allowRecordingOnAllChannels) {
-            channelList[1] = activity.getString(R.string.all_channels);
+            channelList[0] = activity.getString(R.string.all_channels);
         }
         for (int i = 0; i < app.getChannels().size(); i++) {
-            channelList[i + offset + 1] = app.getChannels().get(i).name;
+            channelList[i + offset] = app.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name. Keep the all channels string
@@ -228,12 +227,18 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 if (rec.channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
                         if (channelList[i].equals(rec.channel.name)) {
-                            channelSelectionValue = i;
+                            // If all channels is available then all entries in the channel 
+                            // list are one index higher because all channels is index 0 
+                            channelSelectionValue = (allowRecordingOnAllChannels ? (i+1) : i);
                             break;
                         }
-                    }   
+                    }
                 } else {
+                    // If no channel is set preselect either all 
+                    // channels or the first channel available
                     if (allowRecordingOnAllChannels) {
+                        channelSelectionValue = 0;
+                    } else {
                         channelSelectionValue = 1;
                     }
                 }
@@ -601,13 +606,6 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // The title must not be empty
         if (titleValue.length() == 0) {
             Toast.makeText(activity, getString(R.string.error_empty_title),
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // The channel must be set
-        if (channelSelectionValue == 0) {
-            Toast.makeText(activity, getString(R.string.error_no_channel),
                     Toast.LENGTH_SHORT).show();
             return;
         }

@@ -143,10 +143,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Create the list of channels that the user can select
-        channelList = new String[app.getChannels().size()+1];
-        channelList[0] = activity.getString(R.string.no_channel);
+        channelList = new String[app.getChannels().size()];
         for (int i = 0; i < app.getChannels().size(); i++) {
-            channelList[i+1] = app.getChannels().get(i).name;
+            channelList[i] = app.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name
@@ -195,7 +194,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 subtitleValue = rec.subtitle;
                 descriptionValue = rec.description;
 
-                // The default value is no channel
+                // The default value is the first one
                 channelSelectionValue = 0;
                 // Get the position of the given channel in the channelList
                 if (rec.channel != null) {
@@ -492,13 +491,6 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         // The title must not be empty
         if (titleValue.length() == 0 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
             Toast.makeText(activity, getString(R.string.error_empty_title),
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // The channel must be set
-        if (channelSelectionValue == 0) {
-            Toast.makeText(activity, getString(R.string.error_no_channel),
                     Toast.LENGTH_SHORT).show();
             return;
         }

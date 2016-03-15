@@ -135,10 +135,9 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         super.onCreateView(inflater, container, savedInstanceState);
 
     	// Create the list of channels that the user can select
-        channelList = new String[app.getChannels().size()+1];
-        channelList[0] = activity.getString(R.string.no_channel);
+        channelList = new String[app.getChannels().size()];
         for (int i = 0; i < app.getChannels().size(); i++) {
-        	channelList[i+1] = app.getChannels().get(i).name;
+        	channelList[i] = app.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name
@@ -506,13 +505,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         // The title must not be empty
         if (titleValue.length() == 0) {
             Toast.makeText(activity, getString(R.string.error_empty_title),
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // The channel must be set
-        if (channelSelectionValue == 0) {
-            Toast.makeText(activity, getString(R.string.error_no_channel),
                     Toast.LENGTH_SHORT).show();
             return;
         }
