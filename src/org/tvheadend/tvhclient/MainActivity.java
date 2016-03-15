@@ -1815,7 +1815,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
         if (app.isUnlocked() 
                 && prefs.getBoolean("pref_enable_casting", false)
-                && (selectedMenuPosition != MENU_STATUS)
                 && profile != null 
                 && profile.enabled) {
             return true;
