@@ -154,7 +154,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Determine if the server supports recording on all channels
-        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_SREC_ADD_EMPTY_CHANNEL;
+        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
         final int offset = (allowRecordingOnAllChannels ? 1 : 0);
 
         // Create the list of channels that the user can select. If recording on

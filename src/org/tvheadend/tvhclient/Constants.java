@@ -185,7 +185,7 @@ public class Constants {
 
     // These constants are required to check if the server contains certain bug fixes
     // Allow selecting 'All channels' for a series recording. (http://tvheadend.org/issues/2892)
-    public static final int MIN_API_VERSION_SREC_ADD_EMPTY_CHANNEL = 21;
+    public static final int MIN_API_VERSION_REC_ALL_CHANNELS = 21;
     // Allow editing the title of a recording. (http://tvheadend.org/issues/2893)
     public static final int MIN_API_VERSION_REC_FIELD_TITLE = 21;
     public static final int MIN_API_VERSION_REC_FIELD_SUBTITLE = 21;

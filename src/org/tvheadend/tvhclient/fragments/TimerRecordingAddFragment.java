@@ -86,6 +86,10 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private TVHClientApplication app;
     private DatabaseHelper dbh;
 
+    // Determines if an entry shall be added to the channel selection list to
+    // allow recording on all channels
+    boolean allowRecordingOnAllChannels = false;
+
     public static TimerRecordingAddFragment newInstance(Bundle args) {
         TimerRecordingAddFragment f = new TimerRecordingAddFragment();
         f.setArguments(args);
@@ -134,10 +138,19 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-    	// Create the list of channels that the user can select
-        channelList = new String[app.getChannels().size()];
+        // Determine if the server supports recording on all channels
+        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
+        final int offset = (allowRecordingOnAllChannels ? 1 : 0);
+
+        // Create the list of channels that the user can select. If recording on
+        // all channels are available the add the 'all channels' string to
+        // the beginning of the list before adding the available channels.
+        channelList = new String[app.getChannels().size() + offset];
+        if (allowRecordingOnAllChannels) {
+            channelList[0] = activity.getString(R.string.all_channels);
+        }
         for (int i = 0; i < app.getChannels().size(); i++) {
-        	channelList[i] = app.getChannels().get(i).name;
+            channelList[i + offset] = app.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name
@@ -191,10 +204,20 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 if (rec.channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
                         if (channelList[i].equals(rec.channel.name)) {
-                            channelSelectionValue = i;
+                            // If all channels is available then all entries in the channel 
+                            // list are one index higher because all channels is index 0 
+                            channelSelectionValue = (allowRecordingOnAllChannels ? (i+1) : i);
                             break;
                         }
                     }   
+                } else {
+                    // If no channel is set preselect either all 
+                    // channels or the first channel available
+                    if (allowRecordingOnAllChannels) {
+                        channelSelectionValue = 0;
+                    } else {
+                        channelSelectionValue = 1;
+                    }
                 }
             } else {
                 // No recording was given, set default values
