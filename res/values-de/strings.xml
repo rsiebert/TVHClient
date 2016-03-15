@@ -271,7 +271,7 @@
     <string name="all_days">Alle Tage</string>
     <string name="no_days">Keine Tage</string>
 
-    <string name="completed_recordings">Abgeschlossene Aufnahmen</string>
+    <string name="completed_recordings">Fertige Aufnahmen</string>
     <string name="upcoming_recordings">Geplante Aufnahmen</string>
     <string name="failed_recordings">Fehlerhafte Aufnahmen</string>
     <string name="series_recordings">Serienaufnahmen</string>
