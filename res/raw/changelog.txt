@@ -1,9 +1,9 @@
 $ 1.9.0
   % VERSION 1.9.0
-  _ 13.03.2016
+  _ 16.03.2016
     * Added chromecast support! Please read the information in the settings. (Only available in the unlocked version)
     * Removed the save and cancel buttons in some setting screens for consistency
-    * Fixed download of recordings by adding authentication
+    * Added option to download recordings to the external storage. (Only available in the unlocked version)
     * Small bug fixes
 $ 1.8.8
   % VERSION 1.8.8
