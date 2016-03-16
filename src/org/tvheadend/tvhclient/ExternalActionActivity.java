@@ -178,6 +178,9 @@ public class ExternalActionActivity extends Activity implements HTSListener {
                         if (reason == 1006) {
                             app.log(TAG, "Download " + id + " failed due to insufficient storage space");
                             showErrorDialog(getString(R.string.download_error_insufficient_space, rec.title));
+                        } else if (reason == 407) {
+                            app.log(TAG, "Download " + id + " failed due to missing / wrong authentication");
+                            showErrorDialog(getString(R.string.download_error_authentication_required, rec.title));
                         } else {
                             finish();
                         }
