@@ -15,6 +15,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.UnlockerActivity;
+import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
@@ -60,6 +61,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuNotifications;
     private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
+    private CheckBoxPreference prefDownloadExternalStorage;
 
     private String[] logfileList;
 
@@ -87,6 +89,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
         prefMenuNotifications  = (Preference) findPreference("pref_menu_notifications");
+        prefDownloadExternalStorage = (CheckBoxPreference) findPreference("pref_download_to_external_storage");
     }
 
     @Override
@@ -355,6 +358,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
         });
 
+        prefDownloadExternalStorage.setEnabled(Utils.isExternalStorageWritable());
     }
 
     private void mailLogfile(String filename) {

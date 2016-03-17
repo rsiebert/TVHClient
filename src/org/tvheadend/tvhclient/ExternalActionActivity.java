@@ -146,7 +146,8 @@ public class ExternalActionActivity extends Activity implements HTSListener {
 
         // Save the downloaded file in the external download storage
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("pref_download_to_external_storage", false)) {
+        if (prefs.getBoolean("pref_download_to_external_storage", false)
+                && Utils.isExternalStorageWritable()) {
             app.log(TAG, "Saving the download to the external storage");
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title.replace(' ', '_'));
         }

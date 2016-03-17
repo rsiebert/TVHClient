@@ -419,6 +419,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 }
             }
         };
+
+        // Check if external download is possible, otherwise disable the settings
+        if (!Utils.isExternalStorageWritable()) {
+            app.log(TAG, "External storage not available, disabling option");
+            prefs.edit().putBoolean("pref_download_to_external_storage", false).apply();
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
