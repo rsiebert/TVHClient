@@ -26,9 +26,11 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
@@ -358,7 +360,35 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
         });
 
-        prefDownloadExternalStorage.setEnabled(Utils.isExternalStorageWritable());
+        prefDownloadExternalStorage.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference pref, Object newValue) {
+                if ((Boolean)newValue == true) {
+                    if (!app.isUnlocked()) {
+                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
+                                Snackbar.LENGTH_SHORT).show();
+                        disableSettingDownloadExternalStorage();
+                    } else if (!Utils.isExternalStorageWritable()) {
+                        Snackbar.make(getView(), R.string.no_external_storage_available, 
+                                Snackbar.LENGTH_SHORT).show();
+                        disableSettingDownloadExternalStorage();
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
+    private void disableSettingDownloadExternalStorage() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+                prefs.edit().putBoolean("pref_download_to_external_storage", false).commit();
+                prefDownloadExternalStorage.setChecked(false);
+            }
+        }, 100);
     }
 
     private void mailLogfile(String filename) {
