@@ -380,10 +380,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     private void disableSettingDownloadExternalStorage() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                app.log(TAG, "External storage not available, disabling option");
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
                 prefs.edit().putBoolean("pref_download_to_external_storage", false).commit();
                 prefDownloadExternalStorage.setChecked(false);
@@ -438,6 +438,13 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         super.onResume();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.registerOnSharedPreferenceChangeListener(this);
+
+        // Uncheck the setting in case it is not allowed or possible
+        if (prefs.getBoolean("pref_download_to_external_storage", false)) {
+            if (!app.isUnlocked() || !Utils.isExternalStorageWritable()) {
+                disableSettingDownloadExternalStorage();
+            }
+        }
     }
 
     @Override
