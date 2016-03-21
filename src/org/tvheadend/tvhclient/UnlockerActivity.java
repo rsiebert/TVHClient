@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -23,6 +24,7 @@ public class UnlockerActivity extends ActionBarActivity {
     private final static String TAG = UnlockerActivity.class.getSimpleName();
 
     private ActionBar actionBar = null;
+    private CoordinatorLayout coordinatorLayout;
     private WebView webview;
     private TVHClientApplication app;
 
@@ -40,6 +42,8 @@ public class UnlockerActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle("");
+
+        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinatorLayout);
 
         webview = (WebView) findViewById(R.id.webview);
         if (webview != null) {
@@ -129,7 +133,7 @@ public class UnlockerActivity extends ActionBarActivity {
             // via the billing event interface. 
             if (app.getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
                 app.log(TAG, "Unlocker already purchased");
-                Snackbar.make(null, getString(R.string.unlocker_already_purchased), 
+                Snackbar.make(coordinatorLayout, getString(R.string.unlocker_already_purchased), 
                         Snackbar.LENGTH_SHORT).show();
                 finish();
             }
