@@ -597,7 +597,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public void addSeriesRecording(SeriesRecording rec) {
         synchronized (seriesRecordings) {
-            if (seriesRecordings.indexOf(rec) == -1) {
+            boolean recordingFound = false;
+            for (SeriesRecording sr : seriesRecordings) {
+                if (sr.id.equals(rec.id)) {
+                    recordingFound = true;
+                    break;
+                }
+            }
+            if (!recordingFound) {
                 seriesRecordings.add(rec);
             }
         }
