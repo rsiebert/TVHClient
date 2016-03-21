@@ -20,6 +20,7 @@ import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.app.DownloadManager.Request;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -130,39 +131,52 @@ public class ExternalActionActivity extends Activity implements HTSListener {
     }
 
     /**
-     * Downloads the defined recording via the internal download manager. 
-     * The user will be notified by the system that a download is progressing.
+     * Creates the request for the download of the defined recording via the
+     * internal download manager.
      */
     private void startDownload() {
 
         String downloadUrl = "http://" + conn.address + ":" + conn.streaming_port + "/dvrfile/" + rec.id;
         String auth = "Basic " + Base64.encodeToString((conn.username + ":" + conn.password).getBytes(), Base64.NO_WRAP);
 
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
-        request.addRequestHeader("Authorization", auth);
-        request.setTitle(getString(R.string.download));
-        request.setDescription(rec.title);
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        try {
+            Request request = new Request(Uri.parse(downloadUrl));
+            request.addRequestHeader("Authorization", auth);
+            request.setTitle(getString(R.string.download));
+            request.setDescription(rec.title);
+            request.setNotificationVisibility(Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+    
+            // Tell the download manager to save the download file in the external download  
+            // storage. If this fails inform the user and do not start the download
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs.getBoolean("pref_download_to_external_storage", false) 
+                    && Utils.isExternalStorageWritable()) {
+                app.log(TAG, "Saving the download to the external storage");
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title);
+            }
+            app.log(TAG, "Starting download from url " + downloadUrl);
+            startDownload(request);
 
-        // Save the downloaded file in the external download storage
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("pref_download_to_external_storage", false)
-                && Utils.isExternalStorageWritable()) {
-            app.log(TAG, "Saving the download to the external storage");
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title.replace(' ', '_'));
+        } catch (IllegalStateException e) {
+            app.log(TAG, "External storage not available, " + e.getLocalizedMessage());
+            showErrorDialog(getString(R.string.no_external_storage_available));
         }
+    }
+
+    /**
+     * Puts the request with the required data in the download queue
+     * 
+     * @param request
+     */
+    private void startDownload(Request request) {
 
         dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
         final long id = dm.enqueue(request);
 
-        app.log(TAG, "Started download with id " + id + " from url " + downloadUrl);
-
         // Check after a certain delay the status of the download and that for
-        // example the download has not failed due to insufficient storage
-        // space. The download manager does not sent a broadcast if this error
-        // occurs.
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        // example the download has not failed due to insufficient storage space.
+        // The download manager does not sent a broadcast if this error occurs.
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 DownloadManager.Query query = new DownloadManager.Query();
@@ -186,20 +200,25 @@ public class ExternalActionActivity extends Activity implements HTSListener {
                             finish();
                         }
                         break;
+
                     case DownloadManager.STATUS_PAUSED:
                         app.log(TAG, "Download " + id + " paused!");
+                        finish();
                         break;
 
                     case DownloadManager.STATUS_PENDING:
                         app.log(TAG, "Download " + id + " pending!");
+                        finish();
                         break;
 
                     case DownloadManager.STATUS_RUNNING:
                         app.log(TAG, "Download " + id + " in progress!");
+                        finish();
                         break;
 
                     case DownloadManager.STATUS_SUCCESSFUL:
                         app.log(TAG, "Download " + id + " complete!");
+                        finish();
                         break;
 
                     default:
