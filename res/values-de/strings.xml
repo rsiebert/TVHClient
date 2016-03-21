@@ -17,10 +17,8 @@
     <string name="pref_enable_casting_sum">Diese Funktion nur aktivieren, wenn TVHeadend transkodieren kann und der Server leistungsstark genug ist, um die Videodaten in Echtzeit zu konvertieren.</string>
     <string name="pref_show_cast_minicontroller">Cast Ministeuerung</string>
     <string name="pref_show_cast_minicontroller_sum">Zeigt im unteren Bildschirmbereich die wichtigsten Informationen und Steuerelemente für den aktuellen Cast an.</string>
-    <string name="download_error_insufficient_space">Fehler beim Downloaden der Aufnahme \'$s\'. Nicht genug Speicherplatz verfügbar.</string>
-    <string name="download_error_authentication_required">Fehler beim Downloaden der Aufnahme \'$s\'. Authentifizierung war nicht korrekt bzw. fehlt.</string>
-    <string name="pref_download_to_external_storage">Download auf SD-Karte</string>
-    <string name="pref_download_to_external_storage_sum">Die Aufnahme wird auf den externen Speicher des Gerätes gespeichert. Dies ist meistens die SD-Karte.</string>
+    <string name="download_error_insufficient_space">Fehler beim Downloaden der Aufnahme \'%s\'. Nicht genug Speicherplatz verfügbar.</string>
+    <string name="download_error_authentication_required">Fehler beim Downloaden der Aufnahme \'%s\'. Authentifizierung war nicht korrekt bzw. fehlt.</string>
     <string name="no_external_storage_available">Der externe Speicher ist entweder nicht verfügbar oder nicht beschreibbar.</string>
 
     <string name="settings">Einstellungen</string>

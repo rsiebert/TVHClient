@@ -18,19 +18,23 @@ import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.util.Base64;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -39,7 +43,7 @@ import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
-public class ExternalActionActivity extends Activity implements HTSListener {
+public class ExternalActionActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
 
     private final static String TAG = ExternalActionActivity.class.getSimpleName();
 
@@ -95,7 +99,9 @@ public class ExternalActionActivity extends Activity implements HTSListener {
 
         case Constants.EXTERNAL_ACTION_DOWNLOAD:
             if (rec != null) {
-                startDownload();
+                if (isStoragePermissionGranted()) {
+                    prepareDownload();
+                }
             }
             break;
 
@@ -134,7 +140,7 @@ public class ExternalActionActivity extends Activity implements HTSListener {
      * Creates the request for the download of the defined recording via the
      * internal download manager.
      */
-    private void startDownload() {
+    private void prepareDownload() {
 
         String downloadUrl = "http://" + conn.address + ":" + conn.streaming_port + "/dvrfile/" + rec.id;
         String auth = "Basic " + Base64.encodeToString((conn.username + ":" + conn.password).getBytes(), Base64.NO_WRAP);
@@ -145,15 +151,8 @@ public class ExternalActionActivity extends Activity implements HTSListener {
             request.setTitle(getString(R.string.download));
             request.setDescription(rec.title);
             request.setNotificationVisibility(Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-    
-            // Tell the download manager to save the download file in the external download  
-            // storage. If this fails inform the user and do not start the download
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs.getBoolean("pref_download_to_external_storage", false) 
-                    && Utils.isExternalStorageWritable()) {
-                app.log(TAG, "Saving the download to the external storage");
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title);
-            }
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title);
+
             app.log(TAG, "Starting download from url " + downloadUrl);
             startDownload(request);
 
@@ -506,5 +505,38 @@ public class ExternalActionActivity extends Activity implements HTSListener {
                         finish();
                     }
                 }).show();
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            app.log(TAG, "Permission: " + permissions[0] + " was " + grantResults[0]);
+            prepareDownload();
+        } else {
+            finish();
+        }
+    }
+
+    /**
+     * 
+     * @return
+     */
+    @SuppressLint("NewApi")
+    private boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                app.log(TAG,"Permission is granted");
+                return true;
+            } else {
+                app.log(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else {
+            app.log(TAG,"Permission is granted");
+            return true;
+        }
     }
 }

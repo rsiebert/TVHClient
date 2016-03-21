@@ -32,7 +32,6 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -1173,17 +1172,5 @@ public class Utils {
             result[i] = (char) (m[i] ^ s[i % sl]);
         }
         return new String(result);
-    }
-    
-    /**
-     * Checks if external storage is available for read and write
-     * @return
-     */
-    public static boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
     }
 }

@@ -148,13 +148,6 @@
             android:key="pref_menu_notifications"
             android:title="@string/pref_notifications" >
         </PreferenceScreen>
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_download_to_external_storage"
-            android:summary="@string/pref_download_to_external_storage_sum"
-            android:title="@string/pref_download_to_external_storage" />
-
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_playback_and_recording" >
         <PreferenceScreen

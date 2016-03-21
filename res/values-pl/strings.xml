@@ -17,10 +17,8 @@
     <string name="pref_enable_casting_sum">Tylko włączyć tę funkcję, jeśli tvheadend potrafi przekodować i serwer jest wystarczająco silne, aby przekształcić dane w czasie rzeczywistym.</string>
     <string name="pref_show_cast_minicontroller">Pokaż kontrolę rzucania</string>
     <string name="pref_show_cast_minicontroller_sum">bla </string>
-    <string name="download_error_insufficient_space">Błąd pobierania nagrania \'$s\'. Nie wystarczająca ilość miejsca na urządzeniu.</string>
-    <string name="download_error_authentication_required">Błąd pobierania nagrania \'$s\'. Uwierzytelnianie nieprawidłowe lub brakujące.</string>
-    <string name="pref_download_to_external_storage">Pobierz na zewnętrzną pamięć masową</string>
-    <string name="pref_download_to_external_storage_sum">Nagranie zostanie zapisane w folderze pobierania na zewnętrznej pamięci masowej.</string>
+    <string name="download_error_insufficient_space">Błąd pobierania nagrania \'%s\'. Nie wystarczająca ilość miejsca na urządzeniu.</string>
+    <string name="download_error_authentication_required">Błąd pobierania nagrania \'%s\'. Uwierzytelnianie nieprawidłowe lub brakujące.</string>
 
     <string name="settings">Ustawienia</string>
     <string name="refresh">Odśwież</string>

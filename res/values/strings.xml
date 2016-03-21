@@ -17,10 +17,8 @@
     <string name="pref_enable_casting_sum">Only enable this feature if tvheadend is able to transcode and your server is powerful enough to convert the data in realtime.</string>
     <string name="pref_show_cast_minicontroller">Cast controls</string>
     <string name="pref_show_cast_minicontroller_sum">Show a cast minicontroller at the bottom of the screen to display some information about the current cast.</string>
-    <string name="download_error_insufficient_space">Error downloading the recording \'$s\'. Not sufficient space on the device.</string>
-    <string name="download_error_authentication_required">Error downloading the recording \'$s\'. Authentication not correct or missing.</string>
-    <string name="pref_download_to_external_storage">Download to external storage</string>
-    <string name="pref_download_to_external_storage_sum">The recording will be saved to the download folder on the external storage.</string>
+    <string name="download_error_insufficient_space">Error downloading the recording \'%s\'. Not sufficient space on the device.</string>
+    <string name="download_error_authentication_required">Error downloading the recording \'%s\'. Authentication not correct or missing.</string>
     <string name="no_external_storage_available">External storage is not available or read only.</string>
 
     <string name="settings">Settings</string>

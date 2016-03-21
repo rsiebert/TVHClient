@@ -15,7 +15,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.UnlockerActivity;
-import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
@@ -26,11 +25,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
@@ -63,7 +60,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuNotifications;
     private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
-    private CheckBoxPreference prefDownloadExternalStorage;
 
     private String[] logfileList;
 
@@ -91,7 +87,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
         prefMenuNotifications  = (Preference) findPreference("pref_menu_notifications");
-        prefDownloadExternalStorage = (CheckBoxPreference) findPreference("pref_download_to_external_storage");
     }
 
     @Override
@@ -359,36 +354,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 return false;
             }
         });
-
-        prefDownloadExternalStorage.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference pref, Object newValue) {
-                if ((Boolean)newValue == true) {
-                    if (!app.isUnlocked()) {
-                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
-                                Snackbar.LENGTH_SHORT).show();
-                        disableSettingDownloadExternalStorage();
-                    } else if (!Utils.isExternalStorageWritable()) {
-                        Snackbar.make(getView(), R.string.no_external_storage_available, 
-                                Snackbar.LENGTH_SHORT).show();
-                        disableSettingDownloadExternalStorage();
-                    }
-                }
-                return true;
-            }
-        });
-    }
-
-    private void disableSettingDownloadExternalStorage() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                app.log(TAG, "External storage not available, disabling option");
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-                prefs.edit().putBoolean("pref_download_to_external_storage", false).commit();
-                prefDownloadExternalStorage.setChecked(false);
-            }
-        }, 100);
     }
 
     private void mailLogfile(String filename) {
@@ -438,13 +403,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         super.onResume();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.registerOnSharedPreferenceChangeListener(this);
-
-        // Uncheck the setting in case it is not allowed or possible
-        if (prefs.getBoolean("pref_download_to_external_storage", false)) {
-            if (!app.isUnlocked() || !Utils.isExternalStorageWritable()) {
-                disableSettingDownloadExternalStorage();
-            }
-        }
     }
 
     @Override
