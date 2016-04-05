@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.htsp;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -105,11 +104,8 @@ public class HTSConnection extends Thread {
             socketChannel.connect(new InetSocketAddress(hostname, port));
             running = true;
             start();
-        } catch (ClosedChannelException e1) {
-            app.log(TAG, "Can't open connection, channel closed, " + e1.getLocalizedMessage());
-            listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
-        } catch (IOException e2) {
-            app.log(TAG, "IO error while opening connection, " + e2.getLocalizedMessage());
+        } catch (Exception e) {
+            app.log(TAG, "Can't open connection, " + e.getLocalizedMessage());
             listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
         } finally {
             lock.unlock();
@@ -226,8 +222,8 @@ public class HTSConnection extends Thread {
             socketChannel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ | SelectionKey.OP_CONNECT);
             messageQueue.add(message);
             selector.wakeup();
-        } catch (ClosedChannelException ex) {
-            app.log(TAG, "Can't transmit message, " + ex.getLocalizedMessage());
+        } catch (Exception e) {
+            app.log(TAG, "Can't send message, " + e.getLocalizedMessage());
         } finally {
             lock.unlock();
         }
@@ -242,10 +238,8 @@ public class HTSConnection extends Thread {
             running = false;
             socketChannel.register(selector, 0);
             socketChannel.close();
-        } catch (ClosedChannelException e1) {
-            app.log(TAG, "Can't close connection, " + e1.getLocalizedMessage());
-        } catch (IOException e2) {
-            app.log(TAG, "Can't close connection, " + e2.getLocalizedMessage());
+        } catch (Exception e) {
+            app.log(TAG, "Can't close connection, " + e.getLocalizedMessage());
         } finally {
             lock.unlock();
         }
