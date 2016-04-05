@@ -36,6 +36,9 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.util.Base64;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.cast.MediaInfo;
@@ -59,9 +62,15 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
     private String title = "";
 
+    private ProgressBar castProgressBar;
+    private TextView castProgressInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.external_action_layout);
+        Utils.setLanguage(this);
 
         app = (TVHClientApplication) getApplication();
         dbh = DatabaseHelper.getInstance(this);
@@ -82,6 +91,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         // If the cast menu button is connected then assume playing means casting
         if (VideoCastManager.getInstance().isConnected()) {
             action = Constants.EXTERNAL_ACTION_CAST;
+            castProgressBar = (ProgressBar) findViewById(R.id.progress);
+            castProgressInfo = (TextView) findViewById(R.id.progress_info);
         }
 
         // Create the url with the credentials and the host and  
@@ -107,15 +118,19 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
         case Constants.EXTERNAL_ACTION_CAST:
             if (ch != null) {
+                app.log(TAG, "Starting to cast channel '" + ch.name + "'");
                 // In case a channel shall be played the channel uuid is required. 
                 // It is not provided via the HTSP API, only via the webinterface 
                 // API. Load the channel UUIDs via server:host/api/epg/events/grid.
                 if (ch.uuid != null && ch.uuid.length() > 0) {
+                    app.log(TAG, "Channel uuid + " + ch.uuid + " exists");
                     startCasting();
                 } else {
+                    app.log(TAG, "Channel uuid missing, starting loading thread");
                     new ChannelUuidLoaderTask().execute(conn);
                 }
             } else if (rec != null) {
+                app.log(TAG, "Starting to cast recording '" + rec.title + "'");
                 startCasting();
             }
             break;
@@ -125,14 +140,12 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     @Override
     protected void onResume() {
         super.onResume();
-        app.addListener(this);
         VideoCastManager.getInstance().incrementUiCounter();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        app.removeListener(this);
         VideoCastManager.getInstance().decrementUiCounter();
     }
 
@@ -358,6 +371,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         // Check if the correct profile was set, if not try to do this
         castUrl += "?profile=" + dbh.getProfile(conn.cast_profile_id).name;
 
+        app.log(TAG, "Casting starts with the following information:");
         app.log(TAG, "Cast title is " + title);
         app.log(TAG, "Cast subtitle is " + subtitle);
         app.log(TAG, "Cast icon is " + iconUrl);
@@ -408,26 +422,41 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
      */
     class ChannelUuidLoaderTask extends AsyncTask<Connection, Void, String> {
 
+        private final String SUB_TAG = TAG + ", ChannelUuidLoaderTask";
+
         protected void onPreExecute() {
-            // TODO Show loading indicator
+            if (castProgressInfo != null) {
+                castProgressInfo.setVisibility(View.VISIBLE);
+            }
+            if (castProgressBar != null) {
+                castProgressBar.setVisibility(View.VISIBLE);
+            }
         }
 
         protected String doInBackground(Connection... conns) {
             InputStream is = null;
             String result = "";
             try {
+                // Show that data is being loaded
+                if (castProgressInfo != null) {
+                    castProgressInfo.setText(R.string.loading_casting_data);
+                }
+
+                // Create the URL
                 Connection c = conns[0];
-                String url = "http://" + c.address + ":" + c.streaming_port + "/api/epg/events/grid";
+                int channelCount = (app.getChannels() != null ? app.getChannels().size() : 1000);
+                String url = "http://" + c.address + ":" + c.streaming_port + "/api/channel/grid?limit=" + channelCount;
                 String auth = "Basic " + Base64.encodeToString((c.username + ":" + c.password).getBytes(), Base64.NO_WRAP);
+                app.log(SUB_TAG, "Connecting to " + url);
 
-                app.log(TAG, "Connecting to " + url);
-
+                // Connect to the server and authenticate
                 HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
                 conn.setReadTimeout(5000);
                 conn.setConnectTimeout(5000);
                 conn.setRequestProperty("Authorization", auth);
                 conn.connect();
 
+                // Read the received data from the server
                 is = conn.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
                 StringBuilder sb = new StringBuilder();
@@ -439,7 +468,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                 result = sb.toString();
 
             } catch (Throwable tr) {
-                app.log(TAG, tr.getLocalizedMessage());
+                app.log(SUB_TAG, "Error " + tr.getLocalizedMessage());
             } finally {
                 try {
                     if (is != null) {
@@ -454,41 +483,71 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
         protected void onPostExecute(String result) {
 
+            // Check if any data was loaded, if not exit
             if (result.length() == 0) {
-                app.log(TAG, "Error loading JSON data");
+                app.log(SUB_TAG, "Error loading JSON data");
                 showErrorDialog(getString(R.string.error_loading_json_data));
                 return;
+            } else {
+                app.log(SUB_TAG, "JSON data size is " + result.length());
             }
 
+            // Differentiates between a real parsing 
+            // exception or that no channel uuid was found
+            boolean parsingError = false;
+
             try {
-                app.log(TAG, "Parsing JSON data");
-                JSONObject jsonObj = new JSONObject(result);
+                app.log(SUB_TAG, "Parsing JSON data");
+
+                // Show that data is being parsed
+                if (castProgressInfo != null) {
+                    castProgressInfo.setText(R.string.parsing_casting_data);
+                }
 
                 // Get the JSON array node and loop through all 
                 // entries to save the UUIDs for all channels.
+                JSONObject jsonObj = new JSONObject(result);
                 JSONArray epgData = jsonObj.getJSONArray("entries");
                 for (int i = 0; i < epgData.length(); i++) {
                     JSONObject epgItem = epgData.getJSONObject(i);
-                    String uuid = epgItem.getString("channelUuid");
-                    String name = epgItem.getString("channelName");
-                    for (Channel ch : app.getChannels()) {
-                        if (ch.name.equals(name)) {
-                            ch.uuid = uuid;
-                            break;
-                        }
+
+                    // Get the uuid from the data
+                    String uuid = "";
+                    if (epgItem.has("uuid")) {
+                        uuid = epgItem.getString("uuid");
+                    }
+                    // Get the name from the data. It will be 
+                    // compared against the selected channel
+                    String name = "";
+                    if (epgItem.has("name")) {
+                        name = epgItem.getString("name");
+                    }
+
+                    if (ch.name.equals(name)) {
+                        ch.uuid = uuid;
+                        app.log(SUB_TAG, "Channel '" + ch.name + "' found, uuid is " + ch.uuid);
+                        break;
                     }
                 }
 
             } catch (JSONException e) {
-                app.log(TAG, e.getLocalizedMessage());
+                app.log(SUB_TAG, "Error parsing JSON data, " + e.getLocalizedMessage());
+                parsingError = true;
+
             } finally {
                 // Either start casting with the found UUID or 
                 // show a message that the UUID could not be found
                 if (ch.uuid != null && ch.uuid.length() > 0) {
+                    app.log(SUB_TAG, "Found uuid, starting to cast channel " + ch.name);
                     startCasting();
                 } else {
-                    app.log(TAG, "Error parsing JSON data");
-                    showErrorDialog(getString(R.string.error_parsing_json_data));
+                    if (parsingError) {
+                        app.log(SUB_TAG, "Showing error because JSON data could not be parsed");
+                        showErrorDialog(getString(R.string.error_parsing_json_data));
+                    } else {
+                        app.log(SUB_TAG, "Showing error because no channel uuid was found for " + ch.name);
+                        showErrorDialog(getString(R.string.error_no_channel_info_in_json_data));
+                    }
                     return;
                 }
             }
@@ -496,6 +555,14 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     }
 
     private void showErrorDialog(String msg) {
+        // Hide the progress bar and text
+        if (castProgressInfo != null) {
+            castProgressInfo.setVisibility(View.GONE);
+        }
+        if (castProgressBar != null) {
+            castProgressBar.setVisibility(View.GONE);
+        }
+
         new MaterialDialog.Builder(this)
                 .content(msg)
                 .positiveText("Close")
