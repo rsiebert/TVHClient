@@ -19,6 +19,7 @@
     <string name="pref_show_cast_minicontroller_sum">bla </string>
     <string name="download_error_insufficient_space">Błąd pobierania nagrania \'%s\'. Nie wystarczająca ilość miejsca na urządzeniu.</string>
     <string name="download_error_authentication_required">Błąd pobierania nagrania \'%s\'. Uwierzytelnianie nieprawidłowe lub brakujące.</string>
+    <string name="no_external_storage_available">Pamięć zewnętrzna jest nie dostępna lub jest tylko do odczytu.</string>
 
     <string name="settings">Ustawienia</string>
     <string name="refresh">Odśwież</string>

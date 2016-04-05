@@ -3,13 +3,14 @@
     <string name="app_name">TVHClient</string>
 
     <string name="media_route_menu_title">Spiele auf&#8230;</string>
-    <string name="intro_overlay_text">Zeige Live-TV oder Aufnahmen auf dem Casting Gerät deiner Wahl.\n\nBitte aktiviere Casting in den Einstellungen und überprüfe, ob die dort beschriebenen Anforderungen erfüllt werden.</string>
+    <string name="intro_overlay_text">Zeige Live-TV oder Aufnahmen auf dem Casting Gerät deiner Wahl.\n\nBitte überprüfe, dass die Anforderungen zum Casting erfüllt werden. Diese sind in the Casting Einstellungen beschrieben.</string>
     <string name="connection_temp_lost">Verbindung zum Casting Gerät verloren</string>
     <string name="connection_recovered">Verbindung zum Casting Gerät wurde wieder hergestellt</string>
     <string name="cast_profile_not_set">Es wurde kein Casting Profil in den Einstellungen gewählt. Dies ist zwingend erforderlich.</string>
     <string name="cast_profile_invalid">Das gewählte Profil \'%1$s\' entspricht nicht dem empfohlenden Profil \'%2$s\'. Casting wird evtl. nicht korrekt funktionieren.</string>
     <string name="error_loading_json_data">Konnte die erforderlichen Daten zum Casten nicht vom Server laden. Bitte überprüfe die Verbindung und ob Port 9981 erreichbar ist.</string>
     <string name="error_parsing_json_data">Konnte die vom Server empfangenen Daten nicht verarbeiten. Bitte sende ein Debug-Log an den Entwickler.</string>
+    <string name="error_no_channel_info_in_json_data">Konnte die für das Casting benötigten Senderinformation nicht in den empfangenen Daten finden.</string>
     <string name="proceed">Fortfahren</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Einstellungen für die Casting Funktionalität. Bitte beachte, dass Casting eine TVHeadend Version erfordert, die transkodieren kann. Außerdem muss der Server leistungsstark genug sein, um die Videodaten in Echtzeit konvertieren zu können. Andernfalls wird Casting nicht funktionieren!</string>
@@ -20,6 +21,8 @@
     <string name="download_error_insufficient_space">Fehler beim Downloaden der Aufnahme \'%s\'. Nicht genug Speicherplatz verfügbar.</string>
     <string name="download_error_authentication_required">Fehler beim Downloaden der Aufnahme \'%s\'. Authentifizierung war nicht korrekt bzw. fehlt.</string>
     <string name="no_external_storage_available">Der externe Speicher ist entweder nicht verfügbar oder nicht beschreibbar.</string>
+    <string name="loading_casting_data">Lade benötigte Casting Daten vom Server&#8230;</string>
+    <string name="parsing_casting_data">Verarbeite empfangene Daten&#8230;</string>
 
     <string name="settings">Einstellungen</string>
     <string name="refresh">Aktualisieren</string>
