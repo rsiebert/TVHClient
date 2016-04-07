@@ -1,9 +1,16 @@
+$ 1.9.1
+  % VERSION 1.9.1
+  _ 07.04.2016
+    * Small Chromecast improvements (Only available in the unlocked version)
+    * Prefer playing a downloaded recording (if it exists) instead of streaming it from the server (Only available in the unlocked version)
+    * Starting a search in the program list searches only for programs in the selected the channel
+    * Added search for completed recordings
 $ 1.9.0
   % VERSION 1.9.0
-  _ 19.03.2016
-    * Added Chromecast support! Please read the information in the settings. (Only available in the unlocked version)
+  _ 22.03.2016
+    * Added Chromecast support. Please read the information in the settings! (Only available in the unlocked version)
+    * Recordings will be downloaded into the "Download" folder on the external storage. (Only available in the unlocked version)
     * Removed the save and cancel buttons in some setting screens for consistency
-    * Downloaded recordings are saved to the external storage as a default. (Only available in the unlocked version)
     * Small bug fixes
 $ 1.8.8
   % VERSION 1.8.8
