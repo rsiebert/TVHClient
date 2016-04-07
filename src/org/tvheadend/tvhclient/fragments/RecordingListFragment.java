@@ -3,11 +3,12 @@ package org.tvheadend.tvhclient.fragments;
 import java.util.ArrayList;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.ExternalActionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
+import org.tvheadend.tvhclient.intent.DownloadIntent;
+import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -16,7 +17,6 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -126,21 +126,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         Recording rec = adapter.getSelectedItem();
         switch (item.getItemId()) {
         case R.id.menu_play:
-            // Open a new activity that starts playing the selected recording
-            if (rec != null) {
-                Intent intent = new Intent(activity, ExternalActionActivity.class);
-                intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-                startActivity(intent);
-            }
+            startActivity(new PlayIntent(activity, rec));
             return true;
 
         case R.id.menu_download:
-            if (rec != null) {
-                Intent intent = new Intent(activity, ExternalActionActivity.class);
-                intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-                intent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
-                startActivity(intent);
-            }
+            startActivity(new DownloadIntent(activity, rec));
             return true;
 
         case R.id.menu_add:
@@ -334,16 +324,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_play:
-            Intent playIntent = new Intent(activity, ExternalActionActivity.class);
-            playIntent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-            startActivity(playIntent);
+            startActivity(new PlayIntent(activity, rec));
             return true;
 
         case R.id.menu_download:
-            Intent dlIntent = new Intent(activity, ExternalActionActivity.class);
-            dlIntent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-            dlIntent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
-            startActivity(dlIntent);
+            startActivity(new DownloadIntent(activity, rec));
             return true;
 
         case R.id.menu_edit:

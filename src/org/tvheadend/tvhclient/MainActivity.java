@@ -23,6 +23,7 @@ import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
@@ -1457,9 +1458,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 if (prefs.getBoolean("playWhenChannelIconSelectedPref", true) && 
                         tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                    Intent intent = new Intent(this, ExternalActionActivity.class);
-                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
-                    startActivity(intent);
+                    startActivity(new PlayIntent(this, channel));
 
                 } else {
                     Bundle bundle = new Bundle();
@@ -1479,11 +1478,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case MENU_PROGRAM_GUIDE:
             // If a channel was selected in the program guide screen, start
             // playing the selected channel
-            if (channel != null) {
-                Intent intent = new Intent(this, ExternalActionActivity.class);
-                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
-                startActivity(intent);
-            }
+            startActivity(new PlayIntent(this, channel));
             break;
         }
     }
@@ -1510,9 +1505,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if (prefs.getBoolean("playWhenChannelIconSelectedPref", true) && 
                     tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                Intent intent = new Intent(this, ExternalActionActivity.class);
-                intent.putExtra(Constants.BUNDLE_RECORDING_ID, recording.id);
-                startActivity(intent);
+                startActivity(new PlayIntent(this, recording));
             } else {
                 // When a recording has been selected from the recording list fragment,
                 // show its details. In dual mode these are shown in a separate fragment

@@ -7,13 +7,13 @@ import java.util.Iterator;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.ExternalActionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -270,12 +270,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         switch (item.getItemId()) {
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(activity, ExternalActionActivity.class);
-            Channel channel = adapter.getSelectedItem();
-            if (channel != null) {
-                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
-                startActivity(intent);
-            }
+            startActivity(new PlayIntent(activity, adapter.getSelectedItem()));
             return true;
 
         case R.id.menu_tags:
@@ -405,9 +400,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            Intent intent = new Intent(activity, ExternalActionActivity.class);
-            intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
-            startActivity(intent);
+            startActivity(new PlayIntent(activity, channel));
             return true;
 
         default:

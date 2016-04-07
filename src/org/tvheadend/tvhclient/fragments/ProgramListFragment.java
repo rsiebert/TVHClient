@@ -7,12 +7,12 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.ExternalActionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -336,12 +336,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_play:
-            // Open a new activity that starts playing the program
-            if (program != null && program.channel != null) {
-                Intent intent = new Intent(activity, ExternalActionActivity.class);
-                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-                startActivity(intent);
-            }
+            startActivity(new PlayIntent(activity, program));
             return true;
 
         default:
@@ -388,11 +383,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         case R.id.menu_play:
             // Open a new activity that starts playing the first program that is
             // currently transmitted over this channel 
-            if (channel != null) {
-                Intent intent = new Intent(activity, ExternalActionActivity.class);
-                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
-                startActivity(intent);
-            }
+            startActivity(new PlayIntent(activity, channel));
             return true;
 
         case R.id.menu_genre_color_info_programs:

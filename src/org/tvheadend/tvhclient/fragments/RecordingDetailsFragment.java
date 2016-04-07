@@ -1,18 +1,16 @@
 package org.tvheadend.tvhclient.fragments;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.ExternalActionActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.intent.DownloadIntent;
+import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
-import com.gc.materialdesign.views.ButtonFlat;
-
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
@@ -25,6 +23,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.gc.materialdesign.views.ButtonFlat;
 
 @SuppressWarnings("deprecation")
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
@@ -277,11 +277,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             @Override
             public void onClick(View v) {
                 // Open a new activity that starts playing the program
-                if (rec != null) {
-                    Intent intent = new Intent(activity, ExternalActionActivity.class);
-                    intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-                    startActivity(intent);
-                }
+                startActivity(new PlayIntent(activity, rec));
             }
         });
         editRecordingButton.setOnClickListener(new OnClickListener() {
@@ -321,10 +317,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         downloadRecordingButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, ExternalActionActivity.class);
-                intent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-                intent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
-                startActivity(intent);
+                startActivity(new DownloadIntent(activity, rec));
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

@@ -26,6 +26,8 @@ import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.intent.DownloadIntent;
+import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -399,36 +401,12 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             return true;
 
         case R.id.menu_play:
-            if (model instanceof Program) {
-                Program program = (Program) model;
-                // Open a new activity that starts playing the program
-                if (program != null && program.channel != null) {
-                    // TODO create play intent
-                    Intent intent = new Intent(this, ExternalActionActivity.class);
-                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-                    startActivity(intent);
-                }
-            }
-            if (model instanceof Recording) {
-                Recording recording = (Recording) model;
-                // Open a new activity that starts playing the program
-                if (recording != null) {
-                    // TODO create play intent
-                    Intent intent = new Intent(this, ExternalActionActivity.class);
-                    intent.putExtra(Constants.BUNDLE_RECORDING_ID, recording.id);
-                    startActivity(intent);
-                }
-            }
+            startActivity(new PlayIntent(this, model));
             return true;
 
         case R.id.menu_download:
             if (model instanceof Recording) {
-                // TODO create download intent
-                Recording rec = (Recording) model;
-                Intent dlIntent = new Intent(this, ExternalActionActivity.class);
-                dlIntent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-                dlIntent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
-                startActivity(dlIntent);
+                startActivity(new DownloadIntent(this, (Recording) model));
             }
             return true;
 
