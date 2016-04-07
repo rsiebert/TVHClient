@@ -9,13 +9,15 @@
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/progress_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="null" />
+        android:text="@null"
+        android:visibility="gone" />
 
 </LinearLayout>
