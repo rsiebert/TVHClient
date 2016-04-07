@@ -6,7 +6,6 @@ import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.Recording;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -79,8 +78,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
 
-            if (app.isUnlocked() && 
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            if (app.isUnlocked()) {
                 (menu.findItem(R.id.menu_download)).setVisible(true);
             }
         }
