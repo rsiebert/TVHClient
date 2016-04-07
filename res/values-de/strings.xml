@@ -262,6 +262,7 @@
 
     <string name="search_hint">Suche im TV-Programm</string>
     <string name="searching_programs">Durchsuche %d Programme</string>
+    <string name="searching_recordings">Durchsuche %d Aufnahmen</string>
     <string name="two_days_ago">Vor 2 Tagen</string>
     <string name="yesterday">Gestern</string>
     <string name="today">Heute</string>

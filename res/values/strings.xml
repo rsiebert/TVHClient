@@ -263,6 +263,7 @@
     
     <string name="search_hint">Search the EPG</string>
     <string name="searching_programs">Searching %d programs</string>
+    <string name="searching_recordings">Searching %d recordings</string>
     <string name="two_days_ago">Two days ago</string>
     <string name="yesterday">Yesterday</string>
     <string name="today">Today</string>
