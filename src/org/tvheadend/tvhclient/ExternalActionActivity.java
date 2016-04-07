@@ -141,12 +141,14 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     protected void onResume() {
         super.onResume();
         VideoCastManager.getInstance().incrementUiCounter();
+        app.addListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         VideoCastManager.getInstance().decrementUiCounter();
+        app.removeListener(this);
     }
 
     /**
