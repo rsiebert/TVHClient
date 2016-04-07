@@ -86,6 +86,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             title = ch.name;
         } else if (rec != null) {
             title = rec.title;
+        } else {
+            return;
         }
 
         // If the cast menu button is connected then assume playing means casting
