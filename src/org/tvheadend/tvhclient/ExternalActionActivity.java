@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -87,6 +88,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         } else if (rec != null) {
             title = rec.title;
         } else {
+            app.log(TAG, "No channel or recording provided, exiting");
             return;
         }
 
@@ -103,7 +105,21 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
         switch (action) {
         case Constants.EXTERNAL_ACTION_PLAY:
-            // Start the service to get the url that shall be played
+            // Check if the recording exists in the download folder, if not
+            // stream it from the server
+            if (rec != null && app.isUnlocked()) {
+                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                File file = new File(path, rec.title);
+                app.log(TAG, "Downloaded recording can be played from '" + file.getAbsolutePath() + "': " + file.exists());
+                if (file.exists()) {
+                    startPlayback(file.getAbsolutePath(), "video/x-matroska");
+                    break;
+                }
+            }
+
+            // No downloaded recording exists, so continue starting the service
+            // to get the url that shall be played. This could either be a
+            // channel or a recording.
             Intent intent = new Intent(ExternalActionActivity.this, HTSService.class);
             intent.setAction(Constants.ACTION_GET_TICKET);
             intent.putExtras(getIntent().getExtras());
@@ -180,7 +196,11 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     }
 
     /**
-     * Puts the request with the required data in the download queue
+     * Puts the request with the required data in the download queue. When the
+     * download has been started it checks after a while if the download has
+     * actually started or if it has failed due to insufficient space. This is
+     * required because the download manager does not throw this error via a
+     * notification.
      * 
      * @param request
      */
@@ -243,17 +263,18 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                     }
                 }
             }
-        }, 2500);
+        }, 1500);
     }
 
     /**
      * When the first ticket from the HTSService has been received the URL is
-     * created and then passed to the external media player.
+     * created together with the mime and profile data. This is then passed to
+     * the startPlayback method which invokes the external media player.
      * 
      * @param path
      * @param ticket
      */
-    private void startPlayback(String path, String ticket) {
+    private void initPlayback(String path, String ticket) {
 
         // Set default values if no profile was specified
         Profile profile = dbh.getProfile(conn.playback_profile_id);
@@ -295,16 +316,25 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                 playUrl += "&scodec=" + profile.subtitle_codec;
             }
         }
+        startPlayback(playUrl, mime);
+    }
+
+    /**
+     * Starts the external media player with the given url and mime information.
+     * 
+     * @param url
+     * @param mime
+     */
+    private void startPlayback(String url, String mime) {
+        app.log(TAG, "Starting to play from url " + url);
 
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
-        playbackIntent.setDataAndType(Uri.parse(playUrl), mime);
+        playbackIntent.setDataAndType(Uri.parse(url), mime);
 
         // Pass on the name of the channel or the recording title to the external 
         // video players. VLC uses itemTitle and MX Player the title string.
         playbackIntent.putExtra("itemTitle", title);
         playbackIntent.putExtra("title", title);
-
-        app.log(TAG, "Starting to play from url " + playUrl);
 
         // Start playing the video now in the UI thread
         this.runOnUiThread(new Runnable() {
@@ -347,7 +377,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     }
 
     /**
-     * 
+     * Creates the url and other required media information for casting. This
+     * information is then passed to the cast controller activity.
      */
     private void startCasting() {
 
@@ -412,7 +443,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     public void onMessage(String action, final Object obj) {
         if (action.equals(Constants.ACTION_TICKET_ADD)) {
             HttpTicket t = (HttpTicket) obj;
-            startPlayback(t.path, t.ticket);
+            initPlayback(t.path, t.ticket);
         }
     }
 
@@ -558,6 +589,11 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         }
     }
 
+    /**
+     * Displays a dialog with the given message.
+     * 
+     * @param msg
+     */
     private void showErrorDialog(String msg) {
         // Hide the progress bar and text
         if (castProgressInfo != null) {
@@ -591,6 +627,10 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     }
 
     /**
+     * Android API version 23 and higher requires that the permission to access
+     * the external storage must be requested programmatically (if it has not
+     * been granted already). The positive or negative request is checked in the
+     * onRequestPermissionsResult(...) method.
      * 
      * @return
      */
