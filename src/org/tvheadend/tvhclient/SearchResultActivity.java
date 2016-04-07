@@ -24,11 +24,13 @@ import java.util.List;
 
 import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
+import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Model;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 
@@ -65,6 +67,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     private SearchResultAdapter adapter;
     private ListView listView;
     private Channel channel;
+    private Recording recording;
     private MenuItem searchMenuItem = null;
     private Runnable updateTask;
     private Runnable finishTask;
@@ -98,45 +101,86 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Program program = adapter.getItem(position);
-                if (program != null) {
-                    Bundle args = new Bundle();
-                    args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
-                    args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-                    args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
-                    args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
-                    // Create the fragment and show it as a dialog.
-                    DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
-                    newFragment.show(getSupportFragmentManager(), "dialog");
+                Model model = adapter.getItem(position);
+
+                // Show the program details dialog
+                if (model instanceof Program) {
+                    final Program program = (Program) model;
+                    if (program != null) {
+                        Bundle args = new Bundle();
+                        args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
+                        args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                        args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
+                        args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
+                        DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
+                        newFragment.show(getSupportFragmentManager(), "dialog");
+                    }
+                }
+
+                // Show the recording details dialog
+                if (model instanceof Recording) {
+                    final Recording recording = (Recording) model;
+                    if (recording != null) {
+                        Bundle args = new Bundle();
+                        args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
+                        args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
+                        args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
+                        DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
+                        newFragment.show(getSupportFragmentManager(), "dialog");
+                    }
                 }
             }
         });
 
         // This is the list with the initial data from the program guide. It
         // will be passed to the search adapter. 
-        List<Program> list = new ArrayList<Program>();
+        List<Model> list = new ArrayList<Model>();
 
-        // If no channel is given go through the list of programs in all
-        // channels and add it to the list. If a channel was given search
-        // through the list of programs in the given channel.
-        if (channel == null) {
-            for (Channel ch : app.getChannels()) {
-                if (ch != null) {
-                    synchronized(ch.epg) {
-                        for (Program p : ch.epg) {
-                            if (p != null && p.title != null && p.title.length() > 0) {
-                                list.add(p);
+        Intent intent = getIntent();
+
+        // Try to get the channel and recording id if given, to limit the search
+        // a single channel or the completed recordings.
+        Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
+        if (bundle != null) {
+            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
+            recording = app.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID));
+        } else {
+            channel = null;
+            recording = null;
+        }
+
+        // Depending on the search request, fill the adapter with the already
+        // available data. Either add all completed recordings or add all
+        // available programs from one or all channels.
+        if (recording != null) {
+            app.log(TAG, "onCreate recording");
+            for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
+                if (rec != null && rec.title != null && rec.title.length() > 0) {
+                    list.add(rec);
+                }
+            }
+        } else {
+            if (channel == null) {
+                // Add all available programs from all channels.
+                for (Channel ch : app.getChannels()) {
+                    if (ch != null) {
+                        synchronized(ch.epg) {
+                            for (Program p : ch.epg) {
+                                if (p != null && p.title != null && p.title.length() > 0) {
+                                    list.add(p);
+                                }
                             }
                         }
                     }
                 }
-            }
-        } else {
-            if (channel.epg != null) {
-                synchronized(channel.epg) {
-                    for (Program p : channel.epg) {
-                        if (p != null && p.title != null && p.title.length() > 0) {
-                            list.add(p);
+            } else {
+                // Add all available programs from the given channel.
+                if (channel.epg != null) {
+                    synchronized(channel.epg) {
+                        for (Program p : channel.epg) {
+                            if (p != null && p.title != null && p.title.length() > 0) {
+                                list.add(p);
+                            }
                         }
                     }
                 }
@@ -153,7 +197,11 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         updateTask = new Runnable() {
             public void run() {
                 adapter.getFilter().filter(query.toString());
-                actionBar.setSubtitle(getString(R.string.searching_programs, adapter.getFullCount()));
+                if (recording == null) {
+                    actionBar.setSubtitle(getString(R.string.searching_programs, adapter.getFullCount()));
+                } else {
+                    actionBar.setSubtitle(getString(R.string.searching_recordings, adapter.getFullCount()));
+                }
                 handlerRunning  = false;
             }
         };
@@ -166,8 +214,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                         adapter.getCount()));
             }
         };
-
-        Intent intent = getIntent();
 
         // If the screen has been rotated then overwrite the original query in
         // the intent with the one that has been saved before the rotation. 
@@ -196,33 +242,40 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             return;
         }
 
-        // Get the channel id if given, to limit the search to a channel
+        // Try to get the channel and recording id if given, to limit the search
+        // a single channel or the completed recordings.
+        // TODO is this required if its already in the onCreate method?
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
             channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
+            recording = app.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID));
         } else {
             channel = null;
+            recording = null;
         }
 
         // Get the given search query
         query = intent.getStringExtra(SearchManager.QUERY);
-
-        // Create the intent that will be used to fetch all program data from
-        // the service. The results will be searched. 
-        intent = new Intent(this, HTSService.class);
-        intent.setAction(Constants.ACTION_EPG_QUERY);
-        intent.putExtra("query", "");
-        if (channel != null) {
-            intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
-        }
 
         // Save the query so it can be shown again.
         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                 SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
         suggestions.saveRecentQuery(query, null);
 
-        // Now call the service with the query to get results
-        startService(intent);
+        // If the search shall be performed on one or all channels, fetch and
+        // save all programs from the server and filter them later in the
+        // adapter. If a user starts a different search later all programs are
+        // available already and not only the ones that would be been loaded if
+        // the query would have been passed to the server.
+        if (recording == null) {
+            intent = new Intent(this, HTSService.class);
+            intent.setAction(Constants.ACTION_EPG_QUERY);
+            intent.putExtra("query", "");
+            if (channel != null) {
+                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
+            }
+            startService(intent);
+        }
 
         startQuickAdapterUpdate();
     }
@@ -300,43 +353,82 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             return super.onContextItemSelected(item);
         }
 
-        final Program program = adapter.getItem(info.position);
-        if (program == null) {
-            app.log(TAG, "Selected program is null");
+        final Model model = adapter.getItem(info.position);
+        if (model == null) {
             return super.onContextItemSelected(item);
         }
 
         switch (item.getItemId()) {
-        case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(this, program.title));
+        case R.id.menu_search_epg:
+            if (model instanceof Program) {
+                startActivity(new SearchEPGIntent(this, ((Program) model).title));
+            }
             return true;
 
-        case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(this, program.title));
+        case R.id.menu_search_imdb:
+            if (model instanceof Program) {
+                startActivity(new SearchIMDbIntent(this, ((Program) model).title));
+            }
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(this, program.recording);
+            if (model instanceof Program) {
+                Utils.confirmRemoveRecording(this, ((Program) model).recording);
+            }
+            if (model instanceof Recording) {
+                Utils.confirmRemoveRecording(this, (Recording) model);
+            }
             return true;
 
         case R.id.menu_record_cancel:
-            Utils.confirmCancelRecording(this, program.recording);
+            if (model instanceof Program) {
+                Utils.confirmCancelRecording(this, ((Program) model).recording);
+            }
             return true;
 
         case R.id.menu_record_once:
-            Utils.recordProgram(this, program, false);
+            if (model instanceof Program) {
+                Utils.recordProgram(this, (Program) model, false);
+            }
             return true;
 
         case R.id.menu_record_series:
-            Utils.recordProgram(this, program, true);
+            if (model instanceof Program) {
+                Utils.recordProgram(this, (Program) model, true);
+            }
             return true;
 
         case R.id.menu_play:
-            // Open a new activity that starts playing the program
-            if (program != null && program.channel != null) {
-                Intent intent = new Intent(this, ExternalActionActivity.class);
-                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
-                startActivity(intent);
+            if (model instanceof Program) {
+                Program program = (Program) model;
+                // Open a new activity that starts playing the program
+                if (program != null && program.channel != null) {
+                    // TODO create play intent
+                    Intent intent = new Intent(this, ExternalActionActivity.class);
+                    intent.putExtra(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                    startActivity(intent);
+                }
+            }
+            if (model instanceof Recording) {
+                Recording recording = (Recording) model;
+                // Open a new activity that starts playing the program
+                if (recording != null) {
+                    // TODO create play intent
+                    Intent intent = new Intent(this, ExternalActionActivity.class);
+                    intent.putExtra(Constants.BUNDLE_RECORDING_ID, recording.id);
+                    startActivity(intent);
+                }
+            }
+            return true;
+
+        case R.id.menu_download:
+            if (model instanceof Recording) {
+                // TODO create download intent
+                Recording rec = (Recording) model;
+                Intent dlIntent = new Intent(this, ExternalActionActivity.class);
+                dlIntent.putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
+                dlIntent.putExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_DOWNLOAD);
+                startActivity(dlIntent);
             }
             return true;
 
@@ -348,19 +440,41 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getMenuInflater().inflate(R.menu.program_context_menu, menu);
 
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final Program program = adapter.getItem(info.position);
+        final Model model = adapter.getItem(info.position);
 
-        // Set the title of the context menu
-        if (program != null) {
-            menu.setHeaderTitle(program.title);
+        if (model instanceof Program) {
+            getMenuInflater().inflate(R.menu.program_context_menu, menu);
+            Program program = (Program) model;
+            // Set the title of the context menu
+            if (program != null) {
+                menu.setHeaderTitle(program.title);
+            }
+            // Show or hide the menu items depending on the program state
+            Utils.setProgramMenu(app, menu, program);
+
+        } else if (model instanceof Recording) {
+            getMenuInflater().inflate(R.menu.recording_context_menu, menu);
+            Recording rec = (Recording) model;
+            if (rec != null) {
+                menu.setHeaderTitle(rec.title);
+            }
+
+            // Hide all menu entries before activating certain ones
+            for (int i = 0; i < menu.size(); i++) {
+                menu.getItem(i).setVisible(false);
+            }
+            
+            // Allow playing and downloading a recording
+            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
+            (menu.findItem(R.id.menu_play)).setVisible(true);
+            if (app.isUnlocked()) {
+                (menu.findItem(R.id.menu_download)).setVisible(true);
+            }
         }
-        // Show or hide the menu items depending on the program state
-        Utils.setProgramMenu(app, menu, program);
     }
 
     /**
@@ -407,44 +521,40 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         if (action.equals(Constants.ACTION_PROGRAM_ADD)) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Program p = (Program) obj;
-                    if (p != null && p.title != null && p.title.length() > 0) {
-                        // In case the program is already in the adapter 
-                        // remove it to avoid showing the same entry again
-                        adapter.remove(p);
-                        adapter.add(p);
-                        startDelayedAdapterUpdate();
-                    }
+                    Model m = (Model) obj;
+                    adapter.remove(m);
+                    adapter.add(m);
+                    startDelayedAdapterUpdate();
                 }
             });
         } else if (action.equals(Constants.ACTION_PROGRAM_DELETE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Program p = (Program) obj;
-                    adapter.remove(p);
+                    Model m = (Model) obj;
+                    adapter.remove(m);
                     startDelayedAdapterUpdate();
                 }
             });
         } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    adapter.update((Program) obj);
+                    adapter.update((Model) obj);
                     startDelayedAdapterUpdate();
                 }
             });
-        } else if (action.equals(Constants.ACTION_DVR_ADD)
-                || action.equals(Constants.ACTION_DVR_DELETE)
-                || action.equals(Constants.ACTION_DVR_UPDATE)) {
+        } else if (action.equals(Constants.ACTION_DVR_DELETE)) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Recording rec = (Recording) obj;
-                    for (Program p : adapter.getFullList()) {
-                        if (rec == p.recording) {
-                            adapter.update(p);
-                            startDelayedAdapterUpdate();
-                            return;
-                        }
-                    }
+                    Model m = (Model) obj;
+                    adapter.remove(m);
+                    startDelayedAdapterUpdate();
+                }
+            });
+        } else if (action.equals(Constants.ACTION_DVR_UPDATE)) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.update((Model) obj);
+                    startDelayedAdapterUpdate();
                 }
             });
         }

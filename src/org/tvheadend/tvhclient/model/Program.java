@@ -2,9 +2,8 @@ package org.tvheadend.tvhclient.model;
 
 import java.util.Date;
 
-public class Program implements Comparable<Program> {
+public class Program extends Model implements Comparable<Program> {
 
-    public long id;
     public long nextId;
     public int contentType;
     public Date start;

@@ -15,6 +15,7 @@ import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
 import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
+import org.tvheadend.tvhclient.fragments.RecordingListFragment;
 import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
@@ -43,6 +44,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -160,6 +162,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     // Required to start the search when the user has selected a value from the
     // search suggestion list
     private MenuItem searchMenuItem = null;
+    private SearchView searchView = null;
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
@@ -785,7 +788,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Do not show the search menu on these screens
         if (selectedMenuPosition == MENU_STATUS 
-                || selectedMenuPosition == MENU_COMPLETED_RECORDINGS 
+                || (selectedMenuPosition == MENU_COMPLETED_RECORDINGS && app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() == 0)
                 || selectedMenuPosition == MENU_SCHEDULED_RECORDINGS
                 || selectedMenuPosition == MENU_FAILED_RECORDINGS
                 || selectedMenuPosition == MENU_SERIES_RECORDINGS
@@ -832,7 +835,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             searchMenuItem = menu.findItem(R.id.menu_search); 
-            SearchView searchView = (SearchView) searchMenuItem.getActionView();
+            searchView = (SearchView) searchMenuItem.getActionView();
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             searchView.setIconifiedByDefault(true);
             searchView.setOnQueryTextListener(this);
@@ -889,6 +892,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 if (o instanceof Channel) {
                     final Channel ch = (Channel) o;
                     bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ch.id);
+                }
+            } else if (f instanceof RecordingListFragment && f instanceof FragmentControlInterface) {
+                Object o = ((FragmentControlInterface) f).getSelectedItem();
+                if (o instanceof Recording) {
+                    final Recording rec = (Recording) o;
+                    bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
                 }
             }
         }
@@ -1774,9 +1783,46 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @SuppressLint("NewApi")
     @Override
-    public boolean onQueryTextSubmit(String text) {
+    public boolean onQueryTextSubmit(String query) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             searchMenuItem.collapseActionView();
+
+            // Create the intent that will be passed to the search activity with
+            // the query and optionally some additional data.
+            Intent searchIntent = new Intent(getApplicationContext(), SearchResultActivity.class);
+            searchIntent.putExtra(SearchManager.QUERY, query);
+            searchIntent.setAction(Intent.ACTION_SEARCH);
+
+            Bundle bundle = new Bundle();
+            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+
+            // Pass on the channel id to search only in the selected channel.
+            // This will only be the case if no dual pane is active. Otherwise a
+            // full channel search would only be possible in the EPG view.
+            if (!isDualPane) {
+                if (f instanceof ProgramListFragment && f instanceof FragmentControlInterface) {
+                    Object o = ((FragmentControlInterface) f).getSelectedItem();
+                    if (o instanceof Channel) {
+                        final Channel ch = (Channel) o;
+                        bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ch.id);
+                    }
+                }
+            }
+
+            // Pass on the recording id if the completed recording screen is
+            // visible. The onPrepareOptionsMenu ensures that the search icon is
+            // visible in the required screens.
+            if (f instanceof RecordingListFragment && f instanceof FragmentControlInterface) {
+                Object o = ((FragmentControlInterface) f).getSelectedItem();
+                if (o instanceof Recording) {
+                    final Recording rec = (Recording) o;
+                    bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+                }
+            }
+
+            searchIntent.putExtra(SearchManager.APP_DATA, bundle);
+            startActivity(searchIntent);
+            return true;
         }
         return false;
     }
@@ -1786,6 +1832,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     public boolean onSuggestionClick(int position) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             searchMenuItem.collapseActionView();
+
+            // Set the search query and return true so that the
+            // onQueryTextSubmit is called. This is required to pass additional
+            // data to the search activity
+            Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
+            String suggestion = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+            searchView.setQuery(suggestion, true);
+            return true;
         }
         return false;
     }

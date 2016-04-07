@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Recording implements Comparable<Recording> {
+public class Recording extends Model implements Comparable<Recording> {
 
-    public long id;
     public Date start;
     public Date stop;
     public String title;
