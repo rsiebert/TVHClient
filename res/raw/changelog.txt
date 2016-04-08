@@ -1,6 +1,6 @@
 $ 1.9.1
   % VERSION 1.9.1
-  _ 07.04.2016
+  _ 08.04.2016
     * Small Chromecast improvements (Only available in the unlocked version)
     * Prefer playing a downloaded recording (if it exists) instead of streaming it from the server (Only available in the unlocked version)
     * Starting a search in the program list searches only for programs in the selected the channel
