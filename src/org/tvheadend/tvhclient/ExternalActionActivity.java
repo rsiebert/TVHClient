@@ -115,8 +115,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             // stream it from the server
             if (rec != null && app.isUnlocked()) {
                 File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                File file = new File(path, rec.title);
-                app.log(TAG, "Downloaded recording can be played from '" + file.getAbsolutePath() + "': " + file.exists());
+                File file = new File(path, rec.title + ".mkv");
+                app.log(TAG, "Downloaded recording can be played from '" + file.getAbsolutePath()  + "': " + file.exists());
                 if (file.exists()) {
                     startPlayback(file.getAbsolutePath(), "video/x-matroska");
                     break;
@@ -192,7 +192,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             request.setTitle(getString(R.string.download));
             request.setDescription(rec.title);
             request.setNotificationVisibility(Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title + ".mkv");
 
             app.log(TAG, "Starting download from url " + downloadUrl);
             startDownload(request);
