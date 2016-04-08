@@ -98,6 +98,12 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             castProgressBar = (ProgressBar) findViewById(R.id.progress);
             castProgressInfo = (TextView) findViewById(R.id.progress_info);
         }
+    }
+
+    /**
+     * 
+     */
+    private void initAction() {
 
         // Create the url with the credentials and the host and  
         // port configuration. This one is fixed for all actions
@@ -160,6 +166,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         super.onResume();
         VideoCastManager.getInstance().incrementUiCounter();
         app.addListener(this);
+        
+        initAction();
     }
 
     @Override
@@ -386,15 +394,18 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         String castUrl = "";
         String subtitle = "";
         long duration = 0;
+        int streamType = MediaInfo.STREAM_TYPE_NONE;
 
         if (ch != null) {
             castUrl = baseUrl + "/stream/channel/" + ch.uuid;
             iconUrl = baseUrl + "/" + ch.icon;
+            streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl = baseUrl + "/dvrfile/" + rec.id;
             subtitle = (rec.subtitle.length() > 0 ? rec.subtitle : rec.summary);
             duration = rec.stop.getTime() - rec.start.getTime();
             iconUrl = baseUrl + "/" + (rec.channel != null ? rec.channel.icon : "");
+            streamType = MediaInfo.STREAM_TYPE_BUFFERED;
         }
 
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);        
@@ -413,7 +424,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         app.log(TAG, "Cast url is " + castUrl);
 
         MediaInfo mediaInfo = new MediaInfo.Builder(castUrl.toString())
-            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+            .setStreamType(streamType)
             .setContentType("video/webm")
             .setMetadata(movieMetadata)
             .setStreamDuration(duration)
