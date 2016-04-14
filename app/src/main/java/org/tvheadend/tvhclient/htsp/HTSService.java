@@ -328,7 +328,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         ch.isTransmitting = currEventId != 0;
 
         Iterator<Program> it = ch.epg.iterator();
-        ArrayList<Program> tmp = new ArrayList<Program>();
+        ArrayList<Program> tmp = new ArrayList<>();
 
         while (it.hasNext() && currEventId > 0) {
             Program p = it.next();
@@ -497,7 +497,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
         if (connection.getProtocolVersion() >= 18) {
-            rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+            rec.enabled = msg.getLong("enabled", 0) != 0;
         }
         app.addTimerRecording(rec);
     }
@@ -520,7 +520,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
         if (connection.getProtocolVersion() >= 18) {
-            rec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+            rec.enabled = msg.getLong("enabled", 0) != 0;
         }
         app.updateTimerRecording(rec);
     }
@@ -536,7 +536,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.removeTimerRecording(rec);
     }
 
-    private void onInitialSyncCompleted(HTSMessage msg) {
+    private void onInitialSyncCompleted() {
         app.log(TAG, "initial sync completed");
         app.setLoading(false);
         app.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
@@ -695,7 +695,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (srec == null) {
             return;
         }
-        srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        srec.enabled = msg.getLong("enabled", 0) != 0;
         srec.maxDuration = msg.getLong("maxDuration");
         srec.minDuration = msg.getLong("minDuration");
         srec.retention = msg.getLong("retention");
@@ -714,7 +714,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void onAutorecEntryAdd(HTSMessage msg) {
         SeriesRecording srec = new SeriesRecording();
         srec.id = msg.getString("id");
-        srec.enabled = (msg.getLong("enabled", 0) == 0) ? false : true;
+        srec.enabled = msg.getLong("enabled", 0) != 0;
         srec.maxDuration = msg.getLong("maxDuration");
         srec.minDuration = msg.getLong("minDuration");
         srec.retention = msg.getLong("retention");
@@ -735,54 +735,79 @@ public class HTSService extends Service implements HTSConnectionListener {
     public void onMessage(HTSMessage msg) {
         String method = msg.getMethod();
 
-        if (method.equals("tagAdd")) {
-            onTagAdd(msg);
-        } else if (method.equals("tagUpdate")) {
-            onTagUpdate(msg);
-        } else if (method.equals("tagDelete")) {
-            onTagDelete(msg);
-        } else if (method.equals("channelAdd")) {
-            onChannelAdd(msg);
-        } else if (method.equals("channelUpdate")) {
-            onChannelUpdate(msg);
-        } else if (method.equals("channelDelete")) {
-            onChannelDelete(msg);
-        } else if (method.equals("initialSyncCompleted")) {
-            onInitialSyncCompleted(msg);
-        } else if (method.equals("dvrEntryAdd")) {
-            onDvrEntryAdd(msg);
-        } else if (method.equals("dvrEntryUpdate")) {
-            onDvrEntryUpdate(msg);
-        } else if (method.equals("dvrEntryDelete")) {
-            onDvrEntryDelete(msg);
-        } else if (method.equals("timerecEntryAdd")) {
-            onTimerRecEntryAdd(msg);
-        } else if (method.equals("timerecEntryUpdate")) {
-            onTimerRecEntryUpdate(msg);
-        } else if (method.equals("timerecEntryDelete")) {
-            onTimerRecEntryDelete(msg);
-        } else if (method.equals("subscriptionStart")) {
-            onSubscriptionStart(msg);
-        } else if (method.equals("subscriptionStatus")) {
-            onSubscriptionStatus(msg);
-        } else if (method.equals("subscriptionStop")) {
-            onSubscriptionStop(msg);
-        } else if (method.equals("subscriptionGrace")) {
-            onSubscriptionGrace(msg);
-        } else if (method.equals("muxpkt")) {
-            onMuxPacket(msg);
-        } else if (method.equals("queueStatus")) {
-            onQueueStatus(msg);
-        } else if (method.equals("autorecEntryAdd")) {
-            onAutorecEntryAdd(msg);
-        } else if (method.equals("autorecEntryUpdate")) {
-            onAutorecEntryUpdate(msg);
-        } else if (method.equals("autorecEntryDelete")) {
-            onAutorecEntryDelete(msg);
-        } else if (method.equals("signalStatus")) {
-            onSubscriptionSignalStatus(msg);
-        } else {
-            app.log(TAG, "Unknown method " + method.toString());
+        switch (method) {
+            case "tagAdd":
+                onTagAdd(msg);
+                break;
+            case "tagUpdate":
+                onTagUpdate(msg);
+                break;
+            case "tagDelete":
+                onTagDelete(msg);
+                break;
+            case "channelAdd":
+                onChannelAdd(msg);
+                break;
+            case "channelUpdate":
+                onChannelUpdate(msg);
+                break;
+            case "channelDelete":
+                onChannelDelete(msg);
+                break;
+            case "initialSyncCompleted":
+                onInitialSyncCompleted();
+                break;
+            case "dvrEntryAdd":
+                onDvrEntryAdd(msg);
+                break;
+            case "dvrEntryUpdate":
+                onDvrEntryUpdate(msg);
+                break;
+            case "dvrEntryDelete":
+                onDvrEntryDelete(msg);
+                break;
+            case "timerecEntryAdd":
+                onTimerRecEntryAdd(msg);
+                break;
+            case "timerecEntryUpdate":
+                onTimerRecEntryUpdate(msg);
+                break;
+            case "timerecEntryDelete":
+                onTimerRecEntryDelete(msg);
+                break;
+            case "subscriptionStart":
+                onSubscriptionStart(msg);
+                break;
+            case "subscriptionStatus":
+                onSubscriptionStatus(msg);
+                break;
+            case "subscriptionStop":
+                onSubscriptionStop(msg);
+                break;
+            case "subscriptionGrace":
+                onSubscriptionGrace(msg);
+                break;
+            case "muxpkt":
+                onMuxPacket(msg);
+                break;
+            case "queueStatus":
+                onQueueStatus(msg);
+                break;
+            case "autorecEntryAdd":
+                onAutorecEntryAdd(msg);
+                break;
+            case "autorecEntryUpdate":
+                onAutorecEntryUpdate(msg);
+                break;
+            case "autorecEntryDelete":
+                onAutorecEntryDelete(msg);
+                break;
+            case "signalStatus":
+                onSubscriptionSignalStatus(msg);
+                break;
+            default:
+                app.log(TAG, "Unknown method " + method);
+                break;
         }
     }
 
@@ -793,8 +818,8 @@ public class HTSService extends Service implements HTSConnectionListener {
             byte messageDigest[] = digest.digest();
 
             StringBuilder hexString = new StringBuilder();
-            for (int i = 0; i < messageDigest.length; i++) {
-                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+            for (byte aMessageDigest : messageDigest) {
+                hexString.append(Integer.toHexString(0xFF & aMessageDigest));
             }
             return hexString.toString();
 
@@ -1038,10 +1063,9 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Updates a regular recording on the server with the given id and values.
      * If the update was successful a positive message is shown otherwise a
      * negative one.
-     * 
-     * @param id
-     *            Contains the id and (un)changed parameters of the regular
-     *            recording
+     *
+     * @param intent Contains the intent with the (un)changed parameters of the regular
+     *               recording
      */
     private void updateDvrEntry(final Intent intent) {
 
@@ -1134,9 +1158,8 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Adds a regular recording to the server with the given values. If the
      * adding was successful a positive message is shown otherwise a negative
      * one.
-     * 
-     * @param id
-     *            The parameters of the recording that shall be added
+     *
+     * @param intent The intent with the parameters of the recording that shall be added
      */
     private void addDvrEntry(final Intent intent) {
 
@@ -1449,7 +1472,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!response.containsKey("dvrconfigs")) {
                     return;
                 }
-                List<Profiles> pList = new ArrayList<Profiles>();
+                List<Profiles> pList = new ArrayList<>();
                 for (Object obj : response.getList("dvrconfigs")) {
                     HTSMessage sub = (HTSMessage) obj;
 
@@ -1694,8 +1717,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void subscriptionFilterStream() {
-        // TODO Auto-generated method stub
-        
+        // NOP
     }
 
     private void getChannel(final Channel ch) {
@@ -1704,8 +1726,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("channelId", ch.id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                // TODO
-                
+                // NOP
             }
         });
     }
@@ -1718,7 +1739,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!response.containsKey("profiles")) {
                     return;
                 }
-                List<Profiles> pList = new ArrayList<Profiles>();
+                List<Profiles> pList = new ArrayList<>();
                 for (Object obj : response.getList("profiles")) {
                     HTSMessage sub = (HTSMessage) obj;
 
