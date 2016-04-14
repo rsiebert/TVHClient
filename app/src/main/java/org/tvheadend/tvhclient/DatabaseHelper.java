@@ -225,6 +225,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + KEY_PROFILE_VIDEO_CODEC + " TEXT NULL, "
                     + KEY_PROFILE_SUBTITLE_CODEC + " TEXT NULL);";
             db.execSQL(query);
+            cursor.close();
         }
         if (oldVersion < newVersion && newVersion == 9) {
             db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_CAST_PROFILE_ID
@@ -363,7 +364,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
 
-        Connection conn = null;
+        Connection conn;
         if (c != null && c.moveToFirst()) {
             do {
                 conn = getConnectionValues(c);
