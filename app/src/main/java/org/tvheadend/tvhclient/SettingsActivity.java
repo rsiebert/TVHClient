@@ -60,17 +60,18 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.actionbar_title);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.actionbar_title);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
 
-        // Get the widgets so we can use them later and do not need to inflate again
-        actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
-        actionBarSubtitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_subtitle);
-        actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
-        actionBarIcon.setVisibility(View.GONE);
-        
+            // Get the widgets so we can use them later and do not need to inflate again
+            actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
+            actionBarSubtitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_subtitle);
+            actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
+            actionBarIcon.setVisibility(View.GONE);
+        }
         // Get any saved values from the bundle
         if (savedInstanceState != null) {
             currentSettingsMode = savedInstanceState.getInt(Constants.BUNDLE_SETTINGS_MODE);
@@ -89,7 +90,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         // When the orientation was changed the last visible fragment is
         // available from the manager. If this is the case get it and show it
         // again.
-        fragment = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+        fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
         if (fragment == null) {
             // Get the information if the connection fragment shall be shown.
             // This is the case when the user has selected the connection menu
@@ -131,7 +132,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         switch (currentSettingsMode) {
         case MAIN_SETTINGS:
             restartNow();
-            return;
+            break;
 
         case LIST_CONNECTIONS:
             if (manageConnections) {
@@ -139,13 +140,13 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
             } else {
                 mainSettings();
             }
-            return;
+            break;
 
         case ADD_CONNECTION:
         case EDIT_CONNECTION:
             getSupportFragmentManager().popBackStack();
             currentSettingsMode = LIST_CONNECTIONS;
-            return;
+            break;
 
         case PROFILES:
         case TRANSCODING:
@@ -154,13 +155,13 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
             // Any changes in these fragments need to be changed when the back
             // or home key was pressed. This is only available in the activity,
             // not in the fragment. Therefore trigger the saving from here. 
-            fragment = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+            fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
             if (fragment != null && fragment instanceof BackPressedInterface) {
                 ((BackPressedInterface) fragment).onBackPressed();
             }
             getSupportFragmentManager().popBackStack();
             currentSettingsMode = MAIN_SETTINGS;
-            return;
+            break;
         }
     }
 
@@ -169,7 +170,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
      * navigating back would not show the old fragment again.
      */
     private void removePreviousFragment() {
-        Fragment f = (Fragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+        Fragment f = getSupportFragmentManager().findFragmentById(android.R.id.content);
         if (f != null) {
             getSupportFragmentManager().beginTransaction().remove(f).commit();
         }

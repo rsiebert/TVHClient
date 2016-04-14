@@ -127,7 +127,7 @@ public class ProgramGuideItemView extends LinearLayout {
             // Go through all programs and add them to the view
             synchronized(channel.epg) {
                 Iterator<Program> it = channel.epg.iterator();
-                Program p = null;
+                Program p;
                 while (it.hasNext()) {
                     p = it.next();
 
@@ -191,9 +191,9 @@ public class ProgramGuideItemView extends LinearLayout {
      * Returns the type of the program with respect to its starting and end
      * times and the given time slot. The program can either be outside of the
      * time, overlap it partly or be within the time.
-     * 
-     * @param p
-     * @return
+     *
+     * @param p Program
+     * @return Type of program
      */
     private int getProgramType(final Program p) {
         final long programStartTime = p.start.getTime();
@@ -234,10 +234,10 @@ public class ProgramGuideItemView extends LinearLayout {
      * required width of the program within the view is made. Then the method to
      * add the program is made and the remaining width for the other programs is
      * reduced.
-     * 
-     * @param program
-     * @param programType
-     * @param programsAddedCounter
+     *
+     * @param program              Program
+     * @param programType          Type of program
+     * @param programsAddedCounter Number of programs that were added to the view
      */
     private void addCurrentProgram(final Program program, final int programType, int programsAddedCounter) {
 
@@ -304,16 +304,16 @@ public class ProgramGuideItemView extends LinearLayout {
      * Calculates from the length of the program the required width in pixels.
      * The factor pixels per minute is also considered which depends on the
      * setting how many hours the current time slot shall show.
-     * 
-     * @param p
-     * @param programType
-     * @return
+     *
+     * @param p           Program
+     * @param programType Type of program
+     * @return Widht in pixels that a program shall take up in the EPG view
      */
     private int getProgramLayoutWidth(final Program p, final int programType) {
         final long programStartTime = p.start.getTime();
         final long programEndTime = p.stop.getTime();
         final double durationTime = ((p.stop.getTime() - p.start.getTime()) / 1000 / 60);
-        int offset = 0;
+        int offset;
         int width = 0;
 
         switch (programType) {
@@ -345,13 +345,14 @@ public class ProgramGuideItemView extends LinearLayout {
     /**
      * Creates the views and layout for the given program and adds all required
      * information to it.
-     * 
-     * @param p
-     * @param layoutWidth
-     * @param expandLayout
+     *
+     * @param p            Program
+     * @param layoutWidth  Width in pixels of the layout
+     * @param expandLayout True if the layout shall be expanded
      */
     private void addCurrentProgramToView(final Program p, final int layoutWidth, final boolean expandLayout) {
 
+        // TODO avoid passing null and expandLayout is not used
         View v = activity.getLayoutInflater().inflate( R.layout.program_guide_data_item, null);
         final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
         final TextView title = (TextView) v.findViewById(R.id.title);
@@ -360,8 +361,8 @@ public class ProgramGuideItemView extends LinearLayout {
 
         // Set the layout width
         if (layoutWidth > 0) {
-            LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(layoutWidth, LayoutParams.MATCH_PARENT);
-            itemLayout.setLayoutParams(parms);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutWidth, LayoutParams.MATCH_PARENT);
+            itemLayout.setLayoutParams(params);
         }
 
         // Show the placeholder if there is no program

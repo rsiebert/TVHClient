@@ -83,7 +83,7 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     public List<Long> getLongList(String name) {
-        ArrayList<Long> list = new ArrayList<Long>();
+        ArrayList<Long> list = new ArrayList<>();
 
         if (!containsField(name)) {
             return list;
@@ -107,7 +107,7 @@ public class HTSMessage extends HashMap<String, Object> {
     }
 
     public List<Integer> getIntList(String name) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
+        ArrayList<Integer> list = new ArrayList<>();
 
         if (!containsField(name)) {
             return list;
@@ -341,7 +341,7 @@ public class HTSMessage extends HashMap<String, Object> {
             }
 
             // Get the key for the map (the name)
-            String name = null;
+            String name;
             if (namelen == 0) {
                 name = Integer.toString(cnt++);
             } else {
@@ -351,7 +351,7 @@ public class HTSMessage extends HashMap<String, Object> {
             }
 
             // Get the actual content
-            Object obj = null;
+            Object obj;
             byte[] bData = new byte[(int) datalen]; // Should be long?
             buf.get(bData);
 
@@ -379,7 +379,7 @@ public class HTSMessage extends HashMap<String, Object> {
                     ByteBuffer sub = ByteBuffer.allocateDirect((int) datalen);
                     sub.put(bData);
                     sub.flip();
-                    obj = new ArrayList<Object>(deserializeBinary(sub).values());
+                    obj = new ArrayList<>(deserializeBinary(sub).values());
                     break;
                 }
                 default:

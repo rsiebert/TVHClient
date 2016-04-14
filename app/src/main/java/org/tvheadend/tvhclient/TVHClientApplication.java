@@ -55,7 +55,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     private final static String TAG = TVHClientApplication.class.getSimpleName();
 
-    private final List<HTSListener> listeners = new ArrayList<HTSListener>();
+    private final List<HTSListener> listeners = new ArrayList<>();
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
     private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
@@ -109,14 +109,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
         synchronized (listeners) {
             listeners.remove(listener);
         }
-    }
-
-    /**
-     * Removes all registered listeners from the list. This can be used prior
-     * stopping the service before the application is closed.
-     */
-    public void removeListeners() {
-        listeners.clear();
     }
 
     /**
@@ -500,7 +492,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return List of recordings of the given type
      */
     public List<Recording> getRecordingsByType(int type) {
-        List<Recording> recs = new ArrayList<Recording>();
+        List<Recording> recs = new ArrayList<>();
 
         switch (type) {
         case Constants.RECORDING_TYPE_COMPLETED:
@@ -570,6 +562,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @param id Id of the recording
      */
+    @SuppressWarnings("unused")
     public void removeRecording(long id) {
         synchronized (recordings) {
             for (Recording rec : getRecordings()) {
@@ -1111,7 +1104,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
         if (bp.isValidTransactionDetails(details)) {
-            Snackbar.make(null, getString(R.string.unlocker_purchase_successful), 
+            Snackbar.make(null, getString(R.string.unlocker_purchase_successful),
                     Snackbar.LENGTH_LONG).show();
         } else {
             Snackbar.make(null, getString(R.string.unlocker_purchase_not_successful), 
@@ -1190,7 +1183,9 @@ public class TVHClientApplication extends Application implements BillingProcesso
         // Get the path where the logs are stored
         logPath = new File(getCacheDir(), "logs");
         if (!logPath.exists()) {
-            logPath.mkdirs();
+            if (!logPath.mkdirs()) {
+                log(TAG, "Could not create log path");
+            }
         }
 
         // Open the log file with the current date. This ensures that the log
@@ -1237,10 +1232,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     private void removeOldLogfiles() {
         File[] files = logPath.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            long diff = new Date().getTime() - files[i].lastModified();
+        for(File f : files) {
+            long diff = new Date().getTime() - f.lastModified();
             if (diff > 7 * 24 * 60 * 60 * 1000) {
-                files[i].delete();
+                if (!f.delete()) {
+                    log(TAG, "Could not remove old logfile");
+                }
             }
         }
     }

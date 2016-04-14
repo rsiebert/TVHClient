@@ -58,8 +58,8 @@ public class HTSConnection extends Thread {
         lock = new ReentrantLock();
         inBuf = ByteBuffer.allocateDirect(2048 * 2048 * (bufferSize + 1));
         inBuf.limit(4);
-        responseHandlers = new SparseArray<HTSResponseHandler>();
-        messageQueue = new LinkedList<HTSMessage>();
+        responseHandlers = new SparseArray<>();
+        messageQueue = new LinkedList<>();
 
         this.listener = listener;
         this.clientName = clientName;
@@ -186,7 +186,6 @@ public class HTSConnection extends Thread {
                     sendMessage(authMessage, authHandler);
                 } catch (NoSuchAlgorithmException ex) {
                     app.log(TAG, "No SHA1 MessageDigest available, " + ex.getLocalizedMessage());
-                    return;
                 }
             }
         });
@@ -198,10 +197,8 @@ public class HTSConnection extends Thread {
                     app.log(TAG, "Timeout waiting for auth response");
                     listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
                 }
-                return;
             } catch (InterruptedException ex) {
                 app.log(TAG, "Error during waiting for response, " + ex.getLocalizedMessage());
-                return;
             }
         }
     }
@@ -263,7 +260,7 @@ public class HTSConnection extends Thread {
             try {
                 Iterator<SelectionKey> it = selector.selectedKeys().iterator();
                 while (it.hasNext()) {
-                    SelectionKey selKey = (SelectionKey) it.next();
+                    SelectionKey selKey = it.next();
                     it.remove();
                     processTcpSelectionKey(selKey);
                 }

@@ -91,7 +91,7 @@ public class InfoActivity extends ActionBarActivity {
             sb.append("</body></html>");
 
             // Replace the placeholder in the html file with the real version
-            String version = "?";
+            String version;
             String s = sb.toString();
             try {
                 version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
