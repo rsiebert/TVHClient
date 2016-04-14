@@ -57,11 +57,11 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         try {
             InetAddress address;
             if (!conn.wol_broadcast) {
-                address = InetAddress.getByName(conn.address);
+                address = InetAddress.getByName(conn.wol_address);
                 Log.d(TAG, "Sending WOL packet to " + address);
             } else {
                 // Replace the last number by 255 to send the packet as a broadcast
-                byte[] ipAddress = InetAddress.getByName(conn.address).getAddress();
+                byte[] ipAddress = InetAddress.getByName(conn.wol_address).getAddress();
                 ipAddress[3] = (byte) 255;
                 address = InetAddress.getByAddress(ipAddress);
                 Log.d(TAG, "Sending WOL packet as broadcast to " + address);
