@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/menu_play"
+        android:icon="?attr/ic_menu_play"
+        android:title="@string/play"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_download"
+        android:icon="?attr/ic_menu_download"
+        android:title="@string/download"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_edit"
+        android:icon="?attr/ic_menu_edit"
+        android:title="@string/edit"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_record_cancel"
+        android:icon="?attr/ic_menu_record_cancel"
+        android:title="@string/cancel"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_record_remove"
+        android:icon="?attr/ic_menu_record_remove"
+        android:title="@string/remove"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_search_imdb"
+        android:icon="?attr/ic_menu_search"
+        android:title="@string/search_imdb"/>
+    <item
+        android:id="@+id/menu_search_epg"
+        android:icon="?attr/ic_menu_search"
+        android:title="@string/search_epg"/>
+
+</menu>

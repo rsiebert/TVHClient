@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Font for the title text in the actionbar at the top -->
+    <style name="ActionbarTitleFont.Light" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">#ce000000</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ActionbarTitleFont.Dark" parent="ActionbarTitleFont.Light">
+        <item name="android:textColor">#ceffffff</item>
+    </style>
+
+    <!-- Font for the subtitle text in the actionbar at the top -->
+    <style name="ActionbarSubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#ac000000</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ActionbarSubtitleFont.Dark" parent="ActionbarSubtitleFont.Light">
+        <item name="android:textColor">#acffffff</item>
+    </style>
+
+    <!-- Font for the title texts in various screens -->
+    <style name="TitleFont.Light" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">#ce000000</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TitleFont.Dark" parent="TitleFont.Light">
+        <item name="android:textColor">#ceffffff</item>
+    </style>
+
+    <!-- Font for the subtitles in various screens -->
+    <style name="SubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#ac000000</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="SubtitleFont.Dark" parent="SubtitleFont.Light">
+        <item name="android:textColor">#acffffff</item>
+    </style>
+
+    <!-- Font for the content in various screens -->
+    <style name="ContentFont.Light" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#7c000000</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ContentFont.Dark" parent="ContentFont.Light">
+        <item name="android:textColor">#7cffffff</item>
+    </style>
+
+    <!-- Font for the menu texts in the navigation drawer -->
+    <style name="MenuTitleFont.Light" parent="@android:style/TextAppearance">
+        <item name="android:textColor">#ae000000</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="MenuTitleFont.Dark" parent="MenuTitleFont.Light">
+        <item name="android:textColor">#aeffffff</item>
+    </style>
+
+    <style name="MenuSubtitleFont.Light" parent="@android:style/TextAppearance">
+        <item name="android:textColor">#7c000000</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="MenuSubtitleFont.Dark" parent="MenuSubtitleFont.Light">
+        <item name="android:textColor">#7cffffff</item>
+    </style>
+
+    <!-- Font for the program title in the program guide screen -->
+    <style name="ProgramGuideTimelineFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#ce000000</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ProgramGuideTimelineFont.Dark" parent="ProgramGuideTimelineFont.Light">
+        <item name="android:textColor">#ceffffff</item>
+    </style>
+
+    <!-- Font for the program title in the program guide screen -->
+    <style name="ProgramGuideTitleFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#ac000000</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light">
+        <item name="android:textColor">#acffffff</item>
+    </style>
+
+    <!-- Font for the additional information in the program guide screen -->
+    <style name="ProgramGuideContentFont.Light" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#7c000000</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ProgramGuideContentFont.Dark" parent="ProgramGuideContentFont.Light">
+        <item name="android:textColor">#7cffffff</item>
+    </style>
+
+    <style name="dialog_animation_fade">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="spinnerItemStyle">
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="spinnerItemStyle.Light" parent="spinnerItemStyle">
+        <item name="android:textColor">#7c000000</item>
+    </style>
+    <style name="spinnerItemStyle.Dark" parent="spinnerItemStyle.Light">
+        <item name="android:textColor">#7cffffff</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyle">
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="spinnerDropDownItemStyle.Light" parent="spinnerDropDownItemStyle">
+        <item name="android:textColor">#7c000000</item>
+    </style>
+    <style name="spinnerDropDownItemStyle.Dark" parent="spinnerDropDownItemStyle.Light">
+        <item name="android:textColor">#7cffffff</item>
+    </style>
+
+    <!-- Styles that will be used for the dark holo theme -->
+    <style name="CustomTheme" parent="Theme.AppCompat">
+        <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
+        <item name="ic_menu_save">@drawable/ic_menu_save_dark</item>
+        <item name="ic_menu_cancel">@drawable/ic_menu_cancel_dark</item>
+        <item name="ic_menu_add">@drawable/ic_menu_new_dark</item>
+        <item name="ic_menu_download">@drawable/ic_menu_download_dark</item>
+        <item name="ic_menu_tags">@drawable/ic_menu_tags_dark</item>
+        <item name="ic_menu_record_once">@drawable/ic_menu_record_once_dark</item>
+        <item name="ic_menu_record_series">@drawable/ic_menu_record_series_dark</item>
+        <item name="ic_menu_record_cancel">@drawable/ic_menu_record_cancel_dark</item>
+        <item name="ic_menu_record_remove">@drawable/ic_menu_record_remove_dark</item>
+        <item name="ic_menu_refresh">@drawable/ic_menu_refresh_dark</item>
+        <item name="ic_menu_settings">@drawable/ic_menu_settings_dark</item>
+        <item name="ic_menu_play">@drawable/ic_menu_play_dark</item>
+        <item name="ic_menu_delete">@drawable/ic_menu_delete_dark</item>
+        <item name="ic_menu_edit">@drawable/ic_menu_edit_dark</item>
+        <item name="ic_menu_timeframe">@drawable/ic_menu_timeframe_dark</item>
+        <item name="ic_menu_wol">@drawable/ic_menu_send_wol_dark</item>
+        <item name="ic_menu_help">@drawable/ic_menu_help_dark</item>
+        <item name="ic_menu_info">@drawable/ic_menu_info_dark</item>
+        <item name="ic_arrow_drop_down">@drawable/ic_arrow_drop_down_dark</item>
+        <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_dark</item>
+        <item name="item_active">@drawable/item_active_dark</item>
+        <item name="item_not_active">@drawable/item_not_active_dark</item>
+        <item name="ActionbarTitleFont">@style/ActionbarTitleFont.Dark</item>
+        <item name="ActionbarSubtitleFont">@style/ActionbarSubtitleFont.Dark</item>
+        <item name="TitleFont">@style/TitleFont.Dark</item>
+        <item name="SubtitleFont">@style/SubtitleFont.Dark</item>
+        <item name="ContentFont">@style/ContentFont.Dark</item>
+        <item name="MenuTitleFont">@style/MenuTitleFont.Dark</item>
+        <item name="MenuSubtitleFont">@style/MenuSubtitleFont.Dark</item>
+        <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Dark</item>
+        <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
+        <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
+        <item name="TimelineItemLayoutStyle">@drawable/timeline_item_dark</item>
+        <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_dark</item>
+        <item name="MenuItemLayoutStyle">@drawable/menu_item_dark</item>
+        <item name="MenuHeaderLayoutStyle">@drawable/menu_header_dark</item>
+        <item name="menu_text_selector">@drawable/menu_text_selector_dark</item>
+        <item name="android:windowBackground">@color/window_background_color_dark</item>
+        <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_dark</item>
+        <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
+
+        <!-- For the resting Spinner style -->
+        <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Dark</item>
+        <!-- For each individual Spinner list item once clicked on -->
+        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Dark</item>
+    </style>
+
+    <!-- Styles that will be used for the light holo theme -->
+    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light">
+        <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
+        <item name="ic_menu_save">@drawable/ic_menu_save_light</item>
+        <item name="ic_menu_cancel">@drawable/ic_menu_cancel_light</item>
+        <item name="ic_menu_add">@drawable/ic_menu_new_light</item>
+        <item name="ic_menu_download">@drawable/ic_menu_download_light</item>
+        <item name="ic_menu_tags">@drawable/ic_menu_tags_light</item>
+        <item name="ic_menu_record_once">@drawable/ic_menu_record_once_light</item>
+        <item name="ic_menu_record_series">@drawable/ic_menu_record_series_light</item>
+        <item name="ic_menu_record_cancel">@drawable/ic_menu_record_cancel_light</item>
+        <item name="ic_menu_record_remove">@drawable/ic_menu_record_remove_light</item>
+        <item name="ic_menu_refresh">@drawable/ic_menu_refresh_light</item>
+        <item name="ic_menu_settings">@drawable/ic_menu_settings_light</item>
+        <item name="ic_menu_play">@drawable/ic_menu_play_light</item>
+        <item name="ic_menu_delete">@drawable/ic_menu_delete_light</item>
+        <item name="ic_menu_edit">@drawable/ic_menu_edit_light</item>
+        <item name="ic_menu_timeframe">@drawable/ic_menu_timeframe_light</item>
+        <item name="ic_menu_wol">@drawable/ic_menu_send_wol_light</item>
+        <item name="ic_menu_help">@drawable/ic_menu_help_light</item>
+        <item name="ic_menu_info">@drawable/ic_menu_info_light</item>
+        <item name="ic_arrow_drop_down">@drawable/ic_arrow_drop_down_light</item>
+        <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_light</item>
+        <item name="item_active">@drawable/item_active_light</item>
+        <item name="item_not_active">@drawable/item_not_active_light</item>
+        <item name="ActionbarTitleFont">@style/ActionbarTitleFont.Light</item>
+        <item name="ActionbarSubtitleFont">@style/ActionbarSubtitleFont.Light</item>
+        <item name="TitleFont">@style/TitleFont.Light</item>
+        <item name="SubtitleFont">@style/SubtitleFont.Light</item>
+        <item name="ContentFont">@style/ContentFont.Light</item>
+        <item name="MenuTitleFont">@style/MenuTitleFont.Light</item>
+        <item name="MenuSubtitleFont">@style/MenuSubtitleFont.Light</item>
+        <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Light</item>
+        <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
+        <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
+        <item name="TimelineItemLayoutStyle">@drawable/timeline_item_light</item>
+        <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_light</item>
+        <item name="MenuItemLayoutStyle">@drawable/menu_item_light</item>
+        <item name="MenuHeaderLayoutStyle">@drawable/menu_header_light</item>
+        <item name="menu_text_selector">@drawable/menu_text_selector_light</item>
+        <item name="android:windowBackground">@color/window_background_color_light</item>
+        <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_light</item>
+        <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
+
+        <!-- For the resting Spinner style -->
+        <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Light</item>
+        <!-- For each individual Spinner list item once clicked on -->
+        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Light</item>
+    </style>
+
+</resources>

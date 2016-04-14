@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_scodec_list_display">
+        <item>Pass-through</item>
+        <item>Geen</item>
+    </string-array>
+
+    <string-array name="pref_menu_names">
+        <item>Kanalen</item>
+        <item>Voltooide opnames</item>
+        <item>Geplande opnames</item>
+        <item>Automatische opnames</item>
+        <item>Handmatige opnames</item>
+        <item>Gefaalde opnames</item>
+        <item>Programmagids</item>
+        <item>Status</item>
+        <item>Instellingen</item>
+        <item>Connecties</item>
+        <item>Informatie en hulp</item>
+        <item>Inschakelen Extras</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Gedefinieerd door de server</item>
+        <item>Kanaal naam</item>
+        <item>Kanaal nummer</item>
+    </string-array>
+
+    <string-array name="day_short_names">
+        <item>Maa</item>
+        <item>Din</item>
+        <item>Woe</item>
+        <item>Don</item>
+        <item>Vri</item>
+        <item>Zat</item>
+        <item>Zon</item>
+    </string-array>
+
+    <string-array name="day_long_names">
+        <item>Maandag</item>
+        <item>Dinsdag</item>
+        <item>Woensdag</item>
+        <item>Donderdag</item>
+        <item>Vrijdag</item>
+        <item>Zaterdag</item>
+        <item>Zondag</item>
+    </string-array>
+
+    <string-array name="pr_content_type0">
+        <item>Film/Drama</item>
+        <item>Nieuws/Actuele items</item>
+        <item>Show/Spel show</item>
+        <item>Sport</item>
+        <item>Kinderen/Jeugd</item>
+        <item>Muziek/Ballet/Dans</item>
+        <item>Kunst/Cultuur</item>
+        <item>Sociaal/Politieke issues/Economie</item>
+        <item>Educatie/Wetenschap/Feiten</item>
+        <item>Vrije tijd en hobbies</item>
+        <item>Anders</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Film/Drama</item>
+        <item>Detective/Thriller</item>
+        <item>Avontuur/Western/Oorlog</item>
+        <item>Science Fiction/Fantasie/Horror</item>
+        <item>Komedie</item>
+        <item>Soap/Melodrama/Folkloristische</item>
+        <item>Romantisch</item>
+        <item>Serieus/Religie/Historisch</item>
+        <item>Volwassene Film/Drama</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>Nieuws/Actuele items</item>
+        <item>Nieuws/Weerbericht</item>
+        <item>Magazine</item>
+        <item>Documantaire</item>
+        <item>Discussie/Interview/Debat</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Show/Spel show</item>
+        <item>Spel show/Quiz/Competitie</item>
+        <item>Varieteit</item>
+        <item>Praatprogramma</item>
+    </string-array>
+
+    <string-array name="pr_content_type4">
+        <item>Sport</item>
+        <item>Speciaal evenement</item>
+        <item>Magazine</item>
+        <item>Football/Voetbal</item>
+        <item>Tennis/Squash</item>
+        <item>Teamsport</item>
+        <item>Atheletiek</item>
+        <item>Motorsport</item>
+        <item>Watersport</item>
+        <item>Wintersport</item>
+        <item>Paardrijden</item>
+        <item>Vechtsport</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Kinderen/Jeugd</item>
+        <item>Peuterschool</item>
+        <item>Entertainment (6 tot 14 jarigen)</item>
+        <item>Entertainment (10 tot 16 jarigen)</item>
+        <item>Informatie/Educatie/School</item>
+        <item>Tekenfilm/Poppen</item>
+    </string-array>
+
+    <string-array name="pr_content_type6">
+        <item>Musiek/Ballet/Dans</item>
+        <item>Rock/Pop</item>
+        <item>Serieuze muziek/Klassieke muziek</item>
+        <item>Volks/Traditionele muziek</item>
+        <item>Jazz</item>
+        <item>Musical/Opera</item>
+        <item>Ballet</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Kunst/Kultuur</item>
+        <item>Uitvoerende Kunst</item>
+        <item>Fijne Kunst</item>
+        <item>Religie</item>
+        <item>Populaire Kulturele/Traditionele kunst</item>
+        <item>Literatuur</item>
+        <item>Film/Cinema</item>
+        <item>Experimentele Film/Video</item>
+        <item>Uitzending/Pers</item>
+        <item>Nieuwe Media</item>
+        <item>Magazine</item>
+        <item>Mode</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Sociaal/Politieke issues/Economie</item>
+        <item>Magazine/Report/Documentaire</item>
+        <item>Economische/Sociale adviezen</item>
+        <item>Opmerkelijke Personen</item>
+    </string-array>
+
+    <string-array name="pr_content_type9">
+        <item>Educatie/Wetenschap/Feiten</item>
+        <item>Natuur/Dieren/Omgeving</item>
+        <item>Technologie/Natuur wetenschappen</item>
+        <item>Medicijnen/Fysiologie/Psychologie</item>
+        <item>Buitenlandse Landen/Expedities</item>
+        <item>Sociale/Spirituele wetenschappen</item>
+        <item>Verdere Educatie</item>
+        <item>Talen</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Vrije tijd en hobbies</item>
+        <item>Tourisme/Reizen</item>
+        <item>Handwerk</item>
+        <item>Motor techniek</item>
+        <item>Fitness en Gezondheid</item>
+        <item>Koken</item>
+        <item>Advertentie/Kopen</item>
+        <item>Tuinieren</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Anders</item>
+        <item>Zwart en Wit</item>
+        <item>Niet gepubliceerd</item>
+        <item>Live uitzending</item>
+    </string-array>
+</resources>

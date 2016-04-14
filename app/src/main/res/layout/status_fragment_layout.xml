@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp" >
+
+        <TextView
+            android:id="@+id/connection_label"
+            style="?attr/TitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connection" />
+
+        <TextView
+            android:id="@+id/connection"
+            style="?attr/ContentFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/connection" />
+
+        <TextView
+            android:id="@+id/status_label"
+            style="?attr/TitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@string/status" />
+
+        <TextView
+            android:id="@+id/status"
+            style="?attr/ContentFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/status" />
+
+        <LinearLayout
+            android:id="@+id/additional_information_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/channel_label"
+                style="?attr/TitleFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/channels" />
+
+            <TextView
+                android:id="@+id/channels"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="@string/channels" />
+
+            <TextView
+                android:id="@+id/recording_label"
+                style="?attr/TitleFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/recordings" />
+
+            <TextView
+                android:id="@+id/completed_recordings"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/completed_recordings" />
+
+            <TextView
+                android:id="@+id/upcoming_recordings"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/upcoming_recordings" />
+
+            <TextView
+                android:id="@+id/failed_recordings"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="@string/failed_recordings" />
+
+            <TextView
+                android:id="@+id/series_recording_label"
+                style="?attr/TitleFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/series_recordings" />
+
+            <TextView
+                android:id="@+id/series_recordings"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="@string/series_recordings" />
+
+            <TextView
+                android:id="@+id/timer_recording_label"
+                style="?attr/TitleFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/timer_recordings" />
+
+            <TextView
+                android:id="@+id/timer_recordings"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="@string/timer_recordings" />
+
+            <TextView
+                android:id="@+id/currently_recording_label"
+                style="?attr/TitleFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/currently_recording" />
+
+            <TextView
+                android:id="@+id/currently_recording"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="@string/nothing" />
+
+            <TextView
+                android:id="@+id/discspace_label"
+                style="?attr/TitleFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/disc_space" />
+
+            <TextView
+                android:id="@+id/total_discspace"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/unknown" />
+
+            <TextView
+                android:id="@+id/free_discspace"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/unknown" />
+
+            <TextView
+                android:id="@+id/server_api_version_label"
+                style="?attr/TitleFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/server_api_version" />
+
+            <TextView
+                android:id="@+id/server_api_version"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/unknown" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

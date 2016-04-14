@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference
+        android:defaultValue=""
+        android:key="pref_name"
+        android:summary="@string/pref_name_sum"
+        android:title="@string/pref_name" />
+    <EditTextPreference
+        android:defaultValue=""
+        android:key="pref_address"
+        android:summary="@string/pref_host_sum"
+        android:title="@string/pref_host" />
+    <EditTextPreference
+        android:defaultValue="9982"
+        android:inputType="number"
+        android:key="pref_port"
+        android:summary="@string/pref_port_sum"
+        android:title="@string/pref_port" />
+    <EditTextPreference
+		android:defaultValue="9981"
+		android:inputType="number"
+		android:key="pref_streaming_port"
+		android:summary="@string/pref_streaming_port_sum"
+		android:title="@string/pref_streaming_port" />
+    <EditTextPreference
+        android:defaultValue=""
+        android:key="pref_username"
+        android:summary="@string/pref_user_sum"
+        android:title="@string/pref_user" />
+    <EditTextPreference
+        android:defaultValue=""
+        android:inputType="textPassword"
+        android:key="pref_password"
+        android:summary="@string/pref_pass_sum"
+        android:title="@string/pref_pass" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_selected"
+        android:summary="@string/pref_selected_sum"
+        android:title="@string/pref_selected" />
+    <EditTextPreference
+        android:defaultValue=""
+        android:key="pref_wol_address"
+        android:summary="@string/pref_wol_address_sum"
+        android:title="@string/pref_wol_address" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_wol_broadcast"
+        android:summary="@string/pref_wol_broadcast_sum"
+        android:title="@string/pref_wol_broadcast" />
+    <EditTextPreference
+        android:defaultValue="9"
+        android:inputType="number"
+        android:key="pref_wol_port"
+        android:summary="@string/pref_wol_port_sum"
+        android:title="@string/pref_wol_port" />
+</PreferenceScreen>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="56dp"
+        android:layout_height="40dp"
+        android:contentDescription="@null"
+        android:paddingEnd="0dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="0dp"
+        android:paddingStart="16dp"
+        android:scaleType="fitStart" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/title"
+                style="?attr/TitleFont"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:ellipsize="end"
+                android:paddingEnd="16dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="16dp"
+                android:paddingStart="0dp"
+                android:text="@string/title" />
+
+            <ImageView
+                android:id="@+id/state"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/subtitle"
+            style="?attr/SubtitleFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/subtitle" />
+
+        <TextView
+            android:id="@+id/summary"
+            style="?attr/SubtitleFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/summary" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/channel"
+                style="?attr/ContentFont"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:paddingEnd="16dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="16dp"
+                android:paddingStart="0dp"
+                android:text="@string/channel" />
+
+            <TextView
+                android:id="@+id/duration"
+                style="?attr/ContentFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="end"
+                android:text="@string/duration" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/date"
+                style="?attr/ContentFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:paddingEnd="16dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="16dp"
+                android:paddingStart="0dp"
+                android:text="@string/date" />
+
+            <TextView
+                android:id="@+id/time"
+                style="?attr/ContentFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="end"
+                android:text="@string/time" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/description"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:text="@string/description" />
+
+        <TextView
+            android:id="@+id/is_series_recording"
+            style="?attr/SubtitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/is_series_recording" />
+
+        <TextView
+            android:id="@+id/is_timer_recording"
+            style="?attr/SubtitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/is_timer_recording" />
+
+        <TextView
+            android:id="@+id/failed_reason"
+            style="?attr/SubtitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="@null" />
+    </LinearLayout>
+
+</merge>

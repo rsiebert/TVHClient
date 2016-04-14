@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/menu_send_wol"
+        android:icon="?attr/ic_menu_wol"
+        android:title="@string/send_wol"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_set_active"
+        android:icon="?attr/item_active"
+        android:title="@string/set_active"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_set_not_active"
+        android:icon="?attr/item_not_active"
+        android:title="@string/set_not_active"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_edit"
+        android:icon="?attr/ic_menu_edit"
+        android:title="@string/edit"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_delete"
+        android:icon="?attr/ic_menu_delete"
+        android:title="@string/delete"/>
+
+</menu>

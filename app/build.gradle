@@ -1,0 +1,42 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "org.tvheadend.tvhclient"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 81
+        versionName "1.9.1"
+        setProperty("archivesBaseName", "TVHClient-$versionName")
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://jitpack.io"
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:design:23.3.0'
+    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.android.support:mediarouter-v7:23.3.0'
+    compile 'com.github.vajro:MaterialDesignLibrary:1.6'
+    compile 'com.google.android.libraries.cast.companionlibrary:ccl:2.8.3'
+    compile 'com.anjlab.android.iab.v3:library:1.0.31'
+    compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
+    compile 'com.nineoldandroids:library:2.4.0'
+}

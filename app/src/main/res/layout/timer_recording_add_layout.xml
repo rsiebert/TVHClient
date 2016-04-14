@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/toolbar_background_color" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" >
+
+                <CheckBox
+                    android:id="@+id/is_enabled"
+                    style="?attr/SubtitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/activate_recording" />
+
+                <TextView
+                    android:id="@+id/title_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/title" />
+
+                <EditText
+                    android:id="@+id/title"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_title"
+                    android:inputType="text"
+                    android:paddingBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/name_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/name" />
+
+                <EditText
+                    android:id="@+id/name"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_name"
+                    android:inputType="text"
+                    android:paddingBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/channel_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/channel" />
+
+                <TextView
+                    android:id="@+id/channel"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                    android:drawablePadding="4dp"
+                    android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/not_set" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" >
+
+                    <TextView
+                        android:id="@+id/start_time_label"
+                        style="?attr/TitleFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="16dp"
+                        android:text="@string/start_time" />
+
+                    <TextView
+                        android:id="@+id/stop_time_label"
+                        style="?attr/TitleFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_toEndOf="@+id/start_time_label"
+                        android:layout_toRightOf="@+id/start_time_label"
+                        android:paddingTop="16dp"
+                        android:text="@string/stop_time" />
+
+                    <TextView
+                        android:id="@+id/start_time"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/start_time_label"
+                        android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                        android:drawablePadding="4dp"
+                        android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:text="@string/not_set" />
+
+                    <TextView
+                        android:id="@+id/stop_time"
+                        style="?attr/ContentFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@+id/stop_time_label"
+                        android:layout_alignStart="@+id/stop_time_label"
+                        android:layout_below="@+id/stop_time_label"
+                        android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                        android:drawablePadding="4dp"
+                        android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:text="@string/not_set" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/days_of_week_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/days_of_week" />
+
+                <LinearLayout
+                    android:id="@+id/days_of_week_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="16dp" >
+
+                    <!-- The days of week toggle buttons are added programatically -->
+                </LinearLayout>
+
+                <!-- Below are additional input fields -->
+
+                <TextView
+                    android:id="@+id/priority_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/priority" />
+
+                <TextView
+                    android:id="@+id/priority"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                    android:drawablePadding="4dp"
+                    android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/not_set" />
+
+                <TextView
+                    android:id="@+id/dvr_config_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/dvr_config" />
+
+                <TextView
+                    android:id="@+id/dvr_config"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+                    android:drawablePadding="4dp"
+                    android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/not_set" />
+            </LinearLayout>
+        </ScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_elevation"
+            android:background="@drawable/toolbar_dropshadow" />
+    </FrameLayout>
+
+</LinearLayout>

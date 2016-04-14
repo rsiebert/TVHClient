@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Colors for the program guide genres, taken from XBMC -->
+
+    <!-- movie drama, orange -->
+	<color name="EPG_MOVIES">#db7817</color>
+	<!-- news, green -->
+	<color name="EPG_NEWS">#649a64</color>
+	<!-- show, yellow -->
+	<color name="EPG_SHOWS">#dbd917</color>
+	<!-- sports, red -->
+	<color name="EPG_SPORTS">#ed0e28</color>
+	<!-- child, turquoise -->
+	<color name="EPG_CHILD">#17dbc2</color>
+	<!-- music, bright green -->
+	<color name="EPG_MUSIC">#41ea4d</color>
+	<!-- arts, blue -->
+	<color name="EPG_ARTS">#0043ec</color>
+	<!-- social, grey -->
+	<color name="EPG_SOCIAL">#c6c8cb</color>
+	<!-- science, violet -->
+	<color name="EPG_SCIENCE">#9e209e</color>
+	<!-- hobby, grey blue -->
+	<color name="EPG_HOBBY">#9393cf</color>
+	<!-- special, cyan -->
+	<color name="EPG_SPECIAL">#1da1b1</color>
+	<!-- other/unknown, dark grey -->
+	<color name="EPG_OTHER">#7f8185</color>
+
+	<!-- Drawer menu item background -->
+	<color name="drawer_background_light">#ffeeeeee</color>
+	<color name="drawer_background_dark">#ff191919</color>
+
+	<!-- Drawer menu background when it is selected  -->
+    <color name="drawer_selected_light">#aadedede</color>
+    <color name="drawer_selected_dark">#666e6e6e</color>
+
+	<color name="menu_text_background_light">#ffececed</color>
+	<color name="menu_text_background_dark">#ff363637</color>
+
+    <color name="menu_text_selected_light">#aabebebe</color>
+    <color name="menu_text_selected_dark">#66bebebe</color>
+
+    <color name="button_text_color_light">#ff009688</color>
+    <color name="button_text_color_dark">#ff80cbc4</color>
+
+    <!-- Toolbar background -->
+    <color name="toolbar_background_color_light">#88bdbdbd</color>
+    <color name="toolbar_background_color_dark">#77212121</color>
+
+    <!-- Theme colors -->
+    <color name="window_background_color_light">#fff5f5f5</color>
+    <color name="window_background_color_dark">#ff171717</color>
+</resources>

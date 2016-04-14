@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="programs">
+        <item quantity="one">%d Program</item>
+        <item quantity="other">%d Programme</item>
+    </plurals>
+    <plurals name="items">
+        <item quantity="one">%d Eintrag</item>
+        <item quantity="other">%d Einträge</item>
+    </plurals>
+    <plurals name="recordings">
+        <item quantity="one">%d Aufnahme</item>
+        <item quantity="other">%d Aufnahmen</item>
+    </plurals>
+    <plurals name="completed_recordings">
+        <item quantity="one">%d Abgeschlossene Aufnahme</item>
+        <item quantity="other">%d Abgeschlossene Aufnahmen</item>
+    </plurals>
+    <plurals name="upcoming_recordings">
+        <item quantity="one">%d Geplante Aufnahme</item>
+        <item quantity="other">%d Geplante Aufnahmen</item>
+    </plurals>
+    <plurals name="failed_recordings">
+        <item quantity="one">%d Fehlerhafte Aufnahme</item>
+        <item quantity="other">%d Fehlerhafte Aufnahmen</item>
+    </plurals>
+    <plurals name="results">
+        <item quantity="one">%d Ergebnis</item>
+        <item quantity="other">%d Ergebnisse</item>
+    </plurals>
+
+</resources>

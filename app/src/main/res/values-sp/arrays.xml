@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_scodec_list_display">
+        <item>Segun fuente</item>
+        <item>Ninguno</item>
+    </string-array>
+
+    <string-array name="pref_menu_names">
+        <item>Canales</item>
+        <item>Grabaciones completadas</item>
+        <item>Grabaciones programadas</item>
+        <item>Grabaciones en serie</item>
+        <item>Programar grabaciones</item>
+        <item>Grabaciones fallidas</item>
+        <item>Guía de programas</item>
+        <item>Estado</item>
+        <item>Ajustes</item>
+        <item>Conexiones</item>
+        <item>Información y ayuda</item>
+        <item>Habilitar extras</item>
+    </string-array>
+
+    <string-array name="pref_sort_channels_names">
+        <item>Definidos en el servidor</item>
+        <item>Nombre de canal</item>
+        <item>Número de canal</item>
+    </string-array>
+
+    <string-array name="day_short_names">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mie</item>
+        <item>Jue</item>
+        <item>Vie</item>
+        <item>Sab</item>
+        <item>Dom</item>
+    </string-array>
+
+    <string-array name="day_long_names">
+        <item>Lunes</item>
+        <item>Martes</item>
+        <item>Miércoles</item>
+        <item>Jueves</item>
+        <item>Viernes</item>
+        <item>Sábado</item>
+        <item>Domingo</item>
+    </string-array>
+
+    <string-array name="dvr_priorities">
+        <item>Importante</item>
+        <item>Alta</item>
+        <item>Normal</item>
+        <item>Baja</item>
+        <item>Sin importancia</item>
+        <item>Sin ajustar</item>
+    </string-array>
+    
+    <string-array name="pr_content_type0">
+        <item>Película/Drama</item>
+        <item>Noticias/Actualidad</item>
+        <item>Espectáculos/Juegos</item>
+        <item>Deportes</item>
+        <item>Niños/Jóvenes</item>
+        <item>Música/Ballet/Danza</item>
+        <item>Artes/Cultura</item>
+        <item>Sociedad/Política/Economía</item>
+        <item>Educación/Ciencia/Hechos</item>
+        <item>Ocio y entretenimiento</item>
+        <item>Miscelánea</item>
+    </string-array>
+
+    <string-array name="pr_content_type1">
+        <item>Película/Drama</item>
+        <item>Detectives/Thriller</item>
+        <item>Aventuras/Western/Bélica</item>
+        <item>Ciencia Ficción/Fantástica/Terror</item>
+        <item>Comedia</item>
+        <item>Novela/Melodrama/Tradicional</item>
+        <item>Romántica</item>
+        <item>Seria/Clasica religiosa/Histórica</item>
+        <item>Película para adultos/Drama</item>
+    </string-array>
+
+    <string-array name="pr_content_type2">
+        <item>Noticias/Actualidad</item>
+        <item>Noticias/Información Meteorológica</item>
+        <item>Magacine</item>
+        <item>Documental</item>
+        <item>Discusión/Entrevista/Debate</item>
+    </string-array>
+
+    <string-array name="pr_content_type3">
+        <item>Espectáculos/Juegos</item>
+        <item>Juegos/Concursos</item>
+        <item>Variedades</item>
+        <item>Talk show</item>
+    </string-array>
+    
+    <string-array name="pr_content_type4">
+        <item>Deportes</item>
+        <item>Eventos especiales</item>
+        <item>Magacine</item>
+        <item>Fútbol</item>
+        <item>Tenis/Squash</item>
+        <item>Deportes de equipo</item>
+        <item>Atletismo</item>
+        <item>Deportes de motor</item>
+        <item>Deportes de agua</item>
+        <item>Deportes de invierno</item>
+        <item>Hípica</item>
+        <item>Artes marciales</item>
+    </string-array>
+
+    <string-array name="pr_content_type5">
+        <item>Niños/Jóvenes</item>
+        <item>Pre-escolar</item>
+        <item>Entretenimiento (6 a 14 años)</item>
+        <item>Entretenimiento (10 a 16 años)</item>
+        <item>Informativo/Educativo/Escolar</item>
+        <item>Dibujos animados/Marionetas</item>
+    </string-array>
+    
+    <string-array name="pr_content_type6">
+        <item>Música/Ballet/Danza</item>
+        <item>Rock/Pop</item>
+        <item>Seria/Clásica</item>
+        <item>Folclórica/Tradicional</item>
+        <item>Jazz</item>
+        <item>Musical/Opera</item>
+        <item>Ballet</item>
+    </string-array>
+
+    <string-array name="pr_content_type7">
+        <item>Arte/Cultura</item>
+        <item>Artes escénicas</item>
+        <item>Bellas artes</item>
+        <item>Religion</item>
+        <item>Cultura popular/Tradicionales</item>
+        <item>Literatura</item>
+        <item>Cine</item>
+        <item>Cine experimental/Video</item>
+        <item>Retransmisiones/Prensa</item>
+        <item>Nuevos medios</item>
+        <item>Magacine</item>
+        <item>Moda</item>
+    </string-array>
+
+    <string-array name="pr_content_type8">
+        <item>Social/Política/Economia</item>
+        <item>Magacine/Reportaje/Documental</item>
+        <item>Ciencias económicas/Asesor social</item>
+        <item>Personas notables</item>
+    </string-array>
+ 
+    <string-array name="pr_content_type9">
+        <item>Educación/Ciencia/Hechos</item>        
+        <item>Naturaleza/Animales/Entorno</item>
+        <item>Tecnología/Ciencias naturales</item>
+        <item>Medicina/Fisiología/Psicología</item>
+        <item>Paises extranjeros/Expediciones</item>
+        <item>Social/Ciencias espirituales</item>
+        <item>Educación superior</item>
+        <item>Idiomas</item>
+    </string-array>
+
+    <string-array name="pr_content_type10">
+        <item>Ocio</item>
+        <item>Turismo/Viajes</item>
+        <item>Artesanía</item>
+        <item>Automovilismo</item>
+        <item>Deporte y Salud</item>
+        <item>Cocina</item>
+        <item>Publicidad/Compras</item>
+        <item>Jardinería</item>
+    </string-array>
+
+    <string-array name="pr_content_type11">
+        <item>Miscelánea</item>
+        <item>Blanco y negro</item>
+        <item>Inédito</item>
+        <item>Retransmisión en vivo</item>
+    </string-array>
+</resources>
