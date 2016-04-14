@@ -109,7 +109,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
             // Show the available fragment
             getSupportFragmentManager().beginTransaction()
                     .replace(android.R.id.content, fragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         }
     }
@@ -172,7 +172,11 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     private void removePreviousFragment() {
         Fragment f = getSupportFragmentManager().findFragmentById(android.R.id.content);
         if (f != null) {
-            getSupportFragmentManager().beginTransaction().remove(f).commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                    .remove(f)
+                    .commit();
         }
     }
 
@@ -233,7 +237,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }
 
@@ -242,7 +246,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         currentSettingsMode = LIST_CONNECTIONS;
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsShowConnectionsFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
     }
@@ -252,7 +256,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         currentSettingsMode = ADD_CONNECTION;
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsManageConnectionFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
     }
@@ -265,7 +269,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         Fragment f = Fragment.instantiate(this, SettingsManageConnectionFragment.class.getName());
         f.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
     }
@@ -275,7 +279,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         currentSettingsMode = PROFILES;
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsProfilesFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
     }
@@ -285,7 +289,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         currentSettingsMode = TRANSCODING;
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsTranscodingFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
     }
@@ -295,7 +299,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         currentSettingsMode = TRANSCODING;
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsNotificationFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
     }
@@ -305,7 +309,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         currentSettingsMode = CASTING;
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsCastingFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
     }
