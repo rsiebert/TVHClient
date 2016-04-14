@@ -33,6 +33,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Base64;
@@ -46,6 +47,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 public class Utils {
@@ -68,8 +70,8 @@ public class Utils {
     /**
      * Returns the id of the theme that is currently set in the settings.
      * 
-     * @param context
-     * @return
+     * @param context Context
+     * @return Id of the light or dark theme
      */
     public static int getThemeId(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -80,31 +82,30 @@ public class Utils {
     /**
      * Returns the information if channels shall be shown or not
      * 
-     * @param context
-     * @return
+     * @param context Context
+     * @return True if channel icons shall be shown, otherwise false
      */
     public static boolean showChannelIcons(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean showIcons = prefs.getBoolean("showIconPref", true);
-        return showIcons;
+        return prefs.getBoolean("showIconPref", true);
     }
 
     /**
      * Returns the information if channels shall be shown or not
      * 
-     * @param context
-     * @return
+     * @param context Context
+     * @return True if channel tag icons shall be shown, otherwise false
      */
     public static boolean showChannelTagIcon(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean showIcons = prefs.getBoolean("showTagIconPref", false);
-        return showIcons;
+        return prefs.getBoolean("showTagIconPref", false);
     }
 
     /**
      * Combines the episode and series values into a single string
-     * @param info
-     * @return
+     * @param context Context
+     * @param info Season and episode information
+     * @return String with the season and episode
      */
     public static String buildSeriesInfoString(final Context context, final SeriesInfo info) {
         String s = "";
@@ -146,9 +147,9 @@ public class Utils {
 
     /**
      * Connects to the server with the currently active connection.
-     * 
-     * @param context
-     * @param force
+     *
+     * @param context Context
+     * @param force   Set to true to close and reconnect to the server, then get all data. Set it to false to only reload the data.
      */
     public static void connect(final Context context, final boolean force) {
         // Create an intent and pass on the connection details
@@ -166,46 +167,29 @@ public class Utils {
             intent.putExtra("force", force);
         }
         // Start the service with given action and data
-        if (intent != null) {
-            context.startService(intent);
-        }
+        context.startService(intent);
     }
 
-    /**
-     * 
-     * @param context
-     * @param rec
-     */
     public static void confirmRemoveRecording(final Activity activity, final Recording rec) {
         confirmRemoveRecording(activity, 
-                Constants.ACTION_DELETE_DVR_ENTRY, 
-                (rec.title != null ? rec.title : ""), 
+                Constants.ACTION_DELETE_DVR_ENTRY,
+                (rec.title != null ? rec.title : ""),
                 String.valueOf(rec.id),
                 false);
     }
 
-    /**
-     * 
-     * @param context
-     * @param srec
-     */
     public static void confirmRemoveRecording(final Activity activity, final SeriesRecording srec) {
         confirmRemoveRecording(activity, 
-                Constants.ACTION_DELETE_SERIES_DVR_ENTRY, 
-                (srec.title != null ? srec.title : ""), 
+                Constants.ACTION_DELETE_SERIES_DVR_ENTRY,
+                (srec.title != null ? srec.title : ""),
                 srec.id,
                 false);
     }
 
-    /**
-     * 
-     * @param context
-     * @param trec
-     */
     public static void confirmRemoveRecording(final Activity activity, final TimerRecording trec) {
         confirmRemoveRecording(activity, 
-                Constants.ACTION_DELETE_TIMER_REC_ENTRY, 
-                (trec.name.length() > 0 ? trec.name : trec.title), 
+                Constants.ACTION_DELETE_TIMER_REC_ENTRY,
+                (trec.name.length() > 0 ? trec.name : trec.title),
                 trec.id,
                 (trec.channel == null));
     }
@@ -213,23 +197,28 @@ public class Utils {
     /**
      * Removes the recording with the given id from the server. A dialog is
      * shown up front to confirm the deletion.
-     * 
-     * @param context
-     * @param type
-     * @param title
-     * @param id
+     *
+     * @param activity     Activity context
+     * @param type         Type of the recording
+     * @param title        Title to display in the confirmation dialog
+     * @param id           Id of the recording
+     * @param manualRemove True to remove the recording from the internal list and don't wait for the server response
      */
     public static void confirmRemoveRecording(final Activity activity,
             final String type, final String title, final String id,
-            final boolean reloadRequired) {
+            final boolean manualRemove) {
 
         String message = "";
-        if (type == Constants.ACTION_DELETE_DVR_ENTRY) {
-            message = activity.getString(R.string.remove_recording, title);
-        } else if (type == Constants.ACTION_DELETE_SERIES_DVR_ENTRY) {
-            message = activity.getString(R.string.remove_series_recording, title);
-        } else if (type == Constants.ACTION_DELETE_TIMER_REC_ENTRY) {
-            message = activity.getString(R.string.remove_timer_recording, title);
+        switch (type) {
+            case Constants.ACTION_DELETE_DVR_ENTRY:
+                message = activity.getString(string.remove_recording, title);
+                break;
+            case Constants.ACTION_DELETE_SERIES_DVR_ENTRY:
+                message = activity.getString(string.remove_series_recording, title);
+                break;
+            case Constants.ACTION_DELETE_TIMER_REC_ENTRY:
+                message = activity.getString(string.remove_timer_recording, title);
+                break;
         }
 
         // Show a confirmation dialog before deleting the recording
@@ -238,27 +227,30 @@ public class Utils {
                 .content(message)
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        removeRecording(activity, id, type, reloadRequired);
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        removeRecording(activity, id, type, manualRemove);
                     }
-
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onNegative(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         // NOP
                     }
                 }).show();
     }
 
     /**
-     * 
-     * @param activity
-     * @param id
-     * @param type
+     * Removes the recording with the given id from the server.
+     *
+     * @param activity     Activity context
+     * @param id           Id of the recording
+     * @param type         Type of the recording
+     * @param manualRemove True to remove the recording from the internal list and don't wait for the server response
      */
     public static void removeRecording(final Activity activity, final String id,
-            final String type, boolean reloadRequired) {
+            final String type, boolean manualRemove) {
 
         final Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(type);
@@ -270,22 +262,15 @@ public class Utils {
         // When a recording without a channel is removed, the server
         // does not sent a confirmation. So manually remove the recording from
         // the list.
-        if (reloadRequired) {
+        if (manualRemove) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            if (type == Constants.ACTION_DELETE_TIMER_REC_ENTRY) {
+            if (type.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
                 app.log(TAG, "removeRecording, manually removing timer recording " + id);
                 app.removeTimerRecording(id);
             }
         }
     }
 
-    /**
-     * Notifies the server to cancel the recording with the given id. A dialog is shown
-     * up front to confirm the cancellation.
-     * 
-     * @param context
-     * @param rec
-     */
     public static void confirmCancelRecording(final Context context, final Recording rec) {
         if (rec == null) {
             return;
@@ -297,25 +282,20 @@ public class Utils {
                 .content(context.getString(R.string.cancel_recording, rec.title))
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         cancelRecording(context, rec);
                     }
-
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onNegative(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         // NOP
                     }
                 }).show();
     }
 
-    /**
-     * Notifies the server to cancel the recording with the given id.
-     * 
-     * @param context
-     * @param rec
-     */
     public static void cancelRecording(final Context context, final Recording rec) {
         if (rec == null) {
             return;
@@ -330,10 +310,10 @@ public class Utils {
      * Tells the server to record the program with the given id. If the
      * useSeriesRecording is set then a series recording rule will be created to
      * record that program repeatedly.
-     * 
-     * @param context
-     * @param program
-     * @param useSeriesRecording
+     *
+     * @param activity           Activity context
+     * @param program            Program
+     * @param useSeriesRecording True if a series recording shall be created and not a regular one
      */
     public static void recordProgram(final Activity activity, final Program program, final boolean useSeriesRecording) {
         if (program == null || program.channel == null) {
@@ -368,8 +348,8 @@ public class Utils {
      * Shows or hides certain items from the program menu. This depends on the
      * current state of the program.
      *
-     * @param menu
-     * @param program
+     * @param menu    Menu with all menu items
+     * @param program Program
      */
     public static void setProgramMenu(final TVHClientApplication app, final Menu menu, final Program program) {
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
@@ -432,10 +412,10 @@ public class Utils {
     /**
      * Shows an icon for the state of the current recording. If no recording was
      * given, the icon will be hidden.
-     * 
-     * @param activity
-     * @param state
-     * @param p
+     *
+     * @param activity Activity context
+     * @param state    Widget that shall show the program state
+     * @param p        Program
      */
     public static void setState(Activity activity, ImageView state, final Program p) {
         if (state == null) {
@@ -475,10 +455,10 @@ public class Utils {
     /**
      * Shows the given duration for the given view. If the duration is zero the
      * view will be hidden.
-     * 
-     * @param duration
-     * @param start
-     * @param stop
+     *
+     * @param duration Duration
+     * @param start    Start time
+     * @param stop     Stop time
      */
     public static void setDuration(TextView duration, final Date start, final Date stop) {
         if (duration == null || start == null || stop == null) {
@@ -496,9 +476,9 @@ public class Utils {
     /**
      * Shows the given time for the given view.
      * 
-     * @param time
-     * @param start
-     * @param stop
+     * @param time     Time
+     * @param start    Start time
+     * @param stop     Stop time
      */
     public static void setTime(TextView time, final Date start, final Date stop) {
         if (time == null || start == null || stop == null) {
@@ -506,22 +486,23 @@ public class Utils {
         }
         time.setVisibility(View.VISIBLE);
         final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
-        final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop); 
-        time.setText(startTime + " - " + endTime);
+        final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop);
+        String value = startTime + " - " + endTime;
+        time.setText(value);
     }
 
     /**
      * Shows the given date. The date for the first days will be shown as words.
      * After one week the date value will be used.
-     * 
-     * @param date
-     * @param start
+     *
+     * @param date  Date
+     * @param start Start time
      */
     public static void setDate(TextView date, final Date start) {
         if (date == null || start == null) {
             return;
         }
-        String dateText = "";
+        String dateText;
         if (DateUtils.isToday(start.getTime())) {
             // Show the string today
             dateText = date.getContext().getString(R.string.today);
@@ -542,40 +523,55 @@ public class Utils {
         }
 
         // Translate the day strings
-        if (dateText.equals("today")) {
-            date.setText(R.string.today);
-        } else if (dateText.equals("tomorrow")) {
-            date.setText(R.string.tomorrow);
-        } else if (dateText.equals("in 2 days")) {
-            date.setText(R.string.in_2_days);
-        } else if (dateText.equals("Monday")) {
-            date.setText(R.string.monday);
-        } else if (dateText.equals("Tuesday")) {
-            date.setText(R.string.tuesday);
-        } else if (dateText.equals("Wednesday")) {
-            date.setText(R.string.wednesday);
-        } else if (dateText.equals("Thursday")) {
-            date.setText(R.string.thursday);
-        } else if (dateText.equals("Friday")) {
-            date.setText(R.string.friday);
-        } else if (dateText.equals("Saturday")) {
-            date.setText(R.string.saturday);
-        } else if (dateText.equals("Sunday")) {
-            date.setText(R.string.sunday);
-        } else if (dateText.equals("yesterday")) {
-            date.setText(R.string.yesterday);
-        } else if (dateText.equals("2 days ago")) {
-            date.setText(R.string.two_days_ago);
-        } else {
-            date.setText(dateText);
+        switch (dateText) {
+            case "today":
+                date.setText(string.today);
+                break;
+            case "tomorrow":
+                date.setText(string.tomorrow);
+                break;
+            case "in 2 days":
+                date.setText(string.in_2_days);
+                break;
+            case "Monday":
+                date.setText(string.monday);
+                break;
+            case "Tuesday":
+                date.setText(string.tuesday);
+                break;
+            case "Wednesday":
+                date.setText(string.wednesday);
+                break;
+            case "Thursday":
+                date.setText(string.thursday);
+                break;
+            case "Friday":
+                date.setText(string.friday);
+                break;
+            case "Saturday":
+                date.setText(string.saturday);
+                break;
+            case "Sunday":
+                date.setText(string.sunday);
+                break;
+            case "yesterday":
+                date.setText(string.yesterday);
+                break;
+            case "2 days ago":
+                date.setText(string.two_days_ago);
+                break;
+            default:
+                date.setText(dateText);
+                break;
         }
     }
 
     /**
-     * 
-     * @param dayOfWeekLabel
-     * @param dayOfWeek
-     * @param dow
+     * Calculates from the day of week index the name of the day.
+     *
+     * @param dayOfWeekLabel Widget that shows the day of week header
+     * @param dayOfWeek      Widget that shows the day
+     * @param dow            Index that defines the day of week
      */
     public static void setDaysOfWeek(Context context, TextView dayOfWeekLabel, TextView dayOfWeek, long dow) {
         if (dayOfWeek == null) {
@@ -618,10 +614,10 @@ public class Utils {
     /**
      * Shows the given series text for the given view. If the text is empty
      * then the view will be hidden.
-     * 
-     * @param seriesInfoLabel
-     * @param seriesInfo
-     * @param si
+     *
+     * @param seriesInfoLabel Widget that show the series information header
+     * @param seriesInfo      Widget that shall show the series information
+     * @param si              Series data
      */
     public static void setSeriesInfo(TextView seriesInfoLabel, TextView seriesInfo, final SeriesInfo si) {
         if (seriesInfo != null) {
@@ -638,9 +634,9 @@ public class Utils {
      * Shows the given content type text for the given view. If the text is empty
      * then the view will be hidden.
      * 
-     * @param contentTypeLabel
-     * @param contentType
-     * @param ct
+     * @param contentTypeLabel Widget that show the content type header
+     * @param contentType      Widget that shall show the content type information
+     * @param ct               Content type
      */
     public static void setContentType(TextView contentTypeLabel, TextView contentType, final int ct) {
         if (contentType == null) {
@@ -657,14 +653,13 @@ public class Utils {
 
     /**
      * Shows the channel icon and optionally the channel name. The icon will
-     * only be shown when the user has activated the setting and an icon is 
-     * actually available. If no icon is available the channel name will be 
+     * only be shown when the user has activated the setting and an icon is
+     * actually available. If no icon is available the channel name will be
      * shown as a placeholder.
-     * 
-     * @param icon
-     * @param iconText
-     * @param channel
-     * @param ch
+     *
+     * @param icon     Widget that shall show the channel icon
+     * @param iconText Widget that shows the channel name if no icon is available
+     * @param ch       Channel
      */
     public static void setChannelIcon(ImageView icon, TextView iconText, final Channel ch) {
         if (icon != null) {
@@ -674,10 +669,9 @@ public class Utils {
 
             if (ch != null) {
                 // Show the channels icon if available. If not hide the view. 
-                if (icon != null) {
-                    icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
-                    icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
-                }
+                icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
+                icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
+
                 // If the channel icon is not available show the channel name as a placeholder.
                 if (iconText != null) {
                     iconText.setText(ch.name);
@@ -695,9 +689,9 @@ public class Utils {
      * Shows the given description text for the given view. If the text is empty
      * then the view will be hidden.
      * 
-     * @param descriptionLabel
-     * @param description
-     * @param desc
+     * @param descriptionLabel  Widget that show the description header
+     * @param description       Widget that shall show the description
+     * @param desc              Description text
      */
     public static void setDescription(TextView descriptionLabel, TextView description, final String desc) {
         if (description == null) {
@@ -713,9 +707,9 @@ public class Utils {
     /**
      * Shows the reason why a recording has failed. If the text is empty then
      * the view will be hidden.
-     * 
-     * @param failed_reason
-     * @param rec
+     *
+     * @param failed_reason Widget that shows the failed reason text
+     * @param rec           Recording
      */
     public static void setFailedReason(final TextView failed_reason, final Recording rec) {
         if (failed_reason == null) {
@@ -741,10 +735,10 @@ public class Utils {
 
     /**
      * Shows the progress as a progress bar.
-     * 
-     * @param progress
-     * @param start
-     * @param stop
+     *
+     * @param progress Progress bar widget
+     * @param start    Start time
+     * @param stop     Stop time
      */
     public static void setProgress(ProgressBar progress, final Date start, final Date stop) {
         if (progress == null || start == null || stop == null) {
@@ -762,14 +756,14 @@ public class Utils {
         progress.setProgress((int) Math.floor(percent * 100));
         progress.setVisibility(View.VISIBLE);
     }
-    
+
     /**
      * Shows the progress not as a progress bar but as a text with the
      * percentage symbol.
-     * 
-     * @param progressText
-     * @param start
-     * @param stop
+     *
+     * @param progressText Widget that shows the progress percentage
+     * @param start        Start time
+     * @param stop         Stop time
      */
     public static void setProgressText(TextView progressText, final Date start, final Date stop) {
         if (progressText == null || start == null || stop == null) {
@@ -795,12 +789,13 @@ public class Utils {
             progressText.setVisibility(View.GONE);
         }
     }
-    
+
     /**
-     * 
-     * @param context
-     * @param view
-     * @param program
+     * If the show genre color setting is activated for a certain screen, then it will be set here
+     *
+     * @param context Activity context
+     * @param view    The view that shows the genre color
+     * @param program Program
      */
     public static void setGenreColor(final Context context, View view, final Program program, final String tag) {
     	if (view == null) {
@@ -811,15 +806,20 @@ public class Utils {
         int offset = 0;
 
     	// Check which class is calling and get the setting
-        if (tag.equals("ChannelListAdapter")) {
-            showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
-        } else if (tag.equals("ProgramListAdapter")) {
-            showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
-        } else if (tag.equals("SearchResultAdapter")) {
-            showGenre = prefs.getBoolean("showGenreColorsSearchPref", false);
-        } else if (tag.equals("ProgramGuideItemView")) {
-        	showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
-        	offset = GENRE_COLOR_ALPHA_EPG_OFFSET;
+        switch (tag) {
+            case "ChannelListAdapter":
+                showGenre = prefs.getBoolean("showGenreColorsChannelsPref", false);
+                break;
+            case "ProgramListAdapter":
+                showGenre = prefs.getBoolean("showGenreColorsProgramsPref", false);
+                break;
+            case "SearchResultAdapter":
+                showGenre = prefs.getBoolean("showGenreColorsSearchPref", false);
+                break;
+            case "ProgramGuideItemView":
+                showGenre = prefs.getBoolean("showGenreColorsGuidePref", false);
+                offset = GENRE_COLOR_ALPHA_EPG_OFFSET;
+                break;
         }
         
         // As a default we show a transparent color. If we have a program then
@@ -849,9 +849,11 @@ public class Utils {
     /**
      * Returns the background color of the genre based on the content type. The
      * first byte of hex number represents the main category.
-     * 
-     * @param contentType
-     * @return
+     *
+     * @param context     Activity Context
+     * @param contentType Content type number
+     * @param offset      Value that defines the transparency
+     * @return Color value
      */
     public static int getGenreColor(final Context context, final int contentType, final int offset) {
         if (contentType < 0) {
@@ -917,7 +919,7 @@ public class Utils {
         final String[] s = context.getResources().getStringArray(R.array.pr_content_type0);
 
         // Fill the list for the adapter
-        List<GenreColorDialogItem> items = new ArrayList<GenreColorDialogItem>();
+        List<GenreColorDialogItem> items = new ArrayList<>();
         for (int i = 0; i < s.length; ++i) {
             GenreColorDialogItem item = new GenreColorDialogItem();
             item.color = getGenreColor(context, ((i + 1) * 16), 0);
@@ -936,8 +938,8 @@ public class Utils {
      * Gets the last program id from the given channel. The id is used to tell
      * the server where to continue loading programs.
      * 
-     * @param context
-     * @param channel
+     * @param context Activity context
+     * @param channel Channel
      */
     public static void loadMorePrograms(final Context context, final Channel channel) {
         if (channel == null) {
@@ -986,25 +988,24 @@ public class Utils {
      * Calculates the available display width of one minute in pixels. This
      * depends how wide the screen is and how many hours shall be shown in one
      * screen.
-     * 
-     * @param context
-     * @param tabIndex
-     * @param hoursToShow
-     * @return
+     *
+     * @param context     Activity context
+     * @param tabIndex    Index which screen is visible from the program guide
+     * @param hoursToShow How many hours are visible on one screen
+     * @return Number of pixels that one minute represents on the screen
      */
     public static float getPixelsPerMinute(final Activity context, final int tabIndex, final int hoursToShow) {
         // Get the usable width. Subtract the icon width if its visible.
         DisplayMetrics displaymetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         float displayWidth = displaymetrics.widthPixels - ((tabIndex == 0) ? LAYOUT_ICON_OFFSET : 0);
-        float pixelsPerMinute = ((float) displayWidth / (60.0f * (float) hoursToShow));
-        return pixelsPerMinute;
+        return (displayWidth / (60.0f * (float) hoursToShow));
     }
 
     /**
      * Returns the id of the channel tag that is saved in the current connection
      * 
-     * @return
+     * @return Id of the channel tag
      */
     public static int getChannelTagId(final Context context) {
         // Get the selected tag for the active connection in the database. If
@@ -1023,7 +1024,7 @@ public class Utils {
      * Saves the channel tag for the active connection to remember it across
      * application starts and connection changes.
      * 
-     * @param channelTagId
+     * @param channelTagId Id of the channel tag
      */
     public static void setChannelTagId(final Context context, final int channelTagId) {
         // Save the selected tag for the active connection in the database
@@ -1040,8 +1041,8 @@ public class Utils {
     /**
      * Returns the saved channel tag for the active connection.
      * 
-     * @param app
-     * @return
+     * @param activity Activity context
+     * @return Channel tag
      */
     public static ChannelTag getChannelTag(final Activity activity) {
         final TVHClientApplication app = (TVHClientApplication) activity.getApplication();
@@ -1056,7 +1057,7 @@ public class Utils {
 	 * Change the language to the defined setting. If the default is set then
 	 * let the application decide which language shall be used.
 	 *
-	 * @param context
+	 * @param context Activity context
 	 */
 	public static void setLanguage(final Activity context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1072,8 +1073,8 @@ public class Utils {
      * Returns the type how the channels are sorted in the adapter and in which
      * order they will then be shown in the list.
      * 
-     * @param context
-     * @return
+     * @param context Activity context
+     * @return Number that defines the channel sort order
      */
 	public static int getChannelSortOrder(final Activity context) {
 	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1105,10 +1106,10 @@ public class Utils {
     /**
      * Returns the public key that is required to make in-app purchases. The key
      * which is ciphered is located in the assets folder.
-     * 
-     * @return
+     *
+     * @return Value that is in the public key file
      */
-	public static String getPublicKey(Context context) {
+    public static String getPublicKey(Context context) {
         StringBuilder sb = new StringBuilder();
         try {
             String keyData;
@@ -1135,8 +1136,9 @@ public class Utils {
 
     /**
      * Method deciphers previously ciphered message
+     *
      * @param message ciphered message
-     * @param salt salt which was used for ciphering
+     * @param salt    salt which was used for ciphering
      * @return deciphered message
      */
     static String fromX(String message, String salt) {
@@ -1145,8 +1147,9 @@ public class Utils {
 
     /**
      * Method ciphers message. Later {@link #fromX} method might be used for deciphering
+     *
      * @param message message to be ciphered
-     * @param salt salt to be used for ciphering
+     * @param salt    salt to be used for ciphering
      * @return ciphered message
      */
     static String toX(String message, String salt) {
@@ -1156,8 +1159,9 @@ public class Utils {
     /**
      * Symmetric algorithm used for ciphering/deciphering. Note that in your application you probably want to modify
      * the algorithm used for ciphering/deciphering.
+     *
      * @param message message
-     * @param salt salt
+     * @param salt    salt
      * @return ciphered/deciphered message
      */
     static String x(String message, String salt) {
