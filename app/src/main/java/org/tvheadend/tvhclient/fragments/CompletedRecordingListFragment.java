@@ -105,7 +105,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
             actionBarInterface.setActionBarTitle(getString(R.string.completed_recordings));
             String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
             actionBarInterface.setActionBarSubtitle(items);
-            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher);
+            actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
         }
 
         // Inform the activity that the channel list has been populated. It will

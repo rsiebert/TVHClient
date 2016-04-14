@@ -475,7 +475,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     && currentTag.id != 0) {
                 actionBarInterface.setActionBarIcon(currentTag.iconBitmap);
             } else {
-                actionBarInterface.setActionBarIcon(R.drawable.ic_launcher);
+                actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
             }
         }
 

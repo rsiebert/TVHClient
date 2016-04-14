@@ -218,7 +218,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 if (Utils.showChannelIcons(activity)) {
                     actionBarInterface.setActionBarIcon(channel.iconBitmap);
                 } else {
-                    actionBarInterface.setActionBarIcon(R.drawable.ic_launcher);
+                    actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
                 }
             }
         }

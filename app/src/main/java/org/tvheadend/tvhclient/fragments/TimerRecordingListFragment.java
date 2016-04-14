@@ -172,7 +172,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             actionBarInterface.setActionBarTitle(getString(R.string.timer_recordings));
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
             actionBarInterface.setActionBarSubtitle(items);
-            actionBarInterface.setActionBarIcon(R.drawable.ic_launcher);
+            actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.
