@@ -34,6 +34,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.util.Base64;
@@ -41,6 +42,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -101,7 +103,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     }
 
     /**
-     * 
+     *
      */
     private void initAction() {
 
@@ -143,8 +145,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         case Constants.EXTERNAL_ACTION_CAST:
             if (ch != null) {
                 app.log(TAG, "Starting to cast channel '" + ch.name + "'");
-                // In case a channel shall be played the channel uuid is required. 
-                // It is not provided via the HTSP API, only via the webinterface 
+                // In case a channel shall be played the channel uuid is required.
+                // It is not provided via the HTSP API, only via the webinterface
                 // API. Load the channel UUIDs via server:host/api/epg/events/grid.
                 if (ch.uuid != null && ch.uuid.length() > 0) {
                     app.log(TAG, "Channel uuid + " + ch.uuid + " exists");
@@ -166,7 +168,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         super.onResume();
         VideoCastManager.getInstance().incrementUiCounter();
         app.addListener(this);
-        
+
         initAction();
     }
 
@@ -209,8 +211,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
      * actually started or if it has failed due to insufficient space. This is
      * required because the download manager does not throw this error via a
      * notification.
-     * 
-     * @param request
+     *
+     * @param request The given download request with all relevant data
      */
     private void startDownload(Request request) {
 
@@ -278,9 +280,9 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
      * When the first ticket from the HTSService has been received the URL is
      * created together with the mime and profile data. This is then passed to
      * the startPlayback method which invokes the external media player.
-     * 
-     * @param path
-     * @param ticket
+     *
+     * @param path   The path to the recording or channel that shall be played
+     * @param ticket The ticket id that was given by the server
      */
     private void initPlayback(String path, String ticket) {
 
@@ -292,16 +294,22 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
         // Set the correct MIME type. For 'pass' we assume MPEG-TS
         String mime = "application/octet-stream";
-        if (profile.container.equals("mpegps")) {
-            mime = "video/mp2p";
-        } else if (profile.container.equals("mpegts")) {
-            mime = "video/mp4";
-        } else if (profile.container.equals("matroska")) {
-            mime = "video/x-matroska";
-        } else if (profile.container.equals("pass")) {
-            mime = "video/mp2t";
-        } else if (profile.container.equals("webm")) {
-            mime = "video/webm";
+        switch (profile.container) {
+            case "mpegps":
+                mime = "video/mp2p";
+                break;
+            case "mpegts":
+                mime = "video/mp4";
+                break;
+            case "matroska":
+                mime = "video/x-matroska";
+                break;
+            case "pass":
+                mime = "video/mp2t";
+                break;
+            case "webm":
+                mime = "video/webm";
+                break;
         }
 
         // Create the URL for the external media player that is required to get
@@ -309,8 +317,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         String playUrl = baseUrl + path + "?ticket=" + ticket;
 
         // If a profile was given, use it instead of the old values
-        if (profile != null  
-                && profile.enabled
+        if (profile.enabled
                 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                 && app.isUnlocked()) {
             playUrl += "&profile=" + profile.name;
@@ -329,9 +336,9 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
     /**
      * Starts the external media player with the given url and mime information.
-     * 
-     * @param url
-     * @param mime
+     *
+     * @param url  The url that shall be played
+     * @param mime The mime type that shall be used
      */
     private void startPlayback(String url, String mime) {
         app.log(TAG, "Starting to play from url " + url);
@@ -360,9 +367,9 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                         .content(R.string.show_play_store)
                         .positiveText(getString(android.R.string.yes))
                         .negativeText(getString(android.R.string.no))
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 try {
                                     app.log(TAG, "Starting play store to download external players");
                                     Intent installIntent = new Intent(Intent.ACTION_VIEW);
@@ -374,11 +381,14 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                                     finish();
                                 }
                             }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 finish();
                             }
-                        }).show();
+                        })
+                        .show();
                 }
             }
         });
@@ -408,13 +418,14 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             streamType = MediaInfo.STREAM_TYPE_BUFFERED;
         }
 
-        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);        
+        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
         movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, subtitle);
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
         // Check if the correct profile was set, if not try to do this
+        // TODO if a connection is changed then this could be null
         castUrl += "?profile=" + dbh.getProfile(conn.cast_profile_id).name;
 
         app.log(TAG, "Casting starts with the following information:");
@@ -423,7 +434,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         app.log(TAG, "Cast icon is " + iconUrl);
         app.log(TAG, "Cast url is " + castUrl);
 
-        MediaInfo mediaInfo = new MediaInfo.Builder(castUrl.toString())
+        MediaInfo mediaInfo = new MediaInfo.Builder(castUrl)
             .setStreamType(streamType)
             .setContentType("video/webm")
             .setMetadata(movieMetadata)
@@ -462,7 +473,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
      * Task that opens a connection to the defined URL, authenticates and
      * downloads the available EPG data. If successful the JSON formatted
      * data will be parsed for the available channel UUID.
-     * 
+     *
      * @author rsiebert
      *
      */
@@ -484,9 +495,12 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             String result = "";
             try {
                 // Show that data is being loaded
-                if (castProgressInfo != null) {
-                    castProgressInfo.setText(R.string.loading_casting_data);
-                }
+                if (castProgressInfo != null) runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        castProgressInfo.setText(R.string.loading_casting_data);
+                    }
+                });
 
                 // Create the URL
                 Connection c = conns[0];
@@ -506,9 +520,10 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                 is = conn.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
                 StringBuilder sb = new StringBuilder();
-                String line = null;
+                String line;
                 while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
+                    sb.append(line);
+                    sb.append("\n");
                 }
                 is.close();
                 result = sb.toString();
@@ -594,7 +609,6 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                         app.log(SUB_TAG, "Showing error because no channel uuid was found for " + ch.name);
                         showErrorDialog(getString(R.string.error_no_channel_info_in_json_data));
                     }
-                    return;
                 }
             }
         }
@@ -602,8 +616,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
     /**
      * Displays a dialog with the given message.
-     * 
-     * @param msg
+     *
+     * @param msg The message that shall be shown
      */
     private void showErrorDialog(String msg) {
         // Hide the progress bar and text
@@ -617,17 +631,18 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         new MaterialDialog.Builder(this)
                 .content(msg)
                 .positiveText("Close")
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         finish();
                     }
-                }).show();
+                })
+                .show();
     }
 
     @SuppressLint("NewApi")
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             app.log(TAG, "Permission: " + permissions[0] + " was " + grantResults[0]);
@@ -642,8 +657,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
      * the external storage must be requested programmatically (if it has not
      * been granted already). The positive or negative request is checked in the
      * onRequestPermissionsResult(...) method.
-     * 
-     * @return
+     *
+     * @return True if permission is granted, otherwise false
      */
     @SuppressLint("NewApi")
     private boolean isStoragePermissionGranted() {

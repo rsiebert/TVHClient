@@ -134,10 +134,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     // Holds the list of selected menu items so the previous fragment can be
     // shown again when the user has pressed the back key.
-    public ArrayList<Integer> menuStack = new ArrayList<Integer>();
+    public ArrayList<Integer> menuStack = new ArrayList<>();
 
     // Holds a list of channels that are currently being loaded
-    public List<Channel> channelLoadingList = new ArrayList<Channel>();
+    public List<Channel> channelLoadingList = new ArrayList<>();
     private Runnable channelLoadingTask;
     private Handler channelLoadingHandler = new Handler();
 
@@ -195,11 +195,13 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         changeLogDialog = new ChangeLogDialog(this);
 
         actionBar = getSupportActionBar();
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.actionbar_title);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.actionbar_title);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
+        }
 
         coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinatorLayout);
 
@@ -239,9 +241,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         ViewDragHelper draggerObj = null;
         try {
             draggerObj = (ViewDragHelper) dragger.get(drawerLayout);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -255,17 +255,13 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         int edge = 20;
         try {
             edge = edgeSize.getInt(draggerObj);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
             edgeSize.setInt(draggerObj, edge * 2);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -295,7 +291,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Add a header view to the drawer menu. 
         LayoutInflater inflater = getLayoutInflater();
-        View header = (View) inflater.inflate(R.layout.drawer_list_header, drawerList, false);
+        View header = inflater.inflate(R.layout.drawer_list_header, drawerList, false);
         drawerList.addHeaderView(header, null, false);
 
         // Create the custom adapter for the menus in the navigation drawer.
@@ -347,7 +343,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 // If the program guide is shown get the number of channels from the program guide
                 // pager fragment because it holds the channel fragment which in turn knows the channel count. 
                 Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f != null && f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+                if (f != null && f instanceof ProgramGuidePagerFragment) {
                     int count = ((FragmentControlInterface) f).getItemCount();
                     String items = getResources().getQuantityString(R.plurals.items, count, count);
                     setActionBarSubtitle(items);
@@ -533,7 +529,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 serverName.setText(R.string.no_connection_active);
                 serverSelection.setVisibility(View.GONE);
             } else {
-                serverName.setText(conn != null ? conn.name : "");
+                serverName.setText(conn.name);
                 serverSelection.setVisibility(View.VISIBLE);
 
                 // Add a listener to the server name to allow changing the current
@@ -583,7 +579,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
 
-        List<DrawerMenuItem> list = new ArrayList<DrawerMenuItem>();
+        List<DrawerMenuItem> list = new ArrayList<>();
         list.add(new DrawerMenuItem(""));
         list.add(new DrawerMenuItem(MENU_CHANNELS, menuItems[0],
                 (lightTheme) ? R.drawable.ic_menu_channels_light : R.drawable.ic_menu_channels_dark));
@@ -742,7 +738,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.LAST_CONNECTION_STATE, connectionStatus);
         editor.putBoolean(Constants.LAST_CONNECTION_SETTINGS_SHOWN, connectionSettingsShown);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -888,7 +884,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         Bundle bundle = new Bundle();
         if (!isDualPane) {
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f instanceof ProgramListFragment && f instanceof FragmentControlInterface) {
+            if (f instanceof ProgramListFragment) {
                 Object o = ((FragmentControlInterface) f).getSelectedItem();
                 if (o instanceof Channel) {
                     final Channel ch = (Channel) o;
@@ -912,10 +908,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * required the created fragment will be stored on the back stack so it can
      * be shown later when the user has pressed the back button.
      * 
-     * @param name
-     * @param layout
-     * @param args
-     * @param addToBackStack
+     * @param name Class name of the fragment
+     * @param layout Layout that shall be used
+     * @param addToBackStack True to add the fragment to the back stack, false otherwise
      */
     private void showFragment(String name, int layout, Bundle args, boolean addToBackStack) {
         Fragment f = Fragment.instantiate(this, name);
@@ -938,9 +933,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * Creates the fragment with the given name and shows it on the given
      * layout. If a bundle was given, it will be passed to the fragment.
      * 
-     * @param name
-     * @param layout
-     * @param args
+     * @param name Class name of the fragment
+     * @param layout Layout that shall be used
+     * @param args Additional arguments that can be passed to the fragment
      */
     private void showFragment(String name, int layout, Bundle args) {
         showFragment(name, layout, args, false);
@@ -951,7 +946,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * shown, ensure that the old visible fragment is removed from the view and
      * that the correct layout weights are set.
      * 
-     * @param position
+     * @param position Selected position within the menu array
      */
     private void preHandleMenuSelection(int position) {
         setLayoutWeights(position);
@@ -988,7 +983,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * and shows the correct fragment or fragments depending on the selected
      * menu item.
      * 
-     * @param position
+     * @param position Selected position within the menu array
      */
     private void handleMenuSelection(int position) {
         preHandleMenuSelection(position);
@@ -1084,7 +1079,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * layouts depend on the on the screen size. This is determined
      * automatically
      * 
-     * @param menuPosition
+     * @param menuPosition Selected position within the menu array
      */
     private void setLayoutWeights(int menuPosition) {
         // The default layout weights
@@ -1177,103 +1172,116 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void onMessage(final String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            final Context ctx = this;
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    if (loading) {
-                        setActionBarTitle(getString(R.string.loading));
-                        setActionBarSubtitle("");
-                        // When in dual pane mode remove the fragment on the
-                        // right to avoid seeing invalid data while the
-                        // application is loading data from the server.
-                        if (isDualPane) {
-                            Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
-                            if (rf != null) {
-                                getSupportFragmentManager().beginTransaction().remove(rf).commit();
+        switch (action) {
+            case Constants.ACTION_LOADING:
+                final Context ctx = this;
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        boolean loading = (Boolean) obj;
+                        if (loading) {
+                            setActionBarTitle(getString(R.string.loading));
+                            setActionBarSubtitle("");
+                            // When in dual pane mode remove the fragment on the
+                            // right to avoid seeing invalid data while the
+                            // application is loading data from the server.
+                            if (isDualPane) {
+                                Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+                                if (rf != null) {
+                                    getSupportFragmentManager().beginTransaction().remove(rf).commit();
+                                }
                             }
+                        } else {
+                            // Load the available recording profiles so that they are
+                            // available in case the user wants to add a manual recording
+                            if (app.isUnlocked()) {
+                                Intent intent = new Intent(ctx, HTSService.class);
+                                intent.setAction(Constants.ACTION_GET_DVR_CONFIG);
+                                startService(intent);
+                            }
+                            // Reload the menu. Only after the initial sync we know the server
+                            // version which determines the visibility of the casting icon
+                            invalidateOptionsMenu();
                         }
-                    } else {
-                        // Load the available recording profiles so that they are  
-                        // available in case the user wants to add a manual recording  
-                        if (app.isUnlocked()) {
-                            Intent intent = new Intent(ctx, HTSService.class);
-                            intent.setAction(Constants.ACTION_GET_DVR_CONFIG);
-                            startService(intent);
-                        }
-                        // Reload the menu. Only after the initial sync we know the server 
-                        // version which determines the visibility of the casting icon
-                        invalidateOptionsMenu();
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_CHANNEL_UPDATE)) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    final Channel ch = (Channel) obj;
+                });
+                break;
+            case Constants.ACTION_CHANNEL_UPDATE:
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        final Channel ch = (Channel) obj;
 
-                    // The channel has been updated (usually by a call to load
-                    // more data) so remove it from the loading queue and
-                    // continue with the next one.
-                    channelLoadingList.remove(ch);
+                        // The channel has been updated (usually by a call to load
+                        // more data) so remove it from the loading queue and
+                        // continue with the next one.
+                        channelLoadingList.remove(ch);
 
-                    // Reset the loading indication either instantly or with a 
-                    // delay if there is still a channel in the loading queue
-                    channelLoadingHandler.removeCallbacks(channelLoadingTask);
-                    channelLoadingHandler.postDelayed(channelLoadingTask,
-                            (channelLoadingList.isEmpty() ? 10 : 2000));
-                }
-            });
-        } else if (action.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            connectionStatus = action;
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    showDrawerMenu();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)) {
-
-            // Go to the status screen if an error has occurred from a previously
-            // working connection or no connection at all. Additionally show the
-            // error message
-            if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) || 
-                    connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)) {
-
-                // Show a textual description about the connection state
-                if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
-                    showMessage(getString(R.string.err_connect));
-                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
-                    showMessage(getString(R.string.err_con_lost));
-                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
-                    showMessage(getString(R.string.err_con_timeout));
-                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED) || 
-                        connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
-                    showMessage(getString(R.string.err_auth));
-                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)) {
-                    showMessage(getString(R.string.err_no_network));
-                } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)) {
-                    showMessage(getString(R.string.no_connection_available));
-                }
-
+                        // Reset the loading indication either instantly or with a
+                        // delay if there is still a channel in the loading queue
+                        channelLoadingHandler.removeCallbacks(channelLoadingTask);
+                        channelLoadingHandler.postDelayed(channelLoadingTask,
+                                (channelLoadingList.isEmpty() ? 10 : 2000));
+                    }
+                });
+                break;
+            case Constants.ACTION_CONNECTION_STATE_OK:
+                connectionStatus = action;
                 runOnUiThread(new Runnable() {
                     public void run() {
                         showDrawerMenu();
-                        connectionStatus = action;
-                        handleMenuSelection(MENU_STATUS);
                     }
                 });
-            }
+                break;
+            case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
+            case Constants.ACTION_CONNECTION_STATE_LOST:
+            case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
+            case Constants.ACTION_CONNECTION_STATE_REFUSED:
+            case Constants.ACTION_CONNECTION_STATE_AUTH:
+            case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
+            case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
 
-        } else if (action.equals(Constants.ACTION_SHOW_MESSAGE)) {
-            final String msg = (String) obj;
-            showMessage(msg);
+                // Go to the status screen if an error has occurred from a previously
+                // working connection or no connection at all. Additionally show the
+                // error message
+                if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) ||
+                        connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)) {
+
+                    // Show a textual description about the connection state
+                    switch (connectionStatus) {
+                        case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
+                            showMessage(getString(R.string.err_connect));
+                            break;
+                        case Constants.ACTION_CONNECTION_STATE_LOST:
+                            showMessage(getString(R.string.err_con_lost));
+                            break;
+                        case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
+                            showMessage(getString(R.string.err_con_timeout));
+                            break;
+                        case Constants.ACTION_CONNECTION_STATE_REFUSED:
+                        case Constants.ACTION_CONNECTION_STATE_AUTH:
+                            showMessage(getString(R.string.err_auth));
+                            break;
+                        case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
+                            showMessage(getString(R.string.err_no_network));
+                            break;
+                        case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
+                            showMessage(getString(R.string.no_connection_available));
+                            break;
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            showDrawerMenu();
+                            connectionStatus = action;
+                            handleMenuSelection(MENU_STATUS);
+                        }
+                    });
+                }
+
+                break;
+            case Constants.ACTION_SHOW_MESSAGE:
+                final String msg = (String) obj;
+                showMessage(msg);
+                break;
         }
     }
 
@@ -1284,8 +1292,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     /**
      * Depending on the connection state and server capabilities show or hide
      * certain navigation menu items.
-     * 
-     * @param show
      */
     private void showDrawerMenu() {
         boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) && !app.isLoading();
@@ -1394,7 +1400,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 // Scrolling was initiated by the channel or program guide list fragment. Keep
                 // the currently visible program guide list in sync by scrolling it to the same position
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof ProgramGuidePagerFragment) {
                     ((FragmentControlInterface) f).setSelection(position, offset);
                 }
             }
@@ -1412,7 +1418,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 // fragment. Scroll all program guide fragments in the current
                 // view pager to the same position.
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof ProgramGuidePagerFragment) {
                     ((FragmentControlInterface) f).setSelection(
                             programGuideListPosition,
                             programGuideListPositionOffset);
@@ -1420,11 +1426,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             }
             break;
         }
-    }
-
-    @Override
-    public void noDataAvailable(Channel channel, String tag) {
-        // NOP
     }
 
     @Override
@@ -1606,7 +1607,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // to the selected channel
             if (tag.equals(ChannelListFragment.class.getSimpleName())) { 
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof ChannelListFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof ChannelListFragment) {
                     if (isDualPane) {
                         ((FragmentControlInterface) f).setInitialSelection(channelListPosition);
                     } else {
@@ -1628,7 +1629,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     getSupportFragmentManager().beginTransaction().remove(rf).commit();
                 }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof CompletedRecordingListFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof CompletedRecordingListFragment) {
                     ((FragmentControlInterface) f).setInitialSelection(completedRecordingListPosition);
                 }
             }
@@ -1646,7 +1647,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     getSupportFragmentManager().beginTransaction().remove(rf).commit();
                 }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof ScheduledRecordingListFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof ScheduledRecordingListFragment) {
                     ((FragmentControlInterface) f).setInitialSelection(scheduledRecordingListPosition);
                 }
             }
@@ -1664,7 +1665,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     getSupportFragmentManager().beginTransaction().remove(rf).commit();
                 }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof SeriesRecordingListFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof SeriesRecordingListFragment) {
                     ((FragmentControlInterface) f).setInitialSelection(seriesRecordingListPosition);
                 }
             }
@@ -1682,7 +1683,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     getSupportFragmentManager().beginTransaction().remove(rf).commit();
                 }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof TimerRecordingListFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof TimerRecordingListFragment) {
                     ((FragmentControlInterface) f).setInitialSelection(timerRecordingListPosition);
                 }
             }
@@ -1700,7 +1701,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                     getSupportFragmentManager().beginTransaction().remove(rf).commit();
                 }
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof FailedRecordingListFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof FailedRecordingListFragment) {
                     ((FragmentControlInterface) f).setInitialSelection(failedRecordingListPosition);
                 }
             }
@@ -1712,7 +1713,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // fragment will inform us via the scrolling interface methods where
             // the channel list shall be scrolled to.
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f instanceof ProgramGuidePagerFragment && f instanceof FragmentControlInterface) {
+            if (f instanceof ProgramGuidePagerFragment) {
                 ((FragmentControlInterface) f).setSelection(programGuideListPosition,
                         programGuideListPositionOffset);
             }
@@ -1727,7 +1728,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // Inform the channel list fragment to clear all data from its
             // channel list and show only the channels with the selected tag
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f instanceof ChannelListFragment && f instanceof FragmentControlInterface) {
+            if (f instanceof ChannelListFragment) {
                 ((FragmentControlInterface) f).reloadData();
             }
             break;
@@ -1736,14 +1737,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // Inform the channel list fragment to clear all data from its
             // channel list and show only the channels with the selected tag
             final Fragment cf = getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-            if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
+            if (cf instanceof ChannelListFragment) {
                 ((FragmentControlInterface) cf).reloadData();
             }
             // Additionally inform the program guide fragment to clear all data
             // from its list and show only the programs of the channels that are
             // part of the selected tag
             final Fragment pgf = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (pgf instanceof ProgramGuidePagerFragment && pgf instanceof FragmentControlInterface) {
+            if (pgf instanceof ProgramGuidePagerFragment) {
                 ((FragmentControlInterface) pgf).reloadData();
             }
             break;
@@ -1761,8 +1762,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // call. So the old recording needs to be removed before the new is
             // added, to avoid having two identical entries the list. 
             final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if ((f instanceof SeriesRecordingListFragment || f instanceof TimerRecordingListFragment)
-                    && f instanceof FragmentControlInterface) {
+            if (f instanceof SeriesRecordingListFragment || f instanceof TimerRecordingListFragment) {
                 ((FragmentControlInterface) f).reloadData();
             }
             break;
@@ -1793,7 +1793,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             // This will only be the case if no dual pane is active. Otherwise a
             // full channel search would only be possible in the EPG view.
             if (!isDualPane) {
-                if (f instanceof ProgramListFragment && f instanceof FragmentControlInterface) {
+                if (f instanceof ProgramListFragment) {
                     Object o = ((FragmentControlInterface) f).getSelectedItem();
                     if (o instanceof Channel) {
                         final Channel ch = (Channel) o;
@@ -1860,12 +1860,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Connection conn = dbh.getSelectedConnection();
         Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
-        if (app.isUnlocked() 
+        return (app.isUnlocked()
                 && prefs.getBoolean("pref_enable_casting", false)
                 && profile != null 
-                && profile.enabled) {
-            return true;
-        }
-        return false;
+                && profile.enabled);
     }
 }

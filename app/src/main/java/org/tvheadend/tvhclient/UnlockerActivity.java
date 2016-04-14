@@ -23,10 +23,7 @@ public class UnlockerActivity extends ActionBarActivity {
 
     private final static String TAG = UnlockerActivity.class.getSimpleName();
 
-    private ActionBar actionBar = null;
     private CoordinatorLayout coordinatorLayout;
-    private WebView webview;
-    private TVHClientApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,17 +32,19 @@ public class UnlockerActivity extends ActionBarActivity {
         setContentView(R.layout.webview_layout);
         Utils.setLanguage(this);
 
-        app = (TVHClientApplication) getApplication();
+        TVHClientApplication app = (TVHClientApplication) getApplication();
 
         // Setup the action bar and show the title
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle("");
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setTitle("");
+        }
 
         coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinatorLayout);
 
-        webview = (WebView) findViewById(R.id.webview);
+        WebView webview = (WebView) findViewById(R.id.webview);
         if (webview != null) {
             app.log(TAG, "Showing unlocker features");
 
@@ -89,11 +88,13 @@ public class UnlockerActivity extends ActionBarActivity {
             // contains the feature description with the required HTML tags.
             try {
                 String htmlData;
-                BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                while ((htmlData = in.readLine()) != null) {
-                    sb.append(htmlData);
+                if (is != null) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                    while ((htmlData = in.readLine()) != null) {
+                        sb.append(htmlData);
+                    }
+                    in.close();
                 }
-                in.close();
             } catch (Exception ex) {
                 sb.append("Error parsing feature list");
             }

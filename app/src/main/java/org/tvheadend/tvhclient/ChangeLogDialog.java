@@ -25,10 +25,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 public class ChangeLogDialog {
@@ -36,7 +38,6 @@ public class ChangeLogDialog {
     private final Context context;
     private String lastVersion, thisVersion;
     private ChangeLogDialogInterface di;
-	private MaterialDialog dialog;
   
     // this is the key for storing the version name in SharedPreferences
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
@@ -49,7 +50,7 @@ public class ChangeLogDialog {
      * Retrieves the version names and stores the new version name in
      * SharedPreferences
      * 
-     * @param context
+     * @param context Context
      */
     public ChangeLogDialog(Context context) {
         this(context, PreferenceManager.getDefaultSharedPreferences(context));
@@ -66,7 +67,7 @@ public class ChangeLogDialog {
      * Retrieves the version names and stores the new version name in
      * SharedPreferences
      * 
-     * @param context
+     * @param context Context
      * @param sp the shared preferences to store the last version name into
      */
     public ChangeLogDialog(Context context, SharedPreferences sp) {
@@ -92,7 +93,6 @@ public class ChangeLogDialog {
      *         returned by <code>getThisVersion()</code> the second time this
      *         version of the app is launched (more precisely: the second time
      *         ChangeLog is instantiated).
-     * @see AndroidManifest.xml#android:versionName
      */
     public String getLastVersion() {
         return this.lastVersion;
@@ -100,7 +100,6 @@ public class ChangeLogDialog {
 
     /**
      * @return The version name of this app as described in the manifest.
-     * @see AndroidManifest.xml#android:versionName
      */
     public String getThisVersion() {
         return this.thisVersion;
@@ -142,33 +141,36 @@ public class ChangeLogDialog {
 
     /**
      * 
-     * @param full
-     * @return
+     * @param full Show the full changelog or only the latest changes
+     * @return MaterialDialog object
      */
     private MaterialDialog getDialog(boolean full) {
-        dialog = new MaterialDialog.Builder(context)
+        MaterialDialog dialog = new MaterialDialog.Builder(context)
         .title(R.string.pref_changelog)
         .customView(R.layout.webview_layout, false)
         .positiveText(context.getString(android.R.string.ok))
-        .callback(new MaterialDialog.ButtonCallback() {
+        .onPositive(new MaterialDialog.SingleButtonCallback() {
             @Override
-            public void onPositive(MaterialDialog dialog) {
-            	updateVersionInPreferences();
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                updateVersionInPreferences();
                 if (di != null) {
-                	di.changeLogDialogDismissed();
+                    di.changeLogDialogDismissed();
                 }
             }
-        }).build();
+        })
+        .build();
 
         View view = dialog.getCustomView();
-        WebView webview = (WebView) view.findViewById(R.id.webview);
-        if (webview != null) {
-	        if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
-	            webview.setBackgroundColor(Color.WHITE);
-	        } else {
-	            webview.setBackgroundColor(Color.BLACK);
-	        }
-	        webview.loadDataWithBaseURL("file:///android_asset/", this.getLog(full), "text/html","utf-8", null);
+        if (view != null) {
+            WebView webview = (WebView) view.findViewById(R.id.webview);
+            if (webview != null) {
+                if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+                    webview.setBackgroundColor(Color.WHITE);
+                } else {
+                    webview.setBackgroundColor(Color.BLACK);
+                }
+                webview.loadDataWithBaseURL("file:///android_asset/", this.getLog(full), "text/html", "utf-8", null);
+            }
         }
         return dialog;
     }
@@ -178,7 +180,7 @@ public class ChangeLogDialog {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(VERSION_KEY, thisVersion);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -199,7 +201,7 @@ public class ChangeLogDialog {
     /** modes for HTML-Lists (bullet, numbered) */
     private enum Listmode {
         NONE, ORDERED, UNORDERED,
-    };
+    }
 
     private Listmode listMode = Listmode.NONE;
     private StringBuffer sb = null;
@@ -220,7 +222,7 @@ public class ChangeLogDialog {
         try {
             InputStream ins = context.getResources().openRawResource(R.raw.changelog);
             BufferedReader br = new BufferedReader(new InputStreamReader(ins));
-            String line = null;
+            String line;
             
             // if true: ignore further version sections
             boolean advanceToEOVS = false;
@@ -245,32 +247,43 @@ public class ChangeLogDialog {
                     case '%':
                         // line contains version title
                         this.closeList();
-                        sb.append("<div class=\"title\">" + line.substring(1).trim() + "</div>\n");
+                        sb.append("<div class=\"title\">");
+                        sb.append(line.substring(1).trim());
+                        sb.append("</div>\n");
                         break;
                     case '_':
                         // line contains version title
                         this.closeList();
-                        sb.append("<div class=\"subtitle\">" + line.substring(1).trim() + "</div>\n");
+                        sb.append("<div class=\"subtitle\">");
+                        sb.append(line.substring(1).trim());
+                        sb.append("</div>\n");
                         break;
                     case '!':
                         // line contains free text
                         this.closeList();
-                        sb.append("<div class=\"content\">" + line.substring(1).trim() + "</div>\n");
+                        sb.append("<div class=\"content\">");
+                        sb.append(line.substring(1).trim());
+                        sb.append("</div>\n");
                         break;
                     case '#':
                         // line contains numbered list item
                         this.openList(Listmode.ORDERED);
-                        sb.append("<li class=\"list_content\">" + line.substring(1).trim() + "</li>\n");
+                        sb.append("<li class=\"list_content\">");
+                        sb.append(line.substring(1).trim());
+                        sb.append("</li>\n");
                         break;
                     case '*':
                         // line contains bullet list item
                         this.openList(Listmode.UNORDERED);
-                        sb.append("<li class=\"list_content\">" + line.substring(1).trim() + "</li>\n");
+                        sb.append("<li class=\"list_content\">");
+                        sb.append(line.substring(1).trim());
+                        sb.append("</li>\n");
                         break;
                     default:
                         // no special character: just use line as is
                         this.closeList();
-                        sb.append(line + "\n");
+                        sb.append(line);
+                        sb.append("\n");
                     }
                 }
             }
@@ -307,20 +320,11 @@ public class ChangeLogDialog {
 
     private static final String TAG = "ChangeLog";
 
-    /**
-     * manually set the last version name - for testing purposes only
-     * 
-     * @param lastVersion
-     */
-    public void dontuseSetLastVersion(String lastVersion) {
-        this.lastVersion = lastVersion;
-    }
-
     public interface ChangeLogDialogInterface {
         /**
          * This method is used to inform the user that the change log dialog has
          * been closed.
          */
-        public void changeLogDialogDismissed();
+        void changeLogDialogDismissed();
     }
 }

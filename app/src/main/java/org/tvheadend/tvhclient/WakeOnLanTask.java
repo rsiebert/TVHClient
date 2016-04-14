@@ -55,7 +55,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         }
 
         try {
-            InetAddress address = null;
+            InetAddress address;
             if (!conn.wol_broadcast) {
                 address = InetAddress.getByName(conn.address);
                 Log.d(TAG, "Sending WOL packet to " + address);
@@ -86,7 +86,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     /**
      * Checks if the given MAC address is correct.
      * 
-     * @param macAddress
+     * @param macAddress The MAC address that shall be validated
      * @return True if the MAC address is correct, false otherwise
      */
     private boolean validateMacAddress(final String macAddress) {
@@ -96,24 +96,21 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         // Check if the MAC address is valid
         Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
         Matcher matcher = pattern.matcher(macAddress);
-        if (!matcher.matches()) {
-            return false;
-        }
-        return true;
+        return matcher.matches();
     }
 
     /**
      * Splits the given MAC address into it's parts and saves it in the bytes
      * array
      * 
-     * @param macAddress
-     * @return
+     * @param macAddress The MAC address that shall be split
+     * @return The byte array that holds the MAC address parts
      */
     private byte[] getMacBytes(final String macAddress) {
         byte[] macBytes = new byte[6];
 
         // Parse the MAC address elements into the array.
-        String[] hex = macAddress.split("(\\:|\\-)");
+        String[] hex = macAddress.split("(:|\\-)");
         for (int i = 0; i < 6; i++) {
             macBytes[i] = (byte) Integer.parseInt(hex[i], 16);
         }

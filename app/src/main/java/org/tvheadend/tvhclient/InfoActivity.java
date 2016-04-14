@@ -23,9 +23,6 @@ public class InfoActivity extends ActionBarActivity {
     @SuppressWarnings("unused")
     private final static String TAG = InfoActivity.class.getSimpleName();
 
-    private ActionBar actionBar = null;
-    private WebView webview;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
@@ -34,12 +31,14 @@ public class InfoActivity extends ActionBarActivity {
         Utils.setLanguage(this);
 
         // Setup the action bar and show the title
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(" ");
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setTitle(" ");
+        }
 
-        webview = (WebView) findViewById(R.id.webview);
+        WebView webview = (WebView) findViewById(R.id.webview);
         if (webview != null) {
             // Create the string that is later used to display the HTML page.
             // The string contains all feature information and HTML tags.
@@ -67,8 +66,8 @@ public class InfoActivity extends ActionBarActivity {
             } catch (IOException ex1) {
                 try {
                     is = getAssets().open("html/info_help_en.html");
-                } catch (IOException ex2) {
-                    
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -76,12 +75,15 @@ public class InfoActivity extends ActionBarActivity {
             // contains the feature description with the required HTML tags.
             try {
                 String htmlData;
-                BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                while ((htmlData = in.readLine()) != null) {
-                    sb.append(htmlData);
+                if (is != null) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                    while ((htmlData = in.readLine()) != null) {
+                        sb.append(htmlData);
+                    }
+                    in.close();
                 }
-                in.close();
-            } catch (Exception ex) {
+            } catch (Exception e) {
+                e.printStackTrace();
                 sb.append("Error parsing feature list");
             }
 
@@ -95,7 +97,7 @@ public class InfoActivity extends ActionBarActivity {
                 version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
                 s = Pattern.compile("APP_VERSION").matcher(sb).replaceAll(version);
             } catch (NameNotFoundException e) {
-
+                e.printStackTrace();
             }
 
             webview.loadDataWithBaseURL("file:///android_asset/", s, "text/html","utf-8", null);

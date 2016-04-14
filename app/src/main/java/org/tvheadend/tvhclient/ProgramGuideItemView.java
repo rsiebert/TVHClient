@@ -455,8 +455,8 @@ public class ProgramGuideItemView extends LinearLayout {
     }
     
     public interface ProgramContextMenuInterface {
-        public void setSelectedContextItem(Program p);
+        void setSelectedContextItem(Program p);
 
-        public void setMenuSelection(MenuItem item);
+        void setMenuSelection(MenuItem item);
     }
 }

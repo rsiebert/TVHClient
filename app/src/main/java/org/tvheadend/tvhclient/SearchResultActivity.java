@@ -67,7 +67,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
 
     private ActionBar actionBar = null;
     private SearchResultAdapter adapter;
-    private ListView listView;
     private Channel channel;
     private Recording recording;
     private MenuItem searchMenuItem = null;
@@ -92,23 +91,25 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
 
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(R.string.search);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setTitle(R.string.search);
+        }
 
-        listView = (ListView) findViewById(R.id.item_list);
+        ListView listView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(listView);
 
         // Show the details of the program when the user has selected one
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Model model = adapter.getItem(position);
+        if (listView != null) {
+            listView.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Model model = adapter.getItem(position);
 
-                // Show the program details dialog
-                if (model instanceof Program) {
-                    final Program program = (Program) model;
-                    if (program != null) {
+                    // Show the program details dialog
+                    if (model instanceof Program) {
+                        final Program program = (Program) model;
                         Bundle args = new Bundle();
                         args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
                         args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
@@ -117,12 +118,10 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                         DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
                         newFragment.show(getSupportFragmentManager(), "dialog");
                     }
-                }
 
-                // Show the recording details dialog
-                if (model instanceof Recording) {
-                    final Recording recording = (Recording) model;
-                    if (recording != null) {
+                    // Show the recording details dialog
+                    if (model instanceof Recording) {
+                        final Recording recording = (Recording) model;
                         Bundle args = new Bundle();
                         args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
                         args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
@@ -131,12 +130,12 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                         newFragment.show(getSupportFragmentManager(), "dialog");
                     }
                 }
-            }
-        });
+            });
+        }
 
         // This is the list with the initial data from the program guide. It
         // will be passed to the search adapter. 
-        List<Model> list = new ArrayList<Model>();
+        List<Model> list = new ArrayList<>();
 
         Intent intent = getIntent();
 
@@ -191,14 +190,16 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
 
         // Create the adapter with the given initial program guide data
         adapter = new SearchResultAdapter(this, list);
-        listView.setAdapter(adapter);
+        if (listView != null) {
+            listView.setAdapter(adapter);
+        }
 
         // Create the runnable that will filter the data from the adapter. It
         // also updates the action bar with the number of available program that
         // will be searched 
         updateTask = new Runnable() {
             public void run() {
-                adapter.getFilter().filter(query.toString());
+                adapter.getFilter().filter(query);
                 if (recording == null) {
                     actionBar.setSubtitle(getString(R.string.searching_programs, adapter.getFullCount()));
                 } else {
@@ -428,19 +429,14 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             getMenuInflater().inflate(R.menu.program_context_menu, menu);
             Program program = (Program) model;
             // Set the title of the context menu
-            if (program != null) {
-                menu.setHeaderTitle(program.title);
-            }
+            menu.setHeaderTitle(program.title);
             // Show or hide the menu items depending on the program state
             Utils.setProgramMenu(app, menu, program);
 
         } else if (model instanceof Recording) {
             getMenuInflater().inflate(R.menu.recording_context_menu, menu);
             Recording rec = (Recording) model;
-            if (rec != null) {
-                menu.setHeaderTitle(rec.title);
-            }
-
+            menu.setHeaderTitle(rec.title);
             // Hide all menu entries before activating certain ones
             for (int i = 0; i < menu.size(); i++) {
                 menu.getItem(i).setVisible(false);
@@ -496,45 +492,51 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
      */
     @Override
     public void onMessage(final String action, final Object obj) {
-        if (action.equals(Constants.ACTION_PROGRAM_ADD)) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    Model m = (Model) obj;
-                    adapter.remove(m);
-                    adapter.add(m);
-                    startDelayedAdapterUpdate();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_PROGRAM_DELETE)) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    Model m = (Model) obj;
-                    adapter.remove(m);
-                    startDelayedAdapterUpdate();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.update((Model) obj);
-                    startDelayedAdapterUpdate();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_DVR_DELETE)) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    Model m = (Model) obj;
-                    adapter.remove(m);
-                    startDelayedAdapterUpdate();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_DVR_UPDATE)) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.update((Model) obj);
-                    startDelayedAdapterUpdate();
-                }
-            });
+        switch (action) {
+            case Constants.ACTION_PROGRAM_ADD:
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Model m = (Model) obj;
+                        adapter.remove(m);
+                        adapter.add(m);
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
+            case Constants.ACTION_PROGRAM_DELETE:
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Model m = (Model) obj;
+                        adapter.remove(m);
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
+            case Constants.ACTION_PROGRAM_UPDATE:
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.update((Model) obj);
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
+            case Constants.ACTION_DVR_DELETE:
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Model m = (Model) obj;
+                        adapter.remove(m);
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
+            case Constants.ACTION_DVR_UPDATE:
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.update((Model) obj);
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
         }
     }
 
@@ -564,7 +566,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     @Override
     public boolean onSuggestionClick(int position) {
         // Get the text of the selected suggestion
-        Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getCursor();
+        Cursor cursor = searchView.getSuggestionsAdapter().getCursor();
         query = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
         startQuickAdapterUpdate();
 
@@ -578,7 +580,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     @Override
     public boolean onSuggestionSelect(int position) {
         // Get the text of the selected suggestion
-        Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getCursor();
+        Cursor cursor = searchView.getSuggestionsAdapter().getCursor();
         query = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
         startQuickAdapterUpdate();
         return true;

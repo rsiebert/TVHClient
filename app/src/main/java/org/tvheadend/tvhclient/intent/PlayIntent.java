@@ -16,14 +16,12 @@ public class PlayIntent extends Intent {
         super(ctx, ExternalActionActivity.class);
         if (m instanceof Program) {
             Program p = (Program) m;
-            if (p != null && p.channel != null) {
+            if (p.channel != null) {
                 putExtra(Constants.BUNDLE_CHANNEL_ID, p.channel.id);
             }
         } else if (m instanceof Recording) {
             Recording rec = (Recording)m;
-            if (rec != null) {
-                putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
-            }
+            putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
         }
     }
 
