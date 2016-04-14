@@ -12,7 +12,7 @@ public interface FragmentScrollInterface {
      * @param offset The position in pixels from the top of the first item
      * @param tag Identifier string to differentiate the caller
      */
-    public void onScrollingChanged(final int position, final int offset, final String tag);
+    void onScrollingChanged(final int position, final int offset, final String tag);
 
     /**
      * When the user has scrolled the visible program guide fragment, the other
@@ -23,5 +23,5 @@ public interface FragmentScrollInterface {
      * 
      * @param tag Identifier string to differentiate the caller
      */
-    public void onScrollStateIdle(final String tag);
+    void onScrollStateIdle(final String tag);
 }

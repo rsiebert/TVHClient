@@ -7,5 +7,5 @@ public interface HTSListener {
      * name of the action and the affected object. Anyone that overrides this
      * method can listen for these messages.
      */
-    public void onMessage(String action, Object obj);
+    void onMessage(String action, Object obj);
 }

@@ -2,9 +2,9 @@ package org.tvheadend.tvhclient.interfaces;
 
 public interface SettingsInterface {
 
-    public void restart();
-    public void restartNow();
-    public void reconnect();
+    void restart();
+    void restartNow();
+    void reconnect();
     
     void showConnections();
     void showAddConnection();

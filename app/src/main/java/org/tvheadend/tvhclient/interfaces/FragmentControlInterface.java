@@ -12,7 +12,7 @@ public interface FragmentControlInterface {
      * if the list view of a fragment has been loaded for the first time and
      * another one shall be shown then.
      * 
-     * @param position
+     * @param position Position in the list
      */
     void setInitialSelection(final int position);
 
@@ -22,22 +22,22 @@ public interface FragmentControlInterface {
      * list (e.g. half of a list item is only visible). Useful if the list views
      * of two fragments shall be synchronized.
      * 
-     * @param position
-     * @param offset
+     * @param position Position in the list
+     * @param offset Offset in pixels from the top of edge
      */
     void setSelection(final int position, final int offset);
 
     /**
      * Returns the currently selected item from the adapter
      * 
-     * @return
+     * @return Selected item
      */
     Object getSelectedItem();
 
     /**
      * Returns the number of items in the adapter
      * 
-     * @return
+     * @return number of items
      */
     int getItemCount();
 }
