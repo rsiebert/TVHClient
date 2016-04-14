@@ -1136,10 +1136,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
         // Get the status of the Ethernet connection, some tablets can use an
         // Ethernet cable
         boolean ethConnected = false;
-        if (Build.VERSION.SDK_INT >= 13) {
-            final NetworkInfo eth = cm.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
-            ethConnected = (eth != null) && eth.isConnected();
-        }
+        final NetworkInfo eth = cm.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+        ethConnected = (eth != null) && eth.isConnected();
 
         return (wifiConnected || mobileConnected || ethConnected);
     }

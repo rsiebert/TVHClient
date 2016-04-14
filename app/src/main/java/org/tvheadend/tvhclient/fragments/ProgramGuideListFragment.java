@@ -281,7 +281,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                 // Set the left and top margins of the time indication so it
                 // starts in the actual program guide and not in the channel
                 // list or time line.
-                final int layout = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) ? LayoutParams.MATCH_PARENT : LayoutParams.FILL_PARENT;
+                final int layout = LayoutParams.MATCH_PARENT;
                 RelativeLayout.LayoutParams parms = new RelativeLayout.LayoutParams(3, layout);
                 parms.setMargins(offset, titleLayoutRect.height(), 0, 0);
                 currentTimeIndication.setLayoutParams(parms);

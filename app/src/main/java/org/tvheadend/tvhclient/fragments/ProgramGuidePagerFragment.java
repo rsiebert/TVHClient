@@ -119,12 +119,10 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Prevent the time frame menu item from going into the overlay menu
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
-                menu.findItem(R.id.menu_timeframe).setShowAsActionFlags(
-                        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-            }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
+            menu.findItem(R.id.menu_timeframe).setShowAsActionFlags(
+                    MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
     }
 

@@ -250,12 +250,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         (menu.findItem(R.id.menu_timeframe)).setVisible(app.isUnlocked());
 
-        // Prevent the channel tag menu item from going into the overlay menu 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
-                menu.findItem(R.id.menu_tags).setShowAsActionFlags(
-                        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-            }
+        // Prevent the channel tag menu item from going into the overlay menu
+        if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
+            menu.findItem(R.id.menu_tags).setShowAsActionFlags(
+                    MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
     }
 

@@ -491,7 +491,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
         // Now validate the IP address
         if (matcher.matches()) {
-            pattern = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) ? Patterns.IP_ADDRESS : Pattern.compile(IP_ADDRESS);
+            pattern = Patterns.IP_ADDRESS;
             matcher = pattern.matcher(conn.address);
             if (!matcher.matches()) {
                 if (getView() != null) {

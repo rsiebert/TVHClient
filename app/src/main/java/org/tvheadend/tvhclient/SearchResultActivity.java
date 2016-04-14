@@ -310,15 +310,13 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.search_menu, menu);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            searchMenuItem = menu.findItem(R.id.menu_search); 
-            searchView = (SearchView) searchMenuItem.getActionView();
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setIconifiedByDefault(true);
-            searchView.setOnQueryTextListener(this);
-            searchView.setOnSuggestionListener(this);
-        }
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnSuggestionListener(this);
         return true;
     }
 
@@ -327,12 +325,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         switch (item.getItemId()) {
         case android.R.id.home:
             onBackPressed();
-            return true;
-
-        case R.id.menu_search:
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                onSearchRequested();
-            }
             return true;
 
         case R.id.menu_genre_color_info:
@@ -556,9 +548,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         startQuickAdapterUpdate();
 
         // Close the search view and show the action bar again
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            searchMenuItem.collapseActionView();
-        }
+        searchMenuItem.collapseActionView();
         return true;
     }
 
@@ -571,9 +561,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         startQuickAdapterUpdate();
 
         // Close the search view and show the action bar again
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            searchMenuItem.collapseActionView();
-        }
+        searchMenuItem.collapseActionView();
         return true;
     }
 

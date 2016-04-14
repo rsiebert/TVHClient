@@ -412,9 +412,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             public void onCastAvailabilityChanged(boolean castPresent) {
                 app.log(TAG, "CastConsumer onCastAvailabilityChanged, is present " + castPresent);
 
-                if (mMediaRouteMenuItem != null 
-                        && castPresent 
-                        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                if (mMediaRouteMenuItem != null && castPresent) {
                     showCastInfoOverlay();
                 }
             }
@@ -805,8 +803,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Prevent the refresh menu item from going into the overlay menu when
         // the status page is shown
-        if (selectedMenuPosition == MENU_STATUS
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (selectedMenuPosition == MENU_STATUS) {
             menu.findItem(R.id.menu_refresh).setShowAsActionFlags(
                     MenuItem.SHOW_AS_ACTION_ALWAYS
                             | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -829,15 +826,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             mMediaRouteMenuItem = mCastManager.addMediaRouterButton(menu, R.id.media_route_menu_item);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            searchMenuItem = menu.findItem(R.id.menu_search); 
-            searchView = (SearchView) searchMenuItem.getActionView();
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setIconifiedByDefault(true);
-            searchView.setOnQueryTextListener(this);
-            searchView.setOnSuggestionListener(this);
-        }
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnSuggestionListener(this);
+
         return true;
     }
 
@@ -850,12 +846,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         }
         // Handle your other action bar items...
         switch (item.getItemId()) {
-        case R.id.menu_search:
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                onSearchRequested();
-            }
-            return true;
-
         case R.id.menu_refresh:
             // Clear all available data and all channels that are currently
             // loading, reconnect to the server and reload all data
@@ -872,34 +862,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * This method is called when the user wants to search for programs. In case
-     * the program list of one channel is visible search only within this
-     * channel, otherwise search within the entire available program data.
-     */
-    @Override
-    public boolean onSearchRequested() {
-        Bundle bundle = new Bundle();
-        if (!isDualPane) {
-            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-            if (f instanceof ProgramListFragment) {
-                Object o = ((FragmentControlInterface) f).getSelectedItem();
-                if (o instanceof Channel) {
-                    final Channel ch = (Channel) o;
-                    bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ch.id);
-                }
-            } else if (f instanceof RecordingListFragment && f instanceof FragmentControlInterface) {
-                Object o = ((FragmentControlInterface) f).getSelectedItem();
-                if (o instanceof Recording) {
-                    final Recording rec = (Recording) o;
-                    bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
-                }
-            }
-        }
-        startSearch(null, false, bundle, false);
-        return true;
     }
 
     /**
@@ -1777,64 +1739,58 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     @SuppressLint("NewApi")
     @Override
     public boolean onQueryTextSubmit(String query) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            searchMenuItem.collapseActionView();
+        searchMenuItem.collapseActionView();
 
-            // Create the intent that will be passed to the search activity with
-            // the query and optionally some additional data.
-            Intent searchIntent = new Intent(getApplicationContext(), SearchResultActivity.class);
-            searchIntent.putExtra(SearchManager.QUERY, query);
-            searchIntent.setAction(Intent.ACTION_SEARCH);
+        // Create the intent that will be passed to the search activity with
+        // the query and optionally some additional data.
+        Intent searchIntent = new Intent(getApplicationContext(), SearchResultActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
 
-            Bundle bundle = new Bundle();
-            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+        Bundle bundle = new Bundle();
+        final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
 
-            // Pass on the channel id to search only in the selected channel.
-            // This will only be the case if no dual pane is active. Otherwise a
-            // full channel search would only be possible in the EPG view.
-            if (!isDualPane) {
-                if (f instanceof ProgramListFragment) {
-                    Object o = ((FragmentControlInterface) f).getSelectedItem();
-                    if (o instanceof Channel) {
-                        final Channel ch = (Channel) o;
-                        bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ch.id);
-                    }
-                }
-            }
-
-            // Pass on the recording id if the completed recording screen is
-            // visible. The onPrepareOptionsMenu ensures that the search icon is
-            // visible in the required screens.
-            if (f instanceof RecordingListFragment && f instanceof FragmentControlInterface) {
+        // Pass on the channel id to search only in the selected channel.
+        // This will only be the case if no dual pane is active. Otherwise a
+        // full channel search would only be possible in the EPG view.
+        if (!isDualPane) {
+            if (f instanceof ProgramListFragment) {
                 Object o = ((FragmentControlInterface) f).getSelectedItem();
-                if (o instanceof Recording) {
-                    final Recording rec = (Recording) o;
-                    bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+                if (o instanceof Channel) {
+                    final Channel ch = (Channel) o;
+                    bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ch.id);
                 }
             }
-
-            searchIntent.putExtra(SearchManager.APP_DATA, bundle);
-            startActivity(searchIntent);
-            return true;
         }
-        return false;
+
+        // Pass on the recording id if the completed recording screen is
+        // visible. The onPrepareOptionsMenu ensures that the search icon is
+        // visible in the required screens.
+        if (f instanceof RecordingListFragment && f instanceof FragmentControlInterface) {
+            Object o = ((FragmentControlInterface) f).getSelectedItem();
+            if (o instanceof Recording) {
+                final Recording rec = (Recording) o;
+                bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+            }
+        }
+
+        searchIntent.putExtra(SearchManager.APP_DATA, bundle);
+        startActivity(searchIntent);
+        return true;
     }
 
     @SuppressLint("NewApi")
     @Override
     public boolean onSuggestionClick(int position) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            searchMenuItem.collapseActionView();
+        searchMenuItem.collapseActionView();
 
-            // Set the search query and return true so that the
-            // onQueryTextSubmit is called. This is required to pass additional
-            // data to the search activity
-            Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
-            String suggestion = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
-            searchView.setQuery(suggestion, true);
-            return true;
-        }
-        return false;
+        // Set the search query and return true so that the
+        // onQueryTextSubmit is called. This is required to pass additional
+        // data to the search activity
+        Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
+        String suggestion = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+        searchView.setQuery(suggestion, true);
+        return true;
     }
 
     @Override
