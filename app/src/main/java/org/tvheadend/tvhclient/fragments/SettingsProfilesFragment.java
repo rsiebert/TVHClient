@@ -225,7 +225,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final String connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, "");
         if (!connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            Snackbar.make(getView(), R.string.err_connect, Snackbar.LENGTH_LONG).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.err_connect, Snackbar.LENGTH_LONG).show();
+            }
             return;
         }
 
@@ -260,8 +262,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
-                        if (recProfile.uuid == null || 
-                            (recProfile.uuid != null && recProfile.uuid.length() == 0)) {
+                        if (recProfile.uuid == null || recProfile.uuid.length() == 0) {
                             for (Profiles p : app.getDvrConfigs()) {
                                 if (p.name.equals(Constants.REC_PROFILE_DEFAULT)) {
                                     recProfile.uuid = p.uuid;
@@ -290,8 +291,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
-                        if (progProfile.uuid == null ||
-                            (progProfile.uuid != null && progProfile.uuid.length() == 0)) {
+                        if (progProfile.uuid == null || progProfile.uuid.length() == 0) {
                             for (Profiles p : app.getProfiles()) {
                                 if (p.name.equals(Constants.PROG_PROFILE_DEFAULT)) {
                                     progProfile.uuid = p.uuid;
@@ -309,9 +309,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     }
 
     /**
-     * 
-     * @param preferenceList
-     * @param profileList
+     * Adds the names and uuids of the available profiles to the preference widget
+     *
+     * @param preferenceList Preference list widget that shall hold the values
+     * @param profileList Profile list with the data
      */
     protected void addProfiles(ListPreference preferenceList, final List<Profiles> profileList) {
         // Initialize the arrays that contain the profile values

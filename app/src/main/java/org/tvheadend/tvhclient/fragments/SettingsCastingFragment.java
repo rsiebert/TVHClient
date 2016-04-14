@@ -43,9 +43,12 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 public class SettingsCastingFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
@@ -141,9 +144,9 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
                         new MaterialDialog.Builder(activity)
                                 .content(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
                                 .positiveText(android.R.string.ok)
-                                .callback(new MaterialDialog.ButtonCallback() {
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onPositive(MaterialDialog dialog) {
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         dialog.cancel();
                                     }
                                 }).show();
@@ -206,7 +209,9 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final String connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, "");
         if (!connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            Snackbar.make(getView(), R.string.err_connect, Snackbar.LENGTH_LONG).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.err_connect, Snackbar.LENGTH_LONG).show();
+            }
             return;
         }
 
@@ -264,9 +269,10 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     }
 
     /**
-     * 
-     * @param preferenceList
-     * @param profileList
+     * Adds the names and uuids of the available profiles to the preference widget
+     *
+     * @param preferenceList Preference list widget that shall hold the values
+     * @param profileList Profile list with the data
      */
     protected void addProfiles(ListPreference preferenceList, final List<Profiles> profileList) {
         // Initialize the arrays that contain the profile values

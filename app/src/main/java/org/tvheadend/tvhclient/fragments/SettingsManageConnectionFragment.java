@@ -203,7 +203,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         conn.wol_port = 9;
         conn.wol_broadcast = false;
         // If this is the first connection make it active
-        conn.selected = (dbh.getConnections().size() == 0) ? true : false;
+        conn.selected = (dbh.getConnections().size() == 0);
     }
 
     @Override
@@ -400,7 +400,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     /**
      * Checks if the MAC address syntax is correct.
      * 
-     * @return
+     * @return True if MAC address is valid, otherwise false
      */
     private boolean validateMacAddress() {
         // Initialize in case it's somehow null
@@ -415,7 +415,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
         Matcher matcher = pattern.matcher(conn.wol_address);
         if (!matcher.matches()) {
-            Snackbar.make(getView(), R.string.pref_wol_address_invalid, Snackbar.LENGTH_SHORT).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.pref_wol_address_invalid, Snackbar.LENGTH_SHORT).show();
+            }
             return false;
         }
         return true;
@@ -425,7 +427,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * Checks if the given name is not empty or does not contain special
      * characters which are not allowed in the database
      * 
-     * @return
+     * @return True if name is valid, otherwise false
      */
     private boolean validateName() {
         // Initialize in case it's somehow null
@@ -434,7 +436,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         // Do not allow an empty address
         if (conn.name.length() == 0) {
-            Snackbar.make(getView(), R.string.pref_name_error_empty, Snackbar.LENGTH_SHORT).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.pref_name_error_empty, Snackbar.LENGTH_SHORT).show();
+            }
             return false;
         }
 
@@ -442,7 +446,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
         Matcher matcher = pattern.matcher(conn.name);
         if (!matcher.matches()) {
-            Snackbar.make(getView(), R.string.pref_name_error_invalid, Snackbar.LENGTH_SHORT).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.pref_name_error_invalid, Snackbar.LENGTH_SHORT).show();
+            }
             return false;
         }
         return true;
@@ -453,7 +459,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * is an IP address it must only contain numbers between 1 and 255 and
      * dots. If it is an host name it must contain only valid characters.
      * 
-     * @return
+     * @return True if IP address is valid, otherwise false
      */
     @SuppressLint("NewApi")
     private boolean validateIpAddress() {
@@ -463,7 +469,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
         // Do not allow an empty address
         if (conn.address.length() == 0) {
-            Snackbar.make(getView(), R.string.pref_host_error_empty, Snackbar.LENGTH_SHORT).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.pref_host_error_empty, Snackbar.LENGTH_SHORT).show();
+            }
             return false;
         }
 
@@ -471,7 +479,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
         Matcher matcher = pattern.matcher(conn.address);
         if (!matcher.matches()) {
-            Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
+            }
             return false;
         }
 
@@ -484,7 +494,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             pattern = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) ? Patterns.IP_ADDRESS : Pattern.compile(IP_ADDRESS);
             matcher = pattern.matcher(conn.address);
             if (!matcher.matches()) {
-                Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
+                }
                 return false;
             }
         }
@@ -495,17 +507,21 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * Validates the port numbers. It must not be empty and the value must be
      * between the allowed port range of zero to 65535.
      * 
-     * @return
+     * @return True if port is valid, otherwise false
      */
     private boolean validatePort() {
         if (prefPort.getText().length() == 0 || 
                 prefStreamingPort.getText().length() == 0) {
-            Snackbar.make(getView(), R.string.pref_port_error_empty, Snackbar.LENGTH_SHORT).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.pref_port_error_empty, Snackbar.LENGTH_SHORT).show();
+            }
             return false;
         }
         if ((conn.port <= 0 || conn.port > 65535) ||
                 (conn.streaming_port <= 0 || conn.streaming_port > 65535)) {
-            Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
+            }
             return false;
         }
         return true;

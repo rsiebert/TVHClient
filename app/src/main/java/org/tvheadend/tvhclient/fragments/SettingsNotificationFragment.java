@@ -73,8 +73,10 @@ public class SettingsNotificationFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (!app.isUnlocked()) {
-                    Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
-                            Snackbar.LENGTH_SHORT).show();
+                    if (getView() != null) {
+                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
+                                Snackbar.LENGTH_SHORT).show();
+                    }
                     prefShowNotifications.setChecked(false);
                 }
 

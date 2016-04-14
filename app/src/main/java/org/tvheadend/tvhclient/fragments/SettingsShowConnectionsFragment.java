@@ -84,7 +84,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             settingsInterface = (SettingsInterface) activity;
         }
 
-        connList = new ArrayList<Connection>();
+        connList = new ArrayList<>();
         adapter = new ConnectionListAdapter(activity, connList);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -103,7 +103,6 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                 listView.setItemChecked(position, true);
                 startActionMode();
                 view.setSelected(true);
-                return;
             }
         });
 
@@ -165,7 +164,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
      * Switched the selection status of the connection by setting the previous
      * connection to unselected if the selected one is set as selected.
      * 
-     * @param c
+     * @param c Connection
      */
     private void setConnectionActive(Connection c) {
         if (settingsInterface != null) {
@@ -173,14 +172,14 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         }
 
         // Switch the selection status
-        c.selected = (c.selected) ? false : true;
+        c.selected = !c.selected;
         if (c.selected) {
             Connection previousConn = dbh.getSelectedConnection();
             if (previousConn != null) {
                 previousConn.selected = false;
                 dbh.updateConnection(previousConn);
             }
-        };
+        }
         // Update the currently selected connection and refresh the display
         dbh.updateConnection(c);
         showConnections();
@@ -293,7 +292,9 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             menu.getItem(2).setVisible(false);
         }
 
-        mode.setTitle(c.name);
+        if (c != null) {
+            mode.setTitle(c.name);
+        }
         return true;
     }
 }

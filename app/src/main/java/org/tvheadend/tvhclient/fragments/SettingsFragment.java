@@ -31,12 +31,14 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 @SuppressWarnings("deprecation")
@@ -86,7 +88,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefSendLogfile = findPreference("pref_send_logfile");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
-        prefMenuNotifications  = (Preference) findPreference("pref_menu_notifications");
+        prefMenuNotifications  = findPreference("pref_menu_notifications");
     }
 
     @Override
@@ -109,8 +111,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         // menus only if these are supported by the server.
         final String[] e = getResources().getStringArray(R.array.pref_menu_names);
         final String[] ev = getResources().getStringArray(R.array.pref_menu_ids);
-        List<String> menuEntries = new ArrayList<String>();
-        List<String> menuEntryValues = new ArrayList<String>();
+        List<String> menuEntries = new ArrayList<>();
+        List<String> menuEntryValues = new ArrayList<>();
 
         for (int i = 0; i < e.length; i++) {
             if (i < 8 || (i == 3 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS)
@@ -139,21 +141,23 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefMenuProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (dbh.getConnections().isEmpty()) {
-                    Snackbar.make(getView(), R.string.no_connection_available_advice, 
-                            Snackbar.LENGTH_SHORT).show();
-                } else if (dbh.getSelectedConnection() == null) {
-                    Snackbar.make(getView(), R.string.no_connection_active_advice, 
-                            Snackbar.LENGTH_SHORT).show();
-                } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
-                    Snackbar.make(getView(), R.string.feature_not_supported_by_server, 
-                            Snackbar.LENGTH_SHORT).show();
-                } else if (!app.isUnlocked()) {
-                    Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
-                            Snackbar.LENGTH_SHORT).show();
-                } else {
-                    if (settingsInterface != null) {
-                        settingsInterface.showProfiles();
+                if (getView() != null) {
+                    if (dbh.getConnections().isEmpty()) {
+                        Snackbar.make(getView(), R.string.no_connection_available_advice,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else if (dbh.getSelectedConnection() == null) {
+                        Snackbar.make(getView(), R.string.no_connection_active_advice,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                        Snackbar.make(getView(), R.string.feature_not_supported_by_server,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else if (!app.isUnlocked()) {
+                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        if (settingsInterface != null) {
+                            settingsInterface.showProfiles();
+                        }
                     }
                 }
                 return false;
@@ -164,21 +168,23 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefMenuCasting.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (dbh.getConnections().isEmpty()) {
-                    Snackbar.make(getView(), R.string.no_connection_available_advice, 
-                            Snackbar.LENGTH_SHORT).show();
-                } else if (dbh.getSelectedConnection() == null) {
-                    Snackbar.make(getView(), R.string.no_connection_active_advice, 
-                            Snackbar.LENGTH_SHORT).show();
-                } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
-                    Snackbar.make(getView(), R.string.feature_not_supported_by_server, 
-                            Snackbar.LENGTH_SHORT).show();
-                } else if (!app.isUnlocked()) {
-                    Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
-                            Snackbar.LENGTH_SHORT).show();
-                } else {
-                    if (settingsInterface != null) {
-                        settingsInterface.showCasting();
+                if (getView() != null) {
+                    if (dbh.getConnections().isEmpty()) {
+                        Snackbar.make(getView(), R.string.no_connection_available_advice,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else if (dbh.getSelectedConnection() == null) {
+                        Snackbar.make(getView(), R.string.no_connection_active_advice,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                        Snackbar.make(getView(), R.string.feature_not_supported_by_server,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else if (!app.isUnlocked()) {
+                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        if (settingsInterface != null) {
+                            settingsInterface.showCasting();
+                        }
                     }
                 }
                 return false;
@@ -190,15 +196,17 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefMenuTranscoding.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (dbh.getConnections().isEmpty()) {
-                    Snackbar.make(getView(), getString(R.string.no_connection_available_advice), 
-                            Snackbar.LENGTH_SHORT).show();
-                } else if (dbh.getSelectedConnection() == null) {
-                    Snackbar.make(getView(), getString(R.string.no_connection_active_advice), 
-                            Snackbar.LENGTH_SHORT).show();
-                } else {
-                    if (settingsInterface != null) {
-                        settingsInterface.showTranscodingSettings();
+                if (getView() != null) {
+                    if (dbh.getConnections().isEmpty()) {
+                        Snackbar.make(getView(), getString(R.string.no_connection_available_advice),
+                                Snackbar.LENGTH_SHORT).show();
+                    } else if (dbh.getSelectedConnection() == null) {
+                        Snackbar.make(getView(), getString(R.string.no_connection_active_advice),
+                                Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        if (settingsInterface != null) {
+                            settingsInterface.showTranscodingSettings();
+                        }
                     }
                 }
                 return false;
@@ -215,17 +223,15 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                         .content(R.string.clear_search_history_sum)
                         .positiveText(getString(R.string.delete))
                         .negativeText(getString(R.string.cancel))
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                                 suggestions.clearHistory();
-                                Snackbar.make(getView(), getString(R.string.clear_search_history_done), 
-                                        Snackbar.LENGTH_SHORT).show();
-                            }
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                // NOP
+                                if (getView() != null) {
+                                    Snackbar.make(getView(), getString(R.string.clear_search_history_done),
+                                            Snackbar.LENGTH_SHORT).show();
+                                }
                             }
                         }).show();
                 return false;
@@ -242,9 +248,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                         .content(R.string.clear_icon_cache_sum)
                         .positiveText(getString(R.string.delete))
                         .negativeText(getString(R.string.cancel))
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 File[] files = activity.getCacheDir().listFiles();
                                 for (File file : files) {
                                     if (file.toString().endsWith(".png")) {
@@ -254,12 +260,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                         }
                                     }
                                 }
-                                Snackbar.make(getView(), getString(R.string.clear_icon_cache_done), 
-                                        Snackbar.LENGTH_SHORT).show();
-                            }
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                // NOP
+                                if (getView() != null) {
+                                    Snackbar.make(getView(), getString(R.string.clear_icon_cache_done),
+                                            Snackbar.LENGTH_SHORT).show();
+                                }
                             }
                         }).show();
                 return false;
@@ -272,8 +276,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (app.isUnlocked()) {
-                    Snackbar.make(getView(), getString(R.string.unlocker_already_purchased), 
-                            Snackbar.LENGTH_SHORT).show();
+                    if (getView() != null) {
+                        Snackbar.make(getView(), getString(R.string.unlocker_already_purchased),
+                                Snackbar.LENGTH_SHORT).show();
+                    }
                 } else {
                     Intent unlockerIntent = new Intent(activity, UnlockerActivity.class);
                     startActivity(unlockerIntent);
@@ -344,8 +350,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (!app.isUnlocked()) {
-                    Snackbar.make(getView(), R.string.feature_not_available_in_free_version, 
-                            Snackbar.LENGTH_SHORT).show();
+                    if (getView() != null) {
+                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
+                                Snackbar.LENGTH_SHORT).show();
+                    }
                 } else {
                     if (settingsInterface != null) {
                         settingsInterface.showNotifications();
@@ -427,42 +435,47 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
      */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if (key.equals("lightThemePref") 
-                || key.equals("languagePref")) {
-            if (settingsInterface != null) {
-                settingsInterface.restart();
-                settingsInterface.restartNow();
-            }
-        } else if (key.equals("epgMaxDays")) {
-            try {
-                Integer.parseInt(prefs.getString(key, "7"));
-            } catch (NumberFormatException ex) {
-                prefs.edit().putString(key, "7").commit();
-            }
-            if (settingsInterface != null) {
-                settingsInterface.restart();
-            }
-        } else if (key.equals("epgHoursVisible")) {
-            try {
-                Integer.parseInt(prefs.getString(key, "4"));
-            } catch (NumberFormatException ex) {
-                prefs.edit().putString(key, "4").commit();
-            }
-            if (settingsInterface != null) {
-                settingsInterface.restart();
-            }
-        } else if (key.equals("connectionTimeout")) {
-            try {
-                int value = Integer.parseInt(prefs.getString(key, "5"));
-                if (value < 1) {
-                    prefs.edit().putString(key, "1").commit();
+        switch (key) {
+            case "lightThemePref":
+            case "languagePref":
+                if (settingsInterface != null) {
+                    settingsInterface.restart();
+                    settingsInterface.restartNow();
                 }
-                if (value > 60) {
-                    prefs.edit().putString(key, "60").commit();
+                break;
+            case "epgMaxDays":
+                try {
+                    Integer.parseInt(prefs.getString(key, "7"));
+                } catch (NumberFormatException ex) {
+                    prefs.edit().putString(key, "7").apply();
                 }
-            } catch (NumberFormatException ex) {
-                prefs.edit().putString(key, "5").commit();
-            }
+                if (settingsInterface != null) {
+                    settingsInterface.restart();
+                }
+                break;
+            case "epgHoursVisible":
+                try {
+                    Integer.parseInt(prefs.getString(key, "4"));
+                } catch (NumberFormatException ex) {
+                    prefs.edit().putString(key, "4").apply();
+                }
+                if (settingsInterface != null) {
+                    settingsInterface.restart();
+                }
+                break;
+            case "connectionTimeout":
+                try {
+                    int value = Integer.parseInt(prefs.getString(key, "5"));
+                    if (value < 1) {
+                        prefs.edit().putString(key, "1").apply();
+                    }
+                    if (value > 60) {
+                        prefs.edit().putString(key, "60").apply();
+                    }
+                } catch (NumberFormatException ex) {
+                    prefs.edit().putString(key, "5").apply();
+                }
+                break;
         }
         // Reload the data to fetch the channel icons. They are not loaded
         // (to save bandwidth) when not required.  
