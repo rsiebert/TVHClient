@@ -42,6 +42,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -82,6 +83,11 @@ public class TVHClientApplication extends Application implements BillingProcesso
     private int protocolVersion = 10;
     private String serverName = "";
     private String serverVersion = "";
+
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     /**
      * Adds a single listener to the list.
