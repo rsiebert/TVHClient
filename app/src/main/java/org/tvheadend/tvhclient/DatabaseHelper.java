@@ -234,8 +234,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Inserts a new connection with the given parameters into the database 
-     * @param conn
-     * @return
+     * @param conn Connetcion
+     * @return Id of the newly added connection
      */
     public long addConnection(final Connection conn) {
         ContentValues values = new ContentValues();
@@ -262,8 +262,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Removes a connection with the given id from the database
-     * @param id
-     * @return
+     * @param id Id of the connection
+     * @return True of connection was removed, otherwise false
      */
     public boolean removeConnection(final long id) {
         String[] whereArgs = { String.valueOf(id) };
@@ -275,8 +275,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Updates the connection with the given id and parameters in the database 
-     * @param conn
-     * @return
+     * @param conn Connetcion
+     * @return True if connection was updated, otherwise false
      */
     public boolean updateConnection(final Connection conn) {
 
@@ -306,7 +306,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Returns the connection from the database that is marked as the preferred
      * (selected) one.
      * 
-     * @return
+     * @return Selected connection
      */
     public Connection getSelectedConnection() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -324,8 +324,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Returns the connection with the given id from the database
-     * @param id
-     * @return
+     * @param id Id of the connection
+     * @return Connection
      */
     public Connection getConnection(final long id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -342,10 +342,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Returns a list of all connections from the database
-     * @return
+     * @return List of all connections
      */
     public List<Connection> getConnections() {
-        List<Connection> connList = new ArrayList<Connection>();
+        List<Connection> connList = new ArrayList<>();
         Cursor c = null;
 
         try {
@@ -378,8 +378,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * 
-     * @param c
-     * @return
+     * @param c Database cursor
+     * @return Connection
      */
     private Connection getConnectionValues(final Cursor c) {
         Connection conn = new Connection();
@@ -403,8 +403,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     /**
      * Inserts a new profile with the given parameters into the database 
-     * @param p
-     * @return
+     * @param p Profile
+     * @return True if profile was added, otherwise false
      */
     public long addProfile(final Profile p) {
         ContentValues values = new ContentValues();
@@ -426,8 +426,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Removes a profile with the given id from the database
-     * @param id
-     * @return
+     * @param id Id of the profile
+     * @return True if profile was removed, otherwise false
      */
     public boolean removeProfile(final long id) {
         String[] whereArgs = { String.valueOf(id) };
@@ -439,8 +439,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Updates the profile with the given id and parameters in the database 
-     * @param p
-     * @return
+     * @param p Profile
+     * @return True if profile was updated, otherwise false
      */
     public boolean updateProfile(final Profile p) {
         ContentValues values = new ContentValues();
@@ -461,8 +461,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     /**
      * Returns the profile from the given id from the database
-     * @param id
-     * @return
+     * @param id Id of the profile
+     * @return Profile
      */
     public Profile getProfile(final long id) {
         SQLiteDatabase db = this.getReadableDatabase();

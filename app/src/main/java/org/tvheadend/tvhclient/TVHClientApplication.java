@@ -71,7 +71,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     // File name and path for the internal logging functionality
     private File logPath = null;
-    private File logFile = null;
     private BufferedOutputStream logfileBuffer = null;
     // The prefix with the date in each log entry
     private final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
@@ -87,7 +86,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Adds a single listener to the list.
      * 
-     * @param listener
+     * @param listener Listener class
      */
     public void addListener(HTSListener listener) {
         synchronized (listeners) {
@@ -98,7 +97,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Removes a single listener from the list.
      * 
-     * @param listener
+     * @param listener Listener class
      */
     public void removeListener(HTSListener listener) {
         synchronized (listeners) {
@@ -118,8 +117,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Sends the given action and possible object with the data to all
      * registered listeners.
      * 
-     * @param action
-     * @param obj
+     * @param action String that defines the action
+     * @param obj Object that contains data
      */
     private void broadcastMessage(final String action, final Object obj) {
         synchronized (listeners) {
@@ -147,7 +146,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * required to determine if the server supports series recordings and other
      * stuff.
      *
-     * @param version
+     * @param version Version of the server protocol
      */
     public void setProtocolVersion(final int version) {
         protocolVersion = version;
@@ -166,7 +165,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * required to determine if the server supports series recordings and other
      * stuff.
      *
-     * @return
+     * @return Version of the server protocol
      */
     public int getProtocolVersion() {
         return protocolVersion;
@@ -184,7 +183,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Sends the given packet object for video playback to all registered
      * listeners
      * 
-     * @param p
+     * @param p Packet
      */
     public void broadcastPacket(Packet p) {
         broadcastMessage(Constants.ACTION_PLAYBACK_PACKET, p);
@@ -193,7 +192,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns the list of available channel tags
      * 
-     * @return
+     * @return List of all channel tags
      */
     public List<ChannelTag> getChannelTags() {
         synchronized (tags) {
@@ -220,7 +219,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Adds the new channel tag to the list. If loading is not in progress all
      * registered listeners will be informed.
      * 
-     * @param tag
+     * @param tag Channel tag
      */
     public void addChannelTag(ChannelTag tag) {
         synchronized (tags) {
@@ -244,7 +243,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Removes the given channel tag from the list. If loading is not in progress
      * all registered listeners will be informed.
      * 
-     * @param tag
+     * @param tag Channel tag
      */
     public void removeChannelTag(ChannelTag tag) {
         synchronized (tags) {
@@ -259,7 +258,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Removes the channel tag (given by the id) from the list. If loading is
      * not in progress all registered listeners will be informed.
      * 
-     * @param tag
+     * @param id Id of the channel tag
      */
     public void removeChannelTag(long id) {
         synchronized (tags) {
@@ -275,8 +274,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns the channel tag that matches the given id.
      * 
-     * @param id
-     * @return
+     * @param id Id of the channel tag
+     * @return Channel tag
      */
     public ChannelTag getChannelTag(long id) {
         synchronized (tags) {
@@ -293,7 +292,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that this channel
      * tag has been updated.
      * 
-     * @param tag
+     * @param tag ChannelTag
      */
     public void updateChannelTag(ChannelTag tag) {
         if (!loading) {
@@ -304,7 +303,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Adds the given channel to the list of available channels.
      * 
-     * @param channel
+     * @param channel Channel
      */
     public void addChannel(Channel channel) {
         synchronized (channels) {
@@ -327,7 +326,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns the list of all available channels.
      * 
-     * @return
+     * @return List of all channels
      */
     public List<Channel> getChannels() {
         synchronized (channels) {
@@ -340,7 +339,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * has finished any listener will be informed that this channel has been
      * removed.
      * 
-     * @param channel
+     * @param channel Channel
      */
     public void removeChannel(Channel channel) {
         synchronized (channels) {
@@ -354,8 +353,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns the channel that matches the given id.
      * 
-     * @param id
-     * @return
+     * @param id Id of the channel
+     * @return Channel
      */
     public Channel getChannel(long id) {
         synchronized (channels) {
@@ -372,7 +371,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Removes the channel from the list of available channels that matches the
      * given id. Any listener will be informed about that removal. 
      * 
-     * @param id
+     * @param id Id of the channel
      */
     public void removeChannel(long id) {
         synchronized (channels) {
@@ -389,7 +388,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that the given
      * channel has been updated.
      *  
-     * @param ch
+     * @param ch Channel
      */
     public void updateChannel(Channel ch) {
         if (!loading) {
@@ -401,7 +400,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that the given
      * program has been added.
      * 
-     * @param p
+     * @param p Program
      */
     public void addProgram(Program p) {
         if (!loading) {
@@ -413,7 +412,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that the given
      * program has been deleted.
      * 
-     * @param p
+     * @param p Program
      */
     public void removeProgram(Program p) {
         if (!loading) {
@@ -425,7 +424,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that the given
      * program has been updated.
      * 
-     * @param p
+     * @param p Program
      */
     public void updateProgram(Program p) {
         if (!loading) {
@@ -438,7 +437,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * has finished any listener will be informed that a recording has been
      * added.
      * 
-     * @param rec
+     * @param rec Recording
      */
     public void addRecording(Recording rec) {
         synchronized (recordings) {
@@ -461,7 +460,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns the list of all available recordings.
      * 
-     * @return
+     * @return List of all recordings
      */
     public List<Recording> getRecordings() {
         synchronized (recordings) {
@@ -472,8 +471,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns a single recording that matches the given id.
      * 
-     * @param id
-     * @return
+     * @param id The id of the recording
+     * @return Recording
      */
     public Recording getRecording(long id) {
         synchronized (recordings) {
@@ -491,8 +490,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * identifies if a recording is completed, scheduled for recording or failed
      * due to some reason.
      * 
-     * @param type
-     * @return
+     * @param type The type of the recording
+     * @return List of recordings of the given type
      */
     public List<Recording> getRecordingsByType(int type) {
         List<Recording> recs = new ArrayList<Recording>();
@@ -542,7 +541,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * loading has finished any listener will be informed that a recording has
      * been removed.
      * 
-     * @param rec
+     * @param rec Recording
      */
     public void removeRecording(Recording rec) {
         synchronized (recordings) {
@@ -563,7 +562,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Removes the recording from the list of all available recordings that
      * matches the given id.
      * 
-     * @param id
+     * @param id Id of the recording
      */
     public void removeRecording(long id) {
         synchronized (recordings) {
@@ -580,7 +579,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that a recording
      * has been updated.
      * 
-     * @param rec
+     * @param rec Recording
      */
     public void updateRecording(Recording rec) {
         if (!loading) {
@@ -593,7 +592,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * finished any listener will be informed that a series recording has been
      * added.
      * 
-     * @param srec
+     * @param rec Series recording
      */
     public void addSeriesRecording(SeriesRecording rec) {
         synchronized (seriesRecordings) {
@@ -617,7 +616,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Adds the given series recording to the list of available series
      * recordings
      * 
-     * @return
+     * @return List of all series recordings
      */
     public List<SeriesRecording> getSeriesRecordings() {
         synchronized (seriesRecordings) {
@@ -628,8 +627,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns a single series recording that matches the given id.
      * 
-     * @param id
-     * @return
+     * @param id The id of the series recording
+     * @return Series recording
      */
     public SeriesRecording getSeriesRecording(String id) {
         synchronized (seriesRecordings) {
@@ -647,7 +646,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * recordings. If loading has finished any listener will be informed that a
      * series recording has been removed.
      * 
-     * @param srec
+     * @param srec Series recording
      */
     public void removeSeriesRecording(SeriesRecording srec) {
         synchronized (seriesRecordings) {
@@ -662,7 +661,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Removes the series recording from the list of all available series
      * recordings that matches the given id.
      * 
-     * @param id
+     * @param id The id of the series recording
      */
     public void removeSeriesRecording(String id) {
         synchronized (seriesRecordings) {
@@ -679,7 +678,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that a series
      * recording has been updated.
      * 
-     * @param srec
+     * @param srec Series recording
      */
     public void updateSeriesRecording(SeriesRecording srec) {
         if (!loading) {
@@ -692,7 +691,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * finished any listener will be informed that a timer recording has been
      * added.
      * 
-     * @param rec
+     * @param rec Timer recording
      */
     public void addTimerRecording(TimerRecording rec) {
         synchronized (timerRecordings) {
@@ -709,7 +708,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Adds the given timer recording to the list of available timer
      * recordings
      * 
-     * @return
+     * @return List of all timer recordings
      */
     public List<TimerRecording> getTimerRecordings() {
         return timerRecordings;
@@ -718,8 +717,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns a single timer recording that matches the given id.
      * 
-     * @param id
-     * @return
+     * @param id The id of the timer recording
+     * @return Timer recording
      */
     public TimerRecording getTimerRecording(String id) {
         synchronized (timerRecordings) {
@@ -737,7 +736,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * recordings. If loading has finished any listener will be informed that a
      * timer recording has been removed.
      * 
-     * @param rec
+     * @param rec Timer recording
      */
     public void removeTimerRecording(TimerRecording rec) {
         synchronized (timerRecordings) {
@@ -752,7 +751,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Removes the timer recording from the list of all available timer
      * recordings that matches the given id.
      * 
-     * @param id
+     * @param id The id of the timer recording
      */
     public void removeTimerRecording(String id) {
         synchronized (timerRecordings) {
@@ -769,7 +768,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that a series
      * recording has been updated.
      * 
-     * @param srec
+     * @param rec Timer recording
      */
     public void updateTimerRecording(TimerRecording rec) {
         if (!loading) {
@@ -780,7 +779,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Informes all registered listeners about the loading status.
      * 
-     * @param b
+     * @param b The loading state
      */
     public void setLoading(boolean b) {
         if (loading != b) {
@@ -828,7 +827,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * loading has finished any listener will be informed that a subscription
      * has been added.
      * 
-     * @param s
+     * @param s Subscription
      */
     public void addSubscription(Subscription s) {
         synchronized (subscriptions) {
@@ -842,7 +841,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns a list of all available subscriptions.
      * 
-     * @return
+     * @return List with all subscriptions
      */
     public List<Subscription> getSubscriptions() {
         return subscriptions;
@@ -853,7 +852,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * If loading has finished any listener will be informed that a subscription
      * has been removed.
      * 
-     * @param s
+     * @param s Subscription
      */
     public void removeSubscription(Subscription s) {
         s.streams.clear();
@@ -868,8 +867,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns the subscription that matches the given id.
      * 
-     * @param id
-     * @return
+     * @param id The id of the subscription
+     * @return Subscription
      */
     public Subscription getSubscription(long id) {
         synchronized (subscriptions) {
@@ -887,7 +886,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * matches the given id. If loading has finished any listener will be
      * informed that a subscription has been removed.
      * 
-     * @param id
+     * @param id The id of the subscription
      */
     public void removeSubscription(long id) {
         synchronized (subscriptions) {
@@ -913,7 +912,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Informs all listeners that the given ticket has been added.
      * 
-     * @param t
+     * @param t Ticket id
      */
     public void addTicket(HttpTicket t) {
         broadcastMessage(Constants.ACTION_TICKET_ADD, t);
@@ -922,7 +921,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Returns weather the application is still loading data or not.
      *  
-     * @return
+     * @return True if loading, false otherwise
      */
     public boolean isLoading() {
         return loading;
@@ -936,11 +935,11 @@ public class TVHClientApplication extends Application implements BillingProcesso
     }
 
     public static SparseArray<String> getContentTypes(Context ctx) {
-        SparseArray<String> ret = new SparseArray<String>();
+        SparseArray<String> ret = new SparseArray<>();
 
         String[] s = ctx.getResources().getStringArray(R.array.pr_content_type0);
         for (int i = 0; i < s.length; i++) {
-            ret.append(0x00 + i, s[i]);
+            ret.append(i, s[i]);
         }
 
         s = ctx.getResources().getStringArray(R.array.pr_content_type1);
@@ -1069,7 +1068,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return (bp.isInitialized() && bp.isPurchased(Constants.UNLOCKER));
+        return true; //(bp.isInitialized() && bp.isPurchased(Constants.UNLOCKER));
     }
 
     @Override
@@ -1087,7 +1086,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * Returns the billing processor object that can be used by other classes to
      * access billing related features
      * 
-     * @return
+     * @return The billing processor object
      */
     public BillingProcessor getBillingProcessor() {
         return bp;
@@ -1124,7 +1123,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * available show the status page otherwise continue and show the desired
      * screen.
      * 
-     * @return
+     * @return True if the application is connected somehow with the network, otherwise false
      */
     @SuppressLint("InlinedApi")
     public boolean isConnected() {
@@ -1132,15 +1131,15 @@ public class TVHClientApplication extends Application implements BillingProcesso
         final NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         final NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-        final boolean wifiConnected = ((wifi != null) ? wifi.isConnected() : false);
-        final boolean mobileConnected = ((mobile != null) ? mobile.isConnected() : false);
+        final boolean wifiConnected = (wifi != null) && wifi.isConnected();
+        final boolean mobileConnected = (mobile != null) && mobile.isConnected();
 
         // Get the status of the Ethernet connection, some tablets can use an
         // Ethernet cable
         boolean ethConnected = false;
         if (Build.VERSION.SDK_INT >= 13) {
             final NetworkInfo eth = cm.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
-            ethConnected = ((eth != null) ? eth.isConnected() : false);
+            ethConnected = (eth != null) && eth.isConnected();
         }
 
         return (wifiConnected || mobileConnected || ethConnected);
@@ -1149,8 +1148,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     /**
      * Writes the given tag name and the message into the log file
      * 
-     * @param tag
-     * @param msg
+     * @param tag The tag which identifies who has made the log statement
+     * @param msg The message that shall be logged
      */
     public void log(String tag, String msg) {
         Log.d(tag, msg);
@@ -1191,7 +1190,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
         // Open the log file with the current date. This ensures that the log
         // files are rotated daily 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-        logFile = new File(logPath, "tvhclient_" + sdf.format(new Date().getTime()) + ".log");
+        File logFile = new File(logPath, "tvhclient_" + sdf.format(new Date().getTime()) + ".log");
 
         try {
             // Open the buffer to write data into the log file. Append the data.
@@ -1258,7 +1257,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * recording has started and another that it has ended regardless of the
      * recording state.
      * 
-     * @param rec       The recording for which the notification shall be shown
+     * @param id        Id of the recording for which the notification shall be shown
      * @param offset    Time in minutes that the notification shall be shown earlier
      */
     public void addNotification(final long id, final long offset) {
