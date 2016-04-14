@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.model;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,14 +27,14 @@ public class Recording extends Model implements Comparable<Recording> {
     public long contentType;
     public String comment;
     public String episode;
-    public List<DvrCutpoint> dvrCutPoints = new ArrayList<DvrCutpoint>();
+    public List<DvrCutpoint> dvrCutPoints = new ArrayList<>();
     public String subscriptionError;
     public long streamErrors;
     public long dataErrors;
     public long dataSize;
 
     @Override
-    public int compareTo(Recording that) {
+    public int compareTo(@NonNull Recording that) {
         if (this.state() == 1 && that.state() == 1) {
             return this.start.compareTo(that.start);
         } else {
@@ -59,10 +61,6 @@ public class Recording extends Model implements Comparable<Recording> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Recording) {
-            return ((Recording) o).id == id;
-        }
-
-        return false;
+        return o instanceof Recording && ((Recording) o).id == id;
     }
 }
