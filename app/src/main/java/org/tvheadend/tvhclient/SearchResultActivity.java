@@ -461,13 +461,13 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     private void startAdapterUpdate(int updateTaskTime, int finishTaskTime) {
         if (!handlerRunning) {
             // Show that the loading is still active
-            updateHandler.postDelayed(updateTask, 500);
+            updateHandler.postDelayed(updateTask, updateTaskTime);
 
             // Show the final result when loading is done. This is called only
             // once when the startDelayedAdapterUpdate method is called for the
             // last time.
             updateHandler.removeCallbacks(finishTask);
-            updateHandler.postDelayed(finishTask, 1500);
+            updateHandler.postDelayed(finishTask, finishTaskTime);
             handlerRunning = true;
         }
     }
