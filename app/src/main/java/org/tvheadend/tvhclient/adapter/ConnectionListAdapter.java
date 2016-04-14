@@ -42,7 +42,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        ViewHolder holder = null;
+        ViewHolder holder;
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.connection_list_widget, parent, false);
@@ -59,7 +59,8 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         Connection c = getItem(position);
         if (c != null) {
             holder.title.setText(c.name);
-            holder.summary.setText(c.address + ":" + c.port);
+            String summary = c.address + ":" + c.port;
+            holder.summary.setText(summary);
             
            // Set the active / inactive icon depending on the theme and selection status
            if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {

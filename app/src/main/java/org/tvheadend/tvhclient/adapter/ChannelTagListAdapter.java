@@ -39,7 +39,7 @@ public class ChannelTagListAdapter extends ArrayAdapter<ChannelTag> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        ViewHolder holder = null;
+        ViewHolder holder;
 
         final ChannelTag m = getItem(position);
         if (view == null) {

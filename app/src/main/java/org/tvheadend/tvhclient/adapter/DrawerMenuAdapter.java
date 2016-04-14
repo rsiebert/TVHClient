@@ -26,11 +26,6 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
     private int selectedPosition;
     private boolean lightTheme;
 
-    private RelativeLayout itemLayout;
-    private ImageView icon;
-    private TextView title;
-    private TextView count;
-
     public DrawerMenuAdapter(Activity context, List<DrawerMenuItem> list) {
         super(context, R.layout.list_layout, list);
         this.context = context;
@@ -46,7 +41,7 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+        View view;
         final DrawerMenuItem m = getItem(position);
 
         // Inflate the section layout if a section shall be shown, otherwise
@@ -61,10 +56,10 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
                 view = context.getLayoutInflater().inflate(R.layout.drawer_list_item_empty, parent, false);
             }
         }
-        itemLayout = (RelativeLayout) view.findViewById(R.id.item_layout);
-        icon = (ImageView) view.findViewById(R.id.icon);
-        title = (TextView) view.findViewById(R.id.title);
-        count = (TextView) view.findViewById(R.id.count);
+        RelativeLayout itemLayout = (RelativeLayout) view.findViewById(R.id.item_layout);
+        ImageView icon = (ImageView) view.findViewById(R.id.icon);
+        TextView title = (TextView) view.findViewById(R.id.title);
+        TextView count = (TextView) view.findViewById(R.id.count);
 
         // Highlight the selected position with a different color. This can't be
         // done with the list position because the section menu items mess up
@@ -85,24 +80,23 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
         }
         
         // Apply the values to the available layout items
-        if (m != null) {
-            if (m.isSection) {
-                view.setOnClickListener(null);
-                view.setOnLongClickListener(null);
-                view.setLongClickable(false);
-            } 
-            if (icon != null) {
-                icon.setImageResource(m.icon);
-                icon.setVisibility((m.icon != 0) ? ImageView.VISIBLE : ImageView.GONE);
-            }
-            if (title != null) {
-                title.setText(m.title);
-            }
-            if (count != null) {
-                count.setText(String.valueOf(m.count));
-                count.setVisibility((m.count > 0) ? View.VISIBLE : View.GONE);
-            }
+        if (m.isSection) {
+            view.setOnClickListener(null);
+            view.setOnLongClickListener(null);
+            view.setLongClickable(false);
         }
+        if (icon != null) {
+            icon.setImageResource(m.icon);
+            icon.setVisibility((m.icon != 0) ? ImageView.VISIBLE : ImageView.GONE);
+        }
+        if (title != null) {
+            title.setText(m.title);
+        }
+        if (count != null) {
+            count.setText(String.valueOf(m.count));
+            count.setVisibility((m.count > 0) ? View.VISIBLE : View.GONE);
+        }
+
         return view;
     }
 
@@ -112,8 +106,8 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
      * menu items mess up the positions. So the id is used to get the correct
      * menu item from the list.
      * 
-     * @param id
-     * @return
+     * @param id Id of the menu item
+     * @return Item object
      */
     public DrawerMenuItem getItemById(final int id) {
         for (DrawerMenuItem item : list) {

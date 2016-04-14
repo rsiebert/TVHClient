@@ -102,7 +102,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
 
     public View getRecordingView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        RecordingViewHolder holder = null;
+        RecordingViewHolder holder;
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, parent, false);
@@ -180,7 +180,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
 
     public View getProgramView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        ProgramViewHolder holder = null;
+        ProgramViewHolder holder;
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.search_result_widget, parent, false);
@@ -274,7 +274,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
 
             final List<Model> list = originalData;
             final int count = list.size();
-            final ArrayList<Model> newList = new ArrayList<Model>(count);
+            final ArrayList<Model> newList = new ArrayList<>(count);
 
             Model p;
             for (int i = 0; i < count; i++) {

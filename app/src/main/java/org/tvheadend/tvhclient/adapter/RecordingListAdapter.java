@@ -71,13 +71,12 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         public TextView description;
         public TextView failed_reason;
         public ImageView dual_pane_list_item_selection;
-        public TextView status_label;
     }
     
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        ViewHolder holder = null;
+        ViewHolder holder;
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(layout, parent, false);

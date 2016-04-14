@@ -51,7 +51,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        ViewHolder holder = null;
+        ViewHolder holder;
 
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.program_list_widget, parent, false);
