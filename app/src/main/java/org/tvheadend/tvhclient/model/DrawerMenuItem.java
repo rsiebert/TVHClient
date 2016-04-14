@@ -19,8 +19,8 @@ public class DrawerMenuItem {
 
     /**
      * Creates a menu section item with the given text
-     * 
-     * @param header
+     *
+     * @param title Title text
      */
     public DrawerMenuItem(String title) {
         this.title = title;
@@ -30,9 +30,9 @@ public class DrawerMenuItem {
     /**
      * Creates a menu item with the given title and id. The id is used to
      * identify which menu was selected
-     * 
-     * @param id
-     * @param title
+     *
+     * @param id    Id of the menu item
+     * @param title Title text
      */
     public DrawerMenuItem(int id, String title) {
         this.id = id;
@@ -43,10 +43,10 @@ public class DrawerMenuItem {
     /**
      * Creates a menu item with the given title and id. The id is used to
      * identify which menu was selected
-     * 
-     * @param id
-     * @param title
-     * @param icon
+     *
+     * @param id    Id of the menu item
+     * @param title Title text
+     * @param icon  Icon resource
      */
     public DrawerMenuItem(int id, String title, int icon) {
         this.id = id;
