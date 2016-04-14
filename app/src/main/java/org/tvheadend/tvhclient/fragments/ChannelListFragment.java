@@ -156,7 +156,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    final Channel ch = (Channel) adapter.getItem(position);
+                    final Channel ch = adapter.getItem(position);
                     if (fragmentStatusInterface != null) {
                         fragmentStatusInterface.onListItemSelected(position, ch, TAG);
                     }
@@ -293,7 +293,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (getUserVisibleHint() == false) {
+        if (!getUserVisibleHint()) {
             return false;
         }
 
@@ -378,7 +378,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             new MaterialDialog.Builder(activity)
             .title(R.string.select_dvr_config)
             .items(dvrConfigList)
-            .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+            .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                     // Pass over the 
@@ -524,65 +524,73 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    if (loading) {
-                        adapter.clear();
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        populateList();
+        switch (action) {
+            case Constants.ACTION_LOADING:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        boolean loading = (Boolean) obj;
+                        if (loading) {
+                            adapter.clear();
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            populateList();
+                        }
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_CHANNEL_ADD)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.add((Channel) obj);
-                    adapter.sort(Utils.getChannelSortOrder(activity));
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_CHANNEL_DELETE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.remove((Channel) obj);
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_CHANNEL_UPDATE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.update((Channel) obj);
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_TAG_ADD)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    ChannelTag tag = (ChannelTag) obj;
-                    tagAdapter.add(tag);
-                }
-            });
-        } else if (action.equals(Constants.ACTION_TAG_DELETE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    ChannelTag tag = (ChannelTag) obj;
-                    tagAdapter.remove(tag);
-                }
-            });
-        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)
-                || action.equals(Constants.ACTION_PROGRAM_DELETE)
-                || action.equals(Constants.ACTION_DVR_ADD)
-                || action.equals(Constants.ACTION_DVR_UPDATE)) {
-            // An existing program has been updated
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        } 
+                });
+                break;
+            case Constants.ACTION_CHANNEL_ADD:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.add((Channel) obj);
+                        adapter.sort(Utils.getChannelSortOrder(activity));
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                break;
+            case Constants.ACTION_CHANNEL_DELETE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.remove((Channel) obj);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                break;
+            case Constants.ACTION_CHANNEL_UPDATE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.update((Channel) obj);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                break;
+            case Constants.ACTION_TAG_ADD:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        ChannelTag tag = (ChannelTag) obj;
+                        tagAdapter.add(tag);
+                    }
+                });
+                break;
+            case Constants.ACTION_TAG_DELETE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        ChannelTag tag = (ChannelTag) obj;
+                        tagAdapter.remove(tag);
+                    }
+                });
+                break;
+            case Constants.ACTION_PROGRAM_UPDATE:
+            case Constants.ACTION_PROGRAM_DELETE:
+            case Constants.ACTION_DVR_ADD:
+            case Constants.ACTION_DVR_UPDATE:
+                // An existing program has been updated
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                break;
+        }
     }
 
     @Override
@@ -605,7 +613,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             adapter.setPosition(position);
 
             if (fragmentStatusInterface != null) {
-                final Channel ch = (Channel) adapter.getItem(position);
+                final Channel ch = adapter.getItem(position);
                 fragmentStatusInterface.onListItemSelected(position, ch, TAG);
             }
         }

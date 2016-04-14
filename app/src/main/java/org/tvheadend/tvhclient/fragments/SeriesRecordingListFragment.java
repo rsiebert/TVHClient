@@ -47,12 +47,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     protected FragmentStatusInterface fragmentStatusInterface;
     protected SeriesRecordingListAdapter adapter;
     private ListView listView;
-
-    // This is the default view for the channel list adapter. Other views can be
-    // passed to the adapter to show less information. This is used in the
-    // program guide where only the channel icon is relevant.
-    private int adapterLayout = R.layout.series_recording_list_widget;
-
     protected boolean isDualPane;
 
     private TVHClientApplication app;
@@ -95,6 +89,11 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
+        // This is the default view for the channel list adapter. Other views can be
+        // passed to the adapter to show less information. This is used in the
+        // program guide where only the channel icon is relevant.
+        int adapterLayout = R.layout.series_recording_list_widget;
+
         adapter = new SeriesRecordingListAdapter(activity, new ArrayList<SeriesRecording>(), adapterLayout);
         listView.setAdapter(adapter);
 
@@ -103,7 +102,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SeriesRecording srec = (SeriesRecording) adapter.getItem(position);
+                SeriesRecording srec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }
@@ -328,47 +327,52 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    if (loading) {
-                        adapter.clear();
-                        adapter.notifyDataSetChanged();
-                    } else {
+        switch (action) {
+            case Constants.ACTION_LOADING:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        boolean loading = (Boolean) obj;
+                        if (loading) {
+                            adapter.clear();
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            populateList();
+                        }
+                    }
+                });
+                break;
+            case Constants.ACTION_SERIES_DVR_ADD:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.add((SeriesRecording) obj);
                         populateList();
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_SERIES_DVR_ADD)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.add((SeriesRecording) obj);
-                    populateList();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    // Get the position of the recording that is shown before
-                    // the one that has been deleted. This recording will then
-                    // be selected when the list has been updated.
-                    int previousPosition = adapter.getPosition((SeriesRecording) obj);
-                    if (--previousPosition < 0) {
-                        previousPosition = 0;
+                });
+                break;
+            case Constants.ACTION_SERIES_DVR_DELETE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // Get the position of the recording that is shown before
+                        // the one that has been deleted. This recording will then
+                        // be selected when the list has been updated.
+                        int previousPosition = adapter.getPosition((SeriesRecording) obj);
+                        if (--previousPosition < 0) {
+                            previousPosition = 0;
+                        }
+                        adapter.remove((SeriesRecording) obj);
+                        populateList();
+                        setInitialSelection(previousPosition);
                     }
-                    adapter.remove((SeriesRecording) obj);
-                    populateList();
-                    setInitialSelection(previousPosition);
-                }
-            });
-        } else if (action.equals(Constants.ACTION_SERIES_DVR_UPDATE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.update((SeriesRecording) obj);
-                    adapter.notifyDataSetChanged();
-                }
-            });
+                });
+                break;
+            case Constants.ACTION_SERIES_DVR_UPDATE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.update((SeriesRecording) obj);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                break;
         }
     }
 
@@ -396,7 +400,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             // Simulate a click in the list item to inform the activity
             // It will then show the details fragment if dual pane is active
             if (isDualPane) {
-                SeriesRecording srec = (SeriesRecording) adapter.getItem(position);
+                SeriesRecording srec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }

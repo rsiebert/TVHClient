@@ -55,9 +55,8 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private static int displayWidth;
 
     // The time frame (start and end times) that shall be shown in a single fragment.  
-    private static List<Long> startTimes = new ArrayList<Long>();
-    private static List<Long> endTimes = new ArrayList<Long>();
-    private static int daysToShow;
+    private static List<Long> startTimes = new ArrayList<>();
+    private static List<Long> endTimes = new ArrayList<>();
     private static int hoursToShow;
     private static int fragmentCount;
     
@@ -154,7 +153,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
      */
     private void createProgramGuideTimeDialog() {
         // Fill the list for the adapter
-        List<ProgramGuideTimeDialogItem> times = new ArrayList<ProgramGuideTimeDialogItem>(); 
+        List<ProgramGuideTimeDialogItem> times = new ArrayList<>();
         for (int i = 0; i < fragmentCount; ++i) {
             ProgramGuideTimeDialogItem item = new ProgramGuideTimeDialogItem();
             item.start = startTimes.get(i);
@@ -182,7 +181,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
      */
     private void calcFragmentCount() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        daysToShow = Integer.parseInt(prefs.getString("epgMaxDays", Constants.EPG_DEFAULT_MAX_DAYS));
+        int daysToShow = Integer.parseInt(prefs.getString("epgMaxDays", Constants.EPG_DEFAULT_MAX_DAYS));
         hoursToShow = Integer.parseInt(prefs.getString("epgHoursVisible", Constants.EPG_DEFAULT_HOURS_VISIBLE));
         fragmentCount = (daysToShow * (24 / hoursToShow));
     }
@@ -269,12 +268,12 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // fragment.
         for (int i = 0; i < fragmentCount; ++i) {
             Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
-            if (f instanceof ProgramGuideListFragment && f instanceof FragmentControlInterface) {
+            if (f instanceof ProgramGuideListFragment) {
                 ((FragmentControlInterface) f).reloadData();
             }
         }
         final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
+        if (cf instanceof ChannelListFragment) {
             ((FragmentControlInterface) cf).reloadData();
         }
     }
@@ -292,12 +291,12 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // channel list fragment.
         for (int i = 0; i < fragmentCount; ++i) {
             Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
-            if (f instanceof ProgramGuideListFragment && f instanceof FragmentControlInterface) {
+            if (f instanceof ProgramGuideListFragment) {
                 ((FragmentControlInterface) f).setSelection(position, offset);
             }
         }
         final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
+        if (cf instanceof ChannelListFragment) {
             ((FragmentControlInterface) cf).setSelection(position, offset);
         }
     }

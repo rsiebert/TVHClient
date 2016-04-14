@@ -102,7 +102,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TimerRecording trec = (TimerRecording) adapter.getItem(position);
+                TimerRecording trec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, trec, TAG);
                 }
@@ -317,47 +317,52 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    if (loading) {
-                        adapter.clear();
-                        adapter.notifyDataSetChanged();
-                    } else {
+        switch (action) {
+            case Constants.ACTION_LOADING:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        boolean loading = (Boolean) obj;
+                        if (loading) {
+                            adapter.clear();
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            populateList();
+                        }
+                    }
+                });
+                break;
+            case Constants.ACTION_TIMER_DVR_ADD:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.add((TimerRecording) obj);
                         populateList();
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_TIMER_DVR_ADD)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.add((TimerRecording) obj);
-                    populateList();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_TIMER_DVR_DELETE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    // Get the position of the recording that is shown before
-                    // the one that has been deleted. This recording will then
-                    // be selected when the list has been updated.
-                    int previousPosition = adapter.getPosition((TimerRecording) obj);
-                    if (--previousPosition < 0) {
-                        previousPosition = 0;
+                });
+                break;
+            case Constants.ACTION_TIMER_DVR_DELETE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // Get the position of the recording that is shown before
+                        // the one that has been deleted. This recording will then
+                        // be selected when the list has been updated.
+                        int previousPosition = adapter.getPosition((TimerRecording) obj);
+                        if (--previousPosition < 0) {
+                            previousPosition = 0;
+                        }
+                        adapter.remove((TimerRecording) obj);
+                        populateList();
+                        setInitialSelection(previousPosition);
                     }
-                    adapter.remove((TimerRecording) obj);
-                    populateList();
-                    setInitialSelection(previousPosition);
-                }
-            });
-        } else if (action.equals(Constants.ACTION_TIMER_DVR_UPDATE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.update((TimerRecording) obj);
-                    adapter.notifyDataSetChanged();
-                }
-            });
+                });
+                break;
+            case Constants.ACTION_TIMER_DVR_UPDATE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.update((TimerRecording) obj);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                break;
         }
     }
 
@@ -385,7 +390,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             // Simulate a click in the list item to inform the activity
             // It will then show the details fragment if dual pane is active
             if (isDualPane) {
-                TimerRecording trec = (TimerRecording) adapter.getItem(position);
+                TimerRecording trec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, trec, TAG);
                 }

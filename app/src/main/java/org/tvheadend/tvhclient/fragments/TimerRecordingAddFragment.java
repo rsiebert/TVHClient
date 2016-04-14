@@ -25,6 +25,7 @@ import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -42,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -56,7 +58,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
     private CheckBox isEnabled;
     private TextView priority;
-    private LinearLayout daysOfWeekLayout;
     private ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
     private TextView startTime;
     private TextView stopTime;
@@ -274,7 +275,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         final int displayWidth = displaymetrics.widthPixels;
 
-        daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
+        LinearLayout daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
         String[] shortDays = getResources().getStringArray(R.array.day_short_names);
         for (int i = 0; i < 7; i++) {
             final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
@@ -363,14 +364,14 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             } else {
                 dvrConfigName.setVisibility(View.VISIBLE);
                 dvrConfigNameLabel.setVisibility(View.VISIBLE);
-                dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
+                dvrConfigName.setText(dvrConfigList[dvrConfigNameValue]);
                 dvrConfigName.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         new MaterialDialog.Builder(activity)
                         .title(R.string.select_dvr_config)
                         .items(dvrConfigList)
-                        .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                        .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 dvrConfigName.setText(dvrConfigList[which]);
@@ -486,9 +487,10 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     }
 
     /**
-     * 
-     * @param item
-     * @return
+     * Called when the user has selected a menu item in the toolbar
+     *
+     * @param item Selected menu item
+     * @return True if selection was handled, otherwise false
      */
     protected boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -573,18 +575,21 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 .content(R.string.cancel_add_recording)
                 .positiveText(getString(R.string.discard))
                 .negativeText(getString(R.string.cancel))
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         if (getDialog() != null) {
                             getDialog().dismiss();
                         }
                     }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onNegative(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.cancel();
                     }
-                }).show();
+                })
+                .show();
     }
 
     /**

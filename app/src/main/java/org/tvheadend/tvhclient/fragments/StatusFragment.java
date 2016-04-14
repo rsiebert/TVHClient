@@ -143,88 +143,95 @@ public class StatusFragment extends Fragment implements HTSListener {
 
 	@Override
 	public void onMessage(final String action, final Object obj) {
-	    if (action.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-	        activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    connectionStatus = action;
+        switch (action) {
+            case Constants.ACTION_CONNECTION_STATE_OK:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        connectionStatus = action;
 
-                    // The connection to the server is fine again, therefore
-                    // show the additional information again
-                    additionalInformationLayout.setVisibility(View.VISIBLE);
-                    showConnectionName();
-                    showConnectionStatus();
-                    channels.setText(app.getChannels().size() + " " + getString(R.string.available));
-                    showRecordingStatus();
-
-                    // Also get the disc space in case it was not yet retrieved
-                    getDiscSpace();
-                }
-            });
-	    } else if (action.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)
-	            || action.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)
-	            || action.equals(Constants.ACTION_CONNECTION_STATE_LOST)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_REFUSED)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_AUTH)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)
-                || action.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)) {
-	        activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    connectionStatus = action;
-
-                    if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarTitle(getString(R.string.status));
-                        actionBarInterface.setActionBarSubtitle("");
-                    }
-
-                    // Hide the additional status information because the
-                    // connection to the server is not OK
-                    additionalInformationLayout.setVisibility(View.GONE);
-                    showConnectionName();
-                    showConnectionStatus();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarTitle(getString(R.string.status));
-                        actionBarInterface.setActionBarSubtitle((loading ? getString(R.string.updating) : ""));
-                    }
-
-                    // Show that data is being loaded from the server and hide
-                    // the additional information, because this information is
-                    // outdated. If the data has been loaded from the server,
-                    // show the additional status layout again and display the
-                    // available information. 
-                    if (loading) {
-                        status.setText(getString(R.string.loading));
-                        additionalInformationLayout.setVisibility(View.GONE);
-                        showConnectionName();
-                    } else {
+                        // The connection to the server is fine again, therefore
+                        // show the additional information again
                         additionalInformationLayout.setVisibility(View.VISIBLE);
                         showConnectionName();
                         showConnectionStatus();
-                        channels.setText(app.getChannels().size() + " " + getString(R.string.available));
+                        String text = app.getChannels().size() + " " + getString(R.string.available);
+                        channels.setText(text);
                         showRecordingStatus();
 
-                        // After the data has been loaded, the server accepts
-                        // new service calls, get the disc space information 
-                        // from the server 
+                        // Also get the disc space in case it was not yet retrieved
                         getDiscSpace();
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_DISC_SPACE)) {
-            activity.runOnUiThread(new Runnable() {
-                @SuppressWarnings("unchecked")
-                public void run() {
-                    if (isAdded()) {
-                        showDiscSpace((Map<String, String>) obj);
+                });
+                break;
+            case Constants.ACTION_CONNECTION_STATE_UNKNOWN:
+            case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
+            case Constants.ACTION_CONNECTION_STATE_LOST:
+            case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
+            case Constants.ACTION_CONNECTION_STATE_REFUSED:
+            case Constants.ACTION_CONNECTION_STATE_AUTH:
+            case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
+            case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        connectionStatus = action;
+
+                        if (actionBarInterface != null) {
+                            actionBarInterface.setActionBarTitle(getString(R.string.status));
+                            actionBarInterface.setActionBarSubtitle("");
+                        }
+
+                        // Hide the additional status information because the
+                        // connection to the server is not OK
+                        additionalInformationLayout.setVisibility(View.GONE);
+                        showConnectionName();
+                        showConnectionStatus();
                     }
-                }
-            });
+                });
+                break;
+            case Constants.ACTION_LOADING:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        boolean loading = (Boolean) obj;
+                        if (actionBarInterface != null) {
+                            actionBarInterface.setActionBarTitle(getString(R.string.status));
+                            actionBarInterface.setActionBarSubtitle((loading ? getString(R.string.updating) : ""));
+                        }
+
+                        // Show that data is being loaded from the server and hide
+                        // the additional information, because this information is
+                        // outdated. If the data has been loaded from the server,
+                        // show the additional status layout again and display the
+                        // available information.
+                        if (loading) {
+                            status.setText(getString(R.string.loading));
+                            additionalInformationLayout.setVisibility(View.GONE);
+                            showConnectionName();
+                        } else {
+                            additionalInformationLayout.setVisibility(View.VISIBLE);
+                            showConnectionName();
+                            showConnectionStatus();
+                            String text = app.getChannels().size() + " " + getString(R.string.available);
+                            channels.setText(text);
+                            showRecordingStatus();
+
+                            // After the data has been loaded, the server accepts
+                            // new service calls, get the disc space information
+                            // from the server
+                            getDiscSpace();
+                        }
+                    }
+                });
+                break;
+            case Constants.ACTION_DISC_SPACE:
+                activity.runOnUiThread(new Runnable() {
+                    @SuppressWarnings("unchecked")
+                    public void run() {
+                        if (isAdded()) {
+                            showDiscSpace((Map<String, String>) obj);
+                        }
+                    }
+                });
+                break;
         }
 	}
 
@@ -250,7 +257,8 @@ public class StatusFragment extends Fragment implements HTSListener {
                 connection.setText(getString(R.string.no_connection_active_advice));
             }
         } else {
-            connection.setText(conn.name + " (" + conn.address + ")");
+            String text = conn.name + " (" + conn.address + ")";
+            connection.setText(text);
         }
 	}
 
@@ -260,23 +268,32 @@ public class StatusFragment extends Fragment implements HTSListener {
      */
     protected void showConnectionStatus() {
         // Show a textual description about the connection state
-        if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            status.setText(getString(R.string.ready));
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN)) {
-            status.setText(R.string.err_connect);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_LOST)) {
-            status.setText(R.string.err_con_lost);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_TIMEOUT)) {
-            status.setText(R.string.err_con_timeout);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_REFUSED) 
-                || connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_AUTH)) {
-            status.setText(R.string.err_auth);
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_NETWORK)) {
-            status.setText(getString(R.string.err_no_network));
-        } else if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION)) {
-            status.setText(getString(R.string.no_connection_available));
-        } else {
-            status.setText(getString(R.string.unknown));
+        switch (connectionStatus) {
+            case Constants.ACTION_CONNECTION_STATE_OK:
+                status.setText(getString(R.string.ready));
+                break;
+            case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
+                status.setText(R.string.err_connect);
+                break;
+            case Constants.ACTION_CONNECTION_STATE_LOST:
+                status.setText(R.string.err_con_lost);
+                break;
+            case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
+                status.setText(R.string.err_con_timeout);
+                break;
+            case Constants.ACTION_CONNECTION_STATE_REFUSED:
+            case Constants.ACTION_CONNECTION_STATE_AUTH:
+                status.setText(R.string.err_auth);
+                break;
+            case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
+                status.setText(getString(R.string.err_no_network));
+                break;
+            case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
+                status.setText(getString(R.string.no_connection_available));
+                break;
+            default:
+                status.setText(getString(R.string.unknown));
+                break;
         }
     }
 
@@ -297,7 +314,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * Shows the available and total disc space either in MB or GB to avoid
      * showing large numbers. This depends on the size of the value.
      * 
-     * @param obj
+     * @param list List with the total and free disk space values
      */
     private void showDiscSpace(final Map<String, String> list) {
         try {
@@ -334,7 +351,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 
         // Get the programs that are currently being recorded
         for (Recording rec : app.getRecordings()) {
-            if (rec.isRecording() == true) {
+            if (rec.isRecording()) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
                 if (rec.channel != null) {
                     currentRecText += " (" + getString(R.string.channel) + " " + rec.channel.name + ")\n";
@@ -368,7 +385,8 @@ public class StatusFragment extends Fragment implements HTSListener {
             seriesRecLabel.setVisibility(View.GONE);
             seriesRec.setVisibility(View.GONE);
         } else {
-            seriesRec.setText(app.getSeriesRecordings().size() + " " + getString(R.string.available));
+            String text = app.getSeriesRecordings().size() + " " + getString(R.string.available);
+            seriesRec.setText(text);
         }
 
         // Show how many timer recordings are available if the server supports
@@ -377,11 +395,13 @@ public class StatusFragment extends Fragment implements HTSListener {
             timerRecLabel.setVisibility(View.GONE);
             timerRec.setVisibility(View.GONE);
         } else {
-            timerRec.setText(app.getTimerRecordings().size() + " " + getString(R.string.available));
+            String text = app.getTimerRecordings().size() + " " + getString(R.string.available);
+            timerRec.setText(text);
         }
 
-        serverApiVersion.setText(String.valueOf(app.getProtocolVersion())
+        String version = String.valueOf(app.getProtocolVersion())
                 + "   (" + getString(R.string.server) + ": "
-                + app.getServerName() + " " + app.getServerVersion() + ")");
+                + app.getServerName() + " " + app.getServerVersion() + ")";
+        serverApiVersion.setText(version);
     }
 }

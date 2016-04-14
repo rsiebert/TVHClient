@@ -59,9 +59,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private ProgramGuideListAdapter adapter;
     private ListView listView;
     private LinearLayout titleLayout;
-    private TextView titleDateText;
-    private TextView titleDate;
-    private TextView titleHours;
     private ImageView currentTimeIndication;
     private Bundle bundle;
     private Program selectedProgram = null;
@@ -88,9 +85,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         View v = inflater.inflate(R.layout.program_guide_pager_list, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
         titleLayout = (LinearLayout) v.findViewById(R.id.pager_title);
-        titleDateText = (TextView) v.findViewById(R.id.pager_title_date_text);
-        titleDate = (TextView) v.findViewById(R.id.pager_title_date);
-        titleHours = (TextView) v.findViewById(R.id.pager_title_hours);
+        TextView titleDateText = (TextView) v.findViewById(R.id.pager_title_date_text);
+        TextView titleDate = (TextView) v.findViewById(R.id.pager_title_date);
+        TextView titleHours = (TextView) v.findViewById(R.id.pager_title_hours);
         currentTimeIndication = (ImageView) v.findViewById(R.id.current_time);
 
         // Set the date and the time slot hours in the title of the fragment
@@ -105,21 +102,23 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             // Set the current date and the date as text in the title
             Utils.setDate(titleDateText, startDate);
             final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            titleDate.setText("(" + sdf2.format(startDate) + ")");
+            String value = "(" + sdf2.format(startDate) + ")";
+            titleDate.setText(value);
 
             // Hide the date text if it shows the date time or the display is too narrow
             DisplayMetrics displaymetrics = new DisplayMetrics();
             activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             if (titleDateText.getText().equals(titleDate.getText()) ||
                     // TODO make 400 adjustable or detect automatically if it would wrap
-                ((int) displaymetrics.widthPixels < 400)) { 
+                (displaymetrics.widthPixels < 400)) {
                 titleDate.setVisibility(View.GONE);
             }
 
             final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
             final String start = sdf.format(startDate);
             final String end = sdf.format(endDate);
-            titleHours.setText(start + " - " + end);
+            String diff = start + " - " + end;
+            titleHours.setText(diff);
         }
         return v;
     }
@@ -346,52 +345,57 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
      * sends a new message the correct action will then be executed here.
      */
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    if (loading) {
-                        adapter.clear();
-                        startDelayedAdapterUpdate();
-                    } else {
-                        populateList();
+        switch (action) {
+            case Constants.ACTION_LOADING:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        boolean loading = (Boolean) obj;
+                        if (loading) {
+                            adapter.clear();
+                            startDelayedAdapterUpdate();
+                        } else {
+                            populateList();
+                        }
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_CHANNEL_ADD)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.add((Channel) obj);
-                    adapter.sort(Utils.getChannelSortOrder(activity));
-                    startDelayedAdapterUpdate();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_CHANNEL_DELETE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.remove((Channel) obj);
-                    startDelayedAdapterUpdate();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)
-                || action.equals(Constants.ACTION_PROGRAM_DELETE)
-                || action.equals(Constants.ACTION_DVR_ADD)
-                || action.equals(Constants.ACTION_DVR_UPDATE)) {
-            // An existing program has been updated
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    startDelayedAdapterUpdate();
-                }
-            });
-        }
-        else if (action.equals(Constants.ACTION_CHANNEL_UPDATE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    final Channel ch = (Channel) obj;
-                    adapter.update(ch);
-                    startDelayedAdapterUpdate();
-                }
-            });
+                });
+                break;
+            case Constants.ACTION_CHANNEL_ADD:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.add((Channel) obj);
+                        adapter.sort(Utils.getChannelSortOrder(activity));
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
+            case Constants.ACTION_CHANNEL_DELETE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.remove((Channel) obj);
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
+            case Constants.ACTION_PROGRAM_UPDATE:
+            case Constants.ACTION_PROGRAM_DELETE:
+            case Constants.ACTION_DVR_ADD:
+            case Constants.ACTION_DVR_UPDATE:
+                // An existing program has been updated
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
+            case Constants.ACTION_CHANNEL_UPDATE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        final Channel ch = (Channel) obj;
+                        adapter.update(ch);
+                        startDelayedAdapterUpdate();
+                    }
+                });
+                break;
         }
     }
 

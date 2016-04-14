@@ -132,7 +132,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
         is_timer_recording = (TextView) v.findViewById(R.id.is_timer_recording);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbarShadow = (View) v.findViewById(R.id.toolbar_shadow);
+        toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
         episode = (TextView) v.findViewById(R.id.episode);
         episodeLabel = (TextView) v.findViewById(R.id.episode_label);

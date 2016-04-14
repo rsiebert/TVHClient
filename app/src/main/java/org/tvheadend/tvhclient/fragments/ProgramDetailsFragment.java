@@ -143,7 +143,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         ratingBarText = (TextView) v.findViewById(R.id.star_rating_text);
         ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbarShadow = (View) v.findViewById(R.id.toolbar_shadow);
+        toolbarShadow = v.findViewById(R.id.toolbar_shadow);
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
@@ -204,7 +204,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             ratingBar.setVisibility(View.GONE);
         } else {
             ratingBar.setRating((float)program.starRating / 10.0f);
-            ratingBarText.setText("(" + program.starRating + "/" + 100 + ")");
+            String value = "(" + program.starRating + "/" + 100 + ")";
+            ratingBarText.setText(value);
         }
     }
 

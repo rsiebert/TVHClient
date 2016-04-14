@@ -345,7 +345,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             } else {
                 dvrConfigName.setVisibility(View.VISIBLE);
                 dvrConfigNameLabel.setVisibility(View.VISIBLE);
-                dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
+                dvrConfigName.setText(dvrConfigList[dvrConfigNameValue]);
                 dvrConfigName.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -428,9 +428,10 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 	}
 
     /**
-     * 
-     * @param item
-     * @return
+     * Called when the user has selected a menu item in the toolbar
+     *
+     * @param item Selected menu item
+     * @return True if selection was handled, otherwise false
      */
     protected boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -656,26 +657,28 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
     /**
      * 
-     * @param v
-     * @param cal
+     * @param v TextView that shall display the datevalue
+     * @param cal Calendar
      */
     private void setDateStringFromDate(TextView v, Calendar cal) {
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
         int year = cal.get(Calendar.YEAR);
-        v.setText(((day < 10) ? "0" + day : day) + "."
-                + ((month < 10) ? "0" + month : month) + "." + year);
+        String text = ((day < 10) ? "0" + day : day) + "."
+                + ((month < 10) ? "0" + month : month) + "." + year;
+        v.setText(text);
     }
 
     /**
      * 
-     * @param v
-     * @param cal
+     * @param v TextView that shall display the time value
+     * @param cal Calendar
      */
     private void setTimeStringFromDate(TextView v, Calendar cal) {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int minute = cal.get(Calendar.MINUTE);
-        v.setText(((hour < 10) ? "0" + hour : hour) + ":"
-                + ((minute < 10) ? "0" + minute : minute));
+        String text = ((hour < 10) ? "0" + hour : hour) + ":"
+                + ((minute < 10) ? "0" + minute : minute);
+        v.setText(text);
     }
 }

@@ -101,7 +101,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Recording rec = (Recording) adapter.getItem(position);
+                Recording rec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, rec, TAG);
                 }
@@ -210,7 +210,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         // Create a copy of all recordings from the adapter. This ensures that
         // we still have the same id's at the correct index in the array when the
         // adapter contents were refreshed.
-        final ArrayList<Recording> idList = new ArrayList<Recording>(); 
+        final ArrayList<Recording> idList = new ArrayList<>();
         for (int i = 0; i < adapter.getCount(); ++i) {
             idList.add(adapter.getItem(i));
         }
@@ -239,7 +239,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         // Create a copy of all recordings id's from the adapter. This ensures that
         // we still have the same id's at the correct index in the array when the
         // adapter contents were refreshed.
-        final ArrayList<String> idList = new ArrayList<String>(); 
+        final ArrayList<String> idList = new ArrayList<>();
         for (int i = 0; i < adapter.getCount(); ++i) {
             idList.add(String.valueOf(adapter.getItem(i).id));
         }
@@ -286,7 +286,9 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         (menu.findItem(R.id.menu_search_epg)).setVisible(rec != null);
         (menu.findItem(R.id.menu_search_imdb)).setVisible(rec != null);
 
-        menu.setHeaderTitle(rec.title);
+        if (rec != null) {
+            menu.setHeaderTitle(rec.title);
+        }
     }
 
     @Override
@@ -353,34 +355,38 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_DVR_ADD)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.add((Recording) obj);
-                }
-            });
-        } else if (action.equals(Constants.ACTION_DVR_DELETE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    // Get the position of the recording that is shown before
-                    // the one that has been deleted. This recording will then
-                    // be selected when the list has been updated.
-                    int previousPosition = adapter.getPosition((Recording) obj);
-                    if (--previousPosition < 0) {
-                        previousPosition = 0;
+        switch (action) {
+            case Constants.ACTION_DVR_ADD:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.add((Recording) obj);
                     }
-                    // Remove the recording from the adapter and set the
-                    // recording below the deleted one as the newly selected one
-                    adapter.remove((Recording) obj);
-                    setInitialSelection(previousPosition);
-                }
-            });
-        } else if (action.equals(Constants.ACTION_DVR_UPDATE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.update((Recording) obj);
-                }
-            });
+                });
+                break;
+            case Constants.ACTION_DVR_DELETE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // Get the position of the recording that is shown before
+                        // the one that has been deleted. This recording will then
+                        // be selected when the list has been updated.
+                        int previousPosition = adapter.getPosition((Recording) obj);
+                        if (--previousPosition < 0) {
+                            previousPosition = 0;
+                        }
+                        // Remove the recording from the adapter and set the
+                        // recording below the deleted one as the newly selected one
+                        adapter.remove((Recording) obj);
+                        setInitialSelection(previousPosition);
+                    }
+                });
+                break;
+            case Constants.ACTION_DVR_UPDATE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.update((Recording) obj);
+                    }
+                });
+                break;
         }
     }
 
@@ -388,8 +394,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * Sets the selected item and positions the selection y pixels from the top
      * edge of the ListView.
      * 
-     * @param position
-     * @param offset
+     * @param position Position in the list
+     * @param offset Offset in pixels from the top
      */
     protected void setSelection(int position, int offset) {
         if (listView != null && listView.getCount() > position && position >= 0) {
@@ -403,7 +409,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * the list item was selected. The activity will then show the details
      * fragment to the selected item in the right side.
      * 
-     * @param position
+     * @param position Position in the list
      */
     protected void setInitialSelection(int position) {
         setSelection(position, 0);

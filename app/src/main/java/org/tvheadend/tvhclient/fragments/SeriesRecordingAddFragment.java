@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -41,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -400,14 +402,14 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             } else {
                 dvrConfigName.setVisibility(View.VISIBLE);
                 dvrConfigNameLabel.setVisibility(View.VISIBLE);
-                dvrConfigName.setText(dvrConfigList[(int) dvrConfigNameValue]);
+                dvrConfigName.setText(dvrConfigList[dvrConfigNameValue]);
                 dvrConfigName.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         new MaterialDialog.Builder(activity)
                         .title(R.string.select_dvr_config)
                         .items(dvrConfigList)
-                        .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                        .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 dvrConfigName.setText(dvrConfigList[which]);
@@ -550,9 +552,10 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     }
 
     /**
-     * 
-     * @param item
-     * @return
+     * Called when the user has selected a menu item in the toolbar
+     *
+     * @param item Selected menu item
+     * @return True if selection was handled, otherwise false
      */
     protected boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -646,18 +649,21 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 .content(R.string.cancel_add_recording)
                 .positiveText(getString(R.string.discard))
                 .negativeText(getString(R.string.cancel))
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         if (getDialog() != null) {
                             getDialog().dismiss();
                         }
                     }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onNegative(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.cancel();
                     }
-                }).show();
+                })
+                .show();
     }
 
     /**

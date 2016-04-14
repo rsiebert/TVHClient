@@ -124,7 +124,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             }
         });
         
-        list = new ArrayList<Program>();
+        list = new ArrayList<>();
         adapter = new ProgramListAdapter(activity, list);
         listView.setAdapter(adapter);
 
@@ -244,7 +244,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (getUserVisibleHint() == false) {
+        if (!getUserVisibleHint()) {
             return false;
         }
         // Get the currently selected program from the list where the context
@@ -308,21 +308,20 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             }
 
             // Create new variables because the dialog needs them as final
-            final Program prog = program;
             final String[] dcList = dvrConfigList;
 
             // Create the dialog to show the available profiles
             new MaterialDialog.Builder(activity)
             .title(R.string.select_dvr_config)
             .items(dvrConfigList)
-            .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+            .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                     // Pass over the 
                     Intent intent = new Intent(activity, HTSService.class);
                     intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
-                    intent.putExtra("eventId", prog.id);
-                    intent.putExtra("channelId", prog.channel.id);
+                    intent.putExtra("eventId", program.id);
+                    intent.putExtra("channelId", program.channel.id);
                     intent.putExtra("configName", dcList[which]);
                     activity.startService(intent);
                     return true;
@@ -401,70 +400,77 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
      */
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    if (loading) {
-                        adapter.clear();
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        populateList();
+        switch (action) {
+            case Constants.ACTION_LOADING:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        boolean loading = (Boolean) obj;
+                        if (loading) {
+                            adapter.clear();
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            populateList();
+                        }
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_PROGRAM_ADD)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    Program p = (Program) obj;
-                    if (channel != null && p.channel.id == channel.id) {
-                        adapter.add(p);
+                });
+                break;
+            case Constants.ACTION_PROGRAM_ADD:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Program p = (Program) obj;
+                        if (channel != null && p.channel.id == channel.id) {
+                            adapter.add(p);
+                            adapter.notifyDataSetChanged();
+                            adapter.sort();
+                            if (actionBarInterface != null) {
+                                String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
+                                actionBarInterface.setActionBarSubtitle(items);
+                            }
+                        }
+                    }
+                });
+                break;
+            case Constants.ACTION_PROGRAM_DELETE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.remove((Program) obj);
                         adapter.notifyDataSetChanged();
-                        adapter.sort();
                         if (actionBarInterface != null) {
                             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
                             actionBarInterface.setActionBarSubtitle(items);
                         }
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_PROGRAM_DELETE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.remove((Program) obj);
-                    adapter.notifyDataSetChanged();
-                    if (actionBarInterface != null) {
-                        String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                        actionBarInterface.setActionBarSubtitle(items);
+                });
+                break;
+            case Constants.ACTION_PROGRAM_UPDATE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.update((Program) obj);
+                        adapter.notifyDataSetChanged();
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_PROGRAM_UPDATE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.update((Program) obj);
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        } else if (action.equals(Constants.ACTION_DVR_UPDATE)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    Recording rec = (Recording) obj;
-                    for (Program p : adapter.getList()) {
-                        if (rec == p.recording) {
-                            adapter.update(p);
-                            adapter.notifyDataSetChanged();
-                            return;
+                });
+                break;
+            case Constants.ACTION_DVR_UPDATE:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Recording rec = (Recording) obj;
+                        for (Program p : adapter.getList()) {
+                            if (rec == p.recording) {
+                                adapter.update(p);
+                                adapter.notifyDataSetChanged();
+                                return;
+                            }
                         }
                     }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_DVR_ADD)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.notifyDataSetChanged();
-                }
-            });
+                });
+                break;
+            case Constants.ACTION_DVR_ADD:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                break;
         }
     }
 
@@ -484,7 +490,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         setSelection(position, 0);
         // Simulate a click in the list item to inform the activity
         if (adapter != null && adapter.getCount() > position) {
-            Program p = (Program) adapter.getItem(position);
+            Program p = adapter.getItem(position);
             if (fragmentStatusInterface != null) {
                 fragmentStatusInterface.onListItemSelected(position, p, TAG);
             }

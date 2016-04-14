@@ -102,7 +102,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbarShadow = (View) v.findViewById(R.id.toolbar_shadow);
+        toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
