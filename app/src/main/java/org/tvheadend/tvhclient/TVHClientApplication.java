@@ -1105,7 +1105,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
-        if (bp.isValid(details)) {
+        if (bp.isValidTransactionDetails(details)) {
             Snackbar.make(null, getString(R.string.unlocker_purchase_successful), 
                     Snackbar.LENGTH_LONG).show();
         } else {
