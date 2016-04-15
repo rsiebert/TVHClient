@@ -30,10 +30,6 @@ public class Program extends Model implements Comparable<Program> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Program) {
-            return ((Program) o).id == id;
-        }
-
-        return false;
+        return o instanceof Program && ((Program) o).id == id;
     }
 }

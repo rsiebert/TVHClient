@@ -54,7 +54,7 @@ public class HTSFileInputStream extends InputStream {
 			mtime = response.getLong("mtime", 0);
 			notifyAll();
 		}
-	};
+	}
 
 	class FileReadResponse implements HTSResponseHandler {
 		byte[] data;
@@ -64,7 +64,7 @@ public class HTSFileInputStream extends InputStream {
 			data = response.getByteArray("data");
 			notifyAll();
 		}
-	};
+	}
 
 	class FileCloseResponse implements HTSResponseHandler {
 		int id;
@@ -73,7 +73,7 @@ public class HTSFileInputStream extends InputStream {
 		public void handleResponse(HTSMessage response) {
 			notifyAll();
 		}
-	};
+	}
 
 	private void open() throws IOException {
 		HTSMessage request = new HTSMessage();

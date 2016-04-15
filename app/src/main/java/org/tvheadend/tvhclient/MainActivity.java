@@ -1772,7 +1772,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * for the profile is required because it could be null in case a new
      * connection was defined and no cast profile was selected yet.
      * 
-     * @return
+     * @return True if the cast icon shall be show
      */
     private boolean showCastMenuItem() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

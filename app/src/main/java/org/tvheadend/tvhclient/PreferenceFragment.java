@@ -275,11 +275,6 @@ public abstract class PreferenceFragment extends Fragment implements PreferenceM
                     + "that is not a ListView class");
         }
         mList = (ListView)rawListView;
-        if (mList == null) {
-            throw new RuntimeException(
-                    "Your content must have a ListView whose id attribute is " +
-                    "'android.R.id.list'");
-        }
         mList.setOnKeyListener(mListOnKeyListener);
         mHandler.post(mRequestFocus);
     }

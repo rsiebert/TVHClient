@@ -24,7 +24,7 @@ public abstract class SelectionThread extends Thread {
     public SelectionThread() {
         running = false;
         lock = new ReentrantLock();
-        regBuf = new HashMap<AbstractSelectableChannel, Integer>();
+        regBuf = new HashMap<>();
     }
 
     public void setRunning(boolean b) {
@@ -125,7 +125,7 @@ public abstract class SelectionThread extends Thread {
 
         try {
             lock.lock();
-            ArrayList<AbstractSelectableChannel> tmp = new ArrayList<AbstractSelectableChannel>();
+            ArrayList<AbstractSelectableChannel> tmp = new ArrayList<>();
             for (AbstractSelectableChannel ch : regBuf.keySet()) {
                 try {
                     int ops = regBuf.get(ch);
@@ -214,7 +214,6 @@ public abstract class SelectionThread extends Thread {
                 Log.e(TAG, "Can't send message", t);
                 onError(sChannel);
                 selKey.cancel();
-                return;
             }
         }
     }
@@ -244,6 +243,7 @@ public abstract class SelectionThread extends Thread {
         try {
             onEvent(-1, ch);
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

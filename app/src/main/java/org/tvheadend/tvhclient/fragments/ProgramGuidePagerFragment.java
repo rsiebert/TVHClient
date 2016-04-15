@@ -1,19 +1,8 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.adapter.ProgramGuideTimeDialogAdapter;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -31,6 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.adapter.ProgramGuideTimeDialogAdapter;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface {
 
@@ -104,7 +103,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         f.setArguments(bundle);
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.program_guide_channel_fragment, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
 
         adapter = new ProgramGuidePagerAdapter(getChildFragmentManager(), activity, fragmentCount);
@@ -308,7 +307,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     public int getItemCount() {
         int count = 0;
         final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof ChannelListFragment && cf instanceof FragmentControlInterface) {
+        if (cf instanceof ChannelListFragment) {
             count = ((FragmentControlInterface) cf).getItemCount();
         }
         return count;

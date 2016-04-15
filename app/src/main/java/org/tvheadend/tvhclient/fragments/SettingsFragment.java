@@ -254,7 +254,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                 File[] files = activity.getCacheDir().listFiles();
                                 for (File file : files) {
                                     if (file.toString().endsWith(".png")) {
-                                        file.delete();
+                                        if (!file.delete()) {
+                                            app.log(TAG, "Could not delete channel icon " + file.getName());
+                                        }
                                         if (settingsInterface != null) {
                                             settingsInterface.reconnect();
                                         }

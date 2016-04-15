@@ -946,33 +946,32 @@ public class Utils {
             return;
         }
 
-        Program p = null;
+        Program program = null;
         long nextId = 0;
         synchronized(channel.epg) {
-            Iterator<Program> it = channel.epg.iterator();
-            while (it.hasNext()) {
-                p = it.next();
+            for (Program p : channel.epg) {
+                program = p;
                 // Check if there is a next program available or if the current
                 // program has an id for the next one
-                if (p.id != nextId && nextId != 0) {
+                if (program.id != nextId && nextId != 0) {
                     break;
                 }
                 // Get the next id of the program so we can check in
                 // the next iteration if this program is the last one.
-                nextId = p.nextId;
+                nextId = program.nextId;
             }
         }
 
-        if (p == null) {
+        if (program == null) {
             return;
         }
         // In case the while loop was not entered get the next id 
         // or if there is none the current id if the program.
         if (nextId == 0) {
-            nextId = p.nextId;
+            nextId = program.nextId;
         }
         if (nextId == 0) {
-            nextId = p.id;
+            nextId = program.id;
         }
 
         // Set the required information and start the service command.

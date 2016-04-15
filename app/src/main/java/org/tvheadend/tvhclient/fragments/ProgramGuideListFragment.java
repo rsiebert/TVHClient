@@ -1,34 +1,8 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter;
-import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter.ViewHolder;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.model.Program;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -48,6 +22,31 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter;
+import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter.ViewHolder;
+import org.tvheadend.tvhclient.intent.SearchEPGIntent;
+import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Program;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ProgramGuideListFragment extends Fragment implements HTSListener, FragmentControlInterface, ProgramContextMenuInterface {
 

@@ -1679,7 +1679,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
-                String id = response.getString("id", "");
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
                     app.showMessage(getString(R.string.error_adding_recording, 

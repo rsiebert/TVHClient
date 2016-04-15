@@ -168,10 +168,10 @@ public class HTSMessage extends HashMap<String, Object> {
         }
     }
 
-    public static String getHexString(byte[] b) throws Exception {
+    public static String getHexString(byte[] bytes) throws Exception {
         String result = "";
-        for (int i = 0; i < b.length; i++) {
-            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+        for (byte b : bytes) {
+            result += Integer.toString((b & 0xff) + 0x100, 16).substring(1);
         }
         return result;
     }
