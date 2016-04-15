@@ -1240,7 +1240,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // Show the menu item to unlock the application if it was not yet purchased
         drawerAdapter.getItemById(MENU_UNLOCKER).isVisible = !app.isUnlocked();
 
-        // TODO Remove the connection from the menu list and string arrays 
         // Hide the connection menu
         drawerAdapter.getItemById(MENU_CONNECTIONS).isVisible = false;
 

@@ -1121,7 +1121,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 } else {
                     app.showMessage(getString(R.string.success_updating_recording));
 
-                    // TODO Force a reconnect. This is a workaround because no
+                    // Force a reconnect. This is a workaround because no
                     // onDvrUpdate event is sent
                     Utils.connect(app.getApplicationContext(), true);
                 }
