@@ -104,11 +104,11 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             String value = "(" + sdf2.format(startDate) + ")";
             titleDate.setText(value);
 
-            // Hide the date text if it shows the date time or the display is too narrow
+            // Hide the date text if it shows the date time or the display is too narrow.
+            // It is considered too narrow if the width falls below 400 pixels.
             DisplayMetrics displaymetrics = new DisplayMetrics();
             activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             if (titleDateText.getText().equals(titleDate.getText()) ||
-                    // TODO make 400 adjustable or detect automatically if it would wrap
                 (displaymetrics.widthPixels < 400)) {
                 titleDate.setVisibility(View.GONE);
             }
