@@ -103,7 +103,7 @@
     <string name="pref_port_error_empty">The port number must not be empty.</string>
     <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
     <string name="pref_streaming_port">Port for media streaming</string>
-    <string name="pref_streaming_port_sum">%d will be used for media streaming. The default port is 9981 which is usually fine to use.</string>
+    <string name="pref_streaming_port_sum">Port %d will be used for media streaming. The default port is 9981 which is usually fine to use.</string>
     <string name="pref_user">Username</string>
     <string name="pref_user_sum">Enter username</string>
     <string name="pref_pass">Password</string>
