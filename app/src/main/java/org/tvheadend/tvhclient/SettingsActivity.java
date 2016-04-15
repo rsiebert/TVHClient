@@ -34,7 +34,6 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     private ActionBar actionBar = null;
     private TextView actionBarTitle;
     private TextView actionBarSubtitle;
-    private ImageView actionBarIcon;
     private Fragment fragment;
 
     private static boolean restart = false;
@@ -69,7 +68,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
             // Get the widgets so we can use them later and do not need to inflate again
             actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
             actionBarSubtitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_subtitle);
-            actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
+            ImageView actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
             actionBarIcon.setVisibility(View.GONE);
         }
         // Get any saved values from the bundle

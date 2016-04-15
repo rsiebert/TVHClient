@@ -46,11 +46,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
     protected RecordingListAdapter adapter;
     private ListView listView;
 
-    // This is the default view for the channel list adapter. Other views can be
-    // passed to the adapter to show less information. This is used in the
-    // program guide where only the channel icon is relevant.
-    private int adapterLayout = R.layout.recording_list_widget;
-
     protected boolean isDualPane;
 
     protected TVHClientApplication app;
@@ -92,6 +87,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
+
+        // This is the default view for the channel list adapter. Other views can be
+        // passed to the adapter to show less information. This is used in the
+        // program guide where only the channel icon is relevant.
+        int adapterLayout = R.layout.recording_list_widget;
 
         adapter = new RecordingListAdapter(activity, new ArrayList<Recording>(), adapterLayout);
         listView.setAdapter(adapter);

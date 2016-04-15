@@ -47,12 +47,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     protected FragmentStatusInterface fragmentStatusInterface;
     protected TimerRecordingListAdapter adapter;
     private ListView listView;
-
-    // This is the default view for the channel list adapter. Other views can be
-    // passed to the adapter to show less information. This is used in the
-    // program guide where only the channel icon is relevant.
-    private int adapterLayout = R.layout.timer_recording_list_widget;
-
     protected boolean isDualPane;
 
     private TVHClientApplication app;
@@ -93,6 +87,11 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
+
+        // This is the default view for the channel list adapter. Other views can be
+        // passed to the adapter to show less information. This is used in the
+        // program guide where only the channel icon is relevant.
+        int adapterLayout = R.layout.timer_recording_list_widget;
 
         adapter = new TimerRecordingListAdapter(activity, new ArrayList<TimerRecording>(), adapterLayout);
         listView.setAdapter(adapter);

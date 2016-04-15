@@ -59,7 +59,6 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private TextView priority;
     private EditText minDuration;
     private EditText maxDuration;
-    private LinearLayout daysOfWeekLayout;
     private ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
     private TextView startTime;
     private CheckBox timeEnabled;
@@ -310,7 +309,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         final int displayWidth = displaymetrics.widthPixels;
 
-        daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
+        LinearLayout daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
         String[] shortDays = getResources().getStringArray(R.array.day_short_names);
         for (int i = 0; i < 7; i++) {
             final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);

@@ -49,10 +49,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView seriesRec;
 	private TextView timerRecLabel;
     private TextView timerRec;
-
     private String connectionStatus = "";
-    private String freeDiscSpace = "";
-    private String totalDiscSpace = "";
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
@@ -321,6 +318,9 @@ public class StatusFragment extends Fragment implements HTSListener {
             // Get the disc space values and convert them to megabytes
             long free = (Long.parseLong(list.get("freediskspace")) / 1000000);
             long total = (Long.parseLong(list.get("totaldiskspace")) / 1000000);
+
+            String freeDiscSpace;
+            String totalDiscSpace;
 
             // Show the free amount of disc space as GB or MB
             if (free > 1000) {
