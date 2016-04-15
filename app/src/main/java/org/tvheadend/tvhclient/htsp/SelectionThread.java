@@ -118,7 +118,7 @@ public abstract class SelectionThread extends Thread {
 
         //Process the selected keys
         while (it.hasNext()) {
-            SelectionKey selKey = (SelectionKey) it.next();
+            SelectionKey selKey = it.next();
             it.remove();
             processTcpSelectionKey(selKey);
         }

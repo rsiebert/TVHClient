@@ -102,7 +102,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
     }

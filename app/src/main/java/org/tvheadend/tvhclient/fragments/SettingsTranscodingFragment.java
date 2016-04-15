@@ -152,7 +152,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = activity;
         dbh = DatabaseHelper.getInstance(activity);
     }
 

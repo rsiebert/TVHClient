@@ -352,7 +352,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                         new MaterialDialog.Builder(activity)
                         .title(R.string.select_dvr_config)
                         .items(dvrConfigList)
-                        .itemsCallbackSingleChoice((int) dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                        .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 dvrConfigName.setText(dvrConfigList[which]);

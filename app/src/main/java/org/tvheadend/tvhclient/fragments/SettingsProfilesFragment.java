@@ -112,7 +112,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
     }

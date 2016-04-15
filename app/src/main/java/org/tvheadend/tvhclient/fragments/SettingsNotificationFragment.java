@@ -60,7 +60,7 @@ public class SettingsNotificationFragment extends PreferenceFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
     }
 

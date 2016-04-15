@@ -91,7 +91,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (Activity) activity;
+        this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
     }
 

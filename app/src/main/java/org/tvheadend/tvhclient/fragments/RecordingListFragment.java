@@ -418,7 +418,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             adapter.setPosition(position);
 
             if (isDualPane) {
-                final Recording recording = (Recording) adapter.getItem(position);
+                final Recording recording = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, recording, TAG);
                 }
