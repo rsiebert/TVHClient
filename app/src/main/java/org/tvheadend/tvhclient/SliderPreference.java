@@ -6,8 +6,6 @@
  */
 package org.tvheadend.tvhclient;
 
-import org.tvheadend.tvhclient.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
@@ -29,9 +27,9 @@ public class SliderPreference extends DialogPreference {
 
     /**
      * Constructor that initializes the slider preference
-     * 
-     * @param context
-     * @param attrs
+     *
+     * @param context Activity context
+     * @param attrs   Attributes
      */
     public SliderPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -41,9 +39,9 @@ public class SliderPreference extends DialogPreference {
     /**
      * Constructor that initializes the slider preference
      *  
-     * @param context
-     * @param attrs
-     * @param defStyle
+     * @param context  Activity context
+     * @param attrs    Attributes
+     * @param defStyle Style definition
      */
     public SliderPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -53,8 +51,8 @@ public class SliderPreference extends DialogPreference {
     /**
      * Initializes the slider preference by reading the values defined in the XML resource file.
      * 
-     * @param context
-     * @param attrs
+     * @param context Activity context
+     * @param attrs   Attributes
      */
     private void setup(Context context, AttributeSet attrs) {
         setDialogLayoutResource(R.layout.slider_preference_dialog);
@@ -90,7 +88,7 @@ public class SliderPreference extends DialogPreference {
      * Assures that the given value is within the defined minimum and maximum
      * range. The value is then stored in the persistent storage.
      * 
-     * @param value
+     * @param value Value of the slider
      */
     public void setValue(int value) {
         value = Math.max(mSeekBarMinValue, Math.min(value, mSeekBarMaxValue));
