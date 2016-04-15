@@ -247,7 +247,7 @@ public class ProgramGuideItemView extends LinearLayout {
 
         switch (programType) {
         case PROGRAM_MOVES_INTO_TIMESLOT:
-            addCurrentProgramToView(program, width, false);
+            addCurrentProgramToView(program, width);
             displayWidthRemaining -= width;
             break;
 
@@ -258,9 +258,9 @@ public class ProgramGuideItemView extends LinearLayout {
             if (programsAddedCounter == 0) {
                 final double durationTime = ((program.start.getTime() - startTime) / 1000 / 60);
                 final int w = (int) (durationTime * pixelsPerMinute);
-                addCurrentProgramToView(null, w, false);
+                addCurrentProgramToView(null, w);
             }
-            addCurrentProgramToView(program, width, false);
+            addCurrentProgramToView(program, width);
             displayWidthRemaining -= width;
             break;
 
@@ -271,7 +271,7 @@ public class ProgramGuideItemView extends LinearLayout {
             if (programsAddedCounter == 0) {
                 final double durationTime = ((program.start.getTime() - startTime) / 1000 / 60);
                 final int w = (int) (durationTime * pixelsPerMinute);
-                addCurrentProgramToView(null, w, false);
+                addCurrentProgramToView(null, w);
             }
             // Set the width to the remaining width to indicate for the next
             // program (by the program logic no additional program will be
@@ -280,7 +280,7 @@ public class ProgramGuideItemView extends LinearLayout {
             if (width >= displayWidthRemaining) {
                 width = displayWidthRemaining;
             }
-            addCurrentProgramToView(program, width, true);
+            addCurrentProgramToView(program, width);
             displayWidthRemaining -= width;
             break;
 
@@ -292,7 +292,7 @@ public class ProgramGuideItemView extends LinearLayout {
             if (width >= displayWidthRemaining) {
                 width = displayWidthRemaining;
             }
-            addCurrentProgramToView(program, width, true);
+            addCurrentProgramToView(program, width);
             displayWidthRemaining -= width;
             break;
 
@@ -349,11 +349,10 @@ public class ProgramGuideItemView extends LinearLayout {
      *
      * @param p            Program
      * @param layoutWidth  Width in pixels of the layout
-     * @param expandLayout True if the layout shall be expanded
      */
-    private void addCurrentProgramToView(final Program p, final int layoutWidth, final boolean expandLayout) {
+    private void addCurrentProgramToView(final Program p, final int layoutWidth) {
 
-        // TODO avoid passing null and expandLayout is not used
+        // TODO avoid passing null
         View v = activity.getLayoutInflater().inflate( R.layout.program_guide_data_item, null);
         final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
         final TextView title = (TextView) v.findViewById(R.id.title);
