@@ -6,9 +6,10 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.tvheadend.tvhclient.R.string;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
@@ -948,18 +949,17 @@ public class Utils {
 
         Program program = null;
         long nextId = 0;
-        synchronized(channel.epg) {
-            for (Program p : channel.epg) {
-                program = p;
-                // Check if there is a next program available or if the current
-                // program has an id for the next one
-                if (program.id != nextId && nextId != 0) {
-                    break;
-                }
-                // Get the next id of the program so we can check in
-                // the next iteration if this program is the last one.
-                nextId = program.nextId;
+        Set<Program> epg = new TreeSet<>(channel.epg);
+        for (Program p : epg) {
+            program = p;
+            // Check if there is a next program available or if the current
+            // program has an id for the next one
+            if (program.id != nextId && nextId != 0) {
+                break;
             }
+            // Get the next id of the program so we can check in
+            // the next iteration if this program is the last one.
+            nextId = program.nextId;
         }
 
         if (program == null) {

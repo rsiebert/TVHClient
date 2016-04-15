@@ -1,9 +1,29 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -27,31 +47,12 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import com.afollestad.materialdialogs.MaterialDialog;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
@@ -301,7 +302,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // from the list in this fragment (needed to support multiple fragments
         // in one screen)
         if (info == null || adapter == null || (adapter.getCount() <= info.position)
-                || (info.targetView.getParent() != getView().findViewById(R.id.item_list))) {
+                || (getView() != null && info.targetView.getParent() != getView().findViewById(R.id.item_list))) {
             return super.onContextItemSelected(item);
         }
 
@@ -310,11 +311,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         Program program = null;
         final Channel channel = adapter.getItem(info.position);
         if (channel != null) {
-            synchronized(channel.epg) {
-                Iterator<Program> it = channel.epg.iterator();
-                if (channel.isTransmitting && it.hasNext()) {
-                    program = it.next();
-                }
+            Set<Program> epg = new TreeSet<>(channel.epg);
+            Iterator<Program> it = epg.iterator();
+            if (channel.isTransmitting && it.hasNext()) {
+                program = it.next();
             }
         }
 
@@ -417,16 +417,14 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         Program program = null;
         final Channel channel = adapter.getItem(info.position);
         if (channel != null) {
-            synchronized(channel.epg) {
-                Iterator<Program> it = channel.epg.iterator();
-                while (it.hasNext()) {
-                    program = it.next();
-                    if (channel.isTransmitting && 
-                            channelTimeSelection == 0 &&
-                            program.start.getTime() >= showProgramsFromTime || 
-                            program.stop.getTime() >= showProgramsFromTime) {
-                        break;
-                    }
+            final Set<Program> epg = channel.epg;
+            for (Program p : epg) {
+                program = p;
+                if (channel.isTransmitting &&
+                        channelTimeSelection == 0 &&
+                        program.start.getTime() >= showProgramsFromTime ||
+                        program.stop.getTime() >= showProgramsFromTime) {
+                    break;
                 }
             }
         }

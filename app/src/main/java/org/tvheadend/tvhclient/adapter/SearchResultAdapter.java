@@ -222,15 +222,13 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
     }
 
     public void update(Model p) {
-        synchronized(originalData) {
-            final int length = originalData.size();
-            // Go through the list of programs and find the
-            // one with the same id. If its been found, replace it.
-            for (int i = 0; i < length; ++i) {
-                if (originalData.get(i).id == p.id) {
-                    originalData.set(i, p);
-                    break;
-                }
+        final int length = originalData.size();
+        // Go through the list of programs and find the
+        // one with the same id. If its been found, replace it.
+        for (int i = 0; i < length; ++i) {
+            if (originalData.get(i).id == p.id) {
+                originalData.set(i, p);
+                break;
             }
         }
     }
@@ -272,13 +270,12 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
             final String filterString = constraint.toString().toLowerCase(Locale.getDefault());
             FilterResults results = new FilterResults();
 
-            final List<Model> list = originalData;
-            final int count = list.size();
+            final int count = originalData.size();
             final ArrayList<Model> newList = new ArrayList<>(count);
 
             Model p;
             for (int i = 0; i < count; i++) {
-                p = list.get(i);
+                p = originalData.get(i);
                 if (p instanceof Program) {
                     if (((Program)p).title.toLowerCase(Locale.getDefault()).contains(filterString)) {
                         newList.add(p);

@@ -19,30 +19,12 @@
  */
 package org.tvheadend.tvhclient;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
-import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
-import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
-import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.intent.DownloadIntent;
-import org.tvheadend.tvhclient.intent.PlayIntent;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Model;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -59,6 +41,25 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
+import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
+import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
+import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.intent.DownloadIntent;
+import org.tvheadend.tvhclient.intent.PlayIntent;
+import org.tvheadend.tvhclient.intent.SearchEPGIntent;
+import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Model;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @SuppressWarnings("deprecation")
 public class SearchResultActivity extends ActionBarActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, HTSListener {
@@ -165,11 +166,10 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                 // Add all available programs from all channels.
                 for (Channel ch : app.getChannels()) {
                     if (ch != null) {
-                        synchronized(ch.epg) {
-                            for (Program p : ch.epg) {
-                                if (p != null && p.title != null && p.title.length() > 0) {
-                                    list.add(p);
-                                }
+                        Set<Program> epg = new TreeSet<>(ch.epg);
+                        for (Program p : epg) {
+                            if (p != null && p.title != null && p.title.length() > 0) {
+                                list.add(p);
                             }
                         }
                     }
@@ -177,11 +177,10 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             } else {
                 // Add all available programs from the given channel.
                 if (channel.epg != null) {
-                    synchronized(channel.epg) {
-                        for (Program p : channel.epg) {
-                            if (p != null && p.title != null && p.title.length() > 0) {
-                                list.add(p);
-                            }
+                    Set<Program> epg = new TreeSet<>(channel.epg);
+                    for (Program p : epg) {
+                        if (p != null && p.title != null && p.title.length() > 0) {
+                            list.add(p);
                         }
                     }
                 }
@@ -243,18 +242,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         if (!Intent.ACTION_SEARCH.equals(intent.getAction())
                 || !intent.hasExtra(SearchManager.QUERY)) {
             return;
-        }
-
-        // Try to get the channel and recording id if given, to limit the search
-        // a single channel or the completed recordings.
-        // TODO is this required if its already in the onCreate method?
-        Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
-        if (bundle != null) {
-            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
-            recording = app.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID));
-        } else {
-            channel = null;
-            recording = null;
         }
 
         // Get the given search query
@@ -475,7 +462,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
      * Calls the two timers with shorter timeout values.
      */
     private void startQuickAdapterUpdate() {
-        startAdapterUpdate(10, 50);
+        startAdapterUpdate(250, 1000);
     }
 
     /**

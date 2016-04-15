@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
@@ -125,41 +127,40 @@ public class ProgramGuideItemView extends LinearLayout {
         
         try {
             // Go through all programs and add them to the view
-            synchronized(channel.epg) {
-                Iterator<Program> it = channel.epg.iterator();
-                Program p;
-                while (it.hasNext()) {
-                    p = it.next();
+            Set<Program> epg = new TreeSet<>(channel.epg);
+            Iterator<Program> it = epg.iterator();
+            Program p;
+            while (it.hasNext()) {
+                p = it.next();
 
-                    // Get the type of the program and add it to the view
-                    programType = getProgramType(p);
-                    
-                    // Add the program only when it is somehow within the timeslot.
-                    if (programType == PROGRAM_MOVES_INTO_TIMESLOT ||
-                            programType == PROGRAM_IS_WITHIN_TIMESLOT ||
-                            programType == PROGRAM_MOVES_OUT_OF_TIMESLOT ||
-                            programType == PROGRAM_OVERLAPS_TIMESLOT) {
+                // Get the type of the program and add it to the view
+                programType = getProgramType(p);
 
-                        addCurrentProgram(p, programType, programsAddedCounter);
+                // Add the program only when it is somehow within the timeslot.
+                if (programType == PROGRAM_MOVES_INTO_TIMESLOT ||
+                        programType == PROGRAM_IS_WITHIN_TIMESLOT ||
+                        programType == PROGRAM_MOVES_OUT_OF_TIMESLOT ||
+                        programType == PROGRAM_OVERLAPS_TIMESLOT) {
 
-                        // Increase the counter which is required to fill in placeholder
-                        // programs in case the first program in the guide data is
-                        // already within the time slot and not one that moves into one.
-                        programsAddedCounter++;
-                        programAdded = true;
-                    }
+                    addCurrentProgram(p, programType, programsAddedCounter);
 
-                    // Check if there is more guide data available
-                    lastProgramFound = !it.hasNext();
+                    // Increase the counter which is required to fill in placeholder
+                    // programs in case the first program in the guide data is
+                    // already within the time slot and not one that moves into one.
+                    programsAddedCounter++;
+                    programAdded = true;
+                }
 
-                    // Stop adding more programs if the last program is within the
-                    // time slot and no more data is available or the program added
-                    // is the last one that fits into or overlaps the time slot.
-                    if ((programType == PROGRAM_IS_WITHIN_TIMESLOT && lastProgramFound)
-                            || programType == PROGRAM_MOVES_OUT_OF_TIMESLOT
-                            || programType == PROGRAM_OVERLAPS_TIMESLOT) {
-                        break;
-                    }
+                // Check if there is more guide data available
+                lastProgramFound = !it.hasNext();
+
+                // Stop adding more programs if the last program is within the
+                // time slot and no more data is available or the program added
+                // is the last one that fits into or overlaps the time slot.
+                if ((programType == PROGRAM_IS_WITHIN_TIMESLOT && lastProgramFound)
+                        || programType == PROGRAM_MOVES_OUT_OF_TIMESLOT
+                        || programType == PROGRAM_OVERLAPS_TIMESLOT) {
+                    break;
                 }
             }
         }

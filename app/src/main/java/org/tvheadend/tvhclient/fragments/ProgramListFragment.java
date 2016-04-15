@@ -2,8 +2,9 @@ package org.tvheadend.tvhclient.fragments;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -57,7 +58,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private FragmentStatusInterface fragmentStatusInterface;
 
     private ProgramListAdapter adapter;
-    private List<Program> list;
     private ListView listView;
     private Channel channel;
     private boolean isDualPane = false;
@@ -123,8 +123,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 }
             }
         });
-        
-        list = new ArrayList<>();
+
+        List<Program> list = new ArrayList<>();
         adapter = new ProgramListAdapter(activity, list);
         listView.setAdapter(adapter);
 
@@ -176,33 +176,30 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void populateList() {
         // This is required because addAll is only available in API 11 and higher
         if (channel != null) {
-            synchronized (channel.epg) {
+            Set<Program> epg = new TreeSet<>(channel.epg);
 
-                int availableProgramCount = channel.epg.size();
-                boolean currentProgramFound = false;
-                Iterator<Program> it = channel.epg.iterator();
+            int availableProgramCount = epg.size();
+            boolean currentProgramFound = false;
 
-                // Search through the EPG and find the first program that is currently running.
-                // Also count how many programs are available without counting the ones in the past.
-                while (it.hasNext()) {
-                    Program p = it.next();
-                    if (p.start.getTime() >= showProgramsFromTime  || 
+            // Search through the EPG and find the first program that is currently running.
+            // Also count how many programs are available without counting the ones in the past.
+            for (Program p : epg) {
+                if (p.start.getTime() >= showProgramsFromTime ||
                         p.stop.getTime() >= showProgramsFromTime) {
-                        currentProgramFound = true;
-                        adapter.add(p);
-                    } else {
-                        availableProgramCount--;
-                    }
+                    currentProgramFound = true;
+                    adapter.add(p);
+                } else {
+                    availableProgramCount--;
                 }
+            }
 
-                if (!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) {
-                    Log.d(TAG, "Channel '" + channel.name 
-                            + "', loading programs, current program exists: "
-                            + currentProgramFound + ", epg program count: "
-                            + availableProgramCount);
-                    if (fragmentStatusInterface != null) {
-                        fragmentStatusInterface.moreDataRequired(channel, TAG);
-                    }
+            if (!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) {
+                Log.d(TAG, "Channel '" + channel.name
+                        + "', loading programs, current program exists: "
+                        + currentProgramFound + ", epg program count: "
+                        + availableProgramCount);
+                if (fragmentStatusInterface != null) {
+                    fragmentStatusInterface.moreDataRequired(channel, TAG);
                 }
             }
         }
@@ -260,7 +257,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         // Check if the context menu call came from the list in this fragment
         // (needed for support for multiple fragments in one screen)
-        if (info.targetView.getParent() != getView().findViewById(R.id.item_list)) {
+        if (getView() != null && info.targetView.getParent() != getView().findViewById(R.id.item_list)) {
             return super.onContextItemSelected(item);
         }
 
