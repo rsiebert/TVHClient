@@ -1,24 +1,5 @@
 package org.tvheadend.tvhclient;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.HttpTicket;
-import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -29,7 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -49,6 +29,16 @@ import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
+import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.HttpTicket;
+import org.tvheadend.tvhclient.model.Profile;
+import org.tvheadend.tvhclient.model.Recording;
+
+import java.io.File;
+
 public class ExternalActionActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
 
     private final static String TAG = ExternalActionActivity.class.getSimpleName();
@@ -62,17 +52,12 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     private Channel ch;
     private Recording rec;
     private String baseUrl;
-
     private String title = "";
-
-    private ProgressBar castProgressBar;
-    private TextView castProgressInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(Utils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.external_action_layout);
         Utils.setLanguage(this);
 
         app = (TVHClientApplication) getApplication();
@@ -97,8 +82,6 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         // If the cast menu button is connected then assume playing means casting
         if (VideoCastManager.getInstance().isConnected()) {
             action = Constants.EXTERNAL_ACTION_CAST;
-            castProgressBar = (ProgressBar) findViewById(R.id.progress);
-            castProgressInfo = (TextView) findViewById(R.id.progress_info);
         }
     }
 
@@ -143,18 +126,9 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             break;
 
         case Constants.EXTERNAL_ACTION_CAST:
-            if (ch != null) {
+            if (ch != null && ch.number > 0) {
                 app.log(TAG, "Starting to cast channel '" + ch.name + "'");
-                // In case a channel shall be played the channel uuid is required.
-                // It is not provided via the HTSP API, only via the webinterface
-                // API. Load the channel UUIDs via server:host/api/epg/events/grid.
-                if (ch.uuid != null && ch.uuid.length() > 0) {
-                    app.log(TAG, "Channel uuid + " + ch.uuid + " exists");
-                    startCasting();
-                } else {
-                    app.log(TAG, "Channel uuid missing, starting loading thread");
-                    new ChannelUuidLoaderTask().execute(conn);
-                }
+                startCasting();
             } else if (rec != null) {
                 app.log(TAG, "Starting to cast recording '" + rec.title + "'");
                 startCasting();
@@ -407,7 +381,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         int streamType = MediaInfo.STREAM_TYPE_NONE;
 
         if (ch != null) {
-            castUrl = baseUrl + "/stream/channel/" + ch.uuid;
+            castUrl = baseUrl + "/stream/channelnumber/" + ch.number;
             iconUrl = baseUrl + "/" + ch.icon;
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
@@ -470,164 +444,11 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     }
 
     /**
-     * Task that opens a connection to the defined URL, authenticates and
-     * downloads the available EPG data. If successful the JSON formatted
-     * data will be parsed for the available channel UUID.
-     *
-     * @author rsiebert
-     *
-     */
-    class ChannelUuidLoaderTask extends AsyncTask<Connection, Void, String> {
-
-        private final String SUB_TAG = TAG + ", ChannelUuidLoaderTask";
-
-        protected void onPreExecute() {
-            if (castProgressInfo != null) {
-                castProgressInfo.setVisibility(View.VISIBLE);
-            }
-            if (castProgressBar != null) {
-                castProgressBar.setVisibility(View.VISIBLE);
-            }
-        }
-
-        protected String doInBackground(Connection... conns) {
-            InputStream is = null;
-            String result = "";
-            try {
-                // Show that data is being loaded
-                if (castProgressInfo != null) runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        castProgressInfo.setText(R.string.loading_casting_data);
-                    }
-                });
-
-                // Create the URL
-                Connection c = conns[0];
-                int channelCount = (app.getChannels() != null ? app.getChannels().size() : 1000);
-                String url = "http://" + c.address + ":" + c.streaming_port + "/api/channel/grid?limit=" + channelCount;
-                String auth = "Basic " + Base64.encodeToString((c.username + ":" + c.password).getBytes(), Base64.NO_WRAP);
-                app.log(SUB_TAG, "Connecting to " + url);
-
-                // Connect to the server and authenticate
-                HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
-                conn.setReadTimeout(5000);
-                conn.setConnectTimeout(5000);
-                conn.setRequestProperty("Authorization", auth);
-                conn.connect();
-
-                // Read the received data from the server
-                is = conn.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                    sb.append("\n");
-                }
-                is.close();
-                result = sb.toString();
-
-            } catch (Throwable tr) {
-                app.log(SUB_TAG, "Error " + tr.getLocalizedMessage());
-            } finally {
-                try {
-                    if (is != null) {
-                        is.close();
-                    }
-                } catch (IOException e) {
-                    // NOP
-                }
-            }
-            return result;
-        }
-
-        protected void onPostExecute(String result) {
-
-            // Check if any data was loaded, if not exit
-            if (result.length() == 0) {
-                app.log(SUB_TAG, "Error loading JSON data");
-                showErrorDialog(getString(R.string.error_loading_json_data));
-                return;
-            } else {
-                app.log(SUB_TAG, "JSON data size is " + result.length());
-            }
-
-            // Differentiates between a real parsing 
-            // exception or that no channel uuid was found
-            boolean parsingError = false;
-
-            try {
-                app.log(SUB_TAG, "Parsing JSON data");
-
-                // Show that data is being parsed
-                if (castProgressInfo != null) {
-                    castProgressInfo.setText(R.string.parsing_casting_data);
-                }
-
-                // Get the JSON array node and loop through all 
-                // entries to save the UUIDs for all channels.
-                JSONObject jsonObj = new JSONObject(result);
-                JSONArray epgData = jsonObj.getJSONArray("entries");
-                for (int i = 0; i < epgData.length(); i++) {
-                    JSONObject epgItem = epgData.getJSONObject(i);
-
-                    // Get the uuid from the data
-                    String uuid = "";
-                    if (epgItem.has("uuid")) {
-                        uuid = epgItem.getString("uuid");
-                    }
-                    // Get the name from the data. It will be 
-                    // compared against the selected channel
-                    String name = "";
-                    if (epgItem.has("name")) {
-                        name = epgItem.getString("name");
-                    }
-
-                    if (ch.name.equals(name)) {
-                        ch.uuid = uuid;
-                        app.log(SUB_TAG, "Channel '" + ch.name + "' found, uuid is " + ch.uuid);
-                        break;
-                    }
-                }
-
-            } catch (JSONException e) {
-                app.log(SUB_TAG, "Error parsing JSON data, " + e.getLocalizedMessage());
-                parsingError = true;
-
-            } finally {
-                // Either start casting with the found UUID or 
-                // show a message that the UUID could not be found
-                if (ch.uuid != null && ch.uuid.length() > 0) {
-                    app.log(SUB_TAG, "Found uuid, starting to cast channel " + ch.name);
-                    startCasting();
-                } else {
-                    if (parsingError) {
-                        app.log(SUB_TAG, "Showing error because JSON data could not be parsed");
-                        showErrorDialog(getString(R.string.error_parsing_json_data));
-                    } else {
-                        app.log(SUB_TAG, "Showing error because no channel uuid was found for " + ch.name);
-                        showErrorDialog(getString(R.string.error_no_channel_info_in_json_data));
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Displays a dialog with the given message.
      *
      * @param msg The message that shall be shown
      */
     private void showErrorDialog(String msg) {
-        // Hide the progress bar and text
-        if (castProgressInfo != null) {
-            castProgressInfo.setVisibility(View.GONE);
-        }
-        if (castProgressBar != null) {
-            castProgressBar.setVisibility(View.GONE);
-        }
-
         new MaterialDialog.Builder(this)
                 .content(msg)
                 .positiveText("Close")
