@@ -162,26 +162,25 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                 }
             }
         } else {
+            Set<Program> epg = null;
             if (channel == null) {
-                // Add all available programs from all channels.
+                // Get all available programs from all channels.
                 for (Channel ch : app.getChannels()) {
                     if (ch != null) {
-                        Set<Program> epg = new TreeSet<>(ch.epg);
-                        for (Program p : epg) {
-                            if (p != null && p.title != null && p.title.length() > 0) {
-                                list.add(p);
-                            }
-                        }
+                        epg = new TreeSet<>(ch.epg);
                     }
                 }
             } else {
-                // Add all available programs from the given channel.
+                // Get all available programs from the given channel.
                 if (channel.epg != null) {
-                    Set<Program> epg = new TreeSet<>(channel.epg);
-                    for (Program p : epg) {
-                        if (p != null && p.title != null && p.title.length() > 0) {
-                            list.add(p);
-                        }
+                    epg = new TreeSet<>(channel.epg);
+                }
+            }
+            // Add all available programs from the EPG set
+            if (epg != null) {
+                for (Program p : epg) {
+                    if (p != null && p.title != null && p.title.length() > 0) {
+                        list.add(p);
                     }
                 }
             }
