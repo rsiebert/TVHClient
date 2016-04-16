@@ -10,6 +10,7 @@
     <string name="cast_profile_invalid">Wybrany profil \'%1$s\' nie jest rekomendowanym \'%2$s\' profilem. Należy pamiętać, że rzucanie może nie działać prawidłowo.</string>
     <string name="error_loading_json_data">Nie można załadować danych wymaganych do rzucania z serwera. Proszę sprawdzić, czy połączenie jest aktywne, oraz port 9981 jest osiągalny.</string>
     <string name="error_parsing_json_data">Nie można przeanalizować danych odebranych z serwera. Proszę skontaktować się z deweloperem.</string>
+    <string name="error_no_channel_info_in_json_data">Nie można znaleźć informacji o kanale wymaganych do przekazywania.</string>
     <string name="proceed">Kontynuować</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Ustawienia, aby włączyć i skonfigurować rzucanie telewizji na żywo lub nagrań na TV. Należy pamiętać, że wymaga to tvheadend z włączonym transkodowania i serwera, który jest wystarczająco silny, aby przekodować dane w czasie rzeczywistym.</string>
@@ -20,6 +21,8 @@
     <string name="download_error_insufficient_space">Błąd pobierania nagrania \'%s\'. Nie wystarczająca ilość miejsca na urządzeniu.</string>
     <string name="download_error_authentication_required">Błąd pobierania nagrania \'%s\'. Uwierzytelnianie nieprawidłowe lub brakujące.</string>
     <string name="no_external_storage_available">Pamięć zewnętrzna jest nie dostępna lub jest tylko do odczytu.</string>
+    <string name="loading_casting_data">Ładowanie wymaganych danych do rzucania z serwera&#8230;</string>
+    <string name="parsing_casting_data">Przetwarzanie odebranych danych&#8230;</string>
 
     <string name="settings">Ustawienia</string>
     <string name="refresh">Odśwież</string>
@@ -260,6 +263,7 @@
 
     <string name="search_hint">Szukaj w EPG</string>
     <string name="searching_programs">Wyszukano %d program(ów)</string>
+    <string name="searching_recordings">Wyszukiwanie %d nagrań</string>
     <string name="two_days_ago">Dwa dni temu</string>
     <string name="yesterday">Wczoraj</string>
     <string name="today">Dzisiaj</string>
