@@ -1,22 +1,15 @@
 package org.tvheadend.tvhclient.htsp;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import android.app.Service;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Binder;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -38,16 +31,23 @@ import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
-import android.app.Service;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Binder;
-import android.os.IBinder;
-import android.preference.PreferenceManager;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class HTSService extends Service implements HTSConnectionListener {
 
@@ -691,6 +691,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onAutorecEntryUpdate(HTSMessage msg) {
+        app.log(TAG, "onAutorecEntryUpdate");
         SeriesRecording srec = app.getSeriesRecording(msg.getString("id"));
         if (srec == null) {
             return;
@@ -1582,9 +1583,8 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Deletes a series recording from the server with the given id. If the
      * removal was successful a positive message is shown otherwise a negative
      * one.
-     * 
-     * @param id
-     *            The id of the series recording that shall be deleted
+     *
+     * @param id The id of the series recording that shall be deleted
      */
     private void deleteAutorecEntry(final String id) {
         HTSMessage request = new HTSMessage();
@@ -1607,10 +1607,9 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Adds a series recording to the server with the given values. If the
      * adding was successful a positive message is shown otherwise a negative
      * one.
-     * 
-     * @param intent
-     *            Contains the parameters of the series recording that shall be
-     *            added
+     *
+     * @param intent Contains the parameters of the series recording that shall be
+     *               added
      */
     private void addAutorecEntry(final Intent intent) {
 
