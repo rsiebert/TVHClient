@@ -126,9 +126,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private static final int MENU_PROGRAM_GUIDE = 6;
     private static final int MENU_STATUS = 7;
     private static final int MENU_SETTINGS = 8;
-    private static final int MENU_CONNECTIONS = 9;
-    private static final int MENU_INFORMATION = 10;
-    private static final int MENU_UNLOCKER = 11;
+    private static final int MENU_INFORMATION = 9;
+    private static final int MENU_UNLOCKER = 10;
 
     // Holds the list of selected menu items so the previous fragment can be
     // shown again when the user has pressed the back key.
@@ -567,9 +566,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         list.add(new DrawerMenuItem(""));
         list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[8],
                 (lightTheme) ? R.drawable.ic_menu_settings_light : R.drawable.ic_menu_settings_dark));
-        list.add(new DrawerMenuItem(MENU_CONNECTIONS, menuItems[9],
-                (lightTheme) ? R.drawable.ic_menu_connections_light
-                        : R.drawable.ic_menu_connections_dark));
         list.add(new DrawerMenuItem(MENU_INFORMATION, menuItems[10],
                 (lightTheme) ? R.drawable.ic_menu_info_light
                         : R.drawable.ic_menu_info_dark));
@@ -651,7 +647,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 && (dbh.getConnections().isEmpty() 
                         || dbh.getSelectedConnection() == null)) {
             connectionSettingsShown = true;
-            handleMenuSelection(MENU_CONNECTIONS);
+
+            Intent connIntent = new Intent(this, SettingsActivity.class);
+            connIntent.putExtra(Constants.BUNDLE_MANAGE_CONNECTIONS, true);
+            startActivityForResult(connIntent, Constants.RESULT_CODE_SETTINGS);
+
         } else {
             if (!app.isConnected()) {
                 connectionStatus = Constants.ACTION_CONNECTION_STATE_NO_NETWORK;
@@ -976,13 +976,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             startActivityForResult(settingsIntent, Constants.RESULT_CODE_SETTINGS);
             break;
 
-        case MENU_CONNECTIONS:
-            selectedMenuPosition = defaultMenuPosition;
-            Intent connIntent = new Intent(this, SettingsActivity.class);
-            connIntent.putExtra(Constants.BUNDLE_MANAGE_CONNECTIONS, true);
-            startActivityForResult(connIntent, Constants.RESULT_CODE_SETTINGS);
-            break;
-
         case MENU_UNLOCKER:
             selectedMenuPosition = defaultMenuPosition;
             Intent unlockerIntent = new Intent(this, UnlockerActivity.class);
@@ -1239,9 +1232,6 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Show the menu item to unlock the application if it was not yet purchased
         drawerAdapter.getItemById(MENU_UNLOCKER).isVisible = !app.isUnlocked();
-
-        // Hide the connection menu
-        drawerAdapter.getItemById(MENU_CONNECTIONS).isVisible = false;
 
         // Replace the adapter contents so the view will be updated
         drawerList.setAdapter(null);
