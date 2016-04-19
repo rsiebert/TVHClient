@@ -1,14 +1,5 @@
 package org.tvheadend.tvhclient;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Program;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -19,9 +10,19 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ProgramGuideItemView extends LinearLayout {
 
@@ -89,22 +90,21 @@ public class ProgramGuideItemView extends LinearLayout {
         displayWidthRemaining = displayWidth;
     }
 
-    public void addChannel(final Channel ch) {
-        channel = ch;
-    }
-
     /**
      * Adds all programs from the program guide to the current view.
      * Only those programs that are within the defined time slot are added. If
      * the last program was reached, a call to load more programs is made.
+     *
+     * @param parent ViewGroup parent required for the layout
+     * @param ch Channel with the available EPG data
      */
-    public void addPrograms() {
-
+    public void addPrograms(ViewGroup parent, Channel ch) {
+        channel = ch;
         // Clear all previously shown programs
         layout.removeAllViews();
 
         // Show that no programs are available
-        if (channel == null || channel.epg.isEmpty()) {
+        if (channel == null || channel.epg == null || channel.epg.isEmpty()) {
             addEmptyProgramToView();
             return;
         }
@@ -142,7 +142,7 @@ public class ProgramGuideItemView extends LinearLayout {
                         programType == PROGRAM_MOVES_OUT_OF_TIMESLOT ||
                         programType == PROGRAM_OVERLAPS_TIMESLOT) {
 
-                    addCurrentProgram(p, programType, programsAddedCounter);
+                    addCurrentProgram(p, programType, programsAddedCounter, parent);
 
                     // Increase the counter which is required to fill in placeholder
                     // programs in case the first program in the guide data is
@@ -240,14 +240,14 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param programType          Type of program
      * @param programsAddedCounter Number of programs that were added to the view
      */
-    private void addCurrentProgram(final Program program, final int programType, int programsAddedCounter) {
+    private void addCurrentProgram(final Program program, final int programType, int programsAddedCounter, ViewGroup parent) {
 
         // Calculate the width of the program layout in the view.
         int width = getProgramLayoutWidth(program, programType);
 
         switch (programType) {
         case PROGRAM_MOVES_INTO_TIMESLOT:
-            addCurrentProgramToView(program, width);
+            addCurrentProgramToView(program, width, parent);
             displayWidthRemaining -= width;
             break;
 
@@ -258,9 +258,9 @@ public class ProgramGuideItemView extends LinearLayout {
             if (programsAddedCounter == 0) {
                 final double durationTime = ((program.start.getTime() - startTime) / 1000 / 60);
                 final int w = (int) (durationTime * pixelsPerMinute);
-                addCurrentProgramToView(null, w);
+                addCurrentProgramToView(null, w, parent);
             }
-            addCurrentProgramToView(program, width);
+            addCurrentProgramToView(program, width, parent);
             displayWidthRemaining -= width;
             break;
 
@@ -271,7 +271,7 @@ public class ProgramGuideItemView extends LinearLayout {
             if (programsAddedCounter == 0) {
                 final double durationTime = ((program.start.getTime() - startTime) / 1000 / 60);
                 final int w = (int) (durationTime * pixelsPerMinute);
-                addCurrentProgramToView(null, w);
+                addCurrentProgramToView(null, w, parent);
             }
             // Set the width to the remaining width to indicate for the next
             // program (by the program logic no additional program will be
@@ -280,7 +280,7 @@ public class ProgramGuideItemView extends LinearLayout {
             if (width >= displayWidthRemaining) {
                 width = displayWidthRemaining;
             }
-            addCurrentProgramToView(program, width);
+            addCurrentProgramToView(program, width, parent);
             displayWidthRemaining -= width;
             break;
 
@@ -292,7 +292,7 @@ public class ProgramGuideItemView extends LinearLayout {
             if (width >= displayWidthRemaining) {
                 width = displayWidthRemaining;
             }
-            addCurrentProgramToView(program, width);
+            addCurrentProgramToView(program, width, parent);
             displayWidthRemaining -= width;
             break;
 
@@ -350,10 +350,9 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param p            Program
      * @param layoutWidth  Width in pixels of the layout
      */
-    private void addCurrentProgramToView(final Program p, final int layoutWidth) {
+    private void addCurrentProgramToView(final Program p, final int layoutWidth, ViewGroup parent) {
 
-        // TODO avoid passing null
-        View v = activity.getLayoutInflater().inflate( R.layout.program_guide_data_item, null);
+        View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, parent, false);
         final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
         final TextView title = (TextView) v.findViewById(R.id.title);
         final ImageView state = (ImageView) v.findViewById(R.id.state);
@@ -402,7 +401,7 @@ public class ProgramGuideItemView extends LinearLayout {
                     // channel list fragment was called (not clear why) which 
 	                // resulted in a null pointer exception.
 	                int size = menu.size();
-	                for (int i = 0; i < size; ++i) {
+                    for (int i = 0; i < size; ++i) {
 	                    menu.getItem(i).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 	                        @Override
 	                        public boolean onMenuItemClick(MenuItem item) {

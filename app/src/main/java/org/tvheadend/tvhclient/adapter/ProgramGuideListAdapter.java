@@ -1,14 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.ProgramGuideItemView;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Channel;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.ProgramGuideItemView;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.model.Channel;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
 
@@ -98,10 +98,9 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
             holder = (ViewHolder) view.getTag();
         }
 
-        // TODO channel required?
-        // Adds the channel and shows the programs
-        holder.item.addChannel(getItem(position));
-        holder.item.addPrograms();
+        // Adds the channel and shows the programs. Channel is
+        // required to have access to the EPG data.
+        holder.item.addPrograms(parent, getItem(position));
         return view;
     }
     
