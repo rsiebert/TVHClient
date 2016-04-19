@@ -1353,10 +1353,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void moreDataRequired(final Channel channel, final String tag) {
-        app.log(TAG, "Initial sync not completed, skipping loading more programs for channel "
-                + (channel != null ? channel.name : "null"));
+        app.log(TAG, "Loading more programs for channel " + (channel != null ? channel.name : "null"));
 
         if (app.isLoading() || channel == null) {
+            app.log(TAG, "Initial sync not yet done, skipping loading more programs");
             return;
         }
 
