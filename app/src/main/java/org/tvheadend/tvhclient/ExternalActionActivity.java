@@ -18,9 +18,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.util.Base64;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -398,9 +395,14 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
-        // Check if the correct profile was set, if not try to do this
-        // TODO if a connection is changed then this could be null
-        castUrl += "?profile=" + dbh.getProfile(conn.cast_profile_id).name;
+        // Check if the correct profile was set, if not use the default
+        Profile castProfile = dbh.getProfile(conn.cast_profile_id);
+        if (castProfile == null) {
+            app.log(TAG, "Casting profile is null, using default");
+            castUrl += "?profile=" + Constants.CAST_PROFILE_DEFAULT;
+        } else {
+            castUrl += "?profile=" + castProfile.name;
+        }
 
         app.log(TAG, "Casting starts with the following information:");
         app.log(TAG, "Cast title is " + title);
