@@ -199,7 +199,7 @@
     <string name="no_days">Žádné dny</string>
 
     <string name="completed_recordings">Dokončené nahrávky</string>
-    <string name="upcoming_recordings">Naplánované nahrávky</string>
+    <string name="scheduled_recordings">Naplánované nahrávky</string>
     <string name="failed_recordings">Nezdařené nahrávky</string>
     <string name="series_recordings">Opakované nahrávky</string>
     <string name="timer_recordings">Ruční nahrávky</string>

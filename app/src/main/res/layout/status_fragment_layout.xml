@@ -85,7 +85,7 @@
                 style="?attr/ContentFont"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/upcoming_recordings" />
+                android:text="@string/scheduled_recordings" />
 
             <TextView
                 android:id="@+id/failed_recordings"

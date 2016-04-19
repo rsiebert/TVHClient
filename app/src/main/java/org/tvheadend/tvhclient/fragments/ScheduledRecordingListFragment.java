@@ -1,10 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
@@ -12,6 +7,11 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.model.Recording;
 
 public class ScheduledRecordingListFragment extends RecordingListFragment implements FragmentControlInterface {
 
@@ -113,7 +113,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
 
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.upcoming_recordings));
+            actionBarInterface.setActionBarTitle(getString(R.string.scheduled_recordings));
             String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
             actionBarInterface.setActionBarSubtitle(items);
             actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);

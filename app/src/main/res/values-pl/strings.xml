@@ -8,8 +8,6 @@
     <string name="connection_recovered">Połączenie z urządzeniem odbiorczym odzyskane</string>
     <string name="cast_profile_not_set">Nie wybrano profilu rzucania w ustawieniach. To jest wymagane zanim rzucanie zostanie użyte.</string>
     <string name="cast_profile_invalid">Wybrany profil \'%1$s\' nie jest rekomendowanym \'%2$s\' profilem. Należy pamiętać, że rzucanie może nie działać prawidłowo.</string>
-    <string name="error_loading_json_data">Nie można załadować danych wymaganych do rzucania z serwera. Proszę sprawdzić, czy połączenie jest aktywne, oraz port 9981 jest osiągalny.</string>
-    <string name="error_parsing_json_data">Nie można przeanalizować danych odebranych z serwera. Proszę skontaktować się z deweloperem.</string>
     <string name="proceed">Kontynuować</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Ustawienia, aby włączyć i skonfigurować rzucanie telewizji na żywo lub nagrań na TV. Należy pamiętać, że wymaga to tvheadend z włączonym transkodowania i serwera, który jest wystarczająco silny, aby przekodować dane w czasie rzeczywistym.</string>
@@ -260,6 +258,7 @@
 
     <string name="search_hint">Szukaj w EPG</string>
     <string name="searching_programs">Wyszukano %d program(ów)</string>
+    <string name="searching_recordings">Wyszukiwanie %d nagrań</string>
     <string name="two_days_ago">Dwa dni temu</string>
     <string name="yesterday">Wczoraj</string>
     <string name="today">Dzisiaj</string>
@@ -276,7 +275,7 @@
     <string name="no_days">Brak dni</string>
 
     <string name="completed_recordings">Zakończone</string>
-    <string name="upcoming_recordings">Zaplanowane</string>
+    <string name="scheduled_recordings">Zaplanowane</string>
     <string name="failed_recordings">Utracone / Nieprawidłowe</string>
     <string name="series_recordings">Nagrywanie serii</string>
     <string name="timer_recordings">Ręczne nagrywanie</string>

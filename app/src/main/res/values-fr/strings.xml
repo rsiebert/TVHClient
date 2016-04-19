@@ -245,7 +245,7 @@
     <string name="no_days">Aucun jour</string>
 
     <string name="completed_recordings">Terminé</string>
-    <string name="upcoming_recordings">A venir</string>
+    <string name="scheduled_recordings">A venir</string>
     <string name="failed_recordings">Echec</string>
     <string name="series_recordings">Enregistrements automatique</string>
     <string name="timer_recordings">Enregistrements manuel</string>

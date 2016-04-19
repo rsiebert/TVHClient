@@ -163,7 +163,7 @@
     <string name="sunday">Zondag</string>
 
     <string name="completed_recordings">Voltooid</string>
-    <string name="upcoming_recordings">Toekomstig</string>
+    <string name="scheduled_recordings">Toekomstig</string>
     <string name="failed_recordings">Mislukt</string>
     
     <string name="channels">Kanalen</string>

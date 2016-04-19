@@ -200,7 +200,7 @@
     <string name="no_days">Inga dagar</string>
 
     <string name="completed_recordings">Färdiga</string>
-    <string name="upcoming_recordings">Kommande</string>
+    <string name="scheduled_recordings">Kommande</string>
     <string name="failed_recordings">Misslyckade</string>
     <string name="series_recordings">Serieinspelningar</string>
     <string name="timer_recordings">Manuella inspelningar</string>

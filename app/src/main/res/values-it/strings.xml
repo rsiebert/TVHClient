@@ -200,7 +200,7 @@
     <string name="no_days">Nessun giorno</string>
 
     <string name="completed_recordings">Registrazioni completate</string>
-    <string name="upcoming_recordings">Registrazioni programmate</string>
+    <string name="scheduled_recordings">Registrazioni programmate</string>
     <string name="failed_recordings">Registrazioni fallite</string>
     <string name="series_recordings">Registrazioni di serie</string>
     <string name="timer_recordings">Registrazioni manuali</string>
