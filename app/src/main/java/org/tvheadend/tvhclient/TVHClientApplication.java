@@ -1,31 +1,5 @@
 package org.tvheadend.tvhclient;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.model.HttpTicket;
-import org.tvheadend.tvhclient.model.Packet;
-import org.tvheadend.tvhclient.model.Profiles;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.Subscription;
-import org.tvheadend.tvhclient.model.TimerRecording;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Application;
@@ -50,6 +24,32 @@ import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
+
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.HttpTicket;
+import org.tvheadend.tvhclient.model.Packet;
+import org.tvheadend.tvhclient.model.Profiles;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.Subscription;
+import org.tvheadend.tvhclient.model.TimerRecording;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
 
@@ -1067,7 +1067,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return true; //(bp.isInitialized() && bp.isPurchased(Constants.UNLOCKER));
+        return (bp.isInitialized() && bp.isPurchased(Constants.UNLOCKER));
     }
 
     @Override
