@@ -1,30 +1,5 @@
 package org.tvheadend.tvhclient;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.tvheadend.tvhclient.R.string;
-import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
-import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.GenreColorDialogItem;
-import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.model.SeriesInfo;
-import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.TimerRecording;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +25,30 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.tvheadend.tvhclient.R.string;
+import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
+import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.GenreColorDialogItem;
+import org.tvheadend.tvhclient.model.Profile;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesInfo;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Utils {
 
@@ -949,7 +948,7 @@ public class Utils {
 
         Program program = null;
         long nextId = 0;
-        Set<Program> epg = new TreeSet<>(channel.epg);
+        CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
         for (Program p : epg) {
             program = p;
             // Check if there is a next program available or if the current

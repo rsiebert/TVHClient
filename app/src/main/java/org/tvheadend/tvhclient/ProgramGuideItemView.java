@@ -21,8 +21,7 @@ import org.tvheadend.tvhclient.model.Program;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ProgramGuideItemView extends LinearLayout {
 
@@ -127,7 +126,7 @@ public class ProgramGuideItemView extends LinearLayout {
         
         try {
             // Go through all programs and add them to the view
-            Set<Program> epg = new TreeSet<>(channel.epg);
+            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
             Iterator<Program> it = epg.iterator();
             Program p;
             while (it.hasNext()) {

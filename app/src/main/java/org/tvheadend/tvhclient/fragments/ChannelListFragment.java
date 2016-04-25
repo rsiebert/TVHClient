@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
@@ -310,7 +310,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         Program program = null;
         final Channel channel = adapter.getItem(info.position);
         if (channel != null) {
-            Set<Program> epg = new TreeSet<>(channel.epg);
+            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
             if (channel.isTransmitting) {
                 for (Program p : epg) {
                     if (p.start.getTime() >= showProgramsFromTime ||

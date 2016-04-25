@@ -1,19 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Program;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -24,6 +10,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
+
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
@@ -200,7 +199,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
             }
 
-            Set<Program> epg = new TreeSet<>(c.epg);
+            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(c.epg);
             Program p = null;
             int availableProgramCount = epg.size();
             boolean currentProgramFound = false;

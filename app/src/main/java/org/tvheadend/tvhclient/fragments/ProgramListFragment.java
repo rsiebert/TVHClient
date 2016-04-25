@@ -1,31 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
-import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.intent.PlayIntent;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,6 +22,31 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
+import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.intent.PlayIntent;
+import org.tvheadend.tvhclient.intent.SearchEPGIntent;
+import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ProgramListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
@@ -176,7 +175,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void populateList() {
         // This is required because addAll is only available in API 11 and higher
         if (channel != null) {
-            Set<Program> epg = new TreeSet<>(channel.epg);
+            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
 
             int availableProgramCount = epg.size();
             boolean currentProgramFound = false;
