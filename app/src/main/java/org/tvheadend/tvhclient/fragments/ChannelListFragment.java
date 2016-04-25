@@ -50,7 +50,6 @@ import org.tvheadend.tvhclient.model.Program;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -312,9 +311,14 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         final Channel channel = adapter.getItem(info.position);
         if (channel != null) {
             Set<Program> epg = new TreeSet<>(channel.epg);
-            Iterator<Program> it = epg.iterator();
-            if (channel.isTransmitting && it.hasNext()) {
-                program = it.next();
+            if (channel.isTransmitting) {
+                for (Program p : epg) {
+                    if (p.start.getTime() >= showProgramsFromTime ||
+                            p.stop.getTime() >= showProgramsFromTime) {
+                        program = p;
+                        break;
+                    }
+                }
             }
         }
 
