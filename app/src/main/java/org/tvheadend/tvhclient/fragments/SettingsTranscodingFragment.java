@@ -18,19 +18,18 @@
  */
 package org.tvheadend.tvhclient.fragments;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
+import android.preference.PreferenceFragment;
+
 import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.support.v4.app.FragmentActivity;
 
 public class SettingsTranscodingFragment extends PreferenceFragment implements BackPressedInterface {
 

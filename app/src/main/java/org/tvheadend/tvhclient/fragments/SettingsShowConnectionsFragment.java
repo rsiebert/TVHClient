@@ -1,21 +1,9 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.WakeOnLanTask;
-import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.SettingsInterface;
-import org.tvheadend.tvhclient.model.Connection;
-
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,13 +16,24 @@ import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.WakeOnLanTask;
+import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.SettingsInterface;
+import org.tvheadend.tvhclient.model.Connection;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("deprecation")
 public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();
 
-    private ActionBarActivity activity;
+    private Activity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
 
@@ -62,7 +61,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
+        this.activity = activity;
         dbh = DatabaseHelper.getInstance(activity);
     }
 
@@ -110,7 +109,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     }
 
     private void startActionMode() {
-        actionMode = activity.startSupportActionMode(this);
+        actionMode = activity.startActionMode(this);
         if (actionMode != null) {
             actionMode.invalidate();
         }

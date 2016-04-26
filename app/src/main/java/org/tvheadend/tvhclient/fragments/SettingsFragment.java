@@ -1,23 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import org.tvheadend.tvhclient.ChangeLogDialog;
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.PreferenceFragment;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.SuggestionProvider;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.UnlockerActivity;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.SettingsInterface;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -29,24 +11,41 @@ import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.ChangeLogDialog;
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.SuggestionProvider;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.UnlockerActivity;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.SettingsInterface;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 @SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
-    private ActionBarActivity activity;
+    private Activity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
 
@@ -397,7 +396,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
+        this.activity = activity;
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
     }

@@ -18,10 +18,6 @@
  */
 package org.tvheadend.tvhclient.fragments;
 
-import org.tvheadend.tvhclient.PreferenceFragment;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,9 +26,12 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
+
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 
 public class SettingsNotificationFragment extends PreferenceFragment {
 

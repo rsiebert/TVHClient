@@ -7,9 +7,9 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +19,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
@@ -34,7 +33,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     @SuppressWarnings("unused")
     private final static String TAG = SettingsManageConnectionFragment.class.getSimpleName();
     
-    private ActionBarActivity activity;
+    private Activity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
     
@@ -96,7 +95,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
+        this.activity = activity;
         dbh = DatabaseHelper.getInstance(activity);
     }
 
