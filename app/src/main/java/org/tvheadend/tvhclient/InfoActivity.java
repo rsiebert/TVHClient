@@ -1,12 +1,5 @@
 package org.tvheadend.tvhclient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Locale;
-import java.util.regex.Pattern;
-
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
@@ -16,6 +9,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public class InfoActivity extends ActionBarActivity {
@@ -94,7 +94,9 @@ public class InfoActivity extends ActionBarActivity {
             String version;
             String s = sb.toString();
             try {
-                version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                int versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+                version = versionName + " (" + versionCode + ")";
                 s = Pattern.compile("APP_VERSION").matcher(sb).replaceAll(version);
             } catch (NameNotFoundException e) {
                 e.printStackTrace();
