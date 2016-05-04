@@ -1,13 +1,13 @@
 package org.tvheadend.tvhclient;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.support.v7.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +26,7 @@ import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 @SuppressWarnings("deprecation")
-public class SettingsActivity extends Activity implements ActionBarInterface, SettingsInterface {
+public class SettingsActivity extends ActionBarActivity implements ActionBarInterface, SettingsInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsActivity.class.getSimpleName();
@@ -58,7 +58,7 @@ public class SettingsActivity extends Activity implements ActionBarInterface, Se
         Utils.setLanguage(this);
 
         // Setup the action bar and show the title
-        actionBar = getActionBar();
+        actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(R.layout.actionbar_title);
