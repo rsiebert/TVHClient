@@ -8,7 +8,7 @@ android {
         applicationId "org.tvheadend.tvhclient"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 82
+        versionCode 83
         versionName "1.9.2"
         setProperty("archivesBaseName", "TVHClient-$versionName")
         multiDexEnabled true
