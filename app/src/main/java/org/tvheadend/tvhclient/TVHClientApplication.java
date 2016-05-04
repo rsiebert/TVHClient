@@ -1028,11 +1028,21 @@ public class TVHClientApplication extends Application implements BillingProcesso
     @Override
     public void onCreate() {
         super.onCreate();
-        bp = new BillingProcessor(this, Utils.getPublicKey(this), this);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("pref_debug_mode", false)) {
             enableLogToFile();
+        }
+
+        bp = new BillingProcessor(this, Utils.getPublicKey(this), this);
+        if (!BillingProcessor.isIabServiceAvailable(this)) {
+            log(TAG, "In app purchase is not available");
+        } else {
+            if (bp.loadOwnedPurchasesFromGoogle()) {
+                log(TAG, "Loaded purchase information from Google");
+            } else {
+                log(TAG, "Could not load purchase information from Google");
+            }
         }
 
         // Add the default tag (all channels) to the list
@@ -1067,7 +1077,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return (bp.isInitialized() && bp.isPurchased(Constants.UNLOCKER));
+        return bp.isPurchased(Constants.UNLOCKER);
     }
 
     @Override
@@ -1093,12 +1103,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        // NOP
+        log(TAG, "Billing error " + errorCode);
     }
 
     @Override
     public void onBillingInitialized() {
-        // NOP
+        log(TAG, "Billing is initialized");
     }
 
     @Override
@@ -1114,7 +1124,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     @Override
     public void onPurchaseHistoryRestored() {
-        // NOP
+        log(TAG, "Purchase history restored");
     }
 
     /**
