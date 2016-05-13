@@ -137,7 +137,7 @@
         <item name="ic_menu_tags">@drawable/ic_menu_tags_dark</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_once_dark</item>
         <item name="ic_menu_record_series">@drawable/ic_menu_record_series_dark</item>
-        <item name="ic_menu_record_cancel">@drawable/ic_menu_record_cancel_dark</item>
+        <item name="ic_menu_record_stop">@drawable/ic_menu_record_stop_dark</item>
         <item name="ic_menu_record_remove">@drawable/ic_menu_record_remove_dark</item>
         <item name="ic_menu_refresh">@drawable/ic_menu_refresh_dark</item>
         <item name="ic_menu_settings">@drawable/ic_menu_settings_dark</item>
@@ -187,7 +187,7 @@
         <item name="ic_menu_tags">@drawable/ic_menu_tags_light</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_once_light</item>
         <item name="ic_menu_record_series">@drawable/ic_menu_record_series_light</item>
-        <item name="ic_menu_record_cancel">@drawable/ic_menu_record_cancel_light</item>
+        <item name="ic_menu_record_stop">@drawable/ic_menu_record_stop_light</item>
         <item name="ic_menu_record_remove">@drawable/ic_menu_record_remove_light</item>
         <item name="ic_menu_refresh">@drawable/ic_menu_refresh_light</item>
         <item name="ic_menu_settings">@drawable/ic_menu_settings_light</item>

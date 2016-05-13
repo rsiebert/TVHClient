@@ -361,9 +361,9 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             }
             return true;
 
-        case R.id.menu_record_cancel:
+        case R.id.menu_record_stop:
             if (model instanceof Program) {
-                Utils.confirmCancelRecording(this, ((Program) model).recording);
+                Utils.confirmStopRecording(this, ((Program) model).recording);
             }
             return true;
 

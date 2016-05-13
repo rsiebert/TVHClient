@@ -46,7 +46,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         // Do not show this menu in single mode. No recording is
         // preselected which could be removed.
         if (!isDualPane || adapter.getCount() == 0) {
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+            (menu.findItem(R.id.menu_record_stop)).setVisible(false);
         }
 
         (menu.findItem(R.id.menu_play)).setVisible(false);
@@ -58,7 +58,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
-            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+            (menu.findItem(R.id.menu_record_stop_all)).setVisible(false);
         }
 
         // Show the add button to create a custom recording only when the
@@ -85,13 +85,13 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         Recording rec = adapter.getItem(info.position);
 
         if (rec != null && rec.isRecording()) {
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
+            (menu.findItem(R.id.menu_record_stop)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
             (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
         }
 
         if (rec != null && rec.isScheduled()) {
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
+            (menu.findItem(R.id.menu_record_stop)).setVisible(true);
             (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
         }
     }

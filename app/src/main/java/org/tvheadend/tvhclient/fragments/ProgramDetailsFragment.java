@@ -150,7 +150,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         playButton = (ButtonFlat) v.findViewById(R.id.menu_play);
         recordOnceButton = (ButtonFlat) v.findViewById(R.id.menu_record_once);
         recordSeriesButton = (ButtonFlat) v.findViewById(R.id.menu_record_series);
-        recordCancelButton = (ButtonFlat) v.findViewById(R.id.menu_record_cancel);
+        recordCancelButton = (ButtonFlat) v.findViewById(R.id.menu_record_stop);
 
         int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
                 .getColor(R.color.button_text_color_light) : getResources()
@@ -295,7 +295,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordCancelButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.confirmCancelRecording(activity, program.recording);
+                    Utils.confirmStopRecording(activity, program.recording);
                     if (getDialog() != null) {
                         getDialog().dismiss();
                     }

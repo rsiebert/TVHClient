@@ -1,14 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.intent.DownloadIntent;
-import org.tvheadend.tvhclient.intent.PlayIntent;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -25,6 +16,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonFlat;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.intent.DownloadIntent;
+import org.tvheadend.tvhclient.intent.PlayIntent;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Recording;
 
 @SuppressWarnings("deprecation")
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
@@ -54,7 +54,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private LinearLayout playerLayout;
     private ButtonFlat playRecordingButton;
     private ButtonFlat editRecordingButton;
-    private ButtonFlat cancelRecordingButton;
+    private ButtonFlat stopRecordingButton;
     private ButtonFlat removeRecordingButton;
     private ButtonFlat downloadRecordingButton;
 
@@ -148,7 +148,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
         playRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_play);
         editRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_edit);
-        cancelRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_record_cancel);
+        stopRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_record_stop);
         removeRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
         downloadRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_download);
 
@@ -157,7 +157,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 .getColor(R.color.button_text_color_dark);
         playRecordingButton.setBackgroundColor(bgColor);
         editRecordingButton.setBackgroundColor(bgColor);
-        cancelRecordingButton.setBackgroundColor(bgColor);
+        stopRecordingButton.setBackgroundColor(bgColor);
         removeRecordingButton.setBackgroundColor(bgColor);
         downloadRecordingButton.setBackgroundColor(bgColor);
         return v;
@@ -238,7 +238,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         // Hide all buttons as a default
         playRecordingButton.setVisibility(View.GONE);
         editRecordingButton.setVisibility(View.GONE);
-        cancelRecordingButton.setVisibility(View.GONE);
+        stopRecordingButton.setVisibility(View.GONE);
         removeRecordingButton.setVisibility(View.GONE);
         downloadRecordingButton.setVisibility(View.GONE);
 
@@ -252,14 +252,14 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         } else if (rec.isRecording()) {
             // The recording is recording it can be played or cancelled
-            cancelRecordingButton.setVisibility(View.VISIBLE);
+            stopRecordingButton.setVisibility(View.VISIBLE);
             playRecordingButton.setVisibility(View.VISIBLE);
             if (app.isUnlocked()) {
                 editRecordingButton.setVisibility(View.VISIBLE);
             }
         } else if (rec.isScheduled()) {
             // The recording is scheduled, it can only be cancelled
-            cancelRecordingButton.setVisibility(View.VISIBLE);
+            stopRecordingButton.setVisibility(View.VISIBLE);
             if (app.isUnlocked()) {
                 editRecordingButton.setVisibility(View.VISIBLE);
             }
@@ -296,10 +296,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 }
             }
         });
-        cancelRecordingButton.setOnClickListener(new OnClickListener() {
+        stopRecordingButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.confirmCancelRecording(activity, rec);
+                Utils.confirmStopRecording(activity, rec);
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

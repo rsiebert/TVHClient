@@ -13,7 +13,7 @@
     <attr name="ic_menu_tags" format="reference" />
     <attr name="ic_menu_record_once" format="reference" />
     <attr name="ic_menu_record_series" format="reference" />
-    <attr name="ic_menu_record_cancel" format="reference" />
+    <attr name="ic_menu_record_stop" format="reference" />
     <attr name="ic_menu_record_remove" format="reference" />
     <attr name="ic_menu_refresh" format="reference" />
     <attr name="ic_menu_settings" format="reference" />

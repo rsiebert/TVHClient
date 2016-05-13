@@ -30,9 +30,9 @@
     <string name="record_once">Record</string>
     <string name="record_once_custom_profile">Record with different profile</string>
     <string name="record_series">Record as series recording</string>
-    <string name="record_cancel">Cancel recording</string>
-    <string name="record_cancel_all">Cancel all recordings</string>
-    <string name="confirm_cancel_all">Are you sure you want to cancel all recordings?</string>
+    <string name="record_stop">Stop recording</string>
+    <string name="record_stop_all">Stop all recordings</string>
+    <string name="confirm_stop_all">Are you sure you want to stop all recordings?</string>
     <string name="record_remove">Remove recording</string>
     <string name="record_remove_all">Remove all recordings</string>
     <string name="confirm_remove_all">Are you sure you want to remove all recordings?</string>
@@ -42,6 +42,7 @@
     <string name="add">Add</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="stop">Stop</string>
     <string name="set_active">Activate</string>
     <string name="set_not_active">Deactivate</string>
     <string name="edit">Edit</string>
@@ -63,8 +64,8 @@
     <string name="remove_series_recording">Do you really want to remove the series recording \'%s\'? This will remove all scheduled recordings that are affected by this series recording rule.</string>
     <string name="remove_timer_recording">Do you really want to remove the timer recording \'%s\'?</string>
     <string name="remove_all_recordings">Do you really want to remove ALL recordings?</string>
-    <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
-    <string name="cancel_all_recordings">Do you really want to remove ALL scheduled recordings?</string>
+    <string name="stop_recording">Do you really want to stop the scheduled recording \'%s\'?</string>
+    <string name="stop_all_recordings">Do you really want to stop ALL scheduled recordings?</string>
     <string name="add_title">The title for the recording</string>
     <string name="add_subtitle">The subtitle for the recording</string>
     <string name="add_name">Name for this entry</string>
@@ -232,9 +233,11 @@
     <string name="err_loading_profiles">Error loading profiles from server\n%s</string>
     <string name="error_adding_recording">Recording was not added! %s</string>
     <string name="error_removing_recording">Recording was not removed! %s</string>
+    <string name="error_stopping_recording">Recording was not stopped! %s</string>
     <string name="error_updating_recording">Recording was not updated! %s</string>
     <string name="success_adding_recording">Recording has been added.</string>
     <string name="success_removing_recording">Recording has been removed.</string>
+    <string name="success_stopping_recording">Recording has been stopped.</string>
     <string name="success_updating_recording">Recording has been updated.</string>
 
     <string name="recording_file_missing">Recorded file is missing</string>
