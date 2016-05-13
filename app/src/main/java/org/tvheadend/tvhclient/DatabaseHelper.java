@@ -1,11 +1,5 @@
 package org.tvheadend.tvhclient;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +9,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -250,7 +250,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CONN_STREAMING_PORT, conn.streaming_port);
         values.put(KEY_CONN_WOL_ADDRESS, conn.wol_address);
         values.put(KEY_CONN_WOL_PORT, conn.wol_port);
-        values.put(KEY_CONN_WOL_BROADCAST, conn.wol_broadcast);
+        values.put(KEY_CONN_WOL_BROADCAST, (conn.wol_broadcast) ? "1" : "0");
         values.put(KEY_CONN_PLAY_PROFILE_ID, conn.playback_profile_id);
         values.put(KEY_CONN_REC_PROFILE_ID, conn.recording_profile_id);
         values.put(KEY_CONN_CAST_PROFILE_ID, conn.cast_profile_id);
@@ -292,7 +292,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CONN_STREAMING_PORT, conn.streaming_port);
         values.put(KEY_CONN_WOL_ADDRESS, conn.wol_address);
         values.put(KEY_CONN_WOL_PORT, conn.wol_port);
-        values.put(KEY_CONN_WOL_BROADCAST, conn.wol_broadcast);
+        values.put(KEY_CONN_WOL_BROADCAST, (conn.wol_broadcast) ? "1" : "0");
         values.put(KEY_CONN_PLAY_PROFILE_ID, conn.playback_profile_id);
         values.put(KEY_CONN_REC_PROFILE_ID, conn.recording_profile_id);
         values.put(KEY_CONN_CAST_PROFILE_ID, conn.cast_profile_id);
