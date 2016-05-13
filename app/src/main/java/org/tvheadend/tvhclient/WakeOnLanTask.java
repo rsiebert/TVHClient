@@ -1,18 +1,17 @@
 package org.tvheadend.tvhclient;
 
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+
+import org.tvheadend.tvhclient.model.Connection;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.tvheadend.tvhclient.model.Connection;
-
-import android.app.Activity;
-import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 
 public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
@@ -27,22 +26,24 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private Activity activity;
     private Exception exception;
     private View view;
+    TVHClientApplication app;
 
     public WakeOnLanTask(Activity context, Connection conn, View view) {
         this.activity = context;
         this.conn = conn;
         this.view = view;
+        this.app = (TVHClientApplication) context.getApplicationContext();
     }
 
     @Override
     protected Integer doInBackground(String... params) {
         // Exit if the MAC address is not ok, this should never happen because
         // it is already validated in the settings
-        if (!validateMacAddress(conn.wol_address)) {
+        if (!validateMacAddress(conn.wol_mac_address)) {
             return WOL_INVALID_MAC;
         }
         // Get the MAC address parts from the string
-        byte[] macBytes = getMacBytes(conn.wol_address);
+        byte[] macBytes = getMacBytes(conn.wol_mac_address);
 
         // Assemble the byte array that the WOL consists of
         byte[] bytes = new byte[6 + 16 * macBytes.length];
@@ -57,28 +58,30 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         try {
             InetAddress address;
             if (!conn.wol_broadcast) {
-                address = InetAddress.getByName(conn.wol_address);
-                Log.d(TAG, "Sending WOL packet to " + address);
+                address = InetAddress.getByName(conn.address);
+                app.log(TAG, "Sending WOL packet to " + address);
             } else {
                 // Replace the last number by 255 to send the packet as a broadcast
-                byte[] ipAddress = InetAddress.getByName(conn.wol_address).getAddress();
+                byte[] ipAddress = InetAddress.getByName(conn.address).getAddress();
                 ipAddress[3] = (byte) 255;
                 address = InetAddress.getByAddress(ipAddress);
-                Log.d(TAG, "Sending WOL packet as broadcast to " + address);
+                app.log(TAG, "Sending WOL packet as broadcast to " + address.toString());
             }
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, conn.wol_port);
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);
             socket.close();
-            Log.d(TAG, "Datagram packet send");
+            app.log(TAG, "Datagram packet send");
             if (!conn.wol_broadcast) {
+                app.log(TAG, "Send WOL");
                 return WOL_SEND;
             } else {
+                app.log(TAG, "Send WOL broadcast");
                 return WOL_SEND_BROADCAST;
             }
         } catch (Exception e) {
             this.exception = e;
-            Log.d(TAG, "Exception for address " + conn.address + ", Exception " + e.getLocalizedMessage());
+            app.log(TAG, "Exception for address " + conn.address + ", Exception " + e.getLocalizedMessage());
             return WOL_ERROR;
         }
     }

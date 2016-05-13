@@ -248,7 +248,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CONN_SELECTED, (conn.selected) ? "1" : "0");
         values.put(KEY_CONN_CHANNEL_TAG, conn.channelTag);
         values.put(KEY_CONN_STREAMING_PORT, conn.streaming_port);
-        values.put(KEY_CONN_WOL_ADDRESS, conn.wol_address);
+        values.put(KEY_CONN_WOL_ADDRESS, conn.wol_mac_address);
         values.put(KEY_CONN_WOL_PORT, conn.wol_port);
         values.put(KEY_CONN_WOL_BROADCAST, (conn.wol_broadcast) ? "1" : "0");
         values.put(KEY_CONN_PLAY_PROFILE_ID, conn.playback_profile_id);
@@ -290,7 +290,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CONN_SELECTED, (conn.selected) ? "1" : "0");
         values.put(KEY_CONN_CHANNEL_TAG, conn.channelTag);
         values.put(KEY_CONN_STREAMING_PORT, conn.streaming_port);
-        values.put(KEY_CONN_WOL_ADDRESS, conn.wol_address);
+        values.put(KEY_CONN_WOL_ADDRESS, conn.wol_mac_address);
         values.put(KEY_CONN_WOL_PORT, conn.wol_port);
         values.put(KEY_CONN_WOL_BROADCAST, (conn.wol_broadcast) ? "1" : "0");
         values.put(KEY_CONN_PLAY_PROFILE_ID, conn.playback_profile_id);
@@ -393,7 +393,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         conn.selected = (c.getInt(c.getColumnIndex(KEY_CONN_SELECTED)) > 0);
         conn.channelTag = c.getInt(c.getColumnIndex(KEY_CONN_CHANNEL_TAG));
         conn.streaming_port = c.getInt(c.getColumnIndex(KEY_CONN_STREAMING_PORT));
-        conn.wol_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
+        conn.wol_mac_address = c.getString(c.getColumnIndex(KEY_CONN_WOL_ADDRESS));
         conn.wol_port = c.getInt(c.getColumnIndex(KEY_CONN_WOL_PORT));
         conn.wol_broadcast = (c.getInt(c.getColumnIndex(KEY_CONN_WOL_BROADCAST)) > 0);
         conn.playback_profile_id = c.getInt(c.getColumnIndex(KEY_CONN_PLAY_PROFILE_ID));

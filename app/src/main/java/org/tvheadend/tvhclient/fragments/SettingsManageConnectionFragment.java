@@ -158,7 +158,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             conn.streaming_port = savedInstanceState.getInt(CONNECTION_STREAMING_PORT);
             conn.username = savedInstanceState.getString(CONNECTION_USERNAME);
             conn.password = savedInstanceState.getString(CONNECTION_PASSWORD);
-            conn.wol_address = savedInstanceState.getString(CONNECTION_WOL_ADDRESS);
+            conn.wol_mac_address = savedInstanceState.getString(CONNECTION_WOL_ADDRESS);
             conn.wol_port = savedInstanceState.getInt(CONNECTION_WOL_PORT);
             conn.wol_broadcast = savedInstanceState.getBoolean(CONNECTION_WOL_BROADCAST);
             connectionChanged = savedInstanceState.getBoolean(CONNECTION_CHANGED);
@@ -176,7 +176,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             outState.putInt(CONNECTION_STREAMING_PORT, conn.streaming_port);
             outState.putString(CONNECTION_USERNAME, conn.username);
             outState.putString(CONNECTION_PASSWORD, conn.password);
-            outState.putString(CONNECTION_WOL_ADDRESS, conn.wol_address);
+            outState.putString(CONNECTION_WOL_ADDRESS, conn.wol_mac_address);
             outState.putInt(CONNECTION_WOL_PORT, conn.wol_port);
             outState.putBoolean(CONNECTION_WOL_BROADCAST, conn.wol_broadcast);
             outState.putBoolean(CONNECTION_CHANGED, connectionChanged);
@@ -197,7 +197,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         conn.streaming_port = 9981;
         conn.username = "";
         conn.password = "";
-        conn.wol_address = "";
+        conn.wol_mac_address = "";
         conn.wol_port = 9;
         conn.wol_broadcast = false;
         // If this is the first connection make it active
@@ -234,7 +234,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             prefUsername.setText(conn.username);
             prefPassword.setText(conn.password);
             prefSelected.setChecked(conn.selected);
-            prefWolAddress.setText(conn.wol_address);
+            prefWolAddress.setText(conn.wol_mac_address);
             prefWolPort.setText(String.valueOf(conn.wol_port));
             prefWolBroadcast.setChecked(conn.wol_broadcast);
         }
@@ -257,8 +257,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                     getString(R.string.pref_user_sum) : conn.username);
             prefPassword.setSummary(conn.password.length() == 0 ? 
                     getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
-            prefWolAddress.setSummary((conn.wol_address != null && conn.wol_address.length() == 0) ? 
-                    getString(R.string.pref_wol_address_sum) : conn.wol_address);
+            prefWolAddress.setSummary((conn.wol_mac_address != null && conn.wol_mac_address.length() == 0) ?
+                    getString(R.string.pref_wol_address_sum) : conn.wol_mac_address);
             prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, conn.wol_port));
         }
     }
@@ -310,7 +310,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             conn.username = prefUsername.getText();
             conn.password = prefPassword.getText();
             conn.selected = prefSelected.isChecked();
-            conn.wol_address = prefWolAddress.getText();
+            conn.wol_mac_address = prefWolAddress.getText();
             try {
                 conn.wol_port = Integer.parseInt(prefWolPort.getText());
             } catch (NumberFormatException nex) {
@@ -402,16 +402,16 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      */
     private boolean validateMacAddress() {
         // Initialize in case it's somehow null
-        if (conn.wol_address == null) {
-            conn.wol_address = "";
+        if (conn.wol_mac_address == null) {
+            conn.wol_mac_address = "";
         }
         // Allow an empty address
-        if (conn.wol_address.length() == 0) {
+        if (conn.wol_mac_address.length() == 0) {
             return true;
         }
         // Check if the MAC address is valid
         Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
-        Matcher matcher = pattern.matcher(conn.wol_address);
+        Matcher matcher = pattern.matcher(conn.wol_mac_address);
         if (!matcher.matches()) {
             if (getView() != null) {
                 Snackbar.make(getView(), R.string.pref_wol_address_invalid, Snackbar.LENGTH_SHORT).show();

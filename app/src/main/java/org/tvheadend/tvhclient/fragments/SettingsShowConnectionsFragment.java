@@ -278,8 +278,8 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         final Connection c = adapter.getItem(position);
 
         // Show or hide the wake on LAN menu item
-        if (c != null && c.wol_address != null) {
-            menu.getItem(0).setVisible((c.wol_address.length() > 0));
+        if (c != null && c.wol_mac_address != null) {
+            menu.getItem(0).setVisible((c.wol_mac_address.length() > 0));
         } else {
             menu.getItem(0).setVisible(false);
         }

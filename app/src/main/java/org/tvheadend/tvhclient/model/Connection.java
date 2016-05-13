@@ -10,7 +10,7 @@ public class Connection {
     public boolean selected;
     public int channelTag;
     public int streaming_port;
-    public String wol_address;
+    public String wol_mac_address;
     public int wol_port;
     public boolean wol_broadcast;
     public int playback_profile_id;

@@ -758,7 +758,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         (menu.findItem(R.id.menu_wol)).setVisible(false);
         if (selectedMenuPosition == MENU_STATUS) {
             final Connection conn = dbh.getSelectedConnection();
-            if (app.isUnlocked() && conn != null && conn.wol_address.length() > 0) {
+            if (app.isUnlocked() && conn != null && conn.wol_mac_address.length() > 0) {
                 (menu.findItem(R.id.menu_wol)).setVisible(true);
             }
         }
