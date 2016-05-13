@@ -1280,15 +1280,20 @@ public class TVHClientApplication extends Application implements BillingProcesso
         // The start time when the notification shall be shown
         String msg = getString(R.string.recording_started);
         long time = rec.start.getTime();
-        if (offset > 0) {
-            // Subtract the offset from the time when the notification shall be shown. 
-            time -= (offset * 60000);
-            msg = getString(R.string.recording_starts_in, offset);
-        }
+        if (time > (new Date()).getTime()) {
+            log(TAG, "Recording start time is in the future, adding notification");
+            if (offset > 0) {
+                // Subtract the offset from the time when the notification shall be shown.
+                time -= (offset * 60000);
+                msg = getString(R.string.recording_starts_in, offset);
+            }
 
-        // Create the intent for the start and stop notifications
-        createNotification(rec.id, time, msg);
-        createNotification(rec.id * 100, rec.stop.getTime(), getString(R.string.recording_completed));
+            // Create the intent for the start and stop notifications
+            createNotification(rec.id, time, msg);
+            createNotification(rec.id * 100, rec.stop.getTime(), getString(R.string.recording_completed));
+        } else {
+            log(TAG, "Recording start time was in the past, skipping notification");
+        }
     }
 
     /**
