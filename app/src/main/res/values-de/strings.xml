@@ -31,6 +31,7 @@
     <string name="record_cancel">Aufnahme entfernen</string>
     <string name="record_cancel_all">Alle Aufnahmen entfernen</string>
     <string name="confirm_cancel_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
+    <string name="record_stop">Aufnahme stoppen</string>
     <string name="record_remove">Aufnahme entfernen</string>
     <string name="record_remove_all">Alle Aufnahmen entfernen</string>
     <string name="confirm_remove_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
@@ -40,6 +41,7 @@
     <string name="add">Hinzufügen</string>
     <string name="save">Speichern</string>
     <string name="cancel">Abbrechen</string>
+    <string name="stop">Stoppen</string>
     <string name="set_active">Aktivieren</string>
     <string name="set_not_active">Deaktivieren</string>
     <string name="edit">Bearbeiten</string>
@@ -63,6 +65,7 @@
     <string name="remove_all_recordings">Alle Aufnahmen entfernen?</string>
     <string name="cancel_recording">Geplante Aufnahme \'%s\' entfernen?</string>
     <string name="cancel_all_recordings">Alle geplanten Aufnahmen entfernen?</string>
+    <string name="stop_recording">Laufende Aufnahme \'%s\' entfernen?</string>
     <string name="add_title">Titel der gewünschten Aufnahme</string>
     <string name="add_subtitle">Untertitel der gewünschten Aufnahme</string>
     <string name="add_name">Name dieses erstellten Eintrages</string>

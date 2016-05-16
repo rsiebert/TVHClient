@@ -275,8 +275,8 @@ public class Utils {
         if (rec == null) {
             return;
         }
-        // Show a confirmation dialog before deleting the recording
-        // Show a confirmation dialog before deleting the recording
+
+        // Show a confirmation dialog before canceling the recording
         new MaterialDialog.Builder(context)
                 .title(R.string.record_cancel)
                 .content(context.getString(R.string.cancel_recording, rec.title))
@@ -302,6 +302,41 @@ public class Utils {
         }
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(Constants.ACTION_CANCEL_DVR_ENTRY);
+        intent.putExtra("id", rec.id);
+        context.startService(intent);
+    }
+
+    public static void confirmStopRecording(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
+
+        // Show a confirmation dialog before stopping the recording
+        new MaterialDialog.Builder(context)
+                .title(R.string.record_stop)
+                .content(context.getString(R.string.stop_recording, rec.title))
+                .negativeText(R.string.cancel)
+                .positiveText(R.string.stop)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        stopRecording(context, rec);
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        // NOP
+                    }
+                }).show();
+    }
+
+    public static void stopRecording(final Context context, final Recording rec) {
+        if (rec == null) {
+            return;
+        }
+        final Intent intent = new Intent(context, HTSService.class);
+        intent.setAction(Constants.ACTION_STOP_DVR_ENTRY);
         intent.putExtra("id", rec.id);
         context.startService(intent);
     }
@@ -356,6 +391,7 @@ public class Utils {
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
+        MenuItem recordStopMenuItem = menu.findItem(R.id.menu_record_stop);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
         MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
@@ -366,6 +402,7 @@ public class Utils {
         recordOnceCustomProfileMenuItem.setVisible(false);
         recordSeriesMenuItem.setVisible(false);
         recordCancelMenuItem.setVisible(false);
+        recordStopMenuItem.setVisible(false);
         recordRemoveMenuItem.setVisible(false);
         searchMenuItemEpg.setVisible(false);
         searchMenuItemImdb.setVisible(false);
@@ -399,7 +436,7 @@ public class Utils {
         } else if (program.isRecording()) {
             // Show the play and cancel menu
             playMenuItem.setVisible(true);
-            recordCancelMenuItem.setVisible(true);
+            recordStopMenuItem.setVisible(true);
         } else if (program.isScheduled()) {
             // Show the cancel menu
             recordCancelMenuItem.setVisible(true);

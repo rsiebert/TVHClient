@@ -1,21 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.ArrayList;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
-import org.tvheadend.tvhclient.intent.DownloadIntent;
-import org.tvheadend.tvhclient.intent.PlayIntent;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -34,6 +18,22 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
+import org.tvheadend.tvhclient.intent.DownloadIntent;
+import org.tvheadend.tvhclient.intent.PlayIntent;
+import org.tvheadend.tvhclient.intent.SearchEPGIntent;
+import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Recording;
+
+import java.util.ArrayList;
 
 @SuppressWarnings("deprecation")
 public class RecordingListFragment extends Fragment implements HTSListener {
@@ -277,6 +277,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         // Hide these menus as a default, the required ones will be made visible
         // in the derived classes
         (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        (menu.findItem(R.id.menu_record_stop)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);

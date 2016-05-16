@@ -145,6 +145,7 @@ public class Constants {
     public static final String ACTION_ADD_DVR_ENTRY = "ADD_DVR_ENTRY";
     public static final String ACTION_UPDATE_DVR_ENTRY = "UPDATE_DVR_ENTRY";
     public static final String ACTION_CANCEL_DVR_ENTRY = "CANCEL_DVR_ENTRY";
+    public static final String ACTION_STOP_DVR_ENTRY = "STOP_DVR_ENTRY";
     public static final String ACTION_DELETE_DVR_ENTRY = "DELETE_DVR_ENTRY";
     public static final String ACTION_ADD_TIMER_REC_ENTRY = "ADD_TIMER_REC_ENTRY";
     public static final String ACTION_UPDATE_TIMER_REC_ENTRY = "UPDATE_TIMER_REC_ENTRY";

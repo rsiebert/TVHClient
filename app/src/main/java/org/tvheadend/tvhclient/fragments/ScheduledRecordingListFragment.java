@@ -47,6 +47,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         // preselected which could be removed.
         if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+            (menu.findItem(R.id.menu_record_stop)).setVisible(false);
         }
 
         (menu.findItem(R.id.menu_play)).setVisible(false);
@@ -85,7 +86,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         Recording rec = adapter.getItem(info.position);
 
         if (rec != null && rec.isRecording()) {
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
+            (menu.findItem(R.id.menu_record_stop)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
             (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
         }

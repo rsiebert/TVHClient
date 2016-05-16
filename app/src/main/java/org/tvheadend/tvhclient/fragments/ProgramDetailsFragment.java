@@ -63,6 +63,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private ButtonFlat recordOnceButton;
     private ButtonFlat recordSeriesButton;
     private ButtonFlat recordCancelButton;
+    private ButtonFlat recordStopButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -153,6 +154,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         recordOnceButton = (ButtonFlat) v.findViewById(R.id.menu_record_once);
         recordSeriesButton = (ButtonFlat) v.findViewById(R.id.menu_record_series);
         recordCancelButton = (ButtonFlat) v.findViewById(R.id.menu_record_cancel);
+        recordStopButton = (ButtonFlat) v.findViewById(R.id.menu_record_stop);
 
         int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
                 .getColor(R.color.button_text_color_light) : getResources()
@@ -161,6 +163,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         recordOnceButton.setBackgroundColor(bgColor);
         recordSeriesButton.setBackgroundColor(bgColor);
         recordCancelButton.setBackgroundColor(bgColor);
+        recordStopButton.setBackgroundColor(bgColor);
         return v;
     }
 
@@ -222,6 +225,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         playButton.setVisibility(View.VISIBLE);
         recordOnceButton.setVisibility(View.VISIBLE);
         recordCancelButton.setVisibility(View.VISIBLE);
+        recordStopButton.setVisibility(View.VISIBLE);
 
         if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             recordSeriesButton.setVisibility(View.VISIBLE);
@@ -243,12 +247,15 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         if (program.recording == null) {
             // Show the record menu
             recordCancelButton.setVisibility(View.GONE);
+            recordStopButton.setVisibility(View.GONE);
         } else if (program.isRecording()) {
             // Show the cancel menu
             recordOnceButton.setVisibility(View.GONE);
             recordSeriesButton.setVisibility(View.GONE);
+            recordCancelButton.setVisibility(View.GONE);
         } else if (program.isScheduled()) {
             // Show the cancel and play menu
+            recordStopButton.setVisibility(View.GONE);
             recordOnceButton.setVisibility(View.GONE);
             recordSeriesButton.setVisibility(View.GONE);
         } else {
@@ -256,6 +263,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordOnceButton.setVisibility(View.GONE);
             recordSeriesButton.setVisibility(View.GONE);
             recordCancelButton.setVisibility(View.GONE);
+            recordStopButton.setVisibility(View.GONE);
         }
     }
 
@@ -298,6 +306,17 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
                 @Override
                 public void onClick(View v) {
                     Utils.confirmCancelRecording(activity, program.recording);
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
+                }
+            });
+        }
+        if (recordStopButton != null) {
+            recordStopButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.confirmStopRecording(activity, program.recording);
                     if (getDialog() != null) {
                         getDialog().dismiss();
                     }

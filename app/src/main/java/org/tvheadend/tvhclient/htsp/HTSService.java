@@ -133,6 +133,9 @@ public class HTSService extends Service implements HTSConnectionListener {
                 // NOP
             }
 
+        } else if (action.equals(Constants.ACTION_CANCEL_DVR_ENTRY)) {
+            cancelDvrEntry(intent.getLongExtra("id", 0));
+
         } else if (action.equals(Constants.ACTION_STOP_DVR_ENTRY)) {
             stopDvrEntry(intent.getLongExtra("id", 0));
 
@@ -1035,13 +1038,27 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     /**
-     * Stops a regular recording from the server with the given id.
+     * Cancels a regular recording from the server with the given id.
+     * If it was successful a positive message is shown
+     * otherwise a negative one.
      *
-     * @param id
-     * @param method The method call that shall be used by the server
+     * @param id The id of the regular recording that shall be stopped
      */
-    private void stopDvrEntry(long id) {
-        stopDvrEntry(id, "stopDvrEntry");
+    private void cancelDvrEntry(final long id) {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("cancelDvrEntry");
+        request.putField("id", id);
+        connection.sendMessage(request, new HTSResponseHandler() {
+            public void handleResponse(HTSMessage response) {
+                boolean success = response.getInt("success", 0) == 1;
+                if (!success) {
+                    app.showMessage(getString(R.string.error_removing_recording,
+                                response.getString("error", "")));
+                } else {
+                    app.showMessage(getString(R.string.error_removing_recording));
+                }
+            }
+        });
     }
 
     /**
@@ -1051,24 +1068,18 @@ public class HTSService extends Service implements HTSConnectionListener {
      * otherwise a negative one.
      *
      * @param id The id of the regular recording that shall be stopped
-     * @param method The method call that shall be used by the server
      */
-    private void stopDvrEntry(final long id, final String method) {
+    private void stopDvrEntry(final long id) {
         HTSMessage request = new HTSMessage();
-        request.setMethod(method);
+        request.setMethod("stopDvrEntry");
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    if (method.equals("cancelDvrEntry")) {
-                        app.showMessage(getString(R.string.error_stopping_recording,
-                                response.getString("error", "")));
-                    } else {
-                        stopDvrEntry(id, "cancelDvrEntry");
-                    }
+                    cancelDvrEntry(id);
                 } else {
-                    app.showMessage(getString(R.string.success_stopping_recording));
+                    app.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
