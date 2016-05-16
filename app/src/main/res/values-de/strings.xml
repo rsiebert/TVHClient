@@ -28,9 +28,9 @@
     <string name="record_once">Aufnehmen</string>
     <string name="record_once_custom_profile">Aufnehmen mit anderem Profil</string>
     <string name="record_series">Automatisch Aufnehmen</string>
-    <string name="record_stop">Aufnahme stoppen</string>
-    <string name="record_stop_all">Alle Aufnahmen stoppen</string>
-    <string name="confirm_stop_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
+    <string name="record_cancel">Aufnahme entfernen</string>
+    <string name="record_cancel_all">Alle Aufnahmen entfernen</string>
+    <string name="confirm_cancel_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
     <string name="record_remove">Aufnahme entfernen</string>
     <string name="record_remove_all">Alle Aufnahmen entfernen</string>
     <string name="confirm_remove_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
@@ -61,8 +61,8 @@
     <string name="remove_series_recording">Serienaufnahme \'%s\' und alle dazugehörigen geplanten Aufnahmen entfernen?</string>
     <string name="remove_timer_recording">Manuelle Aufnahme \'%s\' entfernen?</string>
     <string name="remove_all_recordings">Alle Aufnahmen entfernen?</string>
-    <string name="stop_recording">Geplante Aufnahme \'%s\' stoppen?</string>
-    <string name="stop_all_recordings">Alle geplanten Aufnahmen stoppen?</string>
+    <string name="cancel_recording">Geplante Aufnahme \'%s\' entfernen?</string>
+    <string name="cancel_all_recordings">Alle geplanten Aufnahmen entfernen?</string>
     <string name="add_title">Titel der gewünschten Aufnahme</string>
     <string name="add_subtitle">Untertitel der gewünschten Aufnahme</string>
     <string name="add_name">Name dieses erstellten Eintrages</string>
@@ -229,11 +229,9 @@
     <string name="err_loading_profiles">Fehler beim Laden der Profile vom Server\n%s</string>
     <string name="error_adding_recording">Aufnahme konnte nicht erstellt werden! %s</string>
     <string name="error_removing_recording">Aufnahme konnte nicht entfernt werden! %s</string>
-    <string name="error_stopping_recording">Aufnahme konnte nicht gestoppt werden! %s</string>
     <string name="error_updating_recording">Aufnahme konnte nicht aktualisiert werden! %s</string>
     <string name="success_adding_recording">Aufnahme wurde hinzugefügt.</string>
     <string name="success_removing_recording">Aufnahme wurde entfernt.</string>
-    <string name="success_stopping_recording">Aufnahme wurde gestoppt.</string>
     <string name="success_updating_recording">Aufnahme wurde aktualisiert.</string>
 
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>

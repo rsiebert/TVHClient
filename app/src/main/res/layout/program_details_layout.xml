@@ -50,7 +50,7 @@
                             android:text="@string/play" />
 
                         <com.gc.materialdesign.views.ButtonFlat
-                            android:id="@+id/menu_record_stop"
+                            android:id="@+id/menu_record_cancel"
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
                             android:padding="8dp"

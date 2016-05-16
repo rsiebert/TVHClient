@@ -63,7 +63,7 @@
                         android:text="@string/record_series" />
 
                     <com.gc.materialdesign.views.ButtonFlat
-                        android:id="@+id/menu_record_stop"
+                        android:id="@+id/menu_record_cancel"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:layout_marginEnd="16dp"

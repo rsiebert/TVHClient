@@ -39,16 +39,16 @@
         android:title="@string/record_remove_all"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
-        android:id="@+id/menu_record_stop"
-        android:icon="?attr/ic_menu_record_stop"
+        android:id="@+id/menu_record_cancel"
+        android:icon="?attr/ic_menu_record_cancel"
         android:orderInCategory="8"
-        android:title="@string/stop"
+        android:title="@string/remove"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
     <item
-        android:id="@+id/menu_record_stop_all"
-        android:icon="?attr/ic_menu_record_stop"
+        android:id="@+id/menu_record_cancel_all"
+        android:icon="?attr/ic_menu_record_cancel"
         android:orderInCategory="9"
-        android:title="@string/record_stop_all"
+        android:title="@string/record_cancel_all"
         app:showAsAction="ifRoom|collapseActionView|withText"/>
 
 </menu>

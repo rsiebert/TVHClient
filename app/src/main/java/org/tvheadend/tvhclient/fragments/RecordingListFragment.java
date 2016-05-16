@@ -1,5 +1,21 @@
 package org.tvheadend.tvhclient.fragments;
 
+import java.util.ArrayList;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
+import org.tvheadend.tvhclient.intent.DownloadIntent;
+import org.tvheadend.tvhclient.intent.PlayIntent;
+import org.tvheadend.tvhclient.intent.SearchEPGIntent;
+import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Recording;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -18,22 +34,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
-import org.tvheadend.tvhclient.intent.DownloadIntent;
-import org.tvheadend.tvhclient.intent.PlayIntent;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Recording;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("deprecation")
 public class RecordingListFragment extends Fragment implements HTSListener {
@@ -172,21 +172,21 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                     }).show();
             return true;
 
-        case R.id.menu_record_stop:
-            Utils.confirmStopRecording(activity, adapter.getSelectedItem());
+        case R.id.menu_record_cancel:
+            Utils.confirmCancelRecording(activity, adapter.getSelectedItem());
             return true;
 
-        case R.id.menu_record_stop_all:
-            // Show a confirmation dialog before stopping all recordings
+        case R.id.menu_record_cancel_all:
+            // Show a confirmation dialog before canceling all recordings
             new MaterialDialog.Builder(activity)
-                    .title(R.string.record_stop_all)
-                    .content(R.string.confirm_stop_all)
-                    .positiveText(getString(R.string.stop))
-                    .negativeText(getString(R.string.cancel))
+                    .title(R.string.record_cancel_all)
+                    .content(R.string.confirm_cancel_all)
+                    .positiveText(getString(R.string.cancel))
+                    .negativeText(getString(R.string.discard))
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
-                            stopAllRecordings();
+                            cancelAllRecordings();
                         }
         
                         @Override
@@ -205,7 +205,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * Calls the service to cancel the scheduled recordings. The service is
      * called in a certain interval to prevent too many calls to the interface.
      */
-    private void stopAllRecordings() {
+    private void cancelAllRecordings() {
 
         // Create a copy of all recordings from the adapter. This ensures that
         // we still have the same id's at the correct index in the array when the
@@ -219,11 +219,11 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             public void run() {
                 for (int i = 0; i < idList.size(); ++i) {
                     app.log(TAG, "Cancelling recording id " + idList.get(i).title);
-                    Utils.stopRecording(activity, idList.get(i));
+                    Utils.cancelRecording(activity, idList.get(i));
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
-                        app.log(TAG, "Error stopping all recordings, " + e.getLocalizedMessage());
+                        app.log(TAG, "Error cancelling all recordings, " + e.getLocalizedMessage());
                     }
                 }
             }
@@ -276,7 +276,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
         // Hide these menus as a default, the required ones will be made visible
         // in the derived classes
-        (menu.findItem(R.id.menu_record_stop)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
@@ -321,8 +321,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             Utils.confirmRemoveRecording(activity, rec);
             return true;
 
-        case R.id.menu_record_stop:
-            Utils.confirmStopRecording(activity, rec);
+        case R.id.menu_record_cancel:
+            Utils.confirmCancelRecording(activity, rec);
             return true;
 
         case R.id.menu_play:

@@ -52,8 +52,8 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_add)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
-        (menu.findItem(R.id.menu_record_stop)).setVisible(false);
-        (menu.findItem(R.id.menu_record_stop_all)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
+        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
         (menu.findItem(R.id.menu_download)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
