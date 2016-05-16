@@ -131,10 +131,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     // Holds the list of selected menu items so the previous fragment can be
     // shown again when the user has pressed the back key.
-    public ArrayList<Integer> menuStack = new ArrayList<>();
+    private ArrayList<Integer> menuStack = new ArrayList<>();
 
     // Holds a list of channels that are currently being loaded
-    public List<Channel> channelLoadingList = new ArrayList<>();
+    private List<Channel> channelLoadingList = new ArrayList<>();
     private Runnable channelLoadingTask;
     private Handler channelLoadingHandler = new Handler();
 

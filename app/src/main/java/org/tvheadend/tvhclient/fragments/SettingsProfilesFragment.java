@@ -172,7 +172,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         inflater.inflate(R.menu.save_cancel_menu, menu);
     }
 
-    public void save() {
+    private void save() {
         // Save the values into the program profile (play and streaming)
         progProfile.enabled = prefEnableProgProfiles.isChecked();
         progProfile.name = (prefProgProfiles.getEntry() != null ? prefProgProfiles.getEntry().toString() : "");
@@ -313,7 +313,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
      * @param preferenceList Preference list widget that shall hold the values
      * @param profileList Profile list with the data
      */
-    protected void addProfiles(ListPreference preferenceList, final List<Profiles> profileList) {
+    private void addProfiles(ListPreference preferenceList, final List<Profiles> profileList) {
         // Initialize the arrays that contain the profile values
         final int size = profileList.size();
         CharSequence[] entries = new CharSequence[size];

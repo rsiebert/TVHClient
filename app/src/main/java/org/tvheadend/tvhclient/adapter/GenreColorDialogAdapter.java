@@ -1,10 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.List;
-
-import org.tvheadend.tvhclient.model.GenreColorDialogItem;
-import org.tvheadend.tvhclient.R;
-
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.model.GenreColorDialogItem;
+
+import java.util.List;
+
 public class GenreColorDialogAdapter extends ArrayAdapter<GenreColorDialogItem> {
     private LayoutInflater inflater;
-    public ViewHolder holder = null;
+    private ViewHolder holder = null;
     
     public GenreColorDialogAdapter(Activity context, final List<GenreColorDialogItem> items) {
         super(context, R.layout.genre_color_dialog, items);

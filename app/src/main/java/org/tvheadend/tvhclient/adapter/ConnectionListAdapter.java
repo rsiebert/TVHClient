@@ -1,12 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.Comparator;
-import java.util.List;
-
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.R;
-
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +7,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.model.Connection;
+
+import java.util.Comparator;
+import java.util.List;
+
 public class ConnectionListAdapter extends ArrayAdapter<Connection> {
 
-    Activity context;
-    List<Connection> list;
+    private Activity context;
+    private List<Connection> list;
 
     public ConnectionListAdapter(Activity context, List<Connection> list) {
         super(context, R.layout.connection_list_widget, list);

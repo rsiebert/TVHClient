@@ -1,16 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.model.Model;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +9,17 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.model.Model;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterable {
 
@@ -100,7 +100,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         return view;
     }
 
-    public View getRecordingView(int position, View convertView, ViewGroup parent) {
+    private View getRecordingView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         RecordingViewHolder holder;
 
@@ -178,7 +178,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         return view;
     }
 
-    public View getProgramView(int position, View convertView, ViewGroup parent) {
+    private View getProgramView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ProgramViewHolder holder;
 

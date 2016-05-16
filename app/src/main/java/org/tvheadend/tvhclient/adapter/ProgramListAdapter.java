@@ -1,12 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.Comparator;
-import java.util.List;
-
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.R;
-
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +7,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.model.Program;
+
+import java.util.Comparator;
+import java.util.List;
+
 public class ProgramListAdapter extends ArrayAdapter<Program> {
 
     private final static String TAG = ProgramListAdapter.class.getSimpleName();
-    Activity context;
-    List<Program> list;
+    private Activity context;
+    private List<Program> list;
 
     public ProgramListAdapter(Activity context, List<Program> list) {
         super(context, R.layout.program_list_widget, list);

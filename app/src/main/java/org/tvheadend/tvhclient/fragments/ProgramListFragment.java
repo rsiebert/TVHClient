@@ -172,7 +172,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     /**
      * Fills the adapter with all program that are part of the given channel
      */
-    public void populateList() {
+    private void populateList() {
         // This is required because addAll is only available in API 11 and higher
         if (channel != null) {
             CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);

@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.model;
 
 
+import android.support.annotation.NonNull;
+
 public class TimerRecording implements Comparable<TimerRecording> {
 
     public String id;
@@ -15,7 +17,7 @@ public class TimerRecording implements Comparable<TimerRecording> {
     public Channel channel;
 
     @Override
-    public int compareTo(TimerRecording that) {
+    public int compareTo(@NonNull TimerRecording that) {
         return (this.id.equals(that.id)) ? 0 : 1;
     }
 }

@@ -1,14 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.Comparator;
-import java.util.List;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.model.SeriesRecording;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -18,10 +9,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+
+import java.util.Comparator;
+import java.util.List;
+
 public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
 
-    Activity context;
-    List<SeriesRecording> list;
+    private Activity context;
+    private List<SeriesRecording> list;
     private int selectedPosition = 0;
     private int layout;
 

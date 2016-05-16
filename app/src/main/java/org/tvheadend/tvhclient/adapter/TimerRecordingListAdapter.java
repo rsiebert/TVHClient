@@ -1,15 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.model.TimerRecording;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -19,10 +9,20 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.model.TimerRecording;
+
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
 public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
-    Activity context;
-    List<TimerRecording> list;
+    private Activity context;
+    private List<TimerRecording> list;
     private int selectedPosition = 0;
     private int layout;
 

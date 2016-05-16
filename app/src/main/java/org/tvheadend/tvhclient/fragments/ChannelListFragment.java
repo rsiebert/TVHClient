@@ -63,7 +63,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 	private ActionBarInterface actionBarInterface;
 
     private ChannelListAdapter adapter;
-    ArrayAdapter<ChannelTag> tagAdapter;
+    private ArrayAdapter<ChannelTag> tagAdapter;
     private MaterialDialog tagDialog;
     private ListView listView;
 

@@ -172,7 +172,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         app.removeListener(this);
     }
 
-    public void save() {
+    private void save() {
         // Save the values into the program profile (play and streaming)
         castProfile.enabled = prefEnableCasting.isChecked();
         castProfile.name = (prefCastProfiles.getEntry() != null ? prefCastProfiles.getEntry().toString() : "");
@@ -272,7 +272,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
      * @param preferenceList Preference list widget that shall hold the values
      * @param profileList Profile list with the data
      */
-    protected void addProfiles(ListPreference preferenceList, final List<Profiles> profileList) {
+    private void addProfiles(ListPreference preferenceList, final List<Profiles> profileList) {
         // Initialize the arrays that contain the profile values
         final int size = profileList.size();
         CharSequence[] entries = new CharSequence[size];

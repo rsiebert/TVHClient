@@ -15,11 +15,6 @@
  */
 package org.tvheadend.tvhclient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -32,6 +27,11 @@ import android.webkit.WebView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class ChangeLogDialog {
 
@@ -70,7 +70,7 @@ public class ChangeLogDialog {
      * @param context Context
      * @param sp the shared preferences to store the last version name into
      */
-    public ChangeLogDialog(Context context, SharedPreferences sp) {
+    private ChangeLogDialog(Context context, SharedPreferences sp) {
         this.context = context;
 
         // get version numbers
@@ -118,7 +118,7 @@ public class ChangeLogDialog {
      *         first time ever. Also <code>true</code> if your app was
      *         deinstalled and installed again.
      */
-    public boolean firstRunEver() {
+    private boolean firstRunEver() {
         return NO_VERSION.equals(this.lastVersion);
     }
 

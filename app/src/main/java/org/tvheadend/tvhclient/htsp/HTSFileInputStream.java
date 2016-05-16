@@ -1,9 +1,10 @@
 package org.tvheadend.tvhclient.htsp;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import android.util.Log;
 
 public class HTSFileInputStream extends InputStream {
 	private HTSConnection connection;
@@ -119,7 +120,7 @@ public class HTSFileInputStream extends InputStream {
 		}
 	}
 
-	public int read(byte[] outBuf, int outOffset, int outLength) {
+	public int read(@NonNull byte[] outBuf, int outOffset, int outLength) {
 		fillBuffer();
 		
 		int ret = Math.min(buf.length - bufPos, outLength - outOffset);

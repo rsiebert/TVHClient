@@ -1,20 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.ArrayList;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.SeriesRecording;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,17 +22,32 @@ import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
+import org.tvheadend.tvhclient.intent.SearchEPGIntent;
+import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
+import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+
+import java.util.ArrayList;
+
 @SuppressWarnings("deprecation")
 public class SeriesRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
-    public static String TAG = SeriesRecordingListFragment.class.getSimpleName();
+    private static String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
-    protected ActionBarActivity activity;
-    protected ActionBarInterface actionBarInterface;
-    protected FragmentStatusInterface fragmentStatusInterface;
-    protected SeriesRecordingListAdapter adapter;
+    private ActionBarActivity activity;
+    private ActionBarInterface actionBarInterface;
+    private FragmentStatusInterface fragmentStatusInterface;
+    private SeriesRecordingListAdapter adapter;
     private ListView listView;
-    protected boolean isDualPane;
+    private boolean isDualPane;
 
     private TVHClientApplication app;
 

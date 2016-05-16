@@ -26,7 +26,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
 
     private final Activity activity;
     private final List<Channel> list;
-    public ViewHolder holder = null;
+    private ViewHolder holder = null;
     private Bundle bundle;
     final private LayoutInflater inflater;
 

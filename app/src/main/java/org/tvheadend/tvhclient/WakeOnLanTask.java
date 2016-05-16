@@ -26,7 +26,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private Activity activity;
     private Exception exception;
     private View view;
-    TVHClientApplication app;
+    private TVHClientApplication app;
 
     public WakeOnLanTask(Activity context, Connection conn, View view) {
         this.activity = context;

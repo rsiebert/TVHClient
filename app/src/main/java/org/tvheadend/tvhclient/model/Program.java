@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.model;
 
+import android.support.annotation.NonNull;
+
 import java.util.Date;
 
 public class Program extends Model implements Comparable<Program> {
@@ -16,7 +18,7 @@ public class Program extends Model implements Comparable<Program> {
     public Channel channel;
     public Recording recording;
 
-    public int compareTo(Program that) {
+    public int compareTo(@NonNull Program that) {
         return this.start.compareTo(that.start);
     }
 

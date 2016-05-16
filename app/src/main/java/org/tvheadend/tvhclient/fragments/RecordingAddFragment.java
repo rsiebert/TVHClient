@@ -1,21 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Locale;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -40,6 +24,22 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
+import org.tvheadend.tvhclient.model.Recording;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Locale;
 
 @SuppressWarnings("deprecation")
 public class RecordingAddFragment extends DialogFragment implements OnClickListener {
@@ -83,9 +83,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private int channelSelectionValue;
     private int dvrConfigNameValue;
 
-    String[] channelList;
-    String[] priorityList;
-    String[] dvrConfigList;
+    private String[] channelList;
+    private String[] priorityList;
+    private String[] dvrConfigList;
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
@@ -433,7 +433,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
      * @param item Selected menu item
      * @return True if selection was handled, otherwise false
      */
-    protected boolean onToolbarItemSelected(MenuItem item) {
+    private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_save:
             save();

@@ -1,6 +1,14 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.Map;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -12,15 +20,7 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import java.util.Map;
 
 public class StatusFragment extends Fragment implements HTSListener {
 
@@ -236,7 +236,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 	 * Shows the name and address of a connection, otherwise shows an
      * information that no connection is selected or available. 
 	 */
-	protected void showConnectionName() {
+    private void showConnectionName() {
 	    // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
@@ -263,7 +263,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * Shows the current connection status is displayed, this can be
      * authorization, timeouts or other errors.
      */
-    protected void showConnectionStatus() {
+    private void showConnectionStatus() {
         // Show a textual description about the connection state
         switch (connectionStatus) {
             case Constants.ACTION_CONNECTION_STATE_OK:

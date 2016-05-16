@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.model;
 
+import android.support.annotation.NonNull;
+
 public class SeriesRecording implements Comparable<SeriesRecording> {
 
     public String id;
@@ -23,7 +25,7 @@ public class SeriesRecording implements Comparable<SeriesRecording> {
     public String configName;
 
     @Override
-    public int compareTo(SeriesRecording that) {
+    public int compareTo(@NonNull SeriesRecording that) {
         return (this.id.equals(that.id)) ? 0 : 1;
     }
 }

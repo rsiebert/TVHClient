@@ -1,23 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Locale;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.TimerRecording;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -47,6 +29,24 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.htsp.HTSService;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.Profile;
+import org.tvheadend.tvhclient.model.TimerRecording;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Locale;
 
 public class TimerRecordingAddFragment extends DialogFragment implements HTSListener {
 
@@ -80,16 +80,16 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private Runnable addTask;
     private Handler addHandler = new Handler();
 
-    String[] channelList;
-    String[] priorityList;
-    String[] dvrConfigList;
+    private String[] channelList;
+    private String[] priorityList;
+    private String[] dvrConfigList;
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
 
     // Determines if an entry shall be added to the channel selection list to
     // allow recording on all channels
-    boolean allowRecordingOnAllChannels = false;
+    private boolean allowRecordingOnAllChannels = false;
 
     public static TimerRecordingAddFragment newInstance(Bundle args) {
         TimerRecordingAddFragment f = new TimerRecordingAddFragment();
@@ -492,7 +492,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
      * @param item Selected menu item
      * @return True if selection was handled, otherwise false
      */
-    protected boolean onToolbarItemSelected(MenuItem item) {
+    private boolean onToolbarItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_save:
             save();

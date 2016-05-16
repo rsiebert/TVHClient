@@ -1,16 +1,9 @@
 package org.tvheadend.tvhclient.fragments;
 
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.model.SeriesRecording;
-
-import com.gc.materialdesign.views.ButtonFlat;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +14,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.gc.materialdesign.views.ButtonFlat;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 
 @SuppressWarnings("deprecation")
 public class SeriesRecordingDetailsFragment extends DialogFragment {
@@ -57,6 +58,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         return f;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);

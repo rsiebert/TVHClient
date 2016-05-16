@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -134,8 +133,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                 // NOP
             }
 
-        } else if (action.equals(Constants.ACTION_CANCEL_DVR_ENTRY)) {
-            cancelDvrEntry(intent.getLongExtra("id", 0));
+        } else if (action.equals(Constants.ACTION_STOP_DVR_ENTRY)) {
+            stopDvrEntry(intent.getLongExtra("id", 0));
 
         } else if (action.equals(Constants.ACTION_ADD_TIMER_REC_ENTRY)) {
             addTimerRecEntry(intent);
@@ -831,7 +830,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         return "";
     }
 
-    public void cacheImage(String url, File f) throws MalformedURLException, IOException {
+    public void cacheImage(String url, File f) throws IOException {
         InputStream is;
         
         if (url.startsWith("http")) {
@@ -879,7 +878,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         is.close();
     }
 
-    private Bitmap getIcon(final String url) throws MalformedURLException, IOException {
+    private Bitmap getIcon(final String url) throws IOException {
 
         // When no channel icon shall be shown return null instead of the icon.
         // The icon will not be shown anyway, so returning null will drastically
@@ -1036,25 +1035,40 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     /**
-     * Cancels a regular recording from the server with the given id. If the
-     * cancellation was successful a positive message is shown otherwise a negative
-     * one.
-     * 
+     * Stops a regular recording from the server with the given id.
+     *
      * @param id
-     *            The id of the regular recording that shall be cancelled
+     * @param method The method call that shall be used by the server
      */
-    private void cancelDvrEntry(long id) {
+    private void stopDvrEntry(long id) {
+        stopDvrEntry(id, "stopDvrEntry");
+    }
+
+    /**
+     * Stops a regular recording from the server with the given id. If the
+     * stopping was not successful then the fallback method to cancel a
+     * recording is used. If it was successful a positive message is shown
+     * otherwise a negative one.
+     *
+     * @param id The id of the regular recording that shall be stopped
+     * @param method The method call that shall be used by the server
+     */
+    private void stopDvrEntry(final long id, final String method) {
         HTSMessage request = new HTSMessage();
-        request.setMethod("cancelDvrEntry");
+        request.setMethod(method);
         request.putField("id", id);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    app.showMessage(getString(R.string.error_removing_recording,
-                            response.getString("error", "")));
+                    if (method.equals("cancelDvrEntry")) {
+                        app.showMessage(getString(R.string.error_stopping_recording,
+                                response.getString("error", "")));
+                    } else {
+                        stopDvrEntry(id, "cancelDvrEntry");
+                    }
                 } else {
-                    app.showMessage(getString(R.string.success_removing_recording));
+                    app.showMessage(getString(R.string.success_stopping_recording));
                 }
             }
         });

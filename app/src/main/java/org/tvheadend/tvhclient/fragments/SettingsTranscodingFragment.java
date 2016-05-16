@@ -194,7 +194,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         prefRecSubtitleCodec.setValue(recProfile.subtitle_codec);
     }
 
-    public void save() {
+    private void save() {
         // Save the values into the profile
         progProfile.container = prefProgContainer.getValue();
         progProfile.transcode = prefProgTranscode.isChecked();

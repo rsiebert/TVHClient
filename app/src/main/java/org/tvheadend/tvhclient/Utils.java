@@ -204,7 +204,7 @@ public class Utils {
      * @param id           Id of the recording
      * @param manualRemove True to remove the recording from the internal list and don't wait for the server response
      */
-    public static void confirmRemoveRecording(final Activity activity,
+    private static void confirmRemoveRecording(final Activity activity,
             final String type, final String title, final String id,
             final boolean manualRemove) {
 

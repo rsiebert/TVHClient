@@ -66,8 +66,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
             "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
             "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-    
-    Connection conn = null;
+
+    private Connection conn = null;
     private boolean connectionChanged;
 
     private DatabaseHelper dbh;
@@ -328,7 +328,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * chosen the user can continue to add or edit the connection. Otherwise
      * the input will be discarded and the activity will be closed.
      */
-    public void cancel() {
+    private void cancel() {
         // Do not show the cancel dialog if nothing has changed
         if (!connectionChanged) {
             settingsInterface.showConnections();

@@ -1,20 +1,20 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
-
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A private custom adapter that contains the list of
@@ -29,7 +29,7 @@ import android.widget.TextView;
 public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTimeDialogItem> {
 
     private LayoutInflater inflater;
-    public ViewHolder holder = null;
+    private ViewHolder holder = null;
     
     public ProgramGuideTimeDialogAdapter(Activity activity, final List<ProgramGuideTimeDialogItem> times) {
         super(activity, R.layout.program_guide_time_dialog, times);
