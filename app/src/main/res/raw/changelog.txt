@@ -1,6 +1,6 @@
 $ 1.9.2
   % VERSION 1.9.2
-  _ 20.04.2016
+  _ 16.05.2016
     * Reduced Chromecast initialization time (Only available in the unlocked version)
     * Fixed removing multiple series and timer recordings
     * Fixed wake on LAN functionality
