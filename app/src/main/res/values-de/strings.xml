@@ -343,6 +343,7 @@
     <string name="error_empty_title">Bitte einen Aufnahmetitel angeben!</string>
     <string name="error_start_stop_time">Die Endzeit darf nicht vor der Startzeit liegen!</string>
     <string name="error_no_channel">Bitte einen Sender angeben!</string>
+    <string name="duplicate_detection">Erkenne doppelte Sendungen</string>
 
     <string name="subscription_error">Subscription-Fehler: %1$s</string>
     <string name="stream_errors">Streamingfehler: %1$d</string>
