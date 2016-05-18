@@ -200,7 +200,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
-        dupDetectList = activity.getResources().getStringArray(R.array.duplicate_detection_names);
+        dupDetectList = activity.getResources().getStringArray(R.array.duplicate_detection_list);
 
         // If the savedInstanceState is null then the fragment was created for
         // the first time. Either get the given id to edit the recording or
