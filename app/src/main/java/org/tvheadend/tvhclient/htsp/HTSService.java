@@ -709,6 +709,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.startWindow = msg.getLong("startWindow", -1);
         srec.startExtra = msg.getLong("startExtra", 0);
         srec.stopExtra = msg.getLong("stopExtra", 0);
+        srec.dupDetect = msg.getLong("dupDetect", 0);
         srec.title = msg.getString("title", srec.title);
         srec.name = msg.getString("name", srec.name);
         app.updateSeriesRecording(srec);
@@ -728,6 +729,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.startWindow = msg.getLong("startWindow", -1);
         srec.startExtra = msg.getLong("startExtra", 0);
         srec.stopExtra = msg.getLong("stopExtra", 0);
+        srec.dupDetect = msg.getLong("dupDetect", 0);
         srec.title = msg.getString("title");
         srec.name = msg.getString("name");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
@@ -1649,6 +1651,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long enabled = intent.getLongExtra("enabled", 1);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
+        final long dupDetect = intent.getLongExtra("dupDetect", 0);
         final long start = intent.getLongExtra("start", -1);
         final long startWindow = intent.getLongExtra("startWindow", -1);
         final String configName = intent.getStringExtra("configName");
