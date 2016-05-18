@@ -65,7 +65,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private TextView startWindowTime;
     private EditText startExtraTime;
     private EditText stopExtraTime;
-    private EditText dupDetect;
+    private TextView dupDetect;
     private EditText title;
     private EditText name;
     private TextView channelName;
@@ -347,7 +347,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         startWindowTime = (TextView) v.findViewById(R.id.start_before_time);
         startExtraTime = (EditText) v.findViewById(R.id.start_extra);
         stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
-        dupDetect = (EditText) v.findViewById(R.id.duplicate_detection);
+        dupDetect = (TextView) v.findViewById(R.id.duplicate_detection);
         priority = (TextView) v.findViewById(R.id.priority);
         dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
         dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
@@ -770,6 +770,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
         intent.putExtra("startExtra", startExtraTimeValue);
         intent.putExtra("stopExtra", stopExtraTimeValue);
+        intent.putExtra("dupDetect", dupDetectValue);
         intent.putExtra("daysOfWeek", daysOfWeekValue);
         intent.putExtra("priority", priorityValue);
         intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
