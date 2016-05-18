@@ -379,6 +379,7 @@
     <string name="select_priority">Priorität auswählen</string>
     <string name="select_dvr_config">Wähle Aufnahmeprofil</string>
     <string name="select_log_file">Log-Datei auswählen</string>
+    <string name="select_duplicate_detection">Wähle Methode, um doppelte Sendungen zu erkennen</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">Keine Verbindung verfügbar</string>
