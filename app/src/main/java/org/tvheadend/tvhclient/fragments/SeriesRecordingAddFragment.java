@@ -348,6 +348,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         startExtraTime = (EditText) v.findViewById(R.id.start_extra);
         stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
         dupDetect = (TextView) v.findViewById(R.id.duplicate_detection);
+        dupDetectLabel = (TextView) v.findViewById(R.id.duplicate_detection_label);
         priority = (TextView) v.findViewById(R.id.priority);
         dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
         dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
@@ -514,6 +515,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
         startExtraTime.setText(String.valueOf(startExtraTimeValue));
         stopExtraTime.setText(String.valueOf(stopExtraTimeValue));
+
+        dupDetectLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DUPDETECT ? View.VISIBLE : View.GONE);
+        dupDetect.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DUPDETECT ? View.VISIBLE : View.GONE);
 
         dupDetect.setText(dupDetectList[(int) dupDetectValue]);
         dupDetect.setOnClickListener(new OnClickListener() {
