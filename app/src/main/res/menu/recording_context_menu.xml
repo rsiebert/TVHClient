@@ -23,6 +23,11 @@
         android:title="@string/cancel"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/menu_record_stop"
+        android:icon="?attr/ic_menu_record_cancel"
+        android:title="@string/stop"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:title="@string/remove"
