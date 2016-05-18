@@ -192,6 +192,15 @@
         <item>30</item>
     </string-array>
 
+    <string-array name="duplicate_detection_list">
+        <item>All</item>
+        <item>Episode</item>
+        <item>Subtitle</item>
+        <item>Description</item>
+        <item>Once per week</item>
+        <item>Once per day</item>
+    </string-array>
+
     <string-array name="pr_content_type0">
         <item>Movie/Drama</item>
         <item>News/Current affairs</item>
