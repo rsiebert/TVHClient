@@ -65,6 +65,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private TextView startWindowTime;
     private EditText startExtraTime;
     private EditText stopExtraTime;
+    private EditText dupDetect;
     private EditText title;
     private EditText name;
     private TextView channelName;
@@ -79,6 +80,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private boolean timeEnabledValue;
     private long startExtraTimeValue;
     private long stopExtraTimeValue;
+    private long dupDetectValue;
     private long daysOfWeekValue;
     private String titleValue;
     private String nameValue;
@@ -89,6 +91,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private String[] channelList;
     private String[] priorityList;
     private String[] dvrConfigList;
+    private String[] dupDetectList;
 
     private TVHClientApplication app;
 
@@ -141,6 +144,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         outState.putBoolean("timeEnabled", timeEnabledValue);
         outState.putLong("startExtraTimeValue", startExtraTimeValue);
         outState.putLong("stopExtraTimeValue", stopExtraTimeValue);
+        outState.putLong("dupDetectValue", dupDetectValue);
         outState.putLong("daysOfWeekValue", daysOfWeekValue);
         outState.putString("titleValue", titleValue);
         outState.putString("nameValue", nameValue);
@@ -195,6 +199,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
+        dupDetectList = activity.getResources().getStringArray(R.array.duplicate_detection_names);
+
         // If the savedInstanceState is null then the fragment was created for
         // the first time. Either get the given id to edit the recording or
         // create new one. Otherwise an orientation change has occurred and the
@@ -217,6 +223,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 startWindowTimeValue = rec.startWindow;
                 startExtraTimeValue = rec.startExtra;
                 stopExtraTimeValue = rec.stopExtra;
+                dupDetectValue = rec.dupDetect;
                 daysOfWeekValue = rec.daysOfWeek;
                 titleValue = rec.title;
                 nameValue = rec.name;
@@ -254,6 +261,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 startWindowTimeValue = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
                 startExtraTimeValue = DEFAULT_START_EXTRA;
                 stopExtraTimeValue = DEFAULT_STOP_EXTRA;
+                dupDetectValue = 0;
                 daysOfWeekValue = 127;
                 titleValue = "";
                 nameValue = "";
@@ -284,6 +292,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             startWindowTimeValue = savedInstanceState.getLong("startWindowTimeValue");
             startExtraTimeValue = savedInstanceState.getLong("startExtraTimeValue");
             stopExtraTimeValue = savedInstanceState.getLong("stopExtraTimeValue");
+            dupDetectValue = savedInstanceState.getLong("dupDetectValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
             titleValue = savedInstanceState.getString("titleValue");
             nameValue = savedInstanceState.getString("nameValue");
@@ -338,6 +347,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         startWindowTime = (TextView) v.findViewById(R.id.start_before_time);
         startExtraTime = (EditText) v.findViewById(R.id.start_extra);
         stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
+        dupDetect = (EditText) v.findViewById(R.id.duplicate_detection);
         priority = (TextView) v.findViewById(R.id.priority);
         dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
         dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
@@ -504,6 +514,25 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
         startExtraTime.setText(String.valueOf(startExtraTimeValue));
         stopExtraTime.setText(String.valueOf(stopExtraTimeValue));
+
+        dupDetect.setText(dupDetectList[(int) dupDetectValue]);
+        dupDetect.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				new MaterialDialog.Builder(activity)
+	            .title(R.string.select_duplicate_detection)
+	            .items(dupDetectList)
+	            .itemsCallbackSingleChoice((int) dupDetectValue, new MaterialDialog.ListCallbackSingleChoice() {
+	                @Override
+	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        dupDetect.setText(dupDetectList[which]);
+                        dupDetectValue = which;
+	                    return true;
+	                }
+	            })
+	            .show();
+			}
+        });
 
         // Set the correct days as checked or not depending on the given value.
         // For each day shift the daysOfWeekValue by one to the right and check
