@@ -63,6 +63,15 @@
         <item>30 Minuten eher</item>
     </string-array>
 
+    <string-array name="duplicate_detection_list">
+        <item>Alle</item>
+        <item>Episode</item>
+        <item>Untertitel</item>
+        <item>Beschreibung</item>
+        <item>Einmal pro Woche</item>
+        <item>Einmal pro Tag</item>
+    </string-array>
+
     <string-array name="pr_content_type0">
         <item>Film / Drama</item>
         <item>Nachrichten / Aktuelles</item>
