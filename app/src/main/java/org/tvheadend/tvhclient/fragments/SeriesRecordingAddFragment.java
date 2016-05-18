@@ -66,6 +66,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private EditText startExtraTime;
     private EditText stopExtraTime;
     private TextView dupDetect;
+    private TextView dupDetectLabel;
     private EditText title;
     private EditText name;
     private TextView channelName;
