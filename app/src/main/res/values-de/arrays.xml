@@ -64,12 +64,18 @@
     </string-array>
 
     <string-array name="duplicate_detection_list">
-        <item>Alle</item>
-        <item>Episode</item>
-        <item>Untertitel</item>
-        <item>Beschreibung</item>
-        <item>Einmal pro Woche</item>
-        <item>Einmal pro Tag</item>
+        <item>Alles aufnehmen</item>
+        <item>Alle: Aufnahme bei anderer Episodennummer</item>
+        <item>Alle: Aufnahme bei anderem Untertitel</item>
+        <item>Alle: Aufnahme bei anderer Beschreibung</item>
+        <item>Alle: Aufnahme einmal pro Woche</item>
+        <item>Alle: Aufnahme einmal pro Tag</item>
+        <item>Lolal: Aufnahme bei anderer Episodennummer</item>
+        <item>Lokal: Aufnahme bei anderem Titel</item>
+        <item>Lokal: Aufnahme bei anderem Untertitel</item>
+        <item>Lokal: Aufnahme bei anderer Beschreibung</item>
+        <item>Lokal: Aufnahme einmal pro Woche</item>
+        <item>Lokal: Aufnahme einmal pro Tag</item>
     </string-array>
 
     <string-array name="pr_content_type0">

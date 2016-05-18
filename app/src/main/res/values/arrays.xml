@@ -193,12 +193,18 @@
     </string-array>
 
     <string-array name="duplicate_detection_list">
-        <item>All</item>
-        <item>Episode</item>
-        <item>Subtitle</item>
-        <item>Description</item>
-        <item>Once per week</item>
-        <item>Once per day</item>
+        <item>Record all</item>
+        <item>All: Record if different episode number</item>
+        <item>All: Record if different subtitle</item>
+        <item>All: Record if different description</item>
+        <item>All: Record once per week</item>
+        <item>All: Record once per day</item>
+        <item>Local: Record if different episode number</item>
+        <item>Local: Record if different title</item>
+        <item>Local: Record if different subtitle</item>
+        <item>Local: Record if different description</item>
+        <item>Local: Record once per week</item>
+        <item>Local: Record once per day</item>
     </string-array>
 
     <string-array name="pr_content_type0">
