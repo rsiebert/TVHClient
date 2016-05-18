@@ -235,11 +235,9 @@
     <string name="err_loading_profiles">Błąd ładowania profilu z serwera\n%s</string>
     <string name="error_adding_recording">Nagranie nie zostało dodane! %s</string>
     <string name="error_removing_recording">Nagranie nie zostało usunięte! %s</string>
-    <string name="error_stopping_recording">Nagranie nie zostało zatrzymane! %s</string>
     <string name="error_updating_recording">Nagranie nie zostało zaktualizowane! %s</string>
     <string name="success_adding_recording">Nagranie zostało dodane.</string>
     <string name="success_removing_recording">Nagranie zostało usunięte.</string>
-    <string name="success_stopping_recording">Nagranie zostało zatrzymane.</string>
     <string name="success_updating_recording">Nagranie zostało zaktualizowane.</string>
 
     <string name="recording_file_missing">Nagrywany plik jest utracony</string>
