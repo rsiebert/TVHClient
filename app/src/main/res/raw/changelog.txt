@@ -1,3 +1,7 @@
+$ 1.9.3
+  % VERSION 1.9.3
+  _ 25.05.2016
+    * Fixed possible crash when starting to cast
 $ 1.9.2
   % VERSION 1.9.2
   _ 18.05.2016
