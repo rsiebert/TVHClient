@@ -383,8 +383,12 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl = baseUrl + "/dvrfile/" + rec.id;
-            subtitle = (rec.subtitle != null && rec.subtitle.length() > 0 ? rec.subtitle : rec.summary);
-            duration = rec.stop.getTime() - rec.start.getTime();
+            if (rec.subtitle != null) {
+                subtitle = (rec.subtitle.length() > 0 ? rec.subtitle : rec.summary);
+            }
+            if (rec.stop != null && rec.start != null) {
+                duration = rec.stop.getTime() - rec.start.getTime();
+            }
             iconUrl = baseUrl + "/" + (rec.channel != null ? rec.channel.icon : "");
             streamType = MediaInfo.STREAM_TYPE_BUFFERED;
         }
