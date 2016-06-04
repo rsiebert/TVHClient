@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import org.tvheadend.tvhclient.model.Connection;
@@ -127,18 +126,14 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         if (result == WOL_SEND) {
-            Snackbar.make(view, activity.getString(R.string.wol_send,
-                    conn.address), Snackbar.LENGTH_LONG).show();
+            app.showMessage(activity.getString(R.string.wol_send, conn.address));
         } else if (result == WOL_SEND_BROADCAST) {
-            Snackbar.make(view, activity.getString(R.string.wol_send_broadcast, 
-                    conn.address), Snackbar.LENGTH_LONG).show();
+            app.showMessage(activity.getString(R.string.wol_send_broadcast, conn.address));
         } else if (result == WOL_INVALID_MAC) {
-            Snackbar.make(view, activity.getString(R.string.wol_address_invalid), 
-                    Snackbar.LENGTH_LONG).show();
+            app.showMessage(activity.getString(R.string.wol_address_invalid));
         } else {
             final String msg = exception.getLocalizedMessage();
-            Snackbar.make(view, activity.getString(R.string.wol_error, 
-                    conn.address, msg), Snackbar.LENGTH_LONG).show();
+            app.showMessage(activity.getString(R.string.wol_error, conn.address, msg));
         }
     }
 }
