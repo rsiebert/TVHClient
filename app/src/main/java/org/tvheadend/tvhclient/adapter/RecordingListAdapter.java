@@ -167,10 +167,11 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             }
 
             // If activated in the settings allow playing the recording by  
-            // selecting the channel icon if the recording is completed
+            // selecting the channel icon if the recording is completed or currently
+            // being recorded
             if (holder.icon != null && 
-                    rec.error == null && 
-                    rec.state.equals("completed")) {
+                    rec.error == null &&
+                    (rec.state.equals("completed") || rec.isRecording())) {
                 holder.icon.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {

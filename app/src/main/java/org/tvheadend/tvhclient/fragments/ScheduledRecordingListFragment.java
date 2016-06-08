@@ -75,6 +75,15 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         if (isDualPane && adapter.getCount() > 0 && app.isUnlocked()) {
             (menu.findItem(R.id.menu_edit)).setVisible(true);
         }
+
+        // Show the play button if the selected recording in dual pane
+        // mode is currently recording
+        if (isDualPane && adapter.getCount() > 0) {
+            Recording rec = adapter.getSelectedItem();
+            if (rec != null && rec.isRecording()) {
+                (menu.findItem(R.id.menu_play)).setVisible(true);
+            }
+        }
     }
 
     @Override
