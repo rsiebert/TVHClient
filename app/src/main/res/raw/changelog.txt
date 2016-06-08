@@ -1,3 +1,9 @@
+$ 1.9.4
+  % VERSION 1.9.4
+  _ 05.06.2016
+    * Show the play button for in-progress recordings in tablet mode
+    * Allow playing in-progress recordings by selecting its channel icon
+    * Small bug fixes
 $ 1.9.3
   % VERSION 1.9.3
   _ 04.06.2016
