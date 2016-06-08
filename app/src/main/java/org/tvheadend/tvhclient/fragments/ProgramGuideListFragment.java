@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -225,7 +226,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private void populateList() {
         ChannelTag currentTag = Utils.getChannelTag(activity);
         adapter.clear();
-        for (Channel ch : app.getChannels()) {
+
+        // Make a copy of the channel list before iterating over it
+        List<Channel> channels = app.getChannels();
+        for (Channel ch : channels) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
                 adapter.add(ch);
             }
