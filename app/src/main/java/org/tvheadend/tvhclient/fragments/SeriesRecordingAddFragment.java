@@ -236,9 +236,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 if (rec.channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
                         if (channelList[i].equals(rec.channel.name)) {
-                            // If all channels is available then all entries in the channel 
-                            // list are one index higher because all channels is index 0 
-                            channelSelectionValue = (allowRecordingOnAllChannels ? (i+1) : i);
+                            channelSelectionValue = i;
                             break;
                         }
                     }
