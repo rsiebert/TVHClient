@@ -1057,7 +1057,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     app.showMessage(getString(R.string.error_removing_recording,
                                 response.getString("error", "")));
                 } else {
-                    app.showMessage(getString(R.string.error_removing_recording));
+                    app.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
