@@ -312,7 +312,10 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
      * @param mime The mime type that shall be used
      */
     private void startPlayback(String url, String mime) {
-        app.log(TAG, "Starting to play from url " + url);
+
+        // Create a special string for the logging without the http credentials
+        String logUrl = "http://<user>:<pass>" + url.substring(url.indexOf('@'));
+        app.log(TAG, "Starting to play from url " + logUrl);
 
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
         playbackIntent.setDataAndType(Uri.parse(url), mime);
