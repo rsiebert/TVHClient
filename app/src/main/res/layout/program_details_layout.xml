@@ -50,20 +50,13 @@
                             android:text="@string/play" />
 
                         <com.gc.materialdesign.views.ButtonFlat
-                            android:id="@+id/menu_record_cancel"
+                            android:id="@+id/menu_record_remove"
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
                             android:padding="8dp"
-                            android:text="@string/cancel"
+                            android:text="@string/remove"
                             android:visibility="gone" />
 
-                        <com.gc.materialdesign.views.ButtonFlat
-                            android:id="@+id/menu_record_stop"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:padding="8dp"
-                            android:text="@string/stop"
-                            android:visibility="gone" />
                     </LinearLayout>
 
                     <LinearLayout
