@@ -11,8 +11,6 @@
     <string name="record_once">Nahrať</string>
     <string name="record_once_custom_profile">Nahrať s iným profilom</string>
     <string name="record_series">Nahrať (sériovo)</string>
-    <string name="record_cancel">Odstrániť nahrávanie</string>
-    <string name="record_cancel_all">Odstrániť všetky nahrávania</string>
     <string name="confirm_cancel_all">Naozaj chcete odstrániť všetky nahrávania?</string>
     <string name="record_remove">Vymazať nahrávku</string>
     <string name="record_remove_all">Vymazať všetky nahrávky</string>

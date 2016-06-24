@@ -9,8 +9,6 @@
     <string name="download">Downloaden</string>
     <string name="search">Zoek</string>
     <string name="record_once">Opnemen</string>
-    <string name="record_cancel">Stop opname</string>
-    <string name="record_cancel_all">Annuleer alle opnames</string>
     <string name="record_remove">Verwijder opname</string>
     <string name="record_remove_all">Verwijder alle opnames</string>
     <string name="record_edit">Bewerken opname</string>

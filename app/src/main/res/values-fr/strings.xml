@@ -11,9 +11,6 @@
     <string name="search">Recherche</string>
     <string name="record_once">Enregistrer</string>
     <string name="record_series">Enregistrement auto(Autorec)</string>
-    <string name="record_cancel">Annuler un enregistrement</string>
-    <string name="record_cancel_all">Annuler tous les enregistrements</string>
-    <string name="confirm_cancel_all">Etes-vous sur de vouloir annuler tous les enregistrements?</string>
     <string name="record_remove">Effacer un enregistrement</string>
     <string name="record_remove_all">Effacer tous les enregistrements</string>
     <string name="confirm_remove_all">Etes-vous sur de vouloir effacer tous les enregistrements?</string>

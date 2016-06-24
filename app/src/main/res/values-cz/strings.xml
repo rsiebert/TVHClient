@@ -10,8 +10,6 @@
     <string name="search">Hledat</string>
     <string name="record_once">Nahrát</string>
     <string name="record_series">Nahrát (Autorec)</string>
-    <string name="record_cancel">Zrušit nahrávání</string>
-    <string name="record_cancel_all">Zrušit všechna nahrávání</string>
     <string name="record_remove">Smazat nahrávku</string>
     <string name="record_remove_all">Smazat všechny nahrávky</string>
     <string name="record_edit">Upravit nahrávku</string>

@@ -10,8 +10,6 @@
     <string name="search">Sök</string>
     <string name="record_once">Spela in</string>
     <string name="record_series">Spela in (Autorec)</string>
-    <string name="record_cancel">Avbryt inspelning</string>
-    <string name="record_cancel_all">Avbryt alla inspelningar</string>
     <string name="record_remove">Ta bort inspelning</string>
     <string name="record_remove_all">Ta bort alla inspelningar</string>
     <string name="record_edit">Redigera inspelning</string>

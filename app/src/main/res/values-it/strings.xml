@@ -10,8 +10,6 @@
     <string name="search">Ricerca</string>
     <string name="record_once">Registra</string>
     <string name="record_series">Registra serie (Autorec)</string>
-    <string name="record_cancel">Annulla registrazione</string>
-    <string name="record_cancel_all">Annulla tutte registrazioni</string>
     <string name="record_remove">Elimina registrazione</string>
     <string name="record_remove_all">Elimina tutte registrazioni</string>
     <string name="record_edit">Modifica registrazione</string>

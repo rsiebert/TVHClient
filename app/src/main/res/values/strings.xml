@@ -30,9 +30,6 @@
     <string name="record_once">Record</string>
     <string name="record_once_custom_profile">Record with different profile</string>
     <string name="record_series">Record as series recording</string>
-    <string name="record_cancel">Cancel recording</string>
-    <string name="record_cancel_all">Cancel all recordings</string>
-    <string name="confirm_cancel_all">Are you sure you want to cancel all recordings?</string>
     <string name="record_stop">Stop recording</string>
     <string name="record_remove">Remove recording</string>
     <string name="record_remove_all">Remove all recordings</string>
