@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Date;
 
@@ -62,8 +63,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private ButtonFlat playButton;
     private ButtonFlat recordOnceButton;
     private ButtonFlat recordSeriesButton;
-    private ButtonFlat recordCancelButton;
-    private ButtonFlat recordStopButton;
+    private ButtonFlat recordRemoveButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -153,8 +153,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         playButton = (ButtonFlat) v.findViewById(R.id.menu_play);
         recordOnceButton = (ButtonFlat) v.findViewById(R.id.menu_record_once);
         recordSeriesButton = (ButtonFlat) v.findViewById(R.id.menu_record_series);
-        recordCancelButton = (ButtonFlat) v.findViewById(R.id.menu_record_cancel);
-        recordStopButton = (ButtonFlat) v.findViewById(R.id.menu_record_stop);
+        recordRemoveButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
 
         int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
                 .getColor(R.color.button_text_color_light) : getResources()
@@ -162,8 +161,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         playButton.setBackgroundColor(bgColor);
         recordOnceButton.setBackgroundColor(bgColor);
         recordSeriesButton.setBackgroundColor(bgColor);
-        recordCancelButton.setBackgroundColor(bgColor);
-        recordStopButton.setBackgroundColor(bgColor);
+        recordRemoveButton.setBackgroundColor(bgColor);
         return v;
     }
 
@@ -224,8 +222,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         playButton.setVisibility(View.VISIBLE);
         recordOnceButton.setVisibility(View.VISIBLE);
-        recordCancelButton.setVisibility(View.VISIBLE);
-        recordStopButton.setVisibility(View.VISIBLE);
+        recordRemoveButton.setVisibility(View.VISIBLE);
 
         if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             recordSeriesButton.setVisibility(View.VISIBLE);
@@ -246,24 +243,19 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         if (program.recording == null) {
             // Show the record menu
-            recordCancelButton.setVisibility(View.GONE);
-            recordStopButton.setVisibility(View.GONE);
+            recordRemoveButton.setVisibility(View.GONE);
         } else if (program.isRecording()) {
             // Show the cancel menu
             recordOnceButton.setVisibility(View.GONE);
             recordSeriesButton.setVisibility(View.GONE);
-            recordCancelButton.setVisibility(View.GONE);
+            recordRemoveButton.setText(getString(R.string.stop));
         } else if (program.isScheduled()) {
             // Show the cancel and play menu
-            recordStopButton.setVisibility(View.GONE);
             recordOnceButton.setVisibility(View.GONE);
             recordSeriesButton.setVisibility(View.GONE);
         } else {
             // Show the delete menu
-            recordOnceButton.setVisibility(View.GONE);
-            recordSeriesButton.setVisibility(View.GONE);
-            recordCancelButton.setVisibility(View.GONE);
-            recordStopButton.setVisibility(View.GONE);
+            recordRemoveButton.setVisibility(View.GONE);
         }
     }
 
@@ -301,22 +293,18 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
                 }
             });
         }
-        if (recordCancelButton != null) {
-            recordCancelButton.setOnClickListener(new OnClickListener() {
+        if (recordRemoveButton != null) {
+            recordRemoveButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.confirmCancelRecording(activity, program.recording);
-                    if (getDialog() != null) {
-                        getDialog().dismiss();
+                    Recording rec = program.recording;
+                    if (rec != null && rec.isRecording()) {
+                        Utils.confirmStopRecording(activity, rec);
+                    } else if (rec != null && rec.isScheduled()) {
+                        Utils.confirmCancelRecording(activity, rec);
+                    } else {
+                        Utils.confirmRemoveRecording(activity, rec);
                     }
-                }
-            });
-        }
-        if (recordStopButton != null) {
-            recordStopButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Utils.confirmStopRecording(activity, program.recording);
                     if (getDialog() != null) {
                         getDialog().dismiss();
                     }

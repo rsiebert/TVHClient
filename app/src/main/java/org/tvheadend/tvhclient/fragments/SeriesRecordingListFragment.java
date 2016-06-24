@@ -147,7 +147,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() <= 1) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
 

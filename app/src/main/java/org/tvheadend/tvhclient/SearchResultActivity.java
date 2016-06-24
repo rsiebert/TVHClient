@@ -354,22 +354,17 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
 
         case R.id.menu_record_remove:
             if (model instanceof Program) {
-                Utils.confirmRemoveRecording(this, ((Program) model).recording);
+                Recording rec = ((Program) model).recording;
+                if (rec != null && rec.isRecording()) {
+                    Utils.confirmStopRecording(this, rec);
+                } else if (rec != null && rec.isScheduled()) {
+                    Utils.confirmCancelRecording(this, rec);
+                } else {
+                    Utils.confirmRemoveRecording(this, rec);
+                }
             }
             if (model instanceof Recording) {
                 Utils.confirmRemoveRecording(this, (Recording) model);
-            }
-            return true;
-
-        case R.id.menu_record_cancel:
-            if (model instanceof Program) {
-                Utils.confirmCancelRecording(this, ((Program) model).recording);
-            }
-            return true;
-
-        case R.id.menu_record_stop:
-            if (model instanceof Program) {
-                Utils.confirmStopRecording(this, ((Program) model).recording);
             }
             return true;
 
@@ -426,7 +421,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                 menu.getItem(i).setVisible(false);
             }
             
-            // Allow playing and downloading a recording
+            // Allow playing, removing and downloading a recording
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
             if (app.isUnlocked()) {

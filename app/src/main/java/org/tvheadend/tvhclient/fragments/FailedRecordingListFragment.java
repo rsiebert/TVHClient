@@ -1,10 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
@@ -12,6 +7,11 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.model.Recording;
 
 public class FailedRecordingListFragment extends RecordingListFragment implements FragmentControlInterface {
 
@@ -52,12 +52,10 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_add)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
         (menu.findItem(R.id.menu_download)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() <= 1) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
     }

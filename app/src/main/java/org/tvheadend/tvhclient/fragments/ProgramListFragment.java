@@ -270,15 +270,14 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, program.recording);
-            return true;
-
-        case R.id.menu_record_cancel:
-            Utils.confirmCancelRecording(activity, program.recording);
-            return true;
-
-        case R.id.menu_record_stop:
-            Utils.confirmStopRecording(activity, program.recording);
+            Recording rec = program.recording;
+            if (rec != null && rec.isRecording()) {
+                Utils.confirmStopRecording(activity, rec);
+            } else if (rec != null && rec.isScheduled()) {
+                Utils.confirmCancelRecording(activity, rec);
+            } else {
+                Utils.confirmRemoveRecording(activity, rec);
+            }
             return true;
 
         case R.id.menu_record_once:

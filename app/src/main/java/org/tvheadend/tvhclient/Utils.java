@@ -225,7 +225,7 @@ public class Utils {
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
                 .content(message)
-                .negativeText(R.string.cancel)
+                .negativeText(R.string.discard)
                 .positiveText(R.string.remove)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
@@ -278,9 +278,9 @@ public class Utils {
 
         // Show a confirmation dialog before canceling the recording
         new MaterialDialog.Builder(context)
-                .title(R.string.record_cancel)
+                .title(R.string.record_remove)
                 .content(context.getString(R.string.cancel_recording, rec.title))
-                .negativeText(R.string.cancel)
+                .negativeText(string.discard)
                 .positiveText(R.string.remove)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
@@ -390,8 +390,6 @@ public class Utils {
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem recordStopMenuItem = menu.findItem(R.id.menu_record_stop);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
         MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
@@ -401,8 +399,6 @@ public class Utils {
         recordOnceMenuItem.setVisible(false);
         recordOnceCustomProfileMenuItem.setVisible(false);
         recordSeriesMenuItem.setVisible(false);
-        recordCancelMenuItem.setVisible(false);
-        recordStopMenuItem.setVisible(false);
         recordRemoveMenuItem.setVisible(false);
         searchMenuItemEpg.setVisible(false);
         searchMenuItemImdb.setVisible(false);
@@ -434,12 +430,10 @@ public class Utils {
                 recordSeriesMenuItem.setVisible(true);
             }
         } else if (program.isRecording()) {
-            // Show the play and cancel menu
+            // Show the play and stop menu
             playMenuItem.setVisible(true);
-            recordStopMenuItem.setVisible(true);
-        } else if (program.isScheduled()) {
-            // Show the cancel menu
-            recordCancelMenuItem.setVisible(true);
+            recordRemoveMenuItem.setTitle(string.stop);
+            recordRemoveMenuItem.setVisible(true);
         } else {
             // Show the delete menu
             recordRemoveMenuItem.setVisible(true);

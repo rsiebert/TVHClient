@@ -107,6 +107,8 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 }
                 adapter.setPosition(position);
                 adapter.notifyDataSetChanged();
+                // TODO check if required
+                //activity.invalidateOptionsMenu();
             }
         });
 
@@ -123,7 +125,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Recording rec = adapter.getSelectedItem();
+        final Recording rec = adapter.getSelectedItem();
         switch (item.getItemId()) {
         case R.id.menu_play:
             startActivity(new PlayIntent(activity, rec));
@@ -149,7 +151,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
+            if (rec != null && rec.isRecording()) {
+                Utils.confirmStopRecording(activity, rec);
+            } else if (rec != null && rec.isScheduled()) {
+                Utils.confirmCancelRecording(activity, rec);
+            } else {
+                Utils.confirmRemoveRecording(activity, rec);
+            }
             return true;
 
         case R.id.menu_record_remove_all:
@@ -162,33 +170,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
-                            removeAllRecordings();
+                            if (rec != null && (rec.isRecording() || rec.isScheduled())) {
+                                cancelAllRecordings();
+                            } else {
+                                removeAllRecordings();
+                            }
                         }
 
-                        @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            // NOP
-                        }
-                    }).show();
-            return true;
-
-        case R.id.menu_record_cancel:
-            Utils.confirmCancelRecording(activity, adapter.getSelectedItem());
-            return true;
-
-        case R.id.menu_record_cancel_all:
-            // Show a confirmation dialog before canceling all recordings
-            new MaterialDialog.Builder(activity)
-                    .title(R.string.record_cancel_all)
-                    .content(R.string.confirm_cancel_all)
-                    .positiveText(getString(R.string.cancel))
-                    .negativeText(getString(R.string.discard))
-                    .callback(new MaterialDialog.ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            cancelAllRecordings();
-                        }
-        
                         @Override
                         public void onNegative(MaterialDialog dialog) {
                             // NOP
@@ -276,8 +264,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
         // Hide these menus as a default, the required ones will be made visible
         // in the derived classes
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_stop)).setVisible(false);
         (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
@@ -288,6 +274,9 @@ public class RecordingListFragment extends Fragment implements HTSListener {
         (menu.findItem(R.id.menu_search_imdb)).setVisible(rec != null);
 
         if (rec != null) {
+            if (rec.isRecording()) {
+                (menu.findItem(R.id.menu_record_remove)).setTitle(R.string.stop);
+            }
             menu.setHeaderTitle(rec.title);
         }
     }
@@ -319,11 +308,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, rec);
-            return true;
-
-        case R.id.menu_record_cancel:
-            Utils.confirmCancelRecording(activity, rec);
+            if (rec != null && rec.isRecording()) {
+                Utils.confirmStopRecording(activity, rec);
+            } else if (rec != null && rec.isScheduled()) {
+                Utils.confirmCancelRecording(activity, rec);
+            } else {
+                Utils.confirmRemoveRecording(activity, rec);
+            }
             return true;
 
         case R.id.menu_play:

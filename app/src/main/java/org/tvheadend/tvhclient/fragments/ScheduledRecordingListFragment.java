@@ -46,42 +46,37 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         // Do not show this menu in single mode. No recording is
         // preselected which could be removed.
         if (!isDualPane || adapter.getCount() == 0) {
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-            (menu.findItem(R.id.menu_record_stop)).setVisible(false);
+            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
         }
 
         (menu.findItem(R.id.menu_play)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
         (menu.findItem(R.id.menu_add)).setVisible(false);
-        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-        (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         (menu.findItem(R.id.menu_download)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() == 0) {
-            (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
+        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() <= 1) {
+            (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
 
         // Show the add button to create a custom recording only when the
         // application is unlocked
-        if (app.isUnlocked()) {
-            (menu.findItem(R.id.menu_add)).setVisible(true);
-        }
+        (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
 
         // Show the edit button only when the application is unlocked and a
         // recording was selected. Additionally the HTSP version must be at
         // least 20 to assume the server is up to date and contains the required
         // fixes to support this feature.    
-        if (isDualPane && adapter.getCount() > 0 && app.isUnlocked()) {
-            (menu.findItem(R.id.menu_edit)).setVisible(true);
+        if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
+            (menu.findItem(R.id.menu_edit)).setVisible(false);
         }
 
         // Show the play button if the selected recording in dual pane
         // mode is currently recording
         if (isDualPane && adapter.getCount() > 0) {
             Recording rec = adapter.getSelectedItem();
-            if (rec != null && rec.isRecording()) {
-                (menu.findItem(R.id.menu_play)).setVisible(true);
+            if (rec == null || !rec.isRecording()) {
+                (menu.findItem(R.id.menu_play)).setVisible(false);
             }
         }
     }
@@ -95,13 +90,14 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         Recording rec = adapter.getItem(info.position);
 
         if (rec != null && rec.isRecording()) {
-            (menu.findItem(R.id.menu_record_stop)).setVisible(true);
+            (menu.findItem(R.id.menu_record_remove)).setTitle(R.string.stop);
+            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
             (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
         }
 
         if (rec != null && rec.isScheduled()) {
-            (menu.findItem(R.id.menu_record_cancel)).setVisible(true);
+            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
             (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
         }
     }

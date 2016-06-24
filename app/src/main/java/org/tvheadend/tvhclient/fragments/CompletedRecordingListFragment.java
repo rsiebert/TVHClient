@@ -1,10 +1,5 @@
 package org.tvheadend.tvhclient.fragments;
 
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.model.Recording;
-
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -13,6 +8,11 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.model.Recording;
 
 public class CompletedRecordingListFragment extends RecordingListFragment implements FragmentControlInterface {
 
@@ -50,20 +50,16 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
             (menu.findItem(R.id.menu_play)).setVisible(false);
             (menu.findItem(R.id.menu_download)).setVisible(false);
+        } else {
+            (menu.findItem(R.id.menu_download)).setVisible(app.isUnlocked());
         }
 
         (menu.findItem(R.id.menu_add)).setVisible(false);
         (menu.findItem(R.id.menu_edit)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel)).setVisible(false);
-        (menu.findItem(R.id.menu_record_cancel_all)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() == 0) {
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() <= 1) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-        }
-
-        if (!app.isUnlocked()) {
-            (menu.findItem(R.id.menu_download)).setVisible(false);
         }
     }
 
@@ -73,14 +69,12 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
 
         // Get the selected program from the list where the context menu was opened
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+
         Recording rec = adapter.getItem(info.position);
         if (rec != null && (rec.error == null && rec.state.equals("completed"))) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
-
-            if (app.isUnlocked()) {
-                (menu.findItem(R.id.menu_download)).setVisible(true);
-            }
+            (menu.findItem(R.id.menu_download)).setVisible(app.isUnlocked());
         }
     }
 

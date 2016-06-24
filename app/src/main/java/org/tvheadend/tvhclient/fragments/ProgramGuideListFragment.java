@@ -39,6 +39,7 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -323,15 +324,14 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, selectedProgram.recording);
-            return true;
-
-        case R.id.menu_record_cancel:
-            Utils.confirmCancelRecording(activity, selectedProgram.recording);
-            return true;
-
-        case R.id.menu_record_stop:
-            Utils.confirmStopRecording(activity, selectedProgram.recording);
+            Recording rec = selectedProgram.recording;
+            if (rec != null && rec.isRecording()) {
+                Utils.confirmStopRecording(activity, rec);
+            } else if (rec != null && rec.isScheduled()) {
+                Utils.confirmCancelRecording(activity, rec);
+            } else {
+                Utils.confirmRemoveRecording(activity, rec);
+            }
             return true;
 
         case R.id.menu_record_once:
