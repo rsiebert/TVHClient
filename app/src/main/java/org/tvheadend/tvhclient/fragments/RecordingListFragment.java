@@ -107,8 +107,6 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                 }
                 adapter.setPosition(position);
                 adapter.notifyDataSetChanged();
-                // TODO check if required
-                //activity.invalidateOptionsMenu();
             }
         });
 
