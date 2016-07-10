@@ -390,7 +390,6 @@
     <string name="unlocker_purchase_not_successful">Der Kauf war nicht erfolgreich. Bitte kontaktiere den Entwickler.</string>
     <string name="feature_not_available_in_free_version">Diese Funktion ist in der kostenlosen Version nicht enthalten!</string>
     <string name="unlocker_already_purchased">Alle zusätzlichen Funktionen sind bereits aktiviert. Vielen Dank!</string>
-    <string name="unlocker_not_initialized">Die Funktion zum Kaufen wurde nicht richtig initialisiert. Bitte kontaktiere den Entwickler!</string>
     <string name="purchase">Kaufen</string>
 
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>

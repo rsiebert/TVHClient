@@ -393,7 +393,6 @@
     <string name="unlocker_purchase_not_successful">Unfortunately the purchase was not successful. Please contact the developer.</string>
     <string name="feature_not_available_in_free_version">This feature is not available in the free version!</string>
     <string name="unlocker_already_purchased">All additional features are available! Thank you for your support!</string>
-    <string name="unlocker_not_initialized">The billing functionality was not correctly initialized. Please contact the developer!</string>
     <string name="purchase">Purchase</string>
 
     <string name="no_media_player">No media player found</string>
