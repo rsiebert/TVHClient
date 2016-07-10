@@ -15,16 +15,18 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
+import org.onepf.oms.OpenIabHelper;
+import org.onepf.oms.appstore.googleUtils.IabHelper;
+import org.onepf.oms.appstore.googleUtils.IabResult;
+import org.onepf.oms.appstore.googleUtils.Inventory;
+import org.onepf.oms.appstore.googleUtils.Purchase;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -51,7 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
+public class TVHClientApplication extends Application implements IabHelper.QueryInventoryFinishedListener, IabHelper.OnIabPurchaseFinishedListener {
 
     private final static String TAG = TVHClientApplication.class.getSimpleName();
 
@@ -67,8 +69,11 @@ public class TVHClientApplication extends Application implements BillingProcesso
     private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
 
     // This handles all billing related activities like purchasing and checking
-    // if a purchase was made 
-    private BillingProcessor bp;
+    // if a purchase was made
+    OpenIabHelper openIabHelper;
+    private static final int RC_REQUEST = 10001;
+    private boolean isUnlocked = false;
+    private Boolean isBillingSetupDone = false;
 
     // File name and path for the internal logging functionality
     private File logPath = null;
@@ -1028,22 +1033,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
     @Override
     public void onCreate() {
         super.onCreate();
+        log(TAG, "onCreate");
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("pref_debug_mode", false)) {
             enableLogToFile();
         }
 
-        bp = new BillingProcessor(this, Utils.getPublicKey(this), this);
-        if (!BillingProcessor.isIabServiceAvailable(this)) {
-            log(TAG, "In app purchase is not available");
-        } else {
-            if (bp.loadOwnedPurchasesFromGoogle()) {
-                log(TAG, "Loaded purchase information from Google");
-            } else {
-                log(TAG, "Could not load purchase information from Google");
-            }
-        }
+        setupInAppBilling(this);
 
         // Add the default tag (all channels) to the list
         ChannelTag tag = new ChannelTag();
@@ -1077,54 +1074,25 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return bp.isPurchased(Constants.UNLOCKER);
+        log(TAG, "isUnlocked " + isUnlocked);
+        return isUnlocked;
     }
 
     @Override
     public void onTerminate() {
-        if (bp != null) {
-            bp.release();
+
+        if (openIabHelper != null) {
+            openIabHelper.dispose();
         }
+        openIabHelper = null;
 
         disableLogToFile();
         removeOldLogfiles();
         super.onTerminate();
     }
 
-    /**
-     * Returns the billing processor object that can be used by other classes to
-     * access billing related features
-     * 
-     * @return The billing processor object
-     */
-    public BillingProcessor getBillingProcessor() {
-        return bp;
-    }
-
-    @Override
-    public void onBillingError(int errorCode, Throwable error) {
-        log(TAG, "Billing error " + errorCode);
-    }
-
-    @Override
-    public void onBillingInitialized() {
-        log(TAG, "Billing is initialized");
-    }
-
-    @Override
-    public void onProductPurchased(String productId, TransactionDetails details) {
-        if (bp.isValidTransactionDetails(details)) {
-            Snackbar.make(null, getString(R.string.unlocker_purchase_successful),
-                    Snackbar.LENGTH_LONG).show();
-        } else {
-            Snackbar.make(null, getString(R.string.unlocker_purchase_not_successful), 
-                    Snackbar.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onPurchaseHistoryRestored() {
-        log(TAG, "Purchase history restored");
+    public OpenIabHelper getOpenIabHelper() {
+        return openIabHelper;
     }
 
     /**
@@ -1350,6 +1318,89 @@ public class TVHClientApplication extends Application implements BillingProcesso
     public void cancelNotifications() {
         for (Recording rec : getRecordings()) {
             cancelNotification(rec.id);
+        }
+    }
+
+    private void setupInAppBilling(final TVHClientApplication app) {
+
+        app.log(TAG, "Initializing OpenIabHelper builder");
+        OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
+                .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER)
+                .addStoreKey(OpenIabHelper.NAME_GOOGLE, Utils.getPublicKey(this))
+                .setVerifyMode(OpenIabHelper.Options.VERIFY_SKIP);
+
+        app.log(TAG, "Starting setup of OpenIabHelper");
+        openIabHelper = new OpenIabHelper(this, builder.build());
+        openIabHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                app.log(TAG, "onIabSetupFinished");
+                if (!result.isSuccess()) {
+                    isBillingSetupDone = false;
+                    log(TAG, "Could not setup in-app billing: " + result);
+                    return;
+                }
+                Log.d(TAG, "Setup successful. Querying inventory.");
+                isBillingSetupDone = true;
+                openIabHelper.queryInventoryAsync(app);
+            }
+        });
+    }
+
+    /**
+     * Verifies the developer payload of a purchase.
+     */
+    boolean verifyDeveloperPayload(Purchase p) {
+        String payload = p.getDeveloperPayload();
+        return true;
+    }
+
+    public boolean isBillingSetupDone() {
+        return isBillingSetupDone;
+    }
+
+    @Override
+    public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+        log(TAG, "Query inventory finished.");
+
+        if (result.isFailure()) {
+            log(TAG, "Failed to query inventory: " + result);
+            return;
+        }
+
+        log(TAG, "Query inventory was successful.");
+
+        // Check for items we own
+        Purchase unlockerPurchase = inventory.getPurchase(Constants.UNLOCKER);
+        if (unlockerPurchase == null) {
+            log(TAG, "Unlocker is null");
+        } else {
+            log(TAG, "Appstore name " + unlockerPurchase.getAppstoreName());
+            log(TAG, "Payload " + unlockerPurchase.getDeveloperPayload());
+            log(TAG, "JSON " + unlockerPurchase.getOriginalJson());
+            log(TAG, "Sku " + unlockerPurchase.getSku());
+        }
+        isUnlocked = unlockerPurchase != null && verifyDeveloperPayload(unlockerPurchase);
+        log(TAG, "User has unlocked the app " + isUnlocked);
+    }
+
+    @Override
+    public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+        log(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
+
+        if (result.isFailure()) {
+            showMessage(getString(R.string.unlocker_purchase_not_successful));
+            return;
+        }
+        if (!verifyDeveloperPayload(purchase)) {
+            showMessage(getString(R.string.unlocker_purchase_not_successful));
+            return;
+        }
+
+        log(TAG, "Purchase successful.");
+
+        if (purchase.getSku().equals(Constants.UNLOCKER)) {
+            showMessage(getString(R.string.unlocker_purchase_successful));
+            isUnlocked = true;
         }
     }
 }
