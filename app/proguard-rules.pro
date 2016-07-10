@@ -19,3 +19,12 @@
 -keep        class android.support.v13.** { *; }
 -keep        class android.support.v7.** { *; }
 -keep        class android.support.v4.** { *; }
+
+# Google IAB
+-keep        class com.android.vending.billing.**
+
+# AMAZON
+-dontwarn    com.amazon.**
+-keep        class com.amazon.** {*;}
+-keepattributes *Annotation*
+-dontoptimize
