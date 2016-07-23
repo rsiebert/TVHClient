@@ -1,8 +1,26 @@
 <?xml version="1.1" encoding="UTF-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name">TVHClient</string>
 
-    <!-- Menu and dialog strings -->
+    <string name="media_route_menu_title">Jouer sur&#8230;</string>
+    <string name="intro_overlay_text">Appuyer pour lancer la TV en direct ou les enregistrements sur votre TV\n\nVeuillez vérifier les paramétrages requis dans la partie paramètres.</string>
+    <string name="connection_temp_lost">La connexion a l\'appareil de diffusion est temporairement perdue</string>
+    <string name="connection_recovered">La connexion a l\'appareil de diffusion est rétablie</string>
+    <string name="cast_profile_not_set">Aucun profil de diffusion n\'a été sélectionné dans les paramètres. Ceci est nécessaire pour pouvoir l\'utiliser.</string>
+    <string name="cast_profile_invalid">Le profil sélectionné \'%1$s\' n\'est pas celui recommandé \'%2$s\'. Veuillez noter que la diffusion peut ne pas fonctionner.</string>
+    <string name="proceed">En cours</string>
+    <string name="pref_casting">Diffusion</string>
+    <string name="pref_casting_sum">Paramètres pour activer et configurer la diffusion de la TV ou des enregistrements sur votre TV. Veuillez noter que cela demande à ce que le transcoding soit activé sur tvheadend et que le serveur soit assez puissant pour transcoder en temps réel.</string>
+    <string name="pref_enable_casting">Activer la diffusion</string>
+    <string name="pref_enable_casting_sum">N\'activer cette fonction que si tvheadend est capable de transcoder en temps réel.</string>
+    <string name="pref_show_cast_minicontroller">Contrôles de diffusion</string>
+    <string name="pref_show_cast_minicontroller_sum">Montrer un mini contrôleur de diffusion en bas de l\'écran pour afficher des informations sur la diffusion en cours.</string>
+    <string name="download_error_insufficient_space">Erreur lors du téléchargement de l\'enregistrement \'%s\'. Pas assez d\'espace sur l\'appareil.</string>
+    <string name="download_error_authentication_required">Erreur lors du téléchargement de l\'enregistrement \'%s\'. Authentification incorrect ou manquante.</string>
+    <string name="no_external_storage_available">Le stockage externe n\'est pas accessible ou en lecture seul.</string>
+
     <string name="settings">Paramètres</string>
     <string name="refresh">Rafraichir</string>
     <string name="tags">Etiquettes</string>
@@ -10,7 +28,9 @@
     <string name="download">Télécharger</string>
     <string name="search">Recherche</string>
     <string name="record_once">Enregistrer</string>
+    <string name="record_once_custom_profile">Enregistrer avec un profil différent</string>
     <string name="record_series">Enregistrement auto(Autorec)</string>
+    <string name="record_stop">Arreter l\'enregistrement</string>
     <string name="record_remove">Effacer un enregistrement</string>
     <string name="record_remove_all">Effacer tous les enregistrements</string>
     <string name="confirm_remove_all">Etes-vous sur de vouloir effacer tous les enregistrements?</string>
@@ -20,6 +40,7 @@
     <string name="add">Ajouter</string>
     <string name="save">Sauvegarder</string>
     <string name="cancel">Annuler</string>
+	<string name="stop">Stop</string>
     <string name="set_active">Activer</string>
     <string name="set_not_active">Désactiver</string>
     <string name="edit">Editer</string>
@@ -43,6 +64,7 @@
     <string name="remove_all_recordings">Voulez-vous vraiment effacer tous les enregistrements?</string>
     <string name="cancel_recording">Voulez-vous vraiment annuler l\'enregistrement \'%s\'?</string>
     <string name="cancel_all_recordings">Voulez-vous vraiment annuler tous les enregistrements?</string>
+	<string name="stop_recording">Voulez-vous vraiment arrêter l\'enregistrement \'%s\' en cours ?</string>
     <string name="add_title">Ajouter un titre</string>
     <string name="add_subtitle">Ajouter un sous-titre</string>
     <string name="add_name">Ajouter un nom</string>
@@ -56,7 +78,6 @@
     <string name="edit_timer_recording">Edit un enregistrement manuel</string>
     <string name="activate_recording">Activer un enregistrement</string>
 
-    <!-- preference related strings -->
     <string name="pref_manage_connections">Gestions des connexions</string>
     <string name="pref_manage_connections_sum">Choisir votre connexion active au serveur TVHeadend ou ajouter, éditer ou effacer des connexions.</string>
     <string name="pref_connection_details">Détails de la connexion</string>
@@ -92,8 +113,11 @@
     <string name="pref_wol_address_invalid">L\'adresse MAC est invalide.\nElle doit être de la forme \'01:24:67:9a:cd:ef\' et ne doit contenir que des valeurs hexadécimal 0\-9 and a\-f ainsi que les séparateurs \':\' and \'\-\'.</string>
     
     <string name="pref_user_interface">Interface utilisateur</string>
+	<string name="pref_channels">Chaînes</string>
     <string name="pref_icons">Logo des chaines</string>
     <string name="pref_icons_sum">Monter l\icône des chaines.</string>
+	<string name="pref_big_icons">Grande icone de chaine</string>
+    <string name="pref_big_icons_sum">Afficher une plus grosse version de l\'icone de chaine.</string>
     <string name="pref_tag_icon">Icone du tag de la chaine</string>
     <string name="pref_tag_icon_sum">Montre l\icône de la chaine au lieu du logo de l\application.</string>
     <string name="pref_theme">Thème soft</string>
@@ -137,7 +161,7 @@
     <string name="pref_genre_colors_epg">Guide des programmes</string>
     <string name="pref_genre_colors_epg_sum">La couleur sera montrée en fond de chaque éléments du guide de programme.</string>
     <string name="pref_genre_colors_search_results">Résultats de la recherche</string>
-    <string name="pref_genre_colors_search_results_sum">La couleur sera montrée par une ligne verticale sur la gauche de la liste des resultats.</string>
+    <string name="pref_genre_colors_search_results_sum">La couleur sera montrée par une ligne verticale sur la gauche de la liste des résultats.</string>
     <string name="pref_genre_colors_visibility_message">Paramètre la visibilité des couleurs. Plus la valeur est grande, plus la couleur sera foncée.</string>
     <string name="pref_genre_colors_visibility">visibilité des couleurs de genre</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
@@ -149,7 +173,7 @@
     <string name="pref_menu_visibility">Visibilité du menu</string>
     <string name="pref_menu_visibility_sum">Cache ou montre certains objets du menu.</string>
     <string name="pref_hide_menu_delete_all_recordings">Cacher \'Effacer tous les enregistrements\'</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Ne pas montrer cette option pour prevenir l\'effacement accidentel de tous les enregistrements.</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Ne pas montrer cette option pour prévenir l\'effacement accidentel de tous les enregistrements.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Cacher \'Annuler tous les enregistrements\'</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Ne pas montrer cette option pour prevenir l\'annulation accidentel de tous les enregistrements programmés .</string>
     <string name="pref_visible_menu_icon_tags">Toujours afficher le menu \'Tags des chaines\'</string>
@@ -160,14 +184,21 @@
     <string name="pref_recording_profiles_sum">Choisir un profil que le serveur doit utiliser pour enregistrer une émission programmée.</string>
     <string name="pref_playback_profiles">Profils de lecture</string>
     <string name="pref_playback_profiles_sum">Choisir un profil qui doit utiliser pour lire un enregistrement.</string>
+	<string name="pref_cast_profiles">Profiles de diffusion</string>
+    <string name="pref_cast_profiles_sum">Sélectionner un profile à utiliser pour diffuser une chaine ou un enregistrement vers un équipement de type chromecast.</string>
     <string name="pref_enable_recording_profiles">Active les profils d\'enregistrements</string>
     <string name="pref_enable_recording_profiles_sum">Utilise les fonctionnalités du serveur de profil le plus récent pour les enregistrements. Ceci écrase tous les paramètres audio et vidéo pour enregistrer un programme paramétré.</string>
     <string name="pref_enable_playback_profiles">Activer les profils de lecture</string>
     <string name="pref_enable_playback_profiles_sum">Utiliser les nouvelle fonctionnalités de profils de serveur pour les programmations. Ceci remplace tous les paramètres audio et vidéo défini pour lire une émission.</string>
+	<string name="pref_notifications">Notifications</string>
     <string name="pref_show_notifications">Lister les notifications</string>
     <string name="pref_show_notifications_sum">Informe l\'utilisateur dès qu\'un enregistrement a commencé ou est fini.</string>
+	<string name="pref_show_notification_offset">Heure de notification </string>
+    <string name="pref_show_notification_offset_sum">Définir le moment ou la notification doit être affichée avant le début de l\'enregistrement.</string>
     <string name="pref_show_next_program">Affiche le programme suivant dans la liste de chaines</string>
     <string name="pref_show_next_program_sum">Le nom du programme arrivant ensuite est affiché dans la liste des chaines. Il est affiché en dessous de l\'indicateur de progression.</string>
+	<string name="pref_play_when_channel_icon_selected">Icone de la chaine diffusée ou de l\'enregistrement</string>
+    <string name="pref_play_when_channel_icon_selected_sum">Lancer la diffusion du programme en cours ou de l\'enregistrement quand l\icone de de la chaine est sélectionnée dans la liste des chaine, le guide des programmes ou la liste des enregistrements.</string>
     <string name="pref_programs">Programmes</string>
     <string name="pref_playback_and_recording">Lecture et enregistrements</string>
     <string name="pref_transcoding">Paramètres et vidéo</string>
@@ -179,7 +210,9 @@
     <string name="pref_send_logfile">Envoyer les logs au développeur </string>
     <string name="pref_send_logfile_sum">Envoyer les logs par mail au développeur afin d\’améliorer TVHClient. Seul les états de TVHClient sont envoyés!</string>
     <string name="pref_connection_timeout">Connexion interrompue</string>
-    <string name="pref_connection_timeout_sum">Définir le temps en secondes jusqu\'a ce que la connexion avec le serveur soit complètement établie. Augmenter la valeur peut améliorer la connectivité sur un réseau lent.</string>
+    <string name="pref_connection_timeout_sum">Définir le temps en secondes jusqu\'à ce que la connexion avec le serveur soit complètement établie. Augmenter la valeur peut améliorer la connectivité sur un réseau lent.</string>
+    <string name="pref_buffer_size">Taille du buffer des messages</string>
+    <string name="pref_buffer_size_sum">Taille en MB du buffer qui stocke les données reçues du serveur. La valeur par défaut est 4 MB. Si parfois aucunes données ne peuvent être chargée augmenter la valeur peut résoudre le problème. Un trop gros buffer peut pénaliser les vieux équipements.</string>
 
     <string name="feature_not_supported_by_server">Le serveur TVHeadend ne supporte pas cette fonctionnalité. Une nouvelle version est nécessaire.</string>
     <string name="loading_profiles">Chargement des profils</string>
@@ -209,6 +242,7 @@
     <string name="recording_file_invalid">Le fichier est défectueux</string>
     <string name="recording_canceled">L\'enregistrement a été effacé</string>
     <string name="recording_started">L\'enregistrement a commencé</string>
+	<string name="recording_starts_in">L\'enregistrement commencera dans %d min.</string>
     <string name="recording_completed">L\'enregistrement est terminé</string>
     <string name="recording_started_text">L\'enregistrement %s est commencé</string>
     <string name="recording_completed_text">L\'enregistrement %s est terminé</string>
@@ -226,6 +260,7 @@
 
     <string name="search_hint">Recherche de l\'EPG</string>
     <string name="searching_programs">Recherche %d programmes</string>
+	<string name="searching_recordings">Recherche de l\'enregistrement %d</string>
     <string name="two_days_ago">Il y a deux jours</string>
     <string name="yesterday">Hier</string>
     <string name="today">Aujourd\'hui</string>
@@ -281,15 +316,17 @@
     <string name="genre_color_list">Liste des couleurs de genre et leurs significations.</string>
     <string name="retention">Rétention</string>
     <string name="priority">Priorité</string>
+	<string name="dvr_config">Profil d\'enregistrement</string>
     <string name="path">Chemin</string>
     <string name="directory">Répertoire</string>
     <string name="owner">Propriétaire</string>
     <string name="creator">Créateur</string>
     <string name="approx_time">Minutes depuis minuit</string>
 
+	<string name="current_time">Heure courante</string>
     <string name="start_time">Heure de début</string>
     <string name="stop_time">Heure de fin</string>
-    <string name="time_window">Fenetre de temps pour demarrer l\'enregistrement</string>
+    <string name="time_window">Fenêtre de temps pour démarrer l\'enregistrement</string>
     <string name="enable_time_window">Activer les horaires pour l\'enregistrement</string>
     <string name="start_after_time">Début</string>
     <string name="start_before_time">Fin</string>
@@ -306,6 +343,7 @@
     <string name="error_empty_title">Le titre ne peut pas être vide!</string>
     <string name="error_start_stop_time">L\'heure de fin doit être après l\'heure de début!</string>
     <string name="error_no_channel">Veuillez sélectionner une chaine!</string>
+	<string name="duplicate_detection">Détecte les programmes en double</string>
 
     <string name="subscription_error">Erreur de souscription: %1$s</string>
     <string name="stream_errors">Erreur de flux: %1$d</string>
@@ -332,17 +370,20 @@
     <string name="available">Disponible</string>
     <string name="unknown">Inconnu</string>
     <string name="ready">Prêt</string>
+	<string name="select_time">Montre les programmes en cours à l\'heure choisie.</string>
     <string name="select_timeframe">Guide des programmes pour la date et l\'heure sélectionnée.</string>
     <string name="currently_recording">En cours d\'enregistrement</string>
     <string name="select_start_time">Sélectionner une heure de démarrage</string>
     <string name="select_stop_time">Sélectionner une heure de fin</string>
     <string name="select_channel">Sélectionner une chaine</string>
     <string name="select_priority">Sélectionner une priorité</string>
+	<string name="select_dvr_config">Selectionner le profil d\'enregistrement</string>
     <string name="select_log_file">Sélectionner le fichier de log</string>
+	<string name="select_duplicate_detection">Sélectionner la méthode de détection des dupliquas</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">Aucune connexion définie.</string>
-    <string name="no_connection_available_advice">Aucune connexion définie. Au moins une connexion est nécéssaire.</string>
+    <string name="no_connection_available_advice">Aucune connexion définie. Au moins une connexion est nécessaire.</string>
     <string name="no_connection_active">Aucune connexion active.</string>
     <string name="no_connection_active_advice">Au moins une connexion est définie, mais n\'est pas activée.</string>
     <string name="number_of_connections">%d connexion(s) disponible(s)</string>
