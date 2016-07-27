@@ -1325,7 +1325,7 @@ public class TVHClientApplication extends Application implements IabHelper.Query
 
         app.log(TAG, "Initializing OpenIabHelper builder");
         OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
-                .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER)
+                .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
                 .addStoreKey(OpenIabHelper.NAME_GOOGLE, Utils.getPublicKey(this))
                 .setVerifyMode(OpenIabHelper.Options.VERIFY_SKIP);
 
