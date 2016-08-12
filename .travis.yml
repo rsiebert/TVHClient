@@ -10,6 +10,9 @@ android:
 
     # The SDK version used to compile your project
     - android-23
+    
+    # The system image for the emulator
+    - sys-img-x86-android-23
 
     # Additional components
     - extra-google-google_play_services
@@ -18,7 +21,7 @@ android:
     - addon-google_apis-google-23
 
 script:
-   - ./gradlew assemble
+   - ./gradlew build connectedCheck
 
 before_install:
- - chmod +x gradlew
+  - chmod +x gradlew
