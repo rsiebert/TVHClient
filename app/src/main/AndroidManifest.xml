@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
-
     <application 
         android:allowBackup="true"
         android:name="org.tvheadend.tvhclient.TVHClientApplication" 
