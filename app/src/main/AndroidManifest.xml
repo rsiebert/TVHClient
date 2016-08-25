@@ -83,14 +83,5 @@
         <service android:name="com.google.android.libraries.cast.companionlibrary.cast.reconnection.ReconnectionService"/>
         <receiver android:name="com.google.android.libraries.cast.companionlibrary.remotecontrol.VideoIntentReceiver" />
 
-        <receiver android:name="com.amazon.device.iap.ResponseReceiver">
-            <intent-filter>
-                <action
-                    android:name="com.amazon.inapp.purchasing.NOTIFY"
-                    android:permission="com.amazon.inapp.purchasing.Permission.NOTIFY"
-                    />
-            </intent-filter>
-        </receiver>
-
     </application>
 </manifest>
