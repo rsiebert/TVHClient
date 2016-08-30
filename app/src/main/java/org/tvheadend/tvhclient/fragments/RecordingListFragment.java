@@ -163,7 +163,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
             new AlertDialog.Builder(activity)
                     .setTitle(R.string.record_remove_all)
                     .setMessage(R.string.confirm_remove_all)
-                    .setPositiveButton(getString(R.string.remove), new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (rec != null && (rec.isRecording() || rec.isScheduled())) {
@@ -173,7 +173,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
                             }
                         }
                     })
-                    .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             // NOP

@@ -556,7 +556,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         // Show confirmation dialog to cancel
         new AlertDialog.Builder(activity)
                 .setMessage(R.string.cancel_edit_recording)
-                .setPositiveButton(getString(R.string.discard), new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (getDialog() != null) {
@@ -564,7 +564,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                         }
                     }
                 })
-                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.cancel();

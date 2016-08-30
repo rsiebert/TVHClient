@@ -217,7 +217,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 new AlertDialog.Builder(activity)
                         .setTitle(R.string.clear_search_history)
                         .setMessage(R.string.clear_search_history_sum)
-                        .setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
@@ -228,7 +228,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                 }
                             }
                         })
-                        .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // NOP
@@ -247,7 +247,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 new AlertDialog.Builder(activity)
                         .setTitle(R.string.clear_icon_cache)
                         .setMessage(R.string.clear_icon_cache_sum)
-                        .setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 File[] files = activity.getCacheDir().listFiles();
@@ -267,7 +267,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                 }
                             }
                         })
-                        .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // NOP

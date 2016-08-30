@@ -337,7 +337,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         // Show confirmation dialog to cancel
         new AlertDialog.Builder(activity)
                 .setMessage(R.string.confirm_discard_connection)
-                .setPositiveButton(getString(R.string.discard), new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // Delete the connection so that we start fresh when
@@ -347,7 +347,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                         }
                     }
                 })
-                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.cancel();

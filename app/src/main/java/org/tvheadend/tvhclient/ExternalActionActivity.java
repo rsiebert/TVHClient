@@ -339,7 +339,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                     new AlertDialog.Builder(ExternalActionActivity.this)
                         .setTitle(R.string.no_media_player)
                         .setMessage(R.string.show_play_store)
-                        .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 try {
@@ -354,7 +354,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                                 }
                             }
                         })
-                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 finish();

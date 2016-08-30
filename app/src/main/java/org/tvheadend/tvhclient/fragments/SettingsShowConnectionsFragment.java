@@ -228,7 +228,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             // Show confirmation dialog to cancel
             new AlertDialog.Builder(activity)
                     .setMessage(getString(R.string.delete_connection, c.name))
-                    .setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (dbh.removeConnection(c.id)) {
@@ -244,7 +244,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                             }
                         }
                     })
-                    .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.cancel();

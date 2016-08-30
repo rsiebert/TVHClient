@@ -565,7 +565,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         // Show confirmation dialog to cancel
         new AlertDialog.Builder(activity)
                 .setMessage(R.string.cancel_add_recording)
-                .setPositiveButton(getString(R.string.discard), new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (getDialog() != null) {
@@ -573,7 +573,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                         }
                     }
                 })
-                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.cancel();
