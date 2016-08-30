@@ -160,7 +160,7 @@ public class ChangeLogDialog {
             }
         });
 
-        AlertDialog dialog = new AlertDialog.Builder(context)
+        return new AlertDialog.Builder(context)
         .setTitle(R.string.pref_changelog)
         .setView(wv)
         .setPositiveButton(context.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
@@ -173,8 +173,6 @@ public class ChangeLogDialog {
             }
         })
         .create();
-
-        return dialog;
     }
 
     private void updateVersionInPreferences() {
