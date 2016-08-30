@@ -29,7 +29,6 @@ import java.util.Locale;
 public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTimeDialogItem> {
 
     private LayoutInflater inflater;
-    private ViewHolder holder = null;
     
     public ProgramGuideTimeDialogAdapter(Activity activity, final List<ProgramGuideTimeDialogItem> times) {
         super(activity, R.layout.program_guide_time_dialog, times);
@@ -45,6 +44,8 @@ public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTime
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
+        ViewHolder holder;
+
         if (view == null) {
             view = inflater.inflate(R.layout.program_guide_time_dialog, parent, false);
             holder = new ViewHolder();

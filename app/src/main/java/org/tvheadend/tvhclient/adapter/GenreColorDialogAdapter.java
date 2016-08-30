@@ -14,7 +14,6 @@ import java.util.List;
 
 public class GenreColorDialogAdapter extends ArrayAdapter<GenreColorDialogItem> {
     private LayoutInflater inflater;
-    private ViewHolder holder = null;
     
     public GenreColorDialogAdapter(Activity context, final List<GenreColorDialogItem> items) {
         super(context, R.layout.genre_color_dialog, items);
@@ -29,6 +28,7 @@ public class GenreColorDialogAdapter extends ArrayAdapter<GenreColorDialogItem> 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
+        ViewHolder holder;
         if (view == null) {
             view = inflater.inflate(R.layout.genre_color_dialog, parent, false);
             holder = new ViewHolder();
