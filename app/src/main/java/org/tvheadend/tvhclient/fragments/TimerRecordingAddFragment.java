@@ -85,10 +85,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private TVHClientApplication app;
     private DatabaseHelper dbh;
 
-    // Determines if an entry shall be added to the channel selection list to
-    // allow recording on all channels
-    private boolean allowRecordingOnAllChannels = false;
-
     public static TimerRecordingAddFragment newInstance(Bundle args) {
         TimerRecordingAddFragment f = new TimerRecordingAddFragment();
         f.setArguments(args);
@@ -138,7 +134,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Determine if the server supports recording on all channels
-        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
+        boolean allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
         final int offset = (allowRecordingOnAllChannels ? 1 : 0);
 
         // Create the list of channels that the user can select. If recording on
