@@ -35,7 +35,7 @@
                     android:paddingBottom="8dp"
                     android:paddingTop="16dp" >
 
-                    <com.gc.materialdesign.views.ButtonFlat
+                    <Button
                         android:id="@+id/menu_play"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
@@ -44,7 +44,7 @@
                         android:padding="8dp"
                         android:text="@string/play" />
 
-                    <com.gc.materialdesign.views.ButtonFlat
+                    <Button
                         android:id="@+id/menu_record_once"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
@@ -53,7 +53,7 @@
                         android:padding="8dp"
                         android:text="@string/record_once" />
 
-                    <com.gc.materialdesign.views.ButtonFlat
+                    <Button
                         android:id="@+id/menu_record_series"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
@@ -62,7 +62,7 @@
                         android:padding="8dp"
                         android:text="@string/record_series" />
 
-                    <com.gc.materialdesign.views.ButtonFlat
+                    <Button
                         android:id="@+id/menu_record_remove"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"

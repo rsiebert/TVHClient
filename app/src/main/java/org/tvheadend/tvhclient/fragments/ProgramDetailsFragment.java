@@ -11,12 +11,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.support.v7.widget.AppCompatButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
-import com.gc.materialdesign.views.ButtonFlat;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -60,10 +60,10 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private RatingBar ratingBar;
 
     private LinearLayout playerLayout;
-    private ButtonFlat playButton;
-    private ButtonFlat recordOnceButton;
-    private ButtonFlat recordSeriesButton;
-    private ButtonFlat recordRemoveButton;
+    private Button playButton;
+    private Button recordOnceButton;
+    private Button recordSeriesButton;
+    private Button recordRemoveButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -150,10 +150,10 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        playButton = (ButtonFlat) v.findViewById(R.id.menu_play);
-        recordOnceButton = (ButtonFlat) v.findViewById(R.id.menu_record_once);
-        recordSeriesButton = (ButtonFlat) v.findViewById(R.id.menu_record_series);
-        recordRemoveButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
+        playButton = (Button) v.findViewById(R.id.menu_play);
+        recordOnceButton = (Button) v.findViewById(R.id.menu_record_once);
+        recordSeriesButton = (Button) v.findViewById(R.id.menu_record_series);
+        recordRemoveButton = (Button) v.findViewById(R.id.menu_record_remove);
 
         int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
                 .getColor(R.color.button_text_color_light) : getResources()

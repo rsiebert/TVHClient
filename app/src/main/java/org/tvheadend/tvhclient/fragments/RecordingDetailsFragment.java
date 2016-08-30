@@ -12,11 +12,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.gc.materialdesign.views.ButtonFlat;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -53,10 +52,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView is_timer_recording;
 
     private LinearLayout playerLayout;
-    private ButtonFlat playRecordingButton;
-    private ButtonFlat editRecordingButton;
-    private ButtonFlat removeRecordingButton;
-    private ButtonFlat downloadRecordingButton;
+    private Button playRecordingButton;
+    private Button editRecordingButton;
+    private Button removeRecordingButton;
+    private Button downloadRecordingButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -147,10 +146,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        playRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_play);
-        editRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_edit);
-        removeRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
-        downloadRecordingButton = (ButtonFlat) v.findViewById(R.id.menu_download);
+        playRecordingButton = (Button) v.findViewById(R.id.menu_play);
+        editRecordingButton = (Button) v.findViewById(R.id.menu_edit);
+        removeRecordingButton = (Button) v.findViewById(R.id.menu_record_remove);
+        downloadRecordingButton = (Button) v.findViewById(R.id.menu_download);
 
         int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
                 .getColor(R.color.button_text_color_light) : getResources()

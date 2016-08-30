@@ -12,10 +12,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.gc.materialdesign.views.ButtonFlat;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -45,8 +44,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private TextView priority;
 
     private LinearLayout playerLayout;
-    private ButtonFlat recordRemoveButton;
-    private ButtonFlat recordEditButton;
+    private Button recordRemoveButton;
+    private Button recordEditButton;
 
     private Toolbar toolbar;
     private View toolbarShadow;
@@ -108,8 +107,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        recordRemoveButton = (ButtonFlat) v.findViewById(R.id.menu_record_remove);
-        recordEditButton = (ButtonFlat) v.findViewById(R.id.menu_record_edit);
+        recordRemoveButton = (Button) v.findViewById(R.id.menu_record_remove);
+        recordEditButton = (Button) v.findViewById(R.id.menu_record_edit);
 
         int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
                 .getColor(R.color.button_text_color_light) : getResources()
