@@ -218,7 +218,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
 
         case R.id.menu_send_wol:
             if (c != null) {
-                WakeOnLanTask task= new WakeOnLanTask(activity, c, getView());
+                WakeOnLanTask task= new WakeOnLanTask(activity, c);
                 task.execute();
             }
             mode.finish();

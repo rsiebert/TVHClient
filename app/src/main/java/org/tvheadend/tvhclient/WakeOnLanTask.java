@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.view.View;
 
 import org.tvheadend.tvhclient.model.Connection;
 
@@ -24,13 +23,11 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private Connection conn;
     private Activity activity;
     private Exception exception;
-    private View view;
     private TVHClientApplication app;
 
-    public WakeOnLanTask(Activity context, Connection conn, View view) {
+    public WakeOnLanTask(Activity context, Connection conn) {
         this.activity = context;
         this.conn = conn;
-        this.view = view;
         this.app = (TVHClientApplication) context.getApplicationContext();
     }
 
