@@ -1,12 +1,12 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -24,8 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
@@ -369,15 +367,13 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         channelName.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				new MaterialDialog.Builder(activity)
-	            .title(R.string.select_channel)
-	            .items(channelList)
-	            .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
-	                @Override
-	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-	                    channelName.setText(channelList[which]);
+				new AlertDialog.Builder(activity)
+	            .setTitle(R.string.select_channel)
+	            .setItems(channelList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        channelName.setText(channelList[which]);
 	                    channelSelectionValue = which;
-	                    return true;
 	                }
 	            })
 	            .show();
@@ -388,15 +384,13 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         priority.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				new MaterialDialog.Builder(activity)
-	            .title(R.string.select_priority)
-	            .items(priorityList)
-	            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
-	                @Override
-	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+				new AlertDialog.Builder(activity)
+	            .setTitle(R.string.select_priority)
+	            .setItems(priorityList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
                         priority.setText(priorityList[which]);
                         priorityValue = which;
-	                    return true;
 	                }
 	            })
 	            .show();
@@ -415,15 +409,13 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 dvrConfigName.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        new MaterialDialog.Builder(activity)
-                        .title(R.string.select_dvr_config)
-                        .items(dvrConfigList)
-                        .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                        new AlertDialog.Builder(activity)
+                        .setTitle(R.string.select_dvr_config)
+                        .setItems(dvrConfigList, new DialogInterface.OnClickListener() {
                             @Override
-                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                            public void onClick(DialogInterface dialogInterface, int which) {
                                 dvrConfigName.setText(dvrConfigList[which]);
                                 dvrConfigNameValue = which;
-                                return true;
                             }
                         })
                         .show();
@@ -522,15 +514,13 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         dupDetect.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				new MaterialDialog.Builder(activity)
-	            .title(R.string.select_duplicate_detection)
-	            .items(dupDetectList)
-	            .itemsCallbackSingleChoice((int) dupDetectValue, new MaterialDialog.ListCallbackSingleChoice() {
-	                @Override
-	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+				new AlertDialog.Builder(activity)
+	            .setTitle(R.string.select_duplicate_detection)
+	            .setItems(dupDetectList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
                         dupDetect.setText(dupDetectList[which]);
                         dupDetectValue = which;
-	                    return true;
 	                }
 	            })
 	            .show();
@@ -676,22 +666,20 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
      * the input will be discarded and the activity will be closed.
      */
     private void cancel() {
-        new MaterialDialog.Builder(activity)
-                .content(R.string.cancel_add_recording)
-                .positiveText(getString(R.string.discard))
-                .negativeText(getString(R.string.cancel))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+        new AlertDialog.Builder(activity)
+                .setMessage(R.string.cancel_add_recording)
+                .setPositiveButton(getString(R.string.discard), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         if (getDialog() != null) {
                             getDialog().dismiss();
                         }
                     }
                 })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.cancel();
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
                     }
                 })
                 .show();

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
@@ -20,7 +21,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -300,15 +300,13 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             channelName.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new MaterialDialog.Builder(activity)
-                    .title(R.string.select_channel)
-                    .items(channelList)
-                    .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
+                    new AlertDialog.Builder(activity)
+                    .setTitle(R.string.select_channel)
+                    .setItems(channelList, new DialogInterface.OnClickListener() {
                         @Override
-                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        public void onClick(DialogInterface dialogInterface, int which) {
                             channelName.setText(channelList[which]);
                             channelSelectionValue = which;
-                            return true;
                         }
                     })
                     .show();
@@ -321,15 +319,13 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             priority.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					new MaterialDialog.Builder(activity)
-		            .title(R.string.select_priority)
-		            .items(priorityList)
-		            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
-		                @Override
-		                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-		                	priority.setText(priorityList[which]);
+					new AlertDialog.Builder(activity)
+		            .setTitle(R.string.select_priority)
+		            .setItems(priorityList, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            priority.setText(priorityList[which]);
 		                	priorityValue = which;
-		                    return true;
 		                }
 		            })
 		            .show();
@@ -349,15 +345,13 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 dvrConfigName.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        new MaterialDialog.Builder(activity)
-                        .title(R.string.select_dvr_config)
-                        .items(dvrConfigList)
-                        .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                        new AlertDialog.Builder(activity)
+                        .setTitle(R.string.select_dvr_config)
+                        .setItems(dvrConfigList, new DialogInterface.OnClickListener() {
                             @Override
-                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                            public void onClick(DialogInterface dialogInterface, int which) {
                                 dvrConfigName.setText(dvrConfigList[which]);
                                 dvrConfigNameValue = which;
-                                return true;
                             }
                         })
                         .show();
@@ -560,20 +554,20 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
      */
     private void cancel() {
         // Show confirmation dialog to cancel
-        new MaterialDialog.Builder(activity)
-                .content(R.string.cancel_edit_recording)
-                .positiveText(getString(R.string.discard))
-                .negativeText(getString(R.string.cancel))
-                .callback(new MaterialDialog.ButtonCallback() {
+        new AlertDialog.Builder(activity)
+                .setMessage(R.string.cancel_edit_recording)
+                .setPositiveButton(getString(R.string.discard), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         if (getDialog() != null) {
                             getDialog().dismiss();
                         }
                     }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onNegative(MaterialDialog dialog) {
-                        dialog.cancel();
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
                     }
                 }).show();
     }

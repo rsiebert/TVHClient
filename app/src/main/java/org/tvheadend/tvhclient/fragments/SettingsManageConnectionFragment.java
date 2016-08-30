@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -14,8 +16,6 @@ import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -335,24 +335,25 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             return;
         }
         // Show confirmation dialog to cancel
-        new MaterialDialog.Builder(activity)
-                .content(R.string.confirm_discard_connection)
-                .positiveText(getString(R.string.discard))
-                .negativeText(getString(R.string.cancel))
-                .callback(new MaterialDialog.ButtonCallback() {
+        new AlertDialog.Builder(activity)
+                .setMessage(R.string.confirm_discard_connection)
+                .setPositiveButton(getString(R.string.discard), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         // Delete the connection so that we start fresh when
                         // the settings activity is called again.
                         if (settingsInterface != null) {
                             settingsInterface.showConnections();
                         }
                     }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onNegative(MaterialDialog dialog) {
-                        dialog.cancel();
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
                     }
-                }).show();
+                })
+                .show();
     }
     
     /**

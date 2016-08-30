@@ -1,7 +1,9 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -13,8 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
@@ -226,13 +226,11 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
 
         case R.id.menu_delete:
             // Show confirmation dialog to cancel
-            new MaterialDialog.Builder(activity)
-                    .content(getString(R.string.delete_connection, c.name))
-                    .positiveText(getString(R.string.delete))
-                    .negativeText(getString(R.string.cancel))
-                    .callback(new MaterialDialog.ButtonCallback() {
+            new AlertDialog.Builder(activity)
+                    .setMessage(getString(R.string.delete_connection, c.name))
+                    .setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
+                        public void onClick(DialogInterface dialogInterface, int i) {
                             if (dbh.removeConnection(c.id)) {
                                 adapter.remove(c);
                                 adapter.notifyDataSetChanged();
@@ -245,11 +243,14 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                                 }
                             }
                         }
+                    })
+                    .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            dialog.cancel();
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
                         }
-                    }).show();
+                    })
+                    .show();
             mode.finish();
             return true;
 

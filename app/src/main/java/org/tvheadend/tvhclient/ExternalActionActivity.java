@@ -3,9 +3,11 @@ package org.tvheadend.tvhclient;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -19,8 +21,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.util.Base64;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
@@ -336,14 +336,12 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                     app.log(TAG, "Can't execute external media player");
 
                     // Show a confirmation dialog before deleting the recording
-                    new MaterialDialog.Builder(ExternalActionActivity.this)
-                        .title(R.string.no_media_player)
-                        .content(R.string.show_play_store)
-                        .positiveText(getString(android.R.string.yes))
-                        .negativeText(getString(android.R.string.no))
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    new AlertDialog.Builder(ExternalActionActivity.this)
+                        .setTitle(R.string.no_media_player)
+                        .setMessage(R.string.show_play_store)
+                        .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 try {
                                     app.log(TAG, "Starting play store to download external players");
                                     Intent installIntent = new Intent(Intent.ACTION_VIEW);
@@ -356,9 +354,9 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                                 }
                             }
                         })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 finish();
                             }
                         })
@@ -458,12 +456,11 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
      * @param msg The message that shall be shown
      */
     private void showErrorDialog(String msg) {
-        new MaterialDialog.Builder(this)
-                .content(msg)
-                .positiveText("Close")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+        new AlertDialog.Builder(this)
+                .setMessage(msg)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         finish();
                     }
                 })

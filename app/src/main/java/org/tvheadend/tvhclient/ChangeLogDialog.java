@@ -15,18 +15,17 @@
  */
 package org.tvheadend.tvhclient;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import android.app.AlertDialog;
 import android.util.Log;
-import android.view.View;
 import android.webkit.WebView;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
+import android.webkit.WebViewClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -128,14 +127,14 @@ public class ChangeLogDialog {
      *         first run of your app including ChangeLog then the full log
      *         dialog is show.
      */
-    public MaterialDialog getLogDialog() {
+    public Dialog getLogDialog() {
         return this.getDialog(this.firstRunEver());
     }
 
     /**
      * @return an AlertDialog with a full change log displayed
      */
-    public MaterialDialog getFullLogDialog() {
+    public Dialog getFullLogDialog() {
         return this.getDialog(true);
     }
 
@@ -144,34 +143,37 @@ public class ChangeLogDialog {
      * @param full Show the full changelog or only the latest changes
      * @return MaterialDialog object
      */
-    private MaterialDialog getDialog(boolean full) {
-        MaterialDialog dialog = new MaterialDialog.Builder(context)
-        .title(R.string.pref_changelog)
-        .customView(R.layout.webview_layout, false)
-        .positiveText(context.getString(android.R.string.ok))
-        .onPositive(new MaterialDialog.SingleButtonCallback() {
+    private AlertDialog getDialog(final boolean full) {
+
+        WebView wv = new WebView(context);
+        wv.loadUrl("http:\\www.google.com");
+        wv.setWebViewClient(new WebViewClient() {
             @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+                    view.setBackgroundColor(Color.WHITE);
+                } else {
+                    view.setBackgroundColor(Color.BLACK);
+                }
+                view.loadDataWithBaseURL("file:///android_asset/", getLog(full), "text/html", "utf-8", null);
+                return true;
+            }
+        });
+
+        AlertDialog dialog = new AlertDialog.Builder(context)
+        .setTitle(R.string.pref_changelog)
+        .setView(wv)
+        .setPositiveButton(context.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
                 updateVersionInPreferences();
                 if (di != null) {
                     di.changeLogDialogDismissed();
                 }
             }
         })
-        .build();
+        .create();
 
-        View view = dialog.getCustomView();
-        if (view != null) {
-            WebView webview = (WebView) view.findViewById(R.id.webview);
-            if (webview != null) {
-                if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
-                    webview.setBackgroundColor(Color.WHITE);
-                } else {
-                    webview.setBackgroundColor(Color.BLACK);
-                }
-                webview.loadDataWithBaseURL("file:///android_asset/", this.getLog(full), "text/html", "utf-8", null);
-            }
-        }
         return dialog;
     }
 

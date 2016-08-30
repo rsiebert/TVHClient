@@ -1,7 +1,9 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -14,14 +16,9 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.view.View;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
@@ -217,14 +214,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 // Show a confirmation dialog before clearing the search history
-                new MaterialDialog.Builder(activity)
-                        .title(R.string.clear_search_history)
-                        .content(R.string.clear_search_history_sum)
-                        .positiveText(getString(R.string.delete))
-                        .negativeText(getString(R.string.cancel))
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                new AlertDialog.Builder(activity)
+                        .setTitle(R.string.clear_search_history)
+                        .setMessage(R.string.clear_search_history_sum)
+                        .setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                                 suggestions.clearHistory();
                                 if (getView() != null) {
@@ -232,7 +227,14 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                             Snackbar.LENGTH_SHORT).show();
                                 }
                             }
-                        }).show();
+                        })
+                        .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // NOP
+                            }
+                        })
+                        .show();
                 return false;
             }
         });
@@ -242,14 +244,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 // Show a confirmation dialog before clearing the icon cache
-                new MaterialDialog.Builder(activity)
-                        .title(R.string.clear_icon_cache)
-                        .content(R.string.clear_icon_cache_sum)
-                        .positiveText(getString(R.string.delete))
-                        .negativeText(getString(R.string.cancel))
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                new AlertDialog.Builder(activity)
+                        .setTitle(R.string.clear_icon_cache)
+                        .setMessage(R.string.clear_icon_cache_sum)
+                        .setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 File[] files = activity.getCacheDir().listFiles();
                                 for (File file : files) {
                                     if (file.toString().endsWith(".png")) {
@@ -266,7 +266,14 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                             Snackbar.LENGTH_SHORT).show();
                                 }
                             }
-                        }).show();
+                        })
+                        .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // NOP
+                            }
+                        })
+                        .show();
                 return false;
             }
         });
@@ -331,14 +338,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 }
 
                 // Show the dialog with the list of log files
-                new MaterialDialog.Builder(activity)
-                .title(R.string.select_log_file)
-                .items(logfileList)
-                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                new AlertDialog.Builder(activity)
+                .setTitle(R.string.select_log_file)
+                .setItems(logfileList, new DialogInterface.OnClickListener() {
                     @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        mailLogfile(logfileList[which]);
-                        return true;
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mailLogfile(logfileList[i]);
                     }
                 })
                 .show();

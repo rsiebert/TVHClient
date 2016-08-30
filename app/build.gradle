@@ -45,7 +45,4 @@ dependencies {
     compile 'com.anjlab.android.iab.v3:library:1.0.31'
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
-        transitive = true
-    }
 }

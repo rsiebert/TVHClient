@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,8 +22,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -310,20 +310,18 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             final String[] dcList = dvrConfigList;
 
             // Create the dialog to show the available profiles
-            new MaterialDialog.Builder(activity)
-            .title(R.string.select_dvr_config)
-            .items(dvrConfigList)
-            .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+            new AlertDialog.Builder(activity)
+            .setTitle(R.string.select_dvr_config)
+            .setItems(dvrConfigList, new DialogInterface.OnClickListener() {
                 @Override
-                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                    // Pass over the 
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // Pass over the profile information
                     Intent intent = new Intent(activity, HTSService.class);
                     intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
                     intent.putExtra("eventId", program.id);
                     intent.putExtra("channelId", program.channel.id);
-                    intent.putExtra("configName", dcList[which]);
+                    intent.putExtra("configName", dcList[i]);
                     activity.startService(intent);
-                    return true;
                 }
             })
             .show();
