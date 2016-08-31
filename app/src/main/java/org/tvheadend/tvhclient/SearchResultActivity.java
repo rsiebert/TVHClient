@@ -200,10 +200,12 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                 adapter.getFilter().filter(query);
                 if (recording == null) {
                     actionBar.setSubtitle(getResources().getQuantityString(
-                            R.plurals.searching_programs, adapter.getFullCount()));
+                            R.plurals.searching_programs, adapter.getFullCount(),
+                            adapter.getFullCount()));
                 } else {
                     actionBar.setSubtitle(getResources().getQuantityString(
-                            R.plurals.searching_recordings, adapter.getFullCount()));
+                            R.plurals.searching_recordings, adapter.getFullCount(),
+                            adapter.getFullCount()));
                 }
                 handlerRunning  = false;
             }
