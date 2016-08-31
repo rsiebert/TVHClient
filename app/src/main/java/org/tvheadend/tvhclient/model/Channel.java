@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.model;
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +22,7 @@ public class Channel implements Comparable<Channel> {
     public Bitmap iconBitmap;
     public boolean isTransmitting;
     
-    public int compareTo(Channel that) {
+    public int compareTo(@NonNull Channel that) {
         return this.number - that.number;
     }
 
