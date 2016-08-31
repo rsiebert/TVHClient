@@ -7,24 +7,14 @@ public class DrawerMenuItem {
     public int icon = 0;
     public String title = "";
     public int count = 0;
-    public boolean isSection = false;
+    public boolean isSection = true;
     public boolean isVisible = true;
 
     /**
-     * Creates an header item with no text
+     * Creates a section item with no text
      */
     public DrawerMenuItem() {
         // NOP
-    }
-
-    /**
-     * Creates a menu section item with the given text
-     *
-     * @param title Title text
-     */
-    public DrawerMenuItem(String title) {
-        this.title = title;
-        this.isSection = true;
     }
 
     /**

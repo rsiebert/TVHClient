@@ -537,7 +537,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
 
         List<DrawerMenuItem> list = new ArrayList<>();
-        list.add(new DrawerMenuItem(""));
+        list.add(new DrawerMenuItem());
         list.add(new DrawerMenuItem(MENU_CHANNELS, menuItems[0],
                 (lightTheme) ? R.drawable.ic_menu_channels_light : R.drawable.ic_menu_channels_dark));
         list.add(new DrawerMenuItem(MENU_COMPLETED_RECORDINGS, menuItems[1],
@@ -561,14 +561,14 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         list.add(new DrawerMenuItem(MENU_STATUS, menuItems[7],
                 (lightTheme) ? R.drawable.ic_menu_status_light : R.drawable.ic_menu_status_dark));
 
-        list.add(new DrawerMenuItem(""));
+        list.add(new DrawerMenuItem());
         list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[8],
                 (lightTheme) ? R.drawable.ic_menu_settings_light : R.drawable.ic_menu_settings_dark));
         list.add(new DrawerMenuItem(MENU_INFORMATION, menuItems[10],
                 (lightTheme) ? R.drawable.ic_menu_info_light
                         : R.drawable.ic_menu_info_dark));
 
-        list.add(new DrawerMenuItem(""));
+        list.add(new DrawerMenuItem());
         list.add(new DrawerMenuItem(MENU_UNLOCKER, menuItems[11],
                 (lightTheme) ? R.drawable.item_active_light
                         : R.drawable.item_active_dark));
