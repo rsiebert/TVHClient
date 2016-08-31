@@ -115,9 +115,9 @@ public class Utils {
             return info.onScreen;
         }
         
-        final String season = context.getResources().getString(string.season);
-        final String episode = context.getResources().getString(string.episode);
-        final String part = context.getResources().getString(string.part);
+        final String season = context.getResources().getString(R.string.season);
+        final String episode = context.getResources().getString(R.string.episode);
+        final String part = context.getResources().getString(R.string.part);
         
         if (info.onScreen.length() > 0) {
             return info.onScreen;
@@ -209,13 +209,13 @@ public class Utils {
         String message = "";
         switch (type) {
             case Constants.ACTION_DELETE_DVR_ENTRY:
-                message = activity.getString(string.remove_recording, title);
+                message = activity.getString(R.string.remove_recording, title);
                 break;
             case Constants.ACTION_DELETE_SERIES_DVR_ENTRY:
-                message = activity.getString(string.remove_series_recording, title);
+                message = activity.getString(R.string.remove_series_recording, title);
                 break;
             case Constants.ACTION_DELETE_TIMER_REC_ENTRY:
-                message = activity.getString(string.remove_timer_recording, title);
+                message = activity.getString(R.string.remove_timer_recording, title);
                 break;
         }
 
@@ -424,7 +424,7 @@ public class Utils {
         } else if (program.isRecording()) {
             // Show the play and stop menu
             playMenuItem.setVisible(true);
-            recordRemoveMenuItem.setTitle(string.stop);
+            recordRemoveMenuItem.setTitle(R.string.stop);
             recordRemoveMenuItem.setVisible(true);
         } else {
             // Show the delete menu
@@ -548,40 +548,40 @@ public class Utils {
         // Translate the day strings
         switch (dateText) {
             case "today":
-                date.setText(string.today);
+                date.setText(R.string.today);
                 break;
             case "tomorrow":
-                date.setText(string.tomorrow);
+                date.setText(R.string.tomorrow);
                 break;
             case "in 2 days":
-                date.setText(string.in_2_days);
+                date.setText(R.string.in_2_days);
                 break;
             case "Monday":
-                date.setText(string.monday);
+                date.setText(R.string.monday);
                 break;
             case "Tuesday":
-                date.setText(string.tuesday);
+                date.setText(R.string.tuesday);
                 break;
             case "Wednesday":
-                date.setText(string.wednesday);
+                date.setText(R.string.wednesday);
                 break;
             case "Thursday":
-                date.setText(string.thursday);
+                date.setText(R.string.thursday);
                 break;
             case "Friday":
-                date.setText(string.friday);
+                date.setText(R.string.friday);
                 break;
             case "Saturday":
-                date.setText(string.saturday);
+                date.setText(R.string.saturday);
                 break;
             case "Sunday":
-                date.setText(string.sunday);
+                date.setText(R.string.sunday);
                 break;
             case "yesterday":
-                date.setText(string.yesterday);
+                date.setText(R.string.yesterday);
                 break;
             case "2 days ago":
-                date.setText(string.two_days_ago);
+                date.setText(R.string.two_days_ago);
                 break;
             default:
                 date.setText(dateText);
