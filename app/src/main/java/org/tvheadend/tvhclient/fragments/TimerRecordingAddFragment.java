@@ -85,9 +85,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private TVHClientApplication app;
     private DatabaseHelper dbh;
 
-    public static TimerRecordingAddFragment newInstance(Bundle args) {
+    public static TimerRecordingAddFragment newInstance() {
         TimerRecordingAddFragment f = new TimerRecordingAddFragment();
-        f.setArguments(args);
         return f;
     }
 

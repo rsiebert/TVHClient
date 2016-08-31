@@ -93,9 +93,8 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
 
-    public static RecordingAddFragment newInstance(Bundle args) {
+    public static RecordingAddFragment newInstance() {
         RecordingAddFragment f = new RecordingAddFragment();
-        f.setArguments(args);
         return f;
     }
 

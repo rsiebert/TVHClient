@@ -185,7 +185,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 // Create the fragment and show it as a dialog.
-                DialogFragment editFragment = SeriesRecordingAddFragment.newInstance(null);
+                DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, srec.id);
                 editFragment.setArguments(bundle);

@@ -186,7 +186,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 // Create the fragment and show it as a dialog.
-                DialogFragment editFragment = TimerRecordingAddFragment.newInstance(null);
+                DialogFragment editFragment = TimerRecordingAddFragment.newInstance();
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, trec.id);
                 editFragment.setArguments(bundle);

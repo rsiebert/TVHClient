@@ -103,9 +103,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
 
-    public static SeriesRecordingAddFragment newInstance(Bundle args) {
+    public static SeriesRecordingAddFragment newInstance() {
         SeriesRecordingAddFragment f = new SeriesRecordingAddFragment();
-        f.setArguments(args);
         return f;
     }
 

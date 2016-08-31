@@ -135,13 +135,13 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
         case R.id.menu_add:
             // Create the fragment and show it as a dialog.
-            DialogFragment addFragment = RecordingAddFragment.newInstance(null);
+            DialogFragment addFragment = RecordingAddFragment.newInstance();
             addFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = RecordingAddFragment.newInstance(null);
+            DialogFragment editFragment = RecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
             bundle.putLong(Constants.BUNDLE_RECORDING_ID, adapter.getSelectedItem().id);
             editFragment.setArguments(bundle);
@@ -325,7 +325,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
         case R.id.menu_edit:
             // Create the fragment to edit a recording but show it as a dialog.
-            DialogFragment df = RecordingAddFragment.newInstance(null);
+            DialogFragment df = RecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
             bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
             df.setArguments(bundle);

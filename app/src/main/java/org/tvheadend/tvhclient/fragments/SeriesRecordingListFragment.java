@@ -193,13 +193,13 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         switch (item.getItemId()) {
         case R.id.menu_add:
             // Create the fragment and show it as a dialog.
-            DialogFragment newFragment = SeriesRecordingAddFragment.newInstance(null);
+            DialogFragment newFragment = SeriesRecordingAddFragment.newInstance();
             newFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance(null);
+            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
             bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, adapter.getSelectedItem().id);
             editFragment.setArguments(bundle);
@@ -298,7 +298,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         switch (item.getItemId()) {
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance(null);
+            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
             bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, srec.id);
             editFragment.setArguments(bundle);
