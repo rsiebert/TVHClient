@@ -21,17 +21,17 @@ public class SeriesInfo {
 		if (seasonNumber > 0) {
 			if (s.length() > 0)
 				s += ", ";
-			s += String.format("season %02d", seasonNumber);
+			s += String.format(Locale.getDefault(), "season %02d", seasonNumber);
 		}
 		if (episodeNumber > 0) {
 			if (s.length() > 0)
 				s += ", ";
-			s += String.format("episode %02d", episodeNumber);
+			s += String.format(Locale.getDefault(), "episode %02d", episodeNumber);
 		}
 		if (partNumber > 0) {
 			if (s.length() > 0)
 				s += ", ";
-			s += String.format("part %d", partNumber);
+			s += String.format(Locale.getDefault(), "part %d", partNumber);
 		}
 
 		if(s.length() > 0) {
