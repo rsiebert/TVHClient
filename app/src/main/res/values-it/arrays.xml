@@ -36,16 +36,6 @@
         <item>Dom</item>
     </string-array>
 
-    <string-array name="day_long_names">
-        <item>Lunedì</item>
-        <item>Martedì</item>
-        <item>Mercoledì</item>
-        <item>Giovedì</item>
-        <item>Venerdì</item>
-        <item>Sabato</item>
-        <item>Domenica</item>
-    </string-array>
-
     <string-array name="dvr_priorities">
         <item>Molto Alta</item>
         <item>Alta</item>

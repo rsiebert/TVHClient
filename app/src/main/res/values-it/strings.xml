@@ -12,7 +12,6 @@
     <string name="record_series">Registra serie (Autorec)</string>
     <string name="record_remove">Elimina registrazione</string>
     <string name="record_remove_all">Elimina tutte registrazioni</string>
-    <string name="record_edit">Modifica registrazione</string>
     <string name="search_imdb">Cerca su IMDB</string>
     <string name="search_epg">Cerca nella guida programmi</string>
     <string name="add">Aggiungi</string>
@@ -22,13 +21,11 @@
     <string name="set_not_active">Disattiva</string>
     <string name="edit">Modifica</string>
     <string name="delete">Elimina</string>
-    <string name="connections">Connessioni</string>
     <string name="timeframe">Linea temporale</string>
     <string name="genre_color_info">Illustra colori dei generi</string>
     <string name="send_wol">Risveglia</string>
     <string name="select_connection">Seleziona connessione</string>
     <string name="add_connection">Aggiungi connessione</string>
-    <string name="confirm_cancel">Annullare le modifiche? Tutte le modifiche non salvate andranno perdute.</string>
     <string name="remove">Rimuovi</string>
     <string name="delete_connection">Vuoi veramente cancellare la connessione \'%s\'?</string>
     <string name="remove_recording">Vuoi veramente cancellare la registrazione \'%s\'?</string>
@@ -36,14 +33,11 @@
     <string name="remove_timer_recording">uoi veramente cancellare la registrazione manuale \'%s\'?</string>
     <string name="remove_all_recordings">Vuoi veramente cancellare TUTTE le registrazioni fallite?</string>
     <string name="cancel_recording">Vuoi veramente annullare la registrazione programmata \'%s\'?</string>
-    <string name="cancel_all_recordings">Vuoi veramente annullare TUTTE le registrazioni programmate?</string>
     <string name="add_recording">Aggiungi nuova registrazione</string>
     <string name="cancel_add_recording">Annullare l\'aggiunta di una nuova registrzione? Tutti i valori saranno persi.</string>
 
     <string name="pref_manage_connections">Gestisci connessioni</string>
     <string name="pref_manage_connections_sum">Selezione la tua connessione attiva a un server TVHeadend oppure aggiungi, modifica o rimuovi connessioni.</string>
-    <string name="pref_connection_details">Dettagli connessione</string>
-    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="pref_connections">Connessioni</string>
     <string name="pref_name">Nome connessione</string>
     <string name="pref_name_sum">Inserisci un nome univoco per la connessione</string>
@@ -96,9 +90,6 @@
     <string name="pref_scodec_sum">Definisce il tipo di sottotitoli che il convertitore utilizzerà.</string>
     <string name="pref_container">Contenitore multimediale</string>
     <string name="pref_container_sum">Definisce il contenitore multimediale che sarà usato per trasportare i flussi audio e video. Matroska è generalmente la scelta preferita.</string>
-    <string name="pref_playback">Riproduzione</string>
-    <string name="pref_playback_programs_sum">Configura le opzioni di riproduzione per i programmi dal vivo.</string>
-    <string name="pref_playback_recordings_sum">Configura le opzione di riproduzione per i tuoi programmi registrati.</string>
     <string name="pref_transcode">Converti il flusso</string>
     <string name="pref_transcode_sum">Converte il programma o la registrazione in un altro formato durante la riproduzione. (Richiede il supporto da parte del server TVHeadend)</string>
     <string name="pref_information">Informazioni</string>
@@ -159,7 +150,6 @@
     <string name="err_connect">Impossibile connettersi al server</string>
     <string name="err_con_lost">Connessione con il server persa</string>
     <string name="err_con_timeout">Connessione scaduta</string>
-    <string name="err_loading_profiles">Impossibile caricare i profili dal server\n%s</string>
 
     <string name="recording_file_missing">File di registrazione mancante</string>
     <string name="recording_time_missed">Programmazione della registrazione mancata</string>
@@ -167,8 +157,6 @@
     <string name="recording_canceled">Registrazione annullata</string>
     <string name="recording_started">Registrazione iniziata</string>
     <string name="recording_completed">Registrazione completata</string>
-    <string name="recording_started_text">La registrazione %s è stata avviata</string>
-    <string name="recording_completed_text">La registrazione %s è stata completata</string>
 
     <string name="wol_send">Inviato con successo un pacchetto wake on LAN packet a \'%s\'</string>
     <string name="wol_send_broadcast">Inviato con successo un pacchetto wake on LAN in broadcast a \'%s\'</string>
@@ -203,10 +191,6 @@
     <string name="timer_recordings">Registrazioni manuali</string>
     <string name="is_series_recording">Questa registrazione fa parte di una registrazione di serie</string>
     <string name="is_timer_recording">Questa registrazione è stata creata manualmente</string>
-    <string name="no_channels_available">Nessun canale disponibile</string>
-    <string name="no_recordings_available">Nessuna registrazione disponibile</string>
-    <string name="no_recordings_scheduled">Nessuna registrazione programmata</string>
-    <string name="no_programs_available">Nessun programma disponibile</string>
 
     <string name="recording_enabled">Questa registrazione è abilitata</string>
     <string name="recording_disabled">Questa registrazione è disabilitata</string>
@@ -217,9 +201,7 @@
     <string name="channels">Canali</string>
     <string name="recordings">Registrazioni</string>
     <string name="status">Stato</string>
-    <string name="results">Risultati</string>
 
-    <string name="channel_icon">Icona canale</string>
     <string name="status_icon">Icona di stato</string>
     <string name="title">Titolo</string>
     <string name="channel">Canale</string>
@@ -233,30 +215,20 @@
     <string name="content_type">Tipo di contenuto</string>
     <string name="series_information">Informazione serie</string>
     <string name="genre_color_list">Lista dei colori dei generi e loro significato.</string>
-    <string name="retention">Memorizzazione</string>
     <string name="priority">Priorità</string>
-    <string name="path">Percorso</string>
-    <string name="directory">Directory</string>
-    <string name="owner">Possessore</string>
-    <string name="creator">Creatore</string>
-    <string name="approx_time">Minuti da mezzanotte</string>
 
     <string name="start_time">Ora d\'inizio</string>
     <string name="stop_time">Ora di fine</string>
-    <string name="start_window">Finestra d\'avvio</string>
     <string name="extra_start_time">Minuti extra inizio (pre-time)</string>
     <string name="extra_stop_time">Minuti extra fine (post-time)</string>
     <string name="min_duration">Durata minima</string>
     <string name="max_duration">Durata massima</string>
     <string name="from_to_time">Da %1$s a %2$s</string>
     <string name="recording_time">Durata Registrazione</string>
-    <string name="series_recording_add_error">Impossibile aggiungere questa registrazione di serie.</string>
-    <string name="time_recording_add_error">Impossibile aggiungere questa registrazione manuale.</string>
     <string name="error_empty_title">Il titolo non può essere vuoto!</string>
 
     <string name="nothing">Niente</string>
     <string name="loading">Caricamento&#8230;</string>
-    <string name="loading_channel">Caricamento canale %s</string>
     <string name="updating">Aggiornamento&#8230;</string>
     <string name="all_channels">Tutti i canali</string>
     <string name="season">Stagione</string>

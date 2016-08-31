@@ -8,7 +8,6 @@
     <string name="connection_recovered">Verbindung zum Casting Gerät wurde wieder hergestellt</string>
     <string name="cast_profile_not_set">Es wurde kein Casting Profil in den Einstellungen gewählt. Dies ist zwingend erforderlich.</string>
     <string name="cast_profile_invalid">Das gewählte Profil \'%1$s\' entspricht nicht dem empfohlenden Profil \'%2$s\'. Casting wird evtl. nicht korrekt funktionieren.</string>
-    <string name="proceed">Fortfahren</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Einstellungen für die Casting Funktionalität. Bitte beachte, dass Casting eine TVHeadend Version erfordert, die transkodieren kann. Außerdem muss der Server leistungsstark genug sein, um die Videodaten in Echtzeit konvertieren zu können. Andernfalls wird Casting nicht funktionieren!</string>
     <string name="pref_enable_casting">Aktiviere Casting</string>
@@ -32,7 +31,6 @@
     <string name="record_remove">Aufnahme entfernen</string>
     <string name="record_remove_all">Alle Aufnahmen entfernen</string>
     <string name="confirm_remove_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
-    <string name="record_edit">Aufnahme bearbeiten</string>
     <string name="search_imdb">Suche auf der IMDB Webseite</string>
     <string name="search_epg">Suche im TV-Programm</string>
     <string name="add">Hinzufügen</string>
@@ -43,17 +41,14 @@
     <string name="set_not_active">Deaktivieren</string>
     <string name="edit">Bearbeiten</string>
     <string name="delete">Löschen</string>
-    <string name="connections">Verbindungen</string>
     <string name="timeframe">Zeitraum</string>
     <string name="genre_color_info">Bedeutung der Genrefarben</string>
     <string name="send_wol">Aufwecken</string>
     <string name="select_connection">Verbindung wählen</string>
     <string name="add_connection">Verbindung hinzufügen</string>
     <string name="edit_connection">Verbindung bearbeiten</string>
-    <string name="confirm_cancel">Aktion abbrechen? Alle Änderungen gehen verloren.</string>
     <string name="remove">Entfernen</string>
     <string name="discard">Verwerfen</string>
-    <string name="confirm_discard_profile">Profileinstellungen verwerfen? Alle Änderungen gehen verloren.</string>
     <string name="confirm_discard_connection">Verbindungseinstellungen verwerfen? Alle Änderungen gehen verloren.</string>
     <string name="delete_connection">Verbindung \'%s\' entfernen?</string>
     <string name="remove_recording">Aufnahme \'%s\' entfernen?</string>
@@ -61,10 +56,8 @@
     <string name="remove_timer_recording">Manuelle Aufnahme \'%s\' entfernen?</string>
     <string name="remove_all_recordings">Alle Aufnahmen entfernen?</string>
     <string name="cancel_recording">Geplante Aufnahme \'%s\' entfernen?</string>
-    <string name="cancel_all_recordings">Alle geplanten Aufnahmen entfernen?</string>
     <string name="stop_recording">Laufende Aufnahme \'%s\' entfernen?</string>
     <string name="add_title">Titel der gewünschten Aufnahme</string>
-    <string name="add_subtitle">Untertitel der gewünschten Aufnahme</string>
     <string name="add_name">Name dieses erstellten Eintrages</string>
     <string name="add_recording">Neue Aufnahme hinzufügen</string>
     <string name="edit_recording">Aufnahme bearbeiten</string>
@@ -78,8 +71,6 @@
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Die aktive Verbindung zum TVHeadend Server ändern, neue Verbindungen erstellen, vorhandene bearbeiten oder entfernen.</string>
-    <string name="pref_connection_details">Details der Verbindung</string>
-    <string name="pref_connection_wol">Einstellungen für Wake on LAN</string>
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
     <string name="pref_name_sum">Bitte einen eindeutigen Namen eingeben.</string>
@@ -135,9 +126,6 @@
     <string name="pref_scodec_sum">Definiert welche Art von Untertiteln der Transcoder verwenden soll.</string>
     <string name="pref_container">Medien-Container</string>
     <string name="pref_container_sum">Die Art des Medien-Containers in dem die Audio- und Videoinformationen gesendet werden. Matroschka ist üblicherweise die bevorzugte Wahl.</string>
-    <string name="pref_playback">Wiedergabe</string>
-    <string name="pref_playback_programs_sum">Einstellungen für die Wiedergabe von Live-TV.</string>
-    <string name="pref_playback_recordings_sum">Einstellungen für die Wiedergabe der aufgenommenen Programme.</string>
     <string name="pref_transcode">Stream transkodieren</string>
     <string name="pref_transcode_sum">Falls gesetzt, wird die Live-Wiedergabe oder das Program während der Übertragung in ein anderes Format konvertiert. (Der TVHeadend Server muss dies unterstützen)</string>
     <string name="pref_information">Informationen</string>
@@ -226,7 +214,6 @@
     <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
     <string name="err_con_timeout">Zeitüberschreitung beim Verbinden zum Server.</string>
     <string name="err_no_network">Keine Netzwerkverbindung aktiv</string>
-    <string name="err_loading_profiles">Fehler beim Laden der Profile vom Server\n%s</string>
     <string name="error_adding_recording">Aufnahme konnte nicht erstellt werden! %s</string>
     <string name="error_removing_recording">Aufnahme konnte nicht entfernt werden! %s</string>
     <string name="error_updating_recording">Aufnahme konnte nicht aktualisiert werden! %s</string>
@@ -241,8 +228,6 @@
     <string name="recording_started">Aufnahme gestartet</string>
     <string name="recording_starts_in">Aufnahme startet in %d Min.</string>
     <string name="recording_completed">Aufnahme beendet</string>
-    <string name="recording_started_text">Die Aufnahme %s wurde gestarted.</string>
-    <string name="recording_completed_text">Die Aufnahme %s wurde beendet.</string>
 
     <string name="wol_send">Wake on LAN Paket erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
@@ -277,10 +262,6 @@
     <string name="timer_recordings">Manuelle Aufnahmen</string>
     <string name="is_series_recording">Diese Aufnahme ist Teil einer Serienaufnahme</string>
     <string name="is_timer_recording">Diese Aufnahme wurde per Timer manuell erstellt</string>
-    <string name="no_channels_available">Keine Sender vorhanden</string>
-    <string name="no_recordings_available">Keine Aufnahmen vorhanden</string>
-    <string name="no_recordings_scheduled">Keine Aufnahmen geplant</string>
-    <string name="no_programs_available">Keine Programme vorhanden</string>
 
     <string name="recording_enabled">Diese Aufnahme ist aktiviert</string>
     <string name="recording_disabled">Diese Aufnahme ist deaktiviert</string>
@@ -291,9 +272,7 @@
     <string name="channels">Sender</string>
     <string name="recordings">Aufnahmen</string>
     <string name="status">Status</string>
-    <string name="results">Ergebnisse</string>
-    
-    <string name="channel_icon">Senderlogo</string>
+
     <string name="status_icon">Statuslogo</string>
     <string name="title">Titel</string>
     <string name="subtitle">Untertitel</string>
@@ -308,14 +287,8 @@
     <string name="content_type">Genre</string>
     <string name="series_information">Serien Information</string>
     <string name="genre_color_list">Liste der Genrefarben und deren Bedeutung.</string>
-    <string name="retention">Aufbewahrungszeit</string>
     <string name="priority">Priorität</string>
     <string name="dvr_config">Aufnahmeprofil</string>
-    <string name="path">Pfad</string>
-    <string name="directory">Verzeichnis</string>
-    <string name="owner">Besitzer</string>
-    <string name="creator">Ersteller</string>
-    <string name="approx_time">Minuten nach Mitternacht</string>
 
     <string name="current_time">Aktuelle Zeit</string>
     <string name="start_time">Startzeit</string>
@@ -324,7 +297,6 @@
     <string name="enable_time_window">Zeiten für Aufnahme aktivieren</string>
     <string name="start_after_time">Beginn</string>
     <string name="start_before_time">Ende</string>
-    <string name="start_window">Startfenster</string>
     <string name="extra_start_time">Zusätzliche Minuten (Vorlaufzeit)</string>
     <string name="extra_stop_time">Zusätzliche Minuten (Nachlaufzeit)</string>
     <string name="min_duration">Minimale Dauer der Sendung</string>
@@ -332,11 +304,7 @@
     <string name="duration_sum">Dauer in Minuten (0 = egal)</string>
     <string name="from_to_time">Von %1$s bis %2$s</string>
     <string name="recording_time">Aufnahmezeit</string>
-    <string name="series_recording_add_error">Kann diese Serienaufnahme nicht hinzufügen.</string>
-    <string name="time_recording_add_error">Kann diese manuelle Aufnahme nicht hinzufügen.</string>
     <string name="error_empty_title">Bitte einen Aufnahmetitel angeben!</string>
-    <string name="error_start_stop_time">Die Endzeit darf nicht vor der Startzeit liegen!</string>
-    <string name="error_no_channel">Bitte einen Sender angeben!</string>
     <string name="duplicate_detection">Erkenne doppelte Sendungen</string>
 
     <string name="subscription_error">Subscription-Fehler: %1$s</string>
@@ -346,7 +314,6 @@
 
     <string name="nothing">Keine</string>
     <string name="loading">Lade&#8230;</string>
-    <string name="loading_channel">Lade Sender %s</string>
     <string name="updating">Aktualisiere&#8230;</string>
     <string name="all_channels">Alle Sender</string>
     <string name="no_channel">Kein Sender</string>
@@ -367,9 +334,7 @@
     <string name="select_time">Zeige Programme die zur gewählten Zeit laufen.</string>
     <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
     <string name="currently_recording">Laufende Aufnahmen</string>
-    <string name="select_start_time">Startzeit auswählen</string>
-    <string name="select_stop_time">Endzeit auswählen</string>
-	<string name="select_channel">Sender auswählen</string>
+    <string name="select_channel">Sender auswählen</string>
     <string name="select_priority">Priorität auswählen</string>
     <string name="select_dvr_config">Wähle Aufnahmeprofil</string>
     <string name="select_log_file">Log-Datei auswählen</string>

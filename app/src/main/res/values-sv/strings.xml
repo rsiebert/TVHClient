@@ -12,7 +12,6 @@
     <string name="record_series">Spela in (Autorec)</string>
     <string name="record_remove">Ta bort inspelning</string>
     <string name="record_remove_all">Ta bort alla inspelningar</string>
-    <string name="record_edit">Redigera inspelning</string>
     <string name="search_imdb">Sök på IMDB</string>
     <string name="search_epg">Sök i EPG</string>
     <string name="add">Lägg till</string>
@@ -22,13 +21,11 @@
     <string name="set_not_active">Avaktivera</string>
     <string name="edit">Editera</string>
     <string name="delete">Ta bort</string>
-    <string name="connections">Anslutningar</string>
     <string name="timeframe">Tidsram</string>
     <string name="genre_color_info">Förklara genrefärger</string>
     <string name="send_wol">Vakna upp</string>
     <string name="select_connection">Välj anslutning</string>
     <string name="add_connection">Lägg till anslutning</string>
-    <string name="confirm_cancel">Kassera värden? Alla ändringar kommer att försvinna.</string>
     <string name="remove">Avlägsna</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
     <string name="remove_recording">Vill du verkligen ta bort inspelningen \'%s\'?</string>
@@ -36,14 +33,11 @@
     <string name="remove_timer_recording">Vill du verkligen ta bort timerinspelningen \'%s\'?</string>
     <string name="remove_all_recordings">Vill du verkligen ta bort ALLA inspelningar?</string>
     <string name="cancel_recording">Vill du verkligen avbryta schemalagd inspelning \'%s\'?</string>
-    <string name="cancel_all_recordings">Vill du verkligen avbryta ALLA schemalagda inspelningar?</string>
     <string name="add_recording">Lägg till inspelning</string>
     <string name="cancel_add_recording">Ångra lägg till ny inspelning? Alla värden går förlorade.</string>
 
     <string name="pref_manage_connections">Hantera anslutningar</string>
     <string name="pref_manage_connections_sum">Välj din aktiva anslutning till en TVHeadend-server eller lägg till, editera eller ta bort anslutning.</string>
-    <string name="pref_connection_details">Detaljer om ansluting</string>
-    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="pref_connections">Anslutningar</string>
     <string name="pref_name">Anslutningsnamn</string>
     <string name="pref_name_sum">Fyll i ett unikt namn på anslutningen</string>
@@ -96,9 +90,6 @@
     <string name="pref_scodec_sum">Definiera undertextformat som transkoderingen skall använda.</string>
     <string name="pref_container">Mediakontainer</string>
     <string name="pref_container_sum">Definiera mediakontainer som skall användas för ljud och videoströmmar. Matroska är normalt det föredragna alternativet.</string>
-    <string name="pref_playback">Uppspelning</string>
-    <string name="pref_playback_programs_sum">Konfigurera uppspelningsval för Live-TV.</string>
-    <string name="pref_playback_recordings_sum">Konfigurera uppspelningsval för inspelningar.</string>
     <string name="pref_transcode">Transkodera ström</string>
     <string name="pref_transcode_sum">Konvertera Live-TV eller inspelning till ett annat format under uppspelning. (Stöd för detta i TVHeadend-servern krävs)</string>
     <string name="pref_information">Information</string>
@@ -159,7 +150,6 @@
     <string name="err_connect">Kan ej ansluta till server</string>
     <string name="err_con_lost">Anslutning till server tappad</string>
     <string name="err_con_timeout">Anslutningstimeout</string>
-    <string name="err_loading_profiles">Ett fel uppstod vid laddning av profiler från servern\n%s</string>
 
     <string name="recording_file_missing">Inspelad fil saknas</string>
     <string name="recording_time_missed">Schemalagd inspelning missades</string>
@@ -167,8 +157,6 @@
     <string name="recording_canceled">Inspelningen har avbrutits</string>
     <string name="recording_started">Inspelningen startat</string>
     <string name="recording_completed">Inspelningen färdig</string>
-    <string name="recording_started_text">Inspelningen %s har startat</string>
-    <string name="recording_completed_text">Inspelningen %s är färdig</string>
 
     <string name="wol_send">Lyckades skicka wake on LAN paket till \'%s\'</string>
     <string name="wol_send_broadcast">Lyckades skicka wake on LAN paket som broadcast till \'%s\'</string>
@@ -203,11 +191,7 @@
     <string name="timer_recordings">Manuella inspelningar</string>
     <string name="is_series_recording">Denna inspelning är del av en serieinspelning</string>
     <string name="is_timer_recording">Den här inspelningen skapades av en timer</string>
-    <string name="no_channels_available">Inga kanaler tillgängliga</string>
-    <string name="no_recordings_available">Inga inspelningar tillgängliga</string>
-    <string name="no_recordings_scheduled">Inga inspelningar är schemalagda</string>
-    <string name="no_programs_available">Inga program tillgängliga</string>
-    
+
     <string name="recording_enabled">Denna inspelning är aktiverad</string>
     <string name="recording_disabled">Denna inspelning är avaktiverad</string>
     <string name="days_of_week">Veckodagar</string>
@@ -217,9 +201,7 @@
     <string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>
     <string name="status">Status</string>
-    <string name="results">Resultat</string>
-    
-    <string name="channel_icon">Kanalikoner</string>
+
     <string name="status_icon">Statusikoner</string>
     <string name="title">Titel</string>
     <string name="channel">Kanaler</string>
@@ -233,30 +215,20 @@
     <string name="content_type">Genre</string>
     <string name="series_information">Serieinformation</string>
     <string name="genre_color_list">Lista på genrefärger och deras betydelser.</string>
-    <string name="retention">Retention</string>
     <string name="priority">Prioritet</string>
-    <string name="path">Sökväg</string>
-    <string name="directory">Katalog</string>
-    <string name="owner">Ägare</string>
-    <string name="creator">Skapare</string>
-    <string name="approx_time">Minuter från midnatt</string>
 
     <string name="start_time">Starttid</string>
     <string name="stop_time">Sluttid</string>
-    <string name="start_window">Startfönster</string>
     <string name="extra_start_time">Extra startminuter (pre-tid)</string>
     <string name="extra_stop_time">Extra stoppminuter (post-tid)</string>
     <string name="min_duration">Minsta varaktighet</string>
     <string name="max_duration">Maximal varaktighet</string>
     <string name="from_to_time">Från %1$s till %2$s</string>
     <string name="recording_time">Inspelningstid</string>
-    <string name="series_recording_add_error">Kan inte lägga till denna serieinspelning.</string>
-    <string name="time_recording_add_error">Kan inte lägga till denna tidsinspelning.</string>
     <string name="error_empty_title">Titeln får inte vara tom!</string>
 
     <string name="nothing">Ingen</string>
     <string name="loading">Laddar&#8230;</string>
-    <string name="loading_channel">Laddar kanal %s</string>
     <string name="updating">Uppdaterar&#8230;</string>
     <string name="all_channels">Alla Kanaler</string>
     <string name="season">Säsong</string>

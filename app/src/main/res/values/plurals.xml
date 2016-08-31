@@ -29,10 +29,6 @@
         <item quantity="one">%d result</item>
         <item quantity="other">%d results</item>
     </plurals>
-    <plurals name="days">
-        <item quantity="one">%d day</item>
-        <item quantity="other">%d days</item>
-    </plurals>
     <plurals name="searching_programs">
         <item quantity="one">Searching %d program</item>
         <item quantity="other">Searching %d programs</item>

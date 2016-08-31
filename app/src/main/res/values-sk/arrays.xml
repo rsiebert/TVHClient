@@ -36,16 +36,6 @@
         <item>Neď</item>
     </string-array>
 
-    <string-array name="day_long_names">
-        <item>Pondelok</item>
-        <item>Utorok</item>
-        <item>Streda</item>
-        <item>Štvrtok</item>
-        <item>Piatok</item>
-        <item>Sobota</item>
-        <item>Nedeľa</item>
-    </string-array>
-
     <string-array name="dvr_priorities">
         <item>Dôležité</item>
         <item>Vysoká</item>

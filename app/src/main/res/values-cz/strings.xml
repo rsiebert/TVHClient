@@ -12,7 +12,6 @@
     <string name="record_series">Nahrát (Autorec)</string>
     <string name="record_remove">Smazat nahrávku</string>
     <string name="record_remove_all">Smazat všechny nahrávky</string>
-    <string name="record_edit">Upravit nahrávku</string>
     <string name="search_imdb">Hledat v IMDB</string>
     <string name="search_epg">Hledat v programovém průvodci</string>
     <string name="add">Přidat</string>
@@ -22,13 +21,11 @@
     <string name="set_not_active">Deaktivovat</string>
     <string name="edit">Upravit</string>
     <string name="delete">Smazat</string>
-    <string name="connections">Připojení</string>
     <string name="timeframe">Časový rámec</string>
     <string name="genre_color_info">Vysvětlit barvy žánrů</string>
     <string name="send_wol">Probudit</string>
     <string name="select_connection">Vybrat připojení</string>
     <string name="add_connection">Přidat připojení</string>
-    <string name="confirm_cancel">Opravdu chcete zrušit? Všechny změny budou ztraceny!</string>
     <string name="remove">Odstranit</string>
     <string name="delete_connection">Opravdu chcete odstranit připojení \'%s\'?</string>
     <string name="remove_recording">Opravdu chcete smazat nahrávku \'%s\'?</string>
@@ -36,14 +33,11 @@
     <string name="remove_timer_recording">Opravdu chcete smazat načasované nahrávání \'%s\'?</string>
     <string name="remove_all_recordings">Opravdu chcete smazat VŠECHNY nahrávky?</string>
     <string name="cancel_recording">Opravdu chcete zrušit naplánované nahrávání \'%s\'?</string>
-    <string name="cancel_all_recordings">Opravdu chcete zrušit VŠECHNA naplánovaná nahrávání?</string>
     <string name="add_recording">Přidat nové nahrávání</string>
     <string name="cancel_add_recording">Zrušit přidávání nového nahrávání? Všechny hodnoty budou ztraceny.</string>
 
     <string name="pref_manage_connections">Spravovat připojení</string>
     <string name="pref_manage_connections_sum">Nastavit Vaše aktivní připojení k TVHeadend serveru nebo přidat, odebrat a upravit již existující připojení.</string>
-    <string name="pref_connection_details">Podrobnosti připojení</string>
-    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="pref_connections">Připojení</string>
     <string name="pref_name">Jméno připojení</string>
     <string name="pref_name_sum">Zadejte unikátní jméno tohoto připojení</string>
@@ -96,9 +90,6 @@
     <string name="pref_scodec_sum">Určete typ titulků, které použije transcoder.</string>
     <string name="pref_container">Média kontejner</string>
     <string name="pref_container_sum">Určete kontejner média, který se použije pro přepravu audio a video streamů. Matroska je obvykle preferovanou volbou.</string>
-    <string name="pref_playback">Přehrávání</string>
-    <string name="pref_playback_programs_sum">Konfigurace možností přehrávání pro Live-TV programy.</string>
-    <string name="pref_playback_recordings_sum">Konfigurace možností přehrávání nahraných programů.</string>
     <string name="pref_transcode">Překódovat stream</string>
     <string name="pref_transcode_sum">Konvertovat program nebo nahrávku do jiného formátu v průběhu přehrávání (toto musí podporovat TVHeadend server).</string>
     <string name="pref_information">Informace</string>
@@ -158,7 +149,6 @@
     <string name="err_connect">Nelze se připojit k serveru</string>
     <string name="err_con_lost">Připojení k serveru bylo ztraceno</string>
     <string name="err_con_timeout">Časový limit připojení vypršel</string>
-    <string name="err_loading_profiles">Chyba při načítání profilů ze serveru\n%s</string>
 
     <string name="recording_file_missing">Nahraný soubor chybí</string>
     <string name="recording_time_missed">Naplánované nahrávání bylo minuto.</string>
@@ -166,8 +156,6 @@
     <string name="recording_canceled">Nahrávání bylo zrušeno</string>
     <string name="recording_started">Nahrávání začalo</string>
     <string name="recording_completed">Nahrávání dokončeno</string>
-    <string name="recording_started_text">Nahrávání %s bylo započato.</string>
-    <string name="recording_completed_text">Nahrávání %s bylo dokončeno</string>
 
     <string name="wol_send">Úspěšně odeslán Wake on LAN paket na \'%s\'</string>
     <string name="wol_send_broadcast">Úspěšně odeslán Wake on LAN paket jako broadcast na \'%s\'</string>
@@ -202,10 +190,6 @@
     <string name="timer_recordings">Ruční nahrávky</string>
     <string name="is_series_recording">Tato nahrávka je součástí opakovaného nahrávání</string>
     <string name="is_timer_recording">Tato nahrávka byla vytvořena časovačem</string>
-    <string name="no_channels_available">Žádné kanály k dispozici</string>
-    <string name="no_recordings_available">Žádné nahrávky k dispozici</string>
-    <string name="no_recordings_scheduled">Žádné naplánované nahrávky</string>
-    <string name="no_programs_available">Žádné dostupné programy</string>
 
     <string name="recording_enabled">Toto nahrávání je povoleno</string>
     <string name="recording_disabled">Toto nahrávání je zakázáno</string>
@@ -216,9 +200,7 @@
     <string name="channels">Kanály</string>
     <string name="recordings">Nahrávky</string>
     <string name="status">Stav</string>
-    <string name="results">Výsledeků</string>
-    
-    <string name="channel_icon">Ikona kanálu</string>
+
     <string name="status_icon">Ikona stavu</string>
     <string name="title">Název</string>
     <string name="channel">Kanál</string>
@@ -232,30 +214,20 @@
     <string name="content_type">Typ obsahu</string>
     <string name="series_information">Informace o opakování</string>
     <string name="genre_color_list">Seznam barev žánrů a jejich význam.</string>
-    <string name="retention">Zdržení</string>
     <string name="priority">Priorita</string>
-    <string name="path">Cesta</string>
-    <string name="directory">Složka</string>
-    <string name="owner">Vlastník</string>
-    <string name="creator">Tvůrce</string>
-    <string name="approx_time">Minuty od půlnoci</string>
 
     <string name="start_time">Čas začátku</string>
     <string name="stop_time">Čas konce</string>
-    <string name="start_window">Okno začátku</string>
     <string name="extra_start_time">Minuty navíc před začátkem (pre-time)</string>
     <string name="extra_stop_time">Minuty navíc po skončení (post-time)</string>
     <string name="min_duration">Minimální trvání</string>
     <string name="max_duration">Maximální trvání</string>
     <string name="from_to_time">Od %1$s do %2$s</string>
     <string name="recording_time">Čas nahrávání</string>
-    <string name="series_recording_add_error">Nelze přidat toto opakované nahrávání.</string>
-    <string name="time_recording_add_error">Nelze přidat toto časové nahrávání.</string>
     <string name="error_empty_title">Název nesmí být prázdný!</string>
 
     <string name="nothing">Žádné</string>
     <string name="loading">Načítám&#8230;</string>
-    <string name="loading_channel">Načítám kanál %s</string>
     <string name="updating">Aktualizování&#8230;</string>
     <string name="all_channels">Všechny kanály</string>
     <string name="season">Sezóna</string>

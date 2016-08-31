@@ -11,7 +11,6 @@
     <string name="record_once">Opnemen</string>
     <string name="record_remove">Verwijder opname</string>
     <string name="record_remove_all">Verwijder alle opnames</string>
-    <string name="record_edit">Bewerken opname</string>
     <string name="search_imdb">Zoek op IMDB</string>
     <string name="search_epg">Zoek in programma gids</string>
     <string name="add">Toevoegen</string>
@@ -21,21 +20,18 @@
     <string name="set_not_active">Deactiveer</string>
     <string name="edit">Wijzig</string>
     <string name="delete">Verwijder</string>
-    <string name="connections">Connecties</string>
     <string name="timeframe">Periode</string>
     <string name="genre_color_info">Genre kleuren uitleg</string>
     <string name="send_wol">Wake On Lan</string>
     <string name="select_connection">Selecteer connectie</string>
     <string name="add_connection">Connectie toevoegen</string>
-    <string name="confirm_cancel">Vergeet waarden? Alle wijzigen zullen verloren gaan.</string>
     <string name="remove">Verwijderen</string>
     <string name="delete_connection">Weet je zeker dat je connectie \'%s\' wilt verwijderen?</string>
     <string name="remove_recording">Weet je zeker dat je opname \'%s\' wilt verwijderen?</string>
     <string name="remove_all_recordings">Weet je zeker dat je ALLE opnames wilt verwijderen?</string>
     <string name="cancel_recording">Weet je zeker dat je geplande opname \'%s\' wilt annuleren?</string>
-	<string name="cancel_all_recordings">Weet je zeker dat je ALLE geplande opnames wilt annuleren?</string>
 
-	<string name="pref_manage_connections">Beheer connecties</string>
+    <string name="pref_manage_connections">Beheer connecties</string>
     <string name="pref_manage_connections_sum">Selecteer een actieve connectie naar een TVHeadend server of maak, wijzig of verwijder connecties.</string>
     <string name="pref_connections">Connecties</string>
     <string name="pref_name">Connectienaam</string>
@@ -87,9 +83,6 @@
     <string name="pref_scodec_sum">Definieer het ondertitel type dat de transcoder zal gebruikene.</string>
     <string name="pref_container">Media container</string>
     <string name="pref_container_sum">Definieer de media container dat gebruikt zal worden voor het transport van geluid en video. Matroshka heeft meestal de voorkeur.</string>
-    <string name="pref_playback">Afspelen</string>
-    <string name="pref_playback_programs_sum">Stel afspeel opties in voor Live-TV programma\'s.</string>
-    <string name="pref_playback_recordings_sum">Stel afspeel opties in voor je opgenomen programma\'s.</string>
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Converteer het programma of opnamen naar een ander formaat tijdens afspelen. (Dit moet wel ondersteund worden door de TVHeadend server)</string>
     <string name="pref_information">Informatie</string>
@@ -167,9 +160,7 @@
     <string name="channels">Kanalen</string>
     <string name="recordings">Opnames</string>
     <string name="status">Status</string>
-    <string name="results">Resultaten</string>
-    
-    <string name="channel_icon">Kanaal icoon</string>
+
     <string name="status_icon">Status icoon</string>
     <string name="title">Titel</string>
     <string name="channel">Kanaal</string>
@@ -186,7 +177,6 @@
 
     <string name="nothing">Niets</string>
     <string name="loading">Laden&#8230;</string>
-    <string name="loading_channel">Kanaal %s laden</string>
     <string name="updating">Bijwerken&#8230;</string>
     <string name="all_channels">Alle kanalen</string>
     

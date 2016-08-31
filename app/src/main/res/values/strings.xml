@@ -10,7 +10,6 @@
     <string name="connection_recovered">Connection to the cast device is recovered</string>
     <string name="cast_profile_not_set">No casting profile was selected in the settings. This is required before casting can be used.</string>
     <string name="cast_profile_invalid">The selected profile \'%1$s\' is not the recommended \'%2$s\' profile. Please note that casting might not work correctly.</string>
-    <string name="proceed">Proceed</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Settings to enable and configure casting Live-TV or recordings to your TV. Please note that this requires tvheadend with transcoding enabled and a server which is powerful enough to transcode the data in realtime.</string>
     <string name="pref_enable_casting">Enable casting</string>
@@ -34,7 +33,6 @@
     <string name="record_remove">Remove recording</string>
     <string name="record_remove_all">Remove all recordings</string>
     <string name="confirm_remove_all">Are you sure you want to remove all recordings?</string>
-    <string name="record_edit">Edit recording</string>
     <string name="search_imdb">Search on IMDB</string>
     <string name="search_epg">Search the program guide</string>
     <string name="add">Add</string>
@@ -45,17 +43,14 @@
     <string name="set_not_active">Deactivate</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-    <string name="connections">Connections</string>
     <string name="timeframe">Timeframe</string>
     <string name="genre_color_info">Explain genre colors</string>
     <string name="send_wol">Wake up</string>
     <string name="select_connection">Select connection</string>
     <string name="add_connection">Add connection</string>
     <string name="edit_connection">Edit connection</string>
-    <string name="confirm_cancel">Do you really want to cancel? All changes will be discarded!</string>
     <string name="remove">Remove</string>
     <string name="discard">Discard</string>
-    <string name="confirm_discard_profile">Discard profile values? All changes will be lost.</string>
     <string name="confirm_discard_connection">Discard connection values? All changes will be lost.</string>
     <string name="delete_connection">Do you really want to remove the connection \'%s\'?</string>
     <string name="remove_recording">Do you really want to remove the recording \'%s\'?</string>
@@ -63,10 +58,8 @@
     <string name="remove_timer_recording">Do you really want to remove the timer recording \'%s\'?</string>
     <string name="remove_all_recordings">Do you really want to remove ALL recordings?</string>
     <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
-    <string name="cancel_all_recordings">Do you really want to remove ALL scheduled recordings?</string>
     <string name="stop_recording">Do you really want to stop the running recording \'%s\'?</string>
     <string name="add_title">The title for the recording</string>
-    <string name="add_subtitle">The subtitle for the recording</string>
     <string name="add_name">Name for this entry</string>
     <string name="add_recording">Add new recording</string>
     <string name="edit_recording">Edit recording</string>
@@ -80,8 +73,6 @@
 
     <string name="pref_manage_connections">Manage connections</string>
     <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
-    <string name="pref_connection_details">Connection details</string>
-    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="pref_connections">Connections</string>
     <string name="pref_name">Connection name</string>
     <string name="pref_name_sum">Enter a unique name of the connection</string>
@@ -138,9 +129,6 @@
     <string name="pref_scodec_sum">Define the subtitle type that the transcoder shall use.</string>
     <string name="pref_container">Media container</string>
     <string name="pref_container_sum">Define the media container that shall be used to transport the audio and video streams. Matroshka is usually the preferred choice.</string>
-    <string name="pref_playback">Playback</string>
-    <string name="pref_playback_programs_sum">Configure playback options for the Live-TV programs.</string>
-    <string name="pref_playback_recordings_sum">Configure playback options for your recorded programs.</string>
     <string name="pref_transcode">Transcode stream</string>
     <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
     <string name="pref_information">Information</string>
@@ -229,7 +217,6 @@
     <string name="err_con_lost">Lost connection to server</string>
     <string name="err_con_timeout">Connection timeout</string>
     <string name="err_no_network">No network connection active</string>
-    <string name="err_loading_profiles">Error loading profiles from server\n%s</string>
     <string name="error_adding_recording">Recording was not added! %s</string>
     <string name="error_removing_recording">Recording was not removed! %s</string>
     <string name="error_updating_recording">Recording was not updated! %s</string>
@@ -244,8 +231,6 @@
     <string name="recording_started">Recording started</string>
     <string name="recording_starts_in">Recording starts in %d min.</string>
     <string name="recording_completed">Recording completed</string>
-    <string name="recording_started_text">The recording %s has been started</string>
-    <string name="recording_completed_text">The recording %s has been completed</string>
 
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
@@ -281,10 +266,6 @@
     <string name="timer_recordings">Timer recordings</string>
     <string name="is_series_recording">This recording is part of a series recording</string>
     <string name="is_timer_recording">This recording was created by a timer</string>
-    <string name="no_channels_available">No channels available</string>
-    <string name="no_recordings_available">No recordings available</string>
-    <string name="no_recordings_scheduled">No recordings are scheduled</string>
-    <string name="no_programs_available">No programs available</string>
 
     <string name="recording_enabled">This recording is enabled</string>
     <string name="recording_disabled">This recording is disabled</string>
@@ -295,9 +276,7 @@
     <string name="channels">Channels</string>
     <string name="recordings">Recordings</string>
     <string name="status">Status</string>
-    <string name="results">Results</string>
-    
-    <string name="channel_icon">Channel icon</string>
+
     <string name="status_icon">Status icon</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
@@ -312,14 +291,8 @@
     <string name="content_type">Content type</string>
     <string name="series_information">Series information</string>
     <string name="genre_color_list">List of genre colors and their meaning.</string>
-    <string name="retention">Retention</string>
     <string name="priority">Priority</string>
     <string name="dvr_config">Recording profile</string>
-    <string name="path">Path</string>
-    <string name="directory">Directory</string>
-    <string name="owner">Owner</string>
-    <string name="creator">Creator</string>
-    <string name="approx_time">Minutes from midnight</string>
 
     <string name="current_time">Current time</string>
     <string name="start_time">Start time</string>
@@ -328,7 +301,6 @@
     <string name="enable_time_window">Activate times for recording</string>
     <string name="start_after_time">Beginn</string>
     <string name="start_before_time">End</string>
-    <string name="start_window">Start window</string>
     <string name="extra_start_time">Extra start minutes (pre-time)</string>
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>
     <string name="min_duration">Minimum duration of the program</string>
@@ -336,11 +308,7 @@
     <string name="duration_sum">Duration in minutes (0 = any)</string>
     <string name="from_to_time">From %1$s to %2$s</string>
     <string name="recording_time">Recording Time</string>
-    <string name="series_recording_add_error">Can\'t add this series recording.</string>
-    <string name="time_recording_add_error">Can\'t add this manual recording.</string>
     <string name="error_empty_title">The title must no be empty!</string>
-    <string name="error_start_stop_time">The stop time must be after the start time!</string>
-    <string name="error_no_channel">Please select a channel!</string>
     <string name="duplicate_detection">Detect duplicate shows</string>
 
     <string name="subscription_error">Subscription error: %1$s</string>
@@ -350,7 +318,6 @@
 
     <string name="nothing">Nothing</string>
     <string name="loading">Loading&#8230;</string>
-    <string name="loading_channel">Loading channel %s</string>
     <string name="updating">Updating&#8230;</string>
     <string name="all_channels">All channels</string>
     <string name="no_channel">No channel</string>
@@ -371,8 +338,6 @@
     <string name="select_time">Show programs that are running at the selected time.</string>
     <string name="select_timeframe">Show the program guide for the selected date and time.</string>
     <string name="currently_recording">Currently recording</string>
-    <string name="select_start_time">Select start time</string>
-    <string name="select_stop_time">Select end time</string>
     <string name="select_channel">Select channel</string>
     <string name="select_priority">Select priority</string>
     <string name="select_dvr_config">Select recording profile</string>

@@ -25,10 +25,6 @@
         <item quantity="one">%d Mislukt</item>
         <item quantity="other">%d Mislukt</item>
     </plurals>
-    <plurals name="days">
-        <item quantity="one">%d dag</item>
-        <item quantity="other">%d dagen</item>
-    </plurals>
     <plurals name="searching_programs">
         <item quantity="one">Zoeken %d Programma</item>
         <item quantity="other">Zoeken %d Programma\'s</item>

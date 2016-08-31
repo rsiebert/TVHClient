@@ -36,16 +36,6 @@
         <item>Dim</item>
     </string-array>
 
-    <string-array name="day_long_names">
-        <item>Lundi</item>
-        <item>Mardi</item>
-        <item>Mercredi</item>
-        <item>jeudi</item>
-        <item>Vendredi</item>
-        <item>Samedi</item>
-        <item>Dimanche</item>
-    </string-array>
-
     <string-array name="dvr_priorities">
         <item>Important</item>
         <item>Haute</item>

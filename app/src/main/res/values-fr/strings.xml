@@ -10,7 +10,6 @@
     <string name="connection_recovered">La connexion a l\'appareil de diffusion est rétablie</string>
     <string name="cast_profile_not_set">Aucun profil de diffusion n\'a été sélectionné dans les paramètres. Ceci est nécessaire pour pouvoir l\'utiliser.</string>
     <string name="cast_profile_invalid">Le profil sélectionné \'%1$s\' n\'est pas celui recommandé \'%2$s\'. Veuillez noter que la diffusion peut ne pas fonctionner.</string>
-    <string name="proceed">En cours</string>
     <string name="pref_casting">Diffusion</string>
     <string name="pref_casting_sum">Paramètres pour activer et configurer la diffusion de la TV ou des enregistrements sur votre TV. Veuillez noter que cela demande à ce que le transcoding soit activé sur tvheadend et que le serveur soit assez puissant pour transcoder en temps réel.</string>
     <string name="pref_enable_casting">Activer la diffusion</string>
@@ -34,7 +33,6 @@
     <string name="record_remove">Effacer un enregistrement</string>
     <string name="record_remove_all">Effacer tous les enregistrements</string>
     <string name="confirm_remove_all">Etes-vous sur de vouloir effacer tous les enregistrements?</string>
-    <string name="record_edit">Modifier l\'enregistrement</string>
     <string name="search_imdb">Rechercher sur IMDB</string>
     <string name="search_epg">Recherche dans le guide des programmes</string>
     <string name="add">Ajouter</string>
@@ -45,17 +43,14 @@
     <string name="set_not_active">Désactiver</string>
     <string name="edit">Editer</string>
     <string name="delete">Effacer</string>
-    <string name="connections">Connexions</string>
     <string name="timeframe">Temps</string>
     <string name="genre_color_info">Explication des couleurs</string>
     <string name="send_wol">Allume</string>
     <string name="select_connection">choisir une connexion</string>
     <string name="add_connection">Ajouter une connexion</string>
     <string name="edit_connection">Editer la connexion</string>
-    <string name="confirm_cancel">Effacer les valeurs? Tous les changements vont être perdu.</string>
     <string name="remove">Supprimer</string>
     <string name="discard">Abandonner</string>
-    <string name="confirm_discard_profile">Abandonner les valeurs du profil? Tous les changements seront perdus.</string>
     <string name="confirm_discard_connection">Abandonner les valeurs de la connexion? Tous les changements seront perdus.</string>
     <string name="delete_connection">Voulez-vous vraiment effacer la connexion \'%s\'?</string>
     <string name="remove_recording">Voulez-vous vraiment effacer l\'enregistrement \'%s\'?</string>
@@ -63,10 +58,8 @@
     <string name="remove_timer_recording">Voulez-vous vraiment effacer l\'enregistrement horaire \'%s\'?</string>
     <string name="remove_all_recordings">Voulez-vous vraiment effacer tous les enregistrements?</string>
     <string name="cancel_recording">Voulez-vous vraiment annuler l\'enregistrement \'%s\'?</string>
-    <string name="cancel_all_recordings">Voulez-vous vraiment annuler tous les enregistrements?</string>
-	<string name="stop_recording">Voulez-vous vraiment arrêter l\'enregistrement \'%s\' en cours ?</string>
+    <string name="stop_recording">Voulez-vous vraiment arrêter l\'enregistrement \'%s\' en cours ?</string>
     <string name="add_title">Ajouter un titre</string>
-    <string name="add_subtitle">Ajouter un sous-titre</string>
     <string name="add_name">Ajouter un nom</string>
     <string name="add_recording">Ajouter un nouvel enregistrement</string>
     <string name="edit_recording">Editer un enregistrement</string>
@@ -80,8 +73,6 @@
 
     <string name="pref_manage_connections">Gestions des connexions</string>
     <string name="pref_manage_connections_sum">Choisir votre connexion active au serveur TVHeadend ou ajouter, éditer ou effacer des connexions.</string>
-    <string name="pref_connection_details">Détails de la connexion</string>
-    <string name="pref_connection_wol">Wake on LAN</string>
     <string name="pref_connections">Connexions</string>
     <string name="pref_name">Nom de la connexion</string>
     <string name="pref_name_sum">Entrer un nom unique pour la connexion</string>
@@ -138,9 +129,6 @@
     <string name="pref_scodec_sum">Définir le type de sous-titre que le transcoder devrait utiliser.</string>
     <string name="pref_container">Conteneur de média</string>
     <string name="pref_container_sum">Définir le conteneur de média qui devrait être utilisé pour le transport des flux audio et vidéo. Matroshka est habituellement le meilleur choix.</string>
-    <string name="pref_playback">Lecture</string>
-    <string name="pref_playback_programs_sum">Configure les options de lecture pour les programmes en direct.</string>
-    <string name="pref_playback_recordings_sum">Configure les options de lecture pour les programmes enregistrés.</string>
     <string name="pref_transcode">Transcodage des flux</string>
     <string name="pref_transcode_sum">Convertir les émissions ou enregistrements dans un autre format durant la lecture. (Cela doit être supporté par le serveur TVHeadend)</string>
     <string name="pref_information">Information</string>
@@ -229,7 +217,6 @@
     <string name="err_con_lost">Connexion au serveur perdue</string>
     <string name="err_con_timeout">Connection en erreur</string>
     <string name="err_no_network">Pas de connexion réseau active</string>
-    <string name="err_loading_profiles">Erreur lors du chargement des profils depuis le serveur\n%s</string>
     <string name="error_adding_recording">L\'enregistrement n\'a pas été ajouté! %s</string>
     <string name="error_removing_recording">L\'enregistrement n\'a pas été supprimé! %s</string>
     <string name="error_updating_recording">L\'enregistrement n\'a pas été mis à jour! %s</string>
@@ -244,8 +231,6 @@
     <string name="recording_started">L\'enregistrement a commencé</string>
 	<string name="recording_starts_in">L\'enregistrement commencera dans %d min.</string>
     <string name="recording_completed">L\'enregistrement est terminé</string>
-    <string name="recording_started_text">L\'enregistrement %s est commencé</string>
-    <string name="recording_completed_text">L\'enregistrement %s est terminé</string>
 
     <string name="wol_send">Paquet de WoL envoyé avec succès à \'%s\'</string>
     <string name="wol_send_broadcast">Paquet de WoL en broadcast envoyé avec succès à \'%s\'</string>
@@ -280,10 +265,6 @@
     <string name="timer_recordings">Enregistrements manuel</string>
     <string name="is_series_recording">Cet enregistrement fait partie d\'enregistrements auto</string>
     <string name="is_timer_recording">Cet enregistrement a été programmé</string>
-    <string name="no_channels_available">Aucune chaîne disponible</string>
-    <string name="no_recordings_available">Aucun enregistrement disponible</string>
-    <string name="no_recordings_scheduled">Aucun enregistrement programmé</string>
-    <string name="no_programs_available">Pas de programmes disponible</string>
 
     <string name="recording_enabled">Cet enregistrement est activé</string>
     <string name="recording_disabled">Cet enregistrement est désactivé</string>
@@ -294,9 +275,7 @@
     <string name="channels">Chaines</string>
     <string name="recordings">Enregistrements</string>
     <string name="status">Etat</string>
-    <string name="results">Résultats</string>
 
-    <string name="channel_icon">Logo de la chaine</string>
     <string name="status_icon">Icone d\'état</string>
     <string name="title">Titre</string>
     <string name="subtitle">Sous-titre</string>
@@ -311,23 +290,16 @@
     <string name="content_type">Contenu</string>
     <string name="series_information">Informations</string>
     <string name="genre_color_list">Liste des couleurs de genre et leurs significations.</string>
-    <string name="retention">Rétention</string>
     <string name="priority">Priorité</string>
 	<string name="dvr_config">Profil d\'enregistrement</string>
-    <string name="path">Chemin</string>
-    <string name="directory">Répertoire</string>
-    <string name="owner">Propriétaire</string>
-    <string name="creator">Créateur</string>
-    <string name="approx_time">Minutes depuis minuit</string>
 
-	<string name="current_time">Heure courante</string>
+    <string name="current_time">Heure courante</string>
     <string name="start_time">Heure de début</string>
     <string name="stop_time">Heure de fin</string>
     <string name="time_window">Fenêtre de temps pour démarrer l\'enregistrement</string>
     <string name="enable_time_window">Activer les horaires pour l\'enregistrement</string>
     <string name="start_after_time">Début</string>
     <string name="start_before_time">Fin</string>
-    <string name="start_window">Fenêtre de démarrage</string>
     <string name="extra_start_time">Minutes avant le début (pre-time)</string>
     <string name="extra_stop_time">Minutes après la fin (post-time)</string>
     <string name="min_duration">Durée minimum</string>
@@ -335,12 +307,8 @@
     <string name="duration_sum">Durée en minutes (0 = tout)</string>
     <string name="from_to_time">De %1$s a %2$s</string>
     <string name="recording_time">Temps d\'enregistrement</string>
-    <string name="series_recording_add_error">Impossible d\'ajouter cet enregistrement auto.</string>
-    <string name="time_recording_add_error">Impossible d\'ajouter cet enregistrement programmé.</string>
     <string name="error_empty_title">Le titre ne peut pas être vide!</string>
-    <string name="error_start_stop_time">L\'heure de fin doit être après l\'heure de début!</string>
-    <string name="error_no_channel">Veuillez sélectionner une chaine!</string>
-	<string name="duplicate_detection">Détecte les programmes en double</string>
+    <string name="duplicate_detection">Détecte les programmes en double</string>
 
     <string name="subscription_error">Erreur de souscription: %1$s</string>
     <string name="stream_errors">Erreur de flux: %1$d</string>
@@ -349,7 +317,6 @@
 
     <string name="nothing">Rien</string>
     <string name="loading">Chargement&#8230;</string>
-    <string name="loading_channel">Chargement de la chaine %s</string>
     <string name="updating">Mise à jour&#8230;</string>
     <string name="all_channels">Toutes les chaines</string>
     <string name="no_channel">Pas de chaine</string>
@@ -370,8 +337,6 @@
 	<string name="select_time">Montre les programmes en cours à l\'heure choisie.</string>
     <string name="select_timeframe">Guide des programmes pour la date et l\'heure sélectionnée.</string>
     <string name="currently_recording">En cours d\'enregistrement</string>
-    <string name="select_start_time">Sélectionner une heure de démarrage</string>
-    <string name="select_stop_time">Sélectionner une heure de fin</string>
     <string name="select_channel">Sélectionner une chaine</string>
     <string name="select_priority">Sélectionner une priorité</string>
 	<string name="select_dvr_config">Selectionner le profil d\'enregistrement</string>

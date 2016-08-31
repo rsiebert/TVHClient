@@ -31,25 +31,10 @@
         <item quantity="few">%d neúspešné nahrávky</item>
         <item quantity="other">%d neúspešných nahráviek</item>
     </plurals>
-    <plurals name="series_recordings">
-        <item quantity="one">%d sériová nahrávka</item>
-        <item quantity="few">%d sériové nahrávky</item>
-        <item quantity="other">%d sériových nahráviek</item>
-    </plurals>
-    <plurals name="timer_recordings">
-        <item quantity="one">%d ručná nahrávka</item>
-        <item quantity="few">%d ručné nahrávky</item>
-        <item quantity="other">%d ručných nahráviek</item>
-    </plurals>
     <plurals name="results">
         <item quantity="one">%d výsledok</item>
         <item quantity="few">%d výsledky</item>
         <item quantity="other">%d výsledkov</item>
-    </plurals>
-    <plurals name="days">
-        <item quantity="one">%d deň</item>
-        <item quantity="few">%d dni</item>
-        <item quantity="other">%d dní</item>
     </plurals>
     <plurals name="searching_programs">
         <item quantity="one">Vyhľadávanie %d programu</item>

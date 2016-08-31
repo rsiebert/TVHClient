@@ -37,24 +37,6 @@
         <item quantity="many">%d Nieprawidłowych nagrań</item>
         <item quantity="other">%d Nieprawidłowych nagrań</item>
     </plurals>
-    <plurals name="series_recordings">
-        <item quantity="one">%d Seryjne nagranie</item>
-        <item quantity="few">%d Seryjne nagrania</item>
-        <item quantity="many">%d Seryjnych nagrań</item>
-        <item quantity="other">%d Seryjnych nagrań</item>
-    </plurals>
-    <plurals name="timer_recordings">
-        <item quantity="one">%d Ręczne nagranie</item>
-        <item quantity="few">%d Ręczne nagrania</item>
-        <item quantity="many">%d Ręcznych nagrań</item>
-        <item quantity="other">%d Ręcznych nagrań</item>
-    </plurals>
-    <plurals name="days">
-        <item quantity="one">%d dzień</item>
-        <item quantity="few">%d dni</item>
-        <item quantity="many">%d dni</item>
-        <item quantity="other">%d dni</item>
-    </plurals>
     <plurals name="searching_programs">
         <item quantity="one">Wyszukano %d program</item>
         <item quantity="few">Wyszukano %d programy</item>

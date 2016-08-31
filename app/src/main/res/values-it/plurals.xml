@@ -25,10 +25,6 @@
         <item quantity="one">%d Registrazione fallita</item>
         <item quantity="other">%d Registrazioni fallite</item>
     </plurals>
-    <plurals name="days">
-        <item quantity="one">%d giorno</item>
-        <item quantity="other">%d giorni</item>
-    </plurals>
     <plurals name="searching_programs">
         <item quantity="one">La ricerca %d Programma</item>
         <item quantity="other">La ricerca %d Programmi</item>

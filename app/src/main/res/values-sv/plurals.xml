@@ -25,10 +25,6 @@
         <item quantity="one">%d Misslyckade</item>
         <item quantity="other">%d Misslyckade</item>
     </plurals>
-    <plurals name="days">
-        <item quantity="one">%d dag</item>
-        <item quantity="other">%d dagar</item>
-    </plurals>
     <plurals name="searching_programs">
         <item quantity="one">Söka %d Program</item>
         <item quantity="other">Söka %d Program</item>
