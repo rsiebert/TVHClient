@@ -25,7 +25,6 @@ import android.preference.PreferenceManager;
 import android.app.AlertDialog;
 import android.util.Log;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;

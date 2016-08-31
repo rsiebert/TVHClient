@@ -24,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.R.string;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.Channel;
