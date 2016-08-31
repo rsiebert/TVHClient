@@ -816,7 +816,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case R.id.menu_wol:
             final Connection conn = dbh.getSelectedConnection();
             if (conn != null) {
-                WakeOnLanTask task= new WakeOnLanTask(this, conn, coordinatorLayout);
+                WakeOnLanTask task= new WakeOnLanTask(this, conn);
                 task.execute();
             }
             return true;
