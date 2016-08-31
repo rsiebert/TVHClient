@@ -43,7 +43,8 @@
                         android:layout_marginEnd="16dp"
                         android:layout_marginRight="16dp"
                         android:padding="8dp"
-                        android:text="@string/play" />
+                        android:text="@string/play"
+                        style="@style/Widget.AppCompat.Button.Borderless"/>
 
                     <Button
                         android:id="@+id/menu_edit"
@@ -53,7 +54,8 @@
                         android:layout_marginRight="16dp"
                         android:padding="8dp"
                         android:text="@string/edit"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        style="@style/Widget.AppCompat.Button.Borderless"/>
 
                     <Button
                         android:id="@+id/menu_record_remove"
@@ -61,16 +63,18 @@
                         android:layout_height="fill_parent"
                         android:padding="8dp"
                         android:text="@string/remove"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        style="@style/Widget.AppCompat.Button.Borderless"/>
                 </LinearLayout>
 
                 <Button
-                        android:id="@+id/menu_download"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:padding="8dp"
-                        android:text="@string/download"
-                        android:visibility="gone" />
+                    android:id="@+id/menu_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:padding="8dp"
+                    android:text="@string/download"
+                    android:visibility="gone"
+                    style="@style/Widget.AppCompat.Button.Borderless"/>
 
                 <TextView
                     android:id="@+id/is_series_recording"

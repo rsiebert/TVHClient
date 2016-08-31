@@ -47,7 +47,8 @@
                             android:layout_marginEnd="16dp"
                             android:layout_marginRight="16dp"
                             android:padding="8dp"
-                            android:text="@string/play" />
+                            android:text="@string/play"
+                            style="@style/Widget.AppCompat.Button.Borderless"/>
 
                         <Button
                             android:id="@+id/menu_record_remove"
@@ -55,7 +56,8 @@
                             android:layout_height="fill_parent"
                             android:padding="8dp"
                             android:text="@string/remove"
-                            android:visibility="gone" />
+                            android:visibility="gone"
+                            style="@style/Widget.AppCompat.Button.Borderless"/>
 
                     </LinearLayout>
 
@@ -72,14 +74,16 @@
                             android:layout_marginEnd="16dp"
                             android:layout_marginRight="16dp"
                             android:padding="8dp"
-                            android:text="@string/record_once" />
+                            android:text="@string/record_once"
+                            style="@style/Widget.AppCompat.Button.Borderless"/>
 
                         <Button
                             android:id="@+id/menu_record_series"
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
                             android:padding="8dp"
-                            android:text="@string/record_series" />
+                            android:text="@string/record_series"
+                            style="@style/Widget.AppCompat.Button.Borderless"/>
                     </LinearLayout>
                 </LinearLayout>
 
