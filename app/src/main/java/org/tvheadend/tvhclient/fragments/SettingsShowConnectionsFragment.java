@@ -136,7 +136,9 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         adapter.notifyDataSetChanged();
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.settings));
-            actionBarInterface.setActionBarSubtitle(getResources().getQuantityString(R.plurals.number_of_connections, adapter.getCount()));
+            actionBarInterface.setActionBarSubtitle(
+                    getResources().getQuantityString(R.plurals.number_of_connections,
+                            adapter.getCount(), adapter.getCount()));
         }
     }
 
@@ -236,7 +238,9 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                                 adapter.notifyDataSetChanged();
                                 adapter.sort();
                                 if (actionBarInterface != null) {
-                                    actionBarInterface.setActionBarSubtitle(getResources().getQuantityString(R.plurals.number_of_connections, adapter.getCount()));
+                                    actionBarInterface.setActionBarSubtitle(
+                                            getResources().getQuantityString(R.plurals.number_of_connections,
+                                                    adapter.getCount(), adapter.getCount()));
                                 }
                                 if (settingsInterface != null) {
                                     settingsInterface.reconnect();
