@@ -252,12 +252,9 @@
     <string name="no_transmission">Keine Übertragung</string>
     <string name="no_data">Keine Programme verfügbar</string>
     <string name="minutes">%d Min</string>
-    <string name="days">%d Tage</string>
     <string name="not_set">Nicht gesetzt</string>
 
     <string name="search_hint">Suche im TV-Programm</string>
-    <string name="searching_programs">Durchsuche %d Programme</string>
-    <string name="searching_recordings">Durchsuche %d Aufnahmen</string>
     <string name="two_days_ago">Vor 2 Tagen</string>
     <string name="yesterday">Gestern</string>
     <string name="today">Heute</string>
@@ -383,7 +380,6 @@
     <string name="no_connection_available_advice">Keine Verbindung definiert. Mindestens eine muss vorhanden sein.</string>
     <string name="no_connection_active">Keine Verbindung aktiv</string>
     <string name="no_connection_active_advice">Mindestens eine Verbindung existiert, ist aber nicht aktiviert.</string>
-    <string name="number_of_connections">%d Verbindung(en) verfügbar</string>
 
     <!-- Unlcoker related -->
     <string name="unlocker_purchase_successful">Kauf erfolgreich! Vielen Dank! Alle Funktionen sind nun freigeschaltet.</string>

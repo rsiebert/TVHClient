@@ -49,5 +49,28 @@
         <item quantity="many">%d Ręcznych nagrań</item>
         <item quantity="other">%d Ręcznych nagrań</item>
     </plurals>
-
+    <plurals name="days">
+        <item quantity="one">%d dzień</item>
+        <item quantity="few">%d dni</item>
+        <item quantity="many">%d dni</item>
+        <item quantity="other">%d dni</item>
+    </plurals>
+    <plurals name="searching_programs">
+        <item quantity="one">Wyszukano %d program</item>
+        <item quantity="few">Wyszukano %d programy</item>
+        <item quantity="many">Wyszukano %d programów</item>
+        <item quantity="other">Wyszukano %d programów</item>
+    </plurals>
+    <plurals name="searching_recordings">
+        <item quantity="one">Wyszukiwanie %d nagranie</item>
+        <item quantity="few">Wyszukiwanie %d nagrania</item>
+        <item quantity="many">Wyszukiwanie %d nagrań</item>
+        <item quantity="other">Wyszukiwanie %d nagrań</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d połączenie dostępne</item>
+        <item quantity="few">%d połączenia dostępne</item>
+        <item quantity="many">%d portów dostępne</item>
+        <item quantity="other">%d połączeń dostępne</item>
+    </plurals>
 </resources>

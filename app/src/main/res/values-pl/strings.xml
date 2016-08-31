@@ -255,12 +255,9 @@
     <string name="no_transmission">Brak transmisji</string>
     <string name="no_data">Brak dostępnych danych dla kanału</string>
     <string name="minutes">%d min</string>
-    <string name="days">%d dni</string>
     <string name="not_set">Nie ustawiono</string>
 
     <string name="search_hint">Szukaj w EPG</string>
-    <string name="searching_programs">Wyszukano %d program(ów)</string>
-    <string name="searching_recordings">Wyszukiwanie %d nagrań</string>
     <string name="two_days_ago">Dwa dni temu</string>
     <string name="yesterday">Wczoraj</string>
     <string name="today">Dzisiaj</string>
@@ -382,7 +379,6 @@
     <string name="no_connection_available_advice">Brak połaczenia. Musisz dodać conajmniej jedno z menu ustawień.</string>
     <string name="no_connection_active">Brak aktywnych połączeń</string>
     <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefioniowane, ale nie jest aktywowane.</string>
-    <string name="number_of_connections">%d połączenie(a) dostępne</string>
 
     <!-- Unlocker related -->
     <string name="unlocker_purchase_successful">Zakup udany! Dziękujemy za wsparcie! Wszystkie funkcje są teraz dostępne.</string>

@@ -25,5 +25,20 @@
         <item quantity="one">%d Mislukt</item>
         <item quantity="other">%d Mislukt</item>
     </plurals>
-
+    <plurals name="days">
+        <item quantity="one">%d dag</item>
+        <item quantity="other">%d dagen</item>
+    </plurals>
+    <plurals name="searching_programs">
+        <item quantity="one">Zoeken %d Programma</item>
+        <item quantity="other">Zoeken %d Programma\'s</item>
+    </plurals>
+    <plurals name="searching_recordings">
+        <item quantity="one">Zoeken %d Opname</item>
+        <item quantity="other">Zoeken %d Opnames</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d verbinding beschikbaar</item>
+        <item quantity="other">%d verbindingen beschikbaar</item>
+    </plurals>
 </resources>

@@ -199,9 +199,11 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             public void run() {
                 adapter.getFilter().filter(query);
                 if (recording == null) {
-                    actionBar.setSubtitle(getString(R.string.searching_programs, adapter.getFullCount()));
+                    actionBar.setSubtitle(getResources().getQuantityString(
+                            R.plurals.searching_programs, adapter.getFullCount()));
                 } else {
-                    actionBar.setSubtitle(getString(R.string.searching_recordings, adapter.getFullCount()));
+                    actionBar.setSubtitle(getResources().getQuantityString(
+                            R.plurals.searching_recordings, adapter.getFullCount()));
                 }
                 handlerRunning  = false;
             }

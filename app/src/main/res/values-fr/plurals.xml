@@ -25,4 +25,20 @@
         <item quantity="one">%d Echec</item>
         <item quantity="other">%d Echecs</item>
     </plurals>
+    <plurals name="days">
+        <item quantity="one">%d jour</item>
+        <item quantity="other">%d jours</item>
+    </plurals>
+    <plurals name="searching_programs">
+        <item quantity="one">Recherche %d programme</item>
+        <item quantity="other">Recherche %d programmes</item>
+    </plurals>
+    <plurals name="searching_recordings">
+        <item quantity="one">Recherche de l\'enregistrement %d</item>
+        <item quantity="other">Recherche de l\'enregistrements %d</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d connexion disponible</item>
+        <item quantity="other">%d connexions disponibles</item>
+    </plurals>
 </resources>

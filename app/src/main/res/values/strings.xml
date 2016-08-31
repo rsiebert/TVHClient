@@ -98,7 +98,7 @@
     <string name="pref_port_error_empty">The port number must not be empty.</string>
     <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
     <string name="pref_streaming_port">Port for media streaming</string>
-    <string name="pref_streaming_port_sum">Port %d will be used for media streaming. The default port is 9981 which is usually fine to use.</string>
+    <string name="pref_streaming_port_sum" tools:ignore="PluralsCandidate">Port %d will be used for media streaming. The default port is 9981 which is usually fine to use.</string>
     <string name="pref_user">Username</string>
     <string name="pref_user_sum">Enter username</string>
     <string name="pref_pass">Password</string>
@@ -107,7 +107,7 @@
     <string name="pref_wol_address">MAC address</string>
     <string name="pref_wol_address_sum">Enter the MAC address of the host (e.g. 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_port">Wake on LAN Port</string>
-    <string name="pref_wol_port_sum">Port %d will be used to wake up the server. The default is 9.</string>
+    <string name="pref_wol_port_sum" tools:ignore="PluralsCandidate">Port %d will be used to wake up the server. The default is 9.</string>
     <string name="pref_wol_broadcast">Use Broadcast</string>
     <string name="pref_wol_broadcast_sum">Send the WOL packet as a broadcast. Some routers do not allow this kind of WOL.</string>
     <string name="pref_wol_address_invalid">The MAC address is invalid.\nIt must have the pattern \'01:24:67:9a:cd:ef\'.</string>
@@ -255,12 +255,10 @@
     <string name="no_transmission">No transmission</string>
     <string name="no_data">No program data available</string>
     <string name="minutes">%d min</string>
-    <string name="days">%d days</string>
+
     <string name="not_set">Not set</string>
     
     <string name="search_hint">Search the EPG</string>
-    <string name="searching_programs">Searching %d programs</string>
-    <string name="searching_recordings">Searching %d recordings</string>
     <string name="two_days_ago">Two days ago</string>
     <string name="yesterday">Yesterday</string>
     <string name="today">Today</string>
@@ -386,7 +384,6 @@
     <string name="no_connection_available_advice">No connection available. At least one is required.</string>
     <string name="no_connection_active">No connection activated</string>
     <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
-    <string name="number_of_connections">%d connection(s) available</string>
 
     <!-- Unlcoker related -->
     <string name="unlocker_purchase_successful">Purchase successful! Thank you for support! All features are now available.</string>

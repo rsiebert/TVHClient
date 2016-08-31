@@ -46,4 +46,24 @@
         <item quantity="few">%d výsledky</item>
         <item quantity="other">%d výsledkov</item>
     </plurals>
+    <plurals name="days">
+        <item quantity="one">%d deň</item>
+        <item quantity="few">%d dni</item>
+        <item quantity="other">%d dní</item>
+    </plurals>
+    <plurals name="searching_programs">
+        <item quantity="one">Vyhľadávanie %d programu</item>
+        <item quantity="few">Vyhľadávanie %d programy</item>
+        <item quantity="other">Vyhľadávanie %d programov</item>
+    </plurals>
+    <plurals name="searching_recordings">
+        <item quantity="one">Vyhľadávanie %d nahrávka</item>
+        <item quantity="few">Vyhľadávanie %d nahrávky</item>
+        <item quantity="other">Vyhľadávanie %d nahráviek</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d dostupné prípojka</item>
+        <item quantity="few">%d dostupných prípojky</item>
+        <item quantity="other">%d dostupných pripojenie</item>
+    </plurals>
 </resources>

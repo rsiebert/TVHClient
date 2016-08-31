@@ -255,12 +255,9 @@
     <string name="no_transmission">Aucune transmission</string>
     <string name="no_data">Aucun programme disponible</string>
     <string name="minutes">%d min</string>
-    <string name="days">%d jours</string>
     <string name="not_set">Non défini</string>
 
     <string name="search_hint">Recherche de l\'EPG</string>
-    <string name="searching_programs">Recherche %d programmes</string>
-	<string name="searching_recordings">Recherche de l\'enregistrement %d</string>
     <string name="two_days_ago">Il y a deux jours</string>
     <string name="yesterday">Hier</string>
     <string name="today">Aujourd\'hui</string>
@@ -386,7 +383,6 @@
     <string name="no_connection_available_advice">Aucune connexion définie. Au moins une connexion est nécessaire.</string>
     <string name="no_connection_active">Aucune connexion active.</string>
     <string name="no_connection_active_advice">Au moins une connexion est définie, mais n\'est pas activée.</string>
-    <string name="number_of_connections">%d connexion(s) disponible(s)</string>
 
     <!-- Unlocker related -->
     <string name="unlocker_purchase_successful">Achat réussi, merci de votre aide. Toutes les fonctionnalités sont maintenant disponibles.</string>

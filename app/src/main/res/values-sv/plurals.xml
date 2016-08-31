@@ -25,5 +25,20 @@
         <item quantity="one">%d Misslyckade</item>
         <item quantity="other">%d Misslyckade</item>
     </plurals>
-
+    <plurals name="days">
+        <item quantity="one">%d dag</item>
+        <item quantity="other">%d dagar</item>
+    </plurals>
+    <plurals name="searching_programs">
+        <item quantity="one">Söka %d Program</item>
+        <item quantity="other">Söka %d Program</item>
+    </plurals>
+    <plurals name="searching_recordings">
+        <item quantity="one">Söka %d Inspelning</item>
+        <item quantity="other">Söka %d Inspelningar</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d anslutning tillgängliga</item>
+        <item quantity="other">%d anslutningar tillgängliga</item>
+    </plurals>
 </resources>

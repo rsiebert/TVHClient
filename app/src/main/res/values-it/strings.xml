@@ -178,7 +178,6 @@
     <string name="no_transmission">Nessuna trasmissione</string>
     <string name="no_data">Programmazione non disponibile</string>
     <string name="minutes">%d minuti</string>
-    <string name="days">%d giorni</string>
     <string name="not_set">Non impostato</string>
 
     <string name="search_hint">Cerca nella guida</string>
@@ -280,7 +279,6 @@
     <string name="no_connection_available_advice">Nessuna connessione definita. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
     <string name="no_connection_available">Nessuna connessione disponibile.</string>
     <string name="no_connection_active">Almeno una connessione è definita, ma nessuna è attiva.</string>
-    <string name="number_of_connections">%d connessioni disponibili</string>
 
     <string name="no_media_player">Nessun riproduttore multimediale trovato</string>
     <string name="show_play_store">Vuoi andare sul Play Store di Google e cercare un riproduttore multimediale?</string>

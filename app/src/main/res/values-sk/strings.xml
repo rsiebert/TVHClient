@@ -224,7 +224,6 @@
     <string name="no_transmission">Žiadne vysielanie</string>
     <string name="no_data">Údaje o programe sú nedostupné</string>
     <string name="minutes">%d min</string>
-    <string name="days">%d dní</string>
     <string name="not_set">Nie je nastavené</string>
 
     <string name="search_hint">Vyhľadať v EPG</string>
@@ -352,7 +351,6 @@
     <string name="no_connection_available">K dispozícii nie je žiadne pripojenie.</string>
     <string name="no_connection_active">Žiadne pripojenie nie je aktívne</string>
     <string name="no_connection_active_advice">Ani jedno dostupné pripojenie nie je aktivované.</string>
-    <string name="number_of_connections">%d dostupných pripojení</string>
     
     <!-- Unlocker related -->
     <string name="unlocker_purchase_successful">Objednávka úspešná! Ďakujeme za vašu podporu! Všetky funkcie sú aktivované.</string>

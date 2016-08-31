@@ -177,7 +177,6 @@
     <string name="no_transmission">Žádné vysílání</string>
     <string name="no_data">Žádná dostupná data o programu</string>
     <string name="minutes">%d min</string>
-    <string name="days">%d dní</string>
     <string name="not_set">Není nastaveno</string>
     
     <string name="search_hint">Vyhledat v EPG</string>
@@ -278,7 +277,6 @@
     <string name="no_connection_available_advice">Žádné připojení není k dispozici. Musíte přidat alespoň jedno připojení v menu nastavení.</string>
     <string name="no_connection_available">K dispozici není žádné připojení.</string>
     <string name="no_connection_active">Alespoň jedno připojení je nastaveno, ale není aktivováno.</string>
-    <string name="number_of_connections">%d spojení dostupných</string>
     
     <string name="no_media_player">Nebyl nalezen žádný přehrávač multimédií.</string>
     <string name="show_play_store">Chcete jít na Google Play Store a vyhledat dostupné přehrávače multimédií?</string>

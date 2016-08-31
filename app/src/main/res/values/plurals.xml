@@ -29,5 +29,20 @@
         <item quantity="one">%d result</item>
         <item quantity="other">%d results</item>
     </plurals>
-
+    <plurals name="days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="searching_programs">
+        <item quantity="one">Searching %d program</item>
+        <item quantity="other">Searching %d programs</item>
+    </plurals>
+    <plurals name="searching_recordings">
+        <item quantity="one">Searching %d recording</item>
+        <item quantity="other">Searching %d recordings</item>
+    </plurals>
+    <plurals name="number_of_connections">
+        <item quantity="one">%d connection available</item>
+        <item quantity="other">%d connections available</item>
+    </plurals>
 </resources>

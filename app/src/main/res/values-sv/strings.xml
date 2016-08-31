@@ -178,7 +178,6 @@
     <string name="no_transmission">Ingen sändning</string>
     <string name="no_data">Programinformation ej tillgänglig</string>
     <string name="minutes">%d min</string>
-    <string name="days">%d dagar</string>
     <string name="not_set">Inte satt</string>
     
     <string name="search_hint">Sök i programguide</string>
@@ -279,7 +278,6 @@
     <string name="no_connection_available_advice">Ingen anslutning är tillgänglig. Du behöver åtminstone en från inställningsmenyn.</string>
     <string name="no_connection_available">Fortfarande ingen anslutning definierad. Du måste lägga till minst en anslutning från inställningsmenyn.</string>
     <string name="no_connection_active">Minst en anslutning är definierad, men är ej aktiverad.</string>
-    <string name="number_of_connections">%d anslutning(ar) tillgängliga</string>
     
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="show_play_store">Vill du söka efter tillgängliga mediaspelare på Google Play Store?</string>
