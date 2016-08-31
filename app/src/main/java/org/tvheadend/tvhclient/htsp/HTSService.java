@@ -54,10 +54,10 @@ public class HTSService extends Service implements HTSConnectionListener {
     
     private ScheduledExecutorService execService;
     private HTSConnection connection;
-    PackageInfo packInfo;
+    private PackageInfo packInfo;
     private TVHClientApplication app;
 
-    public class LocalBinder extends Binder {
+    private class LocalBinder extends Binder {
         HTSService getService() {
             return HTSService.this;
         }
@@ -816,7 +816,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    public String hashString(String s) {
+    private String hashString(String s) {
         try {
             MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
             digest.update(s.getBytes());
@@ -835,7 +835,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         return "";
     }
 
-    public void cacheImage(String url, File f) throws IOException {
+    private void cacheImage(String url, File f) throws IOException {
         InputStream is;
         
         if (url.startsWith("http")) {

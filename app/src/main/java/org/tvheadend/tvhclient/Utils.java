@@ -104,7 +104,7 @@ public class Utils {
      * @param info Season and episode information
      * @return String with the season and episode
      */
-    public static String buildSeriesInfoString(final Context context, final SeriesInfo info) {
+    private static String buildSeriesInfoString(final Context context, final SeriesInfo info) {
         String s = "";
         if (info == null) {
             return s;
@@ -322,7 +322,7 @@ public class Utils {
                 }).show();
     }
 
-    public static void stopRecording(final Context context, final Recording rec) {
+    private static void stopRecording(final Context context, final Recording rec) {
         if (rec == null) {
             return;
         }
@@ -877,7 +877,7 @@ public class Utils {
      * @param offset      Value that defines the transparency
      * @return Color value
      */
-    public static int getGenreColor(final Context context, final int contentType, final int offset) {
+    private static int getGenreColor(final Context context, final int contentType, final int offset) {
         if (contentType < 0) {
             // Return a fully transparent color in case no genre is available
             return context.getResources().getColor(android.R.color.transparent);
@@ -1027,7 +1027,7 @@ public class Utils {
      * 
      * @return Id of the channel tag
      */
-    public static int getChannelTagId(final Context context) {
+    private static int getChannelTagId(final Context context) {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
         final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
@@ -1161,7 +1161,7 @@ public class Utils {
      * @param salt    salt which was used for ciphering
      * @return deciphered message
      */
-    static String fromX(String message, String salt) {
+    private static String fromX(String message, String salt) {
         return x(new String(Base64.decode(message, 0)), salt);
     }
 
@@ -1184,7 +1184,7 @@ public class Utils {
      * @param salt    salt
      * @return ciphered/deciphered message
      */
-    static String x(String message, String salt) {
+    private static String x(String message, String salt) {
         final char[] m = message.toCharArray();
         final char[] s = salt.toCharArray();
 

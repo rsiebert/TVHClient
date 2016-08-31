@@ -21,43 +21,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
 
     // Database version and name declarations
-    public static final int DATABASE_VERSION = 9;
-    public static final String DATABASE_NAME = "tvhclient";
-    public static final String TABLE_CONN_NAME = "connections";
-    public static final String TABLE_PROFILE_NAME = "profiles";
+    private static final int DATABASE_VERSION = 9;
+    private static final String DATABASE_NAME = "tvhclient";
+    private static final String TABLE_CONN_NAME = "connections";
+    private static final String TABLE_PROFILE_NAME = "profiles";
 
     // Database column names for the connection table
-    public static final String KEY_CONN_ID = BaseColumns._ID;
-    public static final String KEY_CONN_NAME = "name";
-    public static final String KEY_CONN_ADDRESS = "address";
-    public static final String KEY_CONN_PORT = "port";
-    public static final String KEY_CONN_USERNAME = "username";
-    public static final String KEY_CONN_PASSWORD = "password";
-    public static final String KEY_CONN_SELECTED = "selected";
-    public static final String KEY_CONN_CHANNEL_TAG = "channel_tag";
-    public static final String KEY_CONN_STREAMING_PORT = "streaming_port";
-    public static final String KEY_CONN_WOL_ADDRESS = "wol_address";
-    public static final String KEY_CONN_WOL_PORT = "wol_port";
-    public static final String KEY_CONN_WOL_BROADCAST = "wol_broadcast";
-    public static final String KEY_CONN_PLAY_PROFILE_ID = "playback_profile_id";
-    public static final String KEY_CONN_REC_PROFILE_ID = "recording_profile_id";
-    public static final String KEY_CONN_CAST_PROFILE_ID = "cast_profile_id";
+    private static final String KEY_CONN_ID = BaseColumns._ID;
+    private static final String KEY_CONN_NAME = "name";
+    private static final String KEY_CONN_ADDRESS = "address";
+    private static final String KEY_CONN_PORT = "port";
+    private static final String KEY_CONN_USERNAME = "username";
+    private static final String KEY_CONN_PASSWORD = "password";
+    private static final String KEY_CONN_SELECTED = "selected";
+    private static final String KEY_CONN_CHANNEL_TAG = "channel_tag";
+    private static final String KEY_CONN_STREAMING_PORT = "streaming_port";
+    private static final String KEY_CONN_WOL_ADDRESS = "wol_address";
+    private static final String KEY_CONN_WOL_PORT = "wol_port";
+    private static final String KEY_CONN_WOL_BROADCAST = "wol_broadcast";
+    private static final String KEY_CONN_PLAY_PROFILE_ID = "playback_profile_id";
+    private static final String KEY_CONN_REC_PROFILE_ID = "recording_profile_id";
+    private static final String KEY_CONN_CAST_PROFILE_ID = "cast_profile_id";
 
     // Database column names for the profile table
-    public static final String KEY_PROFILE_ID = BaseColumns._ID;
-    public static final String KEY_PROFILE_ENABLED = "profile_enabled"; // use the new profile if htsp version > X
-    public static final String KEY_PROFILE_UUID = "profile_uuid";       // The uuid of the profile
-    public static final String KEY_PROFILE_NAME = "profile_name";       // The name of the profile
-    public static final String KEY_PROFILE_CONTAINER = "container";
-    public static final String KEY_PROFILE_TRANSCODE = "transcode";
-    public static final String KEY_PROFILE_RESOLUTION = "resolution";
-    public static final String KEY_PROFILE_VIDEO_CODEC = "video_codec";
-    public static final String KEY_PROFILE_AUDIO_CODEC = "acode_codec";
-    public static final String KEY_PROFILE_SUBTITLE_CODEC = "subtitle_codec";
+    private static final String KEY_PROFILE_ID = BaseColumns._ID;
+    private static final String KEY_PROFILE_ENABLED = "profile_enabled"; // use the new profile if htsp version > X
+    private static final String KEY_PROFILE_UUID = "profile_uuid";       // The uuid of the profile
+    private static final String KEY_PROFILE_NAME = "profile_name";       // The name of the profile
+    private static final String KEY_PROFILE_CONTAINER = "container";
+    private static final String KEY_PROFILE_TRANSCODE = "transcode";
+    private static final String KEY_PROFILE_RESOLUTION = "resolution";
+    private static final String KEY_PROFILE_VIDEO_CODEC = "video_codec";
+    private static final String KEY_PROFILE_AUDIO_CODEC = "acode_codec";
+    private static final String KEY_PROFILE_SUBTITLE_CODEC = "subtitle_codec";
 
     // Defines a list of columns to retrieve from
     // the Cursor and load into an output row
-    public static final String[] CONN_COLUMNS = { 
+    private static final String[] CONN_COLUMNS = {
         KEY_CONN_ID, 
         KEY_CONN_NAME, 
         KEY_CONN_ADDRESS, 
@@ -77,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Defines a list of columns to retrieve from
     // the Cursor and load into an output row
-    public static final String[] PROFILE_COLUMNS = { 
+    private static final String[] PROFILE_COLUMNS = {
         KEY_PROFILE_ID,
         KEY_PROFILE_ENABLED,
         KEY_PROFILE_UUID,
@@ -90,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         KEY_PROFILE_SUBTITLE_CODEC,
     };
 
-    public static DatabaseHelper instance = null;
+    private static DatabaseHelper instance = null;
     private static Context context;
 
     public static DatabaseHelper getInstance(Context ctx) {

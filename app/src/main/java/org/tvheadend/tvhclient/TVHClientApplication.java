@@ -237,7 +237,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @param tag Channel tag
      */
-    public void removeChannelTag(ChannelTag tag) {
+    private void removeChannelTag(ChannelTag tag) {
         synchronized (tags) {
             tags.remove(tag);
         }
@@ -333,7 +333,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @param channel Channel
      */
-    public void removeChannel(Channel channel) {
+    private void removeChannel(Channel channel) {
         synchronized (channels) {
             channels.remove(channel);
         }
@@ -641,7 +641,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @param srec Series recording
      */
-    public void removeSeriesRecording(SeriesRecording srec) {
+    private void removeSeriesRecording(SeriesRecording srec) {
         synchronized (seriesRecordings) {
             seriesRecordings.remove(srec);
         }
@@ -836,7 +836,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @return List with all subscriptions
      */
-    public List<Subscription> getSubscriptions() {
+    private List<Subscription> getSubscriptions() {
         return subscriptions;
     }
 
@@ -1264,7 +1264,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param id        Id of the recording for which the notification shall be shown
      * @param offset    Time in minutes that the notification shall be shown earlier
      */
-    public void addNotification(final long id, final long offset) {
+    private void addNotification(final long id, final long offset) {
 
         final Recording rec = getRecording(id);
         if (loading || rec == null) {
@@ -1319,7 +1319,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @param id    The id of the recording
      */
-    public void cancelNotification(long id) {
+    private void cancelNotification(long id) {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel((int) id);
         nm.cancel((int) id * 100);

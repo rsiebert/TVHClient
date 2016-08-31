@@ -19,11 +19,11 @@ public class SliderPreference extends DialogPreference {
 
     private final static String TAG = SliderPreference.class.getSimpleName();
 
-    protected int mValue;
-    protected int mSeekBarValue;
-    protected int mSeekBarMinValue;
-    protected int mSeekBarMaxValue;
-    protected int mSeekBarResolution;
+    private int mValue;
+    private int mSeekBarValue;
+    private int mSeekBarMinValue;
+    private int mSeekBarMaxValue;
+    private int mSeekBarResolution;
 
     /**
      * Constructor that initializes the slider preference
@@ -90,7 +90,7 @@ public class SliderPreference extends DialogPreference {
      * 
      * @param value Value of the slider
      */
-    public void setValue(int value) {
+    private void setValue(int value) {
         value = Math.max(mSeekBarMinValue, Math.min(value, mSeekBarMaxValue));
         if (shouldPersist()) {
             persistInt(value);
