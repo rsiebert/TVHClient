@@ -6,8 +6,6 @@ android {
     dexOptions {
         maxProcessCount 2
         javaMaxHeapSize "2g"
-        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
-        preDexLibraries = preDexEnabled && !travisBuild
     }
     defaultConfig {
         applicationId "org.tvheadend.tvhclient"
