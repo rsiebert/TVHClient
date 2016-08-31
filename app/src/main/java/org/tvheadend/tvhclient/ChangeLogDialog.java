@@ -146,19 +146,13 @@ public class ChangeLogDialog {
     private AlertDialog getDialog(final boolean full) {
 
         WebView wv = new WebView(context);
-        wv.loadUrl("http:\\www.google.com");
-        wv.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
-                    view.setBackgroundColor(Color.WHITE);
-                } else {
-                    view.setBackgroundColor(Color.BLACK);
-                }
-                view.loadDataWithBaseURL("file:///android_asset/", getLog(full), "text/html", "utf-8", null);
-                return true;
-            }
-        });
+        wv.loadDataWithBaseURL("file:///android_asset/", getLog(full), "text/html", "utf-8", null);
+
+        if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+            wv.setBackgroundColor(Color.WHITE);
+        } else {
+            wv.setBackgroundColor(Color.BLACK);
+        }
 
         return new AlertDialog.Builder(context)
         .setTitle(R.string.pref_changelog)
