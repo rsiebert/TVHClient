@@ -16,7 +16,6 @@ android {
         versionCode 90
         versionName "1.9.4"
         setProperty("archivesBaseName", "TVHClient-$versionName-$versionCode")
-        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -36,7 +35,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:design:24.0.0'
     compile 'com.google.android.gms:play-services-cast:9.0.2'
