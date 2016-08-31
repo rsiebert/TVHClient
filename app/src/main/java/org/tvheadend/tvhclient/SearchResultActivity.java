@@ -72,7 +72,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     private MenuItem searchMenuItem = null;
     private Runnable updateTask;
     private Runnable finishTask;
-    private Handler updateHandler = new Handler();
+    private final Handler updateHandler = new Handler();
     private boolean handlerRunning = false;
 
     // Contains the search string from the search input field 

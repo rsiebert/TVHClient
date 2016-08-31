@@ -54,8 +54,8 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private static int displayWidth;
 
     // The time frame (start and end times) that shall be shown in a single fragment.  
-    private static List<Long> startTimes = new ArrayList<>();
-    private static List<Long> endTimes = new ArrayList<>();
+    private static final List<Long> startTimes = new ArrayList<>();
+    private static final List<Long> endTimes = new ArrayList<>();
     private static int hoursToShow;
     private static int fragmentCount;
     

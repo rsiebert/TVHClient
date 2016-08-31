@@ -25,23 +25,23 @@ public class HTSConnection extends Thread {
 
     private static final String TAG = HTSConnection.class.getSimpleName();
     private volatile boolean running;
-    private Lock lock;
+    private final Lock lock;
     private SocketChannel socketChannel;
-    private ByteBuffer inBuf;
+    private final ByteBuffer inBuf;
     private int seq;
-    private String clientName;
-    private String clientVersion;
+    private final String clientName;
+    private final String clientVersion;
     private int protocolVersion;
     private String serverName;
     private String serverVersion;
     private String webRoot;
-    
-    private HTSConnectionListener listener;
-    private SparseArray<HTSResponseHandler> responseHandlers;
-    private LinkedList<HTSMessage> messageQueue;
+
+    private final HTSConnectionListener listener;
+    private final SparseArray<HTSResponseHandler> responseHandlers;
+    private final LinkedList<HTSMessage> messageQueue;
     private boolean auth = false;
     private Selector selector;
-    private TVHClientApplication app;
+    private final TVHClientApplication app;
     private int connectionTimeout = 5000;
 
     public HTSConnection(TVHClientApplication app, HTSConnectionListener listener, String clientName, String clientVersion) {

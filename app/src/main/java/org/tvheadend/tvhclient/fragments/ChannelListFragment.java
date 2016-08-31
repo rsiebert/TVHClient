@@ -91,7 +91,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private TVHClientApplication app = null;
 
     private Runnable channelUpdateTask;
-    private Handler channelUpdateHandler = new Handler();
+    private final Handler channelUpdateHandler = new Handler();
 
     private int channelTimeSelection;
     private long showProgramsFromTime;

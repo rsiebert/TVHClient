@@ -13,7 +13,7 @@ import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import java.util.List;
 
 public class GenreColorDialogAdapter extends ArrayAdapter<GenreColorDialogItem> {
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
     
     public GenreColorDialogAdapter(Activity context, final List<GenreColorDialogItem> items) {
         super(context, R.layout.genre_color_dialog, items);

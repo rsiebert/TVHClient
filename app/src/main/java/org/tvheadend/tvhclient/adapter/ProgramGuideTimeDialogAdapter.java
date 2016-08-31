@@ -28,7 +28,7 @@ import java.util.Locale;
  */
 public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTimeDialogItem> {
 
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
     
     public ProgramGuideTimeDialogAdapter(Activity activity, final List<ProgramGuideTimeDialogItem> times) {
         super(activity, R.layout.program_guide_time_dialog, times);

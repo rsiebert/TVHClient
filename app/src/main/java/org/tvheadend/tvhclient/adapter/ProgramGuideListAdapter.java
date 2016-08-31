@@ -27,10 +27,10 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     private final Activity activity;
     private final List<Channel> list;
     private ViewHolder holder = null;
-    private Bundle bundle;
+    private final Bundle bundle;
     final private LayoutInflater inflater;
 
-    private Fragment fragment;
+    private final Fragment fragment;
     // private HashMap<Channel, Set<Program>> channelProgramList = new HashMap<Channel, Set<Program>>();
     
     public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel> list, Bundle bundle) {

@@ -20,10 +20,10 @@ import java.util.List;
 
 public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
 
-    private Activity context;
-    private List<SeriesRecording> list;
+    private final Activity context;
+    private final List<SeriesRecording> list;
     private int selectedPosition = 0;
-    private int layout;
+    private final int layout;
 
     public SeriesRecordingListAdapter(Activity context, List<SeriesRecording> list, int layout) {
         super(context, layout, list);

@@ -74,8 +74,8 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     // Start and end recording times. They are saved in the calendar object and
     // will be converted to milliseconds when saved during an orientation change
     // and converted to seconds before passed to the server.
-    private Calendar startValue = Calendar.getInstance();
-    private Calendar stopValue = Calendar.getInstance();
+    private final Calendar startValue = Calendar.getInstance();
+    private final Calendar stopValue = Calendar.getInstance();
     private long priorityValue;
     private String titleValue;
     private String subtitleValue;

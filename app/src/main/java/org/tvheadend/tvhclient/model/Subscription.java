@@ -7,7 +7,7 @@ public class Subscription {
 
     public long id;
     public String status;
-    public List<Stream> streams = new ArrayList<>();
+    public final List<Stream> streams = new ArrayList<>();
 
     public long packetCount;
     public long queSize;

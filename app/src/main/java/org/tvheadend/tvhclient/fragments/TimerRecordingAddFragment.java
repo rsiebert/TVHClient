@@ -56,7 +56,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
     private CheckBox isEnabled;
     private TextView priority;
-    private ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
+    private final ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
     private TextView startTime;
     private TextView stopTime;
     private EditText title;
@@ -76,7 +76,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private int dvrConfigNameValue;
 
     private Runnable addTask;
-    private Handler addHandler = new Handler();
+    private final Handler addHandler = new Handler();
 
     private String[] channelList;
     private String[] priorityList;

@@ -20,10 +20,10 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private final static int WOL_INVALID_MAC = 2;
     private final static int WOL_ERROR = 3;
 
-    private Connection conn;
-    private Activity activity;
+    private final Connection conn;
+    private final Activity activity;
     private Exception exception;
-    private TVHClientApplication app;
+    private final TVHClientApplication app;
 
     public WakeOnLanTask(Activity context, Connection conn) {
         this.activity = context;

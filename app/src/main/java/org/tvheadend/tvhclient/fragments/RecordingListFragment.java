@@ -38,7 +38,7 @@ import java.util.ArrayList;
 @SuppressWarnings("deprecation")
 public class RecordingListFragment extends Fragment implements HTSListener {
 
-    public static String TAG = RecordingListFragment.class.getSimpleName();
+    protected static String TAG = RecordingListFragment.class.getSimpleName();
 
     protected ActionBarActivity activity;
     protected ActionBarInterface actionBarInterface;

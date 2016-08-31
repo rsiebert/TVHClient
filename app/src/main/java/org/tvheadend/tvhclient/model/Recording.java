@@ -27,7 +27,7 @@ public class Recording extends Model implements Comparable<Recording> {
     public long contentType;
     public String comment;
     public String episode;
-    public List<DvrCutpoint> dvrCutPoints = new ArrayList<>();
+    public final List<DvrCutpoint> dvrCutPoints = new ArrayList<>();
     public String subscriptionError;
     public long streamErrors;
     public long dataErrors;

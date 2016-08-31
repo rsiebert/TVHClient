@@ -65,7 +65,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private Program selectedProgram = null;
 
     private Runnable updateEpgTask;
-    private Handler updateEpgHandler = new Handler();
+    private final Handler updateEpgHandler = new Handler();
 
     // Enables scrolling when the user has touch the screen and starts
     // scrolling. When the user is done, scrolling will be disabled to prevent

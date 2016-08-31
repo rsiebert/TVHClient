@@ -14,8 +14,8 @@ public class Channel implements Comparable<Channel> {
     public String icon;
     public int number;
     public int numberMinor;
-    public Set<Program> epg = Collections.synchronizedSortedSet(new TreeSet<Program>());
-    public Set<Recording> recordings = Collections.synchronizedSortedSet(new TreeSet<Recording>());
+    public final Set<Program> epg = Collections.synchronizedSortedSet(new TreeSet<Program>());
+    public final Set<Recording> recordings = Collections.synchronizedSortedSet(new TreeSet<Recording>());
     public List<Integer> tags;
     public Bitmap iconBitmap;
     public boolean isTransmitting;

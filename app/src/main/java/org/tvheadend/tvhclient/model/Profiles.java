@@ -8,7 +8,7 @@ public class Profiles {
     public String name;
     public String comment;
 
-    public static Comparator<Profiles> ProfilesNameSorter = new Comparator<Profiles>() {
+    public static final Comparator<Profiles> ProfilesNameSorter = new Comparator<Profiles>() {
         public int compare(Profiles x, Profiles y) {
             if (x != null && y != null && x.name != null && y.name != null) {
                 return x.name.toLowerCase(Locale.getDefault()).compareTo(

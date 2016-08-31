@@ -21,10 +21,10 @@ import java.util.List;
 
 public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
-    private Activity context;
-    private List<TimerRecording> list;
+    private final Activity context;
+    private final List<TimerRecording> list;
     private int selectedPosition = 0;
-    private int layout;
+    private final int layout;
 
     public TimerRecordingListAdapter(Activity context, List<TimerRecording> list, int layout) {
         super(context, layout, list);

@@ -24,10 +24,10 @@ import java.util.Locale;
 public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterable {
 
     private final static String TAG = SearchResultAdapter.class.getSimpleName();
-    private Activity context;
+    private final Activity context;
     private List<Model> originalData = null;
     private List<Model> filteredData = null;
-    private ItemFilter mFilter = new ItemFilter();
+    private final ItemFilter mFilter = new ItemFilter();
 
     public SearchResultAdapter(Activity context, List<Model> list) {
         super(context, R.layout.search_result_widget, list);

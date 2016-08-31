@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class HTSFileInputStream extends InputStream {
-	private HTSConnection connection;
-	private String path;
+	private final HTSConnection connection;
+	private final String path;
 
 	private long fileId;
 	private long fileSize;

@@ -57,7 +57,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private TextView priority;
     private EditText minDuration;
     private EditText maxDuration;
-    private ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
+    private final ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
     private TextView startTime;
     private CheckBox timeEnabled;
     private TextView startWindowTime;

@@ -19,9 +19,9 @@ public class ChannelTagListAdapter extends ArrayAdapter<ChannelTag> {
     @SuppressWarnings("unused")
     private final static String TAG = ChannelTagListAdapter.class.getSimpleName();
 
-    private Activity context;
-    private SharedPreferences prefs;
-    private boolean showIcons;
+    private final Activity context;
+    private final SharedPreferences prefs;
+    private final boolean showIcons;
 
     public ChannelTagListAdapter(Activity context, List<ChannelTag> list) {
         super(context, R.layout.list_layout, list);

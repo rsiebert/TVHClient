@@ -28,11 +28,11 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
     private final static String TAG = ChannelListAdapter.class.getSimpleName();
 
-    private Activity context;
-    private List<Channel> list;
-    private int layout;
+    private final Activity context;
+    private final List<Channel> list;
+    private final int layout;
     private int selectedPosition = 0;
-    private SharedPreferences prefs;
+    private final SharedPreferences prefs;
     private long showProgramsFromTime;
 
     public ChannelListAdapter(Activity context, List<Channel> list, int layout) {

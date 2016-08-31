@@ -40,7 +40,7 @@ import java.util.ArrayList;
 @SuppressWarnings("deprecation")
 public class SeriesRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
-    private static String TAG = SeriesRecordingListFragment.class.getSimpleName();
+    private static final String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
     private ActionBarActivity activity;
     private ActionBarInterface actionBarInterface;

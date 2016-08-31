@@ -34,7 +34,8 @@ import java.io.InputStreamReader;
 public class ChangeLogDialog {
 
     private final Context context;
-    private String lastVersion, thisVersion;
+    private final String lastVersion;
+    private String thisVersion;
     private ChangeLogDialogInterface di;
   
     // this is the key for storing the version name in SharedPreferences

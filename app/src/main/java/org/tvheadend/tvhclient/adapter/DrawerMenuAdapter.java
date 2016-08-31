@@ -20,11 +20,11 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
     @SuppressWarnings("unused")
     private final static String TAG = DrawerMenuAdapter.class.getSimpleName();
 
-    private Activity context;
-    private SharedPreferences prefs;
-    private List<DrawerMenuItem> list;
+    private final Activity context;
+    private final SharedPreferences prefs;
+    private final List<DrawerMenuItem> list;
     private int selectedPosition;
-    private boolean lightTheme;
+    private final boolean lightTheme;
 
     public DrawerMenuAdapter(Activity context, List<DrawerMenuItem> list) {
         super(context, R.layout.list_layout, list);

@@ -18,8 +18,8 @@ public abstract class SelectionThread extends Thread {
     private static final String TAG = "SelectionThread";
     private Selector selector;
     private volatile boolean running;
-    private HashMap<AbstractSelectableChannel, Integer> regBuf;
-    private Lock lock;
+    private final HashMap<AbstractSelectableChannel, Integer> regBuf;
+    private final Lock lock;
 
     public SelectionThread() {
         running = false;

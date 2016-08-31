@@ -135,9 +135,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private ArrayList<Integer> menuStack = new ArrayList<>();
 
     // Holds a list of channels that are currently being loaded
-    private List<Channel> channelLoadingList = new ArrayList<>();
+    private final List<Channel> channelLoadingList = new ArrayList<>();
     private Runnable channelLoadingTask;
-    private Handler channelLoadingHandler = new Handler();
+    private final Handler channelLoadingHandler = new Handler();
 
     // Remember if the connection setting screen was already shown. When the
     // main activity starts for the first time and no connections are configured

@@ -21,10 +21,10 @@ import java.util.List;
 
 public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
-    private Activity context;
-    private List<Recording> list;
+    private final Activity context;
+    private final List<Recording> list;
     private int selectedPosition = 0;
-    private int layout;
+    private final int layout;
 
     public RecordingListAdapter(Activity context, List<Recording> list, int layout) {
         super(context, layout, list);

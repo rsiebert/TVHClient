@@ -16,8 +16,8 @@ import java.util.List;
 
 public class ConnectionListAdapter extends ArrayAdapter<Connection> {
 
-    private Activity context;
-    private List<Connection> list;
+    private final Activity context;
+    private final List<Connection> list;
 
     public ConnectionListAdapter(Activity context, List<Connection> list) {
         super(context, R.layout.connection_list_widget, list);

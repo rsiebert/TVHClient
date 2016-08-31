@@ -17,8 +17,8 @@ import java.util.List;
 public class ProgramListAdapter extends ArrayAdapter<Program> {
 
     private final static String TAG = ProgramListAdapter.class.getSimpleName();
-    private Activity context;
-    private List<Program> list;
+    private final Activity context;
+    private final List<Program> list;
 
     public ProgramListAdapter(Activity context, List<Program> list) {
         super(context, R.layout.program_list_widget, list);
