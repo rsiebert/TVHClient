@@ -125,17 +125,17 @@ public class Utils {
         if (info.seasonNumber > 0) {
             if (s.length() > 0)
                 s += ", ";
-            s += String.format("%s %02d", season.toLowerCase(Locale.getDefault()), info.seasonNumber);
+            s += String.format(Locale.getDefault(), "%s %02d", season.toLowerCase(Locale.getDefault()), info.seasonNumber);
         }
         if (info.episodeNumber > 0) {
             if (s.length() > 0)
                 s += ", ";
-            s += String.format("%s %02d", episode.toLowerCase(Locale.getDefault()), info.episodeNumber);
+            s += String.format(Locale.getDefault(), "%s %02d", episode.toLowerCase(Locale.getDefault()), info.episodeNumber);
         }
         if (info.partNumber > 0) {
             if (s.length() > 0)
                 s += ", ";
-            s += String.format("%s %d", part.toLowerCase(Locale.getDefault()), info.partNumber);
+            s += String.format(Locale.getDefault(), "%s %d", part.toLowerCase(Locale.getDefault()), info.partNumber);
         }
         if (s.length() > 0) {
             s = s.substring(0,1).toUpperCase(Locale.getDefault()) + s.substring(1);
