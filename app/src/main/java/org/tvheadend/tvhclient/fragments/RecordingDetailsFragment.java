@@ -151,13 +151,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         removeRecordingButton = (Button) v.findViewById(R.id.menu_record_remove);
         downloadRecordingButton = (Button) v.findViewById(R.id.menu_download);
 
-        int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
-                .getColor(R.color.button_text_color_light) : getResources()
-                .getColor(R.color.button_text_color_dark);
-        playRecordingButton.setBackgroundColor(bgColor);
-        editRecordingButton.setBackgroundColor(bgColor);
-        removeRecordingButton.setBackgroundColor(bgColor);
-        downloadRecordingButton.setBackgroundColor(bgColor);
         return v;
     }
 

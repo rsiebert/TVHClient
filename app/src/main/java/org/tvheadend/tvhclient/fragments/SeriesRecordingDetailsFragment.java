@@ -114,11 +114,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         recordRemoveButton = (Button) v.findViewById(R.id.menu_record_remove);
         recordEditButton = (Button) v.findViewById(R.id.menu_record_edit);
 
-        int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
-                .getColor(R.color.button_text_color_light) : getResources()
-                .getColor(R.color.button_text_color_dark);
-        recordRemoveButton.setBackgroundColor(bgColor);
-        recordEditButton.setBackgroundColor(bgColor);
         return v;
     }
 

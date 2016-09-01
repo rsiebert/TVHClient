@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.support.v7.widget.AppCompatButton;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -59,7 +60,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private RatingBar ratingBar;
 
     private LinearLayout playerLayout;
-    private Button playButton;
+    private AppCompatButton playButton;
     private Button recordOnceButton;
     private Button recordSeriesButton;
     private Button recordRemoveButton;
@@ -149,18 +150,11 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        playButton = (Button) v.findViewById(R.id.menu_play);
+        playButton = (AppCompatButton) v.findViewById(R.id.menu_play);
         recordOnceButton = (Button) v.findViewById(R.id.menu_record_once);
         recordSeriesButton = (Button) v.findViewById(R.id.menu_record_series);
         recordRemoveButton = (Button) v.findViewById(R.id.menu_record_remove);
 
-        int bgColor = (Utils.getThemeId(activity) == R.style.CustomTheme_Light) ? getResources()
-                .getColor(R.color.button_text_color_light) : getResources()
-                .getColor(R.color.button_text_color_dark);
-        playButton.setBackgroundColor(bgColor);
-        recordOnceButton.setBackgroundColor(bgColor);
-        recordSeriesButton.setBackgroundColor(bgColor);
-        recordRemoveButton.setBackgroundColor(bgColor);
         return v;
     }
 

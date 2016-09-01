@@ -42,9 +42,6 @@
     <color name="menu_text_selected_light">#aabebebe</color>
     <color name="menu_text_selected_dark">#66bebebe</color>
 
-    <color name="button_text_color_light">#ff009688</color>
-    <color name="button_text_color_dark">#ff80cbc4</color>
-
     <!-- Toolbar background -->
     <color name="toolbar_background_color_light">#88bdbdbd</color>
     <color name="toolbar_background_color_dark">#77212121</color>
