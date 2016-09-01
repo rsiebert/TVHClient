@@ -137,7 +137,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             addPlayerControlListeners();
             playerLayout.setVisibility(View.VISIBLE);
             recordRemoveButton.setVisibility(View.VISIBLE);
-            recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
+            recordEditButton.setVisibility(View.VISIBLE);
         }
 
         isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
