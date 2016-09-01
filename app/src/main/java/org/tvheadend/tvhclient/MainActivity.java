@@ -614,6 +614,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, Constants.ACTION_CONNECTION_STATE_OK);
         connectionSettingsShown = prefs.getBoolean(Constants.LAST_CONNECTION_SETTINGS_SHOWN, false);
 
+        // Update the time so that the correct programs are shown
+        showProgramsFromTime = new Date().getTime();
+
         // Update the drawer menu so that all available menu items are
         // shown in case the recording counts have changed or the user has
         // bought the unlocked version to enable all features
