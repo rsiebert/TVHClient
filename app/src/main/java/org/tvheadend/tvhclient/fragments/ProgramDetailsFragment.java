@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.support.v7.widget.AppCompatButton;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,7 +59,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private RatingBar ratingBar;
 
     private LinearLayout playerLayout;
-    private AppCompatButton playButton;
+    private Button playButton;
     private Button recordOnceButton;
     private Button recordSeriesButton;
     private Button recordRemoveButton;
@@ -150,7 +149,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        playButton = (AppCompatButton) v.findViewById(R.id.menu_play);
+        playButton = (Button) v.findViewById(R.id.menu_play);
         recordOnceButton = (Button) v.findViewById(R.id.menu_record_once);
         recordSeriesButton = (Button) v.findViewById(R.id.menu_record_series);
         recordRemoveButton = (Button) v.findViewById(R.id.menu_record_remove);
