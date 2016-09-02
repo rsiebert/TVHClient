@@ -1,9 +1,7 @@
 package org.tvheadend.tvhclient;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -11,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Base64;
@@ -23,6 +22,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
@@ -219,21 +221,18 @@ public class Utils {
         }
 
         // Show a confirmation dialog before deleting the recording
-        new AlertDialog.Builder(activity)
-                .setTitle(R.string.record_remove)
-                .setMessage(message)
-                .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_remove)
+                .content(message)
+                .negativeText(R.string.discard)
+                .positiveText(R.string.remove)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         removeRecording(activity, id, type, manualRemove);
                     }
                 })
-                .setNegativeButton(R.string.discard, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // NOP
-                    }
-                }).show();
+                .show();
     }
 
     /**
@@ -272,21 +271,18 @@ public class Utils {
         }
 
         // Show a confirmation dialog before canceling the recording
-        new AlertDialog.Builder(context)
-                .setTitle(R.string.record_remove)
-                .setMessage(context.getString(R.string.cancel_recording, rec.title))
-                .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(context)
+                .title(R.string.record_remove)
+                .content(context.getString(R.string.cancel_recording, rec.title))
+                .negativeText(R.string.discard)
+                .positiveText(R.string.remove)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         cancelRecording(context, rec);
                     }
                 })
-                .setNegativeButton(R.string.discard, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // NOP
-                    }
-                }).show();
+                .show();
     }
 
     public static void cancelRecording(final Context context, final Recording rec) {
@@ -305,21 +301,18 @@ public class Utils {
         }
 
         // Show a confirmation dialog before stopping the recording
-        new AlertDialog.Builder(context)
-                .setTitle(R.string.record_stop)
-                .setMessage(context.getString(R.string.stop_recording, rec.title))
-                .setPositiveButton(R.string.stop, new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(context)
+                .title(R.string.record_stop)
+                .content(context.getString(R.string.stop_recording, rec.title))
+                .negativeText(R.string.cancel)
+                .positiveText(R.string.stop)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         stopRecording(context, rec);
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // NOP
-                    }
-                }).show();
+                .show();
     }
 
     private static void stopRecording(final Context context, final Recording rec) {
@@ -950,9 +943,9 @@ public class Utils {
         }
 
         // Create the dialog and set the adapter
-        new AlertDialog.Builder(context)
-                .setTitle(R.string.genre_color_list)
-                .setAdapter(new GenreColorDialogAdapter(context, items), null)
+        new MaterialDialog.Builder(context)
+                .title(R.string.genre_color_list)
+                .adapter(new GenreColorDialogAdapter(context, items), null)
                 .show();
     }
 

@@ -2,8 +2,6 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -24,6 +22,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -65,11 +65,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     private ChannelListAdapter adapter;
     private ArrayAdapter<ChannelTag> tagAdapter;
-    private AlertDialog tagDialog;
+    private MaterialDialog tagDialog;
     private ListView listView;
 
     // The dialog that allows the user to select a certain time frame
-    private AlertDialog channelTimeDialog;
+    private MaterialDialog channelTimeDialog;
 
     // This is the default view for the channel list adapter. Other views can be
     // passed to the adapter to show less information. This is used in the
@@ -197,19 +197,19 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Create the dialog that will list the available channel tags
         tagAdapter = new ChannelTagListAdapter(activity, new ArrayList<ChannelTag>());
-        tagDialog = new AlertDialog.Builder(activity)
-        .setTitle(R.string.tags)
-        .setAdapter(tagAdapter, new DialogInterface.OnClickListener() {
+        tagDialog = new MaterialDialog.Builder(activity)
+        .title(R.string.tags)
+        .adapter(tagAdapter, new MaterialDialog.ListCallback() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Utils.setChannelTagId(activity, i);
+            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                Utils.setChannelTagId(activity, which);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.channelTagChanged(TAG);
                 }
-                tagDialog.cancel();
+                tagDialog.dismiss();
             }
         })
-        .create();
+        .build();
 
         // Disable the context menu when the channels are shown only. The
         // functionality behind the context menu shall not be available when the
@@ -381,18 +381,20 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             final String[] dcList = dvrConfigList;
 
             // Create the dialog to show the available profiles
-            new AlertDialog.Builder(activity)
-            .setTitle(R.string.select_dvr_config)
-            .setItems(dvrConfigList, new DialogInterface.OnClickListener() {
+            new MaterialDialog.Builder(activity)
+            .title(R.string.select_dvr_config)
+            .items(dvrConfigList)
+            .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // Pass over the profile information
+                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                    // Pass over the 
                     Intent intent = new Intent(activity, HTSService.class);
                     intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
                     intent.putExtra("eventId", prog.id);
                     intent.putExtra("channelId", prog.channel.id);
-                    intent.putExtra("configName", dcList[i]);
+                    intent.putExtra("configName", dcList[which]);
                     activity.startService(intent);
+                    return true;
                 }
             })
             .show();
@@ -653,11 +655,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             j++;
         }
 
-        channelTimeDialog = new AlertDialog.Builder(activity)
-        .setTitle(R.string.select_time)
-        .setItems(times, new DialogInterface.OnClickListener() {
+        channelTimeDialog = new MaterialDialog.Builder(activity)
+        .title(R.string.select_time)
+        .items(times)
+        .itemsCallbackSingleChoice(channelTimeSelection, new MaterialDialog.ListCallbackSingleChoice() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
+            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                 channelTimeSelection = which;
 
                 // Get the current time and create the new time from the selection value. 
@@ -680,8 +683,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     fragmentStatusInterface.onChannelTimeSelected(channelTimeSelection, showProgramsFromTime);
                     fragmentStatusInterface.onListPopulated(TAG);
                 }
+
+                return true;
             }
         })
-        .create();
+        .build();
     }
 }

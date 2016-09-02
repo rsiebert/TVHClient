@@ -1,9 +1,8 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -160,26 +162,21 @@ public class RecordingListFragment extends Fragment implements HTSListener {
 
         case R.id.menu_record_remove_all:
             // Show a confirmation dialog before deleting all recordings
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.record_remove_all)
-                    .setMessage(R.string.confirm_remove_all)
-                    .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
+            new MaterialDialog.Builder(activity)
+                    .title(R.string.record_remove_all)
+                    .content(R.string.confirm_remove_all)
+                    .positiveText(getString(R.string.remove))
+                    .negativeText(getString(R.string.cancel))
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             if (rec != null && (rec.isRecording() || rec.isScheduled())) {
                                 cancelAllRecordings();
                             } else {
                                 removeAllRecordings();
                             }
                         }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // NOP
-                        }
-                    })
-                    .show();
+                    }).show();
             return true;
 
         default:

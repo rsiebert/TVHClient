@@ -15,16 +15,18 @@
  */
 package org.tvheadend.tvhclient;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -127,14 +129,14 @@ public class ChangeLogDialog {
      *         first run of your app including ChangeLog then the full log
      *         dialog is show.
      */
-    public Dialog getLogDialog() {
+    public MaterialDialog getLogDialog() {
         return this.getDialog(this.firstRunEver());
     }
 
     /**
      * @return an AlertDialog with a full change log displayed
      */
-    public Dialog getFullLogDialog() {
+    public MaterialDialog getFullLogDialog() {
         return this.getDialog(true);
     }
 
@@ -143,7 +145,7 @@ public class ChangeLogDialog {
      * @param full Show the full changelog or only the latest changes
      * @return MaterialDialog object
      */
-    private AlertDialog getDialog(final boolean full) {
+    private MaterialDialog getDialog(final boolean full) {
 
         WebView wv = new WebView(context);
         wv.loadDataWithBaseURL("file:///android_asset/", getLog(full), "text/html", "utf-8", null);
@@ -154,19 +156,20 @@ public class ChangeLogDialog {
             wv.setBackgroundColor(Color.BLACK);
         }
 
-        return new AlertDialog.Builder(context)
-        .setTitle(R.string.pref_changelog)
-        .setView(wv)
-        .setPositiveButton(context.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                updateVersionInPreferences();
-                if (di != null) {
-                    di.changeLogDialogDismissed();
-                }
-            }
-        })
-        .create();
+        return new MaterialDialog.Builder(context)
+                .title(R.string.pref_changelog)
+                .customView(wv, false)
+                .positiveText(context.getString(android.R.string.ok))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        updateVersionInPreferences();
+                        if (di != null) {
+                            di.changeLogDialogDismissed();
+                        }
+                    }
+                })
+                .build();
     }
 
     private void updateVersionInPreferences() {

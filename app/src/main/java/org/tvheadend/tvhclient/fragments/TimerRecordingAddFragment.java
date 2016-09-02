@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
@@ -26,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
@@ -317,13 +318,15 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         channelName.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				new AlertDialog.Builder(activity)
-	            .setTitle(R.string.select_channel)
-	            .setItems(channelList, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {
+				new MaterialDialog.Builder(activity)
+	            .title(R.string.select_channel)
+	            .items(channelList)
+	            .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
+	                @Override
+	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         channelName.setText(channelList[which]);
                         channelSelectionValue = which;
+	                    return true;
 	                }
 	            })
 	            .show();
@@ -334,13 +337,15 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         priority.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				new AlertDialog.Builder(activity)
-	            .setTitle(R.string.select_priority)
-	            .setItems(priorityList, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {
+				new MaterialDialog.Builder(activity)
+	            .title(R.string.select_priority)
+	            .items(priorityList)
+	            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
+	                @Override
+	                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         priority.setText(priorityList[which]);
                         priorityValue = which;
+	                    return true;
 	                }
 	            })
 	            .show();
@@ -359,13 +364,15 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 dvrConfigName.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        new AlertDialog.Builder(activity)
-                        .setTitle(R.string.select_dvr_config)
-                        .setItems(dvrConfigList, new DialogInterface.OnClickListener() {
+                        new MaterialDialog.Builder(activity)
+                        .title(R.string.select_dvr_config)
+                        .items(dvrConfigList)
+                        .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 dvrConfigName.setText(dvrConfigList[which]);
                                 dvrConfigNameValue = which;
+                                return true;
                             }
                         })
                         .show();
@@ -560,20 +567,22 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
      */
     private void cancel() {
         // Show confirmation dialog to cancel
-        new AlertDialog.Builder(activity)
-                .setMessage(R.string.cancel_add_recording)
-                .setPositiveButton(R.string.discard, new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(activity)
+                .content(R.string.cancel_add_recording)
+                .positiveText(getString(R.string.discard))
+                .negativeText(getString(R.string.cancel))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         if (getDialog() != null) {
                             getDialog().dismiss();
                         }
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.cancel();
                     }
                 })
                 .show();

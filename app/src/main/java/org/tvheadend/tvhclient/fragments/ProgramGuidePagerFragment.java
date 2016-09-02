@@ -2,8 +2,6 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,6 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -41,7 +41,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private ProgramGuidePagerAdapter adapter = null;
 
     // The dialog that allows the user to select a certain time frame
-    private AlertDialog programGuideTimeDialog;
+    private MaterialDialog programGuideTimeDialog;
 
     // This is the width in pixels from the icon in the program_guide_list.xml
     // We need to subtract this value from the window width to get the real
@@ -159,16 +159,16 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         }
 
         // Create the dialog and set the adapter
-        programGuideTimeDialog = new AlertDialog.Builder(activity)
-        .setTitle(R.string.select_timeframe)
-        .setAdapter(new ProgramGuideTimeDialogAdapter(activity, times), new DialogInterface.OnClickListener() {
+        programGuideTimeDialog = new MaterialDialog.Builder(activity)
+        .title(R.string.select_timeframe)
+        .adapter(new ProgramGuideTimeDialogAdapter(activity, times), new MaterialDialog.ListCallback() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                viewPager.setCurrentItem(i);
+            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                viewPager.setCurrentItem(which);
                 programGuideTimeDialog.dismiss();
             }
         })
-        .create();
+        .build();
     }
 
     /**

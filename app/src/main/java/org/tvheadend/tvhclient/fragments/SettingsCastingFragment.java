@@ -19,8 +19,6 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -31,7 +29,11 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -137,12 +139,13 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 for (Profiles p : app.getProfiles()) {
                     if (p.uuid.equals(newValue) && !p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
-                        new AlertDialog.Builder(activity)
-                                .setMessage(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
-                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        new MaterialDialog.Builder(activity)
+                                .content(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
+                                .positiveText(android.R.string.ok)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.cancel();
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.cancel();
                                     }
                                 }).show();
                     }

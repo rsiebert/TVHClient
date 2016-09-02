@@ -2,10 +2,8 @@ package org.tvheadend.tvhclient;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -43,6 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl;
@@ -338,11 +337,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
                 if (profile == null || !profile.enabled || profile.uuid == null || profile.uuid.length() == 0) {
                     app.log(TAG, "No casting profile set, disconnecting");
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setMessage(R.string.cast_profile_not_set)
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    new MaterialDialog.Builder(MainActivity.this)
+                            .content(R.string.cast_profile_not_set)
+                            .positiveText(android.R.string.ok)
+                            .callback(new MaterialDialog.ButtonCallback() {
                                 @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+                                public void onPositive(MaterialDialog dialog) {
                                     mCastManager.disconnect();
                                 }
                             }).show();
@@ -432,11 +432,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             }
     
             // Now show the dialog to select a new connection
-            new AlertDialog.Builder(this)
-                .setTitle(R.string.select_connection)
-                .setItems(items, new DialogInterface.OnClickListener() {
+            new MaterialDialog.Builder(this)
+                .title(R.string.select_connection)
+                .items(items)
+                .itemsCallbackSingleChoice(currentConnectionListPosition, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         Connection oldConn = dbh.getSelectedConnection();
                         Connection newConn = connList.get(which);
     
@@ -452,6 +453,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             dbh.updateConnection(newConn);
                             Utils.connect(MainActivity.this, true);
                         }
+                        return true;
                     }
                 })
                 .show();
