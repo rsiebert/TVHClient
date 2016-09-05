@@ -1,5 +1,7 @@
 #TVHClient
 
+[![Build Status](https://travis-ci.org/rsiebert/TVHClient.svg?branch=develop)](https://travis-ci.org/rsiebert/TVHClient)
+
 This android application allows you to interact and control the TVHeadend server. It is based on TVHGuide but contains many improvements and new features. It provides a clean and modern UI. The following major features are available: 
 
 <b>Main features:</b>
