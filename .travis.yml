@@ -4,15 +4,8 @@ branches:
   only:
     - develop
 
-jdk:
-  - oraclejdk8
-
 android:
   components:
-    # use the latest revision of Android SDK Tools
-    - platform-tools
-    - tools
-
     # The BuildTools version used by your project
     - build-tools-22.0.1
 
@@ -25,11 +18,8 @@ android:
     - extra-android-m2repository
     - addon-google_apis-google-22
 
-    # The system image for the emulator
-    - sys-img-armeabi-v7a-android-22
-
 script:
-   - ./gradlew build connectedCheck
+   - ./gradlew build
 
 before_install:
   - chmod +x gradlew
