@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 23
     buildToolsVersion "24.0.0"
     dexOptions {
         maxProcessCount 2
@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "org.tvheadend.tvhclient"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 23
         versionCode 91
         versionName "1.9.4"
         setProperty("archivesBaseName", "TVHClient-$versionName-$versionCode")
