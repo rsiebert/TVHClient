@@ -1,10 +1,9 @@
 package org.tvheadend.tvhclient.adapter;
 
-import android.app.Activity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
@@ -26,38 +25,35 @@ import java.util.Locale;
  * @author rsiebert
  * 
  */
-public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTimeDialogItem> {
+public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramGuideTimeDialogAdapter.ViewHolder> {
 
-    private final LayoutInflater inflater;
-    
-    public ProgramGuideTimeDialogAdapter(Activity activity, final List<ProgramGuideTimeDialogItem> times) {
-        super(activity, R.layout.program_guide_time_dialog, times);
-        this.inflater = activity.getLayoutInflater();
+    private Callback mCallback;
+    private List<ProgramGuideTimeDialogItem> list;
+
+    public interface Callback {
+        void onItemClicked(int index);
     }
 
-    public class ViewHolder {
-        public TextView date1;
-        public TextView date2;
-        public TextView time;
+    public ProgramGuideTimeDialogAdapter(List<ProgramGuideTimeDialogItem> list) {
+        this.list = list;
     }
-    
+
+    public void setCallback(Callback mCallback) {
+        this.mCallback = mCallback;
+    }
+
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        ViewHolder holder;
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.program_guide_time_dialog, parent, false);
+        return new ViewHolder(view, this);
+    }
 
-        if (view == null) {
-            view = inflater.inflate(R.layout.program_guide_time_dialog, parent, false);
-            holder = new ViewHolder();
-            holder.date1 = (TextView) view.findViewById(R.id.date1);
-            holder.date2 = (TextView) view.findViewById(R.id.date2);
-            holder.time = (TextView) view.findViewById(R.id.time);
-            view.setTag(holder);
-        } else {
-            holder = (ViewHolder) view.getTag();
-        }
-
-        ProgramGuideTimeDialogItem item = getItem(position);
+    @Override
+    /**
+     * Applies the values to the available layout items
+     */
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        ProgramGuideTimeDialogItem item = list.get(position);
         if (item != null) {
             // Get the date objects from the millisecond values
             final Date startDate = new Date(item.start);
@@ -71,14 +67,46 @@ public class ProgramGuideTimeDialogAdapter extends ArrayAdapter<ProgramGuideTime
             final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
             Utils.setDate(holder.date1, startDate);
             holder.date2.setText(sdf2.format(startDate));
-            
+
             if (holder.date1.getText().equals(holder.date2.getText())) {
                 holder.date2.setVisibility(View.GONE);
             } else {
                 holder.date2.setVisibility(View.VISIBLE);
             }
         }
-        return view;
+    }
+
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        final TextView date1;
+        final TextView date2;
+        final TextView time;
+        final ProgramGuideTimeDialogAdapter adapter;
+
+        public ViewHolder(View view, ProgramGuideTimeDialogAdapter adapter) {
+            super(view);
+            this.date1 = (TextView) view.findViewById(R.id.date1);
+            this.date2 = (TextView) view.findViewById(R.id.date2);
+            this.time = (TextView) view.findViewById(R.id.time);
+
+            this.adapter = adapter;
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (adapter.mCallback == null) {
+                return;
+            }
+            adapter.mCallback.onItemClicked(getAdapterPosition());
+        }
     }
 }
 

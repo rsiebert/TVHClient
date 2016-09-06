@@ -40,9 +40,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private static ViewPager viewPager = null;
     private ProgramGuidePagerAdapter adapter = null;
 
-    // The dialog that allows the user to select a certain time frame
-    private MaterialDialog programGuideTimeDialog;
-
     // This is the width in pixels from the icon in the program_guide_list.xml
     // We need to subtract this value from the window width to get the real
     // usable width. The same values is also used in the
@@ -86,7 +83,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // Calculate the max number of fragments in the view pager 
         calcFragmentCount();
         calcProgramGuideTimeslots();
-        createProgramGuideTimeDialog();
 
         // Calculates the available display width of one minute in pixels. This
         // depends how wide the screen is and how many hours shall be shown in
@@ -135,7 +131,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_timeframe:
-            programGuideTimeDialog.show();
+            showProgramGuideTimeDialog();
             return true;
 
         default:
@@ -148,7 +144,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
      * choose from. In here the data for the adapter is created and the dialog
      * prepared which can be shown later.
      */
-    private void createProgramGuideTimeDialog() {
+    private void showProgramGuideTimeDialog() {
         // Fill the list for the adapter
         List<ProgramGuideTimeDialogItem> times = new ArrayList<>();
         for (int i = 0; i < fragmentCount; ++i) {
@@ -157,18 +153,23 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
             item.end = endTimes.get(i);
             times.add(item);
         }
+        // The dialog that allows the user to select a certain time frame
+        final ProgramGuideTimeDialogAdapter timeAdapter = new ProgramGuideTimeDialogAdapter(times);
+        final MaterialDialog programGuideTimeDialog = new MaterialDialog.Builder(activity)
+                .title(R.string.tags)
+                .adapter(timeAdapter, null)
+                .build();
 
-        // Create the dialog and set the adapter
-        programGuideTimeDialog = new MaterialDialog.Builder(activity)
-        .title(R.string.select_timeframe)
-        .adapter(new ProgramGuideTimeDialogAdapter(activity, times), new MaterialDialog.ListCallback() {
+        // Set the callback to handle clicks. This needs to be done after the
+        // dialog creation so that the inner method has access to the dialog variable
+        timeAdapter.setCallback(new ProgramGuideTimeDialogAdapter.Callback() {
             @Override
-            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+            public void onItemClicked(int which) {
                 viewPager.setCurrentItem(which);
                 programGuideTimeDialog.dismiss();
             }
-        })
-        .build();
+        });
+        programGuideTimeDialog.show();
     }
 
     /**

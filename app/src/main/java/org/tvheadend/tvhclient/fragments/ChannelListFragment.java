@@ -20,7 +20,6 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -63,9 +62,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private FragmentScrollInterface fragmentScrollInterface;
 	private ActionBarInterface actionBarInterface;
 
+    private ArrayList<ChannelTag> tagList = new ArrayList<>();
     private ChannelListAdapter adapter;
-    private ArrayAdapter<ChannelTag> tagAdapter;
-    private MaterialDialog tagDialog;
     private ListView listView;
 
     // The dialog that allows the user to select a certain time frame
@@ -195,22 +193,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             });
         }
 
-        // Create the dialog that will list the available channel tags
-        tagAdapter = new ChannelTagListAdapter(activity, new ArrayList<ChannelTag>());
-        tagDialog = new MaterialDialog.Builder(activity)
-        .title(R.string.tags)
-        .adapter(tagAdapter, new MaterialDialog.ListCallback() {
-            @Override
-            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                Utils.setChannelTagId(activity, which);
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.channelTagChanged(TAG);
-                }
-                tagDialog.dismiss();
-            }
-        })
-        .build();
-
         // Disable the context menu when the channels are shown only. The
         // functionality behind the context menu shall not be available when the
         // program guide is displayed
@@ -273,7 +255,30 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_tags:
-            tagDialog.show();
+            // Create the adapter that holds the channel tags and the
+            // dialog that will show the adapter contents
+            final ChannelTagListAdapter tagAdapter = new ChannelTagListAdapter(tagList);
+            final MaterialDialog dialog = new MaterialDialog.Builder(activity)
+                    .title(R.string.tags)
+                    .adapter(tagAdapter, null)
+                    .build();
+
+            // Set the callback to handle clicks. This needs to be done after the
+            // dialog creation so that the inner method has access to the dialog variable
+            tagAdapter.setCallback(new ChannelTagListAdapter.Callback() {
+                @Override
+                public void onItemClicked(int which) {
+                    Utils.setChannelTagId(activity, which);
+                    if (fragmentStatusInterface != null) {
+                        fragmentStatusInterface.channelTagChanged(TAG);
+                    }
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+
+            dialog.show();
             return true;
 
         case R.id.menu_timeframe:
@@ -462,9 +467,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         adapter.notifyDataSetChanged();
 
         // Fill the tag adapter with the available tags
-        tagAdapter.clear();
+        tagList.clear();
         for (ChannelTag t : app.getChannelTags()) {
-            tagAdapter.add(t);
+            tagList.add(t);
         }
 
         // Show the name of the selected channel tag and the number of channels
@@ -571,7 +576,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         ChannelTag tag = (ChannelTag) obj;
-                        tagAdapter.add(tag);
+                        tagList.add(tag);
                     }
                 });
                 break;
@@ -579,7 +584,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         ChannelTag tag = (ChannelTag) obj;
-                        tagAdapter.remove(tag);
+                        tagList.remove(tag);
                     }
                 });
                 break;

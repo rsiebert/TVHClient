@@ -934,7 +934,7 @@ public class Utils {
         final String[] s = context.getResources().getStringArray(R.array.pr_content_type0);
 
         // Fill the list for the adapter
-        List<GenreColorDialogItem> items = new ArrayList<>();
+        final List<GenreColorDialogItem> items = new ArrayList<>();
         for (int i = 0; i < s.length; ++i) {
             GenreColorDialogItem item = new GenreColorDialogItem();
             item.color = getGenreColor(context, ((i + 1) * 16), 0);
@@ -942,10 +942,9 @@ public class Utils {
             items.add(item);
         }
 
-        // Create the dialog and set the adapter
-        new MaterialDialog.Builder(context)
+        final MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title(R.string.genre_color_list)
-                .adapter(new GenreColorDialogAdapter(context, items), null)
+                .adapter(new GenreColorDialogAdapter(items), null)
                 .show();
     }
 
