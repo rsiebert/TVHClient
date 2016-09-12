@@ -169,6 +169,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // finished scrolling. This is only valid in the program guide
         // where only the channels are shown.
         if (showOnlyChannels) {
+            listView.setVerticalScrollBarEnabled(false);
             listView.setOnScrollListener(new OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
