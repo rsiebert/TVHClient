@@ -240,7 +240,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             // Show the cancel menu
             recordOnceButton.setVisibility(View.GONE);
             recordSeriesButton.setVisibility(View.GONE);
-            recordRemoveButton.setText(getString(R.string.stop));
+            recordRemoveButton.setText(R.string.stop);
         } else if (program.isScheduled()) {
             // Show the cancel and play menu
             recordOnceButton.setVisibility(View.GONE);

@@ -200,7 +200,7 @@ public class StatusFragment extends Fragment implements HTSListener {
                         // show the additional status layout again and display the
                         // available information.
                         if (loading) {
-                            status.setText(getString(R.string.loading));
+                            status.setText(R.string.loading);
                             additionalInformationLayout.setVisibility(View.GONE);
                             showConnectionName();
                         } else {
@@ -249,9 +249,9 @@ public class StatusFragment extends Fragment implements HTSListener {
         // none is selected or available
         if (conn == null) {
             if (noConnectionsDefined) {
-                connection.setText(getString(R.string.no_connection_available_advice));
+                connection.setText(R.string.no_connection_available_advice);
             } else {
-                connection.setText(getString(R.string.no_connection_active_advice));
+                connection.setText(R.string.no_connection_active_advice);
             }
         } else {
             String text = conn.name + " (" + conn.address + ")";
@@ -267,7 +267,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         // Show a textual description about the connection state
         switch (connectionStatus) {
             case Constants.ACTION_CONNECTION_STATE_OK:
-                status.setText(getString(R.string.ready));
+                status.setText(R.string.ready);
                 break;
             case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
                 status.setText(R.string.err_connect);
@@ -283,13 +283,13 @@ public class StatusFragment extends Fragment implements HTSListener {
                 status.setText(R.string.err_auth);
                 break;
             case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
-                status.setText(getString(R.string.err_no_network));
+                status.setText(R.string.err_no_network);
                 break;
             case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
-                status.setText(getString(R.string.no_connection_available));
+                status.setText(R.string.no_connection_available);
                 break;
             default:
-                status.setText(getString(R.string.unknown));
+                status.setText(R.string.unknown);
                 break;
         }
     }
@@ -300,8 +300,8 @@ public class StatusFragment extends Fragment implements HTSListener {
      * been received.
      */
     private void getDiscSpace() {
-        freediscspace.setText(getString(R.string.loading));
-        totaldiscspace.setText(getString(R.string.loading));
+        freediscspace.setText(R.string.loading);
+        totaldiscspace.setText(R.string.loading);
         Intent intent = new Intent(activity, HTSService.class);
         intent.setAction(Constants.ACTION_GET_DISC_SPACE);
         activity.startService(intent);
@@ -337,8 +337,8 @@ public class StatusFragment extends Fragment implements HTSListener {
             freediscspace.setText(freeDiscSpace);
             totaldiscspace.setText(totalDiscSpace);
         } catch (Exception e) {
-            freediscspace.setText(getString(R.string.unknown));
-            totaldiscspace.setText(getString(R.string.unknown));
+            freediscspace.setText(R.string.unknown);
+            totaldiscspace.setText(R.string.unknown);
         }
     }
 
