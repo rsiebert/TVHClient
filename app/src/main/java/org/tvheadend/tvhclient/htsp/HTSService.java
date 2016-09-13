@@ -149,8 +149,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             deleteTimerRecEntry(intent.getStringExtra("id"));
 
         } else if (action.equals(Constants.ACTION_EPG_QUERY)) {
-            Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
-            epgQuery(ch, intent.getStringExtra("query"), intent.getLongExtra("tagId", 0));
+            epgQuery(intent);
 
         } else if (action.equals(Constants.ACTION_SUBSCRIBE)) {
             subscribe(intent.getLongExtra("channelId", 0),
@@ -1011,7 +1010,12 @@ public class HTSService extends Service implements HTSConnectionListener {
         return info;
     }
 	
-    private void epgQuery(final Channel ch, String query, long tagId) {
+    private void epgQuery(final Intent intent) {
+
+        Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
+        String query = intent.getStringExtra("query");
+        long tagId = intent.getLongExtra("tagId", 0);
+
         HTSMessage request = new HTSMessage();
         request.setMethod("epgQuery");
         request.putField("query", query);
