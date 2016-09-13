@@ -1012,9 +1012,9 @@ public class HTSService extends Service implements HTSConnectionListener {
 	
     private void epgQuery(final Intent intent) {
 
-        Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
-        String query = intent.getStringExtra("query");
-        long tagId = intent.getLongExtra("tagId", 0);
+        final Channel ch = app.getChannel(intent.getLongExtra("channelId", 0));
+        final String query = intent.getStringExtra("query");
+        final long tagId = intent.getLongExtra("tagId", 0);
 
         HTSMessage request = new HTSMessage();
         request.setMethod("epgQuery");
@@ -1025,7 +1025,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("minduration", 0);
         request.putField("maxduration", Integer.MAX_VALUE);
 
-        if (ch != null) {
+        if (ch != null && ch.id > 0) {
             request.putField("channelId", ch.id);
         }
         if (tagId > 0) {

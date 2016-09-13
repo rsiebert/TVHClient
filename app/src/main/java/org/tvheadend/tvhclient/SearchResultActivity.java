@@ -263,14 +263,14 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         if (recording == null) {
             intent = new Intent(this, HTSService.class);
             intent.setAction(Constants.ACTION_EPG_QUERY);
-            intent.putExtra("query", "");
+            intent.putExtra("query", query);
             if (channel != null) {
                 intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
             }
             startService(intent);
         }
 
-        startQuickAdapterUpdate();
+        startDelayedAdapterUpdate();
     }
 
     @Override
@@ -459,14 +459,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
      * Calls the two timers with the default timeout values.
      */
     private void startDelayedAdapterUpdate() {
-        startAdapterUpdate(500, 2000);
-    }
-
-    /**
-     * Calls the two timers with shorter timeout values.
-     */
-    private void startQuickAdapterUpdate() {
-        startAdapterUpdate(250, 1000);
+        startAdapterUpdate(1000, 3000);
     }
 
     /**
@@ -527,7 +520,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     public boolean onQueryTextChange(String text) {
         if (text.length() >= 3 && app.isUnlocked()) {
             query = text;
-            startQuickAdapterUpdate();
+            startDelayedAdapterUpdate();
         }
         return true;
     }
@@ -536,7 +529,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     @Override
     public boolean onQueryTextSubmit(String text) {
         query = text;
-        startQuickAdapterUpdate();
+        startDelayedAdapterUpdate();
 
         // Close the search view and show the action bar again
         searchMenuItem.collapseActionView();
@@ -549,7 +542,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         // Get the text of the selected suggestion
         Cursor cursor = searchView.getSuggestionsAdapter().getCursor();
         query = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
-        startQuickAdapterUpdate();
+        startDelayedAdapterUpdate();
 
         // Close the search view and show the action bar again
         searchMenuItem.collapseActionView();
@@ -561,7 +554,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         // Get the text of the selected suggestion
         Cursor cursor = searchView.getSuggestionsAdapter().getCursor();
         query = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
-        startQuickAdapterUpdate();
+        startDelayedAdapterUpdate();
         return true;
     }
 
