@@ -100,7 +100,9 @@ public class FileBrowserFragment extends DialogFragment {
         fileListView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(activity);
         fileListView.setLayoutManager(layoutManager);
+        // TODO add animation upon selection
 
+        // TODO check if the shadow can be removed
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
         return v;
