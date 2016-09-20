@@ -208,7 +208,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
      * 
      */
     private void showPlayerControls() {
-        if (program == null) {
+        if (program == null || activity == null) {
             return;
         }
 
