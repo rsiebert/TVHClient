@@ -1,12 +1,17 @@
 package org.tvheadend.tvhclient.fragments;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -16,7 +21,10 @@ import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -41,11 +49,11 @@ import java.util.List;
 import java.util.Locale;
 
 @SuppressWarnings("deprecation")
-public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener, OnRequestPermissionsResultCallback {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
-    private Activity activity;
+    private ActionBarActivity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
 
@@ -59,6 +67,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefShowChangelog;
     private CheckBoxPreference prefDebugMode;
     private Preference prefMenuNotifications;
+    private Preference prefDownloadDir;
     private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
 
@@ -88,6 +97,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
         prefMenuNotifications  = findPreference("pref_menu_notifications");
+        prefDownloadDir = findPreference("pref_download_directory");
     }
 
     @Override
@@ -363,6 +373,43 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 return false;
             }
         });
+
+        // Add a listener to the user can choose the directory
+        // from the device where the recordings will be downloaded to.
+        // In case the permissions for reading the external storage are not
+        // given, a dilaog will be shown to the user to allow access
+        prefDownloadDir.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (isReadPermissionGranted()) {
+                    FileBrowserFragment newFragment = FileBrowserFragment.newInstance(null);
+                    newFragment.show(activity.getSupportFragmentManager(), "dialog");
+                }
+                return false;
+            }
+        });
+
+        // Set the current download folder in the preference summary text
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String path = prefs.getString("pref_download_directory", Environment.DIRECTORY_DOWNLOADS);
+        prefDownloadDir.setSummary(getString(R.string.pref_download_directory_sum, path));
+    }
+
+    @SuppressLint("NewApi")
+    private boolean isReadPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (activity.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                app.log(TAG,"Permission is granted");
+                return true;
+            } else {
+                app.log(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else {
+            app.log(TAG,"Permission is granted");
+            return true;
+        }
     }
 
     private void mailLogfile(String filename) {
@@ -396,7 +443,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = activity;
+        this.activity = (ActionBarActivity) activity;
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
     }

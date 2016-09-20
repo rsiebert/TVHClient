@@ -148,6 +148,11 @@
             android:key="pref_menu_notifications"
             android:title="@string/pref_notifications" >
         </PreferenceScreen>
+        <Preference
+            android:key="pref_download_directory"
+            android:summary="@string/pref_download_directory_sum"
+            android:title="@string/pref_download_directory">
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_playback_and_recording" >
         <PreferenceScreen
