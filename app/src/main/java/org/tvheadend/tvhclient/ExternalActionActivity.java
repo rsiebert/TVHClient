@@ -37,6 +37,8 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class ExternalActionActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
 
@@ -91,7 +93,17 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
         // Create the url with the credentials and the host and  
         // port configuration. This one is fixed for all actions
-        baseUrl = "http://" + conn.username + ":" + conn.password + "@" + conn.address + ":" + conn.streaming_port;
+        String encodedUsername = null;
+        String encodedPassword = null;
+        try {
+            encodedUsername = URLEncoder.encode(conn.username, "UTF-8");
+            encodedPassword = URLEncoder.encode(conn.password, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // Can't happen since encoding is statically specified
+            app.log(TAG, "Got impossible UnsupportedEncodingException");
+        }
+
+        baseUrl = "http://" + encodedUsername + ":" + encodedPassword + "@" + conn.address + ":" + conn.streaming_port;
 
         switch (action) {
         case Constants.EXTERNAL_ACTION_PLAY:
