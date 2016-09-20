@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/toolbar_background_color" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingEnd="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingStart="16dp">
+
+            <TextView
+                android:id="@+id/path_label"
+                style="?attr/TitleFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:paddingTop="16dp"
+                android:text="@string/summary" />
+
+            <TextView
+                android:id="@+id/path"
+                style="?attr/ContentFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="Current folder:" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/file_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/toolbar_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_elevation"
+            android:background="@drawable/toolbar_dropshadow" />
+    </FrameLayout>
+</LinearLayout>
