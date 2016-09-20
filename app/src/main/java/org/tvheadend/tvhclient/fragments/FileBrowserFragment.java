@@ -175,11 +175,13 @@ public class FileBrowserFragment extends DialogFragment {
      * @param path
      */
     private void saveSelectedDirectory(File path) {
-        // TODO remove the path setDestinationInExternalPublicDir from the path?
-        Log.d(TAG, "Saving the selected path " + path.getAbsolutePath());
+        // Remove the external storage path like /storage/emulated/0 from the selected path.
+        // It will automatically be prepended by the download manager.
+        String strippedPath = path.getAbsolutePath().replace(Environment.getExternalStorageDirectory().getAbsolutePath(), "");
+        Log.d(TAG, "Saving the selected path " + strippedPath);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        prefs.edit().putString("pref_download_directory", path.getAbsolutePath()).apply();
+        prefs.edit().putString("pref_download_directory", strippedPath).apply();
     }
 
     /**

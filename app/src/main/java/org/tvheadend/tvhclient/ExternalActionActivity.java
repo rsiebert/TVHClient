@@ -7,6 +7,7 @@ import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
@@ -165,9 +167,14 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             request.setTitle(getString(R.string.download));
             request.setDescription(rec.title);
             request.setNotificationVisibility(Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, rec.title + ".mkv");
 
-            app.log(TAG, "Starting download from url " + downloadUrl);
+            // The path that can be specified is always in the external storage. Therefore the path
+            // like /storage/emulated/0 is fixed, only the location within this folder can be changed
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            final String path = prefs.getString("pref_download_directory", Environment.DIRECTORY_DOWNLOADS);
+            request.setDestinationInExternalPublicDir(path, rec.title + ".mkv");
+
+            app.log(TAG, "Saving download from url " + downloadUrl + " to " + path);
             startDownload(request);
 
         } catch (IllegalStateException e) {
