@@ -381,9 +381,16 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefDownloadDir.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (isReadPermissionGranted()) {
-                    FileBrowserFragment newFragment = FileBrowserFragment.newInstance(null);
-                    newFragment.show(activity.getSupportFragmentManager(), "dialog");
+                if (!app.isUnlocked()) {
+                    if (getView() != null) {
+                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
+                                Snackbar.LENGTH_SHORT).show();
+                    }
+                } else {
+                    if (isReadPermissionGranted()) {
+                        FileBrowserFragment newFragment = FileBrowserFragment.newInstance(null);
+                        newFragment.show(activity.getSupportFragmentManager(), "dialog");
+                    }
                 }
                 return false;
             }
