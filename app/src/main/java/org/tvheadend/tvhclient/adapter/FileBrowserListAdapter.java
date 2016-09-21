@@ -1,15 +1,10 @@
 package org.tvheadend.tvhclient.adapter;
 
 import android.app.Activity;
-import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -82,15 +77,11 @@ public class FileBrowserListAdapter extends RecyclerView.Adapter<FileBrowserList
                 if (position == 0 && item.getAbsolutePath().equals(basePath.getAbsolutePath())) {
                     holder.itemCount.setVisibility(View.GONE);
                 } else {
-
                     FilenameFilter filter = new FilenameFilter() {
                         @Override
                         public boolean accept(File dir, String filename) {
                             File f = new File(dir, filename);
-                            if (f.isDirectory() && !f.isHidden()) {
-                                return true;
-                            }
-                            return false;
+                            return (f.isDirectory() && !f.isHidden());
                         }
                     };
 
