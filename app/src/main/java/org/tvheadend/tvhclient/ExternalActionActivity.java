@@ -493,8 +493,10 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            app.log(TAG, "Permission: " + permissions[0] + " was " + grantResults[0]);
+        app.log(TAG, "Permission: " + permissions[0] + " was " + grantResults[0]);
+
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                permissions[0].equals("android.permission.WRITE_EXTERNAL_STORAGE")) {
             prepareDownload();
         } else {
             finish();
