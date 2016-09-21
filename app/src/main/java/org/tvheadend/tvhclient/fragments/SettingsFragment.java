@@ -395,8 +395,13 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 return false;
             }
         });
+        updateDownloadDirSummary();
+    }
 
-        // Set the current download folder in the preference summary text
+    /**
+     * Sets the current download folder in the preference summary text
+     */
+    private void updateDownloadDirSummary() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final String path = prefs.getString("pref_download_directory", Environment.DIRECTORY_DOWNLOADS);
         prefDownloadDir.setSummary(getString(R.string.pref_download_directory_sum, path));
@@ -530,6 +535,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 } catch (NumberFormatException ex) {
                     prefs.edit().putString(key, "5").apply();
                 }
+                break;
+            case "pref_download_directory":
+                updateDownloadDirSummary();
                 break;
         }
         // Reload the data to fetch the channel icons. They are not loaded
