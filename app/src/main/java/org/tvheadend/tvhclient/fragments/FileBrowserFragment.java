@@ -37,8 +37,6 @@ public class FileBrowserFragment extends DialogFragment {
     @SuppressWarnings("unused")
     private final static String TAG = FileBrowserFragment.class.getSimpleName();
 
-    // TODO use a model instead of a list of files
-
     private Activity activity;
     private TextView currentPathView;
     private Toolbar toolbar;
@@ -63,8 +61,6 @@ public class FileBrowserFragment extends DialogFragment {
         if (dialog.getWindow() != null) {
             dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
-        // TODO min height and width
-
         return dialog;
     }
 
@@ -107,7 +103,6 @@ public class FileBrowserFragment extends DialogFragment {
         fileListView.setLayoutManager(layoutManager);
         // TODO add animation upon selection
 
-        // TODO check if the shadow can be removed
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
         return v;
