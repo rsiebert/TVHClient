@@ -68,6 +68,8 @@
     <string name="edit_series_recording">Serienaufnahme bearbeiten</string>
     <string name="edit_timer_recording">Manuelle Aufnahme bearbeiten</string>
     <string name="activate_recording">Aufnahme aktivieren</string>
+    <string name="selected_directory">Gewähltes Verzeichnis:</string>
+    <string name="select">Auswählen</string>
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
     <string name="pref_manage_connections_sum">Die aktive Verbindung zum TVHeadend Server ändern, neue Verbindungen erstellen, vorhandene bearbeiten oder entfernen.</string>
@@ -176,6 +178,8 @@
     <string name="pref_enable_playback_profiles">Aktiviere Wiedergabeprofile</string>
     <string name="pref_enable_playback_profiles_sum">Verwende die neueren Serverprofile für Programme. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
     <string name="pref_notifications">Benachrichtigungen</string>
+    <string name="pref_download_directory">Download Verzeichnis</string>
+    <string name="pref_download_directory_sum">Aufnahmen werden in folgendes Verzeichnis heruntergeladen: \'%s\'</string>
     <string name="pref_show_notifications">Zeige Benachrichtigungen</string>
     <string name="pref_show_notifications_sum">Wird eine Aufnahme gestartet oder abgeschlossen, wird dies in der Benachrichtigungszeile angezeigt.</string>
     <string name="pref_show_notification_offset">Benachrichtigungszeitpunkt</string>

@@ -70,7 +70,7 @@
     <string name="edit_series_recording">Edit series recording</string>
     <string name="edit_timer_recording">Edit manual recording</string>
     <string name="activate_recording">Activate recording</string>
-    <string name="select_directory">Select directory</string>
+    <string name="selected_directory">Selected directory:</string>
     <string name="select">Select</string>
 
     <string name="pref_manage_connections">Manage connections</string>
@@ -182,7 +182,7 @@
     <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
     <string name="pref_notifications">Notifications</string>
     <string name="pref_download_directory">Download directory</string>
-    <string name="pref_download_directory_sum">The downloaded files will currently be saved to %s</string>
+    <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
     <string name="pref_show_notifications">Show notifications</string>
     <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed.</string>
     <string name="pref_show_notification_offset">Notification time </string>

@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
 
                 android:paddingTop="16dp"
-                android:text="@string/summary" />
+                android:text="@string/selected_directory" />
 
             <TextView
                 android:id="@+id/path"
@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
-                android:text="Current folder:" />
+                android:text="@null" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/file_list"
