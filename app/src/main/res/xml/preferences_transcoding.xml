@@ -14,7 +14,7 @@
             android:title="@string/pref_container" />
 
         <CheckBoxPreference
-            android:id="@+id/pref_transcode"
+            android:id="@+id/pref_transcode_prog"
             android:name="@string/pref_transcode"
             android:defaultValue="false"
             android:key="progTranscodePref"
@@ -80,7 +80,7 @@
             android:title="@string/pref_container" />
 
         <CheckBoxPreference
-            android:id="@+id/pref_transcode"
+            android:id="@+id/pref_transcode_rec"
             android:name="@string/pref_transcode"
             android:defaultValue="false"
             android:key="recTranscodePref"
