@@ -3,10 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
-    dexOptions {
-        maxProcessCount 2
-        javaMaxHeapSize "2g"
-    }
     defaultConfig {
         applicationId "org.tvheadend.tvhclient"
         minSdkVersion 16
