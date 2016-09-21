@@ -47,7 +47,6 @@ public class FileBrowserFragment extends DialogFragment {
 
     private FileBrowserListAdapter fileListAdapter;
     private RecyclerView fileListView;
-    private RecyclerView.LayoutManager layoutManager;
     private File basePath = Environment.getExternalStorageDirectory();
     private File selectedPath = Environment.getExternalStorageDirectory();
 
@@ -61,7 +60,9 @@ public class FileBrowserFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
         // TODO min height and width
 
         return dialog;
@@ -70,7 +71,7 @@ public class FileBrowserFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getDialog() != null) {
+        if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
             setStyle(DialogFragment.STYLE_NO_TITLE, Utils.getThemeId(activity));
         }
@@ -102,7 +103,7 @@ public class FileBrowserFragment extends DialogFragment {
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         fileListView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(activity);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(activity);
         fileListView.setLayoutManager(layoutManager);
         // TODO add animation upon selection
 
@@ -151,7 +152,14 @@ public class FileBrowserFragment extends DialogFragment {
 
         // Fill the adapter with the found files and directories
         createFileList(selectedPath);
-        fileListAdapter.setFileList(getFileList(), selectedPath);
+
+        // Only pass on the parent file if the selected path is not the base path.
+        // This is the case when the device orientation has changed
+        if (basePath.getAbsolutePath().equals(selectedPath.getAbsolutePath())) {
+            fileListAdapter.setFileList(getFileList(), basePath);
+        } else {
+            fileListAdapter.setFileList(getFileList(), selectedPath.getParentFile());
+        }
         fileListAdapter.notifyDataSetChanged();
 
         // Setup the listeners so that the user can navigate through the
@@ -180,12 +188,13 @@ public class FileBrowserFragment extends DialogFragment {
     }
 
     /**
+     * Saves the selected directory in the preferences. Additionally remove the
+     * external storage path like /storage/emulated/0 from the selected path.
+     * It will automatically be prepended by the download manager.
      *
-     * @param path
+     * @param path The selected path that shall be saved
      */
     private void saveSelectedDirectory(File path) {
-        // Remove the external storage path like /storage/emulated/0 from the selected path.
-        // It will automatically be prepended by the download manager.
         String strippedPath = path.getAbsolutePath().replace(Environment.getExternalStorageDirectory().getAbsolutePath(), "");
         Log.d(TAG, "Saving the selected path " + strippedPath);
 
@@ -219,10 +228,7 @@ public class FileBrowserFragment extends DialogFragment {
                 @Override
                 public boolean accept(File dir, String filename) {
                     File f = new File(dir, filename);
-                    if (f.isDirectory() && !f.isHidden()) {
-                        return true;
-                    }
-                    return false;
+                    return ((f.isDirectory() && !f.isHidden()));
                 }
             };
 
