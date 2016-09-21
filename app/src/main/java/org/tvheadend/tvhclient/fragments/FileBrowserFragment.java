@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.FileBrowserListAdapter;
@@ -48,7 +49,7 @@ public class FileBrowserFragment extends DialogFragment {
     private RecyclerView fileListView;
     private RecyclerView.LayoutManager layoutManager;
     private File basePath = Environment.getExternalStorageDirectory();
-    private File selectedPath;
+    private File selectedPath = Environment.getExternalStorageDirectory();
 
     public static FileBrowserFragment newInstance(Bundle args) {
         FileBrowserFragment f = new FileBrowserFragment();
@@ -84,10 +85,13 @@ public class FileBrowserFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        Log.d(TAG, "onCreateView");
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            // NOP
+        if (savedInstanceState != null) {
+            String path = savedInstanceState.getString(Constants.BUNDLE_DOWNLOAD_DIR, null);
+            if (path != null) {
+                selectedPath = new File(path);
+            }
         }
 
         // Initialize all the widgets from the layout
@@ -109,18 +113,21 @@ public class FileBrowserFragment extends DialogFragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState");
+        outState.putString(Constants.BUNDLE_DOWNLOAD_DIR, selectedPath.getAbsolutePath());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
 
-        if (getDialog() != null) {
-            toolbar.setTitle(R.string.select_directory);
-        }
-
         if (currentPathView != null) {
-            currentPathView.setText(basePath.getAbsolutePath());
+            currentPathView.setText(selectedPath.getAbsolutePath());
         }
 
         // Setup the menu in the toolbar and the listener to save the selected path
@@ -143,8 +150,8 @@ public class FileBrowserFragment extends DialogFragment {
         fileListView.setAdapter(fileListAdapter);
 
         // Fill the adapter with the found files and directories
-        createFileList(basePath);
-        fileListAdapter.setFileList(getFileList(), basePath);
+        createFileList(selectedPath);
+        fileListAdapter.setFileList(getFileList(), selectedPath);
         fileListAdapter.notifyDataSetChanged();
 
         // Setup the listeners so that the user can navigate through the
@@ -205,6 +212,7 @@ public class FileBrowserFragment extends DialogFragment {
         this.fileList.clear();
 
         if (path.exists()) {
+            Log.d(TAG, "Filling list from path " + path.getAbsolutePath());
 
             // Create the filter that checks if the file or directory shall be added to the list
             FilenameFilter filter = new FilenameFilter() {

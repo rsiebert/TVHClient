@@ -48,6 +48,7 @@ public class Constants {
     public static final String BUNDLE_SHOW_PROGRAMS_FROM_TIME = "programsFromTime";
     public static final String BUNDLE_CHANNEL_TIME_SELECTION = "channelTimeDialogSelection";
     public static final String BUNDLE_NOTIFICATION_MSG = "notificationMsg";
+    public static final String BUNDLE_DOWNLOAD_DIR = "downloadDirectory";
 
     // Defines what external action shall be done
     public static final int EXTERNAL_ACTION_PLAY = 1;
