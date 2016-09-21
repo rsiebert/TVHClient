@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -22,7 +23,6 @@ import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Locale;
 
 @SuppressWarnings("deprecation")
-public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener, OnRequestPermissionsResultCallback {
+public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
@@ -415,12 +415,31 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 return true;
             } else {
                 app.log(TAG,"Permission is revoked");
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         } else {
             app.log(TAG,"Permission is granted");
             return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        app.log(TAG, "Permission: " + permissions[0] + " was " + grantResults[0]);
+
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                permissions[0].equals("android.permission.READ_EXTERNAL_STORAGE")) {
+
+            // The delay is needed, otherwise an illegalStateException would be thrown. This is
+            // a known bug in android. Until it is fixed this unpretty workaround is required.
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    FileBrowserFragment newFragment = FileBrowserFragment.newInstance(null);
+                    newFragment.show(activity.getSupportFragmentManager(), "dialog");
+                }
+            }, 200);
         }
     }
 
