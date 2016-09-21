@@ -1,9 +1,8 @@
 $ 1.9.5
   % VERSION 1.9.5
-  _ 20.09.2016
-    * Use the new recycler view for some dialogs
+  _ 21.09.2016
+    * Added setting to set the download directory for recordings (Only available in the unlocked version)
     * Improved search speed
-    * Added setting to specify the directory where recordings can be downloaded to (Only available in the unlocked version)
 $ 1.9.4
   % VERSION 1.9.4
   _ 04.09.2016
