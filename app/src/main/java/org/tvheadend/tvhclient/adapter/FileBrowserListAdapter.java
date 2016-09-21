@@ -75,7 +75,7 @@ public class FileBrowserListAdapter extends RecyclerView.Adapter<FileBrowserList
             if (holder.itemCount != null) {
                 // Do not show the number of items for the parent directory
                 if (position == 0 && item.getAbsolutePath().equals(basePath.getAbsolutePath())) {
-                    holder.itemCount.setVisibility(View.GONE);
+                    holder.itemCount.setText(R.string.parent_directory);
                 } else {
                     FilenameFilter filter = new FilenameFilter() {
                         @Override
@@ -88,7 +88,6 @@ public class FileBrowserListAdapter extends RecyclerView.Adapter<FileBrowserList
                     File[] files = item.listFiles(filter);
                     final int count = (files != null) ? files.length : 0;
                     holder.itemCount.setText(activity.getResources().getQuantityString(R.plurals.items, count, count));
-                    holder.itemCount.setVisibility(View.VISIBLE);
                 }
             }
         }

@@ -365,4 +365,6 @@
     <string name="drawer_open">Navigationsmenü öffnen</string>
     <string name="drawer_close">Navigationsmenü schließen</string>
 
+    <string name="parent_directory">Übergeordnetes Verzeichnis</string>
+
 </resources>
