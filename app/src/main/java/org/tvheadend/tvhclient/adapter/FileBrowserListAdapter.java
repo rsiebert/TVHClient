@@ -26,6 +26,10 @@ public class FileBrowserListAdapter extends RecyclerView.Adapter<FileBrowserList
         this.basePath = basePath;
     }
 
+    public File getItem(int position) {
+        return this.list.get(position);
+    }
+
     public interface Callback {
         void onItemClicked(int adapterPosition);
         void onItemLongClicked(int adapterPosition);
@@ -95,7 +99,7 @@ public class FileBrowserListAdapter extends RecyclerView.Adapter<FileBrowserList
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return (list != null ? list.size() : 0);
     }
 
     /**

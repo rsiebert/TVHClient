@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -11,7 +12,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.FileBrowserListAdapter;
 
@@ -41,12 +42,13 @@ public class FileBrowserFragment extends DialogFragment {
     private TextView currentPathView;
     private Toolbar toolbar;
     private View toolbarShadow;
-    private List<File> fileList = new ArrayList<>();
 
     private FileBrowserListAdapter fileListAdapter;
     private RecyclerView fileListView;
     private File basePath = Environment.getExternalStorageDirectory();
     private File selectedPath = Environment.getExternalStorageDirectory();
+
+    private TVHClientApplication app;
 
     public static FileBrowserFragment newInstance(Bundle args) {
         FileBrowserFragment f = new FileBrowserFragment();
@@ -77,12 +79,12 @@ public class FileBrowserFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.d(TAG, "onCreateView");
 
         if (savedInstanceState != null) {
             String path = savedInstanceState.getString(Constants.BUNDLE_DOWNLOAD_DIR, null);
@@ -110,7 +112,6 @@ public class FileBrowserFragment extends DialogFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState");
         outState.putString(Constants.BUNDLE_DOWNLOAD_DIR, selectedPath.getAbsolutePath());
         super.onSaveInstanceState(outState);
     }
@@ -145,29 +146,23 @@ public class FileBrowserFragment extends DialogFragment {
         fileListAdapter = new FileBrowserListAdapter(activity, basePath);
         fileListView.setAdapter(fileListAdapter);
 
-        // Fill the adapter with the found files and directories
-        createFileList(selectedPath);
-
         // Only pass on the parent file if the selected path is not the base path.
         // This is the case when the device orientation has changed
         if (basePath.getAbsolutePath().equals(selectedPath.getAbsolutePath())) {
-            fileListAdapter.setFileList(getFileList(), basePath);
+            new FileListLoader().execute(basePath);
         } else {
-            fileListAdapter.setFileList(getFileList(), selectedPath.getParentFile());
+            new FileListLoader().execute(selectedPath.getParentFile());
         }
-        fileListAdapter.notifyDataSetChanged();
 
         // Setup the listeners so that the user can navigate through the
         // directory structure and also choose a directory by long pressing it
         fileListAdapter.setCallback(new FileBrowserListAdapter.Callback() {
             @Override
             public void onItemClicked(int which) {
-                selectedPath = fileList.get(which);
+                selectedPath = fileListAdapter.getItem(which);
 
                 // Get the contents of the newly selected path and update the adapter
-                createFileList(selectedPath);
-                fileListAdapter.setFileList(getFileList(), selectedPath.getParentFile());
-                fileListAdapter.notifyDataSetChanged();
+                new FileListLoader().execute(selectedPath);
                 if (currentPathView != null) {
                     currentPathView.setText(selectedPath.getAbsolutePath());
                 }
@@ -176,7 +171,7 @@ public class FileBrowserFragment extends DialogFragment {
             @Override
             public void onItemLongClicked(int which) {
                 // Save the selected folder in the preferences
-                selectedPath = fileList.get(which);
+                selectedPath = fileListAdapter.getItem(which);
                 saveSelectedDirectory(selectedPath);
             }
         });
@@ -191,64 +186,76 @@ public class FileBrowserFragment extends DialogFragment {
      */
     private void saveSelectedDirectory(File path) {
         String strippedPath = path.getAbsolutePath().replace(Environment.getExternalStorageDirectory().getAbsolutePath(), "");
-        Log.d(TAG, "Saving the selected path " + strippedPath);
+        app.log(TAG, "Saving the selected path " + strippedPath);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.edit().putString("pref_download_directory", strippedPath).apply();
     }
 
     /**
-     * Returns the list of file objects that were found in the given directory
-     *
-     * @return fileList List of found files
-     */
-    private List<File> getFileList() {
-        return this.fileList;
-    }
-
-    /**
      * Creates a list of file objects that are available in the given directory.
      * The found files are only added to the list if they match the filter.
-     *
-     * @param path The directory that shall be searched
      */
-    private void createFileList(File path) {
-        this.fileList.clear();
+    class FileListLoader extends AsyncTask<File, Void, Void> {
 
-        if (path.exists()) {
-            Log.d(TAG, "Filling list from path " + path.getAbsolutePath());
+        private final String TAG = FileListLoader.class.getSimpleName();
+        private List<File> fl = new ArrayList<>();
 
-            // Create the filter that checks if the file or directory shall be added to the list
-            FilenameFilter filter = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String filename) {
-                    File f = new File(dir, filename);
-                    return ((f.isDirectory() && !f.isHidden()));
+        @Override
+        protected void onPreExecute() {
+            toolbar.setTitle(R.string.loading);
+        }
+
+        @Override
+        protected Void doInBackground(File... paths) {
+            File path = paths[0];
+
+            if (path.exists()) {
+                app.log(TAG, "Loading directories from " + path.getAbsolutePath());
+
+                // Create the filter that checks if the file or directory shall be added to the list
+                FilenameFilter filter = new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        File f = new File(dir, filename);
+                        return ((f.isDirectory() && !f.isHidden()));
+                    }
+                };
+
+                // Save the contents from the file array into a list
+                File[] files = path.listFiles(filter);
+                if (files != null) {
+                    for (File file : files) {
+                        fl.add(file);
+                    }
                 }
-            };
 
-            // Save the contents from the file array into a list
-            File[] files = path.listFiles(filter);
-            if (files != null) {
-                for (File file : files) {
-                    fileList.add(file);
+                // Sort the found files alphabetically
+                Collections.sort(fl, new Comparator<File>() {
+                    @Override
+                    public int compare(File file1, File file2) {
+                        return file1.getName().compareTo(file2.getName());
+                    }
+                });
+
+                // Add the parent directory so the user can navigate backwards.
+                final File parent = path.getParentFile();
+                if (parent != null && !path.getPath().equals(basePath.getAbsolutePath())) {
+                    fl.add(0, parent);
                 }
+
+                app.log(TAG, "Loaded " + fl.size() + " directories");
             }
+            return null;
+        }
 
-            // Sort the found files alphabetically
-            Collections.sort(fileList, new Comparator<File>() {
-                @Override
-                public int compare(File file1, File file2) {
-                    return file1.getName().compareTo(file2.getName());
-                }
-            });
+        @Override
+        protected void onPostExecute(Void unused) {
+            app.log(TAG, "Updating file list adapter");
 
-            // Add the parent directory so the user can navigate backwards.
-            final File parent = path.getParentFile();
-            if (parent != null && !path.getPath().equals(basePath.getAbsolutePath())) {
-                fileList.add(0, parent);
-            }
+            toolbar.setTitle("");
+            fileListAdapter.setFileList(fl, selectedPath.getParentFile());
+            fileListAdapter.notifyDataSetChanged();
         }
     }
-
 }
