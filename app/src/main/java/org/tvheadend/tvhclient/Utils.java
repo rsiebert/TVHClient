@@ -854,10 +854,19 @@ public class Utils {
         		view.setVisibility(View.GONE);
         	}
         } else if (view instanceof LinearLayout) {
-        	// Get the shape where the background color will be set 
-	        LayerDrawable layers = (LayerDrawable) view.getBackground();
-	        GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
-	        shape.setColor(color);
+            // When the program view guide is shown the the channel list on the left uses a
+            // different layout. This linear layout shall show no color. The linear
+            // layout for each program in the right area shall show the genre color.
+            if (tag.equals("ProgramGuideItemView")) {
+                // Get the shape where the background color will be set, if the
+                // linear layout would be used directly, the borders would be overwritten
+                LayerDrawable layers = (LayerDrawable) view.getBackground();
+                GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+                shape.setColor(color);
+            } else if (tag.equals("ChannelListAdapter")) {
+                color = context.getResources().getColor(android.R.color.transparent);
+                view.setBackgroundColor(color);
+            }
         }
     }
 
