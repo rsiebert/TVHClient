@@ -156,7 +156,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             Utils.setChannelIcon(holder.icon, holder.icon_text, c);
             // Only show the channel text in the program guide when no icons shall be shown
             if (holder.icon_text != null) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 final boolean showIcons = prefs.getBoolean("showIconPref", true);
                 if (!showIcons && layout == R.layout.program_guide_channel_item) {
                     holder.icon_text.setText(c.name);
