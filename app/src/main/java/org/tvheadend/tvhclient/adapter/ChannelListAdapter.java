@@ -8,6 +8,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -84,6 +85,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     }
 
     static class ViewHolder {
+        public LinearLayout channel_item_layout;
         public ImageView icon;
         public TextView icon_text;
         public TextView title;
@@ -110,6 +112,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             final boolean bigIcon = prefs.getBoolean("showBigIconPref", false);
             holder.icon = (ImageView) view.findViewById(bigIcon ? R.id.icon_large : R.id.icon);
 
+            holder.channel_item_layout = (LinearLayout) view.findViewById(R.id.channel_item_layout);
             holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.nextTitle = (TextView) view.findViewById(R.id.next_title);
@@ -272,7 +275,11 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.nextTitle.setVisibility(View.GONE);
                 }
             }
-            Utils.setGenreColor(context, holder.genre, p, TAG);
+            if (layout == R.layout.program_guide_channel_item) {
+                Utils.setGenreColor(context, holder.channel_item_layout, p, TAG);
+            } else {
+                Utils.setGenreColor(context, holder.genre, p, TAG);
+            }
 
         }
         return view;
