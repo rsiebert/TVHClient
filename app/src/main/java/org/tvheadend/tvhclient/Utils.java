@@ -912,9 +912,6 @@ public class Utils {
             case 10:
                 color = R.color.EPG_SPECIAL;
                 break;
-            default:
-                color = android.R.color.transparent;
-                break;
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             
