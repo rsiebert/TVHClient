@@ -17,6 +17,7 @@ public class Program extends Model implements Comparable<Program> {
     public int starRating;
     public Channel channel;
     public Recording recording;
+    public String image;
 
     public int compareTo(@NonNull Program that) {
         return this.start.compareTo(that.start);

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/summary_label"
@@ -61,7 +70,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="16dp" >
+        android:paddingBottom="16dp">
 
         <TextView
             android:id="@+id/date"
@@ -150,7 +159,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="16dp" >
+        android:paddingBottom="16dp">
 
         <RatingBar
             android:id="@+id/star_rating"
