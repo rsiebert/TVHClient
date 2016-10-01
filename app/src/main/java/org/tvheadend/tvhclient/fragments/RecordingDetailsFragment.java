@@ -242,7 +242,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         } else if (rec.isRecording()) {
             // The recording is recording it can be played or cancelled
-            playRecordingButton.setText(getString(R.string.stop));
+            removeRecordingButton.setText(getString(R.string.stop));
+            removeRecordingButton.setVisibility(View.VISIBLE);
             playRecordingButton.setVisibility(View.VISIBLE);
             if (app.isUnlocked()) {
                 editRecordingButton.setVisibility(View.VISIBLE);
