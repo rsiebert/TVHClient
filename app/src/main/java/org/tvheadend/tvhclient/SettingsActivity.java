@@ -8,11 +8,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.fragments.SettingsCastingFragment;
 import org.tvheadend.tvhclient.fragments.SettingsFragment;
@@ -49,7 +52,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
     private final static int NOTIFICATIONS = 7;
     private final static int CASTING = 8;
 
-    private int currentSettingsMode = MAIN_SETTINGS; 
+    private int currentSettingsMode = MAIN_SETTINGS;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
                     .commit();
         }
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -143,8 +146,10 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
 
         case ADD_CONNECTION:
         case EDIT_CONNECTION:
-            getFragmentManager().popBackStack();
-            currentSettingsMode = LIST_CONNECTIONS;
+            fragment = getFragmentManager().findFragmentById(android.R.id.content);
+            if (fragment != null && fragment instanceof BackPressedInterface) {
+                ((BackPressedInterface) fragment).onBackPressed();
+            }
             break;
 
         case PROFILES:
@@ -153,7 +158,7 @@ public class SettingsActivity extends ActionBarActivity implements ActionBarInte
         case CASTING:
             // Any changes in these fragments need to be changed when the back
             // or home key was pressed. This is only available in the activity,
-            // not in the fragment. Therefore trigger the saving from here. 
+            // not in the fragment. Therefore trigger the saving from here.
             fragment = getFragmentManager().findFragmentById(android.R.id.content);
             if (fragment != null && fragment instanceof BackPressedInterface) {
                 ((BackPressedInterface) fragment).onBackPressed();

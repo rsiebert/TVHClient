@@ -10,6 +10,7 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,7 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 
@@ -28,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
-public class SettingsManageConnectionFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
+public class SettingsManageConnectionFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener, BackPressedInterface {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsManageConnectionFragment.class.getSimpleName();
@@ -525,5 +527,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        cancel();
     }
 }
