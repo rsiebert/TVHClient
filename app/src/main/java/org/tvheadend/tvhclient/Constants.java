@@ -44,16 +44,16 @@ public class Constants {
     public static final String BUNDLE_SETTINGS_MODE = "settingsMode";
     public static final String BUNDLE_EPG_PIXELS_PER_MINUTE = "pixelsPerMinute";
     public static final String BUNDLE_EPG_DISPLAY_WIDTH = "displayWidth";
-    public static final String BUNDLE_EXTERNAL_ACTION = "externalAction";
+    public static final String BUNDLE_ACTION = "action";
     public static final String BUNDLE_SHOW_PROGRAMS_FROM_TIME = "programsFromTime";
     public static final String BUNDLE_CHANNEL_TIME_SELECTION = "channelTimeDialogSelection";
     public static final String BUNDLE_NOTIFICATION_MSG = "notificationMsg";
     public static final String BUNDLE_DOWNLOAD_DIR = "downloadDirectory";
 
-    // Defines what external action shall be done
-    public static final int EXTERNAL_ACTION_PLAY = 1;
-    public static final int EXTERNAL_ACTION_DOWNLOAD = 2;
-    public static final int EXTERNAL_ACTION_CAST = 3;
+    // Defines what action shall be done
+    public static final int ACTION_PLAY = 1;
+    public static final int ACTION_DOWNLOAD = 2;
+    public static final int ACTION_CAST = 3;
 
     // Differentiates the different types of recordings
     public static final int RECORDING_TYPE_COMPLETED = 1;

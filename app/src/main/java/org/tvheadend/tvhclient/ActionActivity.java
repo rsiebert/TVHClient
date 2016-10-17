@@ -40,9 +40,9 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class ExternalActionActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
+public class ActionActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
 
-    private final static String TAG = ExternalActionActivity.class.getSimpleName();
+    private final static String TAG = ActionActivity.class.getSimpleName();
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
@@ -64,7 +64,8 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         app = (TVHClientApplication) getApplication();
         dbh = DatabaseHelper.getInstance(this);
         conn = dbh.getSelectedConnection();
-        action = getIntent().getIntExtra(Constants.BUNDLE_EXTERNAL_ACTION, Constants.EXTERNAL_ACTION_PLAY);
+        // If a play intent was sent no action is given, so default to play
+        action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, Constants.ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
         ch = app.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
@@ -82,7 +83,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
 
         // If the cast menu button is connected then assume playing means casting
         if (VideoCastManager.getInstance().isConnected()) {
-            action = Constants.EXTERNAL_ACTION_CAST;
+            action = Constants.ACTION_CAST;
         }
     }
 
@@ -106,7 +107,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
         baseUrl = "http://" + encodedUsername + ":" + encodedPassword + "@" + conn.address + ":" + conn.streaming_port;
 
         switch (action) {
-        case Constants.EXTERNAL_ACTION_PLAY:
+        case Constants.ACTION_PLAY:
             // Check if the recording exists in the download folder, if not
             // stream it from the server
             if (rec != null && app.isUnlocked()) {
@@ -122,13 +123,13 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             // No downloaded recording exists, so continue starting the service
             // to get the url that shall be played. This could either be a
             // channel or a recording.
-            Intent intent = new Intent(ExternalActionActivity.this, HTSService.class);
+            Intent intent = new Intent(ActionActivity.this, HTSService.class);
             intent.setAction(Constants.ACTION_GET_TICKET);
             intent.putExtras(getIntent().getExtras());
             this.startService(intent);
             break;
 
-        case Constants.EXTERNAL_ACTION_DOWNLOAD:
+        case Constants.ACTION_DOWNLOAD:
             if (rec != null) {
                 if (isStoragePermissionGranted()) {
                     prepareDownload();
@@ -136,7 +137,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
             }
             break;
 
-        case Constants.EXTERNAL_ACTION_CAST:
+        case Constants.ACTION_CAST:
             if (ch != null && ch.number > 0) {
                 app.log(TAG, "Starting to cast channel '" + ch.name + "'");
                 startCasting();
@@ -355,7 +356,7 @@ public class ExternalActionActivity extends Activity implements HTSListener, OnR
                     app.log(TAG, "Can't execute external media player");
 
                     // Show a confirmation dialog before deleting the recording
-                    new MaterialDialog.Builder(ExternalActionActivity.this)
+                    new MaterialDialog.Builder(ActionActivity.this)
                         .title(R.string.no_media_player)
                         .content(R.string.show_play_store)
                         .positiveText(getString(android.R.string.yes))

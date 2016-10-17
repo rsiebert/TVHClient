@@ -56,7 +56,7 @@
         <activity android:name="org.tvheadend.tvhclient.UnlockerActivity"/>
         <activity android:name="org.tvheadend.tvhclient.InfoActivity"/>
         <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
-        <activity android:name="org.tvheadend.tvhclient.ExternalActionActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="org.tvheadend.tvhclient.ActionActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name="org.tvheadend.tvhclient.htsp.HTSService" android:enabled="true"/>
         <provider 
             android:name="org.tvheadend.tvhclient.SuggestionProvider" 
