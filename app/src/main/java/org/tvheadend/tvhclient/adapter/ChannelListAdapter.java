@@ -151,9 +151,11 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Set the initial values
             if (holder.progress != null) {
                 holder.progress.setProgress(0);
+                holder.progress.setVisibility(prefs.getBoolean("showProgramProgressPref", true) ? View.VISIBLE : View.GONE);
             }
             if (holder.channel != null) {
                 holder.channel.setText(c.name);
+                holder.channel.setVisibility(prefs.getBoolean("showChannelNamePref", true) ? View.VISIBLE : View.GONE);
             }
 
             Utils.setChannelIcon(holder.icon, holder.icon_text, c);
@@ -248,8 +250,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 Utils.setProgress(holder.progress, p.start, p.stop);
 
                 if (holder.nextTitle != null && np != null) {
-                    final boolean showNextProgram = prefs.getBoolean("showNextProgramPref", true);
-                    holder.nextTitle.setVisibility(showNextProgram ? View.VISIBLE : View.GONE);
+                    holder.nextTitle.setVisibility(prefs.getBoolean("showNextProgramPref", true) ? View.VISIBLE : View.GONE);
                     holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
                 }
             }
