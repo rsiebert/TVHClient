@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.intent;
 import android.content.Context;
 import android.content.Intent;
 
-import org.tvheadend.tvhclient.ActionActivity;
+import org.tvheadend.tvhclient.PlayActivity;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Model;
@@ -21,21 +21,21 @@ public class PlayIntent extends Intent {
     }
 
     public PlayIntent(Context ctx, Program p) {
-        super(ctx, ActionActivity.class);
+        super(ctx, PlayActivity.class);
         if (p != null && p.channel != null) {
             putExtra(Constants.BUNDLE_CHANNEL_ID, p.channel.id);
         }
     }
 
     public PlayIntent(Context ctx, Recording rec) {
-        super(ctx, ActionActivity.class);
+        super(ctx, PlayActivity.class);
         if (rec != null) {
             putExtra(Constants.BUNDLE_RECORDING_ID, rec.id);
         }
     }
 
     public PlayIntent(Context ctx, Channel ch) {
-        super(ctx, ActionActivity.class);
+        super(ctx, PlayActivity.class);
         if (ch != null) {
             putExtra(Constants.BUNDLE_CHANNEL_ID, ch.id);
         }

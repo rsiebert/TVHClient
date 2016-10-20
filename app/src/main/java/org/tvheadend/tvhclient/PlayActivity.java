@@ -40,9 +40,9 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class ActionActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
+public class PlayActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
 
-    private final static String TAG = ActionActivity.class.getSimpleName();
+    private final static String TAG = PlayActivity.class.getSimpleName();
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
@@ -123,7 +123,7 @@ public class ActionActivity extends Activity implements HTSListener, OnRequestPe
             // No downloaded recording exists, so continue starting the service
             // to get the url that shall be played. This could either be a
             // channel or a recording.
-            Intent intent = new Intent(ActionActivity.this, HTSService.class);
+            Intent intent = new Intent(PlayActivity.this, HTSService.class);
             intent.setAction(Constants.ACTION_GET_TICKET);
             intent.putExtras(getIntent().getExtras());
             this.startService(intent);
@@ -356,7 +356,7 @@ public class ActionActivity extends Activity implements HTSListener, OnRequestPe
                     app.log(TAG, "Can't execute external media player");
 
                     // Show a confirmation dialog before deleting the recording
-                    new MaterialDialog.Builder(ActionActivity.this)
+                    new MaterialDialog.Builder(PlayActivity.this)
                         .title(R.string.no_media_player)
                         .content(R.string.show_play_store)
                         .positiveText(getString(android.R.string.yes))
