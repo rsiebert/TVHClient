@@ -118,7 +118,7 @@
         </LinearLayout>
 
         <ProgressBar
-            android:id="@+id/progress"
+            android:id="@+id/progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="8dip"
