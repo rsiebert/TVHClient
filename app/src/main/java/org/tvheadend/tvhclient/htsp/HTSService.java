@@ -976,6 +976,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         p.stop = sub.getDate("stop");
         p.seriesInfo = buildSeriesInfo(sub);
         p.starRating = sub.getInt("starRating", -1);
+        p.image = sub.getString("image");
         return p;
     }
 

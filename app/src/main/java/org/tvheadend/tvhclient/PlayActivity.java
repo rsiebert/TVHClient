@@ -206,13 +206,17 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     /**
      * Starts the external media player with the given url and mime information.
      *
-     * @param url  The url that shall be played
+     * @param url  The url that shall be played. Can either be a http url or a local file path
      * @param mime The mime type that shall be used
      */
     private void startPlayback(String url, String mime) {
 
-        // Create a special string for the logging without the http credentials
-        String logUrl = "http://<user>:<pass>" + url.substring(url.indexOf('@'));
+        // In case a local file will be played log the given url. In case a recording will be
+        // streamed, create a special string for the logging without the http credentials
+        String logUrl = url;
+        if (url.indexOf('@') != -1) {
+            logUrl = "http://<user>:<pass>" + url.substring(url.indexOf('@'));
+        }
         app.log(TAG, "Starting to play from url " + logUrl);
 
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);

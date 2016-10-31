@@ -18,6 +18,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.ImageDownloadTask;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -67,6 +68,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private Toolbar toolbar;
     private View toolbarShadow;
     private TVHClientApplication app;
+    private ImageView imageView;
 
     public static ProgramDetailsFragment newInstance(Bundle args) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -125,7 +127,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
 
         // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.program_details_layout, container, false);
+        final View v = inflater.inflate(R.layout.program_details_layout, container, false);
         state = (ImageView) v.findViewById(R.id.state);
         summaryLabel = (TextView) v.findViewById(R.id.summary_label);
         summary = (TextView) v.findViewById(R.id.summary);
@@ -146,6 +148,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
+        imageView = (ImageView) v.findViewById(R.id.image);
         
         // Initialize the player layout
         playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
@@ -201,6 +204,13 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             ratingBar.setRating((float)program.starRating / 10.0f);
             String value = "(" + program.starRating + "/" + 100 + ")";
             ratingBarText.setText(value);
+        }
+
+        // Show the program image if one exists
+        if (app.isUnlocked()) {
+            app.log(TAG, "Starting download of program image " + program.image);
+            ImageDownloadTask dt = new ImageDownloadTask(imageView);
+            dt.execute(program.image, String.valueOf(program.id));
         }
     }
 
