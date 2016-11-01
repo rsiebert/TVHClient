@@ -370,4 +370,7 @@
 
     <string name="parent_directory">Parent directory</string>
 
+    <string name="pref_show_program_artwork_sum">Displays the artwork/poster image to the current program. The server must provide the information.</string>
+    <string name="pref_show_program_artwork">Show program artwork/poster</string>
+
 </resources>

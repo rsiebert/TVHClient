@@ -2,7 +2,10 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
@@ -207,7 +210,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
 
         // Show the program image if one exists
-        if (app.isUnlocked()) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if (app.isUnlocked() && prefs.getBoolean("pref_show_program_artwork", false)) {
             app.log(TAG, "Starting download of program image " + program.image);
             ImageDownloadTask dt = new ImageDownloadTask(imageView);
             dt.execute(program.image, String.valueOf(program.id));

@@ -66,6 +66,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
     private CheckBoxPreference prefDebugMode;
+    private CheckBoxPreference prefShowProgramArtwork;
     private Preference prefMenuNotifications;
     private Preference prefDownloadDir;
     private Preference prefSendLogfile;
@@ -96,6 +97,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefSendLogfile = findPreference("pref_send_logfile");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
+        prefShowProgramArtwork = (CheckBoxPreference) findPreference("pref_show_program_artwork");
         prefMenuNotifications  = findPreference("pref_menu_notifications");
         prefDownloadDir = findPreference("pref_download_directory");
     }
@@ -352,6 +354,21 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                     }
                 })
                 .show();
+                return false;
+            }
+        });
+
+        // Add a listener to the logger will be enabled or disabled depending on the setting
+        prefShowProgramArtwork.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (!app.isUnlocked()) {
+                    if (getView() != null) {
+                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
+                                Snackbar.LENGTH_SHORT).show();
+                    }
+                    prefShowProgramArtwork.setChecked(false);
+                }
                 return false;
             }
         });
