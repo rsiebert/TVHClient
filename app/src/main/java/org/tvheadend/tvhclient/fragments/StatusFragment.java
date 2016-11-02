@@ -145,18 +145,7 @@ public class StatusFragment extends Fragment implements HTSListener {
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         connectionStatus = action;
-
-                        // The connection to the server is fine again, therefore
-                        // show the additional information again
-                        additionalInformationLayout.setVisibility(View.VISIBLE);
-                        showConnectionName();
-                        showConnectionStatus();
-                        String text = app.getChannels().size() + " " + getString(R.string.available);
-                        channels.setText(text);
-                        showRecordingStatus();
-
-                        // Also get the disc space in case it was not yet retrieved
-                        getDiscSpace();
+                        showCompleteStatus();
                     }
                 });
                 break;
@@ -204,17 +193,7 @@ public class StatusFragment extends Fragment implements HTSListener {
                             additionalInformationLayout.setVisibility(View.GONE);
                             showConnectionName();
                         } else {
-                            additionalInformationLayout.setVisibility(View.VISIBLE);
-                            showConnectionName();
-                            showConnectionStatus();
-                            String text = app.getChannels().size() + " " + getString(R.string.available);
-                            channels.setText(text);
-                            showRecordingStatus();
-
-                            // After the data has been loaded, the server accepts
-                            // new service calls, get the disc space information
-                            // from the server
-                            getDiscSpace();
+                            showCompleteStatus();
                         }
                     }
                 });
@@ -232,7 +211,28 @@ public class StatusFragment extends Fragment implements HTSListener {
         }
 	}
 
-	/**
+    /**
+     * Displays all available status information. This is the case
+     * when the loading is done and the connection is fine
+     */
+    private void showCompleteStatus() {
+        // The connection to the server is fine again, therefore
+        // show the additional information again
+        additionalInformationLayout.setVisibility(View.VISIBLE);
+        showConnectionName();
+        showConnectionStatus();
+        showRecordingStatus();
+
+        // Show the number of available channels
+        final String text = app.getChannels().size() + " " + getString(R.string.available);
+        channels.setText(text);
+
+        // Get the disc space information from the
+        // server in case it was not yet retrieved
+        getDiscSpace();
+    }
+
+    /**
 	 * Shows the name and address of a connection, otherwise shows an
      * information that no connection is selected or available. 
 	 */
