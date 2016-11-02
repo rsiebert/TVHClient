@@ -836,7 +836,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      * @return List with all subscriptions
      */
-    private List<Subscription> getSubscriptions() {
+    public List<Subscription> getSubscriptions() {
         return subscriptions;
     }
 
