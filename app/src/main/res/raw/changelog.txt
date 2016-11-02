@@ -1,8 +1,12 @@
 $ 1.9.5
   % VERSION 1.9.5
-  _ 21.09.2016
+  _ 02.11.2016
     * Added setting to set the download directory for recordings (Only available in the unlocked version)
+    * Added option to show artwork/poster (EPG image) in program details screen (Only available in the unlocked version)
+    * Show cancel dialog in add/edit connection screen when the back button was pressed
+    * Show very long program or recording titles on two lines in the details screens
     * Improved search speed
+    * Small bug fixes
 $ 1.9.4
   % VERSION 1.9.4
   _ 04.09.2016
