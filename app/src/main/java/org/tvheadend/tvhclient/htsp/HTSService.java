@@ -1493,6 +1493,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 app.updateStatus("time", response.getString("time", null));
                 app.updateStatus("timezone", response.getString("timezone", null));
+                app.updateStatus("gmtoffset", response.getString("gmtoffset", null));
             }
         });
     }
