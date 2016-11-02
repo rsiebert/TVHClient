@@ -57,7 +57,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private Button removeRecordingButton;
     private Button downloadRecordingButton;
 
-    private Toolbar toolbar;
+    private TextView toolbarTitle;
     private View toolbarShadow;
     private TVHClientApplication app;
 
@@ -131,7 +131,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
         is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
         is_timer_recording = (TextView) v.findViewById(R.id.is_timer_recording);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbarTitle = (TextView) v.findViewById(R.id.toolbar_title);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
         episode = (TextView) v.findViewById(R.id.episode);
@@ -163,10 +163,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             return;
         }
 
-        toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         if (getDialog() != null) {
-            toolbar.setTitle(rec.title);
+            toolbarTitle.setText(rec.title);
         }
 
         // Show the player controls

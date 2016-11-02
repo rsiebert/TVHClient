@@ -47,7 +47,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private Button recordRemoveButton;
     private Button recordEditButton;
 
-    private Toolbar toolbar;
+    private TextView toolbarTitle;
     private View toolbarShadow;
     private TVHClientApplication app;
 
@@ -106,7 +106,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         startWindowTime = (TextView) v.findViewById(R.id.start_before_time);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbarTitle = (TextView) v.findViewById(R.id.toolbar_title);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
         // Initialize the player layout
@@ -126,10 +126,10 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             return;
         }
 
-        toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         if (getDialog() != null) {
-            toolbar.setTitle(srec.title);
+            toolbarTitle.setText(srec.title);
         }
 
         // Show the player controls

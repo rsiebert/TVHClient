@@ -47,7 +47,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private Button recordRemoveButton;
     private Button recordEditButton;
 
-    private Toolbar toolbar;
+    private TextView toolbarTitle;
     private View toolbarShadow;
     private TVHClientApplication app;
 
@@ -102,7 +102,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         duration = (TextView) v.findViewById(R.id.duration);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbarTitle = (TextView) v.findViewById(R.id.toolbar);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
         // Initialize the player layout
@@ -122,13 +122,13 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             return;
         }
 
-        toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         if (getDialog() != null) {
             if (trec.title != null && trec.title.length() > 0) {
-                toolbar.setTitle(trec.title);
+                toolbarTitle.setText(trec.title);
             } else {
-                toolbar.setTitle(trec.name);
+                toolbarTitle.setText(trec.name);
             }
         }
 

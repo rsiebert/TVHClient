@@ -68,7 +68,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private Button recordSeriesButton;
     private Button recordRemoveButton;
 
-    private Toolbar toolbar;
+    private TextView toolbarTitle;
     private View toolbarShadow;
     private TVHClientApplication app;
     private ImageView imageView;
@@ -149,7 +149,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         ratingBarLabel = (TextView) v.findViewById(R.id.star_rating_label);
         ratingBarText = (TextView) v.findViewById(R.id.star_rating_text);
         ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        toolbarTitle = (TextView) v.findViewById(R.id.toolbar_title);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
         imageView = (ImageView) v.findViewById(R.id.image);
         
@@ -172,10 +172,10 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             return;
         }
 
-        toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         if (getDialog() != null) {
-            toolbar.setTitle(program.title);
+            toolbarTitle.setText(program.title);
         }
 
         // Show the player controls
