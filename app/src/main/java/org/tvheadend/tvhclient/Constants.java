@@ -131,6 +131,7 @@ public class Constants {
     public static final String ACTION_TICKET_ADD = "TICKET_ADD";
     public static final String ACTION_ERROR = "ERROR";
     public static final String ACTION_DISC_SPACE = "DISC_SPACE";
+    public static final String ACTION_SYSTEM_TIME = "SYSTEM_TIME";
     public static final String ACTION_SHOW_MESSAGE = "SHOW_MESSAGE";
 
     // HTSP service actions that are called from the client to the server

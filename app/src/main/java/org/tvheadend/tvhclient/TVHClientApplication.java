@@ -27,6 +27,7 @@ import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Profiles;
@@ -34,6 +35,7 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.Subscription;
+import org.tvheadend.tvhclient.model.SystemTime;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.io.BufferedOutputStream;
@@ -45,10 +47,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+
+import static com.google.android.gms.common.api.Status.st;
 
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
 
@@ -63,7 +65,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
-    private final Map<String, String> status = Collections.synchronizedMap(new HashMap<String, String>());
+    private SystemTime systemTime = new SystemTime();
+    private DiscSpace discSpace = new DiscSpace();
 
     // This handles all billing related activities like purchasing and checking
     // if a purchase was made 
@@ -920,13 +923,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
         return loading;
     }
 
-    public void updateStatus(String key, String value) {
-        status.put(key, value);
-        if (!loading) {
-            broadcastMessage(Constants.ACTION_DISC_SPACE, status);
-        }
-    }
-
     public static SparseArray<String> getContentTypes(Context ctx) {
         SparseArray<String> ret = new SparseArray<>();
 
@@ -1345,5 +1341,27 @@ public class TVHClientApplication extends Application implements BillingProcesso
         for (Recording rec : getRecordings()) {
             cancelNotification(rec.id);
         }
+    }
+
+    public void addSystemTime(SystemTime st) {
+        systemTime = st;
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_SYSTEM_TIME, st);
+        }
+    }
+
+    public void addDiscSpace(DiscSpace ds) {
+        discSpace = ds;
+        if (!loading) {
+            broadcastMessage(Constants.ACTION_DISC_SPACE, st);
+        }
+    }
+
+    public DiscSpace getDiscSpace() {
+        return discSpace;
+    }
+
+    public SystemTime getSystemTime() {
+        return systemTime;
     }
 }

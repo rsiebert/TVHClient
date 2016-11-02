@@ -18,8 +18,10 @@ import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Subscription;
+import org.tvheadend.tvhclient.model.SystemTime;
 
 import java.util.List;
 import java.util.Map;
@@ -194,6 +196,9 @@ public class StatusFragment extends Fragment implements HTSListener {
                             status.setText(R.string.loading);
                             additionalInformationLayout.setVisibility(View.GONE);
                             showConnectionName();
+
+                            freediscspace.setText(R.string.loading);
+                            totaldiscspace.setText(R.string.loading);
                         } else {
                             showCompleteStatus();
                         }
@@ -202,10 +207,10 @@ public class StatusFragment extends Fragment implements HTSListener {
                 break;
             case Constants.ACTION_DISC_SPACE:
                 activity.runOnUiThread(new Runnable() {
-                    @SuppressWarnings("unchecked")
+                    @Override
                     public void run() {
                         if (isAdded()) {
-                            showDiscSpace((Map<String, String>) obj);
+                            showDiscSpace();
                         }
                     }
                 });
@@ -225,14 +230,11 @@ public class StatusFragment extends Fragment implements HTSListener {
         showConnectionStatus();
         showRecordingStatus();
         showSubscriptionStatus();
+        showDiscSpace();
 
         // Show the number of available channels
         final String text = app.getChannels().size() + " " + getString(R.string.available);
         channels.setText(text);
-
-        // Get the disc space information from the
-        // server in case it was not yet retrieved
-        getDiscSpace();
     }
 
     /**
@@ -312,29 +314,21 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     /**
-     * Calls the service to get the available disc space information from the
-     * server. Additionally sets the text views to loading until the data has
-     * been received.
-     */
-    private void getDiscSpace() {
-        freediscspace.setText(R.string.loading);
-        totaldiscspace.setText(R.string.loading);
-        Intent intent = new Intent(activity, HTSService.class);
-        intent.setAction(Constants.ACTION_GET_DISC_SPACE);
-        activity.startService(intent);
-    }
-
-    /**
      * Shows the available and total disc space either in MB or GB to avoid
      * showing large numbers. This depends on the size of the value.
-     * 
-     * @param list List with the total and free disk space values
      */
-    private void showDiscSpace(final Map<String, String> list) {
+    private void showDiscSpace() {
+        DiscSpace ds = app.getDiscSpace();
+        if (ds == null) {
+            freediscspace.setText(R.string.unknown);
+            totaldiscspace.setText(R.string.unknown);
+            return;
+        }
+
         try {
             // Get the disc space values and convert them to megabytes
-            long free = (Long.parseLong(list.get("freediskspace")) / 1000000);
-            long total = (Long.parseLong(list.get("totaldiskspace")) / 1000000);
+            long free = Long.valueOf(ds.freediskspace) / 1000000;
+            long total = Long.valueOf(ds.totaldiskspace) / 1000000;
 
             String freeDiscSpace;
             String totalDiscSpace;

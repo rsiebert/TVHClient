@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.DvrCutpoint;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
@@ -29,6 +30,7 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.SourceInfo;
 import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
+import org.tvheadend.tvhclient.model.SystemTime;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.io.BufferedInputStream;
@@ -544,6 +546,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.setProtocolVersion(connection.getProtocolVersion());
         app.setServerName(connection.getServerName());
         app.setServerVersion(connection.getServerVersion());
+
+        // Get some additional information after the initial loading has been finished
+        getDiscSpace();
+        getSystemTime();
     }
 
     private void onSubscriptionStart(HTSMessage msg) {
@@ -1480,8 +1486,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("getDiskSpace");
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                app.updateStatus("freediskspace", response.getString("freediskspace", null));
-                app.updateStatus("totaldiskspace", response.getString("totaldiskspace", null));
+                DiscSpace ds = new DiscSpace();
+                ds.freediskspace = response.getString("freediskspace", null);
+                ds.totaldiskspace = response.getString("totaldiskspace", null);
+                app.addDiscSpace(ds);
             }
         });
     }
@@ -1491,9 +1499,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("getSysTime");
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                app.updateStatus("time", response.getString("time", null));
-                app.updateStatus("timezone", response.getString("timezone", null));
-                app.updateStatus("gmtoffset", response.getString("gmtoffset", null));
+                SystemTime st = new SystemTime();
+                st.time = response.getString("time", null);
+                st.timezone = response.getString("timezone", null);
+                st.gmtoffset = response.getString("gmtoffset", null);
+                app.addSystemTime(st);
             }
         });
     }
