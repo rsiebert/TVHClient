@@ -19,7 +19,9 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Subscription;
 
+import java.util.List;
 import java.util.Map;
 
 public class StatusFragment extends Fragment implements HTSListener {
@@ -222,6 +224,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         showConnectionName();
         showConnectionStatus();
         showRecordingStatus();
+        showSubscriptionStatus();
 
         // Show the number of available channels
         final String text = app.getChannels().size() + " " + getString(R.string.available);
@@ -230,6 +233,20 @@ public class StatusFragment extends Fragment implements HTSListener {
         // Get the disc space information from the
         // server in case it was not yet retrieved
         getDiscSpace();
+    }
+
+    /**
+     * Displays some subscription details of the available subscriptions
+     */
+    private void showSubscriptionStatus() {
+        app.log(TAG, "showSubscriptionStatus");
+        List<Subscription> subscriptions = app.getSubscriptions();
+        for (Subscription s : subscriptions) {
+            if (s != null) {
+                app.log(TAG, "subscription status " + s.status);
+
+            }
+        }
     }
 
     /**
