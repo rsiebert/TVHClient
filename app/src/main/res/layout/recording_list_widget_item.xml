@@ -149,6 +149,13 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:text="@null" />
+
+        <TextView
+            android:id="@+id/enabled"
+            style="?attr/ContentFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recording_enabled" />
     </LinearLayout>
 
 </merge>

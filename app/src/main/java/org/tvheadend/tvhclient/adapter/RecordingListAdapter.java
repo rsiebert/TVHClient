@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Recording;
@@ -70,6 +71,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         public TextView summary;
         public TextView description;
         public TextView failed_reason;
+        public TextView isEnabled;
         public ImageView dual_pane_list_item_selection;
     }
     
@@ -94,6 +96,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.summary = (TextView) view.findViewById(R.id.summary);
             holder.description = (TextView) view.findViewById(R.id.description);
             holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
+            holder.isEnabled = (TextView) view.findViewById(R.id.enabled);
             holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
@@ -180,6 +183,12 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                         }
                     }
                 });
+            }
+
+            if (holder.isEnabled != null) {
+                TVHClientApplication app = (TVHClientApplication) context.getApplication();
+                holder.isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
+                holder.isEnabled.setText(rec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
             }
         }
         return view;

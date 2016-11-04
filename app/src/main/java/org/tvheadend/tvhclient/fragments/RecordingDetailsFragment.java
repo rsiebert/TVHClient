@@ -50,6 +50,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView failed_reason;
     private TextView is_series_recording;
     private TextView is_timer_recording;
+    private TextView isEnabled;
 
     private LinearLayout playerLayout;
     private Button playRecordingButton;
@@ -131,6 +132,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         failed_reason = (TextView) v.findViewById(R.id.failed_reason);
         is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
         is_timer_recording = (TextView) v.findViewById(R.id.is_timer_recording);
+        isEnabled = (TextView) v.findViewById(R.id.is_enabled);
         toolbarTitle = (TextView) v.findViewById(R.id.toolbar_title);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
@@ -192,6 +194,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         // only when no dual pane is active (the controls shall be shown)
         is_series_recording.setVisibility((rec.autorecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
         is_timer_recording.setVisibility((rec.timerecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
+
+        isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
+        isEnabled.setText(rec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
 
         // Only show the status details in the 
         // completed and failed details screens

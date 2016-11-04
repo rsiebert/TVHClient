@@ -187,6 +187,8 @@ public class Constants {
     public static final int MIN_API_VERSION_REC_FIELD_CREATOR = 18;
     public static final int MIN_API_VERSION_REC_FIELD_DUPDETECT = 20;
 
+    public static final int MIN_API_VERSION_DVR_FIELD_ENABLED = 23;
+
     // These constants are required to check if the server contains certain bug fixes
     // Allow selecting 'All channels' for a series recording. (http://tvheadend.org/issues/2892)
     public static final int MIN_API_VERSION_REC_ALL_CHANNELS = 21;

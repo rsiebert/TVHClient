@@ -25,6 +25,15 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp" >
 
+                <CheckBox
+                    android:id="@+id/is_enabled"
+                    style="?attr/SubtitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/activate_recording" />
+
                 <TextView
                     android:id="@+id/title_label"
                     style="?attr/TitleFont"

@@ -73,6 +73,15 @@
                     style="@style/Widget.AppCompat.Button.Borderless"/>
 
                 <TextView
+                    android:id="@+id/is_enabled"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="0dp"
+                    android:paddingTop="16dp"
+                    android:text="@null" />
+
+                <TextView
                     android:id="@+id/is_series_recording"
                     style="?attr/SubtitleFont"
                     android:layout_width="wrap_content"

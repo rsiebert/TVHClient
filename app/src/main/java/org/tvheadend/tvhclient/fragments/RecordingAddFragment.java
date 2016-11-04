@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +57,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private TextView stopTime;
     private TextView startDate;
     private TextView stopDate;
+    private CheckBox isEnabled;
     private TextView priority;
     private EditText startExtra;
     private EditText stopExtra;
@@ -78,12 +80,14 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     // and converted to seconds before passed to the server.
     private final Calendar startValue = Calendar.getInstance();
     private final Calendar stopValue = Calendar.getInstance();
+
     private long priorityValue;
     private String titleValue;
     private String subtitleValue;
     private String descriptionValue;
     private int channelSelectionValue;
     private int dvrConfigNameValue;
+    private boolean enabledValue;
 
     private String[] channelList;
     private String[] priorityList;
@@ -137,6 +141,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         outState.putString("descriptionValue", descriptionValue);
         outState.putInt("channelNameValue", channelSelectionValue);
         outState.putInt("configNameValue", dvrConfigNameValue);
+        outState.putBoolean("enabledValue", enabledValue);
         super.onSaveInstanceState(outState);
     }
 
@@ -195,6 +200,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 titleValue = rec.title;
                 subtitleValue = rec.subtitle;
                 descriptionValue = rec.description;
+                enabledValue = rec.enabled;
 
                 // The default value is the first one
                 channelSelectionValue = 0;
@@ -217,6 +223,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 subtitleValue = "";
                 descriptionValue = "";
                 channelSelectionValue = 0;
+                enabledValue = true;
             }
 
             // Get the position of the selected profile in the dvrConfigList
@@ -244,6 +251,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             descriptionValue = savedInstanceState.getString("descriptionValue");
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
             dvrConfigNameValue = savedInstanceState.getInt("configNameValue");
+            enabledValue = savedInstanceState.getBoolean("enabledValue");
         }
 
         // Assume a new recording shall be added. If a recording was given then
@@ -257,6 +265,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         View v = inflater.inflate(layout, container, false);
 
         // Initialize all the widgets from the layout
+        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
         title = (EditText) v.findViewById(R.id.title);
         titelLabel = (TextView) v.findViewById(R.id.title_label);
         subtitle = (EditText) v.findViewById(R.id.subtitle);
@@ -281,6 +290,10 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (isEnabled != null) {
+            isEnabled.setChecked(enabledValue);
+            isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+        }
         if (title != null && titelLabel != null) {
             title.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
             titelLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
@@ -481,6 +494,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         if (description != null && description.getText() != null) {
             descriptionValue = description.getText().toString();
         }
+        if (isEnabled != null) {
+            enabledValue = isEnabled.isChecked();
+        }
     }
 
     /**
@@ -539,6 +555,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         intent.putExtra("stopExtra", stopExtraValue);
         intent.putExtra("description", descriptionValue);
         intent.putExtra("priority", priorityValue);
+        intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
 
         // Pass on the information if a recording is already recording. When it
         // is already being recorded only the title, stop and stopExtra will be
