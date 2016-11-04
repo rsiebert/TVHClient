@@ -32,6 +32,7 @@ public class Recording extends Model implements Comparable<Recording> {
     public long streamErrors;
     public long dataErrors;
     public long dataSize;
+    public boolean enabled;
 
     @Override
     public int compareTo(@NonNull Recording that) {

@@ -374,6 +374,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.stop = msg.getDate("stop");
         rec.title = msg.getString("title", null);
         rec.subtitle = msg.getString("subtitle", null);
+        rec.enabled = msg.getLong("enabled", 1) != 0;
+
         rec.channel = app.getChannel(msg.getLong("channel", 0));
         if (rec.channel != null) {
             rec.channel.recordings.add(rec);
@@ -435,6 +437,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.stop = msg.getDate("stop");
         rec.title = msg.getString("title", rec.title);
         rec.subtitle = msg.getString("subtitle", rec.subtitle);
+        rec.enabled = msg.getLong("enabled", 1) != 0;
 
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
@@ -1114,6 +1117,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long stop = intent.getLongExtra("stop", 0);
         final long retention = intent.getLongExtra("retention", 0);
         final long priority = intent.getLongExtra("priority", 2);
+        final long enabled = intent.getLongExtra("enabled", 1);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final String title = intent.getStringExtra("title");
@@ -1149,6 +1153,8 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (channelId != 0 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_UPDATE_CHANNEL) {
                 request.putField("channelId", channelId);
             }
+            // Enabled flag (Added in version 23)
+            request.putField("enabled", enabled);
         }
 
         connection.sendMessage(request, new HTSResponseHandler() {
@@ -1208,6 +1214,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long stop = intent.getLongExtra("stop", 0);
         final long retention = intent.getLongExtra("retention", 0);
         final long priority = intent.getLongExtra("priority", 2);
+        final long enabled = intent.getLongExtra("enabled", 1);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final String title = intent.getStringExtra("title");
@@ -1228,6 +1235,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("stopExtra", stopExtra);
         request.putField("retention", retention);
         request.putField("priority", priority);
+
+        // Enabled flag (Added in version 23)
+        request.putField("enabled", enabled);
+
         if (title != null) {
             request.putField("title", title);
         }
