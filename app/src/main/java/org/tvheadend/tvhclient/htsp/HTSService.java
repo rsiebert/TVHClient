@@ -1284,7 +1284,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long retention = intent.getLongExtra("retention", 0);
         final long priority = intent.getLongExtra("priority", 2);
         final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
-        final long enabled = intent.getLongExtra("enabled", 0);
+        final long enabled = intent.getLongExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String name = intent.getStringExtra("name");
         final String configName = intent.getStringExtra("configName");
@@ -1301,9 +1301,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
 
-        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
-            request.putField("enabled", enabled);
-        }
+        // Enabled flag (Added in version 19)
+        request.putField("enabled", enabled);
 
         if (configName != null) {
             request.putField("configName", configName);
@@ -1364,7 +1363,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long retention = intent.getLongExtra("retention", 0);
         final long priority = intent.getLongExtra("priority", 2);
         final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
-        final long enabled = intent.getLongExtra("enabled", 0);
+        final long enabled = intent.getLongExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String name = intent.getStringExtra("name");
         final String configName = intent.getStringExtra("configName");
@@ -1380,9 +1379,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
 
-        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
-            request.putField("enabled", enabled);
-        }
+        // Enabled flag (Added in version 19)
+        request.putField("enabled", enabled);
 
         if (configName != null) {
             request.putField("configName", configName);
