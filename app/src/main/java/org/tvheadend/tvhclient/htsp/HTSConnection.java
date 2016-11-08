@@ -77,7 +77,7 @@ public class HTSConnection extends Thread {
 
     // synchronized, non blocking connect
     public void open(String hostname, int port, boolean connected) {
-        app.log(TAG, "Connecting to server");
+        app.log(TAG, "Connecting to server " + hostname + ":" + port);
 
         if (running) {
             return;
@@ -105,7 +105,7 @@ public class HTSConnection extends Thread {
             running = true;
             start();
         } catch (Exception e) {
-            app.log(TAG, "Can't open connection, " + e.getLocalizedMessage());
+            app.log(TAG, "Can't open connection to " + hostname + ":" + port + ", " + e.getLocalizedMessage());
             listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
         } finally {
             lock.unlock();
@@ -116,12 +116,12 @@ public class HTSConnection extends Thread {
                 try {
                     signal.wait(connectionTimeout);
                     if (socketChannel.isConnectionPending()) {
-                        app.log(TAG, "Timeout, connection still pending");
+                        app.log(TAG, "Timeout, connection to " + hostname + ":" + port + " still pending");
                         listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
                         close();
                     }
                 } catch (InterruptedException ex) {
-                    app.log(TAG, "Error waiting for pending connection, " + ex.getLocalizedMessage());
+                    app.log(TAG, "Error waiting for pending connection to " + hostname + ":" + port + ", " + ex.getLocalizedMessage());
                 }
             }
         }
