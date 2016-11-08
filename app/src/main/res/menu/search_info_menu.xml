@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_search_imdb"
+        android:title="@string/search_imdb"
+        app:showAsAction="never|withText" />
+    <item
+        android:id="@+id/menu_search_epg"
+        android:title="@string/search_epg"
+        app:showAsAction="never|withText" />
+</menu>

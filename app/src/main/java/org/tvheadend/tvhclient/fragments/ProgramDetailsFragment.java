@@ -3,13 +3,14 @@ package org.tvheadend.tvhclient.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.intent.PlayIntent;
+import org.tvheadend.tvhclient.intent.SearchEPGIntent;
+import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
@@ -68,6 +71,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private Button recordSeriesButton;
     private Button recordRemoveButton;
 
+    private Toolbar toolbar;
     private TextView toolbarTitle;
     private View toolbarShadow;
     private TVHClientApplication app;
@@ -149,6 +153,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         ratingBarLabel = (TextView) v.findViewById(R.id.star_rating_label);
         ratingBarText = (TextView) v.findViewById(R.id.star_rating_text);
         ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbarTitle = (TextView) v.findViewById(R.id.toolbar_title);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
         imageView = (ImageView) v.findViewById(R.id.image);
@@ -215,6 +220,44 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             app.log(TAG, "Starting download of program image " + program.image);
             ImageDownloadTask dt = new ImageDownloadTask(imageView);
             dt.execute(program.image, String.valueOf(program.id));
+        }
+
+        if (getDialog() != null && Build.VERSION.SDK_INT >= 21) {
+            // Inflate a menu to be displayed in the toolbar
+            toolbar.inflateMenu(R.menu.search_info_menu);
+
+            // Set an OnMenuItemClickListener to handle menu item clicks
+            toolbar.setOnMenuItemClickListener(
+                    new Toolbar.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            return onToolbarItemSelected(item);
+                        }
+                    });
+        }
+    }
+
+    /**
+     *
+     * @param item
+     * @return
+     */
+    private boolean onToolbarItemSelected(MenuItem item) {
+        if (program == null) {
+            return false;
+        }
+
+        switch (item.getItemId()) {
+            case R.id.menu_search_imdb:
+                startActivity(new SearchIMDbIntent(activity, program.title));
+                return true;
+
+            case R.id.menu_search_epg:
+                startActivity(new SearchEPGIntent(activity, program.title));
+                return true;
+
+            default:
+                return false;
         }
     }
 
