@@ -70,6 +70,8 @@
     <string name="edit_series_recording">Edytuj serie nagrań</string>
     <string name="edit_timer_recording">Edytuj ręczne nagranie</string>
     <string name="activate_recording">Aktywuj nagrywanie</string>
+    <string name="selected_directory">Wybrany katalog:</string>
+    <string name="select">Wybierz</string>
 
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
     <string name="pref_manage_connections_sum">Wybierz Twoje aktywne połączenie do serwera TVheadend lub dodaj, edytuj lub usuń połączenia.</string>
@@ -179,6 +181,8 @@
     <string name="pref_enable_playback_profiles">Włącz profile odtwarzania</string>
     <string name="pref_enable_playback_profiles_sum">Użyj nowej funkcjonalności serwera profili dla programów. To zastępuje dowolne parametry video i audio dla odtwarzanych programów.</string>
     <string name="pref_notifications">Powiadomienia</string>
+     <string name="pref_download_directory">Katalog pobierania</string>
+    <string name="pref_download_directory_sum">Nagrania będą pobierane do następującego folderu: \'%s\'</string>
     <string name="pref_show_notifications">Pokazuj powiadomienia</string>
     <string name="pref_show_notifications_sum">Informuje użytkownika gdy nagrywanie zostało rozpoczęte lub zostało zakończone.</string>
     <string name="pref_show_notification_offset">Czas powiadomienia</string>
@@ -240,6 +244,7 @@
     <string name="no_transmission">Brak transmisji</string>
     <string name="no_data">Brak dostępnych danych dla kanału</string>
     <string name="minutes">%d min</string>
+    
     <string name="not_set">Nie ustawiono</string>
 
     <string name="search_hint">Szukaj w EPG</string>
@@ -308,6 +313,7 @@
     <string name="from_to_time">Od %1$s do %2$s</string>
     <string name="recording_time">Czas nagrywania</string>
     <string name="error_empty_title">Tytuł nie może być pusty!</string>
+    <string name="duplicate_detection">Pokazuj wykryte duplikaty</string>
 
     <string name="subscription_error">Błędy subskrypcji: %1$s</string>
     <string name="stream_errors">Błędy strumienia: %1$d</string>
@@ -328,6 +334,7 @@
     <string name="server">Serwer</string>
     <string name="connection">Połączenie</string>
     <string name="disc_space">Przestrzeń dysku</string>
+    <string name="server_api_version">Wersja API serwera</string>
     <string name="total">Całość</string>
     <string name="available">Dostępne</string>
     <string name="unknown">Nieznane</string>
@@ -338,6 +345,8 @@
     <string name="select_channel">Wybierz kanał</string>
     <string name="select_priority">Wybierz priorytet</string>
     <string name="select_dvr_config">Wybierz profil nagrywania</string>
+    <string name="select_log_file">Wybierz plik logu</string>
+    <string name="select_duplicate_detection">Wybierz metodę wykrywania duplikatów</string>
 
     <!-- Connection related -->
     <string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
@@ -358,5 +367,10 @@
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Otwórz szufladę nawigacji</string>
     <string name="drawer_close">Zamknij szufladę nawigacji</string>
+    
+    <string name="parent_directory">Katalog nadrzędny</string>
+    
+    <string name="pref_show_program_artwork_sum">Wyświetla obraz grafiki/plakatu dla bieżącego programu.Serwer musi dostarczać informacji.</string>
+    <string name="pref_show_program_artwork">Pokaż grafikę/plakat programu</string>
     
 </resources>
