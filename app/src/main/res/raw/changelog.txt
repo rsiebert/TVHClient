@@ -1,3 +1,8 @@
+$ 1.9.6
+  % VERSION 1.9.6
+  _ 01.12.2016
+    * Added menu to search imdb or the EPG to the program and recording details screens
+    * Fixed possible crash in details screen
 $ 1.9.5
   % VERSION 1.9.5
   _ 04.11.2016
@@ -6,6 +11,7 @@ $ 1.9.5
     * Show cancel dialog in add/edit connection screen when the back button was pressed
     * Show very long program or recording titles on two lines in the details screens
     * Show, enable or disable a scheduled recording (requires at least server API 23)
+    * Added menu to search imdb or the EPG to the program and recording details screens
     * Improved search speed
     * Small bug fixes
 $ 1.9.4
