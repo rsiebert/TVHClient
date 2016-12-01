@@ -177,9 +177,13 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             return;
         }
 
-        toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        if (getDialog() != null) {
+        if (toolbarTitle != null) {
+            toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        }
+        if (toolbarShadow != null) {
+            toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        }
+        if (getDialog() != null && toolbarTitle != null) {
             toolbarTitle.setText(program.title);
         }
 

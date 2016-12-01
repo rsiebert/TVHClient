@@ -126,9 +126,13 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             return;
         }
 
-        toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        if (getDialog() != null) {
+        if (toolbarTitle != null) {
+            toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        }
+        if (toolbarShadow != null) {
+            toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        }
+        if (getDialog() != null && toolbarTitle != null) {
             toolbarTitle.setText(srec.title);
         }
 
