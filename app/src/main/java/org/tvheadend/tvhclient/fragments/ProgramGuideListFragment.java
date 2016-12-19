@@ -254,6 +254,28 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         if (!app.isLoading()) {
             populateList();
         }
+
+        // Create the handler and the timer task that will update the
+        // entire view every five minutes if the first screen is visible
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        // Check if the first fragment is visible.
+                        // This can be checked with the time indication
+                        if (currentTimeIndication != null
+                                && currentTimeIndication.getVisibility() == View.VISIBLE) {
+                            app.log(TAG, "Updated entire view");
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 900000);
     }
 
     /**
