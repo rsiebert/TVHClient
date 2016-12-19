@@ -1467,6 +1467,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 String ticket = response.getString("ticket", null);
                 String webroot = connection.getWebRoot();
 
+                app.log(TAG, "getTicket webroot '" + webroot + "', path '" + path + "'" + ", ticket '" + ticket + "'");
                 if (path != null && ticket != null) {
                     app.addTicket(new HttpTicket(webroot + path, ticket));
                 }

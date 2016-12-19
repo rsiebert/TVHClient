@@ -1,5 +1,13 @@
 package org.tvheadend.tvhclient.htsp;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.SparseArray;
+
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -12,14 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
-
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.SparseArray;
 
 public class HTSConnection extends Thread {
 
@@ -175,7 +175,8 @@ public class HTSConnection extends Thread {
 
                 app.log(TAG, "Server name '" + serverName 
                         + "', version '" + serverVersion
-                        + "', protocol '" + protocolVersion + "'");
+                        + "', protocol '" + protocolVersion
+                        + "', webroot '" + webRoot);
 
                 MessageDigest md;
                 try {
