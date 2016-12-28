@@ -56,7 +56,7 @@
     <string name="remove_timer_recording">Naozaj chcete vymazať načasované nahrávanie \'%s\'?</string>
     <string name="remove_all_recordings">Naozaj chcete vymazať VŠETKY nahrávky?</string>
     <string name="cancel_recording">Naozaj chcete odstrániť naplánované nahrávanie \'%s\'?</string>
-    <string name="stop_recording">Do you really want to stop the running recording \'%s\'?</string>
+    <string name="stop_recording">Naozaj chcete zastaviť prebiehajúce nahrávanie \'%s\'?</string>
     <string name="add_title">Zadajte názov</string>
     <string name="add_name">Zadajte meno</string>
     <string name="add_recording">Pridať nahrávanie</string>
@@ -231,7 +231,7 @@
     <string name="recording_file_invalid">Nahrávanie je neplatné</string>
     <string name="recording_canceled">Nahrávanie bolo odstránené</string>
     <string name="recording_started">Nahrávanie sa začalo</string>
-	<string name="recording_starts_in">Recording starts in %d min.</string>
+	<string name="recording_starts_in">Nahrávanie začne za %d min.</string>
     <string name="recording_completed">Nahrávanie bolo dokončené</string>
 
     <string name="wol_send">Wake on LAN paket na \'%s\' bol úspešne poslaný</string>
