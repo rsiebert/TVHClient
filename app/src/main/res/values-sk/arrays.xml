@@ -44,6 +44,29 @@
         <item>Nedôležité</item>
         <item>Nenastavená</item>
     </string-array>
+	
+    <string-array name="pref_show_notification_offset_list_display">
+        <item>Presný čas začiatku</item>
+        <item>5 minút pred</item>
+        <item>10 minút pred</item>
+        <item>15 minút pred</item>
+        <item>30 minút pred</item>
+    </string-array>
+
+    <string-array name="duplicate_detection_list">
+        <item>Nahrať všetko</item>
+        <item>Všetko: Nahrať, ak číslo epizódy je iné</item>
+        <item>Všetko: Nahrať, ak titulky sú iné</item>
+        <item>Všetko: Nahrať, ak popis je iný</item>
+        <item>Všetko: Nahrať raz týždenne</item>
+        <item>Všetko: Nahrať raz denne</item>
+        <item>Lokálne: Nahrať, ak číslo epizódy je iné</item>
+        <item>Lokálne: Nahrať, ak názov je iný</item>
+        <item>Lokálne: Nahrať, ak podtitulok je iný</item>
+        <item>Lokálne: Nahrať, ak popis je iný</item>
+        <item>Lokálne: Nahrať raz týždenne</item>
+        <item>Lokálne: Nahrať raz denne</item>
+    </string-array>
     
     <string-array name="pr_content_type0">
         <item>Film/Dráma</item>
