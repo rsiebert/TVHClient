@@ -549,6 +549,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         app.setProtocolVersion(connection.getProtocolVersion());
         app.setServerName(connection.getServerName());
         app.setServerVersion(connection.getServerVersion());
+        app.setWebRoot(connection.getWebRoot());
 
         // Get some additional information after the initial loading has been finished
         getDiscSpace();
