@@ -2,6 +2,22 @@
 <resources>
     <string name="app_name">TVHClient</string>
 
+    <string name="media_route_menu_title">Prehrať na&#8230;</string>
+    <string name="intro_overlay_text">Ťuknite pre prenášanie kanálov alebo nahrávok do vášho televízora\n\nSkontrolujte, či spĺňate všetky podmienky pre casting v nastaveniach.</string>
+    <string name="connection_temp_lost">Prehrávanie na vašom zariadení bolo prerušené</string>
+    <string name="connection_recovered">Prehrávanie na vašom zariadení bolo obnovené</string>
+    <string name="cast_profile_not_set">Nieje nastavený žiaden profil pre casting. Prosím, nastavte profil pre casting.</string>
+    <string name="cast_profile_invalid">Vybraný profil \'%1$s\' nieje odporúčaný \'%2$s\' profil. Prehrávanie nemusí pracovať správne.</string>
+    <string name="pref_casting">Casting</string>
+    <string name="pref_casting_sum">Nastavenia pre casting kanálov alebo nahrávok do vášho televízora. Váš Tvheadend server musí podporovať transkódovanie v reálnom čase.</string>
+    <string name="pref_enable_casting">Zapnúť casting</string>
+    <string name="pref_enable_casting_sum">Ak váš Tvheadend server nepodporuje transkódovanie v reálnom čase, odporúčame vypnúť casting.</string>
+    <string name="pref_show_cast_minicontroller">Cast controls</string>
+    <string name="pref_show_cast_minicontroller_sum">Show a cast minicontroller at the bottom of the screen to display some information about the current cast.</string>
+    <string name="download_error_insufficient_space">Chyba počas sťahovania nahrávky \'%s\'. Nedostatok miesta.</string>
+    <string name="download_error_authentication_required">Chyba počas sťahovania nahrávky \'%s\'. Autentifikácia zlyhala.</string>
+    <string name="no_external_storage_available">Extérne úložisko nieje dostupné alebo je len na čítanie.</string>
+
     <string name="settings">Nastavenia</string>
     <string name="refresh">Obnoviť</string>
     <string name="tags">Skupiny</string>
@@ -11,6 +27,7 @@
     <string name="record_once">Nahrať</string>
     <string name="record_once_custom_profile">Nahrať s iným profilom</string>
     <string name="record_series">Nahrať (sériovo)</string>
+    <string name="record_stop">Zastaviť nahrávanie</string>
     <string name="record_remove">Vymazať nahrávku</string>
     <string name="record_remove_all">Vymazať všetky nahrávky</string>
     <string name="confirm_remove_all">Naozaj chcete vymazať všetky nahrávky?</string>
@@ -19,6 +36,7 @@
     <string name="add">Pridať</string>
     <string name="save">Uložiť</string>
     <string name="cancel">Zrušiť</string>
+    <string name="stop">Zastaviť</string>
     <string name="set_active">Aktivovať</string>
     <string name="set_not_active">Deaktivovať</string>
     <string name="edit">Upraviť</string>
@@ -38,6 +56,7 @@
     <string name="remove_timer_recording">Naozaj chcete vymazať načasované nahrávanie \'%s\'?</string>
     <string name="remove_all_recordings">Naozaj chcete vymazať VŠETKY nahrávky?</string>
     <string name="cancel_recording">Naozaj chcete odstrániť naplánované nahrávanie \'%s\'?</string>
+    <string name="stop_recording">Naozaj chcete zastaviť prebiehajúce nahrávanie \'%s\'?</string>
     <string name="add_title">Zadajte názov</string>
     <string name="add_name">Zadajte meno</string>
     <string name="add_recording">Pridať nahrávanie</string>
@@ -49,6 +68,8 @@
     <string name="edit_series_recording">Upraviť sériové nahrávanie</string>
     <string name="edit_timer_recording">Upraviť ručné nahrávanie</string>
     <string name="activate_recording">Aktivovať nahrávanie</string>
+    <string name="selected_directory">Vybraný priečinok:</string>
+    <string name="select">Vybrať</string>
     
     <string name="pref_manage_connections">Spravovať pripojenia</string>
     <string name="pref_manage_connections_sum">Nastaviť aktívne pripojenie k TVHeadend serveru alebo pridať, upraviť či vymazať pripojenie.</string>
@@ -83,8 +104,11 @@
     <string name="pref_wol_address_invalid">MAC adresa je neplatná. \nAdresa musí odpovedať vzoru \'01:24:67:9a:cd:ef\'.</string>
 
     <string name="pref_user_interface">Používateľské rozhranie</string>
+    <string name="pref_channels">Kanály</string>
     <string name="pref_icons">Loga kanálov</string>
     <string name="pref_icons_sum">Zobraziť loga kanálov.</string>
+    <string name="pref_big_icons">Veľké loga kanálov</string>
+    <string name="pref_big_icons_sum">Zobraziť veľké loga kanálov.</string>
     <string name="pref_tag_icon">Skupiny kanálov</string>
     <string name="pref_tag_icon_sum">Zobrazenie ikony \'skupiny kanálov\' namiesto loga aplikácie.</string>
     <string name="pref_theme">Svetla téma</string>
@@ -148,12 +172,19 @@
     <string name="pref_recording_profiles_sum">Nadefinovanie profilu pre nahrávanie naplánovaného programu.</string>
     <string name="pref_playback_profiles">Profily pre prehrávanie</string>
     <string name="pref_playback_profiles_sum">Nadefinovanie profilu pre prehrávanie nahraného programu.</string>
+    <string name="pref_cast_profiles">Profily pre casting</string>
+    <string name="pref_cast_profiles_sum">Zobraziť profil, ktorý bude použitý pre prenášanie kanálu či nahrávky do Chromecastu alebo podobného zariadenia.</string>
     <string name="pref_enable_recording_profiles">Zapnúť nahrávacie profily</string>
     <string name="pref_enable_recording_profiles_sum">Použije novú funkcionalitu pre profily na nahrávanie. Toto prepíše všetky nadefinované video a audio parametre pre nahrávanie naplánovaného programu.</string>
     <string name="pref_enable_playback_profiles">Zapnúť prehrávacie profily</string>
     <string name="pref_enable_playback_profiles_sum">Použije novú funkcionalitu pre profily na programy. Toto prepíše všetky nadefinované video a audio parametre pre prehrávanie programu.</string>
+    <string name="pref_notifications">Notifikácie</string>
+    <string name="pref_download_directory">Priečinok pre sťahovanie</string>
+    <string name="pref_download_directory_sum">Nahrávky budú sťahované do nasledujúceho priečinka: \'%s\'</string>
     <string name="pref_show_notifications">Zobrazovať notifikácie</string>
     <string name="pref_show_notifications_sum">Informovať použivateľa vždy, keď nahrávanie začalo alebo bolo dokončene.</string>
+    <string name="pref_show_notification_offset">Načasovať notifikácie</string>
+    <string name="pref_show_notification_offset_sum">Nadefinovanie času, kedy sa zobrazí notifikácia pred samotným začiatkom nahrávania.</string>
     <string name="pref_show_next_program">Zobrazenie nasl. programu</string>
     <string name="pref_show_next_program_sum">Názov nasledujúceho programu bude zobrazený v zozname kanálov pod ukazovateľom priebehu.</string>
 	<string name="pref_play_when_channel_icon_selected">Začať prehrávanie po kliknutí na logo kanálu</string>
@@ -200,6 +231,7 @@
     <string name="recording_file_invalid">Nahrávanie je neplatné</string>
     <string name="recording_canceled">Nahrávanie bolo odstránené</string>
     <string name="recording_started">Nahrávanie sa začalo</string>
+	<string name="recording_starts_in">Nahrávanie začne za %d min.</string>
     <string name="recording_completed">Nahrávanie bolo dokončené</string>
 
     <string name="wol_send">Wake on LAN paket na \'%s\' bol úspešne poslaný</string>
@@ -210,6 +242,7 @@
     <string name="no_transmission">Žiadne vysielanie</string>
     <string name="no_data">Údaje o programe sú nedostupné</string>
     <string name="minutes">%d min</string>
+	
     <string name="not_set">Nie je nastavené</string>
 
     <string name="search_hint">Vyhľadať v EPG</string>
@@ -278,6 +311,7 @@
     <string name="from_to_time">Od %1$s do %2$s</string>
     <string name="recording_time">Čas nahrávania</string>
     <string name="error_empty_title">Názov nesmie byť prázdny!</string>
+    <string name="duplicate_detection">Detekovať duplicitné programy</string>
 
     <string name="subscription_error">Chyba Subscription: %1$s</string>
     <string name="stream_errors">Chyby streamu: %1$d</string>
@@ -310,6 +344,7 @@
     <string name="select_priority">Nastavte prioritu</string>
     <string name="select_dvr_config">Vyberte nahrávací profil</string>
     <string name="select_log_file">Vyberte log súbor</string>
+    <string name="select_duplicate_detection">Vybrať metódu detekovania duplicít</string>
     
     <!-- Connection related -->
     <string name="no_connection_available_advice">Žiadne pripojenie nie je k dispozícii. Musíte pridať aspoň jedno pripojenie.</string>
@@ -330,5 +365,10 @@
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Zobraziť bočný panel</string>
     <string name="drawer_close">Skryť bočný panel</string>
+
+    <string name="parent_directory">Rodičovský priečinok</string>
+
+    <string name="pref_show_program_artwork_sum">Zobrazí artwork/plagát obrázok aktuálneho programu. Server musí poskytovať tieto informácie.</string>
+    <string name="pref_show_program_artwork">Zobraziť artwork/plagát programu</string>
 
 </resources>
