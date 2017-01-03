@@ -85,6 +85,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     private int protocolVersion = 10;
     private String serverName = "";
     private String serverVersion = "";
+    private String webRoot = "";
 
     /**
      * Adds a single listener to the list.
@@ -1363,5 +1364,13 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     public SystemTime getSystemTime() {
         return systemTime;
+    }
+
+    public void setWebRoot(String webRoot) {
+        this.webRoot = webRoot;
+    }
+
+    public String getWebRoot() {
+        return webRoot;
     }
 }

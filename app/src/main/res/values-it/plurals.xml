@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <plurals name="programs">
-        <item quantity="one">%d Programma</item>
-        <item quantity="other">%d Programmi</item>
-    </plurals>
-    <plurals name="items">
-        <item quantity="one">%d Elemento</item>
-        <item quantity="other">%d Elementi</item>
-    </plurals>
-    <plurals name="recordings">
-        <item quantity="one">%d Registrazione</item>
-        <item quantity="other">%d Registrazioni</item>
-    </plurals>
     <plurals name="completed_recordings">
-        <item quantity="one">%d Registrazione completata</item>
-        <item quantity="other">%d Registrazioni completate</item>
-    </plurals>
-    <plurals name="upcoming_recordings">
-        <item quantity="one">%d Registrazione programmata</item>
-        <item quantity="other">%d Registrazioni programmate</item>
+        <item quantity="other">%d registrazioni completate</item>
+        <item quantity="one">%d registrazione completata</item>
     </plurals>
     <plurals name="failed_recordings">
-        <item quantity="one">%d Registrazione fallita</item>
-        <item quantity="other">%d Registrazioni fallite</item>
+        <item quantity="other">%d registrazioni fallite</item>
+        <item quantity="one">%d registrazione fallita</item>
     </plurals>
-    <plurals name="searching_programs">
-        <item quantity="one">La ricerca %d Programma</item>
-        <item quantity="other">La ricerca %d Programmi</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="one">La ricerca %d Registrazione</item>
-        <item quantity="other">La ricerca %d Registrazioni</item>
+    <plurals name="items">
+        <item quantity="other">%d elementi</item>
+        <item quantity="one">%d elemento</item>
     </plurals>
     <plurals name="number_of_connections">
-        <item quantity="one">%d connessione disponibile</item>
         <item quantity="other">%d connessioni disponibili</item>
+        <item quantity="one">%d connessione disponibile</item>
+    </plurals>
+    <plurals name="programs">
+        <item quantity="other">%d programmi</item>
+        <item quantity="one">%d programma</item>
+    </plurals>
+    <plurals name="recordings">
+        <item quantity="other">%d registrazioni</item>
+        <item quantity="one">%d registrazione</item>
+    </plurals>
+    <plurals name="searching_programs">
+        <item quantity="other">Ricerca %d programmi</item>
+        <item quantity="one">Ricerca %d programma</item>
+    </plurals>
+    <plurals name="searching_recordings">
+        <item quantity="other">Ricerca %d registrazioni</item>
+        <item quantity="one">Ricerca %d registrazione</item>
+    </plurals>
+    <plurals name="upcoming_recordings">
+        <item quantity="other">%d registrazioni programmate</item>
+        <item quantity="one">%d registrazione programmata</item>
+    </plurals>
+    <plurals name="results">
+        <item quantity="other">%d risultati</item>
+        <item quantity="one">%d risultato</item>
     </plurals>
 </resources>

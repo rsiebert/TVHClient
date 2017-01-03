@@ -283,8 +283,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         int streamType = MediaInfo.STREAM_TYPE_NONE;
 
         if (ch != null) {
-            castUrl = baseUrl + "/stream/channelnumber/" + ch.number;
-            iconUrl = baseUrl + "/" + ch.icon;
+            castUrl = baseUrl + app.getWebRoot() + "/stream/channelnumber/" + ch.number;
+            iconUrl = baseUrl + app.getWebRoot() + "/" + ch.icon;
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl = baseUrl + "/dvrfile/" + rec.id;
