@@ -198,6 +198,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         updateTask = new Runnable() {
             public void run() {
                 adapter.getFilter().filter(query);
+                adapter.sort();
                 if (recording == null) {
                     actionBar.setSubtitle(getResources().getQuantityString(
                             R.plurals.searching_programs, adapter.getFullCount(),
