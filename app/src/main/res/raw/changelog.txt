@@ -1,3 +1,14 @@
+$ 1.9.8
+  % VERSION 1.9.8
+  _ 03.01.2017
+    * Add the webroot (if available) to the casting url
+    * Sort the search results by time
+    * Updated Italian translation
+$ 1.9.7
+  % VERSION 1.9.7
+  _ 18.12.2016
+    * Refresh the program guide view automatically every 15 minutes
+    * Fixed crash in timer recording details screen
 $ 1.9.6
   % VERSION 1.9.6
   _ 01.12.2016
