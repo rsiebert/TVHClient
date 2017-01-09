@@ -502,7 +502,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
-        if (connection.getProtocolVersion() >= 18) {
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
         app.addTimerRecording(rec);
@@ -525,7 +525,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
-        if (connection.getProtocolVersion() >= 18) {
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
         app.updateTimerRecording(rec);
