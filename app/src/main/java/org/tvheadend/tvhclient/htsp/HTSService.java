@@ -922,6 +922,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             @Override
             public void run() {
                 try {
+                    app.log(TAG, "Loading channel icon from url '" + ch.icon + "'");
                     ch.iconBitmap = getIcon(ch.icon);
                     app.updateChannel(ch);
                 } catch (Throwable ex) {
@@ -935,6 +936,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         execService.execute(new Runnable() {
             public void run() {
                 try {
+                    app.log(TAG, "Loading channel tag icon from url '" + tag.icon + "'");
                     tag.iconBitmap = getIcon(tag.icon);
                     app.updateChannelTag(tag);
                 } catch (Throwable ex) {
