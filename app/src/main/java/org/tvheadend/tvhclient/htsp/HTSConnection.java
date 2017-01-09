@@ -173,10 +173,10 @@ public class HTSConnection extends Thread {
                 serverVersion = response.getString("serverversion");
                 webRoot = response.getString("webroot", "");
 
-                app.log(TAG, "Server name '" + serverName 
-                        + "', version '" + serverVersion
-                        + "', protocol '" + protocolVersion
-                        + "', webroot '" + webRoot);
+                app.log(TAG, "Server name '" + serverName + "'"
+                        + ", version '" + serverVersion + "'"
+                        + ", protocol '" + protocolVersion + "'"
+                        + ", webroot '" + webRoot + "'");
 
                 MessageDigest md;
                 try {
