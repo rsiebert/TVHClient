@@ -276,26 +276,27 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
      */
     private void startCasting() {
 
-        String iconUrl = "";
-        String castUrl = "";
+        String iconUrl = baseUrl + app.getWebRoot();
+        String castUrl = baseUrl + app.getWebRoot();
         String subtitle = "";
         long duration = 0;
         int streamType = MediaInfo.STREAM_TYPE_NONE;
 
         if (ch != null) {
-            castUrl = baseUrl + app.getWebRoot() + "/stream/channelnumber/" + ch.number;
-            iconUrl = baseUrl + app.getWebRoot() + "/" + ch.icon;
+            castUrl += "/stream/channelnumber/" + ch.number;
+            iconUrl += "/" + ch.icon;
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
-            castUrl = baseUrl + "/dvrfile/" + rec.id;
+            castUrl += "/dvrfile/" + rec.id;
+            iconUrl += "/" + (rec.channel != null ? rec.channel.icon : "");
+            streamType = MediaInfo.STREAM_TYPE_BUFFERED;
+
             if (rec.subtitle != null) {
                 subtitle = (rec.subtitle.length() > 0 ? rec.subtitle : rec.summary);
             }
             if (rec.stop != null && rec.start != null) {
                 duration = rec.stop.getTime() - rec.start.getTime();
             }
-            iconUrl = baseUrl + "/" + (rec.channel != null ? rec.channel.icon : "");
-            streamType = MediaInfo.STREAM_TYPE_BUFFERED;
         }
 
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
