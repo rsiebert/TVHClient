@@ -1575,6 +1575,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final String directory = intent.getStringExtra("directory");
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
+        final long dupDetect = intent.getLongExtra("dupDetect", 0);
         final long start = intent.getLongExtra("start", -1);
         final long startWindow = intent.getLongExtra("startWindow", -1);
         final String configName = intent.getStringExtra("configName");
@@ -1622,6 +1623,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         request.putField("enabled", enabled);
         request.putField("directory", directory);
+        request.putField("dupDetect", dupDetect);
 
         if (configName != null) {
             request.putField("configName", configName);
@@ -1733,6 +1735,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         request.putField("enabled", enabled);
         request.putField("directory", directory);
+        request.putField("dupDetect", dupDetect);
 
         if (configName != null) {
             request.putField("configName", configName);
