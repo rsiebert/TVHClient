@@ -39,8 +39,7 @@
                         android:layout_marginEnd="16dp"
                         android:layout_marginRight="16dp"
                         android:padding="8dp"
-                        android:text="@string/play"
-                        style="@style/Widget.AppCompat.Button.Borderless"/>
+                        android:text="@string/play"/>
 
                     <Button
                         android:id="@+id/menu_edit"
@@ -50,8 +49,7 @@
                         android:layout_marginRight="16dp"
                         android:padding="8dp"
                         android:text="@string/edit"
-                        android:visibility="gone"
-                        style="@style/Widget.AppCompat.Button.Borderless"/>
+                        android:visibility="gone"/>
 
                     <Button
                         android:id="@+id/menu_record_remove"
@@ -59,8 +57,7 @@
                         android:layout_height="fill_parent"
                         android:padding="8dp"
                         android:text="@string/remove"
-                        android:visibility="gone"
-                        style="@style/Widget.AppCompat.Button.Borderless"/>
+                        android:visibility="gone"/>
                 </LinearLayout>
 
                 <Button
@@ -69,8 +66,7 @@
                     android:layout_height="fill_parent"
                     android:padding="8dp"
                     android:text="@string/download"
-                    android:visibility="gone"
-                    style="@style/Widget.AppCompat.Button.Borderless"/>
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/is_enabled"

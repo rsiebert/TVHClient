@@ -175,6 +175,9 @@
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Dark</item>
         <!-- For each individual Spinner list item once clicked on -->
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Dark</item>
+
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+        <item name="buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -225,6 +228,9 @@
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Light</item>
         <!-- For each individual Spinner list item once clicked on -->
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Light</item>
+
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+        <item name="buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
     </style>
 
 </resources>
