@@ -36,6 +36,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private TimerRecording trec;
 
     private TextView isEnabled;
+    private TextView directoryLabel;
+    private TextView directory;
     private TextView time;
     private TextView duration;
     private TextView daysOfWeek;
@@ -97,6 +99,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         View v = inflater.inflate(R.layout.timer_recording_details_layout, container, false);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
+        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
+        directory = (TextView) v.findViewById(R.id.directory);
         time = (TextView) v.findViewById(R.id.time);
         duration = (TextView) v.findViewById(R.id.duration);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
@@ -145,6 +149,10 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
         isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
         isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+
+        directoryLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setText(trec.directory);
 
         if (trec.channel != null) {
             channelName.setText(trec.channel.name);

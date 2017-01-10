@@ -220,6 +220,23 @@
                     android:paddingStart="4dp"
                     android:paddingTop="4dp"
                     android:text="@string/not_set" />
+
+                <TextView
+                    android:id="@+id/directory_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/directory" />
+
+                <EditText
+                    android:id="@+id/directory"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_directory"
+                    android:inputType="text"
+                    android:paddingBottom="16dp" />
             </LinearLayout>
         </ScrollView>
 

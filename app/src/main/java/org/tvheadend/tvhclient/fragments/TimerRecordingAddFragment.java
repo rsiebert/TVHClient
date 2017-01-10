@@ -61,6 +61,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private final ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
     private TextView startTime;
     private TextView stopTime;
+    private EditText directory;
+    private TextView directoryLabel;
     private EditText title;
     private EditText name;
     private TextView channelName;
@@ -71,6 +73,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private long startTimeValue;
     private long stopTimeValue;
     private long daysOfWeekValue;
+    private String directoryValue;
     private String titleValue;
     private String nameValue;
     private boolean enabledValue;
@@ -123,6 +126,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         outState.putLong("startTimeValue", startTimeValue);
         outState.putLong("stopTimeValue", stopTimeValue);
         outState.putLong("daysOfWeekValue", daysOfWeekValue);
+        outState.putString("directoryValue", directoryValue);
         outState.putString("titleValue", titleValue);
         outState.putString("nameValue", nameValue);
         outState.putBoolean("enabledValue", enabledValue);
@@ -191,6 +195,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 startTimeValue = rec.start;
                 stopTimeValue = rec.stop;
                 daysOfWeekValue = rec.daysOfWeek;
+                directoryValue = rec.directory;
                 titleValue = rec.title;
                 nameValue = rec.name;
                 enabledValue = rec.enabled;
@@ -224,6 +229,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 startTimeValue = currentTime;
                 stopTimeValue = currentTime + 30;
                 daysOfWeekValue = 127;
+                directoryValue = "";
                 titleValue = "";
                 nameValue = "";
                 enabledValue = true;
@@ -249,6 +255,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             startTimeValue = savedInstanceState.getLong("startTimeValue");
             stopTimeValue = savedInstanceState.getLong("stopTimeValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
+            directoryValue = savedInstanceState.getString("directoryValue");
             titleValue = savedInstanceState.getString("titleValue");
             nameValue = savedInstanceState.getString("nameValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
@@ -260,6 +267,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         View v = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
+        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
+        directory = (EditText) v.findViewById(R.id.directory);
         title = (EditText) v.findViewById(R.id.title);
         name = (EditText) v.findViewById(R.id.name);
 
@@ -310,6 +319,10 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
         isEnabled.setChecked(enabledValue);
         isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+
+        directoryLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setText(directoryValue);
 
         title.setText(titleValue);
         name.setText(nameValue);
@@ -509,6 +522,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
      * every new time selection.
      */
     private void getValues() {
+        directoryValue = directory.getText().toString();
         titleValue = title.getText().toString();
         nameValue = name.getText().toString();
         enabledValue = isEnabled.isChecked();
@@ -654,6 +668,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
      */
     private Intent getIntentData() {
         Intent intent = new Intent(activity, HTSService.class);
+        intent.putExtra("directory", directoryValue);
         intent.putExtra("title", titleValue);
         intent.putExtra("name", nameValue);
         intent.putExtra("start", startTimeValue);

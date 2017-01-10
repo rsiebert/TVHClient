@@ -12,6 +12,7 @@ public class TimerRecording implements Comparable<TimerRecording> {
     public long priority;
     public long start;  // value is in seconds
     public long stop;   // value is in seconds
+    public String directory;
     public String title;
     public String name;
     public Channel channel;

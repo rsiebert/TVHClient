@@ -33,6 +33,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private SeriesRecording srec;
 
     private TextView isEnabled;
+    private TextView directoryLabel;
+    private TextView directory;
     private TextView minDuration;
     private TextView maxDuration;
     private TextView startTime;
@@ -98,6 +100,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
+        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
+        directory = (TextView) v.findViewById(R.id.directory);
         nameLabel = (TextView) v.findViewById(R.id.name_label);
         name = (TextView) v.findViewById(R.id.name);
         minDuration = (TextView) v.findViewById(R.id.minimum_duration);
@@ -146,6 +150,11 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
 
         isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
         isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+
+        directoryLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setText(srec.directory);
+
         channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
 
         Utils.setDescription(nameLabel, name, srec.name);

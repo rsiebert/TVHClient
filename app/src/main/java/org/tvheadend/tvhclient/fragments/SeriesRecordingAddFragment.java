@@ -67,6 +67,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private EditText stopExtraTime;
     private TextView dupDetect;
     private TextView dupDetectLabel;
+    private EditText directory;
+    private TextView directoryLabel;
     private EditText title;
     private EditText name;
     private TextView channelName;
@@ -83,6 +85,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private long stopExtraTimeValue;
     private long dupDetectValue;
     private long daysOfWeekValue;
+    private String directoryValue;
     private String titleValue;
     private String nameValue;
     private boolean enabledValue;
@@ -147,6 +150,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         outState.putLong("stopExtraTimeValue", stopExtraTimeValue);
         outState.putLong("dupDetectValue", dupDetectValue);
         outState.putLong("daysOfWeekValue", daysOfWeekValue);
+        outState.putString("directoryValue", directoryValue);
         outState.putString("titleValue", titleValue);
         outState.putString("nameValue", nameValue);
         outState.putBoolean("enabledValue", enabledValue);
@@ -226,6 +230,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 stopExtraTimeValue = rec.stopExtra;
                 dupDetectValue = rec.dupDetect;
                 daysOfWeekValue = rec.daysOfWeek;
+                directoryValue = rec.directory;
                 titleValue = rec.title;
                 nameValue = rec.name;
                 enabledValue = rec.enabled;
@@ -262,6 +267,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 stopExtraTimeValue = DEFAULT_STOP_EXTRA;
                 dupDetectValue = 0;
                 daysOfWeekValue = 127;
+                directoryValue = "";
                 titleValue = "";
                 nameValue = "";
                 enabledValue = true;
@@ -293,6 +299,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             stopExtraTimeValue = savedInstanceState.getLong("stopExtraTimeValue");
             dupDetectValue = savedInstanceState.getLong("dupDetectValue");
             daysOfWeekValue = savedInstanceState.getLong("daysOfWeekValue");
+            directoryValue = savedInstanceState.getString("directoryValue");
             titleValue = savedInstanceState.getString("titleValue");
             nameValue = savedInstanceState.getString("nameValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
@@ -304,6 +311,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         View v = inflater.inflate(R.layout.series_recording_add_layout, container, false);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
+        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
+        directory = (EditText) v.findViewById(R.id.directory);
         title = (EditText) v.findViewById(R.id.title);
         name = (EditText) v.findViewById(R.id.name);
         minDuration = (EditText) v.findViewById(R.id.minimum_duration);
@@ -361,6 +370,10 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
         isEnabled.setChecked(enabledValue);
         isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+
+        directoryLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setText(directoryValue);
 
         title.setText(titleValue);
         name.setText(nameValue);
@@ -623,6 +636,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         startExtraTimeValue = Long.valueOf(startExtraTime.getText().toString());
         stopExtraTimeValue = Long.valueOf(stopExtraTime.getText().toString());
 
+        directoryValue = directory.getText().toString();
         titleValue = title.getText().toString();
         nameValue = name.getText().toString();
         enabledValue = isEnabled.isChecked();
@@ -762,6 +776,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         Intent intent = new Intent(activity, HTSService.class);
         intent.putExtra("title", titleValue);
         intent.putExtra("name", nameValue);
+        intent.putExtra("directory", directoryValue);
         intent.putExtra("minDuration", minDurationValue * 60);
         intent.putExtra("maxDuration", maxDurationValue * 60);
 

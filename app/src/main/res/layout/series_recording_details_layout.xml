@@ -211,6 +211,22 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
                     android:text="@string/priority" />
+
+                <TextView
+                    android:id="@+id/directory_label"
+                    style="?attr/TitleFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/directory" />
+
+                <TextView
+                    android:id="@+id/directory"
+                    style="?attr/ContentFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_directory"
+                    android:paddingBottom="16dp" />
             </LinearLayout>
         </ScrollView>
 

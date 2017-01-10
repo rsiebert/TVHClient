@@ -498,6 +498,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.stop = msg.getLong("stop", 0);
         rec.title = msg.getString("title", "");
         rec.name = msg.getString("name", "");
+        rec.directory = msg.getString("directory", "");
         rec.channel = app.getChannel(msg.getLong("channel", 0));
 
         // The enabled flag was added in HTSP API version 18. The support for
@@ -521,6 +522,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.stop = msg.getLong("stop", rec.stop);
         rec.title = msg.getString("title", rec.title);
         rec.name = msg.getString("name", rec.name);
+        rec.directory = msg.getString("directory", rec.name);
         rec.channel = app.getChannel(msg.getLong("channel", 0));
 
         // The enabled flag was added in HTSP API version 18. The support for
@@ -721,6 +723,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.dupDetect = msg.getLong("dupDetect", 0);
         srec.title = msg.getString("title", srec.title);
         srec.name = msg.getString("name", srec.name);
+        srec.directory = msg.getString("directory", srec.directory);
         app.updateSeriesRecording(srec);
     }
 
@@ -741,6 +744,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.dupDetect = msg.getLong("dupDetect", 0);
         srec.title = msg.getString("title");
         srec.name = msg.getString("name");
+        srec.directory = msg.getString("directory");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
 
         app.addSeriesRecording(srec);
@@ -1299,6 +1303,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long priority = intent.getLongExtra("priority", 2);
         final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
         final long enabled = intent.getLongExtra("enabled", 1);
+        final String directory = intent.getStringExtra("directory");
         final String title = intent.getStringExtra("title");
         final String name = intent.getStringExtra("name");
         final String configName = intent.getStringExtra("configName");
@@ -1314,9 +1319,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
-
-        // Enabled flag (Added in version 19)
         request.putField("enabled", enabled);
+        request.putField("directory", directory);
 
         if (configName != null) {
             request.putField("configName", configName);
@@ -1378,6 +1382,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long priority = intent.getLongExtra("priority", 2);
         final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
         final long enabled = intent.getLongExtra("enabled", 1);
+        final String directory = intent.getStringExtra("directory");
         final String title = intent.getStringExtra("title");
         final String name = intent.getStringExtra("name");
         final String configName = intent.getStringExtra("configName");
@@ -1392,9 +1397,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
         request.putField("priority", priority);
-
-        // Enabled flag (Added in version 19)
         request.putField("enabled", enabled);
+        request.putField("directory", directory);
 
         if (configName != null) {
             request.putField("configName", configName);
@@ -1568,6 +1572,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long daysOfWeek = intent.getLongExtra("daysOfWeek", 127);
         final long priority = intent.getLongExtra("priority", 2);
         final long enabled = intent.getLongExtra("enabled", 1);
+        final String directory = intent.getStringExtra("directory");
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final long start = intent.getLongExtra("start", -1);
@@ -1615,8 +1620,8 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("approxTime", start);
         }
 
-        // Enabled flag (Added in version 19)
         request.putField("enabled", enabled);
+        request.putField("directory", directory);
 
         if (configName != null) {
             request.putField("configName", configName);
@@ -1678,6 +1683,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long daysOfWeek = intent.getLongExtra("daysOfWeek", 127);
         final long priority = intent.getLongExtra("priority", 2);
         final long enabled = intent.getLongExtra("enabled", 1);
+        final String directory = intent.getStringExtra("directory");
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final long dupDetect = intent.getLongExtra("dupDetect", 0);
@@ -1725,8 +1731,8 @@ public class HTSService extends Service implements HTSConnectionListener {
             request.putField("approxTime", start);
         }
 
-        // Enabled flag (Added in version 19)
         request.putField("enabled", enabled);
+        request.putField("directory", directory);
 
         if (configName != null) {
             request.putField("configName", configName);

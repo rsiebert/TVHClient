@@ -182,7 +182,8 @@ public class Constants {
 
     // Minimum API versions to enable or disable certain fields in the HTSP API
     // methods. These fields shall only be visible and used if supported.
-    public static final int MIN_API_VERSION_REC_FIELD_ENABLED = 18;
+    public static final int MIN_API_VERSION_REC_FIELD_ENABLED = 19;
+    public static final int MIN_API_VERSION_REC_FIELD_DIRECTORY = 19;
     public static final int MIN_API_VERSION_REC_FIELD_OWNER = 18;
     public static final int MIN_API_VERSION_REC_FIELD_CREATOR = 18;
     public static final int MIN_API_VERSION_REC_FIELD_DUPDETECT = 20;

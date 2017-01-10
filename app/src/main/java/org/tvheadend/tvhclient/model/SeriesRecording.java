@@ -15,6 +15,7 @@ public class SeriesRecording implements Comparable<SeriesRecording> {
     public long startExtra;
     public long stopExtra;
     public long dupDetect;
+    public String directory;
     public String title;
     public String name;
     public Channel channel;
