@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private TVHClientApplication app;
     private DatabaseHelper dbh;
     private Connection conn;
-    private DownloadManager dm;
     private int action;
 
     private Channel ch;
