@@ -1,9 +1,12 @@
 $ 1.9.8
   % VERSION 1.9.8
-  _ 03.01.2017
+  _ 10.01.2017
     * Add the webroot (if available) to the casting url
     * Sort the search results by time
-    * Updated Italian translation
+    * Updated Italian and Slovak translations
+    * Added support to save series and timer recordings in a custom directory
+    * Fixed duplicate detection field not being updated
+    * Fixed wrong color of buttons in the dark theme
 $ 1.9.7
   % VERSION 1.9.7
   _ 18.12.2016
