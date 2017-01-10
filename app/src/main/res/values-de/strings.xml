@@ -57,6 +57,7 @@
     <string name="remove_all_recordings">Alle Aufnahmen entfernen?</string>
     <string name="cancel_recording">Geplante Aufnahme \'%s\' entfernen?</string>
     <string name="stop_recording">Laufende Aufnahme \'%s\' entfernen?</string>
+    <string name="add_directory">Verzeichnis wo die Aufnahme gespeichert werden soll</string>
     <string name="add_title">Titel der gewünschten Aufnahme</string>
     <string name="add_name">Name dieses erstellten Eintrages</string>
     <string name="add_recording">Neue Aufnahme hinzufügen</string>
@@ -278,6 +279,7 @@
     <string name="status">Status</string>
 
     <string name="status_icon">Statuslogo</string>
+    <string name="directory">Verzeichnis</string>
     <string name="title">Titel</string>
     <string name="subtitle">Untertitel</string>
     <string name="channel">Sender</string>
