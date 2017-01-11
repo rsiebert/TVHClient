@@ -120,7 +120,7 @@ public class Utils {
         final String episode = context.getResources().getString(R.string.episode);
         final String part = context.getResources().getString(R.string.part);
         
-        if (info.onScreen.length() > 0) {
+        if (info.onScreen != null && info.onScreen.length() > 0) {
             return info.onScreen;
         }
         if (info.seasonNumber > 0) {
