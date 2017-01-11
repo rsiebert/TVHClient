@@ -43,7 +43,7 @@
                         android:layout_marginRight="16dp"
                         android:padding="8dp"
                         android:text="@string/play"
-                        style="@style/Widget.AppCompat.Button.Borderless"/>
+                        style="?attr/borderless_button"/>
 
                     <Button
                         android:id="@+id/menu_record_once"
@@ -53,7 +53,7 @@
                         android:layout_marginRight="16dp"
                         android:padding="8dp"
                         android:text="@string/record_once"
-                        style="@style/Widget.AppCompat.Button.Borderless"/>
+                        style="?attr/borderless_button"/>
 
                     <Button
                         android:id="@+id/menu_record_series"
@@ -63,7 +63,7 @@
                         android:layout_marginRight="16dp"
                         android:padding="8dp"
                         android:text="@string/record_series"
-                        style="@style/Widget.AppCompat.Button.Borderless"/>
+                        style="?attr/borderless_button"/>
 
                     <Button
                         android:id="@+id/menu_record_remove"
@@ -74,7 +74,7 @@
                         android:padding="8dp"
                         android:text="@string/remove"
                         android:visibility="gone"
-                        style="@style/Widget.AppCompat.Button.Borderless"/>
+                        style="?attr/borderless_button"/>
 
                 </LinearLayout>
 

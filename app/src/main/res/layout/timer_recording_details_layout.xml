@@ -40,7 +40,8 @@
                         android:layout_marginRight="16dp"
                         android:padding="8dp"
                         android:text="@string/remove"
-                        android:visibility="gone"/>
+                        android:visibility="gone"
+                        style="?attr/borderless_button"/>
 
                     <Button
                         android:id="@+id/menu_record_edit"
@@ -48,7 +49,8 @@
                         android:layout_height="fill_parent"
                         android:padding="8dp"
                         android:text="@string/edit"
-                        android:visibility="gone"/>
+                        android:visibility="gone"
+                        style="?attr/borderless_button"/>
                 </LinearLayout>
 
                 <TextView
