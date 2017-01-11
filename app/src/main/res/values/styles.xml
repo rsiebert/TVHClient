@@ -128,10 +128,10 @@
     </style>
 
     <style name="Button.Borderless.Light" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">#3c000000</item>
+        <item name="android:textColor">#ac000000</item>
     </style>
     <style name="Button.Borderless.Dark" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">#3cffffff</item>
+        <item name="android:textColor">#acffffff</item>
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
