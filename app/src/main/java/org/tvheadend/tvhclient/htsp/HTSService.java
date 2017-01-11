@@ -366,14 +366,14 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void onDvrEntryAdd(HTSMessage msg) {
         Recording rec = new Recording();
         rec.id = msg.getLong("id");
-        rec.description = msg.getString("description", "");
-        rec.summary = msg.getString("summary", "");
-        rec.error = msg.getString("error", null);
+        rec.description = msg.getString("description");
+        rec.summary = msg.getString("summary");
+        rec.error = msg.getString("error");
         rec.start = msg.getDate("start");
-        rec.state = msg.getString("state", null);
+        rec.state = msg.getString("state");
         rec.stop = msg.getDate("stop");
-        rec.title = msg.getString("title", null);
-        rec.subtitle = msg.getString("subtitle", null);
+        rec.title = msg.getString("title");
+        rec.subtitle = msg.getString("subtitle");
         rec.enabled = msg.getLong("enabled", 1) != 0;
 
         rec.channel = app.getChannel(msg.getLong("channel", 0));
@@ -496,9 +496,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.priority = msg.getLong("priority", 0);
         rec.start = msg.getLong("start", 0);
         rec.stop = msg.getLong("stop", 0);
-        rec.title = msg.getString("title", "");
-        rec.name = msg.getString("name", "");
-        rec.directory = msg.getString("directory", "");
+        rec.title = msg.getString("title");
+        rec.name = msg.getString("name");
+        rec.directory = msg.getString("directory");
         rec.channel = app.getChannel(msg.getLong("channel", 0));
 
         // The enabled flag was added in HTSP API version 18. The support for
@@ -569,7 +569,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             HTSMessage sub = (HTSMessage) obj;
             s.index = sub.getInt("index");
             s.type = sub.getString("type");
-            s.language = sub.getString("language", "");
+            s.language = sub.getString("language");
             s.width = sub.getInt("width", 0);
             s.height = sub.getInt("height", 0);
             s.duration = sub.getInt("duration", 0);
@@ -587,11 +587,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             Object obj = msg.get("sourceinfo");
             HTSMessage sub = (HTSMessage) obj;
             SourceInfo si = new SourceInfo();
-            si.adapter = sub.getString("adapter", "");
-            si.mux = sub.getString("mux", "");
-            si.network = sub.getString("network", "");
-            si.provider = sub.getString("provider", "");
-            si.service = sub.getString("service", "");
+            si.adapter = sub.getString("adapter");
+            si.mux = sub.getString("mux");
+            si.network = sub.getString("network");
+            si.provider = sub.getString("provider");
+            si.service = sub.getString("service");
             subscription.sourceInfo = si;
 
             app.log(TAG, "onSubscriptionStart, added sourceinfo " + si.adapter);
@@ -983,8 +983,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         Program p = new Program();
         p.id = sub.getLong("eventId", 0);
         p.nextId = sub.getLong("nextEventId", 0);
-        p.description = sub.getString("description", "");
-        p.summary = sub.getString("summary", "");
+        p.description = sub.getString("description");
+        p.summary = sub.getString("summary");
         p.recording = app.getRecording(sub.getLong("dvrId", 0));
         p.contentType = sub.getInt("contentType", -1);
         p.title = sub.getString("title");
@@ -1019,7 +1019,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         SeriesInfo info = new SeriesInfo();
         info.episodeCount = msg.getInt("episodeCount", 0);
         info.episodeNumber = msg.getInt("episodeNumber", 0);
-        info.onScreen = msg.getString("episodeOnscreen", "");
+        info.onScreen = msg.getString("episodeOnscreen");
         info.partCount = msg.getInt("partCount", 0);
         info.partNumber = msg.getInt("partNumber", 0);
         info.seasonCount = msg.getInt("seasonCount", 0);
