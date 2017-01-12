@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res/org.tvheadend.tvhclient">
 
-    <PreferenceCategory android:title="General">
+    <PreferenceCategory android:title="Theme">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="lightThemePref"
@@ -21,6 +21,11 @@
             android:key="showBigIconPref"
             android:summary="@string/pref_big_icons_sum"
             android:title="@string/pref_big_icons" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="playWhenChannelIconSelectedPref"
+            android:summary="@string/pref_play_when_channel_icon_selected_sum"
+            android:title="@string/pref_play_when_channel_icon_selected" />
         <ListPreference
             android:name="@string/pref_sort_channels"
             android:defaultValue="0"
@@ -37,19 +42,14 @@
             android:title="@string/pref_tag_icon" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="showNextProgramPref"
-            android:summary="@string/pref_show_next_program_sum"
-            android:title="@string/pref_show_next_program" />
-        <CheckBoxPreference
-            android:defaultValue="true"
             android:key="showProgramProgressbarPref"
             android:summary="@string/pref_show_progressbar_sum"
             android:title="@string/pref_show_progressbar" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="playWhenChannelIconSelectedPref"
-            android:summary="@string/pref_play_when_channel_icon_selected_sum"
-            android:title="@string/pref_play_when_channel_icon_selected" />
+            android:key="showNextProgramPref"
+            android:summary="@string/pref_show_next_program_sum"
+            android:title="@string/pref_show_next_program" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_programs">
