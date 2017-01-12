@@ -371,6 +371,4 @@
 
     <string name="pref_show_program_artwork_sum">Zeigt das Programmcover (falls vorhanden) in der Detailansicht eines Programmes an. Der Server muss die Informationen liefern.</string>
     <string name="pref_show_program_artwork">Zeige das Programmcover</string>
-    <string name="pref_use_compact_channel_list_layout_sum">Verwendet ein anderes Layout, um mehr Sender in der Liste anzuzeigen. Das Layout wird nur für große Tablets im Querformat verwendet.</string>
-    <string name="pref_use_compact_channel_list_layout">Zeige mehr Sender</string>
 </resources>

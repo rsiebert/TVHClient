@@ -52,11 +52,6 @@
 	            android:key="playWhenChannelIconSelectedPref"
 	            android:summary="@string/pref_play_when_channel_icon_selected_sum"
 	            android:title="@string/pref_play_when_channel_icon_selected" />
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="useCompactChannelListLayoutPref"
-                android:summary="@string/pref_use_compact_channel_list_layout_sum"
-                android:title="@string/pref_use_compact_channel_list_layout" />
 	    </PreferenceScreen>
         <ListPreference
             android:name="@string/pref_language"

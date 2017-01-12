@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -103,21 +101,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // we can return anyway.
         if (container == null) {
             return null;
-        }
-
-        // Use the compact layout if the setting is active
-        // and the device is a large tablet in landscape mode
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("useCompactChannelListLayoutPref", false)) {
-
-            final Configuration config = getResources().getConfiguration();
-            final int orientation = config.orientation;
-            final int layoutSize = (config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK);
-
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE &&
-                    layoutSize == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-                adapterLayout = R.layout.channel_list_widget_compact;
-            }
         }
 
         // Check if only channels without any program information shall be
