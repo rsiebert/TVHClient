@@ -13,4 +13,5 @@ public interface SettingsInterface {
     void showTranscodingSettings();
     void showNotifications();
     void showCasting();
+    void showUserInterface();
 }

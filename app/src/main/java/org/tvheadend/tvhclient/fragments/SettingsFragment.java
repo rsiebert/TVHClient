@@ -63,10 +63,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefManageConnections;
     private Preference prefMenuProfiles;
     private Preference prefMenuCasting;
+    private Preference prefMenuUserInterface;
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
     private CheckBoxPreference prefDebugMode;
-    private CheckBoxPreference prefShowProgramArtwork;
     private Preference prefMenuNotifications;
     private Preference prefDownloadDir;
     private Preference prefSendLogfile;
@@ -89,6 +89,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefManageConnections = findPreference("pref_manage_connections");
         prefMenuProfiles = findPreference("pref_menu_profiles");
         prefMenuCasting = findPreference("pref_menu_casting");
+        prefMenuUserInterface = findPreference("pref_menu_user_interface");
         prefMenuTranscoding = findPreference("pref_menu_transcoding");
         prefShowChangelog = findPreference("pref_changelog");
         prefClearSearchHistory = findPreference("pref_clear_search_history");
@@ -97,7 +98,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefSendLogfile = findPreference("pref_send_logfile");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
-        prefShowProgramArtwork = (CheckBoxPreference) findPreference("pref_show_program_artwork");
         prefMenuNotifications  = findPreference("pref_menu_notifications");
         prefDownloadDir = findPreference("pref_download_directory");
     }
@@ -358,21 +358,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
         });
 
-        // Add a listener to the logger will be enabled or disabled depending on the setting
-        prefShowProgramArtwork.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (!app.isUnlocked()) {
-                    if (getView() != null) {
-                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
-                                Snackbar.LENGTH_SHORT).show();
-                    }
-                    prefShowProgramArtwork.setChecked(false);
-                }
-                return false;
-            }
-        });
-
         // Add a listener so that the notifications can be selected.
         prefMenuNotifications.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
@@ -386,6 +371,17 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                     if (settingsInterface != null) {
                         settingsInterface.showNotifications();
                     }
+                }
+                return false;
+            }
+        });
+
+        // Add a listener so that the notifications can be selected.
+        prefMenuUserInterface.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (settingsInterface != null) {
+                    settingsInterface.showUserInterface();
                 }
                 return false;
             }
@@ -532,31 +528,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
-            case "lightThemePref":
             case "languagePref":
                 if (settingsInterface != null) {
                     settingsInterface.restart();
                     settingsInterface.restartNow();
-                }
-                break;
-            case "epgMaxDays":
-                try {
-                    Integer.parseInt(prefs.getString(key, "7"));
-                } catch (NumberFormatException ex) {
-                    prefs.edit().putString(key, "7").apply();
-                }
-                if (settingsInterface != null) {
-                    settingsInterface.restart();
-                }
-                break;
-            case "epgHoursVisible":
-                try {
-                    Integer.parseInt(prefs.getString(key, "4"));
-                } catch (NumberFormatException ex) {
-                    prefs.edit().putString(key, "4").apply();
-                }
-                if (settingsInterface != null) {
-                    settingsInterface.restart();
                 }
                 break;
             case "connectionTimeout":
