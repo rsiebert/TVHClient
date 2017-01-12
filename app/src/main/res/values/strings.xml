@@ -376,5 +376,7 @@
     <string name="pref_show_program_artwork">Show program artwork/poster</string>
     <string name="pref_show_progressbar_sum">Indicates in the channel list how much of the current program has already been shown.</string>
     <string name="pref_show_progressbar">Show progressbar</string>
+    <string name="pref_customize_user_interface_sum">Choose from a variety of options to decide which information shall be shown in each screen.</string>
+    <string name="pref_customize_user_interface">Customize the user interface</string>
 
 </resources>

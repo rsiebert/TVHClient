@@ -373,4 +373,6 @@
     <string name="pref_show_program_artwork">Zeige das Programmcover</string>
     <string name="pref_show_progressbar_sum">In der Senderliste wird für das aktuelle Programm angezeigt, wieviel der Sendung bereits gezeigt ausgestrahlt wurde.</string>
     <string name="pref_show_progressbar">Zeige Fortschrittsbalken</string>
+    <string name="pref_customize_user_interface_sum">Legt fest welche Informationen in den einzelnen Bildschirmen angezeigt werden sollen.</string>
+    <string name="pref_customize_user_interface">Aussehen anpassen</string>
 </resources>

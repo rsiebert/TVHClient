@@ -29,8 +29,8 @@
             android:title="@string/pref_default_menu" />
         <PreferenceScreen
             android:key="pref_menu_user_interface"
-            android:summary="Choose from a variety of options to decide which information shall be shown in each screen."
-            android:title="Customize user interface" />
+            android:summary="@string/pref_customize_user_interface_sum"
+            android:title="@string/pref_customize_user_interface" />
         <PreferenceScreen
             android:key="pref_menu_notifications"
             android:title="@string/pref_notifications" >
