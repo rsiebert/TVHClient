@@ -171,8 +171,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             return;
         }
 
-        if (toolbarTitle != null) {
-            toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
+        if (toolbar != null) {
+            toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         }
         if (toolbarShadow != null) {
             toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
