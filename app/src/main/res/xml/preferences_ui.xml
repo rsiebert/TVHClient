@@ -42,6 +42,11 @@
             android:title="@string/pref_show_next_program" />
         <CheckBoxPreference
             android:defaultValue="true"
+            android:key="showProgramProgressbarPref"
+            android:summary="@string/pref_show_progressbar_sum"
+            android:title="@string/pref_show_progressbar" />
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="playWhenChannelIconSelectedPref"
             android:summary="@string/pref_play_when_channel_icon_selected_sum"
             android:title="@string/pref_play_when_channel_icon_selected" />

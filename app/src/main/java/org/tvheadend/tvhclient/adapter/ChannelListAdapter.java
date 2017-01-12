@@ -151,7 +151,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Set the initial values
             if (holder.progressbar != null) {
                 holder.progressbar.setProgress(0);
-                holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressPref", true) ? View.VISIBLE : View.GONE);
+                holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
             }
             if (holder.channel != null) {
                 holder.channel.setText(c.name);
