@@ -156,6 +156,7 @@
     <string name="completed_recordings">Voltooid</string>
     <string name="scheduled_recordings">Toekomstig</string>
     <string name="failed_recordings">Mislukt</string>
+    <string name="removed_recordings">Verwijderde</string>
     
     <string name="channels">Kanalen</string>
     <string name="recordings">Opnames</string>

@@ -44,6 +44,7 @@
     <string name="extra_start_time">Minuti extra inizio (pre-time)</string>
     <string name="extra_stop_time">Minuti extra fine (post-time)</string>
     <string name="failed_recordings">Registrazioni fallite</string>
+    <string name="removed_recordings">Registrazioni rimosse</string>
     <string name="feature_not_available_in_free_version">"Questa opzione non è disponibile nella versione gratuita! Puoi sbloccare questa opzione acquistando l'applicazione dal Play Store di Google."</string>
     <string name="friday">Venerdì</string>
     <string name="from_to_time">Da %1$s a %2$s</string>

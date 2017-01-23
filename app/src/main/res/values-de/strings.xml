@@ -263,6 +263,7 @@
     <string name="completed_recordings">Fertige Aufnahmen</string>
     <string name="scheduled_recordings">Geplante Aufnahmen</string>
     <string name="failed_recordings">Fehlerhafte Aufnahmen</string>
+    <string name="removed_recordings">Gelöschte Aufnahmen</string>
     <string name="series_recordings">Serienaufnahmen</string>
     <string name="timer_recordings">Manuelle Aufnahmen</string>
     <string name="is_series_recording">Diese Aufnahme ist Teil einer Serienaufnahme</string>

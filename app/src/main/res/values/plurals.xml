@@ -25,6 +25,10 @@
         <item quantity="one">%d Failed recording</item>
         <item quantity="other">%d Failed recordings</item>
     </plurals>
+    <plurals name="removed_recordings">
+        <item quantity="one">%d Removed recording</item>
+        <item quantity="other">%d Removed recordings</item>
+    </plurals>
     <plurals name="results">
         <item quantity="one">%d result</item>
         <item quantity="other">%d results</item>

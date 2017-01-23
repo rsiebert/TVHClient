@@ -187,6 +187,7 @@
     <string name="completed_recordings">Färdiga</string>
     <string name="scheduled_recordings">Kommande</string>
     <string name="failed_recordings">Misslyckade</string>
+    <string name="removed_recordings">Borttagna</string>
     <string name="series_recordings">Serieinspelningar</string>
     <string name="timer_recordings">Manuella inspelningar</string>
     <string name="is_series_recording">Denna inspelning är del av en serieinspelning</string>

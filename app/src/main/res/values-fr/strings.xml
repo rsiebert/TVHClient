@@ -261,6 +261,7 @@
     <string name="completed_recordings">Terminé</string>
     <string name="scheduled_recordings">A venir</string>
     <string name="failed_recordings">Echec</string>
+    <string name="removed_recordings">Supprimés</string>
     <string name="series_recordings">Enregistrements automatique</string>
     <string name="timer_recordings">Enregistrements manuel</string>
     <string name="is_series_recording">Cet enregistrement fait partie d\'enregistrements auto</string>

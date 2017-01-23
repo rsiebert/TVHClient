@@ -264,6 +264,7 @@
     <string name="completed_recordings">Zakończone</string>
     <string name="scheduled_recordings">Zaplanowane</string>
     <string name="failed_recordings">Utracone / Nieprawidłowe</string>
+    <string name="removed_recordings">Usunięte</string>
     <string name="series_recordings">Nagrywanie serii</string>
     <string name="timer_recordings">Ręczne nagrywanie</string>
     <string name="is_series_recording">To nagranie jest częścią serii nagrań</string>

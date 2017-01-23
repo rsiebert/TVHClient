@@ -267,6 +267,7 @@
     <string name="completed_recordings">Completed recordings</string>
     <string name="scheduled_recordings">Scheduled recordings</string>
     <string name="failed_recordings">Failed recordings</string>
+    <string name="removed_recordings">Removed recordings</string>
     <string name="series_recordings">Series recordings</string>
     <string name="timer_recordings">Timer recordings</string>
     <string name="is_series_recording">This recording is part of a series recording</string>
