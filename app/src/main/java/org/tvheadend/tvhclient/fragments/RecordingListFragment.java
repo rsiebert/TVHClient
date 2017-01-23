@@ -31,6 +31,7 @@ import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
@@ -38,7 +39,7 @@ import org.tvheadend.tvhclient.model.Recording;
 import java.util.ArrayList;
 
 @SuppressWarnings("deprecation")
-public class RecordingListFragment extends Fragment implements HTSListener {
+public class RecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     protected static String TAG = RecordingListFragment.class.getSimpleName();
 
@@ -384,10 +385,25 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * @param position Position in the list
      * @param offset Offset in pixels from the top
      */
-    protected void setSelection(int position, int offset) {
+    public void setSelection(int position, int offset) {
         if (listView != null && listView.getCount() > position && position >= 0) {
             listView.setSelectionFromTop(position, offset);
         }
+    }
+
+    @Override
+    public Object getSelectedItem() {
+        return adapter.getSelectedItem();
+    }
+
+    @Override
+    public int getItemCount() {
+        return adapter.getCount();
+    }
+
+    @Override
+    public void reloadData() {
+        // NOP
     }
 
     /**
@@ -398,7 +414,7 @@ public class RecordingListFragment extends Fragment implements HTSListener {
      * 
      * @param position Position in the list
      */
-    protected void setInitialSelection(int position) {
+    public void setInitialSelection(int position) {
         setSelection(position, 0);
 
         if (adapter != null && adapter.getCount() > position) {

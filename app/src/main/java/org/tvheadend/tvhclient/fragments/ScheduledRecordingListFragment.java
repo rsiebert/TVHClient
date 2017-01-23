@@ -13,7 +13,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.Recording;
 
-public class ScheduledRecordingListFragment extends RecordingListFragment implements FragmentControlInterface {
+public class ScheduledRecordingListFragment extends RecordingListFragment {
 
     /**
      * Sets the correct tag. This is required for logging and especially for the
@@ -162,30 +162,5 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
                 }
             });
         }
-    }
-
-    @Override
-    public void reloadData() {
-        // NOP
-    }
-
-    @Override
-    public void setSelection(int position, int index) {
-        super.setSelection(position, index);
-    }
-    
-    @Override
-    public void setInitialSelection(int position) {
-        super.setInitialSelection(position);
-    }
-
-    @Override
-    public Object getSelectedItem() {
-        return adapter.getSelectedItem();
-    }
-
-    @Override
-    public int getItemCount() {
-        return adapter.getCount();
     }
 }

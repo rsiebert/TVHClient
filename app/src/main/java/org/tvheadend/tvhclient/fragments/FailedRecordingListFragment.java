@@ -133,29 +133,4 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
             });
         }
     }
-
-    @Override
-    public void reloadData() {
-        // NOP
-    }
-
-    @Override
-    public void setSelection(int position, int index) {
-        super.setSelection(position, index);
-    }
-    
-    @Override
-    public void setInitialSelection(int position) {
-        super.setInitialSelection(position);
-    }
-
-    @Override
-    public Object getSelectedItem() {
-        return adapter.getSelectedItem();
-    }
-
-    @Override
-    public int getItemCount() {
-        return adapter.getCount();
-    }
 }
