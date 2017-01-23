@@ -59,6 +59,7 @@ import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
 import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.RecordingListFragment;
+import org.tvheadend.tvhclient.fragments.RemovedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.SeriesRecordingListFragment;
@@ -112,6 +113,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private int seriesRecordingListPosition = 0;
     private int timerRecordingListPosition = 0;
     private int failedRecordingListPosition = 0;
+    private int removedRecordingListPosition = 0;
     private int programGuideListPosition = 0;
     private int programGuideListPositionOffset = 0;
 
@@ -123,11 +125,12 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private static final int MENU_SERIES_RECORDINGS = 3;
     private static final int MENU_TIMER_RECORDINGS = 4;
     private static final int MENU_FAILED_RECORDINGS = 5;
-    private static final int MENU_PROGRAM_GUIDE = 6;
-    private static final int MENU_STATUS = 7;
-    private static final int MENU_SETTINGS = 8;
-    private static final int MENU_INFORMATION = 9;
-    private static final int MENU_UNLOCKER = 10;
+    private static final int MENU_REMOVED_RECORDINGS = 6;
+    private static final int MENU_PROGRAM_GUIDE = 7;
+    private static final int MENU_STATUS = 8;
+    private static final int MENU_SETTINGS = 9;
+    private static final int MENU_INFORMATION = 10;
+    private static final int MENU_UNLOCKER = 11;
 
     // Holds the list of selected menu items so the previous fragment can be
     // shown again when the user has pressed the back key.
@@ -291,6 +294,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             seriesRecordingListPosition = savedInstanceState.getInt(Constants.SERIES_RECORDING_LIST_POSITION, 0);
             timerRecordingListPosition = savedInstanceState.getInt(Constants.TIMER_RECORDING_LIST_POSITION, 0);
             failedRecordingListPosition = savedInstanceState.getInt(Constants.FAILED_RECORDING_LIST_POSITION, 0);
+            removedRecordingListPosition = savedInstanceState.getInt(Constants.REMOVED_RECORDING_LIST_POSITION, 0);
             connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
             connectionSettingsShown = savedInstanceState.getBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN);
             channelTimeSelection = savedInstanceState.getInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION);
@@ -524,6 +528,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 app.getTimerRecordings().size();
         drawerAdapter.getItemById(MENU_FAILED_RECORDINGS).count = 
                 app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
+        drawerAdapter.getItemById(MENU_REMOVED_RECORDINGS).count =
+                app.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED).size();
         drawerAdapter.notifyDataSetChanged();
     }
 
@@ -557,21 +563,24 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         list.add(new DrawerMenuItem(MENU_FAILED_RECORDINGS, menuItems[5],
                 (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
                         : R.drawable.ic_menu_failed_recordings_dark));
-        list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[6],
+        list.add(new DrawerMenuItem(MENU_REMOVED_RECORDINGS, menuItems[6],
+                (lightTheme) ? R.drawable.ic_menu_failed_recordings_light
+                        : R.drawable.ic_menu_failed_recordings_dark));
+        list.add(new DrawerMenuItem(MENU_PROGRAM_GUIDE, menuItems[7],
                 (lightTheme) ? R.drawable.ic_menu_program_guide_light
                         : R.drawable.ic_menu_program_guide_dark));
-        list.add(new DrawerMenuItem(MENU_STATUS, menuItems[7],
+        list.add(new DrawerMenuItem(MENU_STATUS, menuItems[8],
                 (lightTheme) ? R.drawable.ic_menu_status_light : R.drawable.ic_menu_status_dark));
 
         list.add(new DrawerMenuItem());
-        list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[8],
+        list.add(new DrawerMenuItem(MENU_SETTINGS, menuItems[9],
                 (lightTheme) ? R.drawable.ic_menu_settings_light : R.drawable.ic_menu_settings_dark));
-        list.add(new DrawerMenuItem(MENU_INFORMATION, menuItems[10],
+        list.add(new DrawerMenuItem(MENU_INFORMATION, menuItems[11],
                 (lightTheme) ? R.drawable.ic_menu_info_light
                         : R.drawable.ic_menu_info_dark));
 
         list.add(new DrawerMenuItem());
-        list.add(new DrawerMenuItem(MENU_UNLOCKER, menuItems[11],
+        list.add(new DrawerMenuItem(MENU_UNLOCKER, menuItems[12],
                 (lightTheme) ? R.drawable.item_active_light
                         : R.drawable.item_active_dark));
         return list;
@@ -728,6 +737,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         outState.putInt(Constants.SERIES_RECORDING_LIST_POSITION, seriesRecordingListPosition);
         outState.putInt(Constants.TIMER_RECORDING_LIST_POSITION, timerRecordingListPosition);
         outState.putInt(Constants.FAILED_RECORDING_LIST_POSITION, failedRecordingListPosition);
+        outState.putInt(Constants.REMOVED_RECORDING_LIST_POSITION, removedRecordingListPosition);
         outState.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
         outState.putBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN, connectionSettingsShown);
         outState.putInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION, channelTimeSelection);
@@ -751,6 +761,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 || (selectedMenuPosition == MENU_COMPLETED_RECORDINGS && app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() == 0)
                 || selectedMenuPosition == MENU_SCHEDULED_RECORDINGS
                 || selectedMenuPosition == MENU_FAILED_RECORDINGS
+                || selectedMenuPosition == MENU_REMOVED_RECORDINGS
                 || selectedMenuPosition == MENU_SERIES_RECORDINGS
                 || selectedMenuPosition == MENU_TIMER_RECORDINGS) {
             (menu.findItem(R.id.menu_search)).setVisible(false);
@@ -960,6 +971,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             showFragment(FailedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
+        case MENU_REMOVED_RECORDINGS:
+            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            showFragment(RemovedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+            break;
+
         case MENU_PROGRAM_GUIDE:
             // Show the program guide. This fragment will then trigger the
             // display of the channel list fragment on the left side.
@@ -1021,6 +1037,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         case MENU_SERIES_RECORDINGS:
         case MENU_TIMER_RECORDINGS:
         case MENU_FAILED_RECORDINGS:
+        case MENU_REMOVED_RECORDINGS:
             if (isDualPane) {
                 mainLayoutWeight = 6;
                 rightLayoutWeight = 4;
@@ -1221,6 +1238,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         drawerAdapter.getItemById(MENU_COMPLETED_RECORDINGS).isVisible = show;
         drawerAdapter.getItemById(MENU_SCHEDULED_RECORDINGS).isVisible = show;
         drawerAdapter.getItemById(MENU_FAILED_RECORDINGS).isVisible = show;
+        drawerAdapter.getItemById(MENU_REMOVED_RECORDINGS).isVisible = show;
         drawerAdapter.getItemById(MENU_PROGRAM_GUIDE).isVisible = show;
 
         // Only show the series recording menu if the server supports it
@@ -1413,6 +1431,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             break;
         case MENU_FAILED_RECORDINGS:
             failedRecordingListPosition = position;
+            break;
+        case MENU_REMOVED_RECORDINGS:
+            removedRecordingListPosition = position;
             break;
         }
 
@@ -1619,6 +1640,24 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
                 if (f instanceof FailedRecordingListFragment) {
                     ((FragmentControlInterface) f).setInitialSelection(failedRecordingListPosition);
+                }
+            }
+            break;
+
+        case MENU_REMOVED_RECORDINGS:
+            // When the recording list fragment is done loading and dual pane is
+            // active, preselect a recording from the list to show the details
+            // of this recording on the right side. Before doing that remove the
+            // right fragment in case the list in the main fragment is
+            // empty to avoid showing invalid data.
+            if (isDualPane) {
+                final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
+                if (rf != null) {
+                    getSupportFragmentManager().beginTransaction().remove(rf).commit();
+                }
+                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+                if (f instanceof RemovedRecordingListFragment) {
+                    ((FragmentControlInterface) f).setInitialSelection(removedRecordingListPosition);
                 }
             }
             break;

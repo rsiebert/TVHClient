@@ -522,7 +522,19 @@ public class TVHClientApplication extends Application implements BillingProcesso
             synchronized (recordings) {
                 for (Recording rec : recordings) {
                     // Include all failed recordings in the list
-                    if ((rec.error != null || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
+                    if (((rec.error != null && !rec.error.equals("File missing"))
+                            || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
+                        recs.add(rec);
+                    }
+                }
+            }
+            break;
+
+        case Constants.RECORDING_TYPE_REMOVED:
+            synchronized (recordings) {
+                for (Recording rec : recordings) {
+                    // Include all removed recordings in the list
+                    if (rec.error != null && rec.error.equals("File missing")) {
                         recs.add(rec);
                     }
                 }

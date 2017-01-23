@@ -59,6 +59,7 @@ public class Constants {
     public static final int RECORDING_TYPE_COMPLETED = 1;
     public static final int RECORDING_TYPE_SCHEDULED = 2;
     public static final int RECORDING_TYPE_FAILED = 3;
+    public static final int RECORDING_TYPE_REMOVED = 4;
 
     // Strings that determine the navigation drawer menu position and the list
     // positions so it can be reselected after an orientation change.
@@ -71,6 +72,7 @@ public class Constants {
     public static final String SERIES_RECORDING_LIST_POSITION = "series_recording_list_position";
     public static final String TIMER_RECORDING_LIST_POSITION = "timer_recording_list_position";
     public static final String FAILED_RECORDING_LIST_POSITION = "failed_recording_list_position";
+    public static final String REMOVED_RECORDING_LIST_POSITION = "removed_recording_list_position";
     public static final String LAST_CONNECTION_STATE = "last_connection_state";
     public static final String LAST_CONNECTION_SETTINGS_SHOWN = "last_connection_settings_shown";
 
