@@ -736,7 +736,8 @@ public class Utils {
 
         // Show the reason why it failed
         if (rec.error != null && rec.error.equals("File missing")) {
-            failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
+            // failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
+            failed_reason.setVisibility(View.GONE);
         } else if (rec.error != null && rec.error.equals("Aborted by user")) {
             failed_reason.setText(failed_reason.getResources().getString(R.string.recording_canceled));
         } else if (rec.state != null && rec.state.equals("missed")) {
