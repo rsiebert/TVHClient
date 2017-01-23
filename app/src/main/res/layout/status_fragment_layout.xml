@@ -92,8 +92,15 @@
                 style="?attr/ContentFont"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
                 android:text="@string/failed_recordings" />
+
+            <TextView
+                android:id="@+id/removed_recordings"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="@string/removed_recordings" />
 
             <TextView
                 android:id="@+id/series_recording_label"

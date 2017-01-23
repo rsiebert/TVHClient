@@ -44,6 +44,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView completedRec;
 	private TextView upcomingRec;
 	private TextView failedRec;
+    private TextView removedRec;
     private TextView freediscspace;
     private TextView totaldiscspace;
     private TextView serverApiVersion;
@@ -81,6 +82,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         completedRec = (TextView) v.findViewById(R.id.completed_recordings);
         upcomingRec = (TextView) v.findViewById(R.id.upcoming_recordings);
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
+        removedRec = (TextView) v.findViewById(R.id.removed_recordings);
         freediscspace = (TextView) v.findViewById(R.id.free_discspace);
         totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
         seriesRecLabel = (TextView) v.findViewById(R.id.series_recording_label);
@@ -380,6 +382,8 @@ public class StatusFragment extends Fragment implements HTSListener {
                 Constants.RECORDING_TYPE_SCHEDULED).size();
         final int failedRecCount = app.getRecordingsByType(
                 Constants.RECORDING_TYPE_FAILED).size();
+        final int removedRecCount = app.getRecordingsByType(
+                Constants.RECORDING_TYPE_REMOVED).size();
 
         // Show how many different recordings are available
         completedRec.setText(getResources().getQuantityString(
@@ -390,6 +394,8 @@ public class StatusFragment extends Fragment implements HTSListener {
                 scheduledRecCount));
         failedRec.setText(getResources().getQuantityString(
                 R.plurals.failed_recordings, failedRecCount, failedRecCount));
+        removedRec.setText(getResources().getQuantityString(
+                R.plurals.removed_recordings, removedRecCount, removedRecCount));
 
         // Show how many series recordings are available
         if (app.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
