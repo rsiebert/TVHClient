@@ -1,4 +1,4 @@
-#TVHClient
+# TVHClient
 
 [![Build Status](https://travis-ci.org/rsiebert/TVHClient.svg?branch=develop)](https://travis-ci.org/rsiebert/TVHClient)
 
@@ -25,11 +25,11 @@ This android application allows you to interact and control the TVHeadend server
 
 This program is licensed under the GPLv3 (see LICENSE).
 
-#How can I help?
+# How can I help?
 
 If you are a programmer, fork the project, and provide patches or enhancements via pull requests. If you don't have coding skills, you can help with translations. Otherwise, file bugs, and open enhancement requests.
 
-#Building from Source (Android Studio)
+# Building from Source (Android Studio)
 
 * Download Android Studio (http://developer.android.com/sdk/index.html)
 * Install and setup Android Studio (http://developer.android.com/sdk/installing/index.html)
