@@ -50,8 +50,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.google.android.gms.common.api.Status.st;
-
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
 
     private final static String TAG = TVHClientApplication.class.getSimpleName();
