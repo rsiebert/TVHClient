@@ -50,8 +50,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.google.android.gms.common.api.Status.st;
-
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
 
     private final static String TAG = TVHClientApplication.class.getSimpleName();
@@ -1366,7 +1364,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     public void addDiscSpace(DiscSpace ds) {
         discSpace = ds;
         if (!loading) {
-            broadcastMessage(Constants.ACTION_DISC_SPACE, st);
+            broadcastMessage(Constants.ACTION_DISC_SPACE, ds);
         }
     }
 
