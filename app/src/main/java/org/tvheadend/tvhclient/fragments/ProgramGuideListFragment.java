@@ -63,7 +63,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private ImageView currentTimeIndication;
     private Bundle bundle;
     private Program selectedProgram = null;
-
+    private int tabIndex;
     private Runnable updateEpgTask;
     private final Handler updateEpgHandler = new Handler();
 
@@ -94,6 +94,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         // Set the date and the time slot hours in the title of the fragment
         bundle = getArguments();
         if (bundle != null) {
+
+            // Get the current visible tab index
+            tabIndex = bundle.getInt(Constants.BUNDLE_EPG_INDEX, -1);
 
             final long startTime = bundle.getLong(Constants.BUNDLE_EPG_START_TIME, 0);
             final Date startDate = new Date(startTime);
@@ -256,7 +259,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         }
 
         // Create the handler and the timer task that will update the
-        // entire view every five minutes if the first screen is visible
+        // entire view every fifteen minutes if the first screen is visible.
+        // This prevents the time indication from moving to far to the right
         final Handler handler = new Handler();
         Timer timer = new Timer();
         TimerTask doAsynchronousTask = new TimerTask() {
@@ -266,15 +270,17 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                     public void run() {
                         // Check if the first fragment is visible.
                         // This can be checked with the time indication
-                        if (currentTimeIndication != null
-                                && currentTimeIndication.getVisibility() == View.VISIBLE) {
-                            app.log(TAG, "Updated entire view");
+                        if (tabIndex == 0) {
+                            app.log(TAG, "First fragment visible in the EPG, updating entire view");
                             adapter.notifyDataSetChanged();
+                        } else {
+                            app.log(TAG, "First fragment not visible in the EPG, not updating entire view");
                         }
                     }
                 });
             }
         };
+
         timer.schedule(doAsynchronousTask, 0, 900000);
     }
 
@@ -287,7 +293,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     @SuppressLint("InlinedApi")
     private void setCurrentTimeIndication() {
         if (bundle != null && currentTimeIndication != null && activity != null) {
-            final int tabIndex = bundle.getInt(Constants.BUNDLE_EPG_INDEX, -1);
+
             if (tabIndex == 0) {
                 // Get the difference between the current time and the given
                 // start time. Calculate from this value in minutes the width in
