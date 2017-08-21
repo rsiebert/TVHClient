@@ -44,7 +44,7 @@ import android.widget.ListView;
 
 import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
-import org.tvheadend.tvhclient.fragments.RecordingDetailsFragment;
+import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.DownloadIntent;
 import org.tvheadend.tvhclient.intent.PlayIntent;

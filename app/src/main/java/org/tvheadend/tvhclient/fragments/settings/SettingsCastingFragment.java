@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient.fragments.settings;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,12 +25,15 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.view.Menu;
-import android.view.MenuInflater;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -46,26 +49,18 @@ import org.tvheadend.tvhclient.model.Profiles;
 
 import java.util.List;
 
-public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
+public class SettingsCastingFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
 
-    @SuppressWarnings("unused")
-    private final static String TAG = SettingsProfilesFragment.class.getSimpleName();
+
+    private final static String TAG = SettingsCastingFragment.class.getSimpleName();
+    private static final String CAST_PROFILE_UUID = "cast_profile_uuid";
 
     private Activity activity;
     private ActionBarInterface actionBarInterface;
-
     private Connection conn = null;
-    private Profile progProfile = null;
-    private Profile recProfile = null;
-
-    private CheckBoxPreference prefEnableRecProfiles;
-    private CheckBoxPreference prefEnableProgProfiles;
-    private ListPreference prefRecProfiles;
-    private ListPreference prefProgProfiles;
-
-    private static final String PROG_PROFILE_UUID = "prog_profile_uuid";
-    private static final String REC_PROFILE_UUID = "rec_profile_uuid";
-
+    private Profile castProfile = null;
+    private CheckBoxPreference prefEnableCasting;
+    private ListPreference prefCastProfiles;
     private TVHClientApplication app;
     private DatabaseHelper dbh;
 
@@ -74,36 +69,31 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         super.onCreate(savedInstanceState);
 
         // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences_profiles);
+        addPreferencesFromResource(R.xml.preferences_casting);
 
-        prefEnableRecProfiles = (CheckBoxPreference) findPreference("pref_enable_recording_profiles");
-        prefEnableProgProfiles = (CheckBoxPreference) findPreference("pref_enable_playback_profiles");
-        prefRecProfiles = (ListPreference) findPreference("pref_recording_profiles");
-        prefProgProfiles = (ListPreference) findPreference("pref_playback_profiles");
+        prefEnableCasting = (CheckBoxPreference) findPreference("pref_enable_casting");
+        prefCastProfiles = (ListPreference) findPreference("pref_cast_profiles");
 
         conn = dbh.getSelectedConnection();
-        progProfile = dbh.getProfile(conn.playback_profile_id);
-        if (progProfile == null) {
-            progProfile = new Profile();
-        }
-        recProfile = dbh.getProfile(conn.recording_profile_id);
-        if (recProfile == null) {
-            recProfile = new Profile();
+        castProfile = dbh.getProfile(conn.cast_profile_id);
+        if (castProfile == null) {
+            app.log(TAG, "No casting profile defined in the connection");
+            castProfile = new Profile();
+        } else {
+            app.log(TAG, "Casting profile " + castProfile.name + ", " + castProfile.uuid + " is defined in the connection");
         }
 
         // If the state is null then this activity has been started for
         // the first time. If the state is not null then the screen has
         // been rotated and we have to reuse the values.
         if (savedInstanceState != null) {
-            progProfile.uuid = savedInstanceState.getString(PROG_PROFILE_UUID);
-            recProfile.uuid = savedInstanceState.getString(REC_PROFILE_UUID);
+            castProfile.uuid = savedInstanceState.getString(CAST_PROFILE_UUID);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(PROG_PROFILE_UUID, prefProgProfiles.getValue());
-        outState.putString(REC_PROFILE_UUID, prefRecProfiles.getValue());
+        outState.putString(CAST_PROFILE_UUID, prefCastProfiles.getValue());
         super.onSaveInstanceState(outState);
     }
 
@@ -130,21 +120,37 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             actionBarInterface = (ActionBarInterface) activity;
         }
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_profiles));
+            actionBarInterface.setActionBarTitle(getString(R.string.pref_casting));
         }
-
-        prefEnableRecProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        
+        prefEnableCasting.setOnPreferenceClickListener((new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                prefRecProfiles.setEnabled(prefEnableRecProfiles.isChecked());
+                prefCastProfiles.setEnabled(prefEnableCasting.isChecked());
+
+                // try to set the default profile
+                setCastProfile();
                 return false;
             }
-        });
-        prefEnableProgProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        }));
+
+        prefCastProfiles.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());
-                return false;
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                for (Profiles p : app.getProfiles()) {
+                    if (p.uuid.equals(newValue) && !p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
+                        new MaterialDialog.Builder(activity)
+                                .content(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
+                                .positiveText(android.R.string.ok)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.cancel();
+                                    }
+                                }).show();
+                    }
+                }
+                return true;
             }
         });
     }
@@ -166,41 +172,20 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         app.removeListener(this);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.save_cancel_menu, menu);
-    }
-
     private void save() {
         // Save the values into the program profile (play and streaming)
-        progProfile.enabled = prefEnableProgProfiles.isChecked();
-        progProfile.name = (prefProgProfiles.getEntry() != null ? prefProgProfiles.getEntry().toString() : "");
-        progProfile.uuid = prefProgProfiles.getValue();
+        castProfile.enabled = prefEnableCasting.isChecked();
+        castProfile.name = (prefCastProfiles.getEntry() != null ? prefCastProfiles.getEntry().toString() : "");
+        castProfile.uuid = prefCastProfiles.getValue();
 
         // If the profile does not contain an id then it is a new one. Add it
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
-        if (progProfile.id == 0) {
-            conn.playback_profile_id = (int) dbh.addProfile(progProfile);
+        if (castProfile.id == 0) {
+            conn.cast_profile_id = (int) dbh.addProfile(castProfile);
             dbh.updateConnection(conn);
         } else {
-            dbh.updateProfile(progProfile);
-        }
-
-        // Save the values into the recording profile (recording)
-        recProfile.enabled = prefEnableRecProfiles.isChecked();
-        recProfile.name = (prefRecProfiles.getEntry() != null ? prefRecProfiles.getEntry().toString() : "");
-        recProfile.uuid = prefRecProfiles.getValue();
-
-        // If the profile does not contain an id then it is a new one. Add it
-        // to the database and update the connection with the new id. Otherwise
-        // just update the profile.
-        if (recProfile.id == 0) {
-            conn.recording_profile_id = (int) dbh.addProfile(recProfile);
-            dbh.updateConnection(conn);
-        } else {
-            dbh.updateProfile(recProfile);
+            dbh.updateProfile(castProfile);
         }
     }
 
@@ -208,16 +193,14 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
      * 
      */
     private void loadProfiles() {
-        if (prefRecProfiles == null || prefProgProfiles == null) {
+        if (prefCastProfiles == null) {
             return;
         }
 
         // Disable the preferences until the profiles have been loaded.
         // If the server does not support it then it stays disabled
-        prefEnableRecProfiles.setEnabled(false);
-        prefEnableProgProfiles.setEnabled(false);
-        prefRecProfiles.setEnabled(false);
-        prefProgProfiles.setEnabled(false);
+        prefEnableCasting.setEnabled(false);
+        prefCastProfiles.setEnabled(false);
 
         // Get the connection status to check if the profile can be loaded from
         // the server. If not show a message and return
@@ -237,15 +220,13 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
         // Get the available profiles from the server
         final Intent intent = new Intent(activity, HTSService.class);
-        intent.setAction(Constants.ACTION_GET_DVR_CONFIG);
-        activity.startService(intent);
         intent.setAction(Constants.ACTION_GET_PROFILES);
         activity.startService(intent);
     }
 
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_GET_DVR_CONFIG)) {
+        if (action.equals(Constants.ACTION_GET_PROFILES)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Loading is done, remove the loading subtitle
@@ -253,58 +234,36 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                         actionBarInterface.setActionBarSubtitle(conn.name);
                     }
 
-                    if (prefRecProfiles != null && prefEnableRecProfiles != null) {
-                        addProfiles(prefRecProfiles, app.getDvrConfigs());
-
-                        prefRecProfiles.setEnabled(prefEnableRecProfiles.isChecked());
-                        prefEnableRecProfiles.setEnabled(true);
-
-                        // If no uuid is set, no selected profile exists.
-                        // Preselect the default one.
-                        if (recProfile.uuid == null || recProfile.uuid.length() == 0) {
-                            for (Profiles p : app.getDvrConfigs()) {
-                                if (p.name.equals(Constants.REC_PROFILE_DEFAULT)) {
-                                    recProfile.uuid = p.uuid;
-                                    break;
-                                }
-                            }
-                        }
-                        // show the currently selected profile name, if none is
-                        // available then the default value is used
-                        prefRecProfiles.setValue(recProfile.uuid);
-                    }
-                }
-            });
-        } else if (action.equals(Constants.ACTION_GET_PROFILES)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    // Loading is done, remove the loading subtitle
-                    if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(conn.name);
-                    }
-
-                    if (prefProgProfiles != null && prefEnableProgProfiles != null) {
-                        addProfiles(prefProgProfiles, app.getProfiles());
-                        prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());
-                        prefEnableProgProfiles.setEnabled(true);
-
-                        // If no uuid is set, no selected profile exists.
-                        // Preselect the default one.
-                        if (progProfile.uuid == null || progProfile.uuid.length() == 0) {
-                            for (Profiles p : app.getProfiles()) {
-                                if (p.name.equals(Constants.PROG_PROFILE_DEFAULT)) {
-                                    progProfile.uuid = p.uuid;
-                                    break;
-                                }
-                            }
-                        }
-                        // show the currently selected profile name, if none is
-                        // available then the default value is used
-                        prefProgProfiles.setValue(progProfile.uuid);
+                    if (prefCastProfiles != null && prefEnableCasting != null) {
+                        addProfiles(prefCastProfiles, app.getProfiles());
+                        prefCastProfiles.setEnabled(prefEnableCasting.isChecked());
+                        prefEnableCasting.setEnabled(true);
+                        setCastProfile();
                     }
                 }
             });
         }
+    }
+
+    private void setCastProfile() {
+        // If no uuid or name is set, no selected profile 
+        // exists. Preselect the default one, if it exists.
+        if (castProfile.uuid == null
+            || (castProfile.name != null && castProfile.name.length() == 0)
+            || (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
+            app.log(TAG, "No valid casting profile defined in the current connection, setting default");
+
+            for (Profiles p : app.getProfiles()) {
+                if (p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
+                    castProfile.uuid = p.uuid;
+                    break;
+                }
+            }
+        }
+        // show the currently selected profile name, if none is
+        // available then the default value is used
+        app.log(TAG, "Setting casting profile " + castProfile.name);
+        prefCastProfiles.setValue(castProfile.uuid);
     }
 
     /**

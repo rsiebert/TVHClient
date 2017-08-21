@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.app.Activity;
 import android.app.Dialog;

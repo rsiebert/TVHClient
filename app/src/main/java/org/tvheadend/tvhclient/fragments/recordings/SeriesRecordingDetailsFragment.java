@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -20,29 +20,29 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.model.TimerRecording;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 
 @SuppressWarnings("deprecation")
-public class TimerRecordingDetailsFragment extends DialogFragment {
+public class SeriesRecordingDetailsFragment extends DialogFragment {
 
     @SuppressWarnings("unused")
-    private final static String TAG = TimerRecordingDetailsFragment.class.getSimpleName();
+    private final static String TAG = SeriesRecordingDetailsFragment.class.getSimpleName();
 
     private ActionBarActivity activity;
     private boolean showControls = false;
-    private TimerRecording trec;
+    private SeriesRecording srec;
 
     private TextView isEnabled;
     private TextView directoryLabel;
     private TextView directory;
-    private TextView time;
-    private TextView duration;
+    private TextView minDuration;
+    private TextView maxDuration;
+    private TextView startTime;
+    private TextView startWindowTime;
     private TextView daysOfWeek;
     private TextView channelName;
+    private TextView nameLabel;
+    private TextView name;
     private TextView priority;
 
     private LinearLayout playerLayout;
@@ -54,8 +54,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private View toolbarShadow;
     private TVHClientApplication app;
 
-    public static TimerRecordingDetailsFragment newInstance(Bundle args) {
-        TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
+    public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
+        SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
         f.setArguments(args);
         return f;
     }
@@ -87,24 +87,28 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        String recId = "";
+        String srecId = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
-            recId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
+            srecId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 
         // Get the recording so we can show its details 
-        trec = app.getTimerRecording(recId);
+        srec = app.getSeriesRecording(srecId);
 
         // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.timer_recording_details_layout, container, false);
+        View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
         channelName = (TextView) v.findViewById(R.id.channel);
         isEnabled = (TextView) v.findViewById(R.id.is_enabled);
         directoryLabel = (TextView) v.findViewById(R.id.directory_label);
         directory = (TextView) v.findViewById(R.id.directory);
-        time = (TextView) v.findViewById(R.id.time);
-        duration = (TextView) v.findViewById(R.id.duration);
+        nameLabel = (TextView) v.findViewById(R.id.name_label);
+        name = (TextView) v.findViewById(R.id.name);
+        minDuration = (TextView) v.findViewById(R.id.minimum_duration);
+        maxDuration = (TextView) v.findViewById(R.id.maximum_duration);
+        startTime = (TextView) v.findViewById(R.id.start_after_time);
+        startWindowTime = (TextView) v.findViewById(R.id.start_before_time);
         daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
         priority = (TextView) v.findViewById(R.id.priority);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
@@ -124,7 +128,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
         
         // If the recording is null exit
-        if (trec == null) {
+        if (srec == null) {
             return;
         }
 
@@ -135,11 +139,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         }
         if (getDialog() != null && toolbarTitle != null) {
-            if (trec.title != null && trec.title.length() > 0) {
-                toolbarTitle.setText(trec.title);
-            } else {
-                toolbarTitle.setText(trec.name);
-            }
+            toolbarTitle.setText(srec.title);
         }
 
         // Show the player controls
@@ -147,35 +147,35 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             addPlayerControlListeners();
             playerLayout.setVisibility(View.VISIBLE);
             recordRemoveButton.setVisibility(View.VISIBLE);
-            recordEditButton.setVisibility(View.VISIBLE);
+            recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
         }
 
-        isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
-        isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+        isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
 
         directoryLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setText(trec.directory);
+        directory.setText(srec.directory);
 
-        if (trec.channel != null) {
-            channelName.setText(trec.channel.name);
-        } else {
-            channelName.setText(R.string.all_channels);
-        }
+        channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
 
-        Utils.setDaysOfWeek(activity, null, daysOfWeek, trec.daysOfWeek);
+        Utils.setDescription(nameLabel, name, srec.name);
+        Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);
 
         String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-        if (trec.priority >= 0 && trec.priority < priorityItems.length) {
-            priority.setText(priorityItems[(int) (trec.priority)]);
+        if (srec.priority >= 0 && srec.priority < priorityItems.length) {
+            priority.setText(priorityItems[(int) (srec.priority)]);
         }
-
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-        String start = formatter.format(new Date(trec.start * 60L * 1000L));
-        String stop = formatter.format(new Date(trec.stop * 60L * 1000L));
-        time.setText(getString(R.string.from_to_time, start, stop));
-
-        duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));
+        if (srec.minDuration > 0) {
+            // The minimum time is given in seconds, but we want to show it in minutes
+            minDuration.setText(getString(R.string.minutes, (int) (srec.minDuration / 60)));
+        }
+        if (srec.maxDuration > 0) {
+            // The maximum time is given in seconds, but we want to show it in minutes
+            maxDuration.setText(getString(R.string.minutes, (int) (srec.maxDuration / 60)));
+        }
+        startTime.setText(Utils.getTimeStringFromValue(activity, srec.start));
+        startWindowTime.setText(Utils.getTimeStringFromValue(activity, srec.startWindow));
     }
 
     /**
@@ -185,7 +185,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         recordRemoveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.confirmRemoveRecording(activity, trec);
+                Utils.confirmRemoveRecording(activity, srec);
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }
@@ -195,9 +195,9 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 // Create the fragment and show it as a dialog.
-                DialogFragment editFragment = TimerRecordingAddFragment.newInstance();
+                DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
                 Bundle bundle = new Bundle();
-                bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, trec.id);
+                bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, srec.id);
                 editFragment.setArguments(bundle);
                 editFragment.show(activity.getSupportFragmentManager(), "dialog");
 

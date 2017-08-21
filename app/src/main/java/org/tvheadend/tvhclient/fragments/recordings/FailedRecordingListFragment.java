@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -13,15 +13,15 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.Recording;
 
-public class ScheduledRecordingListFragment extends RecordingListFragment {
+public class FailedRecordingListFragment extends RecordingListFragment implements FragmentControlInterface {
 
     /**
      * Sets the correct tag. This is required for logging and especially for the
      * main activity so it knows what action shall be executed depending on the
      * recording fragment type.
      */
-    public ScheduledRecordingListFragment() {
-        TAG = ScheduledRecordingListFragment.class.getSimpleName();
+    public FailedRecordingListFragment() {
+        TAG = FailedRecordingListFragment.class.getSimpleName();
     }
 
     @Override
@@ -50,34 +50,13 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         }
 
         (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_edit)).setVisible(false);
         (menu.findItem(R.id.menu_add)).setVisible(false);
+        (menu.findItem(R.id.menu_edit)).setVisible(false);
         (menu.findItem(R.id.menu_download)).setVisible(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() <= 1) {
+        if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() <= 1) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-        }
-
-        // Show the add button to create a custom recording only when the
-        // application is unlocked
-        (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
-
-        // Show the edit button only when the application is unlocked and a
-        // recording was selected. Additionally the HTSP version must be at
-        // least 20 to assume the server is up to date and contains the required
-        // fixes to support this feature.    
-        if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
-            (menu.findItem(R.id.menu_edit)).setVisible(false);
-        }
-
-        // Show the play button if the selected recording in dual pane
-        // mode is currently recording
-        if (isDualPane && adapter.getCount() > 0) {
-            Recording rec = adapter.getSelectedItem();
-            if (rec == null || !rec.isRecording()) {
-                (menu.findItem(R.id.menu_play)).setVisible(false);
-            }
         }
     }
 
@@ -88,38 +67,29 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // Get the selected program from the list where the context menu was opened
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = adapter.getItem(info.position);
-
-        if (rec != null && rec.isRecording()) {
-            (menu.findItem(R.id.menu_record_remove)).setTitle(R.string.stop);
+        if (rec != null && (rec.error != null || rec.state.equals("missed"))) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-            (menu.findItem(R.id.menu_play)).setVisible(true);
-            (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
-        }
-
-        if (rec != null && rec.isScheduled()) {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-            (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
         }
     }
 
     /**
      * Fills the list with the available recordings. Only the recordings that
-     * are scheduled are added to the list.
+     * are failed are added to the list.
      */
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED)) {
+        for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED)) {
             adapter.add(rec);
         }
 
-        // Show the newest scheduled recordings first 
-        adapter.sort(Constants.RECORDING_SORT_DESCENDING);
+        // Show the newest failed recordings first
+        adapter.sort(Constants.RECORDING_SORT_ASCENDING);
         adapter.notifyDataSetChanged();
 
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.scheduled_recordings));
+            actionBarInterface.setActionBarTitle(getString(R.string.failed_recordings));
             String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
             actionBarInterface.setActionBarSubtitle(items);
             actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);

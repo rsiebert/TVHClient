@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient.fragments.settings;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

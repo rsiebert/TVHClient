@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -28,26 +28,26 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
-import org.tvheadend.tvhclient.adapter.TimerRecordingListAdapter;
+import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import java.util.ArrayList;
 
 @SuppressWarnings("deprecation")
-public class TimerRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
+public class SeriesRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
-    private static final String TAG = TimerRecordingListFragment.class.getSimpleName();
+    private static final String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
     private ActionBarActivity activity;
     private ActionBarInterface actionBarInterface;
     private FragmentStatusInterface fragmentStatusInterface;
-    private TimerRecordingListAdapter adapter;
+    private SeriesRecordingListAdapter adapter;
     private ListView listView;
     private boolean isDualPane;
 
@@ -62,6 +62,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return null;
         }
 
+        // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
         if (bundle != null) {
             isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
@@ -93,9 +94,9 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // This is the default view for the channel list adapter. Other views can be
         // passed to the adapter to show less information. This is used in the
         // program guide where only the channel icon is relevant.
-        int adapterLayout = R.layout.timer_recording_list_widget;
+        int adapterLayout = R.layout.series_recording_list_widget;
 
-        adapter = new TimerRecordingListAdapter(activity, new ArrayList<TimerRecording>(), adapterLayout);
+        adapter = new SeriesRecordingListAdapter(activity, new ArrayList<SeriesRecording>(), adapterLayout);
         listView.setAdapter(adapter);
 
         // Set the listener to show the recording details activity when the user
@@ -103,9 +104,9 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TimerRecording trec = adapter.getItem(position);
+                SeriesRecording srec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, trec, TAG);
+                    fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }
                 adapter.setPosition(position);
                 adapter.notifyDataSetChanged();
@@ -145,12 +146,18 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // mode these menus are handled by the recording details details fragment.
         if (!isDualPane || adapter.getCount() == 0) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-            (menu.findItem(R.id.menu_edit)).setVisible(false);
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() <= 1) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
+        }
+
+        // Show the add button only when the application is unlocked
+        (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
+
+        if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
+            (menu.findItem(R.id.menu_edit)).setVisible(false);
         }
     }
 
@@ -161,16 +168,16 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (TimerRecording trec : app.getTimerRecordings()) {
-            adapter.add(trec);
+        for (SeriesRecording srec : app.getSeriesRecordings()) {
+            adapter.add(srec);
         }
         // Show the newest scheduled recordings first 
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
-        
+
         // Shows the currently visible number of recordings of the type  
         if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.timer_recordings));
+            actionBarInterface.setActionBarTitle(getString(R.string.series_recordings));
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
             actionBarInterface.setActionBarSubtitle(items);
             actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
@@ -188,15 +195,15 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         switch (item.getItemId()) {
         case R.id.menu_add:
             // Create the fragment and show it as a dialog.
-            DialogFragment newFragment = TimerRecordingAddFragment.newInstance();
+            DialogFragment newFragment = SeriesRecordingAddFragment.newInstance();
             newFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = TimerRecordingAddFragment.newInstance();
+            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
-            bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, adapter.getSelectedItem().id);
+            bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, adapter.getSelectedItem().id);
             editFragment.setArguments(bundle);
             editFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
@@ -226,7 +233,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     }
 
     /**
-     * Calls the service to remove the timer recordings. The service is
+     * Calls the service to remove the series recordings. The service is
      * called in a certain interval to prevent too many calls to the interface.
      */
     private void removeAllRecordings() {
@@ -234,11 +241,11 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
                     Utils.removeRecording(activity, adapter.getItem(i).id,
-                            Constants.ACTION_DELETE_TIMER_REC_ENTRY, false);
+                            Constants.ACTION_DELETE_SERIES_DVR_ENTRY, false);
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
-                        Log.d(TAG, "Error removing all timer recordings, " + e.getLocalizedMessage());
+                        Log.d(TAG, "Error removing all series recordings, " + e.getLocalizedMessage());
                     }
                 }
             }
@@ -248,18 +255,22 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.timer_recording_menu, menu);
+        inflater.inflate(R.menu.series_recording_menu, menu);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.timer_recording_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.series_recording_context_menu, menu);
+
+        if (!app.isUnlocked()) {
+            (menu.findItem(R.id.menu_edit)).setVisible(false);
+        }
 
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        TimerRecording srec = adapter.getItem(info.position);
+        SeriesRecording srec = adapter.getItem(info.position);
         menu.setHeaderTitle(srec.title);
     }
 
@@ -279,28 +290,28 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return super.onContextItemSelected(item);
         }
 
-        final TimerRecording trec = adapter.getItem(info.position);
+        final SeriesRecording srec = adapter.getItem(info.position);
 
         switch (item.getItemId()) {
         case R.id.menu_edit:
             // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = TimerRecordingAddFragment.newInstance();
+            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
-            bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, trec.id);
+            bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, srec.id);
             editFragment.setArguments(bundle);
             editFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
 
         case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(activity, trec.title));
+            startActivity(new SearchIMDbIntent(activity, srec.title));
             return true;
 
         case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(activity, trec.title));
+            startActivity(new SearchEPGIntent(activity, srec.title));
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, trec);
+            Utils.confirmRemoveRecording(activity, srec);
             return true;
 
         default:
@@ -328,34 +339,34 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     }
                 });
                 break;
-            case Constants.ACTION_TIMER_DVR_ADD:
+            case Constants.ACTION_SERIES_DVR_ADD:
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.add((TimerRecording) obj);
+                        adapter.add((SeriesRecording) obj);
                         populateList();
                     }
                 });
                 break;
-            case Constants.ACTION_TIMER_DVR_DELETE:
+            case Constants.ACTION_SERIES_DVR_DELETE:
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         // Get the position of the recording that is shown before
                         // the one that has been deleted. This recording will then
                         // be selected when the list has been updated.
-                        int previousPosition = adapter.getPosition((TimerRecording) obj);
+                        int previousPosition = adapter.getPosition((SeriesRecording) obj);
                         if (--previousPosition < 0) {
                             previousPosition = 0;
                         }
-                        adapter.remove((TimerRecording) obj);
+                        adapter.remove((SeriesRecording) obj);
                         populateList();
                         setInitialSelection(previousPosition);
                     }
                 });
                 break;
-            case Constants.ACTION_TIMER_DVR_UPDATE:
+            case Constants.ACTION_SERIES_DVR_UPDATE:
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((TimerRecording) obj);
+                        adapter.update((SeriesRecording) obj);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -387,9 +398,9 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             // Simulate a click in the list item to inform the activity
             // It will then show the details fragment if dual pane is active
             if (isDualPane) {
-                TimerRecording trec = adapter.getItem(position);
+                SeriesRecording srec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, trec, TAG);
+                    fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }
             }
         }

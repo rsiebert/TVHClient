@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient.fragments.settings;
 
 import android.app.Activity;
 import android.app.Fragment;
