@@ -60,10 +60,6 @@
             android:title="@string/pref_show_program_artwork" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Recordings">
-
-    </PreferenceCategory>
-
     <PreferenceCategory
         android:summary="@string/pref_program_guide_sum"
         android:title="@string/pref_program_guide">
