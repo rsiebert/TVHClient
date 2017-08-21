@@ -823,6 +823,15 @@ public class HTSService extends Service implements HTSConnectionListener {
             case "signalStatus":
                 onSubscriptionSignalStatus(msg);
                 break;
+            case "eventAdd":
+                eventAdd(msg);
+                break;
+            case "eventUpdate":
+                eventUpdate(msg);
+                break;
+            case "eventDelete":
+                eventDelete(msg);
+                break;
             default:
                 app.log(TAG, "Unknown method " + method);
                 break;
@@ -1225,6 +1234,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final String title = intent.getStringExtra("title");
+        final String subtitle = intent.getStringExtra("subtitle");
         final String description = intent.getStringExtra("description");
         final String configName = intent.getStringExtra("configName");
 
@@ -1248,6 +1258,9 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         if (title != null) {
             request.putField("title", title);
+        }
+        if (subtitle != null) {
+            request.putField("subtitle", subtitle);
         }
         if (description != null) {
             request.putField("description", description);
@@ -1816,5 +1829,17 @@ public class HTSService extends Service implements HTSConnectionListener {
                 app.addProfiles(pList);
             }
         });
+    }
+
+    private void eventDelete(HTSMessage msg) {
+
+    }
+
+    private void eventUpdate(HTSMessage msg) {
+
+    }
+
+    private void eventAdd(HTSMessage msg) {
+
     }
 }
