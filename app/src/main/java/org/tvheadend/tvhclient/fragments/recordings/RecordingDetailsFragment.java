@@ -285,7 +285,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         removeRecordingButton.setVisibility(View.GONE);
         downloadRecordingButton.setVisibility(View.GONE);
 
-        if (rec.error == null && rec.state.equals("completed")) {
+        // TODO use Objects.equals(Object, Object) for comparing strings
+        if (rec.error == null && rec.state != null && rec.state.equals("completed")) {
             // The recording is available, it can be played and removed
             removeRecordingButton.setVisibility(View.VISIBLE);
             playRecordingButton.setVisibility(View.VISIBLE);
@@ -307,7 +308,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             if (app.isUnlocked()) {
                 editRecordingButton.setVisibility(View.VISIBLE);
             }
-        } else if (rec.error != null || rec.state.equals("missed")) {
+        } else if (rec.error != null || (rec.state != null && rec.state.equals("missed"))) {
             // The recording has failed or has been missed, allow removing it
             removeRecordingButton.setVisibility(View.VISIBLE);
         }
