@@ -14,6 +14,7 @@ import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -500,8 +501,34 @@ public class Utils {
             return;
         }
         time.setVisibility(View.VISIBLE);
-        final String startTime = DateFormat.getTimeFormat(time.getContext()).format(start);
-        final String endTime = DateFormat.getTimeFormat(time.getContext()).format(stop);
+        String startTime = ""; // DateFormat.getTimeFormat(time.getContext()).format(start);
+        String endTime = ""; // DateFormat.getTimeFormat(time.getContext()).format(stop);
+
+        Context context = time.getContext();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean("useLocalizedDateTimeFormatPref", false)) {
+            // Show the date as defined with the currently active locale.
+            // For the date display the short version will be used
+            Locale locale = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                locale = context.getResources().getConfiguration().getLocales().get(0);
+            } else {
+                locale = context.getResources().getConfiguration().locale;
+            }
+            if (locale != null) {
+                final java.text.DateFormat df = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, locale);
+                startTime = df.format(start.getTime());
+                endTime = df.format(stop.getTime());
+                Log.d(TAG, "Setting time using locale " + locale.getCountry() + ", " + locale.getDisplayLanguage() + ", value: " + startTime + " - " + endTime);
+            }
+        } else {
+            // Show the date using the default format like 31.07.2013
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
+            startTime = sdf.format(start.getTime());
+            endTime = sdf.format(stop.getTime());
+            Log.d(TAG, "Setting time using default of 'HH:mm', value: " + startTime + " - " + endTime);
+        }
+
         String value = startTime + " - " + endTime;
         time.setText(value);
     }
@@ -517,7 +544,7 @@ public class Utils {
         if (date == null || start == null) {
             return;
         }
-        String dateText;
+        String dateText = "";
         if (DateUtils.isToday(start.getTime())) {
             // Show the string today
             dateText = date.getContext().getString(R.string.today);
@@ -531,13 +558,10 @@ public class Utils {
             // Show the day of the week, like Monday or Tuesday
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
             dateText = sdf.format(start.getTime());
-        } else {
-            // Show the regular date format like 31.07.2013
-            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            dateText = sdf.format(start.getTime());
         }
 
-        // Translate the day strings
+        // Translate the day strings, if the string is empty
+        // use the day month year date representation
         switch (dateText) {
             case "today":
                 date.setText(R.string.today);
@@ -576,6 +600,29 @@ public class Utils {
                 date.setText(R.string.two_days_ago);
                 break;
             default:
+                Context context = date.getContext();
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                if (prefs.getBoolean("useLocalizedDateTimeFormatPref", false)) {
+                    // Show the date as defined with the currently active locale.
+                    // For the date display the short version will be used
+                    Locale locale = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        locale = context.getResources().getConfiguration().getLocales().get(0);
+                    } else {
+                        locale = context.getResources().getConfiguration().locale;
+                    }
+                    if (locale != null) {
+                        final java.text.DateFormat df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale);
+                        dateText = df.format(start.getTime());
+                        Log.d(TAG, "Setting date using locale " + locale.getCountry() + ", " + locale.getDisplayLanguage() + ", value: " + dateText);
+                    }
+                } else {
+                    // Show the date using the default format like 31.07.2013
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+                    dateText = sdf.format(start.getTime());
+                    Log.d(TAG, "Setting date using default of 'dd.MM.yyyy', value: " + dateText);
+                }
+
                 date.setText(dateText);
                 break;
         }

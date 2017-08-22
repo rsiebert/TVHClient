@@ -2,12 +2,18 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res/org.tvheadend.tvhclient">
 
-    <PreferenceCategory android:title="Theme">
+    <PreferenceCategory android:title="@string/pref_general">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="lightThemePref"
             android:summary="@string/pref_theme_sum"
             android:title="@string/pref_theme" />
+        <CheckBoxPreference
+            android:name="@string/pref_date_time_format"
+            android:defaultValue="false"
+            android:key="useLocalizedDateTimeFormatPref"
+            android:summary="@string/pref_date_time_format_sum"
+            android:title="@string/pref_date_time_format" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_channels">
         <CheckBoxPreference
