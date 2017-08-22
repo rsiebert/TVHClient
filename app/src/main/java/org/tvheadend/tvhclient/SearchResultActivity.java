@@ -20,6 +20,7 @@
 package org.tvheadend.tvhclient;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +43,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
@@ -52,7 +55,9 @@ import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Model;
+import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 
@@ -376,6 +381,56 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         case R.id.menu_record_once:
             if (model instanceof Program) {
                 Utils.recordProgram(this, (Program) model, false);
+            }
+            return true;
+
+        case R.id.menu_record_once_custom_profile:
+            // TODO This is also used in the program list fragment. Consolidate
+            // TODO hide this menu if no profiles are available
+            if (model instanceof Program) {
+                // Create the list of available recording profiles that the user can select from
+                String[] dvrConfigList = new String[app.getDvrConfigs().size()];
+                for (int i = 0; i < app.getDvrConfigs().size(); i++) {
+                    dvrConfigList[i] = app.getDvrConfigs().get(i).name;
+                }
+
+                // Get the selected recording profile to highlight the
+                // correct item in the list of the selection dialog
+                int dvrConfigNameValue = 0;
+                DatabaseHelper dbh = DatabaseHelper.getInstance(this);
+                final Connection conn = dbh.getSelectedConnection();
+                final Profile p = dbh.getProfile(conn.recording_profile_id);
+                if (p != null) {
+                    for (int i = 0; i < dvrConfigList.length; i++) {
+                        if (dvrConfigList[i].equals(p.name)) {
+                            dvrConfigNameValue = i;
+                            break;
+                        }
+                    }
+                }
+
+                // Create new variables because the dialog needs them as final
+                final String[] dcList = dvrConfigList;
+
+                // Create the dialog to show the available profiles
+                final Activity activity = this;
+                new MaterialDialog.Builder(this)
+                        .title(R.string.select_dvr_config)
+                        .items(dvrConfigList)
+                        .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                // Pass over the
+                                Intent intent = new Intent(activity, HTSService.class);
+                                intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+                                intent.putExtra("eventId", ((Program) model).id);
+                                intent.putExtra("channelId", ((Program) model).channel.id);
+                                intent.putExtra("configName", dcList[which]);
+                                startService(intent);
+                                return true;
+                            }
+                        })
+                        .show();
             }
             return true;
 
