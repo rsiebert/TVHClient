@@ -21,7 +21,7 @@ import org.tvheadend.tvhclient.fragments.settings.SettingsNotificationFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsProfilesFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsShowConnectionsFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsTranscodingFragment;
-import org.tvheadend.tvhclient.fragments.SettingsUserInterfaceFragment;
+import org.tvheadend.tvhclient.fragments.settings.SettingsUserInterfaceFragment;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
