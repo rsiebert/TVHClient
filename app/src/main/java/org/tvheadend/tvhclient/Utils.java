@@ -187,9 +187,11 @@ public class Utils {
     }
 
     public static void confirmRemoveRecording(final Activity activity, final TimerRecording trec) {
+        final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
+        final String title = trec.title != null ? trec.title : "";
         confirmRemoveRecording(activity, 
                 Constants.ACTION_DELETE_TIMER_REC_ENTRY,
-                ((trec.name != null && trec.name.length() > 0) ? trec.name : trec.title),
+                (name.length() > 0 ? name : title),
                 trec.id,
                 (trec.channel == null));
     }
