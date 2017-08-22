@@ -332,6 +332,14 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         }
 
         if (priority != null) {
+            if (priorityValue < priorityList.length) {
+                priority.setText(priorityList[(int) priorityValue]);
+            } else {
+                app.log(TAG, "Priority value '"
+                        + priorityValue + "' is larger then priority array size of '"
+                        + priorityList.length + "'. Using default of 2");
+                priority.setText(priorityList[2]);
+            }
             priority.setText(priorityList[(int) priorityValue]);
             priority.setOnClickListener(new OnClickListener() {
 				@Override
