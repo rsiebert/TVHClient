@@ -65,16 +65,9 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-
-        // Get the selected program from the list where the context menu was opened
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
-        Recording rec = adapter.getItem(info.position);
-        if (rec != null && rec.isCompleted()) {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-            (menu.findItem(R.id.menu_play)).setVisible(true);
-            (menu.findItem(R.id.menu_download)).setVisible(app.isUnlocked());
-        }
+        menu.findItem(R.id.menu_record_remove).setVisible(true);
+        menu.findItem(R.id.menu_play).setVisible(true);
+        menu.findItem(R.id.menu_download).setVisible(app.isUnlocked());
     }
 
     /**

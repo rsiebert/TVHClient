@@ -63,13 +63,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-
-        // Get the selected program from the list where the context menu was opened
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Recording rec = adapter.getItem(info.position);
-        if (rec != null) {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-        }
+        menu.findItem(R.id.menu_record_remove).setVisible(true);
     }
 
     /**
