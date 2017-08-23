@@ -518,7 +518,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
             synchronized (recordings) {
                 for (Recording rec : recordings) {
                     // Include all failed recordings in the list
-                    if (rec.isFailed()) {
+                    if (rec.isFailed() || rec.isMissed() || rec.isAborted()) {
                         recs.add(rec);
                     }
                 }
@@ -1075,7 +1075,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return bp.isPurchased(Constants.UNLOCKER);
+        // TODO disable me
+        return true; //bp.isPurchased(Constants.UNLOCKER);
     }
 
     @Override
