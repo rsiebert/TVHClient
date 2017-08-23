@@ -444,8 +444,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
             // Add a notification for scheduled recordings
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs.getBoolean("pref_show_notifications", false)
-                    && rec.error == null && rec.state.equals("scheduled")) {
+            if (prefs.getBoolean("pref_show_notifications", false) && rec.isScheduled()) {
                 addNotification(rec.id);
             }
         }
@@ -496,7 +495,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
                 for (Recording rec : recordings) {
                     // Include all recordings that are marked as completed, also
                     // include recordings marked as auto recorded
-                    if (rec.error == null && rec.state.equals("completed")) {
+                    if (rec.isCompleted()) {
                         recs.add(rec);
                     }
                 }
@@ -508,8 +507,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
                 for (Recording rec : recordings) {
                     // Include all scheduled recordings in the list, also
                     // include recordings marked as auto recorded
-                    if (rec.error == null
-                            && (rec.state.equals("scheduled") || rec.state.equals("recording"))) {
+                    if (rec.isRecording() || rec.isScheduled()) {
                         recs.add(rec);
                     }
                 }
@@ -520,8 +518,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
             synchronized (recordings) {
                 for (Recording rec : recordings) {
                     // Include all failed recordings in the list
-                    if (((rec.error != null && !rec.error.equals("File missing"))
-                            || (rec.state.equals("missed") || rec.state.equals("invalid")))) {
+                    if (rec.isFailed()) {
                         recs.add(rec);
                     }
                 }
@@ -532,7 +529,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
             synchronized (recordings) {
                 for (Recording rec : recordings) {
                     // Include all removed recordings in the list
-                    if (rec.error != null && rec.error.equals("File missing")) {
+                    if (rec.isRemoved()) {
                         recs.add(rec);
                     }
                 }
@@ -1339,7 +1336,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public void addNotifications(final long offset) {
         for (Recording rec : getRecordings()) {
-            if (rec.error == null && rec.state.equals("scheduled")) {
+            if (rec.isScheduled()) {
                 addNotification(rec.id, offset);
             }
         }

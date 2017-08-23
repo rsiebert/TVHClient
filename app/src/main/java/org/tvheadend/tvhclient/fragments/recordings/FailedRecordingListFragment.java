@@ -67,7 +67,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
         // Get the selected program from the list where the context menu was opened
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Recording rec = adapter.getItem(info.position);
-        if (rec != null && (rec.error != null || rec.state.equals("missed"))) {
+        if (rec != null && (rec.isFailed() || rec.isMissed())) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
         }
     }

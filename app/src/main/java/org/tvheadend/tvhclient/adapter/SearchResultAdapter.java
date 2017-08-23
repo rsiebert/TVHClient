@@ -150,7 +150,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
 
             // Show only the recording icon
             if (holder.state != null) {
-                if (rec.state.equals("recording")) {
+                if (rec.isRecording()) {
                     holder.state.setImageResource(R.drawable.ic_rec_small);
                     holder.state.setVisibility(ImageView.VISIBLE);
                 } else {

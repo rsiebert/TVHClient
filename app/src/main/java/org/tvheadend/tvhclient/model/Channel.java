@@ -48,7 +48,7 @@ public class Channel implements Comparable<Channel> {
 
     public boolean isRecording() {
         for (Recording rec : recordings) {
-            if ("recording".equals(rec.state)) {
+            if (rec.isRecording()) {
                 return true;
             }
         }

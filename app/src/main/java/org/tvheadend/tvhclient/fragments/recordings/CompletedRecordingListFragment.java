@@ -70,7 +70,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
         Recording rec = adapter.getItem(info.position);
-        if (rec != null && (rec.error == null && rec.state.equals("completed"))) {
+        if (rec != null && rec.isCompleted()) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
             (menu.findItem(R.id.menu_download)).setVisible(app.isUnlocked());

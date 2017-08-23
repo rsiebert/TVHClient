@@ -144,7 +144,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             
             // Show only the recording icon
             if (holder.state != null) {
-                if (rec.state.equals("recording")) {
+                if (rec.isRecording()) {
                     holder.state.setImageResource(R.drawable.ic_rec_small);
                     holder.state.setVisibility(ImageView.VISIBLE);
                 } else {
@@ -172,9 +172,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             // If activated in the settings allow playing the recording by  
             // selecting the channel icon if the recording is completed or currently
             // being recorded
-            if (holder.icon != null && 
-                    rec.error == null &&
-                    (rec.state.equals("completed") || rec.isRecording())) {
+            if (holder.icon != null && (rec.isCompleted() || rec.isRecording())) {
                 holder.icon.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
