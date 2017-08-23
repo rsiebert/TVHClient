@@ -40,6 +40,7 @@ public class Recording extends Model implements Comparable<Recording> {
     private final int MISSED = 4;
     private final int REMOVED = 5;
     private final int FAILED = 6;
+    private final int ABORTED = 7;
 
     @Override
     public int compareTo(@NonNull Recording that) {
@@ -74,6 +75,10 @@ public class Recording extends Model implements Comparable<Recording> {
         return getState() == FAILED;
     }
 
+    public boolean isAborted() {
+        return getState() == ABORTED;
+    }
+
     private int getState() {
         // The server should always provide a state, everything
         // else is considered as unknown and should not happen.
@@ -97,6 +102,8 @@ public class Recording extends Model implements Comparable<Recording> {
                 // missing. Failed recordings are all recordings that are either missing or invalid
                 if (error.equals("File missing") && state.equals("completed")) {
                     return REMOVED;
+                } else if (error.equals("Aborted by user") && state.equals("completed")) {
+                    return ABORTED;
                 } else if (state.equals("missed") || state.equals("invalid")) {
                     return FAILED;
                 }
