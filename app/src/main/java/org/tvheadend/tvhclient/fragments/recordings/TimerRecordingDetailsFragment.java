@@ -22,9 +22,8 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 @SuppressWarnings("deprecation")
 public class TimerRecordingDetailsFragment extends DialogFragment {
@@ -170,11 +169,16 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             priority.setText(priorityItems[(int) (trec.priority)]);
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-        String start = formatter.format(new Date(trec.start * 60L * 1000L));
-        String stop = formatter.format(new Date(trec.stop * 60L * 1000L));
-        time.setText(getString(R.string.from_to_time, start, stop));
+        // TODO multiple uses, consolidate
+        Calendar startTime = Calendar.getInstance();
+        startTime.set(Calendar.HOUR_OF_DAY, (int) (trec.start / 60));
+        startTime.set(Calendar.MINUTE, (int) (trec.start % 60));
 
+        Calendar endTime = Calendar.getInstance();
+        endTime.set(Calendar.HOUR_OF_DAY, (int) (trec.stop / 60));
+        endTime.set(Calendar.MINUTE, (int) (trec.stop % 60));
+
+        Utils.setTime(time, new Date(startTime.getTimeInMillis()), new Date(endTime.getTimeInMillis()));
         duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));
     }
 

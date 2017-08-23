@@ -15,6 +15,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -128,11 +129,19 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             Utils.setChannelIcon(holder.icon, null, trec.channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, trec.daysOfWeek);
 
-            Date start = new Date(trec.start * 60L * 1000L);
-            Date stop = new Date(trec.stop * 60L * 1000L);
-            Utils.setTime(holder.time, start, stop);
-            Utils.setDuration(holder.duration, start, stop);
+            // TODO multiple uses, consolidate
+            Calendar startTime = Calendar.getInstance();
+            startTime.set(Calendar.HOUR_OF_DAY, (int) (trec.start / 60));
+            startTime.set(Calendar.MINUTE, (int) (trec.start % 60));
 
+            Calendar endTime = Calendar.getInstance();
+            endTime.set(Calendar.HOUR_OF_DAY, (int) (trec.stop / 60));
+            endTime.set(Calendar.MINUTE, (int) (trec.stop % 60));
+
+            Utils.setTime(holder.time, new Date(startTime.getTimeInMillis()), new Date(endTime.getTimeInMillis()));
+            if (holder.duration != null) {
+                holder.duration.setText(context.getString(R.string.minutes, (int) (trec.stop - trec.start)));
+            }
             if (holder.isEnabled != null) {
                 TVHClientApplication app = (TVHClientApplication) context.getApplication();
                 holder.isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
