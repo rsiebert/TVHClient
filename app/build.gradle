@@ -35,4 +35,5 @@ dependencies {
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.afollestad.material-dialogs:core:0.9.0.1'
+    compile 'ch.acra:acra:4.9.2'
 }
