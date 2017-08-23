@@ -1,3 +1,12 @@
+$ 1.9.9
+  % VERSION 1.9.9
+  _ 23.08.2017
+    * Show removed recordings in a separate menu
+    * Added option to display the date and time as defined by the selected language
+    * Added missing menu item to record a program with another profile from the search activity
+    * Added option to enable the crash reporting system ACRA
+    * Fixed updating the EPG only when the first screen is visible
+    * Fixed showing the correct time in the manual recording screens
 $ 1.9.8
   % VERSION 1.9.8
   _ 12.01.2017
