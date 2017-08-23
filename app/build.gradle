@@ -1,25 +1,25 @@
 apply plugin: 'com.android.application'
 
+apply from: '../acra.gradle'
+
 android {
-    compileSdkVersion 25
-    buildToolsVersion "26.0.1"
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
+
     defaultConfig {
         applicationId "org.tvheadend.tvhclient"
-        minSdkVersion 16
-        targetSdkVersion 24
-        versionCode 96
-        versionName "1.9.9"
         setProperty("archivesBaseName", "TVHClient-$versionName-$versionCode")
+
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion project.ext.targetSdkVersion
+
+        versionCode = 96
+        versionName = "1.9.9"
     }
+
     buildTypes {
         release {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    repositories {
-        mavenCentral()
-        maven {
-            url "https://jitpack.io"
         }
     }
 }
