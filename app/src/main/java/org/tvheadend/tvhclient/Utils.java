@@ -451,17 +451,15 @@ public class Utils {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             Recording rec = app.getRecording(p.recording.id);
 
-            if (rec == null || rec.error != null) {
+            if (rec == null || rec.isFailed()) {
                 state.setImageResource(R.drawable.ic_error_small);
-            } else if ("completed".equals(rec.state)) {
+            } else if (rec.isCompleted()) {
                 state.setImageResource(R.drawable.ic_success_small);
-            } else if ("invalid".equals(rec.state)) {
+            } else if (rec.isMissed()) {
                 state.setImageResource(R.drawable.ic_error_small);
-            } else if ("missed".equals(rec.state)) {
-                state.setImageResource(R.drawable.ic_error_small);
-            } else if ("recording".equals(rec.state)) {
+            } else if (rec.isRecording()) {
                 state.setImageResource(R.drawable.ic_rec_small);
-            } else if ("scheduled".equals(rec.state)) {
+            } else if (rec.isScheduled()) {
                 state.setImageResource(R.drawable.ic_schedule_small);
             } else {
                 state.setImageDrawable(null);
@@ -784,14 +782,14 @@ public class Utils {
         failed_reason.setVisibility(View.VISIBLE);
 
         // Show the reason why it failed
-        if (rec.error != null && rec.error.equals("File missing")) {
+        if (rec.isRemoved()) {
             // failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_missing));
             failed_reason.setVisibility(View.GONE);
-        } else if (rec.error != null && rec.error.equals("Aborted by user")) {
+        } else if (rec.isAborted()) {
             failed_reason.setText(failed_reason.getResources().getString(R.string.recording_canceled));
-        } else if (rec.state != null && rec.state.equals("missed")) {
+        } else if (rec.isMissed()) {
             failed_reason.setText(failed_reason.getResources().getString(R.string.recording_time_missed));
-        } else if (rec.state != null && rec.state.equals("invalid")) {
+        } else if (rec.isFailed()) {
             failed_reason.setText(failed_reason.getResources().getString(R.string.recording_file_invalid));
         } else {
             failed_reason.setVisibility(View.GONE);
