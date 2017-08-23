@@ -24,6 +24,12 @@ import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
+import org.acra.ACRA;
+import org.acra.ReportField;
+import org.acra.ReportingInteractionMode;
+import org.acra.config.ACRAConfiguration;
+import org.acra.config.ACRAConfigurationException;
+import org.acra.config.ConfigurationBuilder;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -1068,6 +1074,34 @@ public class TVHClientApplication extends Application implements BillingProcesso
         VideoCastManager.initialize(this, options);
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+
+        // The following line triggers the initialization of ACRA
+        if (BuildConfig.ACRA_ENABLED) {
+            Log.i(TAG, "Initializing ACRA");
+            try {
+                final ACRAConfiguration config = new ConfigurationBuilder(this)
+                        .setMailTo(BuildConfig.ACRA_REPORT_EMAIL)
+                        .setCustomReportContent(
+                                ReportField.APP_VERSION_CODE,
+                                ReportField.APP_VERSION_NAME,
+                                ReportField.ANDROID_VERSION,
+                                ReportField.USER_EMAIL,
+                                ReportField.CUSTOM_DATA,
+                                ReportField.STACK_TRACE,
+                                ReportField.LOGCAT)
+                        .setReportingInteractionMode(ReportingInteractionMode.SILENT)
+                        .setLogcatArguments("-t", "500", "-v", "time", "*:D")
+                        .build();
+                ACRA.init(this, config);
+            } catch (ACRAConfigurationException e) {
+                Log.e(TAG, "Failed to init ACRA", e);
+            }
+        }
+    }
+
     /**
      * Checks if the user has purchased the unlocker from the play store. If yes
      * then all extra features shall be accessible. The application is unlocked.
@@ -1075,8 +1109,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        // TODO disable me
-        return true; //bp.isPurchased(Constants.UNLOCKER);
+        return bp.isPurchased(Constants.UNLOCKER);
     }
 
     @Override
