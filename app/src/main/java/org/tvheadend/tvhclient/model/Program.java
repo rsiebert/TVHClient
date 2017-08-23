@@ -24,11 +24,15 @@ public class Program extends Model implements Comparable<Program> {
     }
 
     public boolean isRecording() {
-        return recording != null && "recording".equals(recording.state);
+        return recording != null && recording.isRecording();
     }
 
     public boolean isScheduled() {
-        return recording != null && "scheduled".equals(recording.state);
+        return recording != null && recording.isScheduled();
+    }
+
+    public boolean isCompleted() {
+        return recording != null && recording.isCompleted();
     }
 
     @Override

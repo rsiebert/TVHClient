@@ -34,30 +34,76 @@ public class Recording extends Model implements Comparable<Recording> {
     public long dataSize;
     public boolean enabled;
 
+    private final int COMPLETED = 1;
+    private final int RECORDING = 2;
+    private final int SCHEDULED = 3;
+    private final int MISSED = 4;
+    private final int REMOVED = 5;
+    private final int FAILED = 6;
+
     @Override
     public int compareTo(@NonNull Recording that) {
-        if (this.state() == 1 && that.state() == 1) {
+        if (this.getState() == 1 && that.getState() == 1) {
             return this.start.compareTo(that.start);
         } else {
             return that.start.compareTo(this.start);
         }
     }
 
+    public boolean isCompleted() {
+        return getState() == COMPLETED;
+    }
+
     public boolean isRecording() {
-        return state() == 0;
+        return getState() == RECORDING;
     }
 
     public boolean isScheduled() {
-        return state() == 1;
+        return getState() == SCHEDULED;
     }
 
-    private int state() {
-        if ("recording".equals(state)) {
-            return 0;
-        } else if ("scheduled".equals(state)) {
-            return 1;
+    public boolean isMissed() {
+        return getState() == MISSED;
+    }
+
+    public boolean isRemoved() {
+        return getState() == REMOVED;
+    }
+
+    public boolean isFailed() {
+        return getState() == FAILED;
+    }
+
+    private int getState() {
+        // The server should always provide a state, everything
+        // else is considered as unknown and should not happen.
+        if (state != null) {
+            // Handle the positive states first
+            if (error == null) {
+                // Recordings without a missing file will be considered as completed.
+                // If the file is missing they are treated as removed recordings. If completed
+                // but another error is set, they are shown in the failed recordings
+                if (state.equals("completed")) {
+                    return COMPLETED;
+                } else if (state.equals("missed")) {
+                    return MISSED;
+                } else if (state.equals("recording")) {
+                    return RECORDING;
+                } else if (state.equals("scheduled")) {
+                    return SCHEDULED;
+                }
+            } else {
+                // Consider the recording as deleted / removed if it was completed and the file is
+                // missing. Failed recordings are all recordings that are either missing or invalid
+                if (error.equals("File missing") && state.equals("completed")) {
+                    return REMOVED;
+                } else if (state.equals("missed") || state.equals("invalid")) {
+                    return FAILED;
+                }
+            }
         }
-        return 2;
+        // All other cases are unknown;
+        return 0;
     }
 
     @Override
