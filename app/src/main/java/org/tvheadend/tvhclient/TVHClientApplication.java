@@ -1109,7 +1109,11 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return bp.isPurchased(Constants.UNLOCKER);
+        if (BuildConfig.DEBUG_MODE) {
+            return true;
+        } else {
+            return bp.isPurchased(Constants.UNLOCKER);
+        }
     }
 
     @Override

@@ -18,7 +18,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Show all features of the app when the app is not released and under development
+            buildConfigField "Boolean", "DEBUG_MODE", "true"
+        }
         release {
+            // Disable the unlocked features when the app is released.
+            // This must be done by the in-app purchase
+            buildConfigField "Boolean", "DEBUG_MODE", "false"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
