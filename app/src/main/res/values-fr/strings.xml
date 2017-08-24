@@ -193,10 +193,6 @@
     <string name="pref_transcoding_sum">Défini les paramètres audio et vidéo de comment sera le programme sera enregistré ou comment il sera lu.</string>
 
     <string name="pref_advanced_settings">Paramétrages avancés</string>
-    <string name="pref_debug_mode"> Mode debug </string>
-    <string name="pref_debug_mode_sum">Ecris les informations détaillées dans un fichier de log sur le stockage interne. Cela peut ralentir un peu l\’application si activé.</string>
-    <string name="pref_send_logfile">Envoyer les logs au développeur </string>
-    <string name="pref_send_logfile_sum">Envoyer les logs par mail au développeur afin d\’améliorer TVHClient. Seul les états de TVHClient sont envoyés!</string>
     <string name="pref_connection_timeout">Connexion interrompue</string>
     <string name="pref_connection_timeout_sum">Définir le temps en secondes jusqu\'à ce que la connexion avec le serveur soit complètement établie. Augmenter la valeur peut améliorer la connectivité sur un réseau lent.</string>
     <string name="pref_buffer_size">Taille du buffer des messages</string>

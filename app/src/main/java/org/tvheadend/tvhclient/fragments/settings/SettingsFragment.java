@@ -8,12 +8,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -23,10 +21,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -43,11 +38,8 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 @SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -67,13 +59,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Preference prefMenuUserInterface;
     private Preference prefMenuTranscoding;
     private Preference prefShowChangelog;
-    private CheckBoxPreference prefDebugMode;
     private Preference prefMenuNotifications;
     private Preference prefDownloadDir;
-    private Preference prefSendLogfile;
     private ListPreference prefDefaultMenu;
-
-    private String[] logfileList;
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
@@ -95,8 +83,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefShowChangelog = findPreference("pref_changelog");
         prefClearSearchHistory = findPreference("pref_clear_search_history");
         prefClearIconCache = findPreference("pref_clear_icon_cache");
-        prefDebugMode = (CheckBoxPreference) findPreference("pref_debug_mode");
-        prefSendLogfile = findPreference("pref_send_logfile");
         prefPurchaseUnlocker = findPreference("pref_unlocker");
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
         prefMenuNotifications  = findPreference("pref_menu_notifications");
@@ -313,52 +299,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             }
         });
 
-        // Add a listener to the logger will be enabled or disabled depending on the setting
-        prefDebugMode.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (prefDebugMode.isChecked()) {
-                    app.enableLogToFile();
-                } else {
-                    app.disableLogToFile();
-                }
-                return false;
-            }
-        });
-
-        // Add a listener to the user can send the internal log file to the
-        // developer. He can then use the data for debugging purposes.
-        prefSendLogfile.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                app.saveLog();
-
-                // Get the list of available files in the log path
-                File logPath = new File(activity.getCacheDir(), "logs");
-                File[] files = logPath.listFiles();
-
-                // Fill the items for the dialog
-                logfileList = new String[files.length];
-                for (int i = 0; i < files.length; i++) {
-                    logfileList[i] = files[i].getName();
-                }
-
-                // Show the dialog with the list of log files
-                new MaterialDialog.Builder(activity)
-                .title(R.string.select_log_file)
-                .items(logfileList)
-                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        mailLogfile(logfileList[which]);
-                        return true;
-                    }
-                })
-                .show();
-                return false;
-            }
-        });
-
         // Add a listener so that the notifications can be selected.
         prefMenuNotifications.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
@@ -454,34 +394,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                     newFragment.show(activity.getSupportFragmentManager(), "dialog");
                 }
             }, 200);
-        }
-    }
-
-    private void mailLogfile(String filename) {
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US);
-        String dateText = sdf.format(date.getTime());
-
-        Uri fileUri = null;
-        try {
-            File logFile = new File(activity.getCacheDir(), "logs/" + filename);
-            fileUri = FileProvider.getUriForFile(activity, "org.tvheadend.tvhclient.fileprovider", logFile);
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "The file can't be shared, " + e.getLocalizedMessage());
-        }
-
-        if (fileUri != null) {
-            // Create the intent with the email, some text and the log 
-            // file attached. The user can select from a list of 
-            // applications which he wants to use to send the mail
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rsiebert80@gmail.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "TVHClient Logfile");
-            intent.putExtra(Intent.EXTRA_TEXT, "Logfile was sent on " + dateText);
-            intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-            intent.setType("text/plain");
-
-            startActivity(Intent.createChooser(intent, "Send Log File to developer"));
         }
     }
 

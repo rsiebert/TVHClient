@@ -198,10 +198,6 @@
     <string name="pref_transcoding_sum">Defines the video and audio parameters how programs shall be recorded or how recordings shall be played.</string>
 
     <string name="pref_advanced_settings">Advanced settings</string>
-    <string name="pref_debug_mode">Debug Mode</string>
-    <string name="pref_debug_mode_sum">Write detailed information into a log file on the internal storage. Could slow down the app a bit if enabled.</string>
-    <string name="pref_send_logfile">Send log to developer</string>
-    <string name="pref_send_logfile_sum">Mail the log file to the developer to support him improving the program. Only status information from TVHClient is sent!</string>
     <string name="pref_connection_timeout">Connection Timeout</string>
     <string name="pref_connection_timeout_sum">Defines the time in seconds until the connection with the server must be fully established. Increasing the value can improve the connectivity on slow networks.</string>
     <string name="pref_buffer_size">Message buffer size</string>
@@ -383,7 +379,6 @@
     <string name="pref_date_time_format">Date and time format</string>
     <string name="pref_date_time_format_sum">Display the date and time as usually used in your country. Otherwise the format \'31.12.2017, 21:09\' is used.</string>
 
-    <string name="pref_crash_reporting_settings">Crash Reporting Settings</string>
     <string name="pref_disable_acra">Enable ACRA?</string>
     <string name="pref_acra_enabled">ACRA enabled</string>
     <string name="pref_acra_disabled">ACRA disabled</string>

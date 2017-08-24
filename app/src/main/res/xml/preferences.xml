@@ -71,47 +71,30 @@
         </Preference>
 
         <PreferenceScreen android:title="@string/pref_advanced_settings" >
-            <PreferenceCategory android:title="@string/pref_crash_reporting_settings">
-                <CheckBoxPreference
-                    android:key="acra.enable"
-                    android:title="@string/pref_disable_acra"
-                    android:summaryOn="@string/pref_acra_enabled"
-                    android:summaryOff="@string/pref_acra_disabled"
-                    android:defaultValue="true"/>
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref_debug_mode"
-                    android:summary="@string/pref_debug_mode_sum"
-                    android:title="@string/pref_debug_mode" >
-                </CheckBoxPreference>
-                <Preference
-                    android:dependency="pref_debug_mode"
-                    android:key="pref_send_logfile"
-                    android:summary="@string/pref_send_logfile_sum"
-                    android:title="@string/pref_send_logfile" >
-                </Preference>
-            </PreferenceCategory>
-
-            <PreferenceCategory android:title="@string/pref_connections">
-                <EditTextPreference
-                    android:id="@+id/pref_connection_timeout"
-                    android:name="@string/pref_connection_timeout"
-                    android:defaultValue="5"
-                    android:key="connectionTimeout"
-                    android:numeric="integer"
-                    android:summary="@string/pref_connection_timeout_sum"
-                    android:title="@string/pref_connection_timeout" />
-                <ListPreference
-                    android:id="@+id/pref_buffer_size"
-                    android:defaultValue="0"
-                    android:dialogTitle="@string/pref_buffer_size"
-                    android:entries="@array/pref_buffer_size_names"
-                    android:entryValues="@array/pref_buffer_size_ids"
-                    android:key="bufferSize"
-                    android:numeric="integer"
-                    android:summary="@string/pref_buffer_size_sum"
-                    android:title="@string/pref_buffer_size" />
-            </PreferenceCategory>
+            <CheckBoxPreference
+                android:key="acra.enable"
+                android:title="@string/pref_disable_acra"
+                android:summaryOn="@string/pref_acra_enabled"
+                android:summaryOff="@string/pref_acra_disabled"
+                android:defaultValue="true"/>
+            <EditTextPreference
+                android:id="@+id/pref_connection_timeout"
+                android:name="@string/pref_connection_timeout"
+                android:defaultValue="5"
+                android:key="connectionTimeout"
+                android:numeric="integer"
+                android:summary="@string/pref_connection_timeout_sum"
+                android:title="@string/pref_connection_timeout" />
+            <ListPreference
+                android:id="@+id/pref_buffer_size"
+                android:defaultValue="0"
+                android:dialogTitle="@string/pref_buffer_size"
+                android:entries="@array/pref_buffer_size_names"
+                android:entryValues="@array/pref_buffer_size_ids"
+                android:key="bufferSize"
+                android:numeric="integer"
+                android:summary="@string/pref_buffer_size_sum"
+                android:title="@string/pref_buffer_size" />
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_information" >
