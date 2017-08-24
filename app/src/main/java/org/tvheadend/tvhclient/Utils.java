@@ -1215,19 +1215,8 @@ public class Utils {
     }
 
     /**
-     * Method ciphers message. Later {@link #fromX} method might be used for deciphering
-     *
-     * @param message message to be ciphered
-     * @param salt    salt to be used for ciphering
-     * @return ciphered message
-     */
-    static String toX(String message, String salt) {
-        return new String(Base64.encode(x(message, salt).getBytes(), 0));
-    }
-
-    /**
-     * Symmetric algorithm used for ciphering/deciphering. Note that in your application you probably want to modify
-     * the algorithm used for ciphering/deciphering.
+     * Symmetric algorithm used for ciphering/deciphering. Note that in your application
+     * you probably want to modify the algorithm used for ciphering/deciphering.
      *
      * @param message message
      * @param salt    salt
