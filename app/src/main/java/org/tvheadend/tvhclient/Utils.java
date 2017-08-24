@@ -509,7 +509,7 @@ public class Utils {
         if (prefs.getBoolean("useLocalizedDateTimeFormatPref", false)) {
             // Show the date as defined with the currently active locale.
             // For the date display the short version will be used
-            Locale locale = null;
+            Locale locale;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 locale = context.getResources().getConfiguration().getLocales().get(0);
             } else {
@@ -605,7 +605,7 @@ public class Utils {
                 if (prefs.getBoolean("useLocalizedDateTimeFormatPref", false)) {
                     // Show the date as defined with the currently active locale.
                     // For the date display the short version will be used
-                    Locale locale = null;
+                    Locale locale;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                         locale = context.getResources().getConfiguration().getLocales().get(0);
                     } else {
