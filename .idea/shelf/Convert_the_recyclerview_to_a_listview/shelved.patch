@@ -1,0 +1,457 @@
+Index: app/src/main/java/org/tvheadend/tvhclient/model/FileModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/org/tvheadend/tvhclient/model/FileModel.java	(revision )
++++ app/src/main/java/org/tvheadend/tvhclient/model/FileModel.java	(revision )
+@@ -0,0 +1,7 @@
++package org.tvheadend.tvhclient.model;
++
++public class FileModel {
++    String name;
++    String parentName;
++    String itemCount;
++}
+Index: app/src/main/java/org/tvheadend/tvhclient/adapter/FileBrowserListAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/org/tvheadend/tvhclient/adapter/FileBrowserListAdapter.java	(date 1474356103000)
++++ app/src/main/java/org/tvheadend/tvhclient/adapter/FileBrowserListAdapter.java	(revision )
+@@ -1,15 +1,10 @@
+ package org.tvheadend.tvhclient.adapter;
+ 
+ import android.app.Activity;
+-import android.os.Environment;
+-import android.support.v7.app.ActionBarActivity;
+-import android.support.v7.widget.RecyclerView;
+ import android.util.Log;
+-import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+-import android.view.animation.Animation;
+-import android.view.animation.AnimationUtils;
++import android.widget.ArrayAdapter;
+ import android.widget.ImageView;
+ import android.widget.TextView;
+ 
+@@ -18,45 +13,79 @@
+ 
+ import java.io.File;
+ import java.io.FilenameFilter;
++import java.util.Collections;
++import java.util.Comparator;
+ import java.util.List;
+ 
+-public class FileBrowserListAdapter extends RecyclerView.Adapter<FileBrowserListAdapter.ViewHolder> {
+-    private final Activity activity;
++public class FileBrowserListAdapter extends ArrayAdapter<File> {
++
++    @SuppressWarnings("unused")
++    private final static String TAG = FileBrowserListAdapter.class.getSimpleName();
++
++    private final Activity context;
+     private File basePath;
+-    private Callback mCallback;
+     private List<File> list;
++    private int selectedPosition;
++    private FilenameFilter filter;
++    private final boolean lightTheme;
+ 
+-    public FileBrowserListAdapter(Activity activity, File basePath) {
+-        this.activity = activity;
++    public FileBrowserListAdapter(Activity context, List<File> list, File basePath) {
++        super(context, R.layout.filebrowser_list_item, list);
++        Log.d(TAG, "FileBrowserListAdapter ctor");
++        this.context = context;
++        this.list = list;
+         this.basePath = basePath;
+-    }
++        this.lightTheme = (Utils.getThemeId(context) == R.style.CustomTheme_Light);
+ 
+-    public interface Callback {
+-        void onItemClicked(int adapterPosition);
+-        void onItemLongClicked(int adapterPosition);
++        // Create the filter that checks if the file or directory shall be added to the list
++        filter = new FilenameFilter() {
++            @Override
++            public boolean accept(File dir, String filename) {
++                File f = new File(dir, filename);
++                if (f.isDirectory() && !f.isHidden()) {
++                    return true;
+-    }
++                }
++                return false;
++            }
++        };
++    }
+ 
+-    public void setFileList(List<File> list, File basePath) {
+-        this.list = list;
++    public void updateBasePath(File basePath) {
+         this.basePath = basePath;
+     }
+ 
+-    public void setCallback(Callback mCallback) {
+-        this.mCallback = mCallback;
++    public void updateFileList(List<File> list) {
++        this.list.clear();
++        this.list.addAll(list);
+     }
+ 
+-    @Override
+-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.filebrowser_list_item, parent, false);
+-        return new ViewHolder(view, this);
++    public void setPosition(int pos) {
++        selectedPosition = pos;
+     }
+ 
++    static class ViewHolder {
++        public ImageView icon;
++        public TextView title;
++        public TextView itemCount;
++    }
++
+     @Override
+-    /**
+-     * Applies the values to the available layout items
+-     */
+-    public void onBindViewHolder(ViewHolder holder, int position) {
+-        final boolean lightTheme = (Utils.getThemeId(activity) == R.style.CustomTheme_Light);
++    public View getView(final int position, View convertView, ViewGroup parent) {
++        View view = convertView;
++        ViewHolder holder;
++
++        if (view == null) {
++            view = context.getLayoutInflater().inflate(R.layout.filebrowser_list_item, parent, false);
++            holder = new ViewHolder();
++
++            holder.icon = (ImageView) view.findViewById(R.id.icon);
++            holder.title = (TextView) view.findViewById(R.id.title);
++            holder.itemCount = (TextView) view.findViewById(R.id.item_count);
++            view.setTag(holder);
++        } else {
++            holder = (ViewHolder) view.getTag();
++        }
++
+         final File item = list.get(position);
+         if (item != null) {
+             if (holder.icon != null) {
+@@ -67,6 +96,8 @@
+                 }
+             }
+ 
++            Log.d(TAG, "Showing item " + item.getAbsolutePath());
++
+             if (holder.title != null) {
+                 // Show the option to navigate up if the first item is the base path.
+                 if (position == 0 && item.getAbsolutePath().equals(basePath.getAbsolutePath())) {
+@@ -82,70 +113,20 @@
+                 if (position == 0 && item.getAbsolutePath().equals(basePath.getAbsolutePath())) {
+                     holder.itemCount.setVisibility(View.GONE);
+                 } else {
+-
+-                    FilenameFilter filter = new FilenameFilter() {
+-                        @Override
+-                        public boolean accept(File dir, String filename) {
+-                            File f = new File(dir, filename);
+-                            if (f.isDirectory() && !f.isHidden()) {
+-                                return true;
+-                            }
+-                            return false;
+-                        }
+-                    };
+-
+                     File[] files = item.listFiles(filter);
+                     final int count = (files != null) ? files.length : 0;
+-                    holder.itemCount.setText(activity.getResources().getQuantityString(R.plurals.items, count, count));
++                    holder.itemCount.setText(context.getResources().getQuantityString(R.plurals.items, count, count));
+                     holder.itemCount.setVisibility(View.VISIBLE);
+                 }
+             }
+         }
++        return view;
+     }
+ 
+-    @Override
+-    public int getItemCount() {
+-        return list.size();
++    public File getSelectedItem() {
++        if (list.size() > 0 && list.size() > selectedPosition) {
++            return list.get(selectedPosition);
+-    }
++        }
+-
+-    /**
+-     * Provide a reference to the views for each data item
+-     * Complex data items may need more than one view per item, and
+-     * you provide access to all the views for a data item in a view holder
+-     */
+-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+-        final ImageView icon;
+-        final TextView title;
+-        final TextView itemCount;
+-        final FileBrowserListAdapter adapter;
+-
+-        public ViewHolder(View view, FileBrowserListAdapter adapter) {
+-            super(view);
+-            this.icon = (ImageView) view.findViewById(R.id.icon);
+-            this.title = (TextView) view.findViewById(R.id.title);
+-            this.itemCount = (TextView) view.findViewById(R.id.item_count);
+-
+-            this.adapter = adapter;
+-            view.setClickable(true);
+-            view.setOnClickListener(this);
+-            view.setOnLongClickListener(this);
+-        }
+-
+-        @Override
+-        public void onClick(View view) {
+-            if (adapter.mCallback == null) {
+-                return;
+-            }
+-            adapter.mCallback.onItemClicked(getAdapterPosition());
+-        }
+-
+-        @Override
+-        public boolean onLongClick(View view) {
+-            if (adapter.mCallback == null) {
+-                return false;
+-            }
+-            adapter.mCallback.onItemLongClicked(getAdapterPosition());
+-            return true;
+-        }
++        return null;
+     }
+ }
+Index: app/src/main/java/org/tvheadend/tvhclient/fragments/FileBrowserFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/org/tvheadend/tvhclient/fragments/FileBrowserFragment.java	(date 1474356103000)
++++ app/src/main/java/org/tvheadend/tvhclient/fragments/FileBrowserFragment.java	(revision )
+@@ -2,21 +2,23 @@
+ 
+ import android.app.Activity;
+ import android.app.Dialog;
++import android.content.DialogInterface;
+ import android.content.SharedPreferences;
+ import android.os.Bundle;
+ import android.os.Environment;
+ import android.preference.PreferenceManager;
+ import android.support.annotation.NonNull;
+ import android.support.v4.app.DialogFragment;
+-import android.support.v7.widget.LinearLayoutManager;
+-import android.support.v7.widget.RecyclerView;
+ import android.support.v7.widget.Toolbar;
+ import android.util.Log;
++import android.view.KeyEvent;
+ import android.view.LayoutInflater;
+ import android.view.MenuItem;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.Window;
++import android.widget.AdapterView;
++import android.widget.ListView;
+ import android.widget.TextView;
+ 
+ import org.tvheadend.tvhclient.R;
+@@ -45,10 +47,8 @@
+     private List<File> fileList = new ArrayList<>();
+ 
+     private FileBrowserListAdapter fileListAdapter;
+-    private RecyclerView fileListView;
+-    private RecyclerView.LayoutManager layoutManager;
++    private ListView fileListView;
+     private File basePath = Environment.getExternalStorageDirectory();
+-    private File selectedPath;
+ 
+     public static FileBrowserFragment newInstance(Bundle args) {
+         FileBrowserFragment f = new FileBrowserFragment();
+@@ -61,8 +61,6 @@
+     public Dialog onCreateDialog(Bundle savedInstanceState) {
+         Dialog dialog = super.onCreateDialog(savedInstanceState);
+         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+-        // TODO min height and width
+-
+         return dialog;
+     }
+ 
+@@ -93,14 +91,8 @@
+         // Initialize all the widgets from the layout
+         View v = inflater.inflate(R.layout.filebrowser_layout, container, false);
+         currentPathView = (TextView) v.findViewById(R.id.path);
+-        fileListView = (RecyclerView) v.findViewById(R.id.file_list);
++        fileListView = (ListView) v.findViewById(R.id.file_list);
+ 
+-        // use this setting to improve performance if you know that changes
+-        // in content do not change the layout size of the RecyclerView
+-        fileListView.setHasFixedSize(true);
+-        layoutManager = new LinearLayoutManager(activity);
+-        fileListView.setLayoutManager(layoutManager);
+-
+         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
+         return v;
+@@ -127,7 +119,7 @@
+             @Override
+             public boolean onMenuItemClick(MenuItem item) {
+                 if (item.getItemId() == R.id.menu_select) {
+-                    saveSelectedDirectory(selectedPath);
++                    saveSelectedDirectory(fileListAdapter.getSelectedItem());
+                 }
+                 if (getDialog() != null) {
+                     getDialog().dismiss();
+@@ -137,70 +129,59 @@
+         });
+ 
+         // Create the adapter that will show the contents of the selected path
+-        fileListAdapter = new FileBrowserListAdapter(activity, basePath);
++        updateFileList(basePath);
++        fileListAdapter = new FileBrowserListAdapter(activity, fileList, basePath);
+         fileListView.setAdapter(fileListAdapter);
+ 
+-        // Fill the adapter with the found files and directories
+-        createFileList(basePath);
+-        fileListAdapter.setFileList(getFileList(), basePath);
+-        fileListAdapter.notifyDataSetChanged();
+-
+         // Setup the listeners so that the user can navigate through the
+         // directory structure and also choose a directory by long pressing it
+-        fileListAdapter.setCallback(new FileBrowserListAdapter.Callback() {
++        fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+             @Override
+-            public void onItemClicked(int which) {
+-                selectedPath = fileList.get(which);
++            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+ 
+-                // Get the contents of the newly selected path and update the adapter
+-                createFileList(selectedPath);
+-                fileListAdapter.setFileList(getFileList(), selectedPath.getParentFile());
++                fileListAdapter.setPosition(position);
++                File selectedPath = fileListAdapter.getSelectedItem();
++                Log.d(TAG, "New selected directory is " + selectedPath.getAbsolutePath());
++
++                // Sets the selected directory as the new base, updates the list and adapter
++                fileListAdapter.updateBasePath(selectedPath);
++                updateFileList(selectedPath);
++                fileListAdapter.updateFileList(fileList);
+                 fileListAdapter.notifyDataSetChanged();
++
+                 if (currentPathView != null) {
+                     currentPathView.setText(selectedPath.getAbsolutePath());
+                 }
+             }
++        });
+ 
++        fileListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+             @Override
+-            public void onItemLongClicked(int which) {
++            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                 // Save the selected folder in the preferences
+-                selectedPath = fileList.get(which);
+-                saveSelectedDirectory(selectedPath);
++                fileListAdapter.setPosition(position);
++                Log.d(TAG, "long click, saving selected directory " + fileListAdapter.getSelectedItem().getAbsolutePath());
++
++                saveSelectedDirectory(fileListAdapter.getSelectedItem());
++
++                if (getDialog() != null) {
++                    getDialog().dismiss();
+-            }
++                }
++                return true;
++            }
+         });
+     }
+ 
+-    /**
+-     *
+-     * @param path
+-     */
+-    private void saveSelectedDirectory(File path) {
+-        // TODO remove the path setDestinationInExternalPublicDir from the path?
+-        Log.d(TAG, "Saving the selected path " + path.getAbsolutePath());
+ 
+-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+-        prefs.edit().putString("pref_download_directory", path.getAbsolutePath()).apply();
+-    }
+-
+     /**
+-     * Returns the list of file objects that were found in the given directory
+-     *
+-     * @return fileList List of found files
+-     */
+-    private List<File> getFileList() {
+-        return this.fileList;
+-    }
+-
+-    /**
+      * Creates a list of file objects that are available in the given directory.
+      * The found files are only added to the list if they match the filter.
+-     *
+-     * @param path The directory that shall be searched
+      */
+-    private void createFileList(File path) {
+-        this.fileList.clear();
++    public void updateFileList(File path) {
++        fileList.clear();
+ 
+         if (path.exists()) {
++            Log.d(TAG, "Searching dirs in " + path.getAbsolutePath());
+ 
+             // Create the filter that checks if the file or directory shall be added to the list
+             FilenameFilter filter = new FilenameFilter() {
+@@ -218,6 +199,7 @@
+             File[] files = path.listFiles(filter);
+             if (files != null) {
+                 for (File file : files) {
++                    Log.d(TAG, "Found dir " + file.getAbsolutePath());
+                     fileList.add(file);
+                 }
+             }
+@@ -232,10 +214,22 @@
+ 
+             // Add the parent directory so the user can navigate backwards.
+             final File parent = path.getParentFile();
+-            if (parent != null && !path.getPath().equals(basePath.getAbsolutePath())) {
++            Log.d(TAG, "Adding parent file " + parent.getAbsolutePath() + " for " + path.getAbsolutePath());
++            if (parent != null && !path.getPath().equals(path.getAbsolutePath())) {
+                 fileList.add(0, parent);
+             }
+         }
+     }
+ 
++    /**
++     *
++     * @param path
++     */
++    private void saveSelectedDirectory(File path) {
++        // TODO remove the path setDestinationInExternalPublicDir from the path?
++        Log.d(TAG, "Saving the selected path " + path.getAbsolutePath());
++
++        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
++        prefs.edit().putString("pref_download_directory", path.getAbsolutePath()).apply();
++    }
+ }
+Index: app/src/main/res/layout/filebrowser_layout.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/filebrowser_layout.xml	(date 1474356103000)
++++ app/src/main/res/layout/filebrowser_layout.xml	(revision )
+@@ -40,7 +40,7 @@
+                 android:paddingBottom="16dp"
+                 android:text="Current folder:" />
+ 
+-            <android.support.v7.widget.RecyclerView
++            <ListView
+                 android:id="@+id/file_list"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+\ No newline at end of file

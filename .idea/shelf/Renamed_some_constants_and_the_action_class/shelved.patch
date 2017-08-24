@@ -1,0 +1,208 @@
+Index: app/src/main/res/layout/action_layout.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/action_layout.xml	(revision )
++++ app/src/main/res/layout/action_layout.xml	(revision )
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:focusable="true"
++    android:keepScreenOn="true">
++
++    <SurfaceView
++        android:id="@+id/surface_view"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent" />
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(date 1476706651000)
++++ app/build.gradle	(revision )
+@@ -35,4 +35,5 @@
+     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
+     compile 'com.nineoldandroids:library:2.4.0'
+     compile 'com.afollestad.material-dialogs:core:0.9.0.1'
++    compile 'com.google.android.exoplayer:exoplayer:r1.5.11'
+ }
+Index: app/src/main/java/org/tvheadend/tvhclient/ActionActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/org/tvheadend/tvhclient/ActionActivity.java	(date 1476706651000)
++++ app/src/main/java/org/tvheadend/tvhclient/ActionActivity.java	(revision )
+@@ -20,9 +20,13 @@
+ import android.support.v4.app.ActivityCompat;
+ import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+ import android.util.Base64;
++import android.view.SurfaceView;
+ 
+ import com.afollestad.materialdialogs.DialogAction;
+ import com.afollestad.materialdialogs.MaterialDialog;
++import com.google.android.exoplayer.ExoPlayer;
++import com.google.android.exoplayer.upstream.DefaultHttpDataSource;
++import com.google.android.exoplayer.util.Util;
+ import com.google.android.gms.cast.MediaInfo;
+ import com.google.android.gms.cast.MediaMetadata;
+ import com.google.android.gms.common.images.WebImage;
+@@ -39,8 +43,10 @@
+ import java.io.File;
+ import java.io.UnsupportedEncodingException;
+ import java.net.URLEncoder;
++import java.util.HashMap;
++import java.util.Map;
+ 
+-public class ActionActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
++public class ActionActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback, DemoPlayer.Listener {
+ 
+     private final static String TAG = ActionActivity.class.getSimpleName();
+ 
+@@ -55,10 +61,15 @@
+     private String baseUrl;
+     private String title = "";
+ 
++    private EventLogger eventLogger;
++    private DemoPlayer player;
++    private SurfaceView surfaceView;
++
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         setTheme(Utils.getThemeId(this));
+         super.onCreate(savedInstanceState);
++        setContentView(R.layout.action_layout);
+         Utils.setLanguage(this);
+ 
+         app = (TVHClientApplication) getApplication();
+@@ -67,6 +78,8 @@
+         // If a play intent was sent no action is given, so default to play
+         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, Constants.ACTION_PLAY);
+ 
++        surfaceView = (SurfaceView) findViewById(R.id.surface_view);
++
+         // Check that a valid channel or recording was specified
+         ch = app.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
+         rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+@@ -115,7 +128,7 @@
+                 File file = new File(path, rec.title + ".mkv");
+                 app.log(TAG, "Downloaded recording can be played from '" + file.getAbsolutePath()  + "': " + file.exists());
+                 if (file.exists()) {
+-                    startPlayback(file.getAbsolutePath(), "video/x-matroska");
++                    startExternalPlayback(file.getAbsolutePath(), "video/x-matroska");
+                     break;
+                 }
+             }
+@@ -163,7 +176,13 @@
+         super.onPause();
+         VideoCastManager.getInstance().decrementUiCounter();
+         app.removeListener(this);
++
++        if (player != null) {
++            app.log(TAG, "Releasing exoplayer");
++            player.stop();
++            player.release();
+-    }
++        }
++    }
+ 
+     /**
+      * Creates the request for the download of the defined recording via the
+@@ -322,20 +341,60 @@
+                 playUrl += "&scodec=" + profile.subtitle_codec;
+             }
+         }
+-        startPlayback(playUrl, mime);
++
++        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
++        if (prefs.getBoolean("pref_use_internal_player", true)) {
++            startInternalPlayback(playUrl);
++        } else {
++            startExternalPlayback(playUrl, mime);
+-    }
++        }
++    }
+ 
+     /**
++     *
++     * @param playUrl
++     */
++    private void startInternalPlayback(final String playUrl) {
++        this.runOnUiThread(new Runnable() {
++            public void run() {
++
++                String url = "http://" + playUrl.substring(playUrl.indexOf('@'));
++                app.log(TAG, "Using internal player for url " + url);
++
++                final String userAgent = Util.getUserAgent(ActionActivity.this, "tvhclient");
++                final String auth = "Basic " + Base64.encodeToString((conn.username + ":" + conn.password).getBytes(), Base64.NO_WRAP);
++                Map<String, String> headers = new HashMap<>();
++                headers.put("Authorization", auth);
++
++                DefaultHttpDataSource httpDataSource = new DefaultHttpDataSource(userAgent, null);
++                httpDataSource.setRequestProperty("Authorization", auth);
++
++                eventLogger = new EventLogger();
++                eventLogger.startSession();
++
++                player = new DemoPlayer(new ExtractorWithHTTPHeadersRendererBuilder(ActionActivity.this, userAgent, Uri.parse(url), headers));
++                player.addListener(ActionActivity.this);
++                player.addListener(eventLogger);
++                player.setInfoListener(eventLogger);
++                player.setInternalErrorListener(eventLogger);
++                player.prepare();
++                player.setSurface(surfaceView.getHolder().getSurface());
++                player.setPlayWhenReady(true);
++            }
++        });
++    }
++
++    /**
+      * Starts the external media player with the given url and mime information.
+      *
+      * @param url  The url that shall be played
+      * @param mime The mime type that shall be used
+      */
+-    private void startPlayback(String url, String mime) {
++    private void startExternalPlayback(String url, String mime) {
+ 
+         // Create a special string for the logging without the http credentials
+         String logUrl = "http://<user>:<pass>" + url.substring(url.indexOf('@'));
+-        app.log(TAG, "Starting to play from url " + logUrl);
++        app.log(TAG, "Using external player for url " + logUrl);
+ 
+         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
+         playbackIntent.setDataAndType(Uri.parse(url), mime);
+@@ -527,5 +586,25 @@
+             app.log(TAG,"Permission is granted");
+             return true;
+         }
++    }
++
++    @Override
++    public void onStateChanged(boolean playWhenReady, int playbackState) {
++        if (playWhenReady && playbackState == ExoPlayer.STATE_BUFFERING) {
++            app.showMessage("Exoplayer is buffering");
++
++        } else if (playWhenReady && playbackState == ExoPlayer.STATE_READY) {
++            app.showMessage("Exoplayer is ready");
++        }
++    }
++
++    @Override
++    public void onError(Exception e) {
++        app.log(TAG, e.getMessage());
++    }
++
++    @Override
++    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
++        app.log(TAG, "onVideoSizeChanged W:" + width + " H:" + height);
+     }
+ }

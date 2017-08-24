@@ -1,0 +1,80 @@
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(date 1484215675000)
++++ app/src/main/res/values/strings.xml	(revision )
+@@ -376,5 +376,7 @@
+     <string name="pref_show_program_artwork">Show program artwork/poster</string>
+     <string name="pref_show_progressbar_sum">Indicates in the channel list how much of the current program has already been shown.</string>
+     <string name="pref_show_progressbar">Show progressbar</string>
++    <string name="pref_duration_alternative"></string>
++    <string name="pref_duration_alternative_sum"></string>
+ 
+ </resources>
+Index: app/src/main/res/values-de/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-de/strings.xml	(date 1484215675000)
++++ app/src/main/res/values-de/strings.xml	(revision )
+@@ -373,4 +373,6 @@
+     <string name="pref_show_program_artwork">Zeige das Programmcover</string>
+     <string name="pref_show_progressbar_sum">In der Senderliste wird für das aktuelle Programm angezeigt, wieviel der Sendung bereits gezeigt ausgestrahlt wurde.</string>
+     <string name="pref_show_progressbar">Zeige Fortschrittsbalken</string>
++    <string name="pref_duration_alternative">Zeigt anstatt der Dauer andere Informationen für das Program an</string>
++    <string name="pref_duration_alternative_sum">Alternative Anzeige</string>
+ </resources>
+Index: app/src/main/res/values-de/arrays.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-de/arrays.xml	(date 1484215675000)
++++ app/src/main/res/values-de/arrays.xml	(revision )
+@@ -193,4 +193,5 @@
+         <item>Unveröffentlicht</item>
+         <item>Live-Sendung</item>
+     </string-array>
++    <string-array name="pref_duration_alternative_names" />
+ </resources>
+Index: app/src/main/res/xml/preferences_ui.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/xml/preferences_ui.xml	(date 1484215675000)
++++ app/src/main/res/xml/preferences_ui.xml	(revision )
+@@ -45,6 +45,15 @@
+             android:key="showProgramProgressbarPref"
+             android:summary="@string/pref_show_progressbar_sum"
+             android:title="@string/pref_show_progressbar" />
++        <ListPreference
++            android:name="@string/pref_duration_alternative"
++            android:defaultValue="0"
++            android:dialogTitle="@string/pref_duration_alternative"
++            android:entries="@array/pref_duration_alternative_names"
++            android:entryValues="@array/pref_duration_alternative_ids"
++            android:key="showDurationAlternativePref"
++            android:summary="@string/pref_duration_alternative_sum"
++            android:title="@string/pref_duration_alternative" />
+         <CheckBoxPreference
+             android:defaultValue="true"
+             android:key="playWhenChannelIconSelectedPref"
+\ No newline at end of file
+Index: app/src/main/res/values/arrays.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/arrays.xml	(date 1484215675000)
++++ app/src/main/res/values/arrays.xml	(revision )
+@@ -322,4 +322,6 @@
+         <item>Unpublished</item>
+         <item>Live Broadcast</item>
+     </string-array>
++    <string-array name="pref_duration_alternative_ids" />
++    <string-array name="pref_duration_alternative_names" />
+ </resources>

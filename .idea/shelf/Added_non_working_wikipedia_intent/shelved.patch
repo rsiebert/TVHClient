@@ -1,0 +1,40 @@
+Index: app/src/main/java/org/tvheadend/tvhclient/intent/SearchWikipediaIntent.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/org/tvheadend/tvhclient/intent/SearchWikipediaIntent.java	(revision )
++++ app/src/main/java/org/tvheadend/tvhclient/intent/SearchWikipediaIntent.java	(revision )
+@@ -0,0 +1,32 @@
++package org.tvheadend.tvhclient.intent;
++
++import android.content.Context;
++import android.content.Intent;
++import android.content.pm.PackageManager;
++import android.net.Uri;
++import android.util.Log;
++
++import java.io.UnsupportedEncodingException;
++import java.net.URLEncoder;
++
++public class SearchWikipediaIntent extends Intent {
++
++    public SearchWikipediaIntent(Context ctx, String query) {
++        super(Intent.ACTION_VIEW);
++
++        String url;
++        try {
++            // Try to encode the URL with the default character set.
++            // Only continue if this was successful
++            url = URLEncoder.encode(query, "utf-8");
++            setData(Uri.parse(url));
++
++            PackageManager packageManager = ctx.getPackageManager();
++            if (packageManager.queryIntentActivities(this, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
++                setData(Uri.parse("http://m.wikipedia.org//w/api.php?action=query&format=none&list=search&srsearch=" + url));
++            }
++        } catch (UnsupportedEncodingException e) {
++            Log.i("SearchWikipediaIntent", e.getLocalizedMessage());
++        }
++    }
++}

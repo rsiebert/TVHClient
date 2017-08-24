@@ -1,0 +1,145 @@
+Index: app/src/main/java/org/tvheadend/tvhclient/htsp/HTSService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/org/tvheadend/tvhclient/htsp/HTSService.java	(date 1484061484000)
++++ app/src/main/java/org/tvheadend/tvhclient/htsp/HTSService.java	(revision )
+@@ -239,8 +239,8 @@
+     private void onTagAdd(HTSMessage msg) {
+         ChannelTag tag = new ChannelTag();
+         tag.id = msg.getLong("tagId");
+-        tag.name = msg.getString("tagName", null);
+-        tag.icon = msg.getString("tagIcon", null);
++        tag.name = msg.getString("tagName", "");
++        tag.icon = msg.getString("tagIcon", "");
+         app.addChannelTag(tag);
+         if (tag.icon != null) {
+             getChannelTagIcon(tag);
+@@ -368,12 +368,12 @@
+         rec.id = msg.getLong("id");
+         rec.description = msg.getString("description", "");
+         rec.summary = msg.getString("summary", "");
+-        rec.error = msg.getString("error", null);
++        rec.error = msg.getString("error", "");
+         rec.start = msg.getDate("start");
+-        rec.state = msg.getString("state", null);
++        rec.state = msg.getString("state", "");
+         rec.stop = msg.getDate("stop");
+-        rec.title = msg.getString("title", null);
+-        rec.subtitle = msg.getString("subtitle", null);
++        rec.title = msg.getString("title", "");
++        rec.subtitle = msg.getString("subtitle", "");
+         rec.enabled = msg.getLong("enabled", 1) != 0;
+ 
+         rec.channel = app.getChannel(msg.getLong("channel", 0));
+@@ -401,9 +401,9 @@
+             rec.timerecId = msg.getString("timerecId");
+         }
+ 
+-        rec.episode = msg.getString("episode", null);
+-        rec.comment = msg.getString("comment", null);
+-        rec.subscriptionError = msg.getString("subscriptionError", null);
++        rec.episode = msg.getString("episode", "");
++        rec.comment = msg.getString("comment", "");
++        rec.subscriptionError = msg.getString("subscriptionError", "");
+         rec.streamErrors = msg.getLong("streamErrors", 0);
+         rec.dataErrors = msg.getLong("dataErrors", 0);
+         rec.dataSize = msg.getLong("dataSize", 0);
+@@ -459,9 +459,9 @@
+             rec.timerecId = msg.getString("timerecId");
+         }
+ 
+-        rec.episode = msg.getString("episode", null);
+-        rec.comment = msg.getString("comment", null);
+-        rec.subscriptionError = msg.getString("subscriptionError", null);
++        rec.episode = msg.getString("episode", "");
++        rec.comment = msg.getString("comment", "");
++        rec.subscriptionError = msg.getString("subscriptionError", "");
+         rec.streamErrors = msg.getLong("streamErrors", 0);
+         rec.dataErrors = msg.getLong("dataErrors", 0);
+         rec.dataSize = msg.getLong("dataSize", 0);
+@@ -501,7 +501,7 @@
+         rec.directory = msg.getString("directory", "");
+         rec.channel = app.getChannel(msg.getLong("channel", 0));
+ 
+-        // The enabled flag was added in HTSP API version 18. The support for
++        // The enabled flag was added in HTSP API version 19. The support for
+         // timer recordings are available since version 17.
+         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+             rec.enabled = msg.getLong("enabled", 0) != 0;
+@@ -525,7 +525,7 @@
+         rec.directory = msg.getString("directory", rec.name);
+         rec.channel = app.getChannel(msg.getLong("channel", 0));
+ 
+-        // The enabled flag was added in HTSP API version 18. The support for
++        // The enabled flag was added in HTSP API version 19. The support for
+         // timer recordings are available since version 17.
+         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+             rec.enabled = msg.getLong("enabled", 0) != 0;
+@@ -603,7 +603,7 @@
+         if (s == null) {
+             return;
+         }
+-        String status = msg.getString("status", null);
++        String status = msg.getString("status", "");
+         if (s.status == null ? status != null : !s.status.equals(status)) {
+             s.status = status;
+             app.updateSubscription(s);
+@@ -615,7 +615,7 @@
+         if (s == null) {
+             return;
+         }
+-        String status = msg.getString("status", null);
++        String status = msg.getString("status", "");
+         if (s.status == null ? status != null : !s.status.equals(status)) {
+             s.status = status;
+             app.updateSubscription(s);
+@@ -742,9 +742,9 @@
+         srec.startExtra = msg.getLong("startExtra", 0);
+         srec.stopExtra = msg.getLong("stopExtra", 0);
+         srec.dupDetect = msg.getLong("dupDetect", 0);
+-        srec.title = msg.getString("title");
+-        srec.name = msg.getString("name");
+-        srec.directory = msg.getString("directory");
++        srec.title = msg.getString("title", "");
++        srec.name = msg.getString("name", "");
++        srec.directory = msg.getString("directory", "");
+         srec.channel = app.getChannel(msg.getLong("channel", 0));
+ 
+         app.addSeriesRecording(srec);
+@@ -1488,8 +1488,8 @@
+         request.putField("dvrId", rec.id);
+         connection.sendMessage(request, new HTSResponseHandler() {
+             public void handleResponse(HTSMessage response) {
+-                String path = response.getString("path", null);
+-                String ticket = response.getString("ticket", null);
++                String path = response.getString("path", "");
++                String ticket = response.getString("ticket", "");
+ 
+                 if (path != null && ticket != null) {
+                     app.addTicket(new HttpTicket(path, ticket));
+@@ -1504,8 +1504,8 @@
+         connection.sendMessage(request, new HTSResponseHandler() {
+             public void handleResponse(HTSMessage response) {
+                 DiscSpace ds = new DiscSpace();
+-                ds.freediskspace = response.getString("freediskspace", null);
+-                ds.totaldiskspace = response.getString("totaldiskspace", null);
++                ds.freediskspace = response.getString("freediskspace", "");
++                ds.totaldiskspace = response.getString("totaldiskspace", "");
+                 app.addDiscSpace(ds);
+             }
+         });
+@@ -1517,9 +1517,9 @@
+         connection.sendMessage(request, new HTSResponseHandler() {
+             public void handleResponse(HTSMessage response) {
+                 SystemTime st = new SystemTime();
+-                st.time = response.getString("time", null);
+-                st.timezone = response.getString("timezone", null);
+-                st.gmtoffset = response.getString("gmtoffset", null);
++                st.time = response.getString("time", "");
++                st.timezone = response.getString("timezone", "");
++                st.gmtoffset = response.getString("gmtoffset", "");
+                 app.addSystemTime(st);
+             }
+         });

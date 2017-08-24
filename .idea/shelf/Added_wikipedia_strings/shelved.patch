@@ -1,0 +1,138 @@
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values/strings.xml	(revision )
+@@ -34,6 +34,7 @@
+     <string name="record_remove_all">Remove all recordings</string>
+     <string name="confirm_remove_all">Are you sure you want to remove all recordings?</string>
+     <string name="search_imdb">Search on IMDB</string>
++    <string name="search_wiki">Search on Wikipedia</string>
+     <string name="search_epg">Search the program guide</string>
+     <string name="add">Add</string>
+     <string name="save">Save</string>
+Index: app/src/main/res/values-de/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-de/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values-de/strings.xml	(revision )
+@@ -32,6 +32,7 @@
+     <string name="record_remove_all">Alle Aufnahmen entfernen</string>
+     <string name="confirm_remove_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
+     <string name="search_imdb">Suche auf der IMDB Webseite</string>
++    <string name="search_wiki">Suche auf Wikipedia</string>
+     <string name="search_epg">Suche im TV-Programm</string>
+     <string name="add">Hinzufügen</string>
+     <string name="save">Speichern</string>
+Index: app/src/main/res/values-pl/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-pl/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values-pl/strings.xml	(revision )
+@@ -34,6 +34,7 @@
+     <string name="record_remove_all">Usuń wszystkie nagrania</string>
+     <string name="confirm_remove_all">Czy na pewno chcesz usunąć wszystkie nagrania?</string>
+     <string name="search_imdb">Szukaj na IMDB</string>
++    <string name="search_wiki">Szukaj na Wikipedia</string>
+     <string name="search_epg">Szukaj w przewodniku programów</string>
+     <string name="add">Dodaj</string>
+     <string name="save">Zapisz</string>
+Index: app/src/main/res/values-sk/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-sk/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values-sk/strings.xml	(revision )
+@@ -15,6 +15,7 @@
+     <string name="record_remove_all">Vymazať všetky nahrávky</string>
+     <string name="confirm_remove_all">Naozaj chcete vymazať všetky nahrávky?</string>
+     <string name="search_imdb">Hľadať v IMDB</string>
++    <string name="search_wiki">Hľadať v Wikipedia</string>
+     <string name="search_epg">Hľadať v programovom sprievodcovi</string>
+     <string name="add">Pridať</string>
+     <string name="save">Uložiť</string>
+\ No newline at end of file
+Index: app/src/main/res/values-sv/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-sv/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values-sv/strings.xml	(revision )
+@@ -13,6 +13,7 @@
+     <string name="record_remove">Ta bort inspelning</string>
+     <string name="record_remove_all">Ta bort alla inspelningar</string>
+     <string name="search_imdb">Sök på IMDB</string>
++    <string name="search_wiki">Sök på Wikipedia</string>
+     <string name="search_epg">Sök i EPG</string>
+     <string name="add">Lägg till</string>
+     <string name="save">Spara</string>
+\ No newline at end of file
+Index: app/src/main/res/values-nl/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-nl/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values-nl/strings.xml	(revision )
+@@ -12,6 +12,7 @@
+     <string name="record_remove">Verwijder opname</string>
+     <string name="record_remove_all">Verwijder alle opnames</string>
+     <string name="search_imdb">Zoek op IMDB</string>
++    <string name="search_wiki">Zoek op Wikipedia</string>
+     <string name="search_epg">Zoek in programma gids</string>
+     <string name="add">Toevoegen</string>
+     <string name="save">Opslaan</string>
+Index: app/src/main/res/values-cz/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-cz/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values-cz/strings.xml	(revision )
+@@ -13,6 +13,7 @@
+     <string name="record_remove">Smazat nahrávku</string>
+     <string name="record_remove_all">Smazat všechny nahrávky</string>
+     <string name="search_imdb">Hledat v IMDB</string>
++    <string name="search_wiki">Hledat v Wikipedia</string>
+     <string name="search_epg">Hledat v programovém průvodci</string>
+     <string name="add">Přidat</string>
+     <string name="save">Uložit</string>
+\ No newline at end of file
+Index: app/src/main/res/values-it/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-it/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values-it/strings.xml	(revision )
+@@ -13,6 +13,7 @@
+     <string name="record_remove">Elimina registrazione</string>
+     <string name="record_remove_all">Elimina tutte registrazioni</string>
+     <string name="search_imdb">Cerca su IMDB</string>
++    <string name="search_wiki">Cerca su Wikipedia</string>
+     <string name="search_epg">Cerca nella guida programmi</string>
+     <string name="add">Aggiungi</string>
+     <string name="save">Salva</string>
+Index: app/src/main/res/values-fr/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-fr/strings.xml	(revision 4f4bdb8986c5c0a577b60c04eae0e4e1e8a725ee)
++++ app/src/main/res/values-fr/strings.xml	(revision )
+@@ -34,6 +34,7 @@
+     <string name="record_remove_all">Effacer tous les enregistrements</string>
+     <string name="confirm_remove_all">Etes-vous sur de vouloir effacer tous les enregistrements?</string>
+     <string name="search_imdb">Rechercher sur IMDB</string>
++    <string name="search_wiki">Rechercher sur Wikipedia</string>
+     <string name="search_epg">Recherche dans le guide des programmes</string>
+     <string name="add">Ajouter</string>
+     <string name="save">Sauvegarder</string>
