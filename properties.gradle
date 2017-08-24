@@ -1,7 +1,7 @@
 def tvhProperties = new Properties()
 
-if (rootProject.file("tvhclient.properties").exists()) {
-    tvhProperties.load(new FileInputStream(rootProject.file("tvhclient.properties")))
+if (rootProject.file("local-tvhclient.properties").exists()) {
+    tvhProperties.load(new FileInputStream(rootProject.file("local-tvhclient.properties")))
 }
 
 static def completeName(name) {
