@@ -388,7 +388,4 @@
     <string name="pref_acra_enabled">ACRA enabled</string>
     <string name="pref_acra_disabled">ACRA disabled</string>
 
-    <string name="pref_acra_syslog">Send system logs?</string>
-    <string name="pref_acra_syslog_enabled">Sending system logs is enabled</string>
-    <string name="pref_acra_syslog_disabled">Sending system logs is disabled</string>
 </resources>

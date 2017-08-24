@@ -79,12 +79,6 @@
                     android:summaryOff="@string/pref_acra_disabled"
                     android:defaultValue="true"/>
                 <CheckBoxPreference
-                    android:key="acra.syslog.enable"
-                    android:summaryOn="@string/pref_acra_syslog_enabled"
-                    android:summaryOff="@string/pref_acra_syslog_disabled"
-                    android:title="@string/pref_acra_syslog"
-                    android:defaultValue="true"/>
-                <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref_debug_mode"
                     android:summary="@string/pref_debug_mode_sum"
