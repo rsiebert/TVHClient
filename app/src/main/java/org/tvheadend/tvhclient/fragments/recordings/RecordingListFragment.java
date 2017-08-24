@@ -304,12 +304,14 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_record_remove:
-            if (rec != null && rec.isRecording()) {
-                Utils.confirmStopRecording(activity, rec);
-            } else if (rec != null && rec.isScheduled()) {
-                Utils.confirmCancelRecording(activity, rec);
-            } else {
-                Utils.confirmRemoveRecording(activity, rec);
+            if (rec != null) {
+                if (rec.isRecording()) {
+                    Utils.confirmStopRecording(activity, rec);
+                } else if (rec.isScheduled()) {
+                    Utils.confirmCancelRecording(activity, rec);
+                } else {
+                    Utils.confirmRemoveRecording(activity, rec);
+                }
             }
             return true;
 
