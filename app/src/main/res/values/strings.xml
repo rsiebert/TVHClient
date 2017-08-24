@@ -391,7 +391,4 @@
     <string name="pref_acra_syslog">Send system logs?</string>
     <string name="pref_acra_syslog_enabled">Sending system logs is enabled</string>
     <string name="pref_acra_syslog_disabled">Sending system logs is disabled</string>
-
-    <string name="pref_acra_user_email">Contact email address (optional)</string>
-    <string name="pref_acra_user_email_summary">Sometimes, the developers may need to contact you for more info</string>
 </resources>

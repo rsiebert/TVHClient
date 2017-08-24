@@ -1088,7 +1088,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
                                 ReportField.APP_VERSION_CODE,
                                 ReportField.APP_VERSION_NAME,
                                 ReportField.ANDROID_VERSION,
-                                ReportField.USER_EMAIL,
                                 ReportField.CUSTOM_DATA,
                                 ReportField.STACK_TRACE,
                                 ReportField.LOGCAT)
