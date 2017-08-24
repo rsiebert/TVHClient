@@ -1,0 +1,31 @@
+android {
+    signingConfigs {
+        if (tvhHasProperty("keystoreFile")) {
+            release {
+                storeFile file(tvhProperty("keystoreFile"))
+                storePassword tvhProperty("keystorePassword")
+                keyAlias tvhProperty("keyAlias")
+                keyPassword tvhProperty("keyPassword")
+            }
+        }
+
+        debug {
+            storeFile rootProject.file("debug-keystore.jks")
+            storePassword "password"
+            keyAlias "android debug key"
+            keyPassword "password"
+        }
+    }
+
+    buildTypes {
+        if (tvhHasProperty("keystoreFile")) {
+            release {
+                signingConfig signingConfigs.release
+            }
+        }
+
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+}

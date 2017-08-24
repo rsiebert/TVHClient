@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+apply from: '../version.gradle'
+apply from: '../signing.gradle'
 apply from: '../acra.gradle'
 
 android {
@@ -7,14 +9,14 @@ android {
     buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "org.tvheadend.tvhclient"
-        setProperty("archivesBaseName", "TVHClient-$versionName-$versionCode")
-
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
 
-        versionCode = 96
-        versionName = "1.9.9"
+        versionCode project.ext.versionCode
+        versionName project.ext.versionName
+
+        applicationId "org.tvheadend.tvhclient"
+        setProperty("archivesBaseName", "TVHClient-$versionName-$versionCode")
     }
 
     buildTypes {
