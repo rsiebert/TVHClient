@@ -36,3 +36,13 @@ If you are a programmer, fork the project, and provide patches or enhancements v
 * Download and install Git (https://git-scm.com/downloads)
 * Clone the TVHClient repository
 * Open the project from Android Studio
+
+# Build Properties
+
+Build customization can be performed via a `local-tvhclient.properties` file, for example:
+
+    org.tvheadend.tvhclient.acraReportUri=https://crashreport.com/report/tvhclient
+    org.tvheadend.tvhclient.keystoreFile=keystore.jks
+    org.tvheadend.tvhclient.keystorePassword=MySecretPassword
+    org.tvheadend.tvhclient.keyAlias=My TVHClient Key
+    org.tvheadend.tvhclient.keyPassword=MySecretPassword
