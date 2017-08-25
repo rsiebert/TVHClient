@@ -1,14 +1,14 @@
 android {
     defaultConfig {
         buildConfigField "boolean", "ACRA_ENABLED", "false"
-        buildConfigField "String", "ACRA_REPORT_EMAIL", "\"\""
+        buildConfigField "String", "ACRA_REPORT_URI", "\"\""
     }
 
-    if (tvhHasProperty("acraReportEmail")) {
+    if (tvhHasProperty("acraReportUri")) {
         buildTypes {
             release {
                 buildConfigField "boolean", "ACRA_ENABLED", "true"
-                buildConfigField "String", "ACRA_REPORT_EMAIL", "\"" + tvhProperty("acraReportEmail") + "\""
+                buildConfigField "String", "ACRA_REPORT_URI", "\"" + tvhProperty("acraReportUri") + "\""
             }
         }
     }
