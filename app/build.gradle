@@ -16,7 +16,7 @@ android {
         versionName project.ext.versionName
 
         applicationId "org.tvheadend.tvhclient"
-        setProperty("archivesBaseName", "TVHClient-$versionName-$versionCode")
+        setProperty("archivesBaseName", "${applicationId}-${versionName}")
     }
 
     buildTypes {
