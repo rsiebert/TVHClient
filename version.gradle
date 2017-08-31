@@ -7,7 +7,7 @@ def versionJSON = getJSON(versionFile)
 def buildNumber = "${versionJSON.build}"
 def version = "${versionJSON.major}.${versionJSON.minor}.${versionJSON.patch}"
 
-def versionName = "${version}-${buildNumber}"
+def versionName = "${version}"
 def versionCode = "${buildNumber}"
 def gitVersion = "${grgit.describe()}"
 
