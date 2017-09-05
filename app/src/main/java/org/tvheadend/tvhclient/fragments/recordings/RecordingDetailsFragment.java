@@ -286,30 +286,32 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         downloadRecordingButton.setVisibility(View.GONE);
 
         // TODO use Objects.equals(Object, Object) for comparing strings
-        if (rec.isCompleted()) {
-            // The recording is available, it can be played and removed
-            removeRecordingButton.setVisibility(View.VISIBLE);
-            playRecordingButton.setVisibility(View.VISIBLE);
-            if (app.isUnlocked()) {
-                downloadRecordingButton.setVisibility(View.VISIBLE);
-            }
+        if (rec != null) {
+            if (rec.isCompleted()) {
+                // The recording is available, it can be played and removed
+                removeRecordingButton.setVisibility(View.VISIBLE);
+                playRecordingButton.setVisibility(View.VISIBLE);
+                if (app.isUnlocked()) {
+                    downloadRecordingButton.setVisibility(View.VISIBLE);
+                }
 
-            // The recording is recording it can be played or cancelled
-            removeRecordingButton.setText(getString(R.string.stop));
-            removeRecordingButton.setVisibility(View.VISIBLE);
-            playRecordingButton.setVisibility(View.VISIBLE);
-            if (app.isUnlocked()) {
-                editRecordingButton.setVisibility(View.VISIBLE);
+                // The recording is recording it can be played or cancelled
+                removeRecordingButton.setText(getString(R.string.stop));
+                removeRecordingButton.setVisibility(View.VISIBLE);
+                playRecordingButton.setVisibility(View.VISIBLE);
+                if (app.isUnlocked()) {
+                    editRecordingButton.setVisibility(View.VISIBLE);
+                }
+            } else if (rec.isScheduled()) {
+                // The recording is scheduled, it can only be cancelled
+                removeRecordingButton.setVisibility(View.VISIBLE);
+                if (app.isUnlocked()) {
+                    editRecordingButton.setVisibility(View.VISIBLE);
+                }
+            } else if (rec.isMissed() || rec.isFailed() || rec.isAborted() || rec.isRemoved()) {
+                // The recording has failed or has been missed, allow removing it
+                removeRecordingButton.setVisibility(View.VISIBLE);
             }
-        } else if (rec.isScheduled()) {
-            // The recording is scheduled, it can only be cancelled
-            removeRecordingButton.setVisibility(View.VISIBLE);
-            if (app.isUnlocked()) {
-                editRecordingButton.setVisibility(View.VISIBLE);
-            }
-        } else if (rec.isMissed() || rec.isFailed() || rec.isAborted() || rec.isRemoved()) {
-            // The recording has failed or has been missed, allow removing it
-            removeRecordingButton.setVisibility(View.VISIBLE);
         }
     }
 
