@@ -83,8 +83,10 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         String encodedUsername = null;
         String encodedPassword = null;
         try {
-            encodedUsername = URLEncoder.encode(conn.username, "UTF-8");
-            encodedPassword = URLEncoder.encode(conn.password, "UTF-8");
+            if (conn != null) {
+                encodedUsername = URLEncoder.encode(conn.username, "UTF-8");
+                encodedPassword = URLEncoder.encode(conn.password, "UTF-8");
+            }
         } catch (UnsupportedEncodingException e) {
             // Can't happen since encoding is statically specified
             app.log(TAG, "Got impossible UnsupportedEncodingException");
