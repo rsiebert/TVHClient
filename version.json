@@ -2,6 +2,6 @@
   "limits": "The play store has a limit on the max version code which maps to: 20.99.99",
   "major": 1,
   "minor": 9,
-  "patch": 9,
-  "build": 96
+  "patch": 10,
+  "build": 97
 }
