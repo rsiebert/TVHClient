@@ -38,11 +38,19 @@ def String getLatestChangelog() {
 }
 
 github {
-    owner = tvhProperty("gitUser")
-    repo = tvhProperty("gitUser")
-    token = tvhProperty("gitToken")
+    // Only set the git values if they are available
+    if (tvhHasProperty("gitUser")
+            && tvhHasProperty("gitRepo")
+            && tvhHasProperty("gitToken")
+            && tvhHasProperty("gitBranch")) {
+
+        owner = tvhProperty("gitUser")
+        repo = tvhProperty("gitRepo")
+        token = tvhProperty("gitToken")
+        targetCommitish = tvhProperty("gitBranch")
+    }
+
     tagName = "${project.ext.versionName}"
-    targetCommitish = tvhProperty("gitBranch")
     name = "New version ${project.ext.versionName}"
     body = """${getLatestChangelog()}"""
     assets = [
