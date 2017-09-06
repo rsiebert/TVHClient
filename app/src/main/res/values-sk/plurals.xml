@@ -31,6 +31,11 @@
         <item quantity="few">%d neúspešné nahrávky</item>
         <item quantity="other">%d neúspešných nahráviek</item>
     </plurals>
+    <plurals name="removed_recordings">
+        <item quantity="one">%d vymazaná nahrávka</item>
+        <item quantity="few">%d vymazané nahrávky</item>
+        <item quantity="other">%d vymazaných nahrávok</item>
+    </plurals>
     <plurals name="results">
         <item quantity="one">%d výsledok</item>
         <item quantity="few">%d výsledky</item>
