@@ -88,6 +88,20 @@
                 android:text="@string/scheduled_recordings" />
 
             <TextView
+                android:id="@+id/series_recordings"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/series_recordings" />
+
+            <TextView
+                android:id="@+id/timer_recordings"
+                style="?attr/ContentFont"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/timer_recordings" />
+
+            <TextView
                 android:id="@+id/failed_recordings"
                 style="?attr/ContentFont"
                 android:layout_width="fill_parent"
@@ -101,38 +115,6 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:text="@string/removed_recordings" />
-
-            <TextView
-                android:id="@+id/series_recording_label"
-                style="?attr/TitleFont"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/series_recordings" />
-
-            <TextView
-                android:id="@+id/series_recordings"
-                style="?attr/ContentFont"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="@string/series_recordings" />
-
-            <TextView
-                android:id="@+id/timer_recording_label"
-                style="?attr/TitleFont"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/timer_recordings" />
-
-            <TextView
-                android:id="@+id/timer_recordings"
-                style="?attr/ContentFont"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="@string/timer_recordings" />
 
             <TextView
                 android:id="@+id/currently_recording_label"

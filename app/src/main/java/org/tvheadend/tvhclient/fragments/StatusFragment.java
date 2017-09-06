@@ -45,15 +45,11 @@ public class StatusFragment extends Fragment implements HTSListener {
 	private TextView upcomingRec;
 	private TextView failedRec;
     private TextView removedRec;
+    private TextView seriesRec;
+    private TextView timerRec;
     private TextView freediscspace;
     private TextView totaldiscspace;
     private TextView serverApiVersion;
-
-    // This information depends on the server capabilities
-	private TextView seriesRecLabel;
-	private TextView seriesRec;
-	private TextView timerRecLabel;
-    private TextView timerRec;
     private String connectionStatus = "";
 
     private TVHClientApplication app;
@@ -83,12 +79,10 @@ public class StatusFragment extends Fragment implements HTSListener {
         upcomingRec = (TextView) v.findViewById(R.id.upcoming_recordings);
         failedRec = (TextView) v.findViewById(R.id.failed_recordings);
         removedRec = (TextView) v.findViewById(R.id.removed_recordings);
+        seriesRec = (TextView) v.findViewById(R.id.series_recordings);
+        timerRec = (TextView) v.findViewById(R.id.timer_recordings);
         freediscspace = (TextView) v.findViewById(R.id.free_discspace);
         totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
-        seriesRecLabel = (TextView) v.findViewById(R.id.series_recording_label);
-        seriesRec = (TextView) v.findViewById(R.id.series_recordings);
-        timerRecLabel = (TextView) v.findViewById(R.id.timer_recording_label);
-        timerRec = (TextView) v.findViewById(R.id.timer_recordings);
         serverApiVersion = (TextView) v.findViewById(R.id.server_api_version);
 
         return v;
@@ -399,7 +393,6 @@ public class StatusFragment extends Fragment implements HTSListener {
 
         // Show how many series recordings are available
         if (app.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            seriesRecLabel.setVisibility(View.GONE);
             seriesRec.setVisibility(View.GONE);
         } else {
             String text = app.getSeriesRecordings().size() + " " + getString(R.string.available);
@@ -409,7 +402,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         // Show how many timer recordings are available if the server supports
         // it and the application is unlocked
         if (app.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS || !app.isUnlocked()) {
-            timerRecLabel.setVisibility(View.GONE);
             timerRec.setVisibility(View.GONE);
         } else {
             String text = app.getTimerRecordings().size() + " " + getString(R.string.available);
