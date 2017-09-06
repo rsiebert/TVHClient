@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.adapter;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,11 +21,13 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
     private final static String TAG = ProgramListAdapter.class.getSimpleName();
     private final Activity context;
     private final List<Program> list;
+    private final SharedPreferences prefs;
 
     public ProgramListAdapter(Activity context, List<Program> list) {
         super(context, R.layout.program_list_widget, list);
         this.context = context;
         this.list = list;
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort() {
@@ -89,6 +93,10 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);
             Utils.setGenreColor(context, holder.genre, p, TAG);
+
+            if (holder.subtitle != null) {
+                holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
+            }
         }
         return view;
     }

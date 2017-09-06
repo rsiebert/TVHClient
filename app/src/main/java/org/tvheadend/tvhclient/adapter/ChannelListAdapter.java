@@ -252,6 +252,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
                 if (holder.subtitle != null) {
                     holder.subtitle.setText(p.subtitle);
+                    holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
                 }
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
