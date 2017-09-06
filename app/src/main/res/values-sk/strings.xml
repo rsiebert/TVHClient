@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name">TVHClient</string>
 
     <string name="media_route_menu_title">Prehrať na&#8230;</string>
@@ -12,8 +14,8 @@
     <string name="pref_casting_sum">Nastavenia pre casting kanálov alebo nahrávok do vášho televízora. Váš Tvheadend server musí podporovať transkódovanie v reálnom čase.</string>
     <string name="pref_enable_casting">Zapnúť casting</string>
     <string name="pref_enable_casting_sum">Ak váš Tvheadend server nepodporuje transkódovanie v reálnom čase, odporúčame vypnúť casting.</string>
-    <string name="pref_show_cast_minicontroller">Cast controls</string>
-    <string name="pref_show_cast_minicontroller_sum">Show a cast minicontroller at the bottom of the screen to display some information about the current cast.</string>
+    <string name="pref_show_cast_minicontroller">Ovládacie prvky</string>
+    <string name="pref_show_cast_minicontroller_sum">Zobrazenie ovládacích prvkov vrátane informácii o aktuálnom prenose na spodku obrazovky.</string>
     <string name="download_error_insufficient_space">Chyba počas sťahovania nahrávky \'%s\'. Nedostatok miesta.</string>
     <string name="download_error_authentication_required">Chyba počas sťahovania nahrávky \'%s\'. Autentifikácia zlyhala.</string>
     <string name="no_external_storage_available">Extérne úložisko nieje dostupné alebo je len na čítanie.</string>
@@ -57,6 +59,7 @@
     <string name="remove_all_recordings">Naozaj chcete vymazať VŠETKY nahrávky?</string>
     <string name="cancel_recording">Naozaj chcete odstrániť naplánované nahrávanie \'%s\'?</string>
     <string name="stop_recording">Naozaj chcete zastaviť prebiehajúce nahrávanie \'%s\'?</string>
+    <string name="add_recording_directory">Priečinok pre nahrávky</string>
     <string name="add_title">Zadajte názov</string>
     <string name="add_name">Zadajte meno</string>
     <string name="add_recording">Pridať nahrávanie</string>
@@ -277,6 +280,7 @@
     <string name="status">Stav</string>
 
     <string name="status_icon">Ikona stavu</string>
+    <string name="directory">Priečinok</string>
     <string name="title">Názov</string>
     <string name="subtitle">Podtitulok</string>
     <string name="channel">Kanál</string>
@@ -367,5 +371,16 @@
 
     <string name="pref_show_program_artwork_sum">Zobrazí artwork/plagát obrázok aktuálneho programu. Server musí poskytovať tieto informácie.</string>
     <string name="pref_show_program_artwork">Zobraziť artwork/plagát programu</string>
+    <string name="pref_show_progressbar_sum">Indikuje v zozname kanálov, koľko času už ubehlo z aktuálneho programu.</string>
+    <string name="pref_show_progressbar">Zobraziť indikátor priebehu</string>
+    <string name="pref_customize_user_interface_sum">Výber rôznych nastavení, ktoré definujú, aké informácie budú zobrazené na jednotlivých obrazovkách.</string>
+    <string name="pref_customize_user_interface">Upraviť použivateľské rozhranie</string>
+    <string name="pref_general">General</string>
+    <string name="pref_date_time_format">Formát dátumu a času</string>
+    <string name="pref_date_time_format_sum">Zobrazí dátum a čas, ktorý je používaný vo vašej krajine. V opačnom prípade bude použitý formát \'31.12.2017, 21:09\'.</string>
+
+    <string name="pref_disable_acra">Zapnúť ACRA?</string>
+    <string name="pref_acra_enabled">ACRA zapnuté</string>
+    <string name="pref_acra_disabled">ACRA vypnuté</string>
 
 </resources>
