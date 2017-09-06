@@ -995,6 +995,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         p.nextId = sub.getLong("nextEventId", 0);
         p.description = sub.getString("description");
         p.summary = sub.getString("summary");
+        p.subtitle = sub.getString("subtitle");
         p.recording = app.getRecording(sub.getLong("dvrId", 0));
         p.contentType = sub.getInt("contentType", -1);
         p.title = sub.getString("title");
