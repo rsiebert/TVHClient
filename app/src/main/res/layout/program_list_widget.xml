@@ -49,6 +49,15 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/subtitle"
+            style="?attr/SubtitleFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/subtitle" />
+
+        <TextView
             android:id="@+id/summary"
             style="?attr/SubtitleFont"
             android:layout_width="wrap_content"
