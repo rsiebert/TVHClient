@@ -83,7 +83,12 @@ public class SettingsNotificationFragment extends PreferenceFragment {
                 // required notifications, otherwise remove them
                 if (prefShowNotifications.isChecked()) {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-                    final long offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+                    long offset = 0;
+                    try {
+                        offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+                    } catch(NumberFormatException ex) {
+
+                    }
                     app.addNotifications(offset);
                 } else {
                     app.cancelNotifications();
@@ -98,7 +103,11 @@ public class SettingsNotificationFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object offset) {
                 // Refresh all notifications by removing adding them again
                 app.cancelNotifications();
-                app.addNotifications(Long.valueOf((String) offset));
+                try {
+                    app.addNotifications(Long.valueOf((String) offset));
+                } catch (NumberFormatException ex) {
+
+                }
                 return true;
             }
         });

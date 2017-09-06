@@ -787,7 +787,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (!loading && prefs.getBoolean("pref_show_notifications", false)) {
-            final long offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+            long offset = 0;
+            try {
+                offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+            } catch(NumberFormatException ex) {
+
+            }
             addNotifications(offset);
         }
     }
@@ -1180,7 +1185,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     private void addNotification(long id) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final long offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+        long offset = 0;
+        try {
+            offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
+        } catch(NumberFormatException ex) {
+
+        }
         addNotification(id, offset);
     }
 

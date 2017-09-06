@@ -633,8 +633,16 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
         timeEnabledValue = timeEnabled.isChecked();
 
-        startExtraTimeValue = Long.valueOf(startExtraTime.getText().toString());
-        stopExtraTimeValue = Long.valueOf(stopExtraTime.getText().toString());
+        try {
+            startExtraTimeValue = Long.valueOf(startExtraTime.getText().toString());
+        } catch(NumberFormatException ex) {
+            startExtraTimeValue = 0;
+        }
+        try {
+            stopExtraTimeValue = Long.valueOf(stopExtraTime.getText().toString());
+        } catch(NumberFormatException ex) {
+            stopExtraTimeValue = 0;
+        }
 
         directoryValue = directory.getText().toString();
         titleValue = title.getText().toString();
