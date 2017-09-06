@@ -60,6 +60,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private ProgramGuideListAdapter adapter;
     private ListView listView;
     private LinearLayout titleLayout;
+    private TextView titleDateText;
+    private TextView titleDate;
+    private TextView titleHours;
     private ImageView currentTimeIndication;
     private Bundle bundle;
     private Program selectedProgram = null;
@@ -86,10 +89,31 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         View v = inflater.inflate(R.layout.program_guide_pager_list, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
         titleLayout = (LinearLayout) v.findViewById(R.id.pager_title);
-        TextView titleDateText = (TextView) v.findViewById(R.id.pager_title_date_text);
-        TextView titleDate = (TextView) v.findViewById(R.id.pager_title_date);
-        TextView titleHours = (TextView) v.findViewById(R.id.pager_title_hours);
+        titleDateText = (TextView) v.findViewById(R.id.pager_title_date_text);
+        titleDate = (TextView) v.findViewById(R.id.pager_title_date);
+        titleHours = (TextView) v.findViewById(R.id.pager_title_hours);
         currentTimeIndication = (ImageView) v.findViewById(R.id.current_time);
+        return v;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (FragmentActivity) activity;
+        app = (TVHClientApplication) activity.getApplication();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (activity instanceof FragmentStatusInterface) {
+            fragmentStatusInterface = (FragmentStatusInterface) activity;
+        }
+        if (activity instanceof FragmentScrollInterface) {
+            fragmentScrollInterface = (FragmentScrollInterface) activity;
+        }
 
         // Set the date and the time slot hours in the title of the fragment
         bundle = getArguments();
@@ -114,7 +138,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             DisplayMetrics displaymetrics = new DisplayMetrics();
             activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             if (titleDateText.getText().equals(titleDate.getText()) ||
-                (displaymetrics.widthPixels < 400)) {
+                    (displaymetrics.widthPixels < 400)) {
                 titleDate.setVisibility(View.GONE);
             }
 
@@ -123,27 +147,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             final String end = sdf.format(endDate);
             String diff = start + " - " + end;
             titleHours.setText(diff);
-        }
-        return v;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
-        app = (TVHClientApplication) activity.getApplication();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (activity instanceof FragmentStatusInterface) {
-            fragmentStatusInterface = (FragmentStatusInterface) activity;
-        }
-        if (activity instanceof FragmentScrollInterface) {
-            fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
 
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
