@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name">TVHClient</string>
     
     <string name="media_route_menu_title">Odtwarzaj na&#8230;</string>
@@ -57,6 +59,7 @@
     <string name="remove_all_recordings">Jesteś pewny że chcesz usunąć wszystkie nagrania?</string>
     <string name="cancel_recording">Jesteś pewny że chcesz anulować zaplanowane nagrywanie \'%s\'?</string>
     <string name="stop_recording">Jesteś pewny że chcesz zatrzymać uruchomione nagrywanie \'%s\'?</string>
+    <string name="add_recording_directory">Zapisz katalog nagrywania</string>
     <string name="add_title">Tytu dla nagrania</string>
     <string name="add_name">Nazwa dla tego wpisu</string>
     <string name="add_recording">Dodaj nowe nagrywanie</string>
@@ -277,6 +280,7 @@
     <string name="status">Status</string>
 
     <string name="status_icon">Status ikon</string>
+    <string name="directory">Katalog</string>
     <string name="title">Tytuł</string>
     <string name="subtitle">Podtytuł</string>
     <string name="channel">Kanał</string>
@@ -367,5 +371,15 @@
     
     <string name="pref_show_program_artwork_sum">Wyświetla obraz grafiki/plakatu dla bieżącego programu.Serwer musi dostarczać informacji.</string>
     <string name="pref_show_program_artwork">Pokaż grafikę/plakat programu</string>
+    <string name="pref_show_progressbar_sum">Pokazuj na liście kanałów, ile aktualnego programu zostało już wyświetlone.</string>
+    <string name="pref_show_progressbar">Pokaż pasek postępu</string>
+    <string name="pref_customize_user_interface_sum">Wybierz jedną z wielu opcji, aby zdecydować, które informacje będą wyświetlane na każdym ekranie.</string>
+    <string name="pref_customize_user_interface">Dostosuj interfejs użytkownika</string>
+    <string name="pref_general">Ogólne</string>
+    <string name="pref_date_time_format">Format daty i czasu</string>
+    <string name="pref_date_time_format_sum">Wyświetl datę i godzinę jaka jest zwykle uzywana w Twoim karju. W przeciwnym wypadku zostanie użyty format \'31.12.2017, 21:09\'.</string>
     
+    <string name="pref_disable_acra">Włączyć ACRA?</string>
+    <string name="pref_acra_enabled">ACRA włączone</string>
+    <string name="pref_acra_disabled">ACRA wyłączone</string>
 </resources>
