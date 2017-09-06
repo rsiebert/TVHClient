@@ -37,6 +37,16 @@
         <item quantity="many">%d Nieprawidłowych nagrań</item>
         <item quantity="other">%d Nieprawidłowych nagrań</item>
     </plurals>
+    <plurals name="removed_recordings">
+        <item quantity="one">%d Usunięte nagranie</item>
+        <item quantity="few">%d Usuniete nagrania</item>
+        <item quantity="other">%d Usuniętych nagrań</item>
+    </plurals>
+    <plurals name="results">
+        <item quantity="one">%d wynik</item>
+        <item quantity="few">%d wyniki</item>
+        <item quantity="other">%d wyników</item>
+    </plurals>
     <plurals name="searching_programs">
         <item quantity="one">Wyszukano %d program</item>
         <item quantity="few">Wyszukano %d programy</item>
