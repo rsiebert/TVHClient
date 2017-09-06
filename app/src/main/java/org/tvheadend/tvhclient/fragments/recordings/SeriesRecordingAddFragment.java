@@ -397,7 +397,14 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 			}
         });
 
-        priority.setText(priorityList[(int) priorityValue]);
+        // TODO check why array index out of bound exception occurred
+        // Somehow the value was the same as the list size and
+        // therefore has triggered an array index out of bound exception
+
+        if (priorityList.length > priorityValue) {
+            priority.setText(priorityList[(int) priorityValue]);
+        }
+
         priority.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
