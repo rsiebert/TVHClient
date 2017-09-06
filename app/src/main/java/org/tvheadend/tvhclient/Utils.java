@@ -519,14 +519,12 @@ public class Utils {
                 final java.text.DateFormat df = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, locale);
                 startTime = df.format(start.getTime());
                 endTime = df.format(stop.getTime());
-//                Log.d(TAG, "Setting time using locale " + locale.getCountry() + ", " + locale.getDisplayLanguage() + ", value: " + startTime + " - " + endTime);
             }
         } else {
             // Show the date using the default format like 31.07.2013
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
             startTime = sdf.format(start.getTime());
             endTime = sdf.format(stop.getTime());
-//            Log.d(TAG, "Setting time using default of 'HH:mm', value: " + startTime + " - " + endTime);
         }
 
         String value = startTime + " - " + endTime;
@@ -614,13 +612,11 @@ public class Utils {
                     if (locale != null) {
                         final java.text.DateFormat df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale);
                         dateText = df.format(start.getTime());
-//                        Log.d(TAG, "Setting date using locale " + locale.getCountry() + ", " + locale.getDisplayLanguage() + ", value: " + dateText);
                     }
                 } else {
                     // Show the date using the default format like 31.07.2013
                     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
                     dateText = sdf.format(start.getTime());
-//                    Log.d(TAG, "Setting date using default of 'dd.MM.yyyy', value: " + dateText);
                 }
 
                 date.setText(dateText);
