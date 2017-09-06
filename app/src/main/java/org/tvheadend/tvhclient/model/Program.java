@@ -13,6 +13,7 @@ public class Program extends Model implements Comparable<Program> {
     public String title;
     public String description;
     public String summary;
+    public String subtitle;
     public SeriesInfo seriesInfo;
     public int starRating;
     public Channel channel;
