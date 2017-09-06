@@ -88,6 +88,15 @@
             android:singleLine="true"
             android:text="@string/title" />
 
+        <TextView
+            android:id="@+id/subtitle"
+            style="?attr/SubtitleFont"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/subtitle" />
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

@@ -89,6 +89,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         public ImageView icon;
         public TextView icon_text;
         public TextView title;
+        public TextView subtitle;
         public TextView nextTitle;
         public TextView channel;
         public TextView time;
@@ -115,6 +116,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             holder.channel_item_layout = (LinearLayout) view.findViewById(R.id.channel_item_layout);
             holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
+            holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
             holder.nextTitle = (TextView) view.findViewById(R.id.next_title);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.progressbar = (ProgressBar) view.findViewById(R.id.progressbar);
@@ -238,12 +240,18 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_transmission);
                 }
+                if (holder.subtitle != null) {
+                    holder.subtitle.setVisibility(View.GONE);
+                }
                 if (holder.nextTitle != null) {
                     holder.nextTitle.setVisibility(View.GONE);
                 }
             } else if (p != null) {
                 if (holder.title != null) {
                     holder.title.setText(p.title);
+                }
+                if (holder.subtitle != null) {
+                    holder.subtitle.setText(p.subtitle);
                 }
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
@@ -262,6 +270,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 // bar,the time and duration texts.
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_data);
+                }
+                if (holder.subtitle != null) {
+                    holder.subtitle.setVisibility(View.GONE);
                 }
                 if (holder.progressbar != null) {
                     holder.progressbar.setVisibility(View.GONE);
