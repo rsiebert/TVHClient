@@ -40,11 +40,13 @@
     <plurals name="removed_recordings">
         <item quantity="one">%d Usunięte nagranie</item>
         <item quantity="few">%d Usuniete nagrania</item>
+        <item quantity="many">%d Usuniętych nagrań</item>
         <item quantity="other">%d Usuniętych nagrań</item>
     </plurals>
     <plurals name="results">
         <item quantity="one">%d wynik</item>
         <item quantity="few">%d wyniki</item>
+        <item quantity="many">%d wyników</item>
         <item quantity="other">%d wyników</item>
     </plurals>
     <plurals name="searching_programs">

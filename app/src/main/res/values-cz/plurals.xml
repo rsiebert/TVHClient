@@ -31,6 +31,16 @@
         <item quantity="few">%d Nezdařené nahrávky</item>
         <item quantity="other">%d Nezdařených nahrávek</item>
     </plurals>
+    <plurals name="series_recordings">
+        <item quantity="one">%d Opakované nahrávka</item>
+        <item quantity="few">%d Opakované nahrávky</item>
+        <item quantity="other">%d Opakovaných nahrávek</item>
+    </plurals>
+    <plurals name="timer_recordings">
+        <item quantity="one">%d Ruční nahrávka</item>
+        <item quantity="few">%d Ruční nahrávky</item>
+        <item quantity="other">%d Ručných nahrávek</item>
+    </plurals>
     <plurals name="searching_programs">
         <item quantity="one">Vyhledávání %d programu</item>
         <item quantity="few">Vyhledávání %d programy</item>

@@ -395,17 +395,19 @@ public class StatusFragment extends Fragment implements HTSListener {
         if (app.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             seriesRec.setVisibility(View.GONE);
         } else {
-            String text = app.getSeriesRecordings().size() + " " + getString(R.string.available);
-            seriesRec.setText(text);
+            final int seriesRecCount = app.getSeriesRecordings().size();
+            seriesRec.setText(getResources().getQuantityString(
+                    R.plurals.series_recordings, seriesRecCount, seriesRecCount));
         }
 
         // Show how many timer recordings are available if the server supports
         // it and the application is unlocked
-        if (app.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS || !app.isUnlocked()) {
+        if (app.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
             timerRec.setVisibility(View.GONE);
         } else {
-            String text = app.getTimerRecordings().size() + " " + getString(R.string.available);
-            timerRec.setText(text);
+            final int timerRecCount = app.getTimerRecordings().size();
+            timerRec.setText(getResources().getQuantityString(
+                    R.plurals.timer_recordings, timerRecCount, timerRecCount));
         }
 
         String version = String.valueOf(app.getProtocolVersion())

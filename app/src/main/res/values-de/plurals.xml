@@ -29,6 +29,14 @@
         <item quantity="one">%d Gelöschte Aufnahme</item>
         <item quantity="other">%d Gelöschte Aufnahmen</item>
     </plurals>
+    <plurals name="series_recordings">
+        <item quantity="one">%d Serienaufnahme</item>
+        <item quantity="other">%d Serienaufnahmen</item>
+    </plurals>
+    <plurals name="timer_recordings">
+        <item quantity="one">%d Manuelle Aufnahme</item>
+        <item quantity="other">%d Manuelle Aufnahmen</item>
+    </plurals>
     <plurals name="results">
         <item quantity="one">%d Ergebnis</item>
         <item quantity="other">%d Ergebnisse</item>

@@ -29,6 +29,14 @@
         <item quantity="one">%d Removed recording</item>
         <item quantity="other">%d Removed recordings</item>
     </plurals>
+    <plurals name="series_recordings">
+        <item quantity="one">%d Series recording</item>
+        <item quantity="other">%d Series recordings</item>
+    </plurals>
+    <plurals name="timer_recordings">
+        <item quantity="one">%d Timer recording</item>
+        <item quantity="other">%d Timer recordings</item>
+    </plurals>
     <plurals name="results">
         <item quantity="one">%d result</item>
         <item quantity="other">%d results</item>
