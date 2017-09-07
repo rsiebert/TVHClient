@@ -35,6 +35,8 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ProgramDetailsFragment extends DialogFragment implements HTSListener {
 
@@ -125,8 +127,12 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         if (channel != null) {
             // Find the program with the given id within this channel so we can
             // show the program details
-            for (Program p : channel.epg) {
-                if (p != null && p.id == programId) {
+            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
+            Iterator<Program> it = epg.iterator();
+            Program p;
+            while (it.hasNext()) {
+                p = it.next();
+                if (p.id == programId) {
                     program = p;
                     break;
                 }

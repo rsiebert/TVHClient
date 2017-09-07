@@ -424,7 +424,12 @@ public class ProgramGuideItemView extends LinearLayout {
                     // all program in the current channel until we find the one.
                     Program program = null;
                     long id = (Long) v.getTag();
-                    for (Program p : channel.epg) {
+
+                    CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
+                    Iterator<Program> it = epg.iterator();
+                    Program p;
+                    while (it.hasNext()) {
+                        p = it.next();
                         if (p.id == id) {
                             program = p;
                             break;
