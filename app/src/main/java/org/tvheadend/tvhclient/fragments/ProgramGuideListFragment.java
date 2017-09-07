@@ -41,12 +41,10 @@ import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -122,16 +120,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             // Get the current visible tab index
             tabIndex = bundle.getInt(Constants.BUNDLE_EPG_INDEX, -1);
 
-            final long startTime = bundle.getLong(Constants.BUNDLE_EPG_START_TIME, 0);
-            final Date startDate = new Date(startTime);
-            final long endTime = bundle.getLong(Constants.BUNDLE_EPG_END_TIME, 0);
-            final Date endDate = new Date(endTime);
+            final Date startDate = new Date(bundle.getLong(Constants.BUNDLE_EPG_START_TIME, 0));
+            final Date endDate = new Date(bundle.getLong(Constants.BUNDLE_EPG_END_TIME, 0));
 
             // Set the current date and the date as text in the title
             Utils.setDate(titleDateText, startDate);
-            final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            String value = "(" + sdf2.format(startDate) + ")";
-            titleDate.setText(value);
+            Utils.setDate(titleDate, startDate);
 
             // Hide the date text if it shows the date time or the display is too narrow.
             // It is considered too narrow if the width falls below 400 pixels.
@@ -142,11 +136,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                 titleDate.setVisibility(View.GONE);
             }
 
-            final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
-            final String start = sdf.format(startDate);
-            final String end = sdf.format(endDate);
-            String diff = start + " - " + end;
-            titleHours.setText(diff);
+            Utils.setTime(titleHours, startDate, endDate);
         }
 
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
