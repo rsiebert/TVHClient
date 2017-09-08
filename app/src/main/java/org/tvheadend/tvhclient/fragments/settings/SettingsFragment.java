@@ -454,6 +454,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     private void mailLogfile(String filename) {
+        Log.d(TAG, "mailLogfile() called with: filename = [" + filename + "]");
+
+        // TODO sync logfile before sending?
+
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US);
         String dateText = sdf.format(date.getTime());
@@ -467,6 +471,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         }
 
         if (fileUri != null) {
+            app.log(TAG, "mailLogfile: Sending mail to developer " + BuildConfig.DEVELOPER_EMAIL);
             // Create the intent with the email, some text and the log 
             // file attached. The user can select from a list of 
             // applications which he wants to use to send the mail

@@ -1237,6 +1237,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
         try {
             // Open the buffer to write data into the log file. Append the data.
             logfileBuffer = new BufferedOutputStream(new FileOutputStream(logFile, true));
+            log(TAG, "\n\n\n");
             log(TAG, "enableLogToFile: Logging started");
 
             try {
