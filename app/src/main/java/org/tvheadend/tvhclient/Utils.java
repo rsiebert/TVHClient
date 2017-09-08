@@ -1188,7 +1188,7 @@ public class Utils {
             // NOP
         }
 
-        final String SALT = "rsiebert80@gmail.com";
+        final String SALT = BuildConfig.PUBLIC_KEY_SALT;
 
         // Note that this is not plain public key but public key encoded with
         // x() method. As symmetric ciphering is used in x() the same method is

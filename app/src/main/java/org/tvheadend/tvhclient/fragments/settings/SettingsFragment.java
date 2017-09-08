@@ -31,6 +31,7 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -475,7 +476,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             // file attached. The user can select from a list of 
             // applications which he wants to use to send the mail
             Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rsiebert80@gmail.com"});
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{BuildConfig.DEVELOPER_EMAIL});
             intent.putExtra(Intent.EXTRA_SUBJECT, "TVHClient Logfile");
             intent.putExtra(Intent.EXTRA_TEXT, "Logfile was sent on " + dateText);
             intent.putExtra(Intent.EXTRA_STREAM, fileUri);
