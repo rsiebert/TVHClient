@@ -382,4 +382,6 @@
     <string name="pref_disable_acra">Włączyć ACRA?</string>
     <string name="pref_acra_enabled">ACRA włączone</string>
     <string name="pref_acra_disabled">ACRA wyłączone</string>
+    <string name="pref_show_program_subtitle_sum">Pokaż napisy do bieżącego programu</string>
+    <string name="pref_show_program_subtitle">Pokaż napisy programu</string>
 </resources>
