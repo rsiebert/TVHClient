@@ -292,6 +292,8 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_channels">Canali</string>
     <string name="pref_connection_timeout">Timeout connessione</string>
     <string name="pref_connection_timeout_sum">"Definisce il tempo in secondi entro il quale deve essere stabilita la connessione con il server. L'aumento del valore può migliorare la connessione in reti lente."</string>
+    <string name="pref_debug_mode">Modo debug</string>
+    <string name="pref_debug_mode_sum">"Registra informazioni dettagliate in un file registro nello storage interno. Se abilitato può rallentare leggemente l'app."</string>
     <string name="pref_download_directory">Cartella download</string>
     <string name="pref_download_directory_sum">"Le registrazioni scaricate verranno salvate in questa cartella: '%s'"</string>
     <string name="pref_enable_casting">Abilita trasmissione</string>
@@ -304,6 +306,8 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_play_when_channel_icon_selected">Icona canale riproduzione o registrazione</string>
     <string name="pref_play_when_channel_icon_selected_sum">"Avvia la riproduzione del canale o registrazione attuale quando l'icona del canale è selezionata nell'elenco canali, guida programmi e elenco registrazioni."</string>
     <string name="pref_playback_and_recording">Riproduzione e registrazione</string>
+    <string name="pref_send_logfile">Invia registro allo sviluppatore</string>
+    <string name="pref_send_logfile_sum">Invia il file del registro eventi allo sviluppatore per supportarlo nel miglioramento del programma. Verranno inviate solo informazioni di stato di TVHClient!</string>
     <string name="pref_show_cast_minicontroller">Controlli trasmissione</string>
     <string name="pref_show_cast_minicontroller_sum">Visualizza un mini controllo trasmissione in fondo allo schermo con alcune informazioni sulla trasmissione attuale.</string>
     <string name="pref_show_notification_offset">Durata notifiche</string>
