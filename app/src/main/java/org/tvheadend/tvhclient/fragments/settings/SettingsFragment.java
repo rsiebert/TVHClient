@@ -268,7 +268,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                 for (File file : files) {
                                     if (file.toString().endsWith(".png")) {
                                         if (!file.delete()) {
-                                            app.log(TAG, "Could not delete channel icon " + file.getName());
+                                            app.log(TAG, "onClick: Could not delete channel icon " + file.getName());
                                         }
                                         if (settingsInterface != null) {
                                             settingsInterface.reconnect();
@@ -426,23 +426,18 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private boolean isReadPermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (activity.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                app.log(TAG,"Permission is granted");
                 return true;
             } else {
-                app.log(TAG,"Permission is revoked");
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         } else {
-            app.log(TAG,"Permission is granted");
             return true;
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        app.log(TAG, "Permission: " + permissions[0] + " was " + grantResults[0]);
-
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                 permissions[0].equals("android.permission.READ_EXTERNAL_STORAGE")) {
 
@@ -468,7 +463,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             File logFile = new File(activity.getCacheDir(), "logs/" + filename);
             fileUri = FileProvider.getUriForFile(activity, "org.tvheadend.tvhclient.fileprovider", logFile);
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, "The file can't be shared, " + e.getLocalizedMessage());
+            // NOP
         }
 
         if (fileUri != null) {

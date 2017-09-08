@@ -25,8 +25,6 @@ import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
 import org.acra.ACRA;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
 import org.acra.config.ACRAConfiguration;
 import org.acra.config.ACRAConfigurationException;
 import org.acra.config.ConfigurationBuilder;
@@ -562,7 +560,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if (prefs.getBoolean("pref_show_notifications", false)) {
-                log(TAG, "Recording was removed, cancel notification");
                 cancelNotification(rec.id);
             }
         }
@@ -1046,12 +1043,10 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
         bp = new BillingProcessor(this, Utils.getPublicKey(this), this);
         if (!BillingProcessor.isIabServiceAvailable(this)) {
-            log(TAG, "In app purchase is not available");
+            log(TAG, "onCreate: billing not available");
         } else {
-            if (bp.loadOwnedPurchasesFromGoogle()) {
-                log(TAG, "Loaded purchase information from Google");
-            } else {
-                log(TAG, "Could not load purchase information from Google");
+            if (!bp.loadOwnedPurchasesFromGoogle()) {
+                log(TAG, "onCreate: Could not load purchase information");
             }
         }
 
@@ -1086,7 +1081,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
         // The following line triggers the initialization of ACRA
         if (BuildConfig.ACRA_ENABLED) {
-            Log.i(TAG, "Initializing ACRA with uri " + BuildConfig.ACRA_REPORT_URI);
+            log(TAG, "attachBaseContext: Initializing ACRA");
             try {
                 final ACRAConfiguration config = new ConfigurationBuilder(this)
                         .setHttpMethod(HttpSender.Method.PUT)
@@ -1097,7 +1092,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
                         .build();
                 ACRA.init(this, config);
             } catch (ACRAConfigurationException e) {
-                Log.e(TAG, "Failed to init ACRA", e);
+                log(TAG, "attachBaseContext: Failed to init ACRA " + e.getLocalizedMessage());
             }
         }
     }
@@ -1139,12 +1134,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        log(TAG, "Billing error " + errorCode);
+        log(TAG, "onBillingError() called with: errorCode = [" + errorCode + "], error = [" + error + "]");
     }
 
     @Override
     public void onBillingInitialized() {
-        log(TAG, "Billing is initialized");
+        log(TAG, "onBillingInitialized() called");
     }
 
     @Override
@@ -1160,7 +1155,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     @Override
     public void onPurchaseHistoryRestored() {
-        log(TAG, "Purchase history restored");
+        log(TAG, "onPurchaseHistoryRestored() called");
     }
 
     /**
@@ -1179,8 +1174,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
         final boolean wifiConnected = (wifi != null) && wifi.isConnected();
         final boolean mobileConnected = (mobile != null) && mobile.isConnected();
 
-        // Get the status of the Ethernet connection, some tablets can use an
-        // Ethernet cable
+        // Get the status of the Ethernet connection, some tablets can use an ethernet cable
         final NetworkInfo eth = cm.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
         boolean ethConnected = (eth != null) && eth.isConnected();
 
@@ -1202,9 +1196,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
             try {
                 logfileBuffer.write(timestamp.getBytes());
             } catch (IOException e) {
-                if (BuildConfig.DEBUG_MODE) {
-                    Log.d(TAG, "Error writing to logfile buffer. " + e.getLocalizedMessage());
-                }
+                // NOP
             }
         }
     }
@@ -1226,12 +1218,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * 
      */
     public void enableLogToFile() {
+        log(TAG, "enableLogToFile() called");
 
         // Get the path where the logs are stored
         logPath = new File(getCacheDir(), "logs");
         if (!logPath.exists()) {
             if (!logPath.mkdirs()) {
-                log(TAG, "Could not create log path");
+                log(TAG, "enableLogToFile: Could not create directory " + logPath.getName());
+                return;
             }
         }
 
@@ -1243,18 +1237,18 @@ public class TVHClientApplication extends Application implements BillingProcesso
         try {
             // Open the buffer to write data into the log file. Append the data.
             logfileBuffer = new BufferedOutputStream(new FileOutputStream(logFile, true));
-            log(TAG, "Log started");
+            log(TAG, "enableLogToFile: Logging started");
 
             try {
                 PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
-                log(TAG, "Application version: " + info.versionName + " (" + info.versionCode + ")");
-                log(TAG, "Android version: " + Build.VERSION.RELEASE + "(" + Build.VERSION.SDK_INT + ")");
+                log(TAG, "enableLogToFile: Application version: " + info.versionName + " (" + info.versionCode + ")");
+                log(TAG, "enableLogToFile: Android version: " + Build.VERSION.RELEASE + "(" + Build.VERSION.SDK_INT + ")");
             } catch (NameNotFoundException e) {
                 // NOP
             }
 
         } catch (IOException e) {
-            Log.d(TAG, "Could not create log, " + e.getLocalizedMessage());
+            // NOP
         }
     }
 
@@ -1263,7 +1257,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
      */
     public void disableLogToFile() {
         if (logfileBuffer != null) {
-            log(TAG, "Log stopped");
             try {
                 logfileBuffer.flush();
                 logfileBuffer.close();
@@ -1283,7 +1276,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
             long diff = new Date().getTime() - f.lastModified();
             if (diff > 7 * 24 * 60 * 60 * 1000) {
                 if (!f.delete()) {
-                    log(TAG, "Could not remove old logfile");
+                    log(TAG, "removeOldLogfiles: Could not remove file " + f.getName());
                 }
             }
         }
@@ -1301,7 +1294,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
         try {
             offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
         } catch(NumberFormatException ex) {
-
+            // NOP
         }
         addNotification(id, offset);
     }
@@ -1316,6 +1309,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param offset    Time in minutes that the notification shall be shown earlier
      */
     private void addNotification(final long id, final long offset) {
+        log(TAG, "addNotification() called with: id = [" + id + "], offset = [" + offset + "]");
 
         final Recording rec = getRecording(id);
         if (loading || rec == null) {
@@ -1326,7 +1320,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
         String msg = getString(R.string.recording_started);
         long time = rec.start.getTime();
         if (time > (new Date()).getTime()) {
-            log(TAG, "Recording start time is in the future, adding notification");
+            log(TAG, "addNotification: Recording added");
             if (offset > 0) {
                 // Subtract the offset from the time when the notification shall be shown.
                 time -= (offset * 60000);
@@ -1337,7 +1331,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
             createNotification(rec.id, time, msg);
             createNotification(rec.id * 100, rec.stop.getTime(), getString(R.string.recording_completed));
         } else {
-            log(TAG, "Recording start time was in the past, skipping notification");
+            log(TAG, "addNotification: Recording not added, start time is in the past");
         }
     }
 
@@ -1350,9 +1344,8 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param msg   Message that will be displayed
      */
     private void createNotification(long id, long time, String msg) {
-
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy, HH.mm", Locale.US);
-        log(TAG, "Creating notification for recording id " + id + ", at " + sdf.format(time) + " with msg " + msg);
+        log(TAG, "createNotification() called with: id = [" + id + "], time = [" + sdf.format(time) + "], msg = [" + msg + "]");
 
         Intent intent = new Intent(this, NotificationReceiver.class);
         Bundle bundle = new Bundle();
@@ -1371,6 +1364,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param id    The id of the recording
      */
     private void cancelNotification(long id) {
+        log(TAG, "cancelNotification() called with: id = [" + id + "]");
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel((int) id);
         nm.cancel((int) id * 100);
