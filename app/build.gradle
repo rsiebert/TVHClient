@@ -32,10 +32,10 @@ android {
         release {
             // Add the values from the local properties file
             if (tvhHasProperty("developerEmail")) {
-                buildConfigField "String", "DEVELOPER_EMAIL", tvhProperty("developerEmail")
+                buildConfigField "String", "DEVELOPER_EMAIL", "\"" + tvhProperty("developerEmail") + "\""
             }
             if (tvhHasProperty("publicKeySalt")) {
-                buildConfigField "String", "PUBLIC_KEY_SALT", tvhProperty("publicKeySalt")
+                buildConfigField "String", "PUBLIC_KEY_SALT", "\"" + tvhProperty("publicKeySalt") + "\""
             }
             // Disable the unlocked features when the app is released.
             // This must be done by the in-app purchase
