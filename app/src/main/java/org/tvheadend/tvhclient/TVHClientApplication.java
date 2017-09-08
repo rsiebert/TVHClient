@@ -1194,13 +1194,17 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @param msg The message that shall be logged
      */
     public void log(String tag, String msg) {
-        Log.d(tag, msg);
+        if (BuildConfig.DEBUG_MODE) {
+            Log.d(tag, msg);
+        }
         if (logfileBuffer != null) {
             String timestamp = format.format(new Date()) + ": " + tag + ", " + msg + "\n";
             try {
                 logfileBuffer.write(timestamp.getBytes());
             } catch (IOException e) {
-                Log.d(TAG, "Error writing to logfile buffer. " + e.getLocalizedMessage());
+                if (BuildConfig.DEBUG_MODE) {
+                    Log.d(TAG, "Error writing to logfile buffer. " + e.getLocalizedMessage());
+                }
             }
         }
     }
