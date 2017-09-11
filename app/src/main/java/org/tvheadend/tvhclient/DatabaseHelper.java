@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
-import android.util.Log;
-import android.widget.Toast;
 
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -91,12 +89,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     };
 
     private static DatabaseHelper instance = null;
-    private static Context context;
 
     public static DatabaseHelper getInstance(Context ctx) {
         if (instance == null)
             instance = new DatabaseHelper(ctx);
-        context = ctx;
         return instance;
     }
 
@@ -109,7 +105,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "onCreate");
 
     	String query = "CREATE TABLE IF NOT EXISTS " + TABLE_CONN_NAME + " (" 
                 + KEY_CONN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -148,8 +143,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "onUpgrade, from version " + oldVersion + " to " + newVersion);
-
         if (oldVersion < newVersion && newVersion == 2) {
             // Add the channel tag column in database version 2 
             db.execSQL("ALTER TABLE " + TABLE_CONN_NAME + " ADD COLUMN " + KEY_CONN_CHANNEL_TAG
@@ -353,15 +346,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             c = db.query(TABLE_CONN_NAME, CONN_COLUMNS, null, null, null, null, KEY_CONN_NAME);
         } catch (SQLiteException ex) {
-            Log.d(TAG, "getConnections, exception " + ex.getLocalizedMessage());
-            if (context != null) {
-                Toast.makeText(context,
-                        "An error occurred while getting the list of available connections!\n"
-                                + "There was probably an issue while updating the app.\n" 
-                                + "Please uninstall and reinstall the app again to fix this.\n" 
-                                + "Thank you!",
-                        Toast.LENGTH_LONG).show();
-            }
+            // NOP
         }
 
         Connection conn;
