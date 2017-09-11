@@ -421,6 +421,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         }
 
+        rec.owner = msg.getString("owner", null);
+        rec.creator = msg.getString("creator", null);
+        rec.path = msg.getString("path", null);
+        rec.files = msg.getString("files", null);
+
         app.addRecording(rec);
     }
 
@@ -466,6 +471,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.streamErrors = msg.getLong("streamErrors", 0);
         rec.dataErrors = msg.getLong("dataErrors", 0);
         rec.dataSize = msg.getLong("dataSize", 0);
+        rec.owner = msg.getString("owner", rec.owner);
+        rec.creator = msg.getString("creator", rec.creator);
+        rec.path = msg.getString("path", rec.path);
+        rec.files = msg.getString("files", rec.files);
 
         app.updateRecording(rec);
     }
@@ -725,6 +734,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.title = msg.getString("title", srec.title);
         srec.name = msg.getString("name", srec.name);
         srec.directory = msg.getString("directory", srec.directory);
+        srec.fulltext = msg.getString("fulltext", srec.fulltext);
+
         app.updateSeriesRecording(srec);
     }
 
@@ -747,6 +758,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.name = msg.getString("name");
         srec.directory = msg.getString("directory");
         srec.channel = app.getChannel(msg.getLong("channel", 0));
+        srec.fulltext = msg.getString("fulltext");
 
         app.addSeriesRecording(srec);
     }
@@ -1142,6 +1154,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final String title = intent.getStringExtra("title");
         final String subtitle = intent.getStringExtra("subtitle");
         final String description = intent.getStringExtra("description");
+        final String configName = intent.getStringExtra("configName");
         final boolean isRecording = intent.getBooleanExtra("isRecording", false);
 
         HTSMessage request = new HTSMessage();
@@ -1171,6 +1184,9 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
             if (channelId != 0 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_UPDATE_CHANNEL) {
                 request.putField("channelId", channelId);
+            }
+            if (configName != null) {
+                request.putField("configName", configName);
             }
             // Enabled flag (Added in version 23)
             request.putField("enabled", enabled);
@@ -1232,6 +1248,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long start = intent.getLongExtra("start", 0);
         final long stop = intent.getLongExtra("stop", 0);
         final long retention = intent.getLongExtra("retention", 0);
+        final String creator = intent.getStringExtra("creator");
         final long priority = intent.getLongExtra("priority", 2);
         final long enabled = intent.getLongExtra("enabled", 1);
         final long startExtra = intent.getLongExtra("startExtra", 0);
@@ -1268,7 +1285,9 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (description != null) {
             request.putField("description", description);
         }
-
+        if (creator != null) {
+            request.putField("creator", creator);
+        }
         if (configName != null) {
             request.putField("configName", configName);
         }
@@ -1693,6 +1712,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void addAutorecEntry(final Intent intent) {
 
         final String title = intent.getStringExtra("title");
+        final String fulltext = intent.getStringExtra("fulltext");
         final String name = intent.getStringExtra("name");
         final long channelId = intent.getLongExtra("channelId", 0);
         final long maxDuration = intent.getLongExtra("maxDuration", 0);
@@ -1755,6 +1775,9 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         if (configName != null) {
             request.putField("configName", configName);
+        }
+        if (fulltext != null) {
+            request.putField("fulltext", fulltext);
         }
 
         connection.sendMessage(request, new HTSResponseHandler() {

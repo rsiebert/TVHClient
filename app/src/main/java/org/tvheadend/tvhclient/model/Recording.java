@@ -41,6 +41,10 @@ public class Recording extends Model implements Comparable<Recording> {
     private final int REMOVED = 5;
     private final int FAILED = 6;
     private final int ABORTED = 7;
+    public String owner;
+    public String creator;
+    public String path;
+    public String files;
 
     @Override
     public int compareTo(@NonNull Recording that) {

@@ -25,6 +25,7 @@ public class SeriesRecording implements Comparable<SeriesRecording> {
 
     // Required only when a new timer recording is added
     public String configName;
+    public String fulltext;
 
     @Override
     public int compareTo(@NonNull SeriesRecording that) {
