@@ -32,10 +32,8 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
     private final static String TAG = DownloadActivity.class.getSimpleName();
 
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
     private Connection conn;
     private DownloadManager dm;
-    private int action;
 
     private Recording rec;
 
@@ -46,10 +44,8 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         Utils.setLanguage(this);
 
         app = (TVHClientApplication) getApplication();
-        dbh = DatabaseHelper.getInstance(this);
+        DatabaseHelper dbh = DatabaseHelper.getInstance(this);
         conn = dbh.getSelectedConnection();
-        // If a play intent was sent no action is given, so default to play
-        action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, Constants.ACTION_DOWNLOAD);
         // Check that a valid channel or recording was specified
         rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
     }
