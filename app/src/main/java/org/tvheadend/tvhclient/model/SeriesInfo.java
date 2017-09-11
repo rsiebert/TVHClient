@@ -11,6 +11,7 @@ public class SeriesInfo {
 	public int partNumber;
 	public int partCount;
 	public String onScreen;
+	public int serieslinkId;
 
 	public String toString() {
 		if (onScreen != null && onScreen.length() > 0) {

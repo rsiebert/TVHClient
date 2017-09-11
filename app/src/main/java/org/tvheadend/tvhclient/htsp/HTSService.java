@@ -1035,6 +1035,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         info.partNumber = msg.getInt("partNumber", 0);
         info.seasonCount = msg.getInt("seasonCount", 0);
         info.seasonNumber = msg.getInt("seasonNumber", 0);
+        info.serieslinkId = msg.getInt("serieslinkId", 0);
         return info;
     }
 	
