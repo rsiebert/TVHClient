@@ -21,12 +21,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.View;
 import android.webkit.WebView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -86,28 +86,10 @@ public class ChangeLogDialog {
     }
 
     /**
-     * @return The version name of the last installation of this app (as
-     *         described in the former manifest). This will be the same as
-     *         returned by <code>getThisVersion()</code> the second time this
-     *         version of the app is launched (more precisely: the second time
-     *         ChangeLog is instantiated).
-     */
-    public String getLastVersion() {
-        return this.lastVersion;
-    }
-
-    /**
-     * @return The version name of this app as described in the manifest.
-     */
-    public String getThisVersion() {
-        return this.thisVersion;
-    }
-
-    /**
      * @return <code>true</code> if this version of your app is started the
      *         first time
      */
-    public boolean firstRun() {
+    boolean firstRun() {
         return !this.lastVersion.equals(this.thisVersion);
     }
 
@@ -126,7 +108,7 @@ public class ChangeLogDialog {
      *         first run of your app including ChangeLog then the full log
      *         dialog is show.
      */
-    public MaterialDialog getLogDialog() {
+    MaterialDialog getLogDialog() {
         return this.getDialog(this.firstRunEver());
     }
 
@@ -183,13 +165,6 @@ public class ChangeLogDialog {
      */
     public String getLog() {
         return this.getLog(false);
-    }
-
-    /**
-     * @return HTML which displays full change log
-     */
-    public String getFullLog() {
-        return this.getLog(true);
     }
 
     /** modes for HTML-Lists (bullet, numbered) */
@@ -310,15 +285,5 @@ public class ChangeLogDialog {
             sb.append("</ul>\n");
         }
         this.listMode = Listmode.NONE;
-    }
-
-    private static final String TAG = "ChangeLog";
-
-    public interface ChangeLogDialogInterface {
-        /**
-         * This method is used to inform the user that the change log dialog has
-         * been closed.
-         */
-        void changeLogDialogDismissed();
     }
 }

@@ -48,7 +48,7 @@ import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCa
 import com.google.android.libraries.cast.companionlibrary.widgets.IntroductoryOverlay;
 import com.google.android.libraries.cast.companionlibrary.widgets.MiniController;
 
-import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
+import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.adapter.DrawerMenuAdapter;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
