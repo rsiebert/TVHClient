@@ -87,11 +87,11 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
             final String path = prefs.getString("pref_download_directory", Environment.DIRECTORY_DOWNLOADS);
             request.setDestinationInExternalPublicDir(path, rec.title + ".mkv");
 
-            app.log(TAG, "Saving download from url " + downloadUrl + " to " + path);
+            app.log(TAG, "prepareDownload: Saving download from url " + downloadUrl + " to " + path);
             startDownload(request);
 
         } catch (IllegalStateException e) {
-            app.log(TAG, "External storage not available, " + e.getLocalizedMessage());
+            app.log(TAG, "prepareDownload: External storage not available, " + e.getLocalizedMessage());
             showErrorDialog(getString(R.string.no_external_storage_available));
         }
     }
@@ -106,7 +106,6 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
      * @param request The given download request with all relevant data
      */
     private void startDownload(Request request) {
-
         dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
         final long id = dm.enqueue(request);
 
@@ -122,16 +121,16 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
                 while (c.moveToNext()) {
                     int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
                     int reason = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_REASON));
-                    app.log(TAG, "Download " + id + " status is " + status + ", reason " + reason);
+                    app.log(TAG, "startDownload: Downloading [" + id + "], status: " + status + ", reason: " + reason);
 
                     switch (status) {
                     case DownloadManager.STATUS_FAILED:
                         // Check the reason value if it is insufficient storage space
                         if (reason == 1006) {
-                            app.log(TAG, "Download " + id + " failed due to insufficient storage space");
+                            app.log(TAG, "startDownload: Download failed due to insufficient storage space");
                             showErrorDialog(getString(R.string.download_error_insufficient_space, rec.title));
                         } else if (reason == 407) {
-                            app.log(TAG, "Download " + id + " failed due to missing / wrong authentication");
+                            app.log(TAG, "startDownload: Download failed due to missing / wrong authentication");
                             showErrorDialog(getString(R.string.download_error_authentication_required, rec.title));
                         } else {
                             finish();
@@ -139,22 +138,18 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
                         break;
 
                     case DownloadManager.STATUS_PAUSED:
-                        app.log(TAG, "Download " + id + " paused!");
                         finish();
                         break;
 
                     case DownloadManager.STATUS_PENDING:
-                        app.log(TAG, "Download " + id + " pending!");
                         finish();
                         break;
 
                     case DownloadManager.STATUS_RUNNING:
-                        app.log(TAG, "Download " + id + " in progress!");
                         finish();
                         break;
 
                     case DownloadManager.STATUS_SUCCESSFUL:
-                        app.log(TAG, "Download " + id + " complete!");
                         finish();
                         break;
 
@@ -201,8 +196,6 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        app.log(TAG, "Permission: " + permissions[0] + " was " + grantResults[0]);
-
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                 permissions[0].equals("android.permission.WRITE_EXTERNAL_STORAGE")) {
             prepareDownload();
@@ -223,15 +216,12 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
     private boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                app.log(TAG,"Permission is granted");
                 return true;
             } else {
-                app.log(TAG,"Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         } else {
-            app.log(TAG,"Permission is granted");
             return true;
         }
     }

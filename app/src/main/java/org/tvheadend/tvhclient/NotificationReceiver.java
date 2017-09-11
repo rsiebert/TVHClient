@@ -23,7 +23,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         final Recording rec = app.getRecording(recId);
 
         if (rec != null) {
-            app.log(TAG, "Showing notification for recording " + rec.title);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                     context).setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(rec.title)

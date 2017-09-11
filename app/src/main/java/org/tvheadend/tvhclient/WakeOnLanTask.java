@@ -55,29 +55,27 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
             InetAddress address;
             if (!conn.wol_broadcast) {
                 address = InetAddress.getByName(conn.address);
-                app.log(TAG, "Sending WOL packet to " + address);
+                app.log(TAG, "doInBackground: Sending WOL packet to " + address);
             } else {
                 // Replace the last number by 255 to send the packet as a broadcast
                 byte[] ipAddress = InetAddress.getByName(conn.address).getAddress();
                 ipAddress[3] = (byte) 255;
                 address = InetAddress.getByAddress(ipAddress);
-                app.log(TAG, "Sending WOL packet as broadcast to " + address.toString());
+                app.log(TAG, "doInBackground: Sending WOL packet as broadcast to " + address.toString());
             }
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, conn.wol_port);
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);
             socket.close();
-            app.log(TAG, "Datagram packet send");
+
+            app.log(TAG, "doInBackground: Datagram packet was sent");
             if (!conn.wol_broadcast) {
-                app.log(TAG, "Send WOL");
                 return WOL_SEND;
             } else {
-                app.log(TAG, "Send WOL broadcast");
                 return WOL_SEND_BROADCAST;
             }
         } catch (Exception e) {
             this.exception = e;
-            app.log(TAG, "Exception for address " + conn.address + ", Exception " + e.getLocalizedMessage());
             return WOL_ERROR;
         }
     }

@@ -28,9 +28,6 @@ public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
 
     @Override
     protected Drawable doInBackground(String... strings) {
-
-        // TODO load the image if it exists
-        Log.d(TAG, "doInBackground, downloading image url " + strings[0] + " for program id " + strings[1]);
         return downloadImage(strings[0], strings[1]);
     }
 

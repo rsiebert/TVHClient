@@ -51,19 +51,19 @@ import com.google.android.libraries.cast.companionlibrary.widgets.MiniController
 import org.tvheadend.tvhclient.ChangeLogDialog.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.adapter.DrawerMenuAdapter;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
-import org.tvheadend.tvhclient.fragments.recordings.CompletedRecordingListFragment;
-import org.tvheadend.tvhclient.fragments.recordings.FailedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
+import org.tvheadend.tvhclient.fragments.StatusFragment;
+import org.tvheadend.tvhclient.fragments.recordings.CompletedRecordingListFragment;
+import org.tvheadend.tvhclient.fragments.recordings.FailedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RemovedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingListFragment;
-import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
@@ -203,7 +203,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
         }
 
-        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinatorLayout);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
         // Get the widgets so we can use them later and do not need to inflate again
         actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
@@ -223,9 +223,9 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // the defined theme. This needs to be done manually. Set the correct
         // background depending on the used theme.
         final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-        drawerList.setBackgroundColor((lightTheme) ? 
-                getResources().getColor(R.color.drawer_background_light) : 
-                    getResources().getColor(R.color.drawer_background_dark));
+        drawerList.setBackgroundColor((lightTheme) ?
+                getResources().getColor(R.color.drawer_background_light) :
+                getResources().getColor(R.color.drawer_background_dark));
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
@@ -233,8 +233,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // contents of the action bar when the drawer is visible, such as to
         // change the title and remove action items that are contextual to the
         // main content.
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 
-                R.string.drawer_open, 
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.string.drawer_open,
                 R.string.drawer_close) {
 
             @Override
@@ -315,9 +315,13 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 }
             }
         };
+        initCasting();
+    }
+
+    private void initCasting() {
+        app.log(TAG, "initCasting() called");
 
         mMiniController = (MiniController) findViewById(R.id.miniController);
-
         mCastManager = VideoCastManager.getInstance();
         mCastManager.reconnectSessionIfPossible();
 
@@ -328,19 +332,19 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 if (resourceId > 0) {
                     reason = getString(resourceId);
                 }
-                app.log(TAG, "CastConsumer onFailed, reason:  " + reason + ", status code: " + statusCode);
+                app.log(TAG, "onFailed() called with: reason = [" + reason + "], statusCode = [" + statusCode + "]");
             }
 
             @Override
             public void onApplicationConnected(ApplicationMetadata appMetadata, String sessionId, boolean wasLaunched) {
+                app.log(TAG, "onApplicationConnected() called with: appMetadata = [" + appMetadata + "], sessionId = [" + sessionId + "], wasLaunched = [" + wasLaunched + "]");
                 invalidateOptionsMenu();
-                app.log(TAG, "CastConsumer onApplicationConnected");
 
                 Connection conn = dbh.getSelectedConnection();
                 Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
 
                 if (profile == null || !profile.enabled || profile.uuid == null || profile.uuid.length() == 0) {
-                    app.log(TAG, "No casting profile set, disconnecting");
+                    app.log(TAG, "onApplicationConnected: No casting profile set, disconnecting");
                     new MaterialDialog.Builder(MainActivity.this)
                             .content(R.string.cast_profile_not_set)
                             .positiveText(android.R.string.ok)
@@ -351,31 +355,31 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                                 }
                             }).show();
                 } else {
-                    app.log(TAG, "Selected casting profile is " + profile.name);
+                    app.log(TAG, "onApplicationConnected: Selected casting profile is " + profile.name);
                 }
             }
 
             @Override
             public void onDisconnected() {
-                app.log(TAG, "CastConsumer onDisconnected");
+                app.log(TAG, "onDisconnected() called");
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onConnectionSuspended(int cause) {
-                app.log(TAG, "CastConsumer onConnectionSuspended, cause " + cause);
+                app.log(TAG, "onConnectionSuspended() called with: cause = [" + cause + "]");
                 showMessage(getString(R.string.connection_temp_lost));
             }
 
             @Override
             public void onConnectivityRecovered() {
-                app.log(TAG, "CastConsumer onConnectivityRecovered");
+                app.log(TAG, "onConnectivityRecovered() called");
                 showMessage(getString(R.string.connection_recovered));
             }
 
             @Override
             public void onCastAvailabilityChanged(boolean castPresent) {
-                app.log(TAG, "CastConsumer onCastAvailabilityChanged, is present " + castPresent);
+                app.log(TAG, "onCastAvailabilityChanged() called with: castPresent = [" + castPresent + "]");
 
                 if (mMediaRouteMenuItem != null && castPresent) {
                     showCastInfoOverlay();
@@ -1364,10 +1368,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void moreDataRequired(final Channel channel, final String tag) {
-        app.log(TAG, "Loading more programs for channel " + (channel != null ? channel.name : "null"));
-
         if (app.isLoading() || channel == null) {
-            app.log(TAG, "Initial sync not yet done, skipping loading more programs");
             return;
         }
 
