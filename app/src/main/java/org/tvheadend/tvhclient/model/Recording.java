@@ -92,14 +92,15 @@ public class Recording extends Model implements Comparable<Recording> {
                 // Recordings without a missing file will be considered as completed.
                 // If the file is missing they are treated as removed recordings. If completed
                 // but another error is set, they are shown in the failed recordings
-                if (state.equals("completed")) {
-                    return COMPLETED;
-                } else if (state.equals("missed")) {
-                    return MISSED;
-                } else if (state.equals("recording")) {
-                    return RECORDING;
-                } else if (state.equals("scheduled")) {
-                    return SCHEDULED;
+                switch (state) {
+                    case "completed":
+                        return COMPLETED;
+                    case "missed":
+                        return MISSED;
+                    case "recording":
+                        return RECORDING;
+                    case "scheduled":
+                        return SCHEDULED;
                 }
             } else {
                 // Consider the recording as deleted / removed if it was completed and the file is
