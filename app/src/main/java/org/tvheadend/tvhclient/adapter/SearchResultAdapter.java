@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.adapter;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -40,11 +39,9 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         sort(new Comparator<Model>() {
             public int compare(Model x, Model y) {
                 if (x instanceof Program && y instanceof Program) {
-                    Log.d(TAG, "Comparing programs");
                     return (((Program)x).start.compareTo(((Program)y).start));
                 }
                 if (x instanceof Recording && y instanceof Recording) {
-                    Log.d(TAG, "Comparing recordings");
                     if (((Recording)x).startExtra < ((Recording)y).startExtra) {
                         return -1;
                     } else if (((Recording)x).startExtra > ((Recording)y).startExtra) {

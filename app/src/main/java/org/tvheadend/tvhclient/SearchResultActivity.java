@@ -159,7 +159,6 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         // available data. Either add all completed recordings or add all
         // available programs from one or all channels.
         if (recording != null) {
-            app.log(TAG, "onCreate recording");
             for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
                 if (rec != null && rec.title != null && rec.title.length() > 0) {
                     list.add(rec);

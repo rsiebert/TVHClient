@@ -25,7 +25,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -255,6 +254,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                app.log(TAG, "onPreferenceClick: Deleting channel icons");
                 // Show a confirmation dialog before clearing the icon cache
                 new MaterialDialog.Builder(activity)
                         .title(R.string.clear_icon_cache)
@@ -454,7 +454,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     private void mailLogfile(String filename) {
-        Log.d(TAG, "mailLogfile() called with: filename = [" + filename + "]");
+        app.log(TAG, "mailLogfile() called with: filename = [" + filename + "]");
 
         // TODO sync logfile before sending?
 
@@ -471,8 +471,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         }
 
         if (fileUri != null) {
-            app.log(TAG, "mailLogfile: Sending mail to developer " + BuildConfig.DEVELOPER_EMAIL);
-            // Create the intent with the email, some text and the log 
+            // Create the intent with the email, some text and the log
             // file attached. The user can select from a list of 
             // applications which he wants to use to send the mail
             Intent intent = new Intent(Intent.ACTION_SEND);

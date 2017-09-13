@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -139,7 +138,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                app.log(TAG, "Scrolling, first item " + firstVisibleItem + ", visible items " + visibleItemCount + ", total item " + totalItemCount);
                 // Enable loading when the user has scrolled pretty much to the end of the list
                 if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
                     allowLoading = true;
@@ -150,7 +148,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 // If loading is allowed and the scrolling has stopped, load more data 
                 if (scrollState == SCROLL_STATE_IDLE && allowLoading) {
-                    app.log(TAG, "Scrolling stopped");
                     allowLoading = false;
                     if (fragmentStatusInterface != null) {
                         fragmentStatusInterface.moreDataRequired(channel, TAG);
@@ -193,10 +190,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             }
 
             if (!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) {
-                Log.d(TAG, "Channel '" + channel.name
-                        + "', loading programs, current program exists: "
-                        + currentProgramFound + ", epg program count: "
-                        + availableProgramCount);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.moreDataRequired(channel, TAG);
                 }

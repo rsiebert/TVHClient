@@ -10,11 +10,9 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -262,7 +260,6 @@ public class Utils {
         if (manualRemove) {
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             if (type.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
-                app.log(TAG, "removeRecording, manually removing timer recording " + id);
                 app.removeTimerRecording(id);
             }
         }

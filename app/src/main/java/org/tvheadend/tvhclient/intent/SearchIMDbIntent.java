@@ -25,7 +25,7 @@ public class SearchIMDbIntent extends Intent {
                 setData(Uri.parse("http://www.imdb.org/find?s=tt&q=" + url));
             }
         } catch (UnsupportedEncodingException e) {
-            Log.i("SearchIMDbIntent", e.getLocalizedMessage());
+            // NOP
         }
     }
 }

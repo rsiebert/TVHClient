@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
@@ -74,16 +75,18 @@ public class HTSService extends Service implements HTSConnectionListener {
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (NameNotFoundException ex) {
-            app.log(TAG, "Can't get package info, " + ex.getLocalizedMessage());
+            // NOP
         }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        app.log(TAG, "onStartCommand() called with: intent = [" + intent.getAction() + "], flags = [" + flags + "], startId = [" + startId + "]");
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
-            app.log(TAG, "Connect to server requested");
+            app.log(TAG, "onStartCommand: Connection to server requested");
+
             boolean force = intent.getBooleanExtra("force", false);
             final String hostname = intent.getStringExtra("hostname");
             final int port = intent.getIntExtra("port", 9982);
@@ -91,12 +94,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             final String password = intent.getStringExtra("password");
 
             if (connection != null && force) {
-                app.log(TAG, "Closing existing connection and clearing all data");
+                app.log(TAG, "onStartCommand: Closing existing connection");
                 connection.close();
                 app.clearAll();
             }
             if (connection == null || !connection.isConnected()) {
-                app.log(TAG, "Starting to connect to server");
+                app.log(TAG, "onStartCommand: Connecting to server");
                 app.setLoading(true);
                 connection = new HTSConnection(app, this, packInfo.packageName, packInfo.versionName);
 
@@ -110,10 +113,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
 
         } else if (connection == null || !connection.isConnected()) {
-            app.log(TAG, "No connection to perform " + action);
+            app.log(TAG, "onStartCommand: No connection to perform " + action);
 
         } else if (action.equals(Constants.ACTION_DISCONNECT)) {
-            app.log(TAG, "Disconnecting from server");
+            app.log(TAG, "onStartCommand: Closing connection to server");
             connection.close();
 
         } else if (action.equals(Constants.ACTION_GET_EVENT)) {
@@ -215,6 +218,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             getSystemTime();
 
         }
+        app.log(TAG, "onStartCommand() returned: " + START_NOT_STICKY);
         return START_NOT_STICKY;
     }
 
@@ -555,7 +559,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onInitialSyncCompleted() {
-        app.log(TAG, "initial sync completed");
+        app.log(TAG, "onInitialSyncCompleted() called");
         app.setLoading(false);
         app.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
         app.setProtocolVersion(connection.getProtocolVersion());
@@ -589,8 +593,6 @@ public class HTSService extends Service implements HTSConnectionListener {
             s.channels = sub.getInt("channels", 0);
             s.rate = sub.getInt("rate", 0);
             subscription.streams.add(s);
-
-            app.log(TAG, "onSubscriptionStart, added stream " + s.index);
         }
 
         if (msg.containsField("sourceinfo")) {
@@ -603,8 +605,6 @@ public class HTSService extends Service implements HTSConnectionListener {
             si.provider = sub.getString("provider");
             si.service = sub.getString("service");
             subscription.sourceInfo = si;
-
-            app.log(TAG, "onSubscriptionStart, added sourceinfo " + si.adapter);
         }
     }
 
@@ -714,7 +714,6 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onAutorecEntryUpdate(HTSMessage msg) {
-        app.log(TAG, "onAutorecEntryUpdate");
         SeriesRecording srec = app.getSeriesRecording(msg.getString("id"));
         if (srec == null) {
             return;
@@ -764,6 +763,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     public void onMessage(HTSMessage msg) {
+        app.log(TAG, "onMessage() called with: msg = [" + msg.getMethod() + "]");
         String method = msg.getMethod();
 
         switch (method) {
@@ -846,7 +846,6 @@ public class HTSService extends Service implements HTSConnectionListener {
                 eventDelete(msg);
                 break;
             default:
-                app.log(TAG, "Unknown method " + method);
                 break;
         }
     }
@@ -864,7 +863,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             return hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            app.log(TAG, "Can't create hash string, " + e);
+            // NOP
         }
 
         return "";
@@ -878,7 +877,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (connection.getProtocolVersion() > 9) {
         	is = new HTSFileInputStream(connection, url);
         } else {
-            app.log(TAG, "Unhandled url " + url + " to cache image");
             return;
         }
         
@@ -948,11 +946,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             @Override
             public void run() {
                 try {
-                    app.log(TAG, "Loading channel icon from url '" + ch.icon + "'");
                     ch.iconBitmap = getIcon(ch.icon);
                     app.updateChannel(ch);
                 } catch (Throwable ex) {
-                    app.log(TAG, "Can't load channel icon, " + ex.getLocalizedMessage());
+                    app.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -962,11 +959,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         execService.execute(new Runnable() {
             public void run() {
                 try {
-                    app.log(TAG, "Loading channel tag icon from url '" + tag.icon + "'");
                     tag.iconBitmap = getIcon(tag.icon);
                     app.updateChannelTag(tag);
                 } catch (Throwable ex) {
-                    app.log(TAG, "Can't load tag icon, " + ex.getLocalizedMessage());
+                    app.log(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -1508,8 +1504,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 String path = response.getString("path", null);
                 String ticket = response.getString("ticket", null);
                 String webroot = connection.getWebRoot();
-
-                app.log(TAG, "getTicket webroot '" + webroot + "', path '" + path + "'" + ", ticket '" + ticket + "'");
+                
                 if (path != null && ticket != null) {
                     app.addTicket(new HttpTicket(webroot + path, ticket));
                 }

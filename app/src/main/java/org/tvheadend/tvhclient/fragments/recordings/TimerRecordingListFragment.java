@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -238,7 +237,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
-                        Log.d(TAG, "Error removing all timer recordings, " + e.getLocalizedMessage());
+                        // NOP
                     }
                 }
             }

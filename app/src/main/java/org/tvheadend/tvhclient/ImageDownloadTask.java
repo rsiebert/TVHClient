@@ -20,7 +20,7 @@ import java.net.URL;
 public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
 
     private final static String TAG = ImageDownloadTask.class.getSimpleName();
-    ImageView imageView;
+    private ImageView imageView;
 
     public ImageDownloadTask(ImageView imageView) {
         this.imageView = imageView;
@@ -64,20 +64,11 @@ public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
         BufferedInputStream buf;
 
         try {
-            Log.d(TAG, "Downloading...");
             // Open the stream and read it
             url = new URL(path);
             in = url.openStream();
             buf = new BufferedInputStream(in);
-/*
-            out = new BufferedOutputStream(new FileOutputStream(name + ".jpg"));
-            int i;
-            while ((i = in.read()) != -1) {
-                out.write(i);
-            }
-            out.close();
-            in.close();
-*/
+
             // Convert the BufferedInputStream to a Bitmap
             Bitmap bMap = BitmapFactory.decodeStream(buf);
             if (in != null) {
@@ -89,7 +80,7 @@ public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
             return new BitmapDrawable(bMap);
 
         } catch (Exception e) {
-            Log.e("Error reading file", e.toString());
+            // NOP
         }
         return null;
     }

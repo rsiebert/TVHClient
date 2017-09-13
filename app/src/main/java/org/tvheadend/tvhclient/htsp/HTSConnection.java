@@ -78,7 +78,7 @@ public class HTSConnection extends Thread {
 
     // synchronized, non blocking connect
     public void open(String hostname, int port, boolean connected) {
-        app.log(TAG, "Connecting to server " + hostname + ":" + port);
+        app.log(TAG, "open() called with: hostname = [" + hostname + "], port = [" + port + "], connected = [" + connected + "]");
 
         if (running) {
             return;
@@ -106,7 +106,7 @@ public class HTSConnection extends Thread {
             running = true;
             start();
         } catch (Exception e) {
-            app.log(TAG, "Can't open connection to " + hostname + ":" + port + ", " + e.getLocalizedMessage());
+            app.log(TAG, "open: Could not open connection. " + e.getLocalizedMessage());
             listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
         } finally {
             lock.unlock();
@@ -117,12 +117,12 @@ public class HTSConnection extends Thread {
                 try {
                     signal.wait(connectionTimeout);
                     if (socketChannel.isConnectionPending()) {
-                        app.log(TAG, "Timeout, connection to " + hostname + ":" + port + " still pending");
+                        app.log(TAG, "open: Timeout waiting for pending connection to server");
                         listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
                         close();
                     }
                 } catch (InterruptedException ex) {
-                    app.log(TAG, "Error waiting for pending connection to " + hostname + ":" + port + ", " + ex.getLocalizedMessage());
+                    app.log(TAG, "open: Waiting for pending connection was interrupted. " + ex.getLocalizedMessage());
                 }
             }
         }
@@ -137,21 +137,24 @@ public class HTSConnection extends Thread {
 
     // synchronized, blocking auth
     public void authenticate(String username, final String password) {
+        app.log(TAG, "authenticate() called with: username = [" + username + "], password = [secret]");
 
         if (auth || !running) {
             return;
         }
 
         auth = false;
-        app.log(TAG, "Starting initial async");
 
         final HTSMessage authMessage = new HTSMessage();
         authMessage.setMethod("enableAsyncMetadata");
         authMessage.putField("username", username);
+
         final HTSResponseHandler authHandler = new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
+                app.log(TAG, "handleResponse: Response to 'authenticate' message");
+                
                 auth = response.getInt("noaccess", 0) != 1;
-                app.log(TAG, "User user authenticated " + auth);
+                app.log(TAG, "handleResponse: Authentication successful: " + auth);
                 if (!auth) {
                     listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
                 }
@@ -161,33 +164,34 @@ public class HTSConnection extends Thread {
             }
         };
 
+        app.log(TAG, "authenticate: Sending 'hello' message");
         HTSMessage helloMessage = new HTSMessage();
         helloMessage.setMethod("hello");
         helloMessage.putField("clientname", this.clientName);
         helloMessage.putField("clientversion", this.clientVersion);
         helloMessage.putField("htspversion", HTSMessage.HTSP_VERSION);
         helloMessage.putField("username", username);
+
         sendMessage(helloMessage, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
+                app.log(TAG, "handleResponse: Response to 'hello' message");
+
                 protocolVersion = response.getInt("htspversion");
                 serverName = response.getString("servername");
                 serverVersion = response.getString("serverversion");
                 webRoot = response.getString("webroot", "");
-
-                app.log(TAG, "Server name '" + serverName + "'"
-                        + ", version '" + serverVersion + "'"
-                        + ", protocol '" + protocolVersion + "'"
-                        + ", webroot '" + webRoot + "'");
 
                 MessageDigest md;
                 try {
                     md = MessageDigest.getInstance("SHA1");
                     md.update(password.getBytes());
                     md.update(response.getByteArray("challenge"));
+
+                    app.log(TAG, "authenticate: Sending 'authenticate' message");
                     authMessage.putField("digest", md.digest());
                     sendMessage(authMessage, authHandler);
                 } catch (NoSuchAlgorithmException ex) {
-                    app.log(TAG, "No SHA1 MessageDigest available, " + ex.getLocalizedMessage());
+                    app.log(TAG, "handleResponse: Could not sent 'authenticate' message. " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -196,11 +200,11 @@ public class HTSConnection extends Thread {
             try {
                 authMessage.wait(5000);
                 if (!auth) {
-                    app.log(TAG, "Timeout waiting for auth response");
+                    app.log(TAG, "authenticate: Timeout waiting for authentication response");
                     listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
                 }
             } catch (InterruptedException ex) {
-                app.log(TAG, "Error during waiting for response, " + ex.getLocalizedMessage());
+                app.log(TAG, "authenticate: Waiting for authentication message was interrupted. " + ex.getLocalizedMessage());
             }
         }
     }
@@ -222,13 +226,14 @@ public class HTSConnection extends Thread {
             messageQueue.add(message);
             selector.wakeup();
         } catch (Exception e) {
-            app.log(TAG, "Can't send message, " + e.getLocalizedMessage());
+            app.log(TAG, "sendMessage: Could not send message. " + e.getLocalizedMessage());
         } finally {
             lock.unlock();
         }
     }
 
     public void close() {
+        app.log(TAG, "close() called");
         lock.lock();
         try {
             responseHandlers.clear();
@@ -238,21 +243,21 @@ public class HTSConnection extends Thread {
             socketChannel.register(selector, 0);
             socketChannel.close();
         } catch (Exception e) {
-            app.log(TAG, "Can't close connection, " + e.getLocalizedMessage());
+            app.log(TAG, "close: Could not close connection. " + e.getLocalizedMessage());
         } finally {
             lock.unlock();
         }
+        app.log(TAG, "close() returned: ");
     }
 
     @Override
     public void run() {
-        app.log(TAG, "Starting connection thread");
+        app.log(TAG, "run() called");
 
         while (running) {
             try {
                 selector.select(5000);
             } catch (IOException ex) {
-                app.log(TAG, "Can't select socket channel, " + ex.getLocalizedMessage());
                 listener.onError(Constants.ACTION_CONNECTION_STATE_LOST);
                 running = false;
                 continue;
@@ -273,7 +278,6 @@ public class HTSConnection extends Thread {
                 socketChannel.register(selector, ops);
 
             } catch (Exception ex) {
-                app.log(TAG, "Can't read message, " + ex.getLocalizedMessage());
                 running = false;
 
             } finally {
@@ -281,6 +285,7 @@ public class HTSConnection extends Thread {
             }
         }
         close();
+        app.log(TAG, "run() returned:");
     }
 
     private void processTcpSelectionKey(SelectionKey selKey) throws IOException {
@@ -299,7 +304,8 @@ public class HTSConnection extends Thread {
             int len = sChannel.read(inBuf);
             if (len < 0) {
                 listener.onError(Constants.ACTION_CONNECTION_STATE_SERVER_DOWN);
-                throw new IOException("Server went down (read() < 0)");
+                app.log(TAG, "processTcpSelectionKey: Could not read data from server");
+                throw new IOException();
             }
 
             HTSMessage msg = HTSMessage.parse(inBuf);

@@ -10,7 +10,6 @@ import android.support.v4.app.NotificationCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    private final static String TAG = NotificationReceiver.class.getSimpleName();
     private final static String GROUP_KEY = "recordings";
 
     @Override

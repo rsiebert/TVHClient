@@ -75,7 +75,6 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
      * are completed are added to the list.
      */
     private void populateList() {
-        Log.i(TAG, "populateList");
         // Clear the list and add the recordings
         adapter.clear();
         for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
@@ -97,7 +96,6 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         // Inform the activity that the channel list has been populated. It will
         // then select a list item if dual pane mode is active.
         if (fragmentStatusInterface != null) {
-            Log.i(TAG, "call onListPopulated");
             fragmentStatusInterface.onListPopulated(TAG);
         }
     }

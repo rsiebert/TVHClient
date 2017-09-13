@@ -227,7 +227,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         // Show the program image if one exists
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if (app.isUnlocked() && prefs.getBoolean("pref_show_program_artwork", false)) {
-            app.log(TAG, "Starting download of program image " + program.image);
             ImageDownloadTask dt = new ImageDownloadTask(imageView);
             dt.execute(program.image, String.valueOf(program.id));
         }

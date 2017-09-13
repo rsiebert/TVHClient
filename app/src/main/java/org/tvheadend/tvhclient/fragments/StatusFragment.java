@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,17 +13,14 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Subscription;
-import org.tvheadend.tvhclient.model.SystemTime;
 
 import java.util.List;
-import java.util.Map;
 
 public class StatusFragment extends Fragment implements HTSListener {
 
@@ -237,12 +233,10 @@ public class StatusFragment extends Fragment implements HTSListener {
      * Displays some subscription details of the available subscriptions
      */
     private void showSubscriptionStatus() {
-        app.log(TAG, "showSubscriptionStatus");
         List<Subscription> subscriptions = app.getSubscriptions();
         for (Subscription s : subscriptions) {
             if (s != null) {
-                app.log(TAG, "subscription status " + s.status);
-
+                // NOP
             }
         }
     }

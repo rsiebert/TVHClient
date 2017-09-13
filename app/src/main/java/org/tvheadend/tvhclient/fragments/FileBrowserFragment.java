@@ -186,8 +186,6 @@ public class FileBrowserFragment extends DialogFragment {
      */
     private void saveSelectedDirectory(File path) {
         String strippedPath = path.getAbsolutePath().replace(Environment.getExternalStorageDirectory().getAbsolutePath(), "");
-        app.log(TAG, "Saving the selected path " + strippedPath);
-
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.edit().putString("pref_download_directory", strippedPath).apply();
     }
@@ -211,8 +209,6 @@ public class FileBrowserFragment extends DialogFragment {
             File path = paths[0];
 
             if (path.exists()) {
-                app.log(TAG, "Loading directories from " + path.getAbsolutePath());
-
                 // Create the filter that checks if the file or directory shall be added to the list
                 FilenameFilter filter = new FilenameFilter() {
                     @Override
@@ -243,16 +239,12 @@ public class FileBrowserFragment extends DialogFragment {
                 if (parent != null && !path.getPath().equals(basePath.getAbsolutePath())) {
                     fl.add(0, parent);
                 }
-
-                app.log(TAG, "Loaded " + fl.size() + " directories");
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void unused) {
-            app.log(TAG, "Updating file list adapter");
-
             toolbar.setTitle("");
             fileListAdapter.setFileList(fl, selectedPath.getParentFile());
             fileListAdapter.notifyDataSetChanged();
