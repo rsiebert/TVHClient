@@ -221,24 +221,11 @@ public class StatusFragment extends Fragment implements HTSListener {
         showConnectionName();
         showConnectionStatus();
         showRecordingStatus();
-        showSubscriptionStatus();
         showDiscSpace();
 
         // Show the number of available channels
         final String text = app.getChannels().size() + " " + getString(R.string.available);
         channels.setText(text);
-    }
-
-    /**
-     * Displays some subscription details of the available subscriptions
-     */
-    private void showSubscriptionStatus() {
-        List<Subscription> subscriptions = app.getSubscriptions();
-        for (Subscription s : subscriptions) {
-            if (s != null) {
-                // NOP
-            }
-        }
     }
 
     /**
