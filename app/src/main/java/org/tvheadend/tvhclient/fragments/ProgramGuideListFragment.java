@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -29,7 +27,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter;
-import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter.ViewHolder;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
@@ -170,13 +167,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
         // Allow the selection of the items within the list
         listView.setItemsCanFocus(true);
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                @SuppressWarnings("unused")
-                ViewHolder holder = (ViewHolder) view.getTag();
-            }
-        });
 
         // Create the handler and the timer task that will update the current
         // time indication every minute.
