@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.adapter.FileBrowserListAdapter;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -47,8 +48,6 @@ public class FileBrowserFragment extends DialogFragment {
     private RecyclerView fileListView;
     private File basePath = Environment.getExternalStorageDirectory();
     private File selectedPath = Environment.getExternalStorageDirectory();
-
-    private TVHClientApplication app;
 
     public static FileBrowserFragment newInstance(Bundle args) {
         FileBrowserFragment f = new FileBrowserFragment();
@@ -79,7 +78,6 @@ public class FileBrowserFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
-        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
@@ -195,8 +193,6 @@ public class FileBrowserFragment extends DialogFragment {
      * The found files are only added to the list if they match the filter.
      */
     class FileListLoader extends AsyncTask<File, Void, Void> {
-
-        private final String TAG = FileListLoader.class.getSimpleName();
         private List<File> fl = new ArrayList<>();
 
         @Override
@@ -220,11 +216,7 @@ public class FileBrowserFragment extends DialogFragment {
 
                 // Save the contents from the file array into a list
                 File[] files = path.listFiles(filter);
-                if (files != null) {
-                    for (File file : files) {
-                        fl.add(file);
-                    }
-                }
+                fl.addAll(Arrays.asList(files));
 
                 // Sort the found files alphabetically
                 Collections.sort(fl, new Comparator<File>() {
