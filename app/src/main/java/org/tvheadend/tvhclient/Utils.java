@@ -992,7 +992,7 @@ public class Utils {
             items.add(item);
         }
 
-        final MaterialDialog dialog = new MaterialDialog.Builder(context)
+        new MaterialDialog.Builder(context)
                 .title(R.string.genre_color_list)
                 .adapter(new GenreColorDialogAdapter(items), null)
                 .show();

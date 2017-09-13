@@ -1760,7 +1760,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // Pass on the recording id if the completed recording screen is
         // visible. The onPrepareOptionsMenu ensures that the search icon is
         // visible in the required screens.
-        if (f instanceof RecordingListFragment && f instanceof FragmentControlInterface) {
+        if (f instanceof RecordingListFragment) {
             Object o = ((FragmentControlInterface) f).getSelectedItem();
             if (o instanceof Recording) {
                 final Recording rec = (Recording) o;
