@@ -250,12 +250,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         }
     }
 
-    /**
-     *
-     * @param item
-     * @return
-     */
-    private boolean onToolbarItemSelected(MenuItem item) {
+    boolean onToolbarItemSelected(MenuItem item) {
         if (rec == null) {
             return false;
         }

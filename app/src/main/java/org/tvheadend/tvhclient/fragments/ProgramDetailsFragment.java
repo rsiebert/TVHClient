@@ -248,11 +248,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
     }
 
-    /**
-     *
-     * @param item
-     * @return
-     */
     private boolean onToolbarItemSelected(MenuItem item) {
         if (program == null) {
             return false;
