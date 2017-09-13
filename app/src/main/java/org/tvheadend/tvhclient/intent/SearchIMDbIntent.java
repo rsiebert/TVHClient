@@ -1,13 +1,12 @@
 package org.tvheadend.tvhclient.intent;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.util.Log;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class SearchIMDbIntent extends Intent {
 

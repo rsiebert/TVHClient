@@ -18,9 +18,6 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.model.Subscription;
-
-import java.util.List;
 
 public class StatusFragment extends Fragment implements HTSListener {
 

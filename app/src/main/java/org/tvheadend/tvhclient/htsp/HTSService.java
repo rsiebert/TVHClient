@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
