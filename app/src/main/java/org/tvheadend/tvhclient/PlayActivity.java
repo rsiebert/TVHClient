@@ -32,13 +32,17 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private final static String TAG = PlayActivity.class.getSimpleName();
 
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
-    private Connection conn;
     private int action;
 
     private Channel ch;
     private Recording rec;
     private String baseUrl;
+    private Profile playbackProfile;
+    private Profile castingProfile;
+    private String username;
+    private String password;
+    private String address;
+    private int streamingPort;
     private String title = "";
 
     @Override
@@ -48,8 +52,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         Utils.setLanguage(this);
 
         app = (TVHClientApplication) getApplication();
-        dbh = DatabaseHelper.getInstance(this);
-        conn = dbh.getSelectedConnection();
+
         // If a play intent was sent no action is given, so default to play
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, Constants.ACTION_PLAY);
 
@@ -81,18 +84,29 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // Create the url with the credentials and the host and  
         // port configuration. This one is fixed for all actions
+        DatabaseHelper dbh = DatabaseHelper.getInstance(this);
+        Connection conn = dbh.getSelectedConnection();
+        if (conn != null) {
+            username = conn.username;
+            password = conn.password;
+            address = conn.address;
+            streamingPort = conn.streaming_port;
+            playbackProfile = dbh.getProfile(conn.playback_profile_id);
+            castingProfile = dbh.getProfile(conn.cast_profile_id);
+        }
+
         String encodedUsername = null;
         String encodedPassword = null;
         try {
             if (conn != null) {
-                encodedUsername = URLEncoder.encode(conn.username, "UTF-8");
-                encodedPassword = URLEncoder.encode(conn.password, "UTF-8");
+                encodedUsername = URLEncoder.encode(username, "UTF-8");
+                encodedPassword = URLEncoder.encode(password, "UTF-8");
             }
         } catch (UnsupportedEncodingException e) {
             // Can't happen since encoding is statically specified
         }
 
-        baseUrl = "http://" + encodedUsername + ":" + encodedPassword + "@" + conn.address + ":" + conn.streaming_port;
+        baseUrl = "http://" + encodedUsername + ":" + encodedPassword + "@" + address + ":" + streamingPort;
 
         switch (action) {
         case Constants.ACTION_PLAY:
@@ -158,15 +172,14 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         app.log(TAG, "initPlayback() called with: path = [" + path + "], ticket = [" + ticket + "]");
 
         // Set default values if no profile was specified
-        Profile profile = dbh.getProfile(conn.playback_profile_id);
-        if (profile == null) {
+        if (playbackProfile == null) {
             app.log(TAG, "initPlayback: no profile defined, creating default profile");
-            profile = new Profile();
+            playbackProfile = new Profile();
         }
 
         // Set the correct MIME type. For 'pass' we assume MPEG-TS
         String mime = "application/octet-stream";
-        switch (profile.container) {
+        switch (playbackProfile.container) {
             case "mpegps":
                 mime = "video/mp2p";
                 break;
@@ -189,18 +202,18 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         String playUrl = baseUrl + path + "?ticket=" + ticket;
 
         // If a profile was given, use it instead of the old values
-        if (profile.enabled
+        if (playbackProfile.enabled
                 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                 && app.isUnlocked()) {
-            playUrl += "&profile=" + profile.name;
+            playUrl += "&profile=" + playbackProfile.name;
         } else {
-            playUrl += "&mux=" + profile.container;
-            if (profile.transcode) {
+            playUrl += "&mux=" + playbackProfile.container;
+            if (playbackProfile.transcode) {
                 playUrl += "&transcode=1";
-                playUrl += "&resolution=" + profile.resolution;
-                playUrl += "&acodec=" + profile.audio_codec;
-                playUrl += "&vcodec=" + profile.video_codec;
-                playUrl += "&scodec=" + profile.subtitle_codec;
+                playUrl += "&resolution=" + playbackProfile.resolution;
+                playUrl += "&acodec=" + playbackProfile.audio_codec;
+                playUrl += "&vcodec=" + playbackProfile.video_codec;
+                playUrl += "&scodec=" + playbackProfile.subtitle_codec;
             }
         }
         startPlayback(playUrl, mime);
@@ -313,11 +326,10 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
         // Check if the correct profile was set, if not use the default
-        Profile castProfile = dbh.getProfile(conn.cast_profile_id);
-        if (castProfile == null) {
+        if (castingProfile == null) {
             castUrl += "?profile=" + Constants.CAST_PROFILE_DEFAULT;
         } else {
-            castUrl += "?profile=" + castProfile.name;
+            castUrl += "?profile=" + castingProfile.name;
         }
 
         MediaInfo mediaInfo = new MediaInfo.Builder(castUrl)
