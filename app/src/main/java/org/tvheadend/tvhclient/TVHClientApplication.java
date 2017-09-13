@@ -801,7 +801,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
             try {
                 offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
             } catch(NumberFormatException ex) {
-
+                // NOP
             }
             addNotifications(offset);
         }

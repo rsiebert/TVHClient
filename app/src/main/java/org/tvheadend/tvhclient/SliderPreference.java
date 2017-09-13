@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 public class SliderPreference extends DialogPreference {
 
-    private final static String TAG = SliderPreference.class.getSimpleName();
-
     private int mValue;
     private int mSeekBarValue;
     private int mSeekBarMinValue;

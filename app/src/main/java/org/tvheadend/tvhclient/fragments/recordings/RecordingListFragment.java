@@ -225,7 +225,10 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         // adapter contents were refreshed.
         final ArrayList<String> idList = new ArrayList<>();
         for (int i = 0; i < adapter.getCount(); ++i) {
-            idList.add(String.valueOf(adapter.getItem(i).id));
+            final Recording rec = adapter.getItem(i);
+            if (rec != null) {
+                idList.add(String.valueOf(rec.id));
+            }
         }
 
         new Thread() {
@@ -293,6 +296,9 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         }
 
         final Recording rec = adapter.getItem(info.position);
+        if (rec == null) {
+            return super.onContextItemSelected(item);
+        }
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
@@ -304,14 +310,12 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_record_remove:
-            if (rec != null) {
-                if (rec.isRecording()) {
-                    Utils.confirmStopRecording(activity, rec);
-                } else if (rec.isScheduled()) {
-                    Utils.confirmCancelRecording(activity, rec);
-                } else {
-                    Utils.confirmRemoveRecording(activity, rec);
-                }
+            if (rec.isRecording()) {
+                Utils.confirmStopRecording(activity, rec);
+            } else if (rec.isScheduled()) {
+                Utils.confirmCancelRecording(activity, rec);
+            } else {
+                Utils.confirmRemoveRecording(activity, rec);
             }
             return true;
 

@@ -100,8 +100,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private static final int DEFAULT_STOP_EXTRA = 2;
 
     public static RecordingAddFragment newInstance() {
-        RecordingAddFragment f = new RecordingAddFragment();
-        return f;
+        return new RecordingAddFragment();
     }
 
     @Override
@@ -116,14 +115,16 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
         return dialog;
     }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getDialog() != null) {
+        if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
     }

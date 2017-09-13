@@ -239,8 +239,11 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeRecording(activity, adapter.getItem(i).id,
-                            Constants.ACTION_DELETE_SERIES_DVR_ENTRY, false);
+                    final SeriesRecording srec = adapter.getItem(i);
+                    if (srec != null) {
+                        Utils.removeRecording(activity, srec.id,
+                                Constants.ACTION_DELETE_SERIES_DVR_ENTRY, false);
+                    }
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
@@ -269,8 +272,10 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        SeriesRecording srec = adapter.getItem(info.position);
-        menu.setHeaderTitle(srec.title);
+        final SeriesRecording srec = adapter.getItem(info.position);
+        if (srec != null) {
+            menu.setHeaderTitle(srec.title);
+        }
     }
 
     @Override
@@ -290,6 +295,9 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
 
         final SeriesRecording srec = adapter.getItem(info.position);
+        if (srec == null) {
+            return super.onContextItemSelected(item);
+        }
 
         switch (item.getItemId()) {
         case R.id.menu_edit:

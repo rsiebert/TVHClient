@@ -87,7 +87,7 @@ public class SettingsNotificationFragment extends PreferenceFragment {
                     try {
                         offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
                     } catch(NumberFormatException ex) {
-
+                        // NOP
                     }
                     app.addNotifications(offset);
                 } else {
@@ -106,7 +106,7 @@ public class SettingsNotificationFragment extends PreferenceFragment {
                 try {
                     app.addNotifications(Long.valueOf((String) offset));
                 } catch (NumberFormatException ex) {
-
+                    // NOP
                 }
                 return true;
             }

@@ -246,6 +246,9 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         }
 
         final Program program = adapter.getItem(info.position);
+        if (program == null) {
+            return super.onContextItemSelected(item);
+        }
 
         // Check if the context menu call came from the list in this fragment
         // (needed for support for multiple fragments in one screen)

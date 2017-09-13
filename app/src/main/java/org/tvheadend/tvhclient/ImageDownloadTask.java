@@ -5,21 +5,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 
 
 public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
-
-    private final static String TAG = ImageDownloadTask.class.getSimpleName();
     private ImageView imageView;
 
     public ImageDownloadTask(ImageView imageView) {
@@ -28,7 +24,7 @@ public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
 
     @Override
     protected Drawable doInBackground(String... strings) {
-        return downloadImage(strings[0], strings[1]);
+        return downloadImage(strings[0]);
     }
 
     protected void onPostExecute(Drawable image) {
@@ -53,13 +49,12 @@ public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
         }
     }
 
-    private Drawable downloadImage(String path, String name) {
+    private Drawable downloadImage(String path) {
         if (path == null) {
             return null;
         }
 
         URL url;
-        BufferedOutputStream out;
         InputStream in;
         BufferedInputStream buf;
 
@@ -71,12 +66,8 @@ public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
 
             // Convert the BufferedInputStream to a Bitmap
             Bitmap bMap = BitmapFactory.decodeStream(buf);
-            if (in != null) {
-                in.close();
-            }
-            if (buf != null) {
-                buf.close();
-            }
+            in.close();
+            buf.close();
             return new BitmapDrawable(bMap);
 
         } catch (Exception e) {

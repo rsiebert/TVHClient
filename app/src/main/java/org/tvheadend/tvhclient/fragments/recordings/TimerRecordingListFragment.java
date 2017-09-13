@@ -232,8 +232,11 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         new Thread() {
             public void run() {
                 for (int i = 0; i < adapter.getCount(); ++i) {
-                    Utils.removeRecording(activity, adapter.getItem(i).id,
-                            Constants.ACTION_DELETE_TIMER_REC_ENTRY, false);
+                    final TimerRecording trec = adapter.getItem(i);
+                    if (trec != null) {
+                        Utils.removeRecording(activity, trec.id,
+                                Constants.ACTION_DELETE_TIMER_REC_ENTRY, false);
+                    }
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
@@ -258,8 +261,10 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        TimerRecording srec = adapter.getItem(info.position);
-        menu.setHeaderTitle(srec.title);
+        TimerRecording trec = adapter.getItem(info.position);
+        if (trec != null) {
+            menu.setHeaderTitle(trec.title);
+        }
     }
 
     @Override
@@ -279,6 +284,9 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         }
 
         final TimerRecording trec = adapter.getItem(info.position);
+        if (trec == null) {
+            return super.onContextItemSelected(item);
+        }
 
         switch (item.getItemId()) {
         case R.id.menu_edit:

@@ -193,6 +193,9 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         // Get the currently selected program from the list
         int position = listView.getCheckedItemPosition();
         final Connection c = adapter.getItem(position);
+        if (c == null) {
+            return false;
+        }
 
         switch (item.getItemId()) {
         case R.id.menu_set_active:
@@ -221,10 +224,8 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             return true;
 
         case R.id.menu_send_wol:
-            if (c != null) {
-                WakeOnLanTask task= new WakeOnLanTask(activity, c);
-                task.execute();
-            }
+            WakeOnLanTask task= new WakeOnLanTask(activity, c);
+            task.execute();
             mode.finish();
             return true;
 
