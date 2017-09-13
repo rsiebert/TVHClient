@@ -116,21 +116,7 @@ public class SettingsUserInterfaceFragment extends PreferenceFragment implements
                 }
                 break;
             case "epgMaxDays":
-                try {
-                    Integer.parseInt(prefs.getString(key, "7"));
-                } catch (NumberFormatException ex) {
-                    prefs.edit().putString(key, "7").apply();
-                }
-                if (settingsInterface != null) {
-                    settingsInterface.restart();
-                }
-                break;
             case "epgHoursVisible":
-                try {
-                    Integer.parseInt(prefs.getString(key, "4"));
-                } catch (NumberFormatException ex) {
-                    prefs.edit().putString(key, "4").apply();
-                }
                 if (settingsInterface != null) {
                     settingsInterface.restart();
                 }
