@@ -1,6 +1,6 @@
 $ 1.9.10
   % VERSION 1.9.10
-  _ 06.09.2017
+  _ 14.09.2017
     * Updated Polish and Slovak translations
     * Added option to show the subtitle for a program
     * Minor bug fixes
