@@ -90,6 +90,12 @@ public class TVHClientApplication extends Application implements BillingProcesso
     private String serverVersion = "";
     private String webRoot = "";
 
+    private static TVHClientApplication mInstance;
+
+    public static synchronized TVHClientApplication getInstance() {
+        return mInstance;
+    }
+
     /**
      * Adds a single listener to the list.
      * 
@@ -1035,6 +1041,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
     @Override
     public void onCreate() {
         super.onCreate();
+        mInstance = this;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("pref_debug_mode", false)) {
