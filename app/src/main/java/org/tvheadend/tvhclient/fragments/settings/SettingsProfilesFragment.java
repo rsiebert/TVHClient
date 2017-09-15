@@ -107,7 +107,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         super.onSaveInstanceState(outState);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

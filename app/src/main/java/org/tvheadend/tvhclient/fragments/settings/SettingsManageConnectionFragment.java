@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.model.Connection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("deprecation")
 public class SettingsManageConnectionFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener, BackPressedInterface {
 
     @SuppressWarnings("unused")

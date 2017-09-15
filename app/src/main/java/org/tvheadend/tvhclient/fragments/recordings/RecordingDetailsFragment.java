@@ -30,7 +30,6 @@ import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
-@SuppressWarnings("deprecation")
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
 
     @SuppressWarnings("unused")

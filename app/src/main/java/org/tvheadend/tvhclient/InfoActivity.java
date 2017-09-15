@@ -17,7 +17,6 @@ import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("deprecation")
 public class InfoActivity extends ActionBarActivity {
 
     @SuppressWarnings("unused")

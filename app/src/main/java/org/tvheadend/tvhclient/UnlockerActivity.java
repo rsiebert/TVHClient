@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
-@SuppressWarnings("deprecation")
 public class UnlockerActivity extends ActionBarActivity {
 
     private CoordinatorLayout coordinatorLayout;

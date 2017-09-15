@@ -38,7 +38,6 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("deprecation")
 public class TimerRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     private static final String TAG = TimerRecordingListFragment.class.getSimpleName();

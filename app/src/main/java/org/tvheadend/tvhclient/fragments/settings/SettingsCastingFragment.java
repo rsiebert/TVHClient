@@ -97,7 +97,6 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         super.onSaveInstanceState(outState);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

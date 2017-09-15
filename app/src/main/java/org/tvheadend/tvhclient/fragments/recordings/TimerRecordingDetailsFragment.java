@@ -25,7 +25,6 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 import java.util.Calendar;
 import java.util.Date;
 
-@SuppressWarnings("deprecation")
 public class TimerRecordingDetailsFragment extends DialogFragment {
 
     @SuppressWarnings("unused")

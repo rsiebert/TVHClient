@@ -91,7 +91,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         return v;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -272,7 +271,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
      * This line is only visible in the first screen where the current time is
      * shown. This method is called every minute.
      */
-    @SuppressWarnings("deprecation")
     @SuppressLint("InlinedApi")
     private void setCurrentTimeIndication() {
         if (bundle != null && currentTimeIndication != null && activity != null) {

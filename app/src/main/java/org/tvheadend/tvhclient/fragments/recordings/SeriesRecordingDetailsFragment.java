@@ -22,7 +22,6 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
-@SuppressWarnings("deprecation")
 public class SeriesRecordingDetailsFragment extends DialogFragment {
 
     @SuppressWarnings("unused")

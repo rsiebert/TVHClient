@@ -147,7 +147,6 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         super.onSaveInstanceState(outState);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

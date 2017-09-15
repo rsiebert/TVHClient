@@ -51,7 +51,6 @@ public class SettingsUserInterfaceFragment extends PreferenceFragment implements
         prefShowProgramArtwork = (CheckBoxPreference) findPreference("pref_show_program_artwork");
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

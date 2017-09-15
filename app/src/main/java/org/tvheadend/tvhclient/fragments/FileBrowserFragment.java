@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class FileBrowserFragment extends DialogFragment {
 
     @SuppressWarnings("unused")

@@ -26,7 +26,6 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
-@SuppressWarnings("deprecation")
 public class SettingsActivity extends ActionBarActivity implements ActionBarInterface, SettingsInterface {
 
     @SuppressWarnings("unused")

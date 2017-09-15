@@ -29,7 +29,6 @@ import org.tvheadend.tvhclient.model.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
 
     @SuppressWarnings("unused")

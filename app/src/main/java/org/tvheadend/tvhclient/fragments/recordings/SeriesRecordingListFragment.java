@@ -38,7 +38,6 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("deprecation")
 public class SeriesRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     private static final String TAG = SeriesRecordingListFragment.class.getSimpleName();

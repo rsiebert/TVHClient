@@ -49,7 +49,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-@SuppressWarnings("deprecation")
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private final static String TAG = SettingsFragment.class.getSimpleName();

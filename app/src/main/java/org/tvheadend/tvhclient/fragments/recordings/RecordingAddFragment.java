@@ -44,7 +44,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Locale;
 
-@SuppressWarnings("deprecation")
 public class RecordingAddFragment extends DialogFragment implements OnClickListener {
 
     private final static String TAG = RecordingAddFragment.class.getSimpleName();
