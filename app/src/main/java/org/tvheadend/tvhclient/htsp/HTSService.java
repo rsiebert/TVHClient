@@ -80,7 +80,6 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        app.log(TAG, "onStartCommand() called with: intent = [" + intent.getAction() + "], flags = [" + flags + "], startId = [" + startId + "]");
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
