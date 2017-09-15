@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -485,9 +486,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (ActionBarActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
     }

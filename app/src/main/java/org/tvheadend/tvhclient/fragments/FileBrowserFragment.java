@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -73,9 +74,9 @@ public class FileBrowserFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = getActivity();
     }
 
     @Override

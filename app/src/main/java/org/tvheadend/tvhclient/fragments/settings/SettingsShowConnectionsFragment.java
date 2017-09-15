@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments.settings;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.ActionMode;
@@ -60,9 +61,9 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = getActivity();
         dbh = DatabaseHelper.getInstance(activity);
     }
 

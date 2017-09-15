@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -71,9 +72,9 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     }
     
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = getActivity();
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -92,9 +93,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // TODO was prev cast to fragment activiy
+        activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
 

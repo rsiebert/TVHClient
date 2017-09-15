@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -126,9 +127,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
 

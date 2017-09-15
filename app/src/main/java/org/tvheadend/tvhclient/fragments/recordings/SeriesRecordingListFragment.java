@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -72,9 +73,9 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (ActionBarActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
 

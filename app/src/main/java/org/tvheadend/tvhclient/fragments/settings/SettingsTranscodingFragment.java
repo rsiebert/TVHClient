@@ -19,6 +19,7 @@
 package org.tvheadend.tvhclient.fragments.settings;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -148,9 +149,9 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = getActivity();
         dbh = DatabaseHelper.getInstance(activity);
     }
 

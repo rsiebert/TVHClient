@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
@@ -103,9 +104,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (ActionBarActivity) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (ActionBarActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
     }

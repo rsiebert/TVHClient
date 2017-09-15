@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments.settings;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -93,9 +94,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = getActivity();
         dbh = DatabaseHelper.getInstance(activity);
     }
 
