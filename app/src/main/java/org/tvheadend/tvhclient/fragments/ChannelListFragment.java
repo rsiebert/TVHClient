@@ -51,6 +51,7 @@ import org.tvheadend.tvhclient.model.Recording;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -455,22 +456,33 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
      * Additionally some status information will be shown in the action bar.
      */
     private void populateList() {
-        // Add only those channels that contain the selected tag
-        adapter.clear();
+        // Get the currently selected channel tag
         ChannelTag currentTag = Utils.getChannelTag(activity);
-        for (Channel ch : app.getChannels()) {
+
+        // Add only those channels that contain the selected channel tag
+        adapter.clear();
+        CopyOnWriteArrayList<Channel> channelList = new CopyOnWriteArrayList<>(app.getChannels());
+        Iterator<Channel> cIt = channelList.iterator();
+        Channel ch;
+        while (cIt.hasNext()) {
+            ch = cIt.next();
             if (currentTag == null || ch.hasTag(currentTag.id)) {
                 adapter.add(ch);
             }
         }
+
         adapter.sort(Utils.getChannelSortOrder(activity));
         adapter.setTime(showProgramsFromTime);
         adapter.notifyDataSetChanged();
 
-        // Fill the tag adapter with the available tags
+        // Fill the channel tag adapter with the available channel tags
         tagList.clear();
-        for (ChannelTag t : app.getChannelTags()) {
-            tagList.add(t);
+        CopyOnWriteArrayList<ChannelTag> channelTagList = new CopyOnWriteArrayList<>(app.getChannelTags());
+        Iterator<ChannelTag> ctIt = channelTagList.iterator();
+        ChannelTag tag;
+        while (ctIt.hasNext()) {
+            tag = ctIt.next();
+            tagList.add(tag);
         }
 
         // Show the name of the selected channel tag and the number of channels
