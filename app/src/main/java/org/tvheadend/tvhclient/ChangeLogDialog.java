@@ -135,9 +135,10 @@ public class ChangeLogDialog {
             wv.setBackgroundColor(Color.BLACK);
         }
 
-        return new MaterialDialog.Builder(context)
-                .title(R.string.pref_changelog)
-                .customView(wv, false)
+        // Create the dialog that will show the changelog to the user.
+        // The actual contents will be added via the customView() call.
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(context);
+        builder.title(R.string.pref_changelog)
                 .positiveText(context.getString(android.R.string.ok))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
@@ -147,8 +148,22 @@ public class ChangeLogDialog {
                             di.changeLogDialogDismissed();
                         }
                     }
-                })
-                .build();
+                });
+
+        // Try to add the web view to the dialog builder. In rare cases where this
+        // is not present catch the exception and show a message to the user.
+        try {
+            builder.customView(wv, false);
+            return builder.build();
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("webview")) {
+                builder.content("The system package WebView is not installed. "
+                        + "This is required to show the HTML page. "
+                        + "This package is usually installed per default. "
+                        + "It can be installed manually from the play store.");
+            }
+            return builder.build();
+        }
     }
 
     private void updateVersionInPreferences() {
