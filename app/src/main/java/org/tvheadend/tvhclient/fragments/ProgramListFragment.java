@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -90,8 +89,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
@@ -225,10 +224,10 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     }
 
     @Override
-    public void onDetach() {
+    public void onDestroy() {
         fragmentStatusInterface = null;
         actionBarInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     @Override

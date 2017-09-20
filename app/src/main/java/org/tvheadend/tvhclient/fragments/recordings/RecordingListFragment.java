@@ -74,8 +74,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         activity = (ActionBarActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
@@ -118,10 +118,10 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     }
 
     @Override
-    public void onDetach() {
+    public void onDestroy() {
         fragmentStatusInterface = null;
         actionBarInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     @Override

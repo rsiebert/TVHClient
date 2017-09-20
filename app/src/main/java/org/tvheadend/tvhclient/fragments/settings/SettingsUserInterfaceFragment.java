@@ -48,21 +48,16 @@ public class SettingsUserInterfaceFragment extends PreferenceFragment implements
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_ui);
-
         prefShowProgramArtwork = (CheckBoxPreference) findPreference("pref_show_program_artwork");
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override
-    public void onDetach() {
+    public void onDestroy() {
         settingsInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     public void onResume() {

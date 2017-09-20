@@ -83,6 +83,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = (ActionBarActivity) getActivity();
+        app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
+
         // Set the default values and then load the preferences from the XML resource
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
         addPreferencesFromResource(R.xml.preferences);
@@ -486,18 +490,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = (ActionBarActivity) getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-        dbh = DatabaseHelper.getInstance(activity);
-    }
-
-    @Override
-    public void onDetach() {
+    public void onDestroy() {
         settingsInterface = null;
         actionBarInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     public void onResume() {

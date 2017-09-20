@@ -72,16 +72,13 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        activity = (ActionBarActivity) getActivity();
+        app = (TVHClientApplication) activity.getApplication();
+
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = (ActionBarActivity) getActivity();
-        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override

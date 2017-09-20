@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -83,8 +82,8 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
@@ -126,9 +125,9 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     @Override
-    public void onDetach() {
+    public void onDestroy() {
         actionBarInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
 	@Override

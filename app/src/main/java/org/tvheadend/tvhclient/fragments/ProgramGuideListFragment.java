@@ -93,9 +93,9 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        // TODO was prev cast to fragment activiy
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
@@ -313,10 +313,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     }
 
     @Override
-    public void onDetach() {
+    public void onDestroy() {
         fragmentStatusInterface = null;
         fragmentScrollInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     @Override

@@ -72,8 +72,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         activity = (ActionBarActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
@@ -116,10 +116,10 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     }
 
     @Override
-    public void onDetach() {
+    public void onDestroy() {
         fragmentStatusInterface = null;
         actionBarInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     @Override

@@ -74,6 +74,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = getActivity();
+        app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
+
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_profiles);
 
@@ -109,17 +113,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-        dbh = DatabaseHelper.getInstance(activity);
-    }
-
-    @Override
-    public void onDetach() {
+    public void onDestroy() {
         actionBarInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     @Override

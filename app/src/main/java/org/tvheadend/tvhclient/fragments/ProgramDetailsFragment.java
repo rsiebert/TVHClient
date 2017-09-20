@@ -99,16 +99,13 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        activity = getActivity();
+        app = (TVHClientApplication) activity.getApplication();
+
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
     }
 
     @Override

@@ -67,16 +67,13 @@ public class FileBrowserFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        activity = getActivity();
+
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
             setStyle(DialogFragment.STYLE_NO_TITLE, Utils.getThemeId(activity));
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = getActivity();
     }
 
     @Override

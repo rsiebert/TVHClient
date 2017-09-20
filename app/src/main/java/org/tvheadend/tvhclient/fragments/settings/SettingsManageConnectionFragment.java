@@ -77,6 +77,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = getActivity();
+        dbh = DatabaseHelper.getInstance(activity);
+
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_add_connection);
 
@@ -94,17 +97,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = getActivity();
-        dbh = DatabaseHelper.getInstance(activity);
-    }
-
-    @Override
-    public void onDetach() {
+    public void onDestroy() {
         actionBarInterface = null;
         settingsInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
     
     @Override

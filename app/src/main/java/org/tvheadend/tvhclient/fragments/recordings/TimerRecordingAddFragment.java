@@ -95,14 +95,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         return new TimerRecordingAddFragment();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-        dbh = DatabaseHelper.getInstance(activity);
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -116,6 +108,11 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        activity = getActivity();
+        app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
+
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }

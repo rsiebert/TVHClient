@@ -114,14 +114,6 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         return f;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-        dbh = DatabaseHelper.getInstance(activity);
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -135,6 +127,11 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        activity = getActivity();
+        app = (TVHClientApplication) activity.getApplication();
+        dbh = DatabaseHelper.getInstance(activity);
+
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }

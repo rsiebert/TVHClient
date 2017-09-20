@@ -72,8 +72,8 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     }
     
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         activity = getActivity();
     }
 

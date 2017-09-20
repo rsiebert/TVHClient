@@ -61,17 +61,17 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         activity = getActivity();
         dbh = DatabaseHelper.getInstance(activity);
     }
 
     @Override
-    public void onDetach() {
+    public void onDestroy() {
         actionBarInterface = null;
         settingsInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     @Override

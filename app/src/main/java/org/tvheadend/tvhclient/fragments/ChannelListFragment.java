@@ -127,8 +127,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
     }
@@ -521,11 +521,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     }
 
     @Override
-    public void onDetach() {
+    public void onDestroy() {
         fragmentStatusInterface = null;
         fragmentScrollInterface = null;
         actionBarInterface = null;
-        super.onDetach();
+        super.onDestroy();
     }
 
     /**
