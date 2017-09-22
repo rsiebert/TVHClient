@@ -95,18 +95,31 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             castingProfile = dbh.getProfile(conn.cast_profile_id);
         }
 
-        String encodedUsername = null;
-        String encodedPassword = null;
+        String encodedUsername = "";
+        String encodedPassword = "";
         try {
             if (conn != null) {
-                encodedUsername = URLEncoder.encode(username, "UTF-8");
-                encodedPassword = URLEncoder.encode(password, "UTF-8");
+                if (!username.isEmpty()) {
+                    encodedUsername = URLEncoder.encode(username, "UTF-8");
+                }
+                if (!password.isEmpty()) {
+                    encodedPassword = URLEncoder.encode(password, "UTF-8");
+                }
             }
         } catch (UnsupportedEncodingException e) {
             // Can't happen since encoding is statically specified
         }
 
-        baseUrl = "http://" + encodedUsername + ":" + encodedPassword + "@" + address + ":" + streamingPort;
+        // Only add the credentials to the playback URL if a
+        // username and password are set in the current connection
+        baseUrl = "http://";
+        if (!encodedUsername.isEmpty()) {
+            baseUrl += encodedUsername;
+            if (!encodedPassword.isEmpty()) {
+                baseUrl += ":" + encodedPassword + "@";
+            }
+        }
+        baseUrl += address + ":" + streamingPort;
 
         switch (action) {
         case Constants.ACTION_PLAY:
