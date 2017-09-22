@@ -23,6 +23,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -52,6 +53,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     protected boolean isDualPane;
 
     protected TVHClientApplication app;
+    private Logger logger;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         super.onCreate(savedInstanceState);
         activity = (ActionBarActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
+        logger = Logger.getInstance();
     }
 
     @Override
@@ -202,12 +205,12 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         new Thread() {
             public void run() {
                 for (int i = 0; i < idList.size(); ++i) {
-                    app.log(TAG, "Cancelling recording id " + idList.get(i).title);
+                    logger.log(TAG, "Cancelling recording id " + idList.get(i).title);
                     Utils.cancelRecording(activity, idList.get(i));
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
-                        app.log(TAG, "Error cancelling all recordings, " + e.getLocalizedMessage());
+                        logger.log(TAG, "Error cancelling all recordings, " + e.getLocalizedMessage());
                     }
                 }
             }
@@ -234,12 +237,12 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         new Thread() {
             public void run() {
                 for (int i = 0; i < idList.size(); ++i) {
-                    app.log(TAG, "Removing recording id " + idList.get(i));
+                    logger.log(TAG, "Removing recording id " + idList.get(i));
                     Utils.removeRecording(activity, idList.get(i), Constants.ACTION_DELETE_DVR_ENTRY, false);
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
-                        app.log(TAG, "Error removing all recordings, " + e.getLocalizedMessage());
+                        logger.log(TAG, "Error removing all recordings, " + e.getLocalizedMessage());
                     }
                 }
             }

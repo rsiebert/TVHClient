@@ -22,6 +22,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
     private final Connection conn;
     private final Activity activity;
+    private final Logger logger;
     private Exception exception;
     private final TVHClientApplication app;
 
@@ -29,6 +30,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         this.activity = context;
         this.conn = conn;
         this.app = (TVHClientApplication) context.getApplicationContext();
+        logger = Logger.getInstance();
     }
 
     @Override
@@ -55,20 +57,20 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
             InetAddress address;
             if (!conn.wol_broadcast) {
                 address = InetAddress.getByName(conn.address);
-                app.log(TAG, "doInBackground: Sending WOL packet to " + address);
+                logger.log(TAG, "doInBackground: Sending WOL packet to " + address);
             } else {
                 // Replace the last number by 255 to send the packet as a broadcast
                 byte[] ipAddress = InetAddress.getByName(conn.address).getAddress();
                 ipAddress[3] = (byte) 255;
                 address = InetAddress.getByAddress(ipAddress);
-                app.log(TAG, "doInBackground: Sending WOL packet as broadcast to " + address.toString());
+                logger.log(TAG, "doInBackground: Sending WOL packet as broadcast to " + address.toString());
             }
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, conn.wol_port);
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);
             socket.close();
 
-            app.log(TAG, "doInBackground: Datagram packet was sent");
+            logger.log(TAG, "doInBackground: Datagram packet was sent");
             if (!conn.wol_broadcast) {
                 return WOL_SEND;
             } else {

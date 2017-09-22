@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -72,6 +71,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private boolean enableScrolling = false;
 
     private TVHClientApplication app;
+    private Logger logger;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,6 +98,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
+        logger = Logger.getInstance();
     }
 
     @Override
@@ -255,10 +256,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                         // Check if the first fragment is visible.
                         // This can be checked with the time indication
                         if (tabIndex == 0) {
-                            app.log(TAG, "First fragment visible in the EPG, updating entire view");
+                            logger.log(TAG, "First fragment visible in the EPG, updating entire view");
                             adapter.notifyDataSetChanged();
                         } else {
-                            app.log(TAG, "First fragment not visible in the EPG, not updating entire view");
+                            logger.log(TAG, "First fragment not visible in the EPG, not updating entire view");
                         }
                     }
                 });

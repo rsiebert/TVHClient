@@ -36,6 +36,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
     private DownloadManager dm;
 
     private Recording rec;
+    private Logger logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         conn = dbh.getSelectedConnection();
         // Check that a valid channel or recording was specified
         rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+        logger = Logger.getInstance();
     }
 
     @Override
@@ -83,11 +85,11 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
             final String path = prefs.getString("pref_download_directory", Environment.DIRECTORY_DOWNLOADS);
             request.setDestinationInExternalPublicDir(path, rec.title + ".mkv");
 
-            app.log(TAG, "prepareDownload: Saving download from url " + downloadUrl + " to " + path);
+            logger.log(TAG, "prepareDownload: Saving download from url " + downloadUrl + " to " + path);
             startDownload(request);
 
         } catch (IllegalStateException e) {
-            app.log(TAG, "prepareDownload: External storage not available, " + e.getLocalizedMessage());
+            logger.log(TAG, "prepareDownload: External storage not available, " + e.getLocalizedMessage());
             showErrorDialog(getString(R.string.no_external_storage_available));
         }
     }
@@ -117,16 +119,16 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
                 while (c.moveToNext()) {
                     int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
                     int reason = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_REASON));
-                    app.log(TAG, "startDownload: Downloading [" + id + "], status: " + status + ", reason: " + reason);
+                    logger.log(TAG, "startDownload: Downloading [" + id + "], status: " + status + ", reason: " + reason);
 
                     switch (status) {
                     case DownloadManager.STATUS_FAILED:
                         // Check the reason value if it is insufficient storage space
                         if (reason == 1006) {
-                            app.log(TAG, "startDownload: Download failed due to insufficient storage space");
+                            logger.log(TAG, "startDownload: Download failed due to insufficient storage space");
                             showErrorDialog(getString(R.string.download_error_insufficient_space, rec.title));
                         } else if (reason == 407) {
-                            app.log(TAG, "startDownload: Download failed due to missing / wrong authentication");
+                            logger.log(TAG, "startDownload: Download failed due to missing / wrong authentication");
                             showErrorDialog(getString(R.string.download_error_authentication_required, rec.title));
                         } else {
                             finish();

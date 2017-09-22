@@ -38,6 +38,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
@@ -64,6 +65,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     private ListPreference prefCastProfiles;
     private TVHClientApplication app;
     private DatabaseHelper dbh;
+    private Logger logger;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
+        logger = Logger.getInstance();
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_casting);
@@ -82,10 +85,10 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         conn = dbh.getSelectedConnection();
         castProfile = dbh.getProfile(conn.cast_profile_id);
         if (castProfile == null) {
-            app.log(TAG, "No casting profile defined in the connection");
+            logger.log(TAG, "No casting profile defined in the connection");
             castProfile = new Profile();
         } else {
-            app.log(TAG, "Casting profile " + castProfile.name + ", " + castProfile.uuid + " is defined in the connection");
+            logger.log(TAG, "Casting profile " + castProfile.name + ", " + castProfile.uuid + " is defined in the connection");
         }
 
         // If the state is null then this activity has been started for
@@ -247,7 +250,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         if (castProfile.uuid == null
             || (castProfile.name != null && castProfile.name.length() == 0)
             || (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
-            app.log(TAG, "No valid casting profile defined in the current connection, setting default");
+            logger.log(TAG, "No valid casting profile defined in the current connection, setting default");
 
             for (Profiles p : app.getProfiles()) {
                 if (p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
@@ -258,7 +261,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         }
         // show the currently selected profile name, if none is
         // available then the default value is used
-        app.log(TAG, "Setting casting profile " + castProfile.name);
+        logger.log(TAG, "Setting casting profile " + castProfile.name);
         prefCastProfiles.setValue(castProfile.uuid);
     }
 

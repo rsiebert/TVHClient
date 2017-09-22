@@ -44,6 +44,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private String address;
     private int streamingPort;
     private String title = "";
+    private Logger logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         Utils.setLanguage(this);
 
         app = (TVHClientApplication) getApplication();
-
+        logger = Logger.getInstance();
+        
         // If a play intent was sent no action is given, so default to play
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, Constants.ACTION_PLAY);
 
@@ -66,7 +68,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         } else if (rec != null) {
             title = rec.title;
         } else {
-            app.log(TAG, "onCreate: No channel or recording provided, exiting");
+            logger.log(TAG, "onCreate: No channel or recording provided, exiting");
             return;
         }
 
@@ -80,7 +82,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
      *
      */
     private void initAction() {
-        app.log(TAG, "initAction() called");
+        logger.log(TAG, "initAction() called");
 
         // Create the url with the credentials and the host and  
         // port configuration. This one is fixed for all actions
@@ -128,7 +130,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             if (rec != null && app.isUnlocked()) {
                 File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 File file = new File(path, rec.title + ".mkv");
-                app.log(TAG, "initAction: Downloaded recording can be played from '" + file.getAbsolutePath()  + "': " + file.exists());
+                logger.log(TAG, "initAction: Downloaded recording can be played from '" + file.getAbsolutePath()  + "': " + file.exists());
                 if (file.exists()) {
                     startPlayback(file.getAbsolutePath(), "video/x-matroska");
                     break;
@@ -146,15 +148,15 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         case Constants.ACTION_CAST:
             if (ch != null && ch.number > 0) {
-                app.log(TAG, "initAction: Starting to cast channel '" + ch.name + "'");
+                logger.log(TAG, "initAction: Starting to cast channel '" + ch.name + "'");
                 startCasting();
             } else if (rec != null) {
-                app.log(TAG, "initAction: Starting to cast recording '" + rec.title + "'");
+                logger.log(TAG, "initAction: Starting to cast recording '" + rec.title + "'");
                 startCasting();
             }
             break;
         }
-        app.log(TAG, "initAction() returned");
+        logger.log(TAG, "initAction() returned");
     }
 
     @Override
@@ -182,11 +184,11 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
      * @param ticket The ticket id that was given by the server
      */
     private void initPlayback(String path, String ticket) {
-        app.log(TAG, "initPlayback() called with: path = [" + path + "], ticket = [" + ticket + "]");
+        logger.log(TAG, "initPlayback() called with: path = [" + path + "], ticket = [" + ticket + "]");
 
         // Set default values if no profile was specified
         if (playbackProfile == null) {
-            app.log(TAG, "initPlayback: no profile defined, creating default profile");
+            logger.log(TAG, "initPlayback: no profile defined, creating default profile");
             playbackProfile = new Profile();
         }
 
@@ -230,7 +232,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             }
         }
         startPlayback(playUrl, mime);
-        app.log(TAG, "initPlayback() returned");
+        logger.log(TAG, "initPlayback() returned");
     }
 
     /**
@@ -248,7 +250,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             logUrl = "http://<user>:<pass>" + url.substring(url.indexOf('@'));
         }
 
-        app.log(TAG, "startPlayback() called with: url = [" + logUrl + "], mime = [" + mime + "]");
+        logger.log(TAG, "startPlayback() called with: url = [" + logUrl + "], mime = [" + mime + "]");
 
         final Intent playbackIntent = new Intent(Intent.ACTION_VIEW);
         playbackIntent.setDataAndType(Uri.parse(url), mime);
@@ -262,11 +264,11 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         this.runOnUiThread(new Runnable() {
             public void run() {
                 try {
-                    app.log(TAG, "startPlayback: Starting external player");
+                    logger.log(TAG, "startPlayback: Starting external player");
                     startActivity(playbackIntent);
                     finish();
                 } catch (Throwable t) {
-                    app.log(TAG, "startPlayback: Can't execute external media player");
+                    logger.log(TAG, "startPlayback: Can't execute external media player");
 
                     // Show a confirmation dialog before deleting the recording
                     new MaterialDialog.Builder(PlayActivity.this)
@@ -278,12 +280,12 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 try {
-                                    app.log(TAG, "startPlayback: Starting play store to download external players");
+                                    logger.log(TAG, "startPlayback: Starting play store to download external players");
                                     Intent installIntent = new Intent(Intent.ACTION_VIEW);
                                     installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
                                     startActivity(installIntent);
                                 } catch (Throwable t2) {
-                                    app.log(TAG, "startPlayback: Could not start google play store");
+                                    logger.log(TAG, "startPlayback: Could not start google play store");
                                 } finally {
                                     finish();
                                 }
@@ -299,7 +301,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
                 }
             }
         });
-        app.log(TAG, "startPlayback() returned");
+        logger.log(TAG, "startPlayback() returned");
     }
 
     /**
@@ -307,7 +309,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
      * information is then passed to the cast controller activity.
      */
     private void startCasting() {
-        app.log(TAG, "startCasting() called");
+        logger.log(TAG, "startCasting() called");
 
         String iconUrl = baseUrl + app.getWebRoot();
         String castUrl = baseUrl + app.getWebRoot();
@@ -352,10 +354,10 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             .setStreamDuration(duration)
             .build();
 
-        app.log(TAG, "startCasting: Casting the following program: title [" + title + "], url [" + castUrl + "]");
+        logger.log(TAG, "startCasting: Casting the following program: title [" + title + "], url [" + castUrl + "]");
         VideoCastManager.getInstance().startVideoCastControllerActivity(this, mediaInfo, 0, true);
 
-        app.log(TAG, "startCasting() returned");
+        logger.log(TAG, "startCasting() returned");
         finish();
     }
 

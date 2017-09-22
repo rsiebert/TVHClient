@@ -259,7 +259,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefClearIconCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                app.log(TAG, "onPreferenceClick: Deleting channel icons");
+                logger.log(TAG, "onPreferenceClick: Deleting channel icons");
                 // Show a confirmation dialog before clearing the icon cache
                 new MaterialDialog.Builder(activity)
                         .title(R.string.clear_icon_cache)
@@ -273,7 +273,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                                 for (File file : files) {
                                     if (file.toString().endsWith(".png")) {
                                         if (!file.delete()) {
-                                            app.log(TAG, "onClick: Could not delete channel icon " + file.getName());
+                                            logger.log(TAG, "onClick: Could not delete channel icon " + file.getName());
                                         }
                                         if (settingsInterface != null) {
                                             settingsInterface.reconnect();
@@ -459,7 +459,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     }
 
     private void mailLogfile(String filename) {
-        app.log(TAG, "mailLogfile() called with: filename = [" + filename + "]");
+        logger.log(TAG, "mailLogfile() called with: filename = [" + filename + "]");
 
         // TODO sync logfile before sending?
 

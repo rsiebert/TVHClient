@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
@@ -31,6 +29,7 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
@@ -98,6 +97,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
+    private Logger logger;
 
     public static RecordingAddFragment newInstance() {
         return new RecordingAddFragment();
@@ -120,6 +120,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         activity = (ActionBarActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
+        logger = Logger.getInstance();
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
@@ -333,7 +334,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             if (priorityValue < priorityList.length) {
                 priority.setText(priorityList[(int) priorityValue]);
             } else {
-                app.log(TAG, "Priority value '"
+                logger.log(TAG, "Priority value '"
                         + priorityValue + "' is larger then priority array size of '"
                         + priorityList.length + "'. Using default of 2");
                 priority.setText(priorityList[2]);

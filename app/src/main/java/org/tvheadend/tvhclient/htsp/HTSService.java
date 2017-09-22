@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -59,6 +60,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private HTSConnection connection;
     private PackageInfo packInfo;
     private TVHClientApplication app;
+    private Logger logger;
 
     private class LocalBinder extends Binder {
         HTSService getService() {
@@ -70,6 +72,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     public void onCreate() {
         execService = Executors.newScheduledThreadPool(10);
         app = (TVHClientApplication) getApplication();
+        logger = Logger.getInstance();
 
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -83,7 +86,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
-            app.log(TAG, "onStartCommand: Connection to server requested");
+            logger.log(TAG, "onStartCommand: Connection to server requested");
 
             boolean force = intent.getBooleanExtra("force", false);
             final String hostname = intent.getStringExtra("hostname");
@@ -92,12 +95,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             final String password = intent.getStringExtra("password");
 
             if (connection != null && force) {
-                app.log(TAG, "onStartCommand: Closing existing connection");
+                logger.log(TAG, "onStartCommand: Closing existing connection");
                 connection.close();
                 app.clearAll();
             }
             if (connection == null || !connection.isConnected()) {
-                app.log(TAG, "onStartCommand: Connecting to server");
+                logger.log(TAG, "onStartCommand: Connecting to server");
                 app.setLoading(true);
                 connection = new HTSConnection(app, this, packInfo.packageName, packInfo.versionName);
 
@@ -111,10 +114,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
 
         } else if (connection == null || !connection.isConnected()) {
-            app.log(TAG, "onStartCommand: No connection to perform " + action);
+            logger.log(TAG, "onStartCommand: No connection to perform " + action);
 
         } else if (action.equals(Constants.ACTION_DISCONNECT)) {
-            app.log(TAG, "onStartCommand: Closing connection to server");
+            logger.log(TAG, "onStartCommand: Closing connection to server");
             connection.close();
 
         } else if (action.equals(Constants.ACTION_GET_EVENT)) {
@@ -216,7 +219,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             getSystemTime();
 
         }
-        app.log(TAG, "onStartCommand() returned: " + START_NOT_STICKY);
+        logger.log(TAG, "onStartCommand() returned: " + START_NOT_STICKY);
         return START_NOT_STICKY;
     }
 
@@ -557,7 +560,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onInitialSyncCompleted() {
-        app.log(TAG, "onInitialSyncCompleted() called");
+        logger.log(TAG, "onInitialSyncCompleted() called");
         app.setLoading(false);
         app.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
         app.setProtocolVersion(connection.getProtocolVersion());
@@ -761,7 +764,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     public void onMessage(HTSMessage msg) {
-        app.log(TAG, "onMessage() called with: msg = [" + msg.getMethod() + "]");
+        logger.log(TAG, "onMessage() called with: msg = [" + msg.getMethod() + "]");
         String method = msg.getMethod();
 
         switch (method) {
@@ -947,7 +950,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     ch.iconBitmap = getIcon(ch.icon);
                     app.updateChannel(ch);
                 } catch (Throwable ex) {
-                    app.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
+                    logger.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -960,7 +963,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     tag.iconBitmap = getIcon(tag.icon);
                     app.updateChannelTag(tag);
                 } catch (Throwable ex) {
-                    app.log(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
+                    logger.log(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
                 }
             }
         });

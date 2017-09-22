@@ -48,7 +48,6 @@ import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCa
 import com.google.android.libraries.cast.companionlibrary.widgets.IntroductoryOverlay;
 import com.google.android.libraries.cast.companionlibrary.widgets.MiniController;
 
-import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.adapter.DrawerMenuAdapter;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
@@ -69,6 +68,7 @@ import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -175,6 +175,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private MenuItem mMediaRouteMenuItem;
     private IntroductoryOverlay mOverlay;
     private MiniController mMiniController;
+    private Logger logger;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -190,6 +191,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         View v = findViewById(R.id.right_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
+        logger = Logger.getInstance();
         dbh = DatabaseHelper.getInstance(this);
         changeLogDialog = new ChangeLogDialog(this);
 
@@ -318,7 +320,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     }
 
     private void initCasting() {
-        app.log(TAG, "initCasting() called");
+        logger.log(TAG, "initCasting() called");
 
         mMiniController = (MiniController) findViewById(R.id.miniController);
         mCastManager = VideoCastManager.getInstance();
@@ -331,19 +333,19 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 if (resourceId > 0) {
                     reason = getString(resourceId);
                 }
-                app.log(TAG, "onFailed() called with: reason = [" + reason + "], statusCode = [" + statusCode + "]");
+                logger.log(TAG, "onFailed() called with: reason = [" + reason + "], statusCode = [" + statusCode + "]");
             }
 
             @Override
             public void onApplicationConnected(ApplicationMetadata appMetadata, String sessionId, boolean wasLaunched) {
-                app.log(TAG, "onApplicationConnected() called with: appMetadata = [" + appMetadata + "], sessionId = [" + sessionId + "], wasLaunched = [" + wasLaunched + "]");
+                logger.log(TAG, "onApplicationConnected() called with: appMetadata = [" + appMetadata + "], sessionId = [" + sessionId + "], wasLaunched = [" + wasLaunched + "]");
                 invalidateOptionsMenu();
 
                 Connection conn = dbh.getSelectedConnection();
                 Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
 
                 if (profile == null || !profile.enabled || profile.uuid == null || profile.uuid.length() == 0) {
-                    app.log(TAG, "onApplicationConnected: No casting profile set, disconnecting");
+                    logger.log(TAG, "onApplicationConnected: No casting profile set, disconnecting");
                     new MaterialDialog.Builder(MainActivity.this)
                             .content(R.string.cast_profile_not_set)
                             .positiveText(android.R.string.ok)
@@ -354,31 +356,31 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                                 }
                             }).show();
                 } else {
-                    app.log(TAG, "onApplicationConnected: Selected casting profile is " + profile.name);
+                    logger.log(TAG, "onApplicationConnected: Selected casting profile is " + profile.name);
                 }
             }
 
             @Override
             public void onDisconnected() {
-                app.log(TAG, "onDisconnected() called");
+                logger.log(TAG, "onDisconnected() called");
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onConnectionSuspended(int cause) {
-                app.log(TAG, "onConnectionSuspended() called with: cause = [" + cause + "]");
+                logger.log(TAG, "onConnectionSuspended() called with: cause = [" + cause + "]");
                 showMessage(getString(R.string.connection_temp_lost));
             }
 
             @Override
             public void onConnectivityRecovered() {
-                app.log(TAG, "onConnectivityRecovered() called");
+                logger.log(TAG, "onConnectivityRecovered() called");
                 showMessage(getString(R.string.connection_recovered));
             }
 
             @Override
             public void onCastAvailabilityChanged(boolean castPresent) {
-                app.log(TAG, "onCastAvailabilityChanged() called with: castPresent = [" + castPresent + "]");
+                logger.log(TAG, "onCastAvailabilityChanged() called with: castPresent = [" + castPresent + "]");
 
                 if (mMediaRouteMenuItem != null && castPresent) {
                     showCastInfoOverlay();
