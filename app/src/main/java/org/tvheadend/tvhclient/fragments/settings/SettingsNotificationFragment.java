@@ -31,6 +31,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 
+import org.tvheadend.tvhclient.NotificationHandler;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 
@@ -44,6 +45,7 @@ public class SettingsNotificationFragment extends PreferenceFragment {
 
     private Activity activity;
     private TVHClientApplication app;
+    private NotificationHandler notificationHandler;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class SettingsNotificationFragment extends PreferenceFragment {
 
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
+        notificationHandler = NotificationHandler.getInstance();
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_notifications);
@@ -85,9 +88,9 @@ public class SettingsNotificationFragment extends PreferenceFragment {
                     } catch(NumberFormatException ex) {
                         // NOP
                     }
-                    app.addNotifications(offset);
+                    notificationHandler.addNotifications(offset);
                 } else {
-                    app.cancelNotifications();
+                    notificationHandler.cancelNotifications();
                 }
 
                 return true;
@@ -98,9 +101,9 @@ public class SettingsNotificationFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object offset) {
                 // Refresh all notifications by removing adding them again
-                app.cancelNotifications();
+                notificationHandler.cancelNotifications();
                 try {
-                    app.addNotifications(Long.valueOf((String) offset));
+                    notificationHandler.addNotifications(Long.valueOf((String) offset));
                 } catch (NumberFormatException ex) {
                     // NOP
                 }
