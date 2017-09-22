@@ -2,9 +2,11 @@ package org.tvheadend.tvhclient;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
@@ -19,12 +21,19 @@ public class Logger {
 
     private final static String TAG = Logger.class.getSimpleName();
 
-    private static Logger mInstance;
-    // File name and path for the internal logging functionality
-    private File logPath = null;
-    private BufferedOutputStream logfileBuffer = null;
-    // The prefix with the date in each log entry
-    private final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+    private static Logger mInstance = null;
+    private TVHClientApplication tvh = null;
+    private File mLogPath = null;
+    private BufferedOutputStream mBuffer = null;
+    private final SimpleDateFormat mLogFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+
+    public Logger() {
+        tvh = TVHClientApplication.getInstance();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(tvh);
+        if (prefs.getBoolean("pref_debug_mode", false)) {
+            enableLogToFile();
+        }
+    }
 
     public static synchronized Logger getInstance() {
         if (mInstance == null)
@@ -42,10 +51,10 @@ public class Logger {
         if (BuildConfig.DEBUG_MODE) {
             Log.d(tag, msg);
         }
-        if (logfileBuffer != null) {
-            String timestamp = format.format(new Date()) + ": " + tag + ", " + msg + "\n";
+        if (mBuffer != null) {
+            String timestamp = mLogFormat.format(new Date()) + ": " + tag + ", " + msg + "\n";
             try {
-                logfileBuffer.write(timestamp.getBytes());
+                mBuffer.write(timestamp.getBytes());
             } catch (IOException e) {
                 // NOP
             }
@@ -56,9 +65,9 @@ public class Logger {
      *
      */
     public void saveLog() {
-        if (logfileBuffer != null) {
+        if (mBuffer != null) {
             try {
-                logfileBuffer.flush();
+                mBuffer.flush();
             } catch (IOException e) {
                 // NOP
             }
@@ -74,10 +83,10 @@ public class Logger {
         Context context = TVHClientApplication.getInstance();
 
         // Get the path where the logs are stored
-        logPath = new File(context.getCacheDir(), "logs");
-        if (!logPath.exists()) {
-            if (!logPath.mkdirs()) {
-                log(TAG, "enableLogToFile: Could not create directory " + logPath.getName());
+        mLogPath = new File(context.getCacheDir(), "logs");
+        if (!mLogPath.exists()) {
+            if (!mLogPath.mkdirs()) {
+                log(TAG, "enableLogToFile: Could not create directory " + mLogPath.getName());
                 return;
             }
         }
@@ -85,11 +94,11 @@ public class Logger {
         // Open the log file with the current date. This ensures that the log
         // files are rotated daily
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-        File logFile = new File(logPath, "tvhclient_" + sdf.format(new Date().getTime()) + ".log");
+        File logFile = new File(mLogPath, "tvhclient_" + sdf.format(new Date().getTime()) + ".log");
 
         try {
             // Open the buffer to write data into the log file. Append the data.
-            logfileBuffer = new BufferedOutputStream(new FileOutputStream(logFile, true));
+            mBuffer = new BufferedOutputStream(new FileOutputStream(logFile, true));
             log(TAG, "\n\n\n");
             log(TAG, "enableLogToFile: Logging started");
 
@@ -107,14 +116,14 @@ public class Logger {
     }
 
     /**
-     * Closes the output buffer to stop logging to the defined file
+     * Closes the buffer to stop logging to the defined file
      */
     public void disableLogToFile() {
-        if (logfileBuffer != null) {
+        if (mBuffer != null) {
             try {
-                logfileBuffer.flush();
-                logfileBuffer.close();
-                logfileBuffer = null;
+                mBuffer.flush();
+                mBuffer.close();
+                mBuffer = null;
             } catch (IOException e) {
                 // NOP
             }
@@ -126,7 +135,7 @@ public class Logger {
      * Removes any log files that are older than a week
      */
     private void removeOldLogfiles() {
-        File[] files = logPath.listFiles();
+        File[] files = mLogPath.listFiles();
         for(File f : files) {
             long diff = new Date().getTime() - f.lastModified();
             if (diff > 7 * 24 * 60 * 60 * 1000) {
