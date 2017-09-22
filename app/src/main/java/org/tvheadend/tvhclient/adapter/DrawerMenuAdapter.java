@@ -1,10 +1,5 @@
 package org.tvheadend.tvhclient.adapter;
 
-import java.util.List;
-
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.DrawerMenuItem;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -14,6 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.model.DrawerMenuItem;
+
+import java.util.List;
 
 public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
 

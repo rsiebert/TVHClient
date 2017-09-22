@@ -3,8 +3,8 @@ package org.tvheadend.tvhclient.intent;
 import android.content.Context;
 import android.content.Intent;
 
-import org.tvheadend.tvhclient.PlayActivity;
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.PlayActivity;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Model;
 import org.tvheadend.tvhclient.model.Program;

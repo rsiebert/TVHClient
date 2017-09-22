@@ -1,7 +1,5 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;

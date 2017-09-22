@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.DiscSpace;

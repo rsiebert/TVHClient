@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;

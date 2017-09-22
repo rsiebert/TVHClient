@@ -19,7 +19,6 @@
 package org.tvheadend.tvhclient.fragments.settings;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
