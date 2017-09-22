@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
@@ -21,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.R;
@@ -72,6 +74,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
     private TVHClientApplication app;
     private Logger logger;
+    private DataStorage ds;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,7 +100,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
         logger = Logger.getInstance();
     }
 
@@ -217,7 +221,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         adapter.clear();
 
         // Make a copy of the channel list before iterating over it
-        List<Channel> channels = app.getChannels();
+        List<Channel> channels = ds.getChannels();
         for (Channel ch : channels) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
                 adapter.add(ch);
@@ -239,7 +243,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!app.isLoading()) {
+        if (!ds.isLoading()) {
             populateList();
         }
 

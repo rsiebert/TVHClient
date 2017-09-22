@@ -34,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -69,6 +70,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
+    private DataStorage ds;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
+        ds = DataStorage.getInstance();
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_profiles);
@@ -250,7 +253,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                     }
 
                     if (prefRecProfiles != null && prefEnableRecProfiles != null) {
-                        addProfiles(prefRecProfiles, app.getDvrConfigs());
+                        addProfiles(prefRecProfiles, ds.getDvrConfigs());
 
                         prefRecProfiles.setEnabled(prefEnableRecProfiles.isChecked());
                         prefEnableRecProfiles.setEnabled(true);
@@ -258,7 +261,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
                         if (recProfile.uuid == null || recProfile.uuid.length() == 0) {
-                            for (Profiles p : app.getDvrConfigs()) {
+                            for (Profiles p : ds.getDvrConfigs()) {
                                 if (p.name.equals(Constants.REC_PROFILE_DEFAULT)) {
                                     recProfile.uuid = p.uuid;
                                     break;
@@ -280,14 +283,14 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                     }
 
                     if (prefProgProfiles != null && prefEnableProgProfiles != null) {
-                        addProfiles(prefProgProfiles, app.getProfiles());
+                        addProfiles(prefProgProfiles, ds.getProfiles());
                         prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());
                         prefEnableProgProfiles.setEnabled(true);
 
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
                         if (progProfile.uuid == null || progProfile.uuid.length() == 0) {
-                            for (Profiles p : app.getProfiles()) {
+                            for (Profiles p : ds.getProfiles()) {
                                 if (p.name.equals(Constants.PROG_PROFILE_DEFAULT)) {
                                     progProfile.uuid = p.uuid;
                                     break;

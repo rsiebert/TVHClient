@@ -32,6 +32,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
@@ -77,6 +78,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private TVHClientApplication app;
     private DatabaseHelper dbh;
     private Logger logger;
+    private DataStorage ds;
 
 
     @Override
@@ -87,6 +89,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
         logger = Logger.getInstance();
+        ds = DataStorage.getInstance();
 
         // Set the default values and then load the preferences from the XML resource
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
@@ -132,8 +135,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         List<String> menuEntryValues = new ArrayList<>();
 
         for (int i = 0; i < e.length; i++) {
-            if (i < 8 || (i == 3 && app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS)
-                    || (i == 4 && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS && app.isUnlocked()))) {
+            if (i < 8 || (i == 3 && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS)
+                    || (i == 4 && (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS && app.isUnlocked()))) {
                 menuEntries.add(e[i]);
                 menuEntryValues.add(ev[i]);
             }
@@ -165,7 +168,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                     } else if (dbh.getSelectedConnection() == null) {
                         Snackbar.make(getView(), R.string.no_connection_active_advice,
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                    } else if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
                         Snackbar.make(getView(), R.string.feature_not_supported_by_server,
                                 Snackbar.LENGTH_SHORT).show();
                     } else if (!app.isUnlocked()) {
@@ -192,7 +195,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                     } else if (dbh.getSelectedConnection() == null) {
                         Snackbar.make(getView(), R.string.no_connection_active_advice,
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (app.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                    } else if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
                         Snackbar.make(getView(), R.string.feature_not_supported_by_server,
                                 Snackbar.LENGTH_SHORT).show();
                     } else if (!app.isUnlocked()) {

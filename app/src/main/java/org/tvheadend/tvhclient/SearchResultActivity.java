@@ -83,7 +83,8 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
     private String query;
 
     private SearchView searchView;
-    private TVHClientApplication app = null;
+    private TVHClientApplication app;
+    private DataStorage ds;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,8 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_layout);
 
-        app = (TVHClientApplication) getApplication();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
 
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
@@ -147,8 +149,8 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         // a single channel or the completed recordings.
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
-            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
-            recording = app.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID));
+            channel = ds.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
+            recording = ds.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID));
         } else {
             channel = null;
             recording = null;
@@ -158,7 +160,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         // available data. Either add all completed recordings or add all
         // available programs from one or all channels.
         if (recording != null) {
-            for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
+            for (Recording rec : ds.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
                 if (rec != null && rec.title != null && rec.title.length() > 0) {
                     list.add(rec);
                 }
@@ -166,7 +168,7 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
         } else {
             if (channel == null) {
                 // Get all available programs from all channels.
-                for (Channel ch : app.getChannels()) {
+                for (Channel ch : ds.getChannels()) {
                     if (ch != null) {
                         CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(ch.epg);
                         for (Program p : epg) {
@@ -387,9 +389,9 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
             // TODO hide this menu if no profiles are available
             if (model instanceof Program) {
                 // Create the list of available recording profiles that the user can select from
-                String[] dvrConfigList = new String[app.getDvrConfigs().size()];
-                for (int i = 0; i < app.getDvrConfigs().size(); i++) {
-                    dvrConfigList[i] = app.getDvrConfigs().get(i).name;
+                String[] dvrConfigList = new String[ds.getDvrConfigs().size()];
+                for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
+                    dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
                 }
 
                 // Get the selected recording profile to highlight the

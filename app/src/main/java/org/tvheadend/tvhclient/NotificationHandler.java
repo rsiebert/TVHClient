@@ -23,10 +23,12 @@ public class NotificationHandler {
     private static NotificationHandler mInstance;
     private final Logger logger;
     private final TVHClientApplication tvh;
+    private final DataStorage ds;
 
     public NotificationHandler() {
         logger = Logger.getInstance();
         tvh = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
     }
 
     public static synchronized NotificationHandler getInstance() {
@@ -66,8 +68,8 @@ public class NotificationHandler {
         Logger logger = Logger.getInstance();
         logger.log(TAG, "addNotification() called with: id = [" + id + "], offset = [" + offset + "]");
 
-        final Recording rec = tvh.getRecording(id);
-        if (tvh.isLoading() || rec == null) {
+        final Recording rec = ds.getRecording(id);
+        if (ds.isLoading() || rec == null) {
             return;
         }
 
@@ -131,7 +133,7 @@ public class NotificationHandler {
      * @param offset Time in minutes that the notification shall be shown earlier
      */
     public void addNotifications(final long offset) {
-        for (Recording rec : tvh.getRecordings()) {
+        for (Recording rec : ds.getRecordings()) {
             if (rec.isScheduled()) {
                 addNotification(rec.id, offset);
             }
@@ -142,7 +144,7 @@ public class NotificationHandler {
      * Cancels all pending notifications related to recordings
      */
     public void cancelNotifications() {
-        for (Recording rec : tvh.getRecordings()) {
+        for (Recording rec : ds.getRecordings()) {
             cancelNotification(rec.id);
         }
     }

@@ -37,6 +37,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
@@ -66,15 +67,17 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     private TVHClientApplication app;
     private DatabaseHelper dbh;
     private Logger logger;
+    private DataStorage ds;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
         dbh = DatabaseHelper.getInstance(activity);
         logger = Logger.getInstance();
+        ds = DataStorage.getInstance();
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_casting);
@@ -136,7 +139,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         prefCastProfiles.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                for (Profiles p : app.getProfiles()) {
+                for (Profiles p : ds.getProfiles()) {
                     if (p.uuid.equals(newValue) && !p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
                         new MaterialDialog.Builder(activity)
                                 .content(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
@@ -234,7 +237,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
                     }
 
                     if (prefCastProfiles != null && prefEnableCasting != null) {
-                        addProfiles(prefCastProfiles, app.getProfiles());
+                        addProfiles(prefCastProfiles, ds.getProfiles());
                         prefCastProfiles.setEnabled(prefEnableCasting.isChecked());
                         prefEnableCasting.setEnabled(true);
                         setCastProfile();
@@ -252,7 +255,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
             || (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
             logger.log(TAG, "No valid casting profile defined in the current connection, setting default");
 
-            for (Profiles p : app.getProfiles()) {
+            for (Profiles p : ds.getProfiles()) {
                 if (p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
                     castProfile.uuid = p.uuid;
                     break;

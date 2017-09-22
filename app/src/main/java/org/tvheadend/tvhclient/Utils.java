@@ -258,9 +258,8 @@ public class Utils {
         // does not sent a confirmation. So manually remove the recording from
         // the list.
         if (manualRemove) {
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
             if (type.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
-                app.removeTimerRecording(id);
+                DataStorage.getInstance().removeTimerRecording(id);
             }
         }
     }
@@ -348,14 +347,13 @@ public class Utils {
         }
 
         // Add the recording profile if available and enabled
-        final TVHClientApplication app = (TVHClientApplication) activity.getApplication();
         final DatabaseHelper dbh = DatabaseHelper.getInstance(activity);
         final Connection conn = dbh.getSelectedConnection();
         final Profile p = dbh.getProfile(conn.recording_profile_id);
         if (p != null 
                 && p.enabled
-                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                && app.isUnlocked()) {
+                && DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && TVHClientApplication.getInstance().isUnlocked()) {
             intent.putExtra("configName", p.name);
         }
 
@@ -409,8 +407,8 @@ public class Utils {
         if (program.recording == null) {
             // Show the record menu
             recordOnceMenuItem.setVisible(true);
-            recordOnceCustomProfileMenuItem.setVisible(app.isUnlocked());
-            if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+            recordOnceCustomProfileMenuItem.setVisible(TVHClientApplication.getInstance().isUnlocked());
+            if (DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
                 recordSeriesMenuItem.setVisible(true);
             }
         } else if (program.isRecording()) {
@@ -446,7 +444,7 @@ public class Utils {
             state.setVisibility(ImageView.VISIBLE);
 
             TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            Recording rec = app.getRecording(p.recording.id);
+            Recording rec = DataStorage.getInstance().getRecording(p.recording.id);
 
             if (rec == null || rec.isFailed()) {
                 state.setImageResource(R.drawable.ic_error_small);
@@ -1107,8 +1105,7 @@ public class Utils {
      * @return Channel tag
      */
     public static ChannelTag getChannelTag(final Activity activity) {
-        final TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-        List<ChannelTag> ctl = app.getChannelTags();        
+        List<ChannelTag> ctl = DataStorage.getInstance().getChannelTags();
         if (ctl.size() > getChannelTagId(activity)) {
             return ctl.get(getChannelTagId(activity));
         }

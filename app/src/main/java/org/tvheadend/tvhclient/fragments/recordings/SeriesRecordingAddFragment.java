@@ -31,6 +31,7 @@ import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -108,6 +109,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
+    private DataStorage ds;
 
     public static SeriesRecordingAddFragment newInstance() {
         SeriesRecordingAddFragment f = new SeriesRecordingAddFragment();
@@ -129,8 +131,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
         dbh = DatabaseHelper.getInstance(activity);
+        ds = DataStorage.getInstance();
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
@@ -164,18 +167,18 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Determine if the server supports recording on all channels
-        allowRecordingOnAllChannels = app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
+        allowRecordingOnAllChannels = ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
         final int offset = (allowRecordingOnAllChannels ? 1 : 0);
 
         // Create the list of channels that the user can select. If recording on
         // all channels are available the add the 'all channels' string to
         // the beginning of the list before adding the available channels.
-        channelList = new String[app.getChannels().size() + offset];
+        channelList = new String[ds.getChannels().size() + offset];
         if (allowRecordingOnAllChannels) {
             channelList[0] = activity.getString(R.string.all_channels);
         }
-        for (int i = 0; i < app.getChannels().size(); i++) {
-            channelList[i + offset] = app.getChannels().get(i).name;
+        for (int i = 0; i < ds.getChannels().size(); i++) {
+            channelList[i + offset] = ds.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name. Keep the all channels string
@@ -197,9 +200,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         });
 
         // Create the list of available configurations that the user can select from
-        dvrConfigList = new String[app.getDvrConfigs().size()];
-        for (int i = 0; i < app.getDvrConfigs().size(); i++) {
-            dvrConfigList[i] = app.getDvrConfigs().get(i).name;
+        dvrConfigList = new String[ds.getDvrConfigs().size()];
+        for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
+            dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
         }
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
@@ -218,7 +221,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             }
 
             // Get the recording so we can show its details
-            rec = app.getSeriesRecording(recId);
+            rec = ds.getSeriesRecording(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
                 minDurationValue = (rec.minDuration / 60);
@@ -369,10 +372,10 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         super.onActivityCreated(savedInstanceState);
 
         isEnabled.setChecked(enabledValue);
-        isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+        isEnabled.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
 
-        directoryLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directoryLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(directoryValue);
 
         title.setText(titleValue);
@@ -535,8 +538,8 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         startExtraTime.setText(String.valueOf(startExtraTimeValue));
         stopExtraTime.setText(String.valueOf(stopExtraTimeValue));
 
-        dupDetectLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DUPDETECT ? View.VISIBLE : View.GONE);
-        dupDetect.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DUPDETECT ? View.VISIBLE : View.GONE);
+        dupDetectLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DUPDETECT ? View.VISIBLE : View.GONE);
+        dupDetect.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DUPDETECT ? View.VISIBLE : View.GONE);
 
         dupDetect.setText(dupDetectList[(int) dupDetectValue]);
         dupDetect.setOnClickListener(new OnClickListener() {
@@ -681,7 +684,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // Update the timer recording if it has been edited, otherwise add a new one.
         if (rec != null && rec.id != null && rec.id.length() > 0) {
 
-            if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_UPDATE_SERIES_RECORDINGS) {
+            if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_UPDATE_SERIES_RECORDINGS) {
                 // If the API version supports it, use the native service call method
                 updateSeriesRecording();
             } else {
@@ -813,7 +816,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // server. So go through all available channels and get the id for the
         // selected channel name.
         if (!allowRecordingOnAllChannels || channelSelectionValue > 1) {
-            for (Channel c : app.getChannels()) {
+            for (Channel c : ds.getChannels()) {
                 if (c.name.equals(channelName.getText().toString())) {
                     intent.putExtra("channelId", c.id);
                     break;
@@ -827,7 +830,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         if (p != null 
                 && p.enabled
                 && (dvrConfigName.getText().length() > 0)
-                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                 && app.isUnlocked()) {
             // Use the selected profile. If no change was done in the 
             // selection then the default one from the connection setting will be used

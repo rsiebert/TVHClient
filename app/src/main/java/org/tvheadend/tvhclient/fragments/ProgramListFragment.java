@@ -23,6 +23,7 @@ import android.widget.ListView;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -66,6 +67,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private boolean allowLoading = false;
 
     private TVHClientApplication app;
+    private DataStorage ds;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            channel = app.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
+            channel = ds.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
             isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
             showProgramsFromTime = bundle.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, new Date().getTime());
         }
@@ -92,7 +94,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
     }
 
     @Override
@@ -160,7 +163,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!app.isLoading()) {
+        if (!ds.isLoading()) {
             populateList();
         }
     }
@@ -283,9 +286,9 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_record_once_custom_profile:
             // Create the list of available recording profiles that the user can select from
-            String[] dvrConfigList = new String[app.getDvrConfigs().size()];
-            for (int i = 0; i < app.getDvrConfigs().size(); i++) {
-                dvrConfigList[i] = app.getDvrConfigs().get(i).name;
+            String[] dvrConfigList = new String[ds.getDvrConfigs().size()];
+            for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
+                dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
             }
 
             // Get the selected recording profile to highlight the 

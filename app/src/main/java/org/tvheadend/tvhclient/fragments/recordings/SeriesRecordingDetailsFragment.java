@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -53,6 +54,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private TextView toolbarTitle;
     private View toolbarShadow;
     private TVHClientApplication app;
+    private DataStorage ds;
 
     public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
@@ -75,7 +77,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
 
         activity = (ActionBarActivity) getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
@@ -94,7 +97,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         }
 
         // Get the recording so we can show its details 
-        srec = app.getSeriesRecording(srecId);
+        srec = ds.getSeriesRecording(srecId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
@@ -149,11 +152,11 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
         }
 
-        isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+        isEnabled.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
         isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabel.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directoryLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(srec.directory);
 
         channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));

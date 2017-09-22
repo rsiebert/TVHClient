@@ -45,6 +45,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private int streamingPort;
     private String title = "";
     private Logger logger;
+    private DataStorage ds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,15 +53,16 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         super.onCreate(savedInstanceState);
         Utils.setLanguage(this);
 
-        app = (TVHClientApplication) getApplication();
+        app = TVHClientApplication.getInstance();
         logger = Logger.getInstance();
+        ds = DataStorage.getInstance();
         
         // If a play intent was sent no action is given, so default to play
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, Constants.ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
-        ch = app.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
-        rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+        ch = ds.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
+        rec = ds.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
 
         // Get the title from either the channel or recording
         if (ch != null) {
@@ -218,7 +220,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // If a profile was given, use it instead of the old values
         if (playbackProfile.enabled
-                && app.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                 && app.isUnlocked()) {
             playUrl += "&profile=" + playbackProfile.name;
         } else {
@@ -311,8 +313,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private void startCasting() {
         logger.log(TAG, "startCasting() called");
 
-        String iconUrl = baseUrl + app.getWebRoot();
-        String castUrl = baseUrl + app.getWebRoot();
+        String iconUrl = baseUrl + ds.getWebRoot();
+        String castUrl = baseUrl + ds.getWebRoot();
         String subtitle = "";
         long duration = 0;
         int streamType = MediaInfo.STREAM_TYPE_NONE;

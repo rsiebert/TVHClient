@@ -25,6 +25,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -51,6 +52,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private boolean isDualPane;
 
     private TVHClientApplication app;
+    private DataStorage ds;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,7 +77,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = (ActionBarActivity) getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
     }
 
     @Override
@@ -126,7 +129,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!app.isLoading()) {
+        if (!ds.isLoading()) {
             populateList();
         }
     }
@@ -160,7 +163,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (TimerRecording trec : app.getTimerRecordings()) {
+        for (TimerRecording trec : ds.getTimerRecordings()) {
             adapter.add(trec);
         }
         // Show the newest scheduled recordings first 

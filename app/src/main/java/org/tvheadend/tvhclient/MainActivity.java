@@ -176,6 +176,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
     private IntroductoryOverlay mOverlay;
     private MiniController mMiniController;
     private Logger logger;
+    private DataStorage ds;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -193,6 +194,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         logger = Logger.getInstance();
         dbh = DatabaseHelper.getInstance(this);
+        ds = DataStorage.getInstance();
         changeLogDialog = new ChangeLogDialog(this);
 
         actionBar = getSupportActionBar();
@@ -524,17 +526,17 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Update the number of recordings in each category
         drawerAdapter.getItemById(MENU_COMPLETED_RECORDINGS).count = 
-                app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
+                ds.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
         drawerAdapter.getItemById(MENU_SCHEDULED_RECORDINGS).count = 
-                app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
+                ds.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).count = 
-                app.getSeriesRecordings().size();
+                ds.getSeriesRecordings().size();
         drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).count =
-                app.getTimerRecordings().size();
+                ds.getTimerRecordings().size();
         drawerAdapter.getItemById(MENU_FAILED_RECORDINGS).count = 
-                app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
+                ds.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         drawerAdapter.getItemById(MENU_REMOVED_RECORDINGS).count =
-                app.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED).size();
+                ds.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED).size();
         drawerAdapter.notifyDataSetChanged();
     }
 
@@ -763,7 +765,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
         // Do not show the search menu on these screens
         if (selectedMenuPosition == MENU_STATUS 
-                || (selectedMenuPosition == MENU_COMPLETED_RECORDINGS && app.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() == 0)
+                || (selectedMenuPosition == MENU_COMPLETED_RECORDINGS && ds.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() == 0)
                 || selectedMenuPosition == MENU_SCHEDULED_RECORDINGS
                 || selectedMenuPosition == MENU_FAILED_RECORDINGS
                 || selectedMenuPosition == MENU_REMOVED_RECORDINGS
@@ -1236,7 +1238,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      * certain navigation menu items.
      */
     private void showDrawerMenu() {
-        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) && !app.isLoading();
+        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) && !ds.isLoading();
 
         // Enable the main menus in the drawer
         drawerAdapter.getItemById(MENU_CHANNELS).isVisible = show;
@@ -1247,13 +1249,13 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         drawerAdapter.getItemById(MENU_PROGRAM_GUIDE).isVisible = show;
 
         // Only show the series recording menu if the server supports it
-        drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (app
+        drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (ds
                 .getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS));
 
         // Only show the timer recording menu if the server supports it and the
         // application is unlocked
         drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show
-                && (app.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS)
+                && (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS)
                 && app.isUnlocked());
 
         // Show the menu item to unlock the application if it was not yet purchased
@@ -1369,7 +1371,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
 
     @Override
     public void moreDataRequired(final Channel channel, final String tag) {
-        if (app.isLoading() || channel == null) {
+        if (ds.isLoading() || channel == null) {
             return;
         }
 

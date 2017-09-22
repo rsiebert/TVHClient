@@ -26,6 +26,7 @@ import android.widget.ListView;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -95,6 +96,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     private int channelTimeSelection;
     private long showProgramsFromTime;
+    private DataStorage ds;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -131,7 +133,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
     }
 
     @Override
@@ -363,9 +366,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_record_once_custom_profile:
             // Create the list of available recording profiles that the user can select from
-            String[] dvrConfigList = new String[app.getDvrConfigs().size()];
-            for (int i = 0; i < app.getDvrConfigs().size(); i++) {
-                dvrConfigList[i] = app.getDvrConfigs().get(i).name;
+            String[] dvrConfigList = new String[ds.getDvrConfigs().size()];
+            for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
+                dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
             }
 
             // Get the selected recording profile to highlight the 
@@ -461,7 +464,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Add only those channels that contain the selected channel tag
         adapter.clear();
-        CopyOnWriteArrayList<Channel> channelList = new CopyOnWriteArrayList<>(app.getChannels());
+        CopyOnWriteArrayList<Channel> channelList = new CopyOnWriteArrayList<>(ds.getChannels());
         Iterator<Channel> cIt = channelList.iterator();
         Channel ch;
         while (cIt.hasNext()) {
@@ -477,7 +480,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Fill the channel tag adapter with the available channel tags
         tagList.clear();
-        CopyOnWriteArrayList<ChannelTag> channelTagList = new CopyOnWriteArrayList<>(app.getChannelTags());
+        CopyOnWriteArrayList<ChannelTag> channelTagList = new CopyOnWriteArrayList<>(ds.getChannelTags());
         Iterator<ChannelTag> ctIt = channelTagList.iterator();
         ChannelTag tag;
         while (ctIt.hasNext()) {
@@ -514,7 +517,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!app.isLoading()) {
+        if (!ds.isLoading()) {
             populateList();
         }
 

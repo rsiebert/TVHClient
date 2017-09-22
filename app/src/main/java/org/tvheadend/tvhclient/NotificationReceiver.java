@@ -16,10 +16,9 @@ public class NotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         // Get the recording of interest
-        TVHClientApplication app = (TVHClientApplication) context.getApplicationContext();
         long recId = intent.getLongExtra(Constants.BUNDLE_RECORDING_ID, 0);
         String msg = intent.getStringExtra(Constants.BUNDLE_NOTIFICATION_MSG);
-        final Recording rec = app.getRecording(recId);
+        final Recording rec = DataStorage.getInstance().getRecording(recId);
 
         if (rec != null) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(

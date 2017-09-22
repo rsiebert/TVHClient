@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -184,8 +185,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             }
 
             if (holder.isEnabled != null) {
-                TVHClientApplication app = (TVHClientApplication) context.getApplication();
-                holder.isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
+                holder.isEnabled.setVisibility((DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
                 holder.isEnabled.setText(rec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
             }
         }

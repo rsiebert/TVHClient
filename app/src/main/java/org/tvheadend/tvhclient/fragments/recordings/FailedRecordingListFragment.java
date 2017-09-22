@@ -27,7 +27,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!app.isLoading()) {
+        if (!ds.isLoading()) {
             populateList();
         }
     }
@@ -72,7 +72,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_FAILED)) {
+        for (Recording rec : ds.getRecordingsByType(Constants.RECORDING_TYPE_FAILED)) {
             adapter.add(rec);
         }
 

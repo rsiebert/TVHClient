@@ -23,6 +23,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.ImageDownloadTask;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -79,6 +80,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private View toolbarShadow;
     private TVHClientApplication app;
     private ImageView imageView;
+    private DataStorage ds;
 
     public static ProgramDetailsFragment newInstance(Bundle args) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -101,7 +103,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
@@ -123,7 +126,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
         
         // Get the channel of the program
-        channel = app.getChannel(channelId);
+        channel = ds.getChannel(channelId);
         if (channel != null) {
             // Find the program with the given id within this channel so we can
             // show the program details
@@ -277,7 +280,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         recordOnceButton.setVisibility(View.VISIBLE);
         recordRemoveButton.setVisibility(View.VISIBLE);
 
-        if (app.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             recordSeriesButton.setVisibility(View.VISIBLE);
         } else {
             recordSeriesButton.setVisibility(View.GONE);

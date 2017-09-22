@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -76,6 +77,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView data_errors;
     private TextView data_size;
     private TextView statusLabel;
+    private DataStorage ds;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -98,7 +100,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         super.onCreate(savedInstanceState);
 
         activity = (ActionBarActivity) getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
@@ -118,7 +121,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         }
 
         // Get the recording so we can show its details 
-        rec = app.getRecording(recId);
+        rec = ds.getRecording(recId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.recording_details_layout, container, false);
@@ -204,7 +207,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         is_series_recording.setVisibility((rec.autorecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
         is_timer_recording.setVisibility((rec.timerecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
 
-        isEnabled.setVisibility((app.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
+        isEnabled.setVisibility((ds.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
         isEnabled.setText(rec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
 
         // Only show the status details in the 

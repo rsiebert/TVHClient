@@ -23,6 +23,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -54,6 +55,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
     protected TVHClientApplication app;
     private Logger logger;
+    protected DataStorage ds;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,8 +81,9 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = (ActionBarActivity) getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
         logger = Logger.getInstance();
+        ds = DataStorage.getInstance();
     }
 
     @Override

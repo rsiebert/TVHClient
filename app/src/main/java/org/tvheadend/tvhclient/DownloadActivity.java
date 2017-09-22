@@ -31,7 +31,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
 
     private final static String TAG = DownloadActivity.class.getSimpleName();
 
-    private TVHClientApplication app;
+    private DataStorage ds;
     private Connection conn;
     private DownloadManager dm;
 
@@ -44,11 +44,11 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         super.onCreate(savedInstanceState);
         Utils.setLanguage(this);
 
-        app = (TVHClientApplication) getApplication();
+        ds = DataStorage.getInstance();
         DatabaseHelper dbh = DatabaseHelper.getInstance(this);
         conn = dbh.getSelectedConnection();
         // Check that a valid channel or recording was specified
-        rec = app.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+        rec = ds.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
         logger = Logger.getInstance();
     }
 

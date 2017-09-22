@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -47,8 +48,9 @@ public class StatusFragment extends Fragment implements HTSListener {
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
+    private DataStorage ds;
 
-	@Override
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         // If the view group does not exist, the fragment would not be shown. So
@@ -85,8 +87,9 @@ public class StatusFragment extends Fragment implements HTSListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
+        app = TVHClientApplication.getInstance();
         dbh = DatabaseHelper.getInstance(activity);
+        ds = DataStorage.getInstance();
     }
 
     @Override
@@ -111,7 +114,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         // information, otherwise show the connection status and the cause of
         // possible connection problems. 
         additionalInformationLayout.setVisibility(View.GONE);
-        if (app.isLoading()) {
+        if (ds.isLoading()) {
             onMessage(Constants.ACTION_LOADING, true);
         } else {
             onMessage(connectionStatus, false);
@@ -220,7 +223,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         showDiscSpace();
 
         // Show the number of available channels
-        final String text = app.getChannels().size() + " " + getString(R.string.available);
+        final String text = ds.getChannels().size() + " " + getString(R.string.available);
         channels.setText(text);
     }
 
@@ -291,8 +294,8 @@ public class StatusFragment extends Fragment implements HTSListener {
      * showing large numbers. This depends on the size of the value.
      */
     private void showDiscSpace() {
-        DiscSpace ds = app.getDiscSpace();
-        if (ds == null) {
+        DiscSpace discSpace = ds.getDiscSpace();
+        if (discSpace == null) {
             freediscspace.setText(R.string.unknown);
             totaldiscspace.setText(R.string.unknown);
             return;
@@ -300,8 +303,8 @@ public class StatusFragment extends Fragment implements HTSListener {
 
         try {
             // Get the disc space values and convert them to megabytes
-            long free = Long.valueOf(ds.freediskspace) / 1000000;
-            long total = Long.valueOf(ds.totaldiskspace) / 1000000;
+            long free = Long.valueOf(discSpace.freediskspace) / 1000000;
+            long total = Long.valueOf(discSpace.totaldiskspace) / 1000000;
 
             String freeDiscSpace;
             String totalDiscSpace;
@@ -334,7 +337,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         String currentRecText = "";
 
         // Get the programs that are currently being recorded
-        for (Recording rec : app.getRecordings()) {
+        for (Recording rec : ds.getRecordings()) {
             if (rec.isRecording()) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
                 if (rec.channel != null) {
@@ -347,13 +350,13 @@ public class StatusFragment extends Fragment implements HTSListener {
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText
                 : getString(R.string.nothing));
 
-        final int completedRecCount = app.getRecordingsByType(
+        final int completedRecCount = ds.getRecordingsByType(
                 Constants.RECORDING_TYPE_COMPLETED).size();
-        final int scheduledRecCount = app.getRecordingsByType(
+        final int scheduledRecCount = ds.getRecordingsByType(
                 Constants.RECORDING_TYPE_SCHEDULED).size();
-        final int failedRecCount = app.getRecordingsByType(
+        final int failedRecCount = ds.getRecordingsByType(
                 Constants.RECORDING_TYPE_FAILED).size();
-        final int removedRecCount = app.getRecordingsByType(
+        final int removedRecCount = ds.getRecordingsByType(
                 Constants.RECORDING_TYPE_REMOVED).size();
 
         // Show how many different recordings are available
@@ -369,27 +372,27 @@ public class StatusFragment extends Fragment implements HTSListener {
                 R.plurals.removed_recordings, removedRecCount, removedRecCount));
 
         // Show how many series recordings are available
-        if (app.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             seriesRec.setVisibility(View.GONE);
         } else {
-            final int seriesRecCount = app.getSeriesRecordings().size();
+            final int seriesRecCount = ds.getSeriesRecordings().size();
             seriesRec.setText(getResources().getQuantityString(
                     R.plurals.series_recordings, seriesRecCount, seriesRecCount));
         }
 
         // Show how many timer recordings are available if the server supports
         // it and the application is unlocked
-        if (app.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
+        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
             timerRec.setVisibility(View.GONE);
         } else {
-            final int timerRecCount = app.getTimerRecordings().size();
+            final int timerRecCount = ds.getTimerRecordings().size();
             timerRec.setText(getResources().getQuantityString(
                     R.plurals.timer_recordings, timerRecCount, timerRecCount));
         }
 
-        String version = String.valueOf(app.getProtocolVersion())
+        String version = String.valueOf(ds.getProtocolVersion())
                 + "   (" + getString(R.string.server) + ": "
-                + app.getServerName() + " " + app.getServerVersion() + ")";
+                + ds.getServerName() + " " + ds.getServerVersion() + ")";
         serverApiVersion.setText(version);
     }
 }

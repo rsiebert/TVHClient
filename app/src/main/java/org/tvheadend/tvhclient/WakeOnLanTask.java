@@ -24,12 +24,10 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private final Activity activity;
     private final Logger logger;
     private Exception exception;
-    private final TVHClientApplication app;
 
     public WakeOnLanTask(Activity context, Connection conn) {
         this.activity = context;
         this.conn = conn;
-        this.app = (TVHClientApplication) context.getApplicationContext();
         logger = Logger.getInstance();
     }
 
@@ -122,15 +120,16 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
      */
     @Override
     protected void onPostExecute(Integer result) {
+        DataStorage ds = DataStorage.getInstance();
         if (result == WOL_SEND) {
-            app.showMessage(activity.getString(R.string.wol_send, conn.address));
+            ds.showMessage(activity.getString(R.string.wol_send, conn.address));
         } else if (result == WOL_SEND_BROADCAST) {
-            app.showMessage(activity.getString(R.string.wol_send_broadcast, conn.address));
+            ds.showMessage(activity.getString(R.string.wol_send_broadcast, conn.address));
         } else if (result == WOL_INVALID_MAC) {
-            app.showMessage(activity.getString(R.string.wol_address_invalid));
+            ds.showMessage(activity.getString(R.string.wol_address_invalid));
         } else {
             final String msg = exception.getLocalizedMessage();
-            app.showMessage(activity.getString(R.string.wol_error, conn.address, msg));
+            ds.showMessage(activity.getString(R.string.wol_error, conn.address, msg));
         }
     }
 }

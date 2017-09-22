@@ -27,7 +27,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!app.isLoading()) {
+        if (!ds.isLoading()) {
             populateList();
         }
     }
@@ -108,7 +108,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (Recording rec : app.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED)) {
+        for (Recording rec : ds.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED)) {
             adapter.add(rec);
         }
 

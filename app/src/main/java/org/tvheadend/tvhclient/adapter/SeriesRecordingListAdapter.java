@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -130,8 +131,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);
 
             if (holder.isEnabled != null) {
-                TVHClientApplication app = (TVHClientApplication) context.getApplication();
-                holder.isEnabled.setVisibility(app.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+                holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
                 holder.isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
             }
         }
