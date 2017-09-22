@@ -2,9 +2,7 @@ package org.tvheadend.tvhclient.fragments.settings;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -35,6 +33,7 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -77,6 +76,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
     private TVHClientApplication app;
     private DatabaseHelper dbh;
+    private Logger logger;
 
 
     @Override
@@ -86,6 +86,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         activity = (ActionBarActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
+        logger = Logger.getInstance();
 
         // Set the default values and then load the preferences from the XML resource
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
@@ -323,9 +324,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (prefDebugMode.isChecked()) {
-                    app.enableLogToFile();
+                    logger.enableLogToFile();
                 } else {
-                    app.disableLogToFile();
+                    logger.disableLogToFile();
                 }
                 return false;
             }
@@ -336,7 +337,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefSendLogfile.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                app.saveLog();
+                logger.saveLog();
 
                 // Get the list of available files in the log path
                 File logPath = new File(activity.getCacheDir(), "logs");
