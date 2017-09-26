@@ -22,6 +22,7 @@ import org.acra.config.ACRAConfiguration;
 import org.acra.config.ACRAConfigurationException;
 import org.acra.config.ConfigurationBuilder;
 import org.acra.sender.HttpSender;
+import org.tvheadend.tvhclient.data.DataContentProviderHelper;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.ChannelTag;
 
@@ -39,10 +40,18 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
 
     private Logger logger = null;
+    private DataContentProviderHelper mDataContentProviderHelper = null;
     private static TVHClientApplication mInstance;
 
     public static synchronized TVHClientApplication getInstance() {
         return mInstance;
+    }
+
+    public synchronized DataContentProviderHelper getContentProviderHelper() {
+        if (mDataContentProviderHelper == null) {
+            mDataContentProviderHelper = new DataContentProviderHelper(getApplicationContext());
+        }
+        return mDataContentProviderHelper;
     }
 
 

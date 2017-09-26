@@ -84,8 +84,8 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         prefEnableCasting = (CheckBoxPreference) findPreference("pref_enable_casting");
         prefCastProfiles = (ListPreference) findPreference("pref_cast_profiles");
 
-        conn = dbh.getSelectedConnection();
-        castProfile = dbh.getProfile(conn.cast_profile_id);
+        conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
+        castProfile = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.cast_profile_id);
         if (castProfile == null) {
             logger.log(TAG, "No casting profile defined in the connection");
             castProfile = new Profile();
@@ -183,10 +183,10 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (castProfile.id == 0) {
-            conn.cast_profile_id = (int) dbh.addProfile(castProfile);
-            dbh.updateConnection(conn);
+            conn.cast_profile_id = (int) TVHClientApplication.getInstance().getContentProviderHelper().addProfile(castProfile);
+            TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(conn);
         } else {
-            dbh.updateProfile(castProfile);
+            TVHClientApplication.getInstance().getContentProviderHelper().updateProfile(castProfile);
         }
     }
 

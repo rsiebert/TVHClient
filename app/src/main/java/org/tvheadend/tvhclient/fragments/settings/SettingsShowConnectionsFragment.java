@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.WakeOnLanTask;
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -127,7 +128,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
      */
     private void showConnections() {
         connList.clear();
-        List<Connection> cl = dbh.getConnections();
+        List<Connection> cl = TVHClientApplication.getInstance().getContentProviderHelper().getConnections();
         if (cl != null && cl.size() > 0) {
             for (int i = 0; i < cl.size(); ++i) {
                 connList.add(cl.get(i));
@@ -176,14 +177,14 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         // Switch the selection status
         c.selected = !c.selected;
         if (c.selected) {
-            Connection previousConn = dbh.getSelectedConnection();
+            Connection previousConn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
             if (previousConn != null) {
                 previousConn.selected = false;
-                dbh.updateConnection(previousConn);
+                TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(previousConn);
             }
         }
         // Update the currently selected connection and refresh the display
-        dbh.updateConnection(c);
+        TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(c);
         showConnections();
     }
 
@@ -210,7 +211,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                 settingsInterface.reconnect();
             }
             c.selected = false;
-            dbh.updateConnection(c);
+            TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(c);
             showConnections();
             mode.finish();
             return true;
@@ -237,7 +238,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            if (dbh.removeConnection(c.id)) {
+                            if (TVHClientApplication.getInstance().getContentProviderHelper().removeConnection(c.id)) {
                                 adapter.remove(c);
                                 adapter.notifyDataSetChanged();
                                 adapter.sort();

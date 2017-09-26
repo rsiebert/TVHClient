@@ -155,7 +155,7 @@ public class Utils {
         intent.setAction(Constants.ACTION_CONNECT);
 
         final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
-        final Connection conn = dbh.getSelectedConnection();
+        final Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
             intent.putExtra("hostname", conn.address);
@@ -348,8 +348,8 @@ public class Utils {
 
         // Add the recording profile if available and enabled
         final DatabaseHelper dbh = DatabaseHelper.getInstance(activity);
-        final Connection conn = dbh.getSelectedConnection();
-        final Profile p = dbh.getProfile(conn.recording_profile_id);
+        final Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
+        final Profile p = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.recording_profile_id);
         if (p != null 
                 && p.enabled
                 && DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
@@ -1072,7 +1072,7 @@ public class Utils {
         // none exist then use the variable here.
         final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
     	if (dbh != null) {
-	        Connection conn = dbh.getSelectedConnection();
+	        Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
 	        if (conn != null) {
 	            return conn.channelTag;
 	        }
@@ -1090,10 +1090,10 @@ public class Utils {
         // Save the selected tag for the active connection in the database
         final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
     	if (dbh != null) {
-	        Connection conn = dbh.getSelectedConnection();
+	        Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
 	        if (conn != null) {
 	            conn.channelTag = channelTagId;
-	            dbh.updateConnection(conn);
+                TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(conn);
 	        }
 	    }
     }
