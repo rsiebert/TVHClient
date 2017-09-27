@@ -22,10 +22,6 @@ android {
         // Set the default values for these build config fields
         buildConfigField "String", "DEVELOPER_EMAIL", "\"\""
         buildConfigField "String", "PUBLIC_KEY_SALT", "\"\""
-
-        jackOptions {
-            enabled true
-        }
     }
 
     buildTypes {
@@ -48,8 +44,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
