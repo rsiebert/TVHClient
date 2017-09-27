@@ -200,4 +200,58 @@ public class DataContract {
         // The default sort order for queries containing NAME fields.
         public static final String SORT_ORDER_DEFAULT = CHANNEL_ID + " ASC, " + START + " ASC";
     }
+
+    /**
+     * Constants for the recordings table of the tvhclient provider.
+     */
+    public static final class Recordings {
+        // The database table name
+        public static final String TABLE = "recordings";
+        // The content URI for this table.
+        public static final Uri CONTENT_URI =  Uri.withAppendedPath(DataContract.CONTENT_URI, "recordings");
+        // The mime type of a directory of items.
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/recordings";
+        // The mime type of a single item.
+        public static final String CONTENT_RECORDING_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/recordings";
+
+        public static final String ID = BaseColumns._ID;            // u32   required   ID of dvrEntry.
+        public static final String CHANNEL = "channel";             // u32   optional   Channel of dvrEntry.
+        public static final String START = "start";                 // s64   required   Time of when this entry was scheduled to start recording.
+        public static final String STOP = "stop";                   // s64   required   Time of when this entry was scheduled to stop recording.
+        public static final String START_EXTRA = "startExtra";      // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+        public static final String STOP_EXTRA = "stopExtra";        // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+        public static final String RETENTION = "retention";         // s64   required   DVR Entry retention time in days (Added in version 13).
+        public static final String PRIORITY = "priority";           // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+        public static final String EVENT_ID = "eventId";            // u32   optional   Associated EPG Event ID (Added in version 13).
+        public static final String AUTOREC_ID = "autorecId";        // str   optional   Associated Autorec UUID (Added in version 13).
+        public static final String TIMEREC_ID = "timerecId";        // str   optional   Associated Timerec UUID (Added in version 18).
+        public static final String TYPE_OF_CONTENT = "contentType"; // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
+        public static final String TITLE = "title";                 // str   optional   Title of recording
+        public static final String SUBTITLE = "subtitle";           // str   optional   Subtitle of recording (Added in version 20).
+        public static final String SUMMARY = "summary";             // str   optional   Short description of the recording (Added in version 6).
+        public static final String DESCRIPTION = "description";     // str   optional   Long description of the recording.
+        public static final String STATE = "state";                 // str   required   Recording state
+        public static final String ERROR = "error";                 // str   optional   Plain english error description (e.g. "Aborted by user").
+        public static final String OWNER = "owner";                 // str   optional   Name of the entry owner (Added in version 18).
+        public static final String CREATOR = "creator";             // str   optional   Name of the entry creator (Added in version 18).
+        public static final String SUBSCRIPTION_ERROR = "subscriptionError";    // str   optional   Subscription error string (Added in version 20).
+        public static final String STREAM_ERRORS = "streamErrors";  // str   optional   Number of recording errors (Added in version 20).
+        public static final String DATA_ERRORS = "dataErrors";      // str   optional   Number of stream data errors (Added in version 20).
+        public static final String PATH = "path";                   // str   optional   Recording path for playback.
+        // TODO this requires a separate table or just a comma separated string in this table?
+        public static final String FILES = "files";                 // msg   optional   All recorded files for playback (Added in version 21).
+        public static final String DATA_SIZE = "dataSize";          // s64   optional   Actual file size of the last recordings (Added in version 21).
+        public static final String ENABLED = "enabled";             // u32   optional   Enabled flag (Added in version 23).
+
+        // A projection of all columns in the items table.
+        public static final String[] PROJECTION_ALL = {
+                ID, CHANNEL, START, STOP, START_EXTRA, STOP_EXTRA, RETENTION, PRIORITY, EVENT_ID,
+                AUTOREC_ID, TIMEREC_ID, TYPE_OF_CONTENT, TITLE, SUBTITLE, SUMMARY, DESCRIPTION,
+                STATE, ERROR, OWNER, CREATOR, SUBSCRIPTION_ERROR, STREAM_ERRORS, DATA_ERRORS, PATH,
+                DATA_SIZE, ENABLED
+        };
+
+        // The default sort order for queries containing NAME fields.
+        public static final String SORT_ORDER_DEFAULT = CHANNEL + " ASC, " + START + " ASC";
+    }
 }
