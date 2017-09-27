@@ -174,7 +174,7 @@ public class DataContract {
         public static final String EPISODE_ID = "episodeId";            // u32   optional   Episode ID (Added in version 6).
         public static final String SEASON_ID = "seasonId";              // u32   optional   Season ID (Added in version 6).
         public static final String BRAND_ID = "brandId";                // u32   optional   Brand ID (Added in version 6).
-        public static final String TYPE_OF_CONTENT = "contentType";        // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
+        public static final String TYPE_OF_CONTENT = "contentType";     // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
         public static final String AGE_RATING = "ageRating";            // u32   optional   Minimum age rating (Added in version 6).
         public static final String STAR_RATING = "starRating";          // u32   optional   Star rating (1-5) (Added in version 6).
         public static final String FIRST_AIRED = "firstAired";          // s64   optional   Original broadcast time, UNIX time (Added in version 6).
