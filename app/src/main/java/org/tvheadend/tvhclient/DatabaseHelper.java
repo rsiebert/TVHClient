@@ -62,6 +62,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + DataContract.Profiles.VIDEO_CODEC + " TEXT NULL, "
                 + DataContract.Profiles.SUBTITLE_CODEC + " TEXT NULL);";
         db.execSQL(query);
+
+        query = "CREATE TABLE IF NOT EXISTS " + DataContract.Channels.TABLE + " ("
+                + DataContract.Channels.ID + " INTEGER PRIMARY KEY,"                // u32 ID of channel
+                + DataContract.Channels.NUMBER + " INT DEFAULT 0,"                  // u32 Channel number, 0 means unconfigured.
+                + DataContract.Channels.NUMBER_MINOR + " INT DEFAULT 0,"            // u32 Minor channel number (Added in version 13).
+                + DataContract.Channels.NAME + " TEXT NULL,"                        // str Name of channel.
+                + DataContract.Channels.ICON + " TEXT NULL,"                        // str URL to an icon representative for the channel
+                + DataContract.Channels.EVENT_ID + " INT DEFAULT 0,"                // u32 ID of the current event on this channel.
+                + DataContract.Channels.NEXT_EVENT_ID + " INT DEFAULT 0);";         // u32 ID of the next event on the channel.
+        db.execSQL(query);
+
+        query = "CREATE TABLE IF NOT EXISTS " + DataContract.Tags.TABLE + " ("
+                + DataContract.Tags.ID + " INTEGER PRIMARY KEY,"                    // u32 ID of tag.
+                + DataContract.Tags.NAME + " TEXT NULL,"                            // str Name of tag.
+                + DataContract.Tags.INDEX + " INT DEFAULT 0,"                       // u32 Index value for sorting (default by from min to max) (Added in version 18).
+                + DataContract.Tags.ICON + " TEXT NULL,"                            // str URL to an icon representative for the channel.
+                + DataContract.Tags.TITLED_ICON + " INT DEFAULT 0);";               // u32 Icon includes a title" +
+        db.execSQL(query);
+
+        query = "CREATE TABLE IF NOT EXISTS " + DataContract.Programs.TABLE + " ("
+                + DataContract.Programs.ID + " INTEGER PRIMARY KEY,"                // u32 Event ID
+                + DataContract.Programs.CHANNEL_ID + " INT DEFAULT 0,"              // u32 The channel this event is related to.
+                + DataContract.Programs.START + " INT DEFAULT 0,"                   // u64 Start time of event, UNIX time.
+                + DataContract.Programs.STOP + " INT DEFAULT 0,"                    // u64 Ending time of event, UNIX time.
+                + DataContract.Programs.TITLE + " TEXT NULL,"                       // str Title of event.
+                + DataContract.Programs.SUMMARY + " TEXT NULL,"                     // str Short description of the event (Added in version 6).
+                + DataContract.Programs.DESCRIPTION + " TEXT NULL,"                 // str Long description of the event.
+                + DataContract.Programs.SERIES_LINK_ID + " INT DEFAULT 0,"          // u32 Series Link ID (Added in version 6).
+                + DataContract.Programs.EPISODE_ID + " INT DEFAULT 0,"              // u32 Episode ID (Added in version 6).
+                + DataContract.Programs.SEASON_ID + " INT DEFAULT 0,"               // u32 Season ID (Added in version 6).
+                + DataContract.Programs.BRAND_ID + " INT DEFAULT 0,"                // u32 Brand ID (Added in version 6).
+                + DataContract.Programs.TYPE_OF_CONTENT + " INT DEFAULT 0,"         // u32 DVB content code (Added in version 4, Modified in version 6*).
+                + DataContract.Programs.AGE_RATING + " INT DEFAULT 0,"              // u32 Minimum age rating (Added in version 6).
+                + DataContract.Programs.STAR_RATING + " INT DEFAULT 0,"             // u32 Star rating (1-5) (Added in version 6).
+                + DataContract.Programs.FIRST_AIRED + " INT DEFAULT 0,"             // s64 Original broadcast time, UNIX time (Added in version 6).
+                + DataContract.Programs.SEASON_NUMBER + " INT DEFAULT 0,"           // u32 Season number (Added in version 6).
+                + DataContract.Programs.SEASON_COUNT + " INT DEFAULT 0,"            // u32 Show season count (Added in version 6).
+                + DataContract.Programs.EPISODE_NUMBER + " INT DEFAULT 0,"          // u32 Episode number (Added in version 6).
+                + DataContract.Programs.EPISODE_COUNT + " INT DEFAULT 0,"           // u32 Season episode count (Added in version 6).
+                + DataContract.Programs.PART_NUMBER + " INT DEFAULT 0,"             // u32 Multi-part episode part number (Added in version 6).
+                + DataContract.Programs.PART_COUNT + " INT DEFAULT 0,"              // u32 Multi-part episode part count (Added in version 6).
+                + DataContract.Programs.EPISODE_ON_SCREEN + " TEXT NULL,"           // str Textual representation of episode number (Added in version 6).
+                + DataContract.Programs.IMAGE + " TEXT NULL,"                       // str URL to a still capture from the episode (Added in version 6).
+                + DataContract.Programs.DVR_ID + " INT DEFAULT 0,"                  // u32 ID of a recording (Added in version 5).
+                + DataContract.Programs.NEXT_EVENT_ID + " INT DEFAULT 0);";         // u32 ID of next event on the same channel.
+        db.execSQL(query);
     }
 
     /**
