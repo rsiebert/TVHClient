@@ -171,7 +171,10 @@ public class DataContentProvider extends ContentProvider {
 
         // Check if the uri is valid
         if (mUriMatcher.match(uri) != CONNECTION_LIST
-                && mUriMatcher.match(uri) != PROFILE_LIST) {
+                && mUriMatcher.match(uri) != PROFILE_LIST
+                && mUriMatcher.match(uri) != CHANNEL_LIST
+                && mUriMatcher.match(uri) != TAG_LIST
+                && mUriMatcher.match(uri) != PROGRAM_LIST) {
             throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
         }
 
