@@ -7,22 +7,14 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DataContentProvider extends ContentProvider {
     private final static String TAG = DataContentProvider.class.getSimpleName();
@@ -32,6 +24,12 @@ public class DataContentProvider extends ContentProvider {
     private static final int CONNECTION_ID = 2;
     private static final int PROFILE_LIST = 3;
     private static final int PROFILE_ID = 4;
+    private static final int CHANNEL_LIST = 5;
+    private static final int CHANNEL_ID = 6;
+    private static final int TAG_LIST = 7;
+    private static final int TAG_ID = 8;
+    private static final int PROGRAM_LIST = 9;
+    private static final int PROGRAM_ID = 10;
     private static final UriMatcher mUriMatcher;
 
     // prepare the UriMatcher
@@ -41,6 +39,12 @@ public class DataContentProvider extends ContentProvider {
         mUriMatcher.addURI(DataContract.AUTHORITY, "connections/#", CONNECTION_ID);
         mUriMatcher.addURI(DataContract.AUTHORITY, "profiles", PROFILE_LIST);
         mUriMatcher.addURI(DataContract.AUTHORITY, "profiles/#", PROFILE_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "channels", CHANNEL_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "channels/#", CHANNEL_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "tags", TAG_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "tags/#", TAG_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "programs", PROGRAM_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "programs/#", PROGRAM_ID);
     }
 
     private DatabaseHelper mHelper;
@@ -75,12 +79,41 @@ public class DataContentProvider extends ContentProvider {
 
             case PROFILE_LIST:
                 builder.setTables(DataContract.Profiles.TABLE);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = DataContract.Profiles.SORT_ORDER_DEFAULT;
+                }
                 break;
 
             case PROFILE_ID:
-                builder.setTables(DataContract.Connections.TABLE);
+                builder.setTables(DataContract.Profiles.TABLE);
                 // limit query to one row at most
                 builder.appendWhere(DataContract.Profiles.ID + " = " + uri.getLastPathSegment());
+                break;
+
+            case CHANNEL_LIST:
+                builder.setTables(DataContract.Channels.TABLE);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = DataContract.Channels.SORT_ORDER_DEFAULT;
+                }
+                break;
+
+            case CHANNEL_ID:
+                builder.setTables(DataContract.Channels.TABLE);
+                // limit query to one row at most
+                builder.appendWhere(DataContract.Channels.ID + " = " + uri.getLastPathSegment());
+                break;
+
+            case TAG_LIST:
+                builder.setTables(DataContract.Tags.TABLE);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = DataContract.Tags.SORT_ORDER_DEFAULT;
+                }
+                break;
+
+            case TAG_ID:
+                builder.setTables(DataContract.Tags.TABLE);
+                // limit query to one row at most
+                builder.appendWhere(DataContract.Tags.ID + " = " + uri.getLastPathSegment());
                 break;
 
             default:
@@ -104,6 +137,7 @@ public class DataContentProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
         Log.d(TAG, "getType() called with: uri = [" + uri + "]");
 
+        // TODO rename the content_<name>_type to content_id_type or something else
         switch (mUriMatcher.match(uri)) {
             case CONNECTION_ID:
                 return DataContract.Connections.CONTENT_CONNECTION_TYPE;
@@ -113,6 +147,18 @@ public class DataContentProvider extends ContentProvider {
                 return DataContract.Profiles.CONTENT_PROFILE_TYPE;
             case PROFILE_LIST:
                 return DataContract.Profiles.CONTENT_TYPE;
+            case CHANNEL_ID:
+                return DataContract.Channels.CONTENT_CHANNEL_TYPE;
+            case CHANNEL_LIST:
+                return DataContract.Channels.CONTENT_TYPE;
+            case TAG_ID:
+                return DataContract.Tags.CONTENT_TAG_TYPE;
+            case TAG_LIST:
+                return DataContract.Tags.CONTENT_TYPE;
+            case PROGRAM_ID:
+                return DataContract.Programs.CONTENT_PROGRAM_TYPE;
+            case PROGRAM_LIST:
+                return DataContract.Programs.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -142,6 +188,21 @@ public class DataContentProvider extends ContentProvider {
 
             case PROFILE_LIST:
                 id = db.insert(DataContract.Profiles.TABLE, null, contentValues);
+                newUri = getUriForId(id, uri);
+                break;
+
+            case CHANNEL_LIST:
+                id = db.insert(DataContract.Channels.TABLE, null, contentValues);
+                newUri = getUriForId(id, uri);
+                break;
+
+            case TAG_LIST:
+                id = db.insert(DataContract.Tags.TABLE, null, contentValues);
+                newUri = getUriForId(id, uri);
+                break;
+
+            case PROGRAM_LIST:
+                id = db.insert(DataContract.Programs.TABLE, null, contentValues);
                 newUri = getUriForId(id, uri);
                 break;
         }
@@ -176,6 +237,36 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.Profiles.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 deletedRows = db.delete(DataContract.Profiles.TABLE, where, selectionArgs);
+                break;
+
+            case CHANNEL_LIST:
+                deletedRows = db.delete(DataContract.Channels.TABLE, selection, selectionArgs);
+                break;
+
+            case CHANNEL_ID:
+                where = DataContract.Channels.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                deletedRows = db.delete(DataContract.Channels.TABLE, where, selectionArgs);
+                break;
+
+            case TAG_LIST:
+                deletedRows = db.delete(DataContract.Tags.TABLE, selection, selectionArgs);
+                break;
+
+            case TAG_ID:
+                where = DataContract.Tags.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                deletedRows = db.delete(DataContract.Tags.TABLE, where, selectionArgs);
+                break;
+
+            case PROGRAM_LIST:
+                deletedRows = db.delete(DataContract.Programs.TABLE, selection, selectionArgs);
+                break;
+
+            case PROGRAM_ID:
+                where = DataContract.Programs.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                deletedRows = db.delete(DataContract.Programs.TABLE, where, selectionArgs);
                 break;
 
             default:
@@ -217,6 +308,36 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.Profiles.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 updateCount = db.update(DataContract.Profiles.TABLE, contentValues, where, selectionArgs);
+                break;
+
+            case CHANNEL_LIST:
+                updateCount = db.update(DataContract.Channels.TABLE, contentValues, selection, selectionArgs);
+                break;
+
+            case CHANNEL_ID:
+                where = DataContract.Channels.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                updateCount = db.update(DataContract.Channels.TABLE, contentValues, where, selectionArgs);
+                break;
+
+            case TAG_LIST:
+                updateCount = db.update(DataContract.Tags.TABLE, contentValues, selection, selectionArgs);
+                break;
+
+            case TAG_ID:
+                where = DataContract.Tags.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                updateCount = db.update(DataContract.Tags.TABLE, contentValues, where, selectionArgs);
+                break;
+
+            case PROGRAM_LIST:
+                updateCount = db.update(DataContract.Programs.TABLE, contentValues, selection, selectionArgs);
+                break;
+
+            case PROGRAM_ID:
+                where = DataContract.Programs.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                updateCount = db.update(DataContract.Programs.TABLE, contentValues, where, selectionArgs);
                 break;
 
             default:
