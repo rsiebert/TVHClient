@@ -30,6 +30,8 @@ public class DataContentProvider extends ContentProvider {
     private static final int TAG_ID = 8;
     private static final int PROGRAM_LIST = 9;
     private static final int PROGRAM_ID = 10;
+    private static final int RECORDING_LIST = 11;
+    private static final int RECORDING_ID = 12;
     private static final UriMatcher mUriMatcher;
 
     // prepare the UriMatcher
@@ -45,6 +47,8 @@ public class DataContentProvider extends ContentProvider {
         mUriMatcher.addURI(DataContract.AUTHORITY, "tags/#", TAG_ID);
         mUriMatcher.addURI(DataContract.AUTHORITY, "programs", PROGRAM_LIST);
         mUriMatcher.addURI(DataContract.AUTHORITY, "programs/#", PROGRAM_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "recordings", RECORDING_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "recordings/#", RECORDING_ID);
     }
 
     private DatabaseHelper mHelper;
@@ -116,6 +120,32 @@ public class DataContentProvider extends ContentProvider {
                 builder.appendWhere(DataContract.Tags.ID + " = " + uri.getLastPathSegment());
                 break;
 
+            case PROGRAM_LIST:
+                builder.setTables(DataContract.Programs.TABLE);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = DataContract.Programs.SORT_ORDER_DEFAULT;
+                }
+                break;
+
+            case PROGRAM_ID:
+                builder.setTables(DataContract.Programs.TABLE);
+                // limit query to one row at most
+                builder.appendWhere(DataContract.Programs.ID + " = " + uri.getLastPathSegment());
+                break;
+
+            case RECORDING_LIST:
+                builder.setTables(DataContract.Recordings.TABLE);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = DataContract.Recordings.SORT_ORDER_DEFAULT;
+                }
+                break;
+
+            case RECORDING_ID:
+                builder.setTables(DataContract.Recordings.TABLE);
+                // limit query to one row at most
+                builder.appendWhere(DataContract.Recordings.ID + " = " + uri.getLastPathSegment());
+                break;
+
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -159,6 +189,10 @@ public class DataContentProvider extends ContentProvider {
                 return DataContract.Programs.CONTENT_PROGRAM_TYPE;
             case PROGRAM_LIST:
                 return DataContract.Programs.CONTENT_TYPE;
+            case RECORDING_ID:
+                return DataContract.Recordings.CONTENT_RECORDING_TYPE;
+            case RECORDING_LIST:
+                return DataContract.Recordings.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -174,7 +208,8 @@ public class DataContentProvider extends ContentProvider {
                 && mUriMatcher.match(uri) != PROFILE_LIST
                 && mUriMatcher.match(uri) != CHANNEL_LIST
                 && mUriMatcher.match(uri) != TAG_LIST
-                && mUriMatcher.match(uri) != PROGRAM_LIST) {
+                && mUriMatcher.match(uri) != PROGRAM_LIST
+                && mUriMatcher.match(uri) != RECORDING_LIST) {
             throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
         }
 
@@ -206,6 +241,11 @@ public class DataContentProvider extends ContentProvider {
 
             case PROGRAM_LIST:
                 id = db.insertWithOnConflict(DataContract.Programs.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = getUriForId(id, uri);
+                break;
+
+            case RECORDING_LIST:
+                id = db.insertWithOnConflict(DataContract.Recordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = getUriForId(id, uri);
                 break;
         }
@@ -270,6 +310,16 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.Programs.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 deletedRows = db.delete(DataContract.Programs.TABLE, where, selectionArgs);
+                break;
+
+            case RECORDING_LIST:
+                deletedRows = db.delete(DataContract.Recordings.TABLE, selection, selectionArgs);
+                break;
+
+            case RECORDING_ID:
+                where = DataContract.Recordings.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                deletedRows = db.delete(DataContract.Recordings.TABLE, where, selectionArgs);
                 break;
 
             default:
@@ -341,6 +391,16 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.Programs.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 updateCount = db.update(DataContract.Programs.TABLE, contentValues, where, selectionArgs);
+                break;
+
+            case RECORDING_LIST:
+                updateCount = db.update(DataContract.Recordings.TABLE, contentValues, selection, selectionArgs);
+                break;
+
+            case RECORDING_ID:
+                where = DataContract.Recordings.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                updateCount = db.update(DataContract.Recordings.TABLE, contentValues, where, selectionArgs);
                 break;
 
             default:
