@@ -99,17 +99,17 @@ public class DataContract {
         public static final String CONTENT_CHANNEL_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/channels";
 
         // Database column names
-        public static final String ID = BaseColumns._ID;                // u32 ID of channel
-        public static final String NUMBER = "channelNumber";            // u32 Channel number, 0 means unconfigured.
-        public static final String NUMBER_MINOR = "channelNumberMinor"; // u32 Minor channel number (Added in version 13).
-        public static final String NAME = "channelName";                // str Name of channel.
-        public static final String ICON = "channelIcon";                // str URL to an icon representative for the channel
-        public static final String EVENT_ID = "eventId";                // u32 ID of the current event on this channel.
-        public static final String NEXT_EVENT_ID = "nextEventId";       // u32 ID of the next event on the channel.
+        public static final String ID = BaseColumns._ID;                // u32 required   ID of channel
+        public static final String NUMBER = "channelNumber";            // u32 required   Channel number, 0 means unconfigured.
+        public static final String NUMBER_MINOR = "channelNumberMinor"; // u32 optional   Minor channel number (Added in version 13).
+        public static final String NAME = "channelName";                // str required   Name of channel.
+        public static final String ICON = "channelIcon";                // str optional   URL to an icon representative for the channel
+        public static final String EVENT_ID = "eventId";                // u32 optional   ID of the current event on this channel.
+        public static final String NEXT_EVENT_ID = "nextEventId";       // u32 optional   ID of the next event on the channel.
         // TODO this relation requires a channel id to tag id table?
-        public static final String TAGS = "tags";                       // u32[] Tags this channel is mapped to.
+        public static final String TAGS = "tags";                       // u32[] optional   Tags this channel is mapped to.
         // TODO this relation requires a channel id to services table?
-        public static final String SERVICES = "services";               // msg[] List of available services (Added in version 5)
+        public static final String SERVICES = "services";               // msg[] optional   List of available services (Added in version 5)
 
         // A projection of all columns in the items table.
         public static final String[] PROJECTION_ALL = {
