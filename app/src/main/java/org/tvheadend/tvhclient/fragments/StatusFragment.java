@@ -35,14 +35,14 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
 
     private LinearLayout additionalInformationLayout;
 
-	// This information is always available
+    // This information is always available
     private TextView connection;
     private TextView status;
     private TextView channels;
-	private TextView currentlyRec;
-	private TextView completedRec;
-	private TextView upcomingRec;
-	private TextView failedRec;
+    private TextView currentlyRec;
+    private TextView completedRec;
+    private TextView upcomingRec;
+    private TextView failedRec;
     private TextView removedRec;
     private TextView seriesRec;
     private TextView timerRec;
@@ -55,8 +55,11 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     private DatabaseHelper dbh;
     private DataStorage ds;
 
-    private static final int CHANNEL_LOADER_ID = 1;
-    private static final int RECORDING_LOADER_ID = 2;
+    private static final int LOADER_ID_CHANNELS = 1;
+    private static final int LOADER_ID_COMPLETED_RECORDINGS = 2;
+    private static final int LOADER_ID_SCHEDULED_RECORDINGS = 3;
+    private static final int LOADER_ID_FAILED_RECORDINGS = 4;
+    private static final int LOADER_ID_REMOVED_RECORDINGS = 5;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -114,8 +117,11 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
 
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
-        getLoaderManager().initLoader(CHANNEL_LOADER_ID, null, this);
-        getLoaderManager().initLoader(RECORDING_LOADER_ID, null, this);
+        getLoaderManager().initLoader(LOADER_ID_CHANNELS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_COMPLETED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_SCHEDULED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_FAILED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_REMOVED_RECORDINGS, null, this);
     }
 
     @Override
@@ -146,8 +152,8 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         super.onDestroy();
     }
 
-	@Override
-	public void onMessage(final String action, final Object obj) {
+    @Override
+    public void onMessage(final String action, final Object obj) {
         switch (action) {
             case Constants.ACTION_CONNECTION_STATE_OK:
                 activity.runOnUiThread(new Runnable() {
@@ -220,7 +226,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
                 });
                 break;
         }
-	}
+    }
 
     /**
      * Displays all available status information. This is the case
@@ -237,11 +243,11 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     }
 
     /**
-	 * Shows the name and address of a connection, otherwise shows an
-     * information that no connection is selected or available. 
-	 */
+     * Shows the name and address of a connection, otherwise shows an
+     * information that no connection is selected or available.
+     */
     private void showConnectionName() {
-	    // Get the currently selected connection
+        // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
         if (dbh != null) {
@@ -261,7 +267,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
             String text = conn.name + " (" + conn.address + ")";
             connection.setText(text);
         }
-	}
+    }
 
     /**
      * Shows the current connection status is displayed, this can be
@@ -359,27 +365,6 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText
                 : getString(R.string.nothing));
 
-        final int completedRecCount = ds.getRecordingsByType(
-                Constants.RECORDING_TYPE_COMPLETED).size();
-        final int scheduledRecCount = ds.getRecordingsByType(
-                Constants.RECORDING_TYPE_SCHEDULED).size();
-        final int failedRecCount = ds.getRecordingsByType(
-                Constants.RECORDING_TYPE_FAILED).size();
-        final int removedRecCount = ds.getRecordingsByType(
-                Constants.RECORDING_TYPE_REMOVED).size();
-
-        // Show how many different recordings are available
-        completedRec.setText(getResources().getQuantityString(
-                R.plurals.completed_recordings, completedRecCount,
-                completedRecCount));
-        upcomingRec.setText(getResources().getQuantityString(
-                R.plurals.upcoming_recordings, scheduledRecCount,
-                scheduledRecCount));
-        failedRec.setText(getResources().getQuantityString(
-                R.plurals.failed_recordings, failedRecCount, failedRecCount));
-        removedRec.setText(getResources().getQuantityString(
-                R.plurals.removed_recordings, removedRecCount, removedRecCount));
-
         // Show how many series recordings are available
         if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             seriesRec.setVisibility(View.GONE);
@@ -407,28 +392,76 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        switch (i) {
-            case CHANNEL_LOADER_ID:
-                return new CursorLoader(getActivity(),
-                        DataContract.Channels.CONTENT_URI,
-                        DataContract.Channels.PROJECTION_ALL,
-                        null, null, null);
+        // TODO move these repeating queries into a separate uri
+        final String[] channelProjection = new String[]{
+                DataContract.Recordings.ID};
 
-            case RECORDING_LOADER_ID:
-                return null;
+        final String[] recordingProjection = new String[]{
+                DataContract.Recordings.ID,
+                DataContract.Recordings.ERROR,
+                DataContract.Recordings.STATE};
+
+        switch (i) {
+            case LOADER_ID_CHANNELS:
+                return new CursorLoader(getActivity(), DataContract.Channels.CONTENT_URI,
+                        channelProjection, null, null, null);
+
+            case LOADER_ID_COMPLETED_RECORDINGS:
+                return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
+                        recordingProjection,
+                        DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?",
+                        new String[]{"NULL", "completed"}, null);
+
+            case LOADER_ID_SCHEDULED_RECORDINGS:
+                // TODO Something missing here
+                return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
+                        recordingProjection,
+                        DataContract.Recordings.ERROR + "=? AND ("
+                                + DataContract.Recordings.STATE + "=? OR "
+                                + DataContract.Recordings.STATE + "=?)",
+                        new String[]{"NULL", "recording", "scheduled"}, null);
+
+            case LOADER_ID_FAILED_RECORDINGS:
+                // A recording is failed if its either failed, missed or aborted
+                // failed: error is set AND (state == missed or state == invalid)
+                // missed: no error and state == missed
+                // aborted: error == "Aborted by user" and state == "completed"
+                return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
+                        recordingProjection,
+                        "(" + DataContract.Recordings.ERROR + "=? AND " + "(" + DataContract.Recordings.STATE + "=? OR " + DataContract.Recordings.STATE + "=?)) "
+                                + " OR (" + DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?)"
+                                + " OR (" + DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?)",
+                        new String[]{"NOT NULL", "missed", "invalid", "NULL", "missed", "Aborted by user", "completed"}, null);
+
+            case LOADER_ID_REMOVED_RECORDINGS:
+                return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
+                        recordingProjection,
+                        DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?",
+                        new String[]{"File missing", "completed"}, null);
+
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch (loader.getId()) {
-            case CHANNEL_LOADER_ID:
-                int channelCount = (cursor != null) ? cursor.getCount() : 0;
-                channels.setText(channelCount + " " + getString(R.string.available));
-                break;
+        int count = (cursor != null) ? cursor.getCount() : 0;
 
-            case RECORDING_LOADER_ID:
+        switch (loader.getId()) {
+            case LOADER_ID_CHANNELS:
+                channels.setText(count + " " + getString(R.string.available));
+                break;
+            case LOADER_ID_COMPLETED_RECORDINGS:
+                completedRec.setText(getResources().getQuantityString(R.plurals.completed_recordings, count, count));
+                break;
+            case LOADER_ID_SCHEDULED_RECORDINGS:
+                upcomingRec.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, count, count));
+                break;
+            case LOADER_ID_FAILED_RECORDINGS:
+                failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, count, count));
+                break;
+            case LOADER_ID_REMOVED_RECORDINGS:
+                removedRec.setText(getResources().getQuantityString(R.plurals.removed_recordings, count, count));
                 break;
         }
     }
@@ -436,8 +469,20 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
-            case CHANNEL_LOADER_ID:
+            case LOADER_ID_CHANNELS:
                 channels.setText(0 + " " + getString(R.string.available));
+                break;
+            case LOADER_ID_COMPLETED_RECORDINGS:
+                completedRec.setText(getResources().getQuantityString(R.plurals.completed_recordings, 0, 0));
+                break;
+            case LOADER_ID_SCHEDULED_RECORDINGS:
+                upcomingRec.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, 0, 0));
+                break;
+            case LOADER_ID_FAILED_RECORDINGS:
+                failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, 0, 0));
+                break;
+            case LOADER_ID_REMOVED_RECORDINGS:
+                removedRec.setText(getResources().getQuantityString(R.plurals.removed_recordings, 0, 0));
                 break;
         }
     }
