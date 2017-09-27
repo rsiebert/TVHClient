@@ -1,8 +1,12 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +18,14 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.DataContract;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.Recording;
 
-public class StatusFragment extends Fragment implements HTSListener {
+public class StatusFragment extends Fragment implements HTSListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     @SuppressWarnings("unused")
     private final static String TAG = StatusFragment.class.getSimpleName();
@@ -49,6 +54,9 @@ public class StatusFragment extends Fragment implements HTSListener {
     private TVHClientApplication app;
     private DatabaseHelper dbh;
     private DataStorage ds;
+
+    private static final int CHANNEL_LOADER_ID = 1;
+    private static final int RECORDING_LOADER_ID = 2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -103,6 +111,11 @@ public class StatusFragment extends Fragment implements HTSListener {
             actionBarInterface.setActionBarTitle(getString(R.string.status));
             actionBarInterface.setActionBarSubtitle("");
         }
+
+        // Prepare the loader.  Either re-connect with an existing one,
+        // or start a new one.
+        getLoaderManager().initLoader(CHANNEL_LOADER_ID, null, this);
+        getLoaderManager().initLoader(RECORDING_LOADER_ID, null, this);
     }
 
     @Override
@@ -221,10 +234,6 @@ public class StatusFragment extends Fragment implements HTSListener {
         showConnectionStatus();
         showRecordingStatus();
         showDiscSpace();
-
-        // Show the number of available channels
-        final String text = ds.getChannels().size() + " " + getString(R.string.available);
-        channels.setText(text);
     }
 
     /**
@@ -394,5 +403,42 @@ public class StatusFragment extends Fragment implements HTSListener {
                 + "   (" + getString(R.string.server) + ": "
                 + ds.getServerName() + " " + ds.getServerVersion() + ")";
         serverApiVersion.setText(version);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        switch (i) {
+            case CHANNEL_LOADER_ID:
+                return new CursorLoader(getActivity(),
+                        DataContract.Channels.CONTENT_URI,
+                        DataContract.Channels.PROJECTION_ALL,
+                        null, null, null);
+
+            case RECORDING_LOADER_ID:
+                return null;
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case CHANNEL_LOADER_ID:
+                int channelCount = (cursor != null) ? cursor.getCount() : 0;
+                channels.setText(channelCount + " " + getString(R.string.available));
+                break;
+
+            case RECORDING_LOADER_ID:
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        switch (loader.getId()) {
+            case CHANNEL_LOADER_ID:
+                channels.setText(0 + " " + getString(R.string.available));
+                break;
+        }
     }
 }
