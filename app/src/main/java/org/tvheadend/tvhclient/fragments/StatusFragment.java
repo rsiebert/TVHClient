@@ -236,8 +236,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         boolean noConnectionsDefined = false;
         Connection conn = null;
         if (dbh != null) {
-            noConnectionsDefined = dbh.getConnections().isEmpty();
-            conn = dbh.getSelectedConnection();
+            noConnectionsDefined = TVHClientApplication.getInstance().getContentProviderHelper().getConnections().isEmpty();
+            conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
         }
 
         // Show the details about the current connection or an information that

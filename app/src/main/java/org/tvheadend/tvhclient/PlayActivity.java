@@ -89,14 +89,14 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         // Create the url with the credentials and the host and  
         // port configuration. This one is fixed for all actions
         DatabaseHelper dbh = DatabaseHelper.getInstance(this);
-        Connection conn = dbh.getSelectedConnection();
+        Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
         if (conn != null) {
             username = conn.username;
             password = conn.password;
             address = conn.address;
             streamingPort = conn.streaming_port;
-            playbackProfile = dbh.getProfile(conn.playback_profile_id);
-            castingProfile = dbh.getProfile(conn.cast_profile_id);
+            playbackProfile = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.playback_profile_id);
+            castingProfile = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.cast_profile_id);
         }
 
         String encodedUsername = "";

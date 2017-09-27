@@ -343,8 +343,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 logger.log(TAG, "onApplicationConnected() called with: appMetadata = [" + appMetadata + "], sessionId = [" + sessionId + "], wasLaunched = [" + wasLaunched + "]");
                 invalidateOptionsMenu();
 
-                Connection conn = dbh.getSelectedConnection();
-                Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
+                Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
+                Profile profile = (conn != null ? TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.cast_profile_id) : null);
 
                 if (profile == null || !profile.enabled || profile.uuid == null || profile.uuid.length() == 0) {
                     logger.log(TAG, "onApplicationConnected: No casting profile set, disconnecting");
@@ -430,10 +430,10 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // Create a list of available connections names that the
         // selection dialog can display. Additionally preselect the
         // current active connection.
-        final List<Connection> connList = dbh.getConnections();
+        final List<Connection> connList = TVHClientApplication.getInstance().getContentProviderHelper().getConnections();
         if (connList != null) {
             int currentConnectionListPosition = -1;
-            Connection currentConnection = dbh.getSelectedConnection();
+            Connection currentConnection = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
             String[] items = new String[connList.size()];
             for (int i = 0; i < connList.size(); i++) {
                 items[i] = connList.get(i).name;
@@ -449,7 +449,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 .itemsCallbackSingleChoice(currentConnectionListPosition, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        Connection oldConn = dbh.getSelectedConnection();
+                        Connection oldConn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
                         Connection newConn = connList.get(which);
     
                         // Switch the active connection and reconnect  
@@ -460,8 +460,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                             // Set the new connection as the active one
                             newConn.selected = true;
                             oldConn.selected = false;
-                            dbh.updateConnection(oldConn);
-                            dbh.updateConnection(newConn);
+                            TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(oldConn);
+                            TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(newConn);
                             Utils.connect(MainActivity.this, true);
                         }
                         return true;
@@ -488,11 +488,11 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             serverName.setOnClickListener(null);
             serverSelection.setOnClickListener(null);
 
-            final Connection conn = dbh.getSelectedConnection();
-            if (dbh.getConnections().isEmpty()) {
+            final Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
+            if (TVHClientApplication.getInstance().getContentProviderHelper().getConnections().isEmpty()) {
                 serverName.setText(R.string.no_connection_available);
                 serverSelection.setVisibility(View.GONE);
-            } else if (dbh.getConnections().size() == 1) {
+            } else if (TVHClientApplication.getInstance().getContentProviderHelper().getConnections().size() == 1) {
                 serverName.setText(conn != null ? conn.name : "");
                 serverSelection.setVisibility(View.GONE);
             } else if (conn == null) {
@@ -663,8 +663,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      */
     private void reconnectAndResume() {
         if (!connectionSettingsShown
-                && (dbh.getConnections().isEmpty() 
-                        || dbh.getSelectedConnection() == null)) {
+                && (TVHClientApplication.getInstance().getContentProviderHelper().getConnections().isEmpty()
+                        || TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection() == null)) {
             connectionSettingsShown = true;
 
             Intent connIntent = new Intent(this, SettingsActivity.class);
@@ -683,8 +683,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
                 // Set the connection state to unknown if no connection was added
                 // when the connection fragment was shown. The status fragment is
                 // then shown with the information that no connection is available
-                if (dbh.getConnections().isEmpty() 
-                        || dbh.getSelectedConnection() == null) {
+                if (TVHClientApplication.getInstance().getContentProviderHelper().getConnections().isEmpty()
+                        || TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection() == null) {
                     connectionStatus = Constants.ACTION_CONNECTION_STATE_NO_CONNECTION;
                     handleMenuSelection(MENU_STATUS);
                 } else {
@@ -778,7 +778,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
         // the status screen and if the app is unlocked and an address is set
         (menu.findItem(R.id.menu_wol)).setVisible(false);
         if (selectedMenuPosition == MENU_STATUS) {
-            final Connection conn = dbh.getSelectedConnection();
+            final Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
             if (app.isUnlocked() && conn != null && conn.wol_mac_address.length() > 0) {
                 (menu.findItem(R.id.menu_wol)).setVisible(true);
             }
@@ -837,7 +837,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             return true;
 
         case R.id.menu_wol:
-            final Connection conn = dbh.getSelectedConnection();
+            final Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
             if (conn != null) {
                 WakeOnLanTask task= new WakeOnLanTask(this, conn);
                 task.execute();
@@ -1811,8 +1811,8 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
      */
     private boolean showCastMenuItem() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Connection conn = dbh.getSelectedConnection();
-        Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
+        Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
+        Profile profile = (conn != null ? TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.cast_profile_id) : null);
         return (app.isUnlocked()
                 && prefs.getBoolean("pref_enable_casting", false)
                 && profile != null 
