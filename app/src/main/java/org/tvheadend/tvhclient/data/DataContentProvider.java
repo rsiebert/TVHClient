@@ -192,17 +192,17 @@ public class DataContentProvider extends ContentProvider {
                 break;
 
             case CHANNEL_LIST:
-                id = db.insert(DataContract.Channels.TABLE, null, contentValues);
+                id = db.insertWithOnConflict(DataContract.Channels.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = getUriForId(id, uri);
                 break;
 
             case TAG_LIST:
-                id = db.insert(DataContract.Tags.TABLE, null, contentValues);
+                id = db.insertWithOnConflict(DataContract.Tags.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = getUriForId(id, uri);
                 break;
 
             case PROGRAM_LIST:
-                id = db.insert(DataContract.Programs.TABLE, null, contentValues);
+                id = db.insertWithOnConflict(DataContract.Programs.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = getUriForId(id, uri);
                 break;
         }
