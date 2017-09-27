@@ -12,7 +12,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
     
     // Database version and name declarations
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     private static final String DATABASE_NAME = "tvhclient";
 
     private static DatabaseHelper mInstance = null;
@@ -107,6 +107,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + DataContract.Programs.IMAGE + " TEXT NULL,"                       // str URL to a still capture from the episode (Added in version 6).
                 + DataContract.Programs.DVR_ID + " INT DEFAULT 0,"                  // u32 ID of a recording (Added in version 5).
                 + DataContract.Programs.NEXT_EVENT_ID + " INT DEFAULT 0);";         // u32 ID of next event on the same channel.
+        db.execSQL(query);
+
+        query = "CREATE TABLE IF NOT EXISTS " + DataContract.Recordings.TABLE + " ("
+                + DataContract.Recordings.ID + " INTEGER PRIMARY KEY,"      // u32   required   ID of dvrEntry.
+                + DataContract.Recordings.CHANNEL + " INT DEFAULT 0,"       // u32   optional   Channel of dvrEntry.
+                + DataContract.Recordings.START + " INT DEFAULT 0,"         // s64   required   Time of when this entry was scheduled to start recording.
+                + DataContract.Recordings.STOP + " INT DEFAULT 0,"          // s64   required   Time of when this entry was scheduled to stop recording.
+                + DataContract.Recordings.START_EXTRA + " INT DEFAULT 0,"   // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+                + DataContract.Recordings.STOP_EXTRA + " INT DEFAULT 0,"    // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+                + DataContract.Recordings.RETENTION + " INT DEFAULT 0,"     // s64   required   DVR Entry retention time in days (Added in version 13).
+                + DataContract.Recordings.PRIORITY + " INT DEFAULT 0,"      // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+                + DataContract.Recordings.EVENT_ID + " INT DEFAULT 0,"      // u32   optional   Associated EPG Event ID (Added in version 13).
+                + DataContract.Recordings.AUTOREC_ID + " TEXT NULL,"        // str   optional   Associated Autorec UUID (Added in version 13).
+                + DataContract.Recordings.TIMEREC_ID + " TEXT NULL,"        // str   optional   Associated Timerec UUID (Added in version 18).
+                + DataContract.Recordings.TYPE_OF_CONTENT + " INT DEFAULT 0," // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
+                + DataContract.Recordings.TITLE + " TEXT NULL,"             // str   optional   Title of recording
+                + DataContract.Recordings.SUBTITLE + " TEXT NULL,"          // str   optional   Subtitle of recording (Added in version 20).
+                + DataContract.Recordings.SUMMARY + " TEXT NULL,"           // str   optional   Short description of the recording (Added in version 6).
+                + DataContract.Recordings.DESCRIPTION + " TEXT NULL,"       // str   optional   Long description of the recording.
+                + DataContract.Recordings.STATE + " TEXT NULL,"             // str   required   Recording state
+                + DataContract.Recordings.ERROR + " TEXT NULL,"             // str   optional   Plain english error description (e.g. "Aborted by user").
+                + DataContract.Recordings.OWNER + " TEXT NULL,"             // str   optional   Name of the entry owner (Added in version 18).
+                + DataContract.Recordings.CREATOR + " TEXT NULL,"           // str   optional   Name of the entry creator (Added in version 18).
+                + DataContract.Recordings.SUBSCRIPTION_ERROR + " TEXT NULL," // str   optional   Subscription error string (Added in version 20).
+                + DataContract.Recordings.STREAM_ERRORS + " TEXT NULL,"     // str   optional   Number of recording errors (Added in version 20).
+                + DataContract.Recordings.DATA_ERRORS + " TEXT NULL,"       // str   optional   Number of stream data errors (Added in version 20).
+                + DataContract.Recordings.PATH + " TEXT NULL,"              // str   optional   Recording path for playback.
+                + DataContract.Recordings.DATA_SIZE + " INT DEFAULT 0,"     // s64   optional   Actual file size of the last recordings (Added in version 21).
+                + DataContract.Recordings.ENABLED + " INT DEFAULT 0);";     // u32   optional   Enabled flag (Added in version 23).
         db.execSQL(query);
     }
 
@@ -243,6 +272,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + DataContract.Programs.IMAGE + " TEXT NULL,"                       // str URL to a still capture from the episode (Added in version 6).
                     + DataContract.Programs.DVR_ID + " INT DEFAULT 0,"                  // u32 ID of a recording (Added in version 5).
                     + DataContract.Programs.NEXT_EVENT_ID + " INT DEFAULT 0);";         // u32 ID of next event on the same channel.
+            db.execSQL(query);
+        }
+        if (oldVersion < newVersion && newVersion == 11) {
+            String query = "CREATE TABLE IF NOT EXISTS " + DataContract.Recordings.TABLE + " ("
+                    + DataContract.Recordings.ID + " INTEGER PRIMARY KEY,"      // u32   required   ID of dvrEntry.
+                    + DataContract.Recordings.CHANNEL + " INT DEFAULT 0,"       // u32   optional   Channel of dvrEntry.
+                    + DataContract.Recordings.START + " INT DEFAULT 0,"         // s64   required   Time of when this entry was scheduled to start recording.
+                    + DataContract.Recordings.STOP + " INT DEFAULT 0,"          // s64   required   Time of when this entry was scheduled to stop recording.
+                    + DataContract.Recordings.START_EXTRA + " INT DEFAULT 0,"   // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+                    + DataContract.Recordings.STOP_EXTRA + " INT DEFAULT 0,"    // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+                    + DataContract.Recordings.RETENTION + " INT DEFAULT 0,"     // s64   required   DVR Entry retention time in days (Added in version 13).
+                    + DataContract.Recordings.PRIORITY + " INT DEFAULT 0,"      // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+                    + DataContract.Recordings.EVENT_ID + " INT DEFAULT 0,"      // u32   optional   Associated EPG Event ID (Added in version 13).
+                    + DataContract.Recordings.AUTOREC_ID + " TEXT NULL,"        // str   optional   Associated Autorec UUID (Added in version 13).
+                    + DataContract.Recordings.TIMEREC_ID + " TEXT NULL,"        // str   optional   Associated Timerec UUID (Added in version 18).
+                    + DataContract.Recordings.TYPE_OF_CONTENT + " INT DEFAULT 0," // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
+                    + DataContract.Recordings.TITLE + " TEXT NULL,"             // str   optional   Title of recording
+                    + DataContract.Recordings.SUBTITLE + " TEXT NULL,"          // str   optional   Subtitle of recording (Added in version 20).
+                    + DataContract.Recordings.SUMMARY + " TEXT NULL,"           // str   optional   Short description of the recording (Added in version 6).
+                    + DataContract.Recordings.DESCRIPTION + " TEXT NULL,"       // str   optional   Long description of the recording.
+                    + DataContract.Recordings.STATE + " TEXT NULL,"             // str   required   Recording state
+                    + DataContract.Recordings.ERROR + " TEXT NULL,"             // str   optional   Plain english error description (e.g. "Aborted by user").
+                    + DataContract.Recordings.OWNER + " TEXT NULL,"             // str   optional   Name of the entry owner (Added in version 18).
+                    + DataContract.Recordings.CREATOR + " TEXT NULL,"           // str   optional   Name of the entry creator (Added in version 18).
+                    + DataContract.Recordings.SUBSCRIPTION_ERROR + " TEXT NULL," // str   optional   Subscription error string (Added in version 20).
+                    + DataContract.Recordings.STREAM_ERRORS + " TEXT NULL,"     // str   optional   Number of recording errors (Added in version 20).
+                    + DataContract.Recordings.DATA_ERRORS + " TEXT NULL,"       // str   optional   Number of stream data errors (Added in version 20).
+                    + DataContract.Recordings.PATH + " TEXT NULL,"              // str   optional   Recording path for playback.
+                    + DataContract.Recordings.DATA_SIZE + " INT DEFAULT 0,"     // s64   optional   Actual file size of the last recordings (Added in version 21).
+                    + DataContract.Recordings.ENABLED + " INT DEFAULT 0);";     // u32   optional   Enabled flag (Added in version 23).
             db.execSQL(query);
         }
     }
