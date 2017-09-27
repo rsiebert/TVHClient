@@ -154,7 +154,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         if (oldVersion < newVersion && newVersion == 10) {
             String query = "CREATE TABLE IF NOT EXISTS " + DataContract.Channels.TABLE + " ("
-                    + DataContract.Channels.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"  // u32 ID of channel
+                    + DataContract.Channels.ID + " INTEGER PRIMARY KEY,"                // u32 ID of channel
                     + DataContract.Channels.NUMBER + " INT DEFAULT 0,"                  // u32 Channel number, 0 means unconfigured.
                     + DataContract.Channels.NUMBER_MINOR + " INT DEFAULT 0,"            // u32 Minor channel number (Added in version 13).
                     + DataContract.Channels.NAME + " TEXT NULL,"                        // str Name of channel.
@@ -164,7 +164,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(query);
 
             query = "CREATE TABLE IF NOT EXISTS " + DataContract.Tags.TABLE + " ("
-                    + DataContract.Tags.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"      // u32 ID of tag.
+                    + DataContract.Tags.ID + " INTEGER PRIMARY KEY,"                    // u32 ID of tag.
                     + DataContract.Tags.NAME + " TEXT NULL,"                            // str Name of tag.
                     + DataContract.Tags.INDEX + " INT DEFAULT 0,"                       // u32 Index value for sorting (default by from min to max) (Added in version 18).
                     + DataContract.Tags.ICON + " TEXT NULL,"                            // str URL to an icon representative for the channel.
@@ -172,7 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(query);
 
             query = "CREATE TABLE IF NOT EXISTS " + DataContract.Programs.TABLE + " ("
-                    + DataContract.Programs.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"  // u32 Event ID
+                    + DataContract.Programs.ID + " INTEGER PRIMARY KEY,"                // u32 Event ID
                     + DataContract.Programs.CHANNEL_ID + " INT DEFAULT 0,"              // u32 The channel this event is related to.
                     + DataContract.Programs.START + " INT DEFAULT 0,"                   // u64 Start time of event, UNIX time.
                     + DataContract.Programs.STOP + " INT DEFAULT 0,"                    // u64 Ending time of event, UNIX time.
