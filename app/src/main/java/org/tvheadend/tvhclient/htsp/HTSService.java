@@ -283,13 +283,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         Log.d(TAG, "onChannelAdd() called");
 
         ContentValues values = new ContentValues();
-        values.put(DataContract.Channels.ID, msg.getLong("channelId"));
-        values.put(DataContract.Channels.NUMBER, msg.getInt("channelNumber", 0));
-        values.put(DataContract.Channels.NUMBER_MINOR, msg.getInt("channelNumberMinor", 0));
-        values.put(DataContract.Channels.NAME, msg.getString("channelName", null));
-        values.put(DataContract.Channels.ICON, msg.getString("channelIcon", null));
-        values.put(DataContract.Channels.EVENT_ID, msg.getLong("eventId", 0));
-        values.put(DataContract.Channels.NEXT_EVENT_ID, msg.getLong("nextEventId", 0));
+        values.put(DataContract.Channels.ID, msg.getInt("channelId"));                          // u32 required   ID of channel
+        values.put(DataContract.Channels.NUMBER, msg.getInt("channelNumber"));                  // u32 required   Channel number, 0 means unconfigured.
+        values.put(DataContract.Channels.NUMBER_MINOR, msg.getInt("channelNumberMinor", 0));    // u32 optional   Minor channel number (Added in version 13).
+        values.put(DataContract.Channels.NAME, msg.getString("channelName"));                   // str required   Name of channel.
+        values.put(DataContract.Channels.ICON, msg.getString("channelIcon", null));             // str optional   URL to an icon representative for the channel
+        values.put(DataContract.Channels.EVENT_ID, msg.getInt("eventId", 0));                   // u32 optional   ID of the current event on this channel.
+        values.put(DataContract.Channels.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));          // u32 optional   ID of the next event on the channel.
 
         Uri uri = getContentResolver().insert(DataContract.Channels.CONTENT_URI, values);
         long id = Long.valueOf(uri.getLastPathSegment());
@@ -390,6 +390,40 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onDvrEntryAdd(HTSMessage msg) {
+        Log.d(TAG, "onDvrEntryAdd() called");
+
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Recordings.ID, msg.getLong("id"));                              // u32   required   ID of dvrEntry.
+        values.put(DataContract.Recordings.CHANNEL, msg.getInt("channel", 0));                  // u32   optional   Channel of dvrEntry.
+        values.put(DataContract.Recordings.START, msg.getInt("start"));                         // s64   required   Time of when this entry was scheduled to start recording.
+        values.put(DataContract.Recordings.STOP, msg.getInt("stop"));                           // s64   required   Time of when this entry was scheduled to stop recording.
+        values.put(DataContract.Recordings.START_EXTRA, msg.getInt("startExtra"));              // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+        values.put(DataContract.Recordings.STOP_EXTRA, msg.getInt("stopExtra"));                // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+        values.put(DataContract.Recordings.RETENTION, msg.getInt("retention"));                 // s64   required   DVR Entry retention time in days (Added in version 13).
+        values.put(DataContract.Recordings.PRIORITY, msg.getInt("priority"));                   // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+        values.put(DataContract.Recordings.EVENT_ID, msg.getInt("eventId", 0));                 // u32   optional   Associated EPG Event ID (Added in version 13).
+        values.put(DataContract.Recordings.AUTOREC_ID, msg.getString("autorecId", null));       // str   optional   Associated Autorec UUID (Added in version 13).
+        values.put(DataContract.Recordings.TIMEREC_ID, msg.getString("timerecId", null));       // str   optional   Associated Timerec UUID (Added in version 18).
+        values.put(DataContract.Recordings.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
+        values.put(DataContract.Recordings.TITLE, msg.getString("title", null));                // str   optional   Title of recording
+        values.put(DataContract.Recordings.SUBTITLE, msg.getString("subtitle", null));          // str   optional   Subtitle of recording (Added in version 20).
+        values.put(DataContract.Recordings.SUMMARY, msg.getString("summary", null));            // str   optional   Short description of the recording (Added in version 6).
+        values.put(DataContract.Recordings.DESCRIPTION, msg.getString("description", null));    // str   optional   Long description of the recording.
+        values.put(DataContract.Recordings.STATE, msg.getString("state"));                      // str   required   Recording state
+        values.put(DataContract.Recordings.ERROR, msg.getString("error", null));                // str   optional   Plain english error description (e.g. "Aborted by user").
+        values.put(DataContract.Recordings.OWNER, msg.getString("owner", null));                // str   optional   Name of the entry owner (Added in version 18).
+        values.put(DataContract.Recordings.CREATOR, msg.getString("creator", null));            // str   optional   Name of the entry creator (Added in version 18).
+        values.put(DataContract.Recordings.SUBSCRIPTION_ERROR, msg.getString("subscriptionError", null));    // str   optional   Subscription error string (Added in version 20).
+        values.put(DataContract.Recordings.STREAM_ERRORS, msg.getString("streamErrors", null)); // str   optional   Number of recording errors (Added in version 20).
+        values.put(DataContract.Recordings.DATA_ERRORS, msg.getString("dataErrors", null));     // str   optional   Number of stream data errors (Added in version 20).
+        values.put(DataContract.Recordings.PATH, msg.getString("path", null));                  // str   optional   Recording path for playback.
+        values.put(DataContract.Recordings.DATA_SIZE, msg.getInt("dataSize", 0));               // s64   optional   Actual file size of the last recordings (Added in version 21).
+        values.put(DataContract.Recordings.ENABLED, msg.getInt("enabled", 0));                  // u32   optional   Enabled flag (Added in version 23).
+
+        Uri uri = getContentResolver().insert(DataContract.Recordings.CONTENT_URI, values);
+        long id = Long.valueOf(uri.getLastPathSegment());
+        Log.d(TAG, "onDvrEntryAdd: Added recording to database, recording id is '" + id + "'");
+
         Recording rec = new Recording();
         rec.id = msg.getLong("id");
         rec.description = msg.getString("description");
