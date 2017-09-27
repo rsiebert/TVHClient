@@ -1,15 +1,18 @@
 package org.tvheadend.tvhclient.htsp;
 
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
@@ -17,6 +20,7 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.data.DataContract;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
 import org.tvheadend.tvhclient.model.Channel;
@@ -276,6 +280,21 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onChannelAdd(HTSMessage msg) {
+        Log.d(TAG, "onChannelAdd() called");
+
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Channels.ID, msg.getLong("channelId"));
+        values.put(DataContract.Channels.NUMBER, msg.getInt("channelNumber", 0));
+        values.put(DataContract.Channels.NUMBER_MINOR, msg.getInt("channelNumberMinor", 0));
+        values.put(DataContract.Channels.NAME, msg.getString("channelName", null));
+        values.put(DataContract.Channels.ICON, msg.getString("channelIcon", null));
+        values.put(DataContract.Channels.EVENT_ID, msg.getLong("eventId", 0));
+        values.put(DataContract.Channels.NEXT_EVENT_ID, msg.getLong("nextEventId", 0));
+
+        Uri uri = getContentResolver().insert(DataContract.Channels.CONTENT_URI, values);
+        long id = Long.valueOf(uri.getLastPathSegment());
+        Log.d(TAG, "onChannelAdd: Added channel to database, channel id is '" + id + "'");
+
         final Channel ch = new Channel();
         ch.id = msg.getLong("channelId");
         ch.name = msg.getString("channelName", null);
