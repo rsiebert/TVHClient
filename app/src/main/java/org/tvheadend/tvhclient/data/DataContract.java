@@ -18,7 +18,7 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "connections";
         // The content URI for this table.
-        static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "connections");
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "connections");
         // The mime type of a directory of items.
         static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/connections";
         // The mime type of a single item.
@@ -42,7 +42,7 @@ public class DataContract {
         public static final String CAST_PROFILE_ID = "cast_profile_id";
 
         // A projection of all columns in the items table.
-        static final String[] PROJECTION_ALL = {
+        public static final String[] PROJECTION_ALL = {
                 ID, NAME, ADDRESS, PORT, USERNAME, PASSWORD, SELECTED, CHANNEL_TAG, STREAMING_PORT,
                 WOL_ADDRESS, WOL_PORT, WOL_BROADCAST, PLAY_PROFILE_ID, REC_PROFILE_ID, CAST_PROFILE_ID
         };
