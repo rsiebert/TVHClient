@@ -120,8 +120,9 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         if (!encodedUsername.isEmpty()) {
             baseUrl += encodedUsername;
             if (!encodedPassword.isEmpty()) {
-                baseUrl += ":" + encodedPassword + "@";
+                baseUrl += ":" + encodedPassword;
             }
+            baseUrl += "@";
         }
         baseUrl += address + ":" + streamingPort;
 
