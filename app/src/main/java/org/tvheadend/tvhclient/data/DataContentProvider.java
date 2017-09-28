@@ -218,7 +218,6 @@ public class DataContentProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
         Log.d(TAG, "getType() called with: uri = [" + uri + "]");
 
-        // TODO rename the content_<name>_type to content_id_type or something else
         switch (mUriMatcher.match(uri)) {
             case CONNECTION_ID:
                 return DataContract.Connections.CONTENT_ITEM_TYPE;

@@ -9,7 +9,7 @@ public class DataContract {
     // The authority of the tvhclient provider.
     static final String AUTHORITY = "org.tvheadend.tvhclient.provider";
     // The content URI for the top-level tvhclient authority.
-    static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    private static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     /**
      * Constants for the connections table of the tvhclient provider.
@@ -18,11 +18,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "connections";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "connections");
+        static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "connections");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/connections";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/connections";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/connections";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/connections";
 
         // Database column names
         public static final String ID = BaseColumns._ID;
@@ -42,12 +42,12 @@ public class DataContract {
         public static final String CAST_PROFILE_ID = "cast_profile_id";
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, NAME, ADDRESS, PORT, USERNAME, PASSWORD, SELECTED, CHANNEL_TAG, STREAMING_PORT,
                 WOL_ADDRESS, WOL_PORT, WOL_BROADCAST, PLAY_PROFILE_ID, REC_PROFILE_ID, CAST_PROFILE_ID
         };
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
+        static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
     /**
@@ -57,11 +57,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "profiles";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "profiles");
+        static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "profiles");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/profiles";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/profiles";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/profiles";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/profiles";
 
         // Database column names
         public static final String ID = BaseColumns._ID;
@@ -76,13 +76,13 @@ public class DataContract {
         public static final String SUBTITLE_CODEC = "subtitle_codec";
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, ENABLED, UUID, NAME, CONTAINER, TRANSCODE,
                 RESOLUTION, AUDIO_CODEC, VIDEO_CODEC, SUBTITLE_CODEC,
         };
 
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
+        static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
     /**
@@ -94,9 +94,9 @@ public class DataContract {
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "channels");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/channels";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/channels";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/channels";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/channels";
 
         // Database column names
         public static final String ID = BaseColumns._ID;                // u32 required   ID of channel
@@ -112,12 +112,12 @@ public class DataContract {
         public static final String SERVICES = "services";               // msg[] optional   List of available services (Added in version 5)
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, NUMBER, NUMBER_MINOR, NAME, ICON, EVENT_ID, NEXT_EVENT_ID
         };
 
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
+        static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
     /**
@@ -129,9 +129,9 @@ public class DataContract {
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "tags");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/tags";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/tags";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/tags";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/tags";
 
         public static final String ID = BaseColumns._ID;            // u32   required   ID of tag.
         public static final String NAME = "tagName";                // str   required   Name of tag.
@@ -142,12 +142,12 @@ public class DataContract {
         public static final String MEMBERS = "members";             // u32[] optional   Channel IDs of those that belong to the tag
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, NAME, INDEX, ICON, TITLED_ICON
         };
 
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
+        static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
     /**
@@ -159,9 +159,9 @@ public class DataContract {
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "programs");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/programs";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/programs";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/programs";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/programs";
 
         public static final String ID = BaseColumns._ID;                // u32   required   Event ID
         public static final String CHANNEL_ID = "channelId";            // u32   required   The channel this event is related to.
@@ -190,7 +190,7 @@ public class DataContract {
         public static final String NEXT_EVENT_ID = "nextEventId";       // u32   optional   ID of next event on the same channel.
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, CHANNEL_ID, START, STOP, TITLE, SUMMARY, DESCRIPTION,
                 SERIES_LINK_ID, EPISODE_ID, SEASON_ID, BRAND_ID, TYPE_OF_CONTENT, AGE_RATING, STAR_RATING,
                 FIRST_AIRED, SEASON_NUMBER, SEASON_COUNT, EPISODE_NUMBER, EPISODE_COUNT, PART_NUMBER,
@@ -198,7 +198,7 @@ public class DataContract {
         };
 
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = CHANNEL_ID + " ASC, " + START + " ASC";
+        static final String SORT_ORDER_DEFAULT = CHANNEL_ID + " ASC, " + START + " ASC";
     }
 
     /**
@@ -210,9 +210,9 @@ public class DataContract {
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "recordings");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/recordings";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/recordings";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/recordings";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/recordings";
 
         public static final String ID = BaseColumns._ID;            // u32   required   ID of dvrEntry.
         public static final String CHANNEL = "channel";             // u32   optional   Channel of dvrEntry.
@@ -244,7 +244,7 @@ public class DataContract {
         public static final String ENABLED = "enabled";             // u32   optional   Enabled flag (Added in version 23).
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, CHANNEL, START, STOP, START_EXTRA, STOP_EXTRA, RETENTION, PRIORITY, EVENT_ID,
                 AUTOREC_ID, TIMEREC_ID, TYPE_OF_CONTENT, TITLE, SUBTITLE, SUMMARY, DESCRIPTION,
                 STATE, ERROR, OWNER, CREATOR, SUBSCRIPTION_ERROR, STREAM_ERRORS, DATA_ERRORS, PATH,
@@ -252,7 +252,7 @@ public class DataContract {
         };
 
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = CHANNEL + " ASC, " + START + " ASC";
+        static final String SORT_ORDER_DEFAULT = CHANNEL + " ASC, " + START + " ASC";
     }
 
     /**
@@ -264,9 +264,9 @@ public class DataContract {
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "series_recordings");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/series_recordings";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/series_recordings";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/series_recordings";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/series_recordings";
 
         public static final String ID = BaseColumns._ID;            // str   required   ID (string!) of dvrAutorecEntry.
         public static final String ENABLED = "enabled";             // u32   required   If autorec entry is enabled (activated).
@@ -290,14 +290,14 @@ public class DataContract {
         public static final String DUP_DETECT = "dupDetect";        // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, ENABLED, NAME, MIN_DURATION, MAX_DURATION, RETENTION, DAYS_OF_WEEK, PRIORITY,
                 APPROX_TIME, START, START_WINDOW, START_EXTRA, STOP_EXTRA, TITLE, FULLTEXT,
                 DIRECTORY, CHANNEL, OWNER, CREATOR, DUP_DETECT
         };
 
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
+        static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
     }
 
     /**
@@ -309,9 +309,9 @@ public class DataContract {
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "timer_recordings");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/timer_recordings";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/timer_recordings";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/timer_recordings";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/timer_recordings";
 
         public static final String ID = BaseColumns._ID;        // str   required   ID (string!) of timerecEntry.
         public static final String TITLE = "title";             // str   required   Title for the recordings.
@@ -329,13 +329,13 @@ public class DataContract {
         public static final String CREATOR = "creator";         // str   optional   Creator of this timerec entry.
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, TITLE, DIRECTORY, ENABLED, NAME, CONFIG_NAME, CHANNEL, DAYS_OF_WEEK,
                 PRIORITY, START, STOP, RETENTION, OWNER, CREATOR
         };
 
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
+        static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
     }
 
     /**
@@ -347,9 +347,9 @@ public class DataContract {
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "events");
         // The mime type of a directory of items.
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/events";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/events";
         // The mime type of a single item.
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/events";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/events";
 
         public static final String ID = BaseColumns._ID;                // u32   required   Event ID
         public static final String CHANNEL_ID = "channelId";            // u32   required   The channel this event is related to.
@@ -378,7 +378,7 @@ public class DataContract {
         public static final String NEXT_EVENT_ID = "nextEventId";       // u32   optional   ID of next event on the same channel.
 
         // A projection of all columns in the items table.
-        public static final String[] PROJECTION_ALL = {
+        static final String[] PROJECTION_ALL = {
                 ID, CHANNEL_ID, START, STOP, TITLE, SUMMARY, DESCRIPTION, SERIES_LINK_ID,
                 EPISODE_ID, SEASON_ID, BRAND_ID, TYPE_OF_CONTENT, AGE_RATING, STAR_RATING,
                 FIRST_AIRED, SEASON_NUMBER, SEASON_COUNT, EPISODE_NUMBER, EPISODE_COUNT,
@@ -386,6 +386,6 @@ public class DataContract {
         };
 
         // The default sort order for queries
-        public static final String SORT_ORDER_DEFAULT = CHANNEL_ID + " ASC, " + START + " ASC";
+        static final String SORT_ORDER_DEFAULT = CHANNEL_ID + " ASC, " + START + " ASC";
     }
 }
