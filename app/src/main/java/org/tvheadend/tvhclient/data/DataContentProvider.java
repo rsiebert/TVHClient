@@ -32,6 +32,12 @@ public class DataContentProvider extends ContentProvider {
     private static final int PROGRAM_ID = 10;
     private static final int RECORDING_LIST = 11;
     private static final int RECORDING_ID = 12;
+    private static final int SERIES_RECORDING_LIST = 13;
+    private static final int SERIES_RECORDING_ID = 14;
+    private static final int TIMER_RECORDING_LIST = 15;
+    private static final int TIMER_RECORDING_ID = 16;
+    private static final int EVENT_LIST = 17;
+    private static final int EVENT_ID = 18;
     private static final UriMatcher mUriMatcher;
 
     // prepare the UriMatcher
@@ -49,6 +55,12 @@ public class DataContentProvider extends ContentProvider {
         mUriMatcher.addURI(DataContract.AUTHORITY, "programs/#", PROGRAM_ID);
         mUriMatcher.addURI(DataContract.AUTHORITY, "recordings", RECORDING_LIST);
         mUriMatcher.addURI(DataContract.AUTHORITY, "recordings/#", RECORDING_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "series_recordings", SERIES_RECORDING_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "series_recordings/#", SERIES_RECORDING_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings", TIMER_RECORDING_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings/#", TIMER_RECORDING_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "events", EVENT_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "events/#", EVENT_ID);
     }
 
     private DatabaseHelper mHelper;
@@ -146,6 +158,45 @@ public class DataContentProvider extends ContentProvider {
                 builder.appendWhere(DataContract.Recordings.ID + " = " + uri.getLastPathSegment());
                 break;
 
+            case SERIES_RECORDING_LIST:
+                builder.setTables(DataContract.SeriesRecordings.TABLE);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = DataContract.SeriesRecordings.SORT_ORDER_DEFAULT;
+                }
+                break;
+
+            case SERIES_RECORDING_ID:
+                builder.setTables(DataContract.SeriesRecordings.TABLE);
+                // limit query to one row at most
+                builder.appendWhere(DataContract.SeriesRecordings.ID + " = " + uri.getLastPathSegment());
+                break;
+
+            case TIMER_RECORDING_LIST:
+                builder.setTables(DataContract.TimerRecordings.TABLE);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = DataContract.TimerRecordings.SORT_ORDER_DEFAULT;
+                }
+                break;
+
+            case TIMER_RECORDING_ID:
+                builder.setTables(DataContract.TimerRecordings.TABLE);
+                // limit query to one row at most
+                builder.appendWhere(DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment());
+                break;
+
+            case EVENT_LIST:
+                builder.setTables(DataContract.Events.TABLE);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = DataContract.Events.SORT_ORDER_DEFAULT;
+                }
+                break;
+
+            case EVENT_ID:
+                builder.setTables(DataContract.Events.TABLE);
+                // limit query to one row at most
+                builder.appendWhere(DataContract.Events.ID + " = " + uri.getLastPathSegment());
+                break;
+
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -193,6 +244,18 @@ public class DataContentProvider extends ContentProvider {
                 return DataContract.Recordings.CONTENT_ITEM_TYPE;
             case RECORDING_LIST:
                 return DataContract.Recordings.CONTENT_TYPE;
+            case SERIES_RECORDING_ID:
+                return DataContract.SeriesRecordings.CONTENT_ITEM_TYPE;
+            case SERIES_RECORDING_LIST:
+                return DataContract.SeriesRecordings.CONTENT_TYPE;
+            case TIMER_RECORDING_ID:
+                return DataContract.TimerRecordings.CONTENT_ITEM_TYPE;
+            case TIMER_RECORDING_LIST:
+                return DataContract.TimerRecordings.CONTENT_TYPE;
+            case EVENT_ID:
+                return DataContract.Events.CONTENT_ITEM_TYPE;
+            case EVENT_LIST:
+                return DataContract.Events.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -209,7 +272,10 @@ public class DataContentProvider extends ContentProvider {
                 && mUriMatcher.match(uri) != CHANNEL_LIST
                 && mUriMatcher.match(uri) != TAG_LIST
                 && mUriMatcher.match(uri) != PROGRAM_LIST
-                && mUriMatcher.match(uri) != RECORDING_LIST) {
+                && mUriMatcher.match(uri) != RECORDING_LIST
+                && mUriMatcher.match(uri) != SERIES_RECORDING_LIST
+                && mUriMatcher.match(uri) != TIMER_RECORDING_LIST
+                && mUriMatcher.match(uri) != EVENT_LIST) {
             throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
         }
 
@@ -246,6 +312,21 @@ public class DataContentProvider extends ContentProvider {
 
             case RECORDING_LIST:
                 id = db.insertWithOnConflict(DataContract.Recordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = getUriForId(id, uri);
+                break;
+
+            case SERIES_RECORDING_LIST:
+                id = db.insertWithOnConflict(DataContract.SeriesRecordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = getUriForId(id, uri);
+                break;
+
+            case TIMER_RECORDING_LIST:
+                id = db.insertWithOnConflict(DataContract.TimerRecordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = getUriForId(id, uri);
+                break;
+
+            case EVENT_LIST:
+                id = db.insertWithOnConflict(DataContract.Events.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = getUriForId(id, uri);
                 break;
         }
@@ -320,6 +401,36 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.Recordings.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 deletedRows = db.delete(DataContract.Recordings.TABLE, where, selectionArgs);
+                break;
+
+            case SERIES_RECORDING_LIST:
+                deletedRows = db.delete(DataContract.SeriesRecordings.TABLE, selection, selectionArgs);
+                break;
+
+            case SERIES_RECORDING_ID:
+                where = DataContract.SeriesRecordings.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                deletedRows = db.delete(DataContract.SeriesRecordings.TABLE, where, selectionArgs);
+                break;
+
+            case TIMER_RECORDING_LIST:
+                deletedRows = db.delete(DataContract.TimerRecordings.TABLE, selection, selectionArgs);
+                break;
+
+            case TIMER_RECORDING_ID:
+                where = DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                deletedRows = db.delete(DataContract.TimerRecordings.TABLE, where, selectionArgs);
+                break;
+
+            case EVENT_LIST:
+                deletedRows = db.delete(DataContract.Events.TABLE, selection, selectionArgs);
+                break;
+
+            case EVENT_ID:
+                where = DataContract.Events.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                deletedRows = db.delete(DataContract.Events.TABLE, where, selectionArgs);
                 break;
 
             default:
@@ -401,6 +512,36 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.Recordings.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 updateCount = db.update(DataContract.Recordings.TABLE, contentValues, where, selectionArgs);
+                break;
+
+            case SERIES_RECORDING_LIST:
+                updateCount = db.update(DataContract.SeriesRecordings.TABLE, contentValues, selection, selectionArgs);
+                break;
+
+            case SERIES_RECORDING_ID:
+                where = DataContract.SeriesRecordings.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                updateCount = db.update(DataContract.SeriesRecordings.TABLE, contentValues, where, selectionArgs);
+                break;
+
+            case TIMER_RECORDING_LIST:
+                updateCount = db.update(DataContract.TimerRecordings.TABLE, contentValues, selection, selectionArgs);
+                break;
+
+            case TIMER_RECORDING_ID:
+                where = DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                updateCount = db.update(DataContract.TimerRecordings.TABLE, contentValues, where, selectionArgs);
+                break;
+
+            case EVENT_LIST:
+                updateCount = db.update(DataContract.Events.TABLE, contentValues, selection, selectionArgs);
+                break;
+
+            case EVENT_ID:
+                where = DataContract.Events.ID + " = " + uri.getLastPathSegment();
+                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
+                updateCount = db.update(DataContract.Events.TABLE, contentValues, where, selectionArgs);
                 break;
 
             default:
