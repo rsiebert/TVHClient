@@ -12,7 +12,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String TAG = DatabaseHelper.class.getSimpleName();
     
     // Database version and name declarations
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     private static final String DATABASE_NAME = "tvhclient";
 
     private static DatabaseHelper mInstance = null;
@@ -136,6 +136,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + DataContract.Recordings.PATH + " TEXT NULL,"              // str   optional   Recording path for playback.
                 + DataContract.Recordings.DATA_SIZE + " INT DEFAULT 0,"     // s64   optional   Actual file size of the last recordings (Added in version 21).
                 + DataContract.Recordings.ENABLED + " INT DEFAULT 0);";     // u32   optional   Enabled flag (Added in version 23).
+        db.execSQL(query);
+
+        query = "CREATE TABLE IF NOT EXISTS " + DataContract.SeriesRecordings.TABLE + " ("
+                + DataContract.SeriesRecordings.ID + " TEXT PRIMARY KEY,"            // str   required   ID (string!) of dvrAutorecEntry.
+                + DataContract.SeriesRecordings.ENABLED + " INT DEFAULT 0,"          // u32   required   If autorec entry is enabled (activated).
+                + DataContract.SeriesRecordings.NAME + " TEXT NULL,"                 // str   required   Name of the autorec entry (Added in version 18).
+                + DataContract.SeriesRecordings.MIN_DURATION + " INT DEFAULT 0,"     // u32   required   Minimal duration in seconds (0 = Any).
+                + DataContract.SeriesRecordings.MAX_DURATION + " INT DEFAULT 0,"     // u32   required   Maximal duration in seconds (0 = Any).
+                + DataContract.SeriesRecordings.RETENTION + " INT DEFAULT 0,"        // u32   required   Retention time (in days).
+                + DataContract.SeriesRecordings.DAYS_OF_WEEK + " INT DEFAULT 0,"     // u32   required   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+                + DataContract.SeriesRecordings.PRIORITY + " INT DEFAULT 0,"         // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+                + DataContract.SeriesRecordings.APPROX_TIME + " INT DEFAULT 0,"      // u32   required   Minutes from midnight (up to 24*60).
+                + DataContract.SeriesRecordings.START + " INT DEFAULT 0,"            // s32   required   Exact start time (minutes from midnight) (Added in version 18).
+                + DataContract.SeriesRecordings.START_WINDOW + " INT DEFAULT 0,"     // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
+                + DataContract.SeriesRecordings.START_EXTRA + " INT DEFAULT 0,"      // s64   required   Extra start minutes (pre-time).
+                + DataContract.SeriesRecordings.STOP_EXTRA + " INT DEFAULT 0,"       // s64   required   Extra stop minutes (post-time).
+                + DataContract.SeriesRecordings.TITLE + " TEXT NULL,"                // str   optional   Title.
+                + DataContract.SeriesRecordings.FULLTEXT + " INT DEFAULT 0,"         // u32   optional   Fulltext flag (Added in version 20).
+                + DataContract.SeriesRecordings.DIRECTORY + " TEXT NULL,"            // str   optional   Forced directory name (Added in version 19).
+                + DataContract.SeriesRecordings.CHANNEL + " INT DEFAULT 0,"          // u32   optional   Channel ID.
+                + DataContract.SeriesRecordings.OWNER + " TEXT NULL,"                // str   optional   Owner of this autorec entry (Added in version 18).
+                + DataContract.SeriesRecordings.CREATOR + " TEXT NULL,"              // str   optional   Creator of this autorec entry (Added in version 18).
+                + DataContract.SeriesRecordings.DUP_DETECT + " INT DEFAULT 0);";     // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
+        db.execSQL(query);
+
+        query = "CREATE TABLE IF NOT EXISTS " + DataContract.TimerRecordings.TABLE + " ("
+                + DataContract.TimerRecordings.ID + " TEXT PRIMARY KEY,"        // str   required   ID (string!) of timerecEntry.
+                + DataContract.TimerRecordings.TITLE + " TEXT NULL,"            // str   required   Title for the recordings.
+                + DataContract.TimerRecordings.DIRECTORY + " TEXT NULL,"        // str   optional   Forced directory name (Added in version 19).
+                + DataContract.TimerRecordings.ENABLED + " INT DEFAULT 0,"      // u32   required   Title for the recordings.
+                + DataContract.TimerRecordings.NAME + " TEXT NULL,"             // str   required   Name for this timerec entry.
+                + DataContract.TimerRecordings.CONFIG_NAME + " TEXT NULL,"      // str   required   DVR Configuration Name / UUID.
+                + DataContract.TimerRecordings.CHANNEL + " INT DEFAULT 0,"      // u32   required   Channel ID.
+                + DataContract.TimerRecordings.DAYS_OF_WEEK + " INT DEFAULT 0," // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+                + DataContract.TimerRecordings.PRIORITY + " INT DEFAULT 0,"     // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+                + DataContract.TimerRecordings.START + " INT DEFAULT 0,"        // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
+                + DataContract.TimerRecordings.STOP + " INT DEFAULT 0,"         // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+                + DataContract.TimerRecordings.RETENTION + " INT DEFAULT 0,"    // u32   optional   Retention in days.
+                + DataContract.TimerRecordings.OWNER + " TEXT NULL,"            // str   optional   Owner of this timerec entry.
+                + DataContract.TimerRecordings.CREATOR + " TEXT NULL);";        // str   optional   Creator of this timerec entry.
         db.execSQL(query);
     }
 
@@ -302,6 +342,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + DataContract.Recordings.PATH + " TEXT NULL,"              // str   optional   Recording path for playback.
                     + DataContract.Recordings.DATA_SIZE + " INT DEFAULT 0,"     // s64   optional   Actual file size of the last recordings (Added in version 21).
                     + DataContract.Recordings.ENABLED + " INT DEFAULT 0);";     // u32   optional   Enabled flag (Added in version 23).
+            db.execSQL(query);
+        }
+        if (oldVersion < newVersion && newVersion == 12) {
+            String query = "CREATE TABLE IF NOT EXISTS " + DataContract.SeriesRecordings.TABLE + " ("
+                    + DataContract.SeriesRecordings.ID + " TEXT PRIMARY KEY,"            // str   required   ID (string!) of dvrAutorecEntry.
+                    + DataContract.SeriesRecordings.ENABLED + " INT DEFAULT 0,"          // u32   required   If autorec entry is enabled (activated).
+                    + DataContract.SeriesRecordings.NAME + " TEXT NULL,"                 // str   required   Name of the autorec entry (Added in version 18).
+                    + DataContract.SeriesRecordings.MIN_DURATION + " INT DEFAULT 0,"     // u32   required   Minimal duration in seconds (0 = Any).
+                    + DataContract.SeriesRecordings.MAX_DURATION + " INT DEFAULT 0,"     // u32   required   Maximal duration in seconds (0 = Any).
+                    + DataContract.SeriesRecordings.RETENTION + " INT DEFAULT 0,"        // u32   required   Retention time (in days).
+                    + DataContract.SeriesRecordings.DAYS_OF_WEEK + " INT DEFAULT 0,"     // u32   required   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+                    + DataContract.SeriesRecordings.PRIORITY + " INT DEFAULT 0,"         // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+                    + DataContract.SeriesRecordings.APPROX_TIME + " INT DEFAULT 0,"      // u32   required   Minutes from midnight (up to 24*60).
+                    + DataContract.SeriesRecordings.START + " INT DEFAULT 0,"            // s32   required   Exact start time (minutes from midnight) (Added in version 18).
+                    + DataContract.SeriesRecordings.START_WINDOW + " INT DEFAULT 0,"     // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
+                    + DataContract.SeriesRecordings.START_EXTRA + " INT DEFAULT 0,"      // s64   required   Extra start minutes (pre-time).
+                    + DataContract.SeriesRecordings.STOP_EXTRA + " INT DEFAULT 0,"       // s64   required   Extra stop minutes (post-time).
+                    + DataContract.SeriesRecordings.TITLE + " TEXT NULL,"                // str   optional   Title.
+                    + DataContract.SeriesRecordings.FULLTEXT + " INT DEFAULT 0,"         // u32   optional   Fulltext flag (Added in version 20).
+                    + DataContract.SeriesRecordings.DIRECTORY + " TEXT NULL,"            // str   optional   Forced directory name (Added in version 19).
+                    + DataContract.SeriesRecordings.CHANNEL + " INT DEFAULT 0,"          // u32   optional   Channel ID.
+                    + DataContract.SeriesRecordings.OWNER + " TEXT NULL,"                // str   optional   Owner of this autorec entry (Added in version 18).
+                    + DataContract.SeriesRecordings.CREATOR + " TEXT NULL,"              // str   optional   Creator of this autorec entry (Added in version 18).
+                    + DataContract.SeriesRecordings.DUP_DETECT + " INT DEFAULT 0);";     // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
+            db.execSQL(query);
+
+            query = "CREATE TABLE IF NOT EXISTS " + DataContract.TimerRecordings.TABLE + " ("
+                    + DataContract.TimerRecordings.ID + " TEXT PRIMARY KEY,"        // str   required   ID (string!) of timerecEntry.
+                    + DataContract.TimerRecordings.TITLE + " TEXT NULL,"            // str   required   Title for the recordings.
+                    + DataContract.TimerRecordings.DIRECTORY + " TEXT NULL,"        // str   optional   Forced directory name (Added in version 19).
+                    + DataContract.TimerRecordings.ENABLED + " INT DEFAULT 0,"      // u32   required   Title for the recordings.
+                    + DataContract.TimerRecordings.NAME + " TEXT NULL,"             // str   required   Name for this timerec entry.
+                    + DataContract.TimerRecordings.CONFIG_NAME + " TEXT NULL,"      // str   required   DVR Configuration Name / UUID.
+                    + DataContract.TimerRecordings.CHANNEL + " INT DEFAULT 0,"      // u32   required   Channel ID.
+                    + DataContract.TimerRecordings.DAYS_OF_WEEK + " INT DEFAULT 0," // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+                    + DataContract.TimerRecordings.PRIORITY + " INT DEFAULT 0,"     // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+                    + DataContract.TimerRecordings.START + " INT DEFAULT 0,"        // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
+                    + DataContract.TimerRecordings.STOP + " INT DEFAULT 0,"         // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+                    + DataContract.TimerRecordings.RETENTION + " INT DEFAULT 0,"    // u32   optional   Retention in days.
+                    + DataContract.TimerRecordings.OWNER + " TEXT NULL,"            // str   optional   Owner of this timerec entry.
+                    + DataContract.TimerRecordings.CREATOR + " TEXT NULL);";        // str   optional   Creator of this timerec entry.
             db.execSQL(query);
         }
     }
