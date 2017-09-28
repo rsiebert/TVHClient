@@ -246,730 +246,6 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
     private final IBinder mBinder = new LocalBinder();
 
-    /**
-     * Server to client method.
-     * A tag has been added on the server.
-     * @param msg The message with the new tag data
-     */
-    private void onTagAdd(HTSMessage msg) {
-        Log.d(TAG, "onTagAdd() called");
-
-        ContentValues values = new ContentValues();
-        values.put(DataContract.Tags.ID, msg.getInt("tagId"));                      // u32   required   ID of tag.
-        values.put(DataContract.Tags.NAME, msg.getString("tagName"));               // str   required   Name of tag.
-        values.put(DataContract.Tags.INDEX, msg.getInt("tagIndex", 0));             // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
-        values.put(DataContract.Tags.ICON, msg.getString("tagIcon", null));         // str   optional   URL to an icon representative for the channel.
-        values.put(DataContract.Tags.TITLED_ICON, msg.getInt("tagTitledIcon", 0));  // u32   optional   Icon includes a title
-
-        getContentResolver().insert(DataContract.Tags.CONTENT_URI, values);
-
-        // TODO remove old stuff when possible
-        ChannelTag tag = new ChannelTag();
-        tag.id = msg.getLong("tagId");
-        tag.name = msg.getString("tagName", null);
-        tag.icon = msg.getString("tagIcon", null);
-        ds.addChannelTag(tag);
-        if (tag.icon != null) {
-            getChannelTagIcon(tag);
-        }
-    }
-
-    /**
-     * Server to client method.
-     * A tag has been updated on the server.
-     * @param msg The message with the updated tag data
-     */
-    private void onTagUpdate(HTSMessage msg) {
-        Log.d(TAG, "onTagUpdate() called");
-
-        int id =  msg.getInt("tagId");
-        ContentValues values = new ContentValues();
-        values.put(DataContract.Tags.NAME, msg.getString("tagName"));               // str   required   Name of tag.
-        values.put(DataContract.Tags.INDEX, msg.getInt("tagIndex", 0));             // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
-        values.put(DataContract.Tags.ICON, msg.getString("tagIcon", null));         // str   optional   URL to an icon representative for the channel.
-        values.put(DataContract.Tags.TITLED_ICON, msg.getInt("tagTitledIcon", 0));  // u32   optional   Icon includes a title
-
-        getContentResolver().update(DataContract.Tags.CONTENT_URI, values,
-                DataContract.Tags.ID + "=?", new String[]{String.valueOf(id)});
-
-        // TODO remove old stuff when possible
-
-        ChannelTag tag = ds.getChannelTag(msg.getLong("tagId"));
-        if (tag == null) {
-            return;
-        }
-
-        tag.name = msg.getString("tagName", tag.name);
-        String icon = msg.getString("tagIcon", tag.icon);
-        if (icon == null) {
-            tag.icon = null;
-            tag.iconBitmap = null;
-        } else if (!icon.equals(tag.icon)) {
-            tag.icon = icon;
-            getChannelTagIcon(tag);
-        }
-    }
-
-    /**
-     * Server to client method.
-     * A tag has been deleted on the server.
-     * @param msg The message with the tag id that was deleted
-     */
-    private void onTagDelete(HTSMessage msg) {
-        Log.d(TAG, "onTagDelete() called");
-
-        int id = msg.getInt("tagId");
-        getContentResolver().delete(DataContract.Tags.CONTENT_URI,
-                DataContract.Tags.ID + "=?", new String[]{String.valueOf(id)});
-
-        // TODO remove old stuff when possible
-        ds.removeChannelTag(msg.getLong("tagId"));
-    }
-
-    /**
-     * Server to client method.
-     * A channel has been added on the server.
-     * @param msg The message with the new channel data
-     */
-    private void onChannelAdd(HTSMessage msg) {
-        Log.d(TAG, "onChannelAdd() called");
-
-        ContentValues values = new ContentValues();
-        values.put(DataContract.Channels.ID, msg.getInt("channelId"));                          // u32 required   ID of channel
-        values.put(DataContract.Channels.NUMBER, msg.getInt("channelNumber"));                  // u32 required   Channel number, 0 means unconfigured.
-        values.put(DataContract.Channels.NUMBER_MINOR, msg.getInt("channelNumberMinor", 0));    // u32 optional   Minor channel number (Added in version 13).
-        values.put(DataContract.Channels.NAME, msg.getString("channelName"));                   // str required   Name of channel.
-        values.put(DataContract.Channels.ICON, msg.getString("channelIcon", null));             // str optional   URL to an icon representative for the channel
-        values.put(DataContract.Channels.EVENT_ID, msg.getInt("eventId", 0));                   // u32 optional   ID of the current event on this channel.
-        values.put(DataContract.Channels.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));          // u32 optional   ID of the next event on the channel.
-
-        getContentResolver().insert(DataContract.Channels.CONTENT_URI, values);
-
-        // TODO remove old stuff when possible
-
-        final Channel ch = new Channel();
-        ch.id = msg.getLong("channelId");
-        ch.name = msg.getString("channelName", null);
-        ch.number = msg.getInt("channelNumber", 0);
-
-        // The default values will be set in case a server with a htsp API
-        // version 12 or lower is used
-        ch.numberMinor = msg.getInt("channelNumberMinor", 0);
-
-        ch.icon = msg.getString("channelIcon", null);
-        ch.tags = msg.getIntList("tags", ch.tags);
-
-        if (ch.number == 0) {
-            ch.number = (int) (ch.id + 25000);
-        }
-
-        ds.addChannel(ch);
-        if (ch.icon != null) {
-            getChannelIcon(ch);
-        }
-        long currEventId = msg.getLong("eventId", 0);
-        long nextEventId = msg.getLong("nextEventId", 0);
-
-        ch.isTransmitting = (currEventId != 0);
-
-        if (currEventId > 0) {
-            getEvents(ch, currEventId, Constants.PREF_PROGRAMS_TO_LOAD);
-        } else if (nextEventId > 0) {
-            getEvents(ch, nextEventId, Constants.PREF_PROGRAMS_TO_LOAD);
-        }
-    }
-
-    /**
-     * Server to client method.
-     * A channel has been updated on the server.
-     * @param msg The message with the updated channel data
-     */
-    private void onChannelUpdate(HTSMessage msg) {
-        Log.d(TAG, "onChannelUpdate() called");
-
-        int id =  msg.getInt("channelId");
-        ContentValues values = new ContentValues();
-        values.put(DataContract.Channels.NUMBER, msg.getInt("channelNumber"));                  // u32   Channel number, 0 means unconfigured.
-        values.put(DataContract.Channels.NUMBER_MINOR, msg.getInt("channelNumberMinor", 0));    // u32   Minor channel number (Added in version 13).
-        values.put(DataContract.Channels.NAME, msg.getString("channelName"));                   // str   Name of channel.
-        values.put(DataContract.Channels.ICON, msg.getString("channelIcon", null));             // str   URL to an icon representative for the channel
-        values.put(DataContract.Channels.EVENT_ID, msg.getInt("eventId", 0));                   // u32   ID of the current event on this channel.
-        values.put(DataContract.Channels.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));          // u32   ID of the next event on the channel.
-
-        getContentResolver().update(DataContract.Channels.CONTENT_URI, values,
-                DataContract.Channels.ID + "=?", new String[]{String.valueOf(id)});
-
-        // TODO remove old stuff when possible
-
-        final Channel ch = ds.getChannel(msg.getLong("channelId"));
-        if (ch == null) {
-            return;
-        }
-
-        ch.name = msg.getString("channelName", ch.name);
-        ch.number = msg.getInt("channelNumber", ch.number);
-
-        // The default values will be set in case a server with a htsp API
-        // version 12 or lower is used
-        ch.numberMinor = msg.getInt("channelNumberMinor", 0);
-
-        String icon = msg.getString("channelIcon", ch.icon);
-        ch.tags = msg.getIntList("tags", ch.tags);
-
-        if (icon == null) {
-            ch.icon = null;
-            ch.iconBitmap = null;
-        } else if (!icon.equals(ch.icon)) {
-            ch.icon = icon;
-            getChannelIcon(ch);
-        }
-        // Remove programs that have ended
-        long currEventId = msg.getLong("eventId", 0);
-        long nextEventId = msg.getLong("nextEventId", 0);
-
-        ch.isTransmitting = currEventId != 0;
-
-        Iterator<Program> it = ch.epg.iterator();
-        ArrayList<Program> tmp = new ArrayList<>();
-
-        while (it.hasNext() && currEventId > 0) {
-            Program p = it.next();
-            if (p.id != currEventId) {
-                tmp.add(p);
-            } else {
-                break;
-            }
-        }
-        ch.epg.removeAll(tmp);
-
-        for (Program p : tmp) {
-            ds.removeProgram(p);
-        }
-
-        final long eventId = currEventId != 0 ? currEventId : nextEventId;
-        if (eventId > 0 && ch.epg.size() < 2) {
-            execService.schedule(new Runnable() {
-                public void run() {
-                    getEvents(ch, eventId, 5);
-                }
-            }, 30, TimeUnit.SECONDS);
-        } else {
-            ds.updateChannel(ch);
-        }
-    }
-
-    /**
-     * Server to client method.
-     * A channel has been deleted on the server.
-     * @param msg The message with the channel id that was deleted
-     */
-    private void onChannelDelete(HTSMessage msg) {
-        Log.d(TAG, "onChannelDelete() called");
-
-        int id = msg.getInt("channelId");
-        getContentResolver().delete(DataContract.Channels.CONTENT_URI,
-                DataContract.Channels.ID + "=?", new String[]{String.valueOf(id)});
-
-        // TODO remove old stuff when possible
-        ds.removeChannel(msg.getLong("channelId"));
-    }
-
-    /**
-     * Server to client method.
-     * A recording has been added on the server.
-     * @param msg The message with the new recording data
-     */
-    private void onDvrEntryAdd(HTSMessage msg) {
-        Log.d(TAG, "onDvrEntryAdd() called");
-
-        ContentValues values = new ContentValues();
-        values.put(DataContract.Recordings.ID, msg.getLong("id"));                              // u32   required   ID of dvrEntry.
-        values.put(DataContract.Recordings.CHANNEL, msg.getInt("channel", 0));                  // u32   optional   Channel of dvrEntry.
-        values.put(DataContract.Recordings.START, msg.getInt("start"));                         // s64   required   Time of when this entry was scheduled to start recording.
-        values.put(DataContract.Recordings.STOP, msg.getInt("stop"));                           // s64   required   Time of when this entry was scheduled to stop recording.
-        values.put(DataContract.Recordings.START_EXTRA, msg.getInt("startExtra"));              // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
-        values.put(DataContract.Recordings.STOP_EXTRA, msg.getInt("stopExtra"));                // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
-        values.put(DataContract.Recordings.RETENTION, msg.getInt("retention"));                 // s64   required   DVR Entry retention time in days (Added in version 13).
-        values.put(DataContract.Recordings.PRIORITY, msg.getInt("priority"));                   // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
-        values.put(DataContract.Recordings.EVENT_ID, msg.getInt("eventId", 0));                 // u32   optional   Associated EPG Event ID (Added in version 13).
-        values.put(DataContract.Recordings.AUTOREC_ID, msg.getString("autorecId", null));       // str   optional   Associated Autorec UUID (Added in version 13).
-        values.put(DataContract.Recordings.TIMEREC_ID, msg.getString("timerecId", null));       // str   optional   Associated Timerec UUID (Added in version 18).
-        values.put(DataContract.Recordings.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
-        values.put(DataContract.Recordings.TITLE, msg.getString("title", null));                // str   optional   Title of recording
-        values.put(DataContract.Recordings.SUBTITLE, msg.getString("subtitle", null));          // str   optional   Subtitle of recording (Added in version 20).
-        values.put(DataContract.Recordings.SUMMARY, msg.getString("summary", null));            // str   optional   Short description of the recording (Added in version 6).
-        values.put(DataContract.Recordings.DESCRIPTION, msg.getString("description", null));    // str   optional   Long description of the recording.
-        values.put(DataContract.Recordings.STATE, msg.getString("state"));                      // str   required   Recording state
-        values.put(DataContract.Recordings.ERROR, msg.getString("error", null));                // str   optional   Plain english error description (e.g. "Aborted by user").
-        values.put(DataContract.Recordings.OWNER, msg.getString("owner", null));                // str   optional   Name of the entry owner (Added in version 18).
-        values.put(DataContract.Recordings.CREATOR, msg.getString("creator", null));            // str   optional   Name of the entry creator (Added in version 18).
-        values.put(DataContract.Recordings.SUBSCRIPTION_ERROR, msg.getString("subscriptionError", null));    // str   optional   Subscription error string (Added in version 20).
-        values.put(DataContract.Recordings.STREAM_ERRORS, msg.getString("streamErrors", null)); // str   optional   Number of recording errors (Added in version 20).
-        values.put(DataContract.Recordings.DATA_ERRORS, msg.getString("dataErrors", null));     // str   optional   Number of stream data errors (Added in version 20).
-        values.put(DataContract.Recordings.PATH, msg.getString("path", null));                  // str   optional   Recording path for playback.
-        values.put(DataContract.Recordings.DATA_SIZE, msg.getInt("dataSize", 0));               // s64   optional   Actual file size of the last recordings (Added in version 21).
-        values.put(DataContract.Recordings.ENABLED, msg.getInt("enabled", 0));                  // u32   optional   Enabled flag (Added in version 23).
-
-        getContentResolver().insert(DataContract.Recordings.CONTENT_URI, values);
-
-        // TODO remove old stuff when possible
-
-        Recording rec = new Recording();
-        rec.id = msg.getLong("id");
-        rec.description = msg.getString("description");
-        rec.summary = msg.getString("summary");
-        rec.error = msg.getString("error");
-        rec.start = msg.getDate("start");
-        rec.state = msg.getString("state");
-        rec.stop = msg.getDate("stop");
-        rec.title = msg.getString("title");
-        rec.subtitle = msg.getString("subtitle");
-        rec.enabled = msg.getLong("enabled", 1) != 0;
-
-        rec.channel = ds.getChannel(msg.getLong("channel", 0));
-        if (rec.channel != null) {
-            rec.channel.recordings.add(rec);
-        }
-
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported HTSP API version. These entries are available
-        // only on version 13 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            rec.eventId = msg.getLong("eventId", 0);
-            rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getLong("startExtra", 0);
-            rec.stopExtra = msg.getLong("stopExtra", 0);
-            rec.retention = msg.getLong("retention");
-            rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType", -1);
-        }
-
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported HTSP API version. These entries are available
-        // only on version 17 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
-            rec.timerecId = msg.getString("timerecId");
-        }
-
-        rec.episode = msg.getString("episode", null);
-        rec.comment = msg.getString("comment", null);
-        rec.subscriptionError = msg.getString("subscriptionError", null);
-        rec.streamErrors = msg.getLong("streamErrors", 0);
-        rec.dataErrors = msg.getLong("dataErrors", 0);
-        rec.dataSize = msg.getLong("dataSize", 0);
-
-        if (rec.channel != null && rec.channel.epg != null) {
-            for (Program p : rec.channel.epg) {
-                if (p != null 
-                        && p.title.equals(rec.title)
-                        && p.start.getTime() == rec.start.getTime()
-                        && p.stop.getTime() == rec.stop.getTime()) {
-                    p.recording = rec;
-                    break;
-                }
-            }
-        }
-
-        rec.owner = msg.getString("owner", null);
-        rec.creator = msg.getString("creator", null);
-        rec.path = msg.getString("path", null);
-        rec.files = msg.getString("files", null);
-
-        ds.addRecording(rec);
-    }
-
-    /**
-     * Server to client method.
-     * A recording has been updated on the server.
-     * @param msg The message with the updated recording data
-     */
-    private void onDvrEntryUpdate(HTSMessage msg) {
-        Log.d(TAG, "onDvrEntryUpdate() called");
-
-        int id = msg.getInt("id");
-        ContentValues values = new ContentValues();
-        values.put(DataContract.Recordings.CHANNEL, msg.getInt("channel", 0));                  // u32   Channel of dvrEntry.
-        values.put(DataContract.Recordings.START, msg.getInt("start"));                         // s64   Time of when this entry was scheduled to start recording.
-        values.put(DataContract.Recordings.STOP, msg.getInt("stop"));                           // s64   Time of when this entry was scheduled to stop recording.
-        values.put(DataContract.Recordings.START_EXTRA, msg.getInt("startExtra"));              // s64   Extra start time (pre-time) in minutes (Added in version 13).
-        values.put(DataContract.Recordings.STOP_EXTRA, msg.getInt("stopExtra"));                // s64   Extra stop time (post-time) in minutes (Added in version 13).
-        values.put(DataContract.Recordings.RETENTION, msg.getInt("retention"));                 // s64   DVR Entry retention time in days (Added in version 13).
-        values.put(DataContract.Recordings.PRIORITY, msg.getInt("priority"));                   // u32   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
-        values.put(DataContract.Recordings.EVENT_ID, msg.getInt("eventId", 0));                 // u32   Associated EPG Event ID (Added in version 13).
-        values.put(DataContract.Recordings.AUTOREC_ID, msg.getString("autorecId", null));       // str   Associated Autorec UUID (Added in version 13).
-        values.put(DataContract.Recordings.TIMEREC_ID, msg.getString("timerecId", null));       // str   Associated Timerec UUID (Added in version 18).
-        values.put(DataContract.Recordings.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   Content Type (like in the DVB standard) (Added in version 13).
-        values.put(DataContract.Recordings.TITLE, msg.getString("title", null));                // str   Title of recording
-        values.put(DataContract.Recordings.SUBTITLE, msg.getString("subtitle", null));          // str   Subtitle of recording (Added in version 20).
-        values.put(DataContract.Recordings.SUMMARY, msg.getString("summary", null));            // str   Short description of the recording (Added in version 6).
-        values.put(DataContract.Recordings.DESCRIPTION, msg.getString("description", null));    // str   Long description of the recording.
-        values.put(DataContract.Recordings.STATE, msg.getString("state"));                      // str   Recording state
-        values.put(DataContract.Recordings.ERROR, msg.getString("error", null));                // str   Plain english error description (e.g. "Aborted by user").
-        values.put(DataContract.Recordings.OWNER, msg.getString("owner", null));                // str   Name of the entry owner (Added in version 18).
-        values.put(DataContract.Recordings.CREATOR, msg.getString("creator", null));            // str   Name of the entry creator (Added in version 18).
-        values.put(DataContract.Recordings.SUBSCRIPTION_ERROR, msg.getString("subscriptionError", null));    // str   Subscription error string (Added in version 20).
-        values.put(DataContract.Recordings.STREAM_ERRORS, msg.getString("streamErrors", null)); // str   Number of recording errors (Added in version 20).
-        values.put(DataContract.Recordings.DATA_ERRORS, msg.getString("dataErrors", null));     // str   Number of stream data errors (Added in version 20).
-        values.put(DataContract.Recordings.PATH, msg.getString("path", null));                  // str   Recording path for playback.
-        values.put(DataContract.Recordings.DATA_SIZE, msg.getInt("dataSize", 0));               // s64   Actual file size of the last recordings (Added in version 21).
-        values.put(DataContract.Recordings.ENABLED, msg.getInt("enabled", 0));                  // u32   Enabled flag (Added in version 23).
-
-        getContentResolver().update(DataContract.Recordings.CONTENT_URI, values,
-                DataContract.Recordings.ID + "=?", new String[]{String.valueOf(id)});
-
-        // TODO remove old stuff when possible
-
-        Recording rec = ds.getRecording(msg.getLong("id"));
-        if (rec == null) {
-            return;
-        }
-
-        rec.description = msg.getString("description", rec.description);
-        rec.summary = msg.getString("summary", rec.summary);
-        rec.error = msg.getString("error", rec.error);
-        rec.start = msg.getDate("start");
-        rec.state = msg.getString("state", rec.state);
-        rec.stop = msg.getDate("stop");
-        rec.title = msg.getString("title", rec.title);
-        rec.subtitle = msg.getString("subtitle", rec.subtitle);
-        rec.enabled = msg.getLong("enabled", 1) != 0;
-
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported HTSP API version. These entries are available
-        // only on version 13 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            rec.eventId = msg.getLong("eventId", 0);
-            rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getLong("startExtra", 0);
-            rec.stopExtra = msg.getLong("stopExtra", 0);
-            rec.retention = msg.getLong("retention");
-            rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType", -1);
-        }
-
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported HTSP API version. These entries are available
-        // only on version 17 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
-            rec.timerecId = msg.getString("timerecId");
-        }
-
-        rec.episode = msg.getString("episode", null);
-        rec.comment = msg.getString("comment", null);
-        rec.subscriptionError = msg.getString("subscriptionError", null);
-        rec.streamErrors = msg.getLong("streamErrors", 0);
-        rec.dataErrors = msg.getLong("dataErrors", 0);
-        rec.dataSize = msg.getLong("dataSize", 0);
-        rec.owner = msg.getString("owner", rec.owner);
-        rec.creator = msg.getString("creator", rec.creator);
-        rec.path = msg.getString("path", rec.path);
-        rec.files = msg.getString("files", rec.files);
-
-        ds.updateRecording(rec);
-    }
-
-    /**
-     * Server to client method.
-     * A recording has been deleted on the server.
-     * @param msg The message with the recording id that was deleted
-     */
-    private void onDvrEntryDelete(HTSMessage msg) {
-        Log.d(TAG, "onDvrEntryDelete() called");
-
-        int id = msg.getInt("id");
-        getContentResolver().delete(DataContract.Recordings.CONTENT_URI,
-                DataContract.Recordings.ID + "=?", new String[]{String.valueOf(id)});
-
-        // TODO remove old stuff when possible
-
-        Recording rec = ds.getRecording(msg.getLong("id"));
-
-        if (rec == null || rec.channel == null) {
-            return;
-        }
-
-        rec.channel.recordings.remove(rec);
-        for (Program p : rec.channel.epg) {
-            if (p.recording == rec) {
-                p.recording = null;
-                ds.updateProgram(p);
-                break;
-            }
-        }
-        ds.removeRecording(rec);
-    }
-
-    /**
-     * Server to client method.
-     * A series recording has been added on the server.
-     * @param msg The message with the new series recording data
-     */
-    private void onAutorecEntryAdd(HTSMessage msg) {
-        Log.d(TAG, "onAutorecEntryAdd() called");
-
-        ContentValues values = new ContentValues();
-        values.put(DataContract.SeriesRecordings.ID, msg.getString("id"));                      // str   required   ID (string!) of dvrAutorecEntry.
-        values.put(DataContract.SeriesRecordings.ENABLED, msg.getInt("enabled"));               // u32   required   If autorec entry is enabled (activated).
-        values.put(DataContract.SeriesRecordings.NAME, msg.getString("name"));                  // str   required   Name of the autorec entry (Added in version 18).
-        values.put(DataContract.SeriesRecordings.MIN_DURATION, msg.getInt("minDuration"));      // u32   required   Minimal duration in seconds (0 = Any).
-        values.put(DataContract.SeriesRecordings.MAX_DURATION, msg.getInt("maxDuration"));      // u32   required   Maximal duration in seconds (0 = Any).
-        values.put(DataContract.SeriesRecordings.RETENTION, msg.getInt("retention"));           // u32   required   Retention time (in days).
-        values.put(DataContract.SeriesRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));       // u32   required   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
-        values.put(DataContract.SeriesRecordings.PRIORITY, msg.getInt("priority"));             // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
-        values.put(DataContract.SeriesRecordings.APPROX_TIME, msg.getInt("approxTime"));        // u32   required   Minutes from midnight (up to 24*60).
-        values.put(DataContract.SeriesRecordings.START, msg.getInt("start"));                   // s32   required   Exact start time (minutes from midnight) (Added in version 18).
-        values.put(DataContract.SeriesRecordings.START_WINDOW, msg.getInt("startWindow"));      // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
-        values.put(DataContract.SeriesRecordings.START_EXTRA, msg.getInt("startExtra"));        // s64   required   Extra start minutes (pre-time).
-        values.put(DataContract.SeriesRecordings.STOP_EXTRA, msg.getInt("stopExtra"));          // s64   required   Extra stop minutes (post-time).
-        values.put(DataContract.SeriesRecordings.TITLE, msg.getString("title", null));          // str   optional   Title.
-        values.put(DataContract.SeriesRecordings.FULLTEXT, msg.getInt("fulltext", 0));          // u32   optional   Fulltext flag (Added in version 20).
-        values.put(DataContract.SeriesRecordings.DIRECTORY, msg.getString("directory", null));  // str   optional   Forced directory name (Added in version 19).
-        values.put(DataContract.SeriesRecordings.CHANNEL, msg.getInt("channel", 0));            // u32   optional   Channel ID.
-        values.put(DataContract.SeriesRecordings.OWNER, msg.getString("owner", null));          // str   optional   Owner of this autorec entry (Added in version 18).
-        values.put(DataContract.SeriesRecordings.CREATOR, msg.getString("creator", null));      // str   optional   Creator of this autorec entry (Added in version 18).
-        values.put(DataContract.SeriesRecordings.DUP_DETECT, msg.getInt("dupDetect", 0));       // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
-
-        getContentResolver().insert(DataContract.SeriesRecordings.CONTENT_URI, values);
-
-        // TODO remove old stuff when possible
-
-        SeriesRecording srec = new SeriesRecording();
-        srec.id = msg.getString("id");
-        srec.enabled = msg.getLong("enabled", 0) != 0;
-        srec.maxDuration = msg.getLong("maxDuration");
-        srec.minDuration = msg.getLong("minDuration");
-        srec.retention = msg.getLong("retention");
-        srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime", -1);
-        srec.priority = msg.getLong("priority");
-        srec.start = msg.getLong("start", -1);
-        srec.startWindow = msg.getLong("startWindow", -1);
-        srec.startExtra = msg.getLong("startExtra", 0);
-        srec.stopExtra = msg.getLong("stopExtra", 0);
-        srec.dupDetect = msg.getLong("dupDetect", 0);
-        srec.title = msg.getString("title");
-        srec.name = msg.getString("name");
-        srec.directory = msg.getString("directory");
-        srec.channel = ds.getChannel(msg.getLong("channel", 0));
-        srec.fulltext = msg.getString("fulltext");
-
-        ds.addSeriesRecording(srec);
-    }
-
-    /**
-     * Server to client method.
-     * A series recording has been updated on the server.
-     * @param msg The message with the updated series recording data
-     */
-    private void onAutorecEntryUpdate(HTSMessage msg) {
-        Log.d(TAG, "onAutorecEntryUpdate() called");
-
-        String id = msg.getString("id");                                                        // str   ID (string!) of dvrAutorecEntry.
-        ContentValues values = new ContentValues();
-        values.put(DataContract.SeriesRecordings.ENABLED, msg.getInt("enabled"));               // u32   If autorec entry is enabled (activated).
-        values.put(DataContract.SeriesRecordings.NAME, msg.getString("name"));                  // str   Name of the autorec entry (Added in version 18).
-        values.put(DataContract.SeriesRecordings.MIN_DURATION, msg.getInt("minDuration"));      // u32   Minimal duration in seconds (0 = Any).
-        values.put(DataContract.SeriesRecordings.MAX_DURATION, msg.getInt("maxDuration"));      // u32   Maximal duration in seconds (0 = Any).
-        values.put(DataContract.SeriesRecordings.RETENTION, msg.getInt("retention"));           // u32   Retention time (in days).
-        values.put(DataContract.SeriesRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));       // u32   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
-        values.put(DataContract.SeriesRecordings.PRIORITY, msg.getInt("priority"));             // u32   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
-        values.put(DataContract.SeriesRecordings.APPROX_TIME, msg.getInt("approxTime"));        // u32   Minutes from midnight (up to 24*60).
-        values.put(DataContract.SeriesRecordings.START, msg.getInt("start"));                   // s32   Exact start time (minutes from midnight) (Added in version 18).
-        values.put(DataContract.SeriesRecordings.START_WINDOW, msg.getInt("startWindow"));      // s32   Exact stop time (minutes from midnight) (Added in version 18).
-        values.put(DataContract.SeriesRecordings.START_EXTRA, msg.getInt("startExtra"));        // s64   Extra start minutes (pre-time).
-        values.put(DataContract.SeriesRecordings.STOP_EXTRA, msg.getInt("stopExtra"));          // s64   Extra stop minutes (post-time).
-        values.put(DataContract.SeriesRecordings.TITLE, msg.getString("title", null));          // str   Title.
-        values.put(DataContract.SeriesRecordings.FULLTEXT, msg.getInt("fulltext", 0));          // u32   Fulltext flag (Added in version 20).
-        values.put(DataContract.SeriesRecordings.DIRECTORY, msg.getString("directory", null));  // str   Forced directory name (Added in version 19).
-        values.put(DataContract.SeriesRecordings.CHANNEL, msg.getInt("channel", 0));            // u32   Channel ID.
-        values.put(DataContract.SeriesRecordings.OWNER, msg.getString("owner", null));          // str   Owner of this autorec entry (Added in version 18).
-        values.put(DataContract.SeriesRecordings.CREATOR, msg.getString("creator", null));      // str   Creator of this autorec entry (Added in version 18).
-        values.put(DataContract.SeriesRecordings.DUP_DETECT, msg.getInt("dupDetect", 0));       // u32   Duplicate detection (see addAutorecEntry) (Added in version 20).
-
-        getContentResolver().update(DataContract.SeriesRecordings.CONTENT_URI, values,
-                DataContract.SeriesRecordings.ID + "=?", new String[]{id});
-
-        // TODO remove old stuff when possible
-
-        SeriesRecording srec = ds.getSeriesRecording(msg.getString("id"));
-        if (srec == null) {
-            return;
-        }
-        srec.enabled = msg.getLong("enabled", 0) != 0;
-        srec.maxDuration = msg.getLong("maxDuration");
-        srec.minDuration = msg.getLong("minDuration");
-        srec.retention = msg.getLong("retention");
-        srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime", -1);
-        srec.priority = msg.getLong("priority");
-        srec.start = msg.getLong("start", -1);
-        srec.startWindow = msg.getLong("startWindow", -1);
-        srec.startExtra = msg.getLong("startExtra", 0);
-        srec.stopExtra = msg.getLong("stopExtra", 0);
-        srec.dupDetect = msg.getLong("dupDetect", 0);
-        srec.title = msg.getString("title", srec.title);
-        srec.name = msg.getString("name", srec.name);
-        srec.directory = msg.getString("directory", srec.directory);
-        srec.fulltext = msg.getString("fulltext", srec.fulltext);
-
-        ds.updateSeriesRecording(srec);
-    }
-
-    /**
-     * Server to client method.
-     * A series recording has been deleted on the server.
-     * @param msg The message with the series recording id that was deleted
-     */
-    private void onAutorecEntryDelete(HTSMessage msg) {
-        Log.d(TAG, "onAutorecEntryDelete() called");
-
-        String id = msg.getString("id");
-        getContentResolver().delete(DataContract.SeriesRecordings.CONTENT_URI,
-                DataContract.SeriesRecordings.ID + "=?", new String[]{id});
-
-        // TODO remove old stuff when possible
-
-        if (id == null) {
-            return;
-        }
-        // Remove the series recording from the list and also update all
-        // recordings by removing the series id
-        ds.removeSeriesRecording(id);
-        for (Recording rec : ds.getRecordings()) {
-            if (rec.autorecId != null && rec.autorecId.equals(id)) {
-                rec.autorecId = null;
-            }
-        }
-    }
-
-    /**
-     * Server to client method.
-     * A timer recording has been added on the server.
-     * @param msg The message with the new timer recording data
-     */
-    private void onTimerRecEntryAdd(HTSMessage msg) {
-        Log.d(TAG, "onTimerRecEntryAdd() called");
-
-        ContentValues values = new ContentValues();
-        values.put(DataContract.TimerRecordings.ID, msg.getString("id"));                       // str   required   ID (string!) of timerecEntry.
-        values.put(DataContract.TimerRecordings.TITLE, msg.getString("title"));                 // str   required   Title for the recordings.
-        values.put(DataContract.TimerRecordings.DIRECTORY, msg.getString("directory", null));   // str   optional   Forced directory name (Added in version 19).
-        values.put(DataContract.TimerRecordings.ENABLED, msg.getInt("enabled"));                // u32   required   Title for the recordings.
-        values.put(DataContract.TimerRecordings.NAME, msg.getString("name"));                   // str   required   Name for this timerec entry.
-        values.put(DataContract.TimerRecordings.CONFIG_NAME, msg.getString("configName"));      // str   required   DVR Configuration Name / UUID.
-        values.put(DataContract.TimerRecordings.CHANNEL, msg.getInt("channel"));                // u32   required   Channel ID.
-        values.put(DataContract.TimerRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));        // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
-        values.put(DataContract.TimerRecordings.PRIORITY, msg.getInt("priority"));              // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
-        values.put(DataContract.TimerRecordings.START, msg.getInt("start"));                    // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
-        values.put(DataContract.TimerRecordings.STOP, msg.getInt("stop"));                      // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
-        values.put(DataContract.TimerRecordings.RETENTION, msg.getInt("retention"));            // u32   optional   Retention in days.
-        values.put(DataContract.TimerRecordings.OWNER, msg.getString("owner"));                 // str   optional   Owner of this timerec entry.
-        values.put(DataContract.TimerRecordings.CREATOR, msg.getString("creator"));             // str   optional   Creator of this timerec entry.
-
-        getContentResolver().insert(DataContract.TimerRecordings.CONTENT_URI, values);
-
-        // TODO remove old stuff when possible
-
-        TimerRecording rec = new TimerRecording();
-        rec.id = msg.getString("id", "");
-        
-        rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
-        rec.retention = msg.getLong("retention", 0);
-        rec.priority = msg.getLong("priority", 0);
-        rec.start = msg.getLong("start", 0);
-        rec.stop = msg.getLong("stop", 0);
-        rec.title = msg.getString("title");
-        rec.name = msg.getString("name");
-        rec.directory = msg.getString("directory");
-        rec.channel = ds.getChannel(msg.getLong("channel", 0));
-
-        // The enabled flag was added in HTSP API version 18. The support for
-        // timer recordings are available since version 17.
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
-            rec.enabled = msg.getLong("enabled", 0) != 0;
-        }
-        ds.addTimerRecording(rec);
-    }
-
-    /**
-     * Server to client method.
-     * A timer recording has been updated on the server.
-     * @param msg The message with the updated timer recording data
-     */
-    private void onTimerRecEntryUpdate(HTSMessage msg) {
-        Log.d(TAG, "onTimerRecEntryUpdate() called");
-
-        String id = msg.getString("id");                                                        // str   ID (string!) of timerecEntry.
-        ContentValues values = new ContentValues();
-        values.put(DataContract.TimerRecordings.TITLE, msg.getString("title"));                 // str   Title for the recordings.
-        values.put(DataContract.TimerRecordings.DIRECTORY, msg.getString("directory", null));   // str   Forced directory name (Added in version 19).
-        values.put(DataContract.TimerRecordings.ENABLED, msg.getInt("enabled"));                // u32   Title for the recordings.
-        values.put(DataContract.TimerRecordings.NAME, msg.getString("name"));                   // str   Name for this timerec entry.
-        values.put(DataContract.TimerRecordings.CONFIG_NAME, msg.getString("configName"));      // str   DVR Configuration Name / UUID.
-        values.put(DataContract.TimerRecordings.CHANNEL, msg.getInt("channel"));                // u32   Channel ID.
-        values.put(DataContract.TimerRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));        // u32   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
-        values.put(DataContract.TimerRecordings.PRIORITY, msg.getInt("priority"));              // u32   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
-        values.put(DataContract.TimerRecordings.START, msg.getInt("start"));                    // u32   Minutes from midnight (up to 24*60) for the start of the time window (including)
-        values.put(DataContract.TimerRecordings.STOP, msg.getInt("stop"));                      // u32   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
-        values.put(DataContract.TimerRecordings.RETENTION, msg.getInt("retention"));            // u32   Retention in days.
-        values.put(DataContract.TimerRecordings.OWNER, msg.getString("owner"));                 // str   Owner of this timerec entry.
-        values.put(DataContract.TimerRecordings.CREATOR, msg.getString("creator"));             // str   Creator of this timerec entry.
-
-        getContentResolver().update(DataContract.TimerRecordings.CONTENT_URI, values,
-                DataContract.TimerRecordings.ID + "=?", new String[]{id});
-
-        // TODO remove old stuff when possible
-
-        TimerRecording rec = ds.getTimerRecording(msg.getString("id"));
-        if (rec == null) {
-            return;
-        }
-
-        rec.daysOfWeek = msg.getLong("daysOfWeek", rec.daysOfWeek);
-        rec.retention = msg.getLong("retention", rec.retention);
-        rec.priority = msg.getLong("priority", rec.priority);
-        rec.start = msg.getLong("start", rec.start);
-        rec.stop = msg.getLong("stop", rec.stop);
-        rec.title = msg.getString("title", rec.title);
-        rec.name = msg.getString("name", rec.name);
-        rec.directory = msg.getString("directory", rec.name);
-        rec.channel = ds.getChannel(msg.getLong("channel", 0));
-
-        // The enabled flag was added in HTSP API version 18. The support for
-        // timer recordings are available since version 17.
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
-            rec.enabled = msg.getLong("enabled", 0) != 0;
-        }
-        ds.updateTimerRecording(rec);
-    }
-
-    /**
-     * Server to client method.
-     * A timer recording has been deleted on the server.
-     * @param msg The message with the recording id that was deleted
-     */
-    private void onTimerRecEntryDelete(HTSMessage msg) {
-        Log.d(TAG, "onTimerRecEntryDelete() called");
-
-        String id = msg.getString("id");
-        getContentResolver().delete(DataContract.TimerRecordings.CONTENT_URI,
-                DataContract.TimerRecordings.ID + "=?", new String[]{id});
-
-        // TODO remove old stuff when possible
-
-        TimerRecording rec = ds.getTimerRecording(msg.getString("id"));
-
-        if (rec == null || rec.channel == null) {
-            return;
-        }
-
-        rec.channel = null;
-        ds.removeTimerRecording(rec);
-    }
-
-
-
-
     private void onInitialSyncCompleted() {
         Log.d(TAG, "onInitialSyncCompleted() called");
         ds.setLoading(false);
@@ -1185,13 +461,13 @@ public class HTSService extends Service implements HTSConnectionListener {
                 onSubscriptionSignalStatus(msg);
                 break;
             case "eventAdd":
-                eventAdd(msg);
+                onEventAdd(msg);
                 break;
             case "eventUpdate":
-                eventUpdate(msg);
+                onEventUpdate(msg);
                 break;
             case "eventDelete":
-                eventDelete(msg);
+                onEventDelete(msg);
                 break;
             default:
                 break;
@@ -2200,15 +1476,816 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void eventDelete(HTSMessage msg) {
 
+    /**
+     * Server to client method.
+     * A tag has been added on the server.
+     * @param msg The message with the new tag data
+     */
+    private void onTagAdd(HTSMessage msg) {
+        Log.d(TAG, "onTagAdd() called");
+
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Tags.ID, msg.getInt("tagId"));                      // u32   required   ID of tag.
+        values.put(DataContract.Tags.NAME, msg.getString("tagName"));               // str   required   Name of tag.
+        values.put(DataContract.Tags.INDEX, msg.getInt("tagIndex", 0));             // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
+        values.put(DataContract.Tags.ICON, msg.getString("tagIcon", null));         // str   optional   URL to an icon representative for the channel.
+        values.put(DataContract.Tags.TITLED_ICON, msg.getInt("tagTitledIcon", 0));  // u32   optional   Icon includes a title
+
+        getContentResolver().insert(DataContract.Tags.CONTENT_URI, values);
+
+        // TODO remove old stuff when possible
+        ChannelTag tag = new ChannelTag();
+        tag.id = msg.getLong("tagId");
+        tag.name = msg.getString("tagName", null);
+        tag.icon = msg.getString("tagIcon", null);
+        ds.addChannelTag(tag);
+        if (tag.icon != null) {
+            getChannelTagIcon(tag);
+        }
     }
 
-    private void eventUpdate(HTSMessage msg) {
+    /**
+     * Server to client method.
+     * A tag has been updated on the server.
+     * @param msg The message with the updated tag data
+     */
+    private void onTagUpdate(HTSMessage msg) {
+        Log.d(TAG, "onTagUpdate() called");
 
+        int id =  msg.getInt("tagId");
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Tags.NAME, msg.getString("tagName"));               // str   required   Name of tag.
+        values.put(DataContract.Tags.INDEX, msg.getInt("tagIndex", 0));             // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
+        values.put(DataContract.Tags.ICON, msg.getString("tagIcon", null));         // str   optional   URL to an icon representative for the channel.
+        values.put(DataContract.Tags.TITLED_ICON, msg.getInt("tagTitledIcon", 0));  // u32   optional   Icon includes a title
+
+        getContentResolver().update(DataContract.Tags.CONTENT_URI, values,
+                DataContract.Tags.ID + "=?", new String[]{String.valueOf(id)});
+
+        // TODO remove old stuff when possible
+
+        ChannelTag tag = ds.getChannelTag(msg.getLong("tagId"));
+        if (tag == null) {
+            return;
+        }
+
+        tag.name = msg.getString("tagName", tag.name);
+        String icon = msg.getString("tagIcon", tag.icon);
+        if (icon == null) {
+            tag.icon = null;
+            tag.iconBitmap = null;
+        } else if (!icon.equals(tag.icon)) {
+            tag.icon = icon;
+            getChannelTagIcon(tag);
+        }
     }
 
-    private void eventAdd(HTSMessage msg) {
+    /**
+     * Server to client method.
+     * A tag has been deleted on the server.
+     * @param msg The message with the tag id that was deleted
+     */
+    private void onTagDelete(HTSMessage msg) {
+        Log.d(TAG, "onTagDelete() called");
 
+        int id = msg.getInt("tagId");
+        getContentResolver().delete(DataContract.Tags.CONTENT_URI,
+                DataContract.Tags.ID + "=?", new String[]{String.valueOf(id)});
+
+        // TODO remove old stuff when possible
+        ds.removeChannelTag(msg.getLong("tagId"));
+    }
+
+    /**
+     * Server to client method.
+     * A channel has been added on the server.
+     * @param msg The message with the new channel data
+     */
+    private void onChannelAdd(HTSMessage msg) {
+        Log.d(TAG, "onChannelAdd() called");
+
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Channels.ID, msg.getInt("channelId"));                          // u32 required   ID of channel
+        values.put(DataContract.Channels.NUMBER, msg.getInt("channelNumber"));                  // u32 required   Channel number, 0 means unconfigured.
+        values.put(DataContract.Channels.NUMBER_MINOR, msg.getInt("channelNumberMinor", 0));    // u32 optional   Minor channel number (Added in version 13).
+        values.put(DataContract.Channels.NAME, msg.getString("channelName"));                   // str required   Name of channel.
+        values.put(DataContract.Channels.ICON, msg.getString("channelIcon", null));             // str optional   URL to an icon representative for the channel
+        values.put(DataContract.Channels.EVENT_ID, msg.getInt("eventId", 0));                   // u32 optional   ID of the current event on this channel.
+        values.put(DataContract.Channels.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));          // u32 optional   ID of the next event on the channel.
+
+        getContentResolver().insert(DataContract.Channels.CONTENT_URI, values);
+
+        // TODO remove old stuff when possible
+
+        final Channel ch = new Channel();
+        ch.id = msg.getLong("channelId");
+        ch.name = msg.getString("channelName", null);
+        ch.number = msg.getInt("channelNumber", 0);
+
+        // The default values will be set in case a server with a htsp API
+        // version 12 or lower is used
+        ch.numberMinor = msg.getInt("channelNumberMinor", 0);
+
+        ch.icon = msg.getString("channelIcon", null);
+        ch.tags = msg.getIntList("tags", ch.tags);
+
+        if (ch.number == 0) {
+            ch.number = (int) (ch.id + 25000);
+        }
+
+        ds.addChannel(ch);
+        if (ch.icon != null) {
+            getChannelIcon(ch);
+        }
+        long currEventId = msg.getLong("eventId", 0);
+        long nextEventId = msg.getLong("nextEventId", 0);
+
+        ch.isTransmitting = (currEventId != 0);
+
+        if (currEventId > 0) {
+            getEvents(ch, currEventId, Constants.PREF_PROGRAMS_TO_LOAD);
+        } else if (nextEventId > 0) {
+            getEvents(ch, nextEventId, Constants.PREF_PROGRAMS_TO_LOAD);
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A channel has been updated on the server.
+     * @param msg The message with the updated channel data
+     */
+    private void onChannelUpdate(HTSMessage msg) {
+        Log.d(TAG, "onChannelUpdate() called");
+
+        int id =  msg.getInt("channelId");
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Channels.NUMBER, msg.getInt("channelNumber"));                  // u32   Channel number, 0 means unconfigured.
+        values.put(DataContract.Channels.NUMBER_MINOR, msg.getInt("channelNumberMinor", 0));    // u32   Minor channel number (Added in version 13).
+        values.put(DataContract.Channels.NAME, msg.getString("channelName"));                   // str   Name of channel.
+        values.put(DataContract.Channels.ICON, msg.getString("channelIcon", null));             // str   URL to an icon representative for the channel
+        values.put(DataContract.Channels.EVENT_ID, msg.getInt("eventId", 0));                   // u32   ID of the current event on this channel.
+        values.put(DataContract.Channels.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));          // u32   ID of the next event on the channel.
+
+        getContentResolver().update(DataContract.Channels.CONTENT_URI, values,
+                DataContract.Channels.ID + "=?", new String[]{String.valueOf(id)});
+
+        // TODO remove old stuff when possible
+
+        final Channel ch = ds.getChannel(msg.getLong("channelId"));
+        if (ch == null) {
+            return;
+        }
+
+        ch.name = msg.getString("channelName", ch.name);
+        ch.number = msg.getInt("channelNumber", ch.number);
+
+        // The default values will be set in case a server with a htsp API
+        // version 12 or lower is used
+        ch.numberMinor = msg.getInt("channelNumberMinor", 0);
+
+        String icon = msg.getString("channelIcon", ch.icon);
+        ch.tags = msg.getIntList("tags", ch.tags);
+
+        if (icon == null) {
+            ch.icon = null;
+            ch.iconBitmap = null;
+        } else if (!icon.equals(ch.icon)) {
+            ch.icon = icon;
+            getChannelIcon(ch);
+        }
+        // Remove programs that have ended
+        long currEventId = msg.getLong("eventId", 0);
+        long nextEventId = msg.getLong("nextEventId", 0);
+
+        ch.isTransmitting = currEventId != 0;
+
+        Iterator<Program> it = ch.epg.iterator();
+        ArrayList<Program> tmp = new ArrayList<>();
+
+        while (it.hasNext() && currEventId > 0) {
+            Program p = it.next();
+            if (p.id != currEventId) {
+                tmp.add(p);
+            } else {
+                break;
+            }
+        }
+        ch.epg.removeAll(tmp);
+
+        for (Program p : tmp) {
+            ds.removeProgram(p);
+        }
+
+        final long eventId = currEventId != 0 ? currEventId : nextEventId;
+        if (eventId > 0 && ch.epg.size() < 2) {
+            execService.schedule(new Runnable() {
+                public void run() {
+                    getEvents(ch, eventId, 5);
+                }
+            }, 30, TimeUnit.SECONDS);
+        } else {
+            ds.updateChannel(ch);
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A channel has been deleted on the server.
+     * @param msg The message with the channel id that was deleted
+     */
+    private void onChannelDelete(HTSMessage msg) {
+        Log.d(TAG, "onChannelDelete() called");
+
+        int id = msg.getInt("channelId");
+        getContentResolver().delete(DataContract.Channels.CONTENT_URI,
+                DataContract.Channels.ID + "=?", new String[]{String.valueOf(id)});
+
+        // TODO remove old stuff when possible
+        ds.removeChannel(msg.getLong("channelId"));
+    }
+
+    /**
+     * Server to client method.
+     * A recording has been added on the server.
+     * @param msg The message with the new recording data
+     */
+    private void onDvrEntryAdd(HTSMessage msg) {
+        Log.d(TAG, "onDvrEntryAdd() called");
+
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Recordings.ID, msg.getLong("id"));                              // u32   required   ID of dvrEntry.
+        values.put(DataContract.Recordings.CHANNEL, msg.getInt("channel", 0));                  // u32   optional   Channel of dvrEntry.
+        values.put(DataContract.Recordings.START, msg.getInt("start"));                         // s64   required   Time of when this entry was scheduled to start recording.
+        values.put(DataContract.Recordings.STOP, msg.getInt("stop"));                           // s64   required   Time of when this entry was scheduled to stop recording.
+        values.put(DataContract.Recordings.START_EXTRA, msg.getInt("startExtra"));              // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+        values.put(DataContract.Recordings.STOP_EXTRA, msg.getInt("stopExtra"));                // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+        values.put(DataContract.Recordings.RETENTION, msg.getInt("retention"));                 // s64   required   DVR Entry retention time in days (Added in version 13).
+        values.put(DataContract.Recordings.PRIORITY, msg.getInt("priority"));                   // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+        values.put(DataContract.Recordings.EVENT_ID, msg.getInt("eventId", 0));                 // u32   optional   Associated EPG Event ID (Added in version 13).
+        values.put(DataContract.Recordings.AUTOREC_ID, msg.getString("autorecId", null));       // str   optional   Associated Autorec UUID (Added in version 13).
+        values.put(DataContract.Recordings.TIMEREC_ID, msg.getString("timerecId", null));       // str   optional   Associated Timerec UUID (Added in version 18).
+        values.put(DataContract.Recordings.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
+        values.put(DataContract.Recordings.TITLE, msg.getString("title", null));                // str   optional   Title of recording
+        values.put(DataContract.Recordings.SUBTITLE, msg.getString("subtitle", null));          // str   optional   Subtitle of recording (Added in version 20).
+        values.put(DataContract.Recordings.SUMMARY, msg.getString("summary", null));            // str   optional   Short description of the recording (Added in version 6).
+        values.put(DataContract.Recordings.DESCRIPTION, msg.getString("description", null));    // str   optional   Long description of the recording.
+        values.put(DataContract.Recordings.STATE, msg.getString("state"));                      // str   required   Recording state
+        values.put(DataContract.Recordings.ERROR, msg.getString("error", null));                // str   optional   Plain english error description (e.g. "Aborted by user").
+        values.put(DataContract.Recordings.OWNER, msg.getString("owner", null));                // str   optional   Name of the entry owner (Added in version 18).
+        values.put(DataContract.Recordings.CREATOR, msg.getString("creator", null));            // str   optional   Name of the entry creator (Added in version 18).
+        values.put(DataContract.Recordings.SUBSCRIPTION_ERROR, msg.getString("subscriptionError", null));    // str   optional   Subscription error string (Added in version 20).
+        values.put(DataContract.Recordings.STREAM_ERRORS, msg.getString("streamErrors", null)); // str   optional   Number of recording errors (Added in version 20).
+        values.put(DataContract.Recordings.DATA_ERRORS, msg.getString("dataErrors", null));     // str   optional   Number of stream data errors (Added in version 20).
+        values.put(DataContract.Recordings.PATH, msg.getString("path", null));                  // str   optional   Recording path for playback.
+        values.put(DataContract.Recordings.DATA_SIZE, msg.getInt("dataSize", 0));               // s64   optional   Actual file size of the last recordings (Added in version 21).
+        values.put(DataContract.Recordings.ENABLED, msg.getInt("enabled", 0));                  // u32   optional   Enabled flag (Added in version 23).
+
+        getContentResolver().insert(DataContract.Recordings.CONTENT_URI, values);
+
+        // TODO remove old stuff when possible
+
+        Recording rec = new Recording();
+        rec.id = msg.getLong("id");
+        rec.description = msg.getString("description");
+        rec.summary = msg.getString("summary");
+        rec.error = msg.getString("error");
+        rec.start = msg.getDate("start");
+        rec.state = msg.getString("state");
+        rec.stop = msg.getDate("stop");
+        rec.title = msg.getString("title");
+        rec.subtitle = msg.getString("subtitle");
+        rec.enabled = msg.getLong("enabled", 1) != 0;
+
+        rec.channel = ds.getChannel(msg.getLong("channel", 0));
+        if (rec.channel != null) {
+            rec.channel.recordings.add(rec);
+        }
+
+        // Not all fields can be set with default values, so check if the server
+        // provides a supported HTSP API version. These entries are available
+        // only on version 13 and higher
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+            rec.eventId = msg.getLong("eventId", 0);
+            rec.autorecId = msg.getString("autorecId");
+            rec.startExtra = msg.getLong("startExtra", 0);
+            rec.stopExtra = msg.getLong("stopExtra", 0);
+            rec.retention = msg.getLong("retention");
+            rec.priority = msg.getLong("priority");
+            rec.contentType = msg.getLong("contentType", -1);
+        }
+
+        // Not all fields can be set with default values, so check if the server
+        // provides a supported HTSP API version. These entries are available
+        // only on version 17 and higher
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
+            rec.timerecId = msg.getString("timerecId");
+        }
+
+        rec.episode = msg.getString("episode", null);
+        rec.comment = msg.getString("comment", null);
+        rec.subscriptionError = msg.getString("subscriptionError", null);
+        rec.streamErrors = msg.getLong("streamErrors", 0);
+        rec.dataErrors = msg.getLong("dataErrors", 0);
+        rec.dataSize = msg.getLong("dataSize", 0);
+
+        if (rec.channel != null && rec.channel.epg != null) {
+            for (Program p : rec.channel.epg) {
+                if (p != null
+                        && p.title.equals(rec.title)
+                        && p.start.getTime() == rec.start.getTime()
+                        && p.stop.getTime() == rec.stop.getTime()) {
+                    p.recording = rec;
+                    break;
+                }
+            }
+        }
+
+        rec.owner = msg.getString("owner", null);
+        rec.creator = msg.getString("creator", null);
+        rec.path = msg.getString("path", null);
+        rec.files = msg.getString("files", null);
+
+        ds.addRecording(rec);
+    }
+
+    /**
+     * Server to client method.
+     * A recording has been updated on the server.
+     * @param msg The message with the updated recording data
+     */
+    private void onDvrEntryUpdate(HTSMessage msg) {
+        Log.d(TAG, "onDvrEntryUpdate() called");
+
+        int id = msg.getInt("id");
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Recordings.CHANNEL, msg.getInt("channel", 0));                  // u32   Channel of dvrEntry.
+        values.put(DataContract.Recordings.START, msg.getInt("start"));                         // s64   Time of when this entry was scheduled to start recording.
+        values.put(DataContract.Recordings.STOP, msg.getInt("stop"));                           // s64   Time of when this entry was scheduled to stop recording.
+        values.put(DataContract.Recordings.START_EXTRA, msg.getInt("startExtra"));              // s64   Extra start time (pre-time) in minutes (Added in version 13).
+        values.put(DataContract.Recordings.STOP_EXTRA, msg.getInt("stopExtra"));                // s64   Extra stop time (post-time) in minutes (Added in version 13).
+        values.put(DataContract.Recordings.RETENTION, msg.getInt("retention"));                 // s64   DVR Entry retention time in days (Added in version 13).
+        values.put(DataContract.Recordings.PRIORITY, msg.getInt("priority"));                   // u32   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+        values.put(DataContract.Recordings.EVENT_ID, msg.getInt("eventId", 0));                 // u32   Associated EPG Event ID (Added in version 13).
+        values.put(DataContract.Recordings.AUTOREC_ID, msg.getString("autorecId", null));       // str   Associated Autorec UUID (Added in version 13).
+        values.put(DataContract.Recordings.TIMEREC_ID, msg.getString("timerecId", null));       // str   Associated Timerec UUID (Added in version 18).
+        values.put(DataContract.Recordings.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   Content Type (like in the DVB standard) (Added in version 13).
+        values.put(DataContract.Recordings.TITLE, msg.getString("title", null));                // str   Title of recording
+        values.put(DataContract.Recordings.SUBTITLE, msg.getString("subtitle", null));          // str   Subtitle of recording (Added in version 20).
+        values.put(DataContract.Recordings.SUMMARY, msg.getString("summary", null));            // str   Short description of the recording (Added in version 6).
+        values.put(DataContract.Recordings.DESCRIPTION, msg.getString("description", null));    // str   Long description of the recording.
+        values.put(DataContract.Recordings.STATE, msg.getString("state"));                      // str   Recording state
+        values.put(DataContract.Recordings.ERROR, msg.getString("error", null));                // str   Plain english error description (e.g. "Aborted by user").
+        values.put(DataContract.Recordings.OWNER, msg.getString("owner", null));                // str   Name of the entry owner (Added in version 18).
+        values.put(DataContract.Recordings.CREATOR, msg.getString("creator", null));            // str   Name of the entry creator (Added in version 18).
+        values.put(DataContract.Recordings.SUBSCRIPTION_ERROR, msg.getString("subscriptionError", null));    // str   Subscription error string (Added in version 20).
+        values.put(DataContract.Recordings.STREAM_ERRORS, msg.getString("streamErrors", null)); // str   Number of recording errors (Added in version 20).
+        values.put(DataContract.Recordings.DATA_ERRORS, msg.getString("dataErrors", null));     // str   Number of stream data errors (Added in version 20).
+        values.put(DataContract.Recordings.PATH, msg.getString("path", null));                  // str   Recording path for playback.
+        values.put(DataContract.Recordings.DATA_SIZE, msg.getInt("dataSize", 0));               // s64   Actual file size of the last recordings (Added in version 21).
+        values.put(DataContract.Recordings.ENABLED, msg.getInt("enabled", 0));                  // u32   Enabled flag (Added in version 23).
+
+        getContentResolver().update(DataContract.Recordings.CONTENT_URI, values,
+                DataContract.Recordings.ID + "=?", new String[]{String.valueOf(id)});
+
+        // TODO remove old stuff when possible
+
+        Recording rec = ds.getRecording(msg.getLong("id"));
+        if (rec == null) {
+            return;
+        }
+
+        rec.description = msg.getString("description", rec.description);
+        rec.summary = msg.getString("summary", rec.summary);
+        rec.error = msg.getString("error", rec.error);
+        rec.start = msg.getDate("start");
+        rec.state = msg.getString("state", rec.state);
+        rec.stop = msg.getDate("stop");
+        rec.title = msg.getString("title", rec.title);
+        rec.subtitle = msg.getString("subtitle", rec.subtitle);
+        rec.enabled = msg.getLong("enabled", 1) != 0;
+
+        // Not all fields can be set with default values, so check if the server
+        // provides a supported HTSP API version. These entries are available
+        // only on version 13 and higher
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+            rec.eventId = msg.getLong("eventId", 0);
+            rec.autorecId = msg.getString("autorecId");
+            rec.startExtra = msg.getLong("startExtra", 0);
+            rec.stopExtra = msg.getLong("stopExtra", 0);
+            rec.retention = msg.getLong("retention");
+            rec.priority = msg.getLong("priority");
+            rec.contentType = msg.getLong("contentType", -1);
+        }
+
+        // Not all fields can be set with default values, so check if the server
+        // provides a supported HTSP API version. These entries are available
+        // only on version 17 and higher
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
+            rec.timerecId = msg.getString("timerecId");
+        }
+
+        rec.episode = msg.getString("episode", null);
+        rec.comment = msg.getString("comment", null);
+        rec.subscriptionError = msg.getString("subscriptionError", null);
+        rec.streamErrors = msg.getLong("streamErrors", 0);
+        rec.dataErrors = msg.getLong("dataErrors", 0);
+        rec.dataSize = msg.getLong("dataSize", 0);
+        rec.owner = msg.getString("owner", rec.owner);
+        rec.creator = msg.getString("creator", rec.creator);
+        rec.path = msg.getString("path", rec.path);
+        rec.files = msg.getString("files", rec.files);
+
+        ds.updateRecording(rec);
+    }
+
+    /**
+     * Server to client method.
+     * A recording has been deleted on the server.
+     * @param msg The message with the recording id that was deleted
+     */
+    private void onDvrEntryDelete(HTSMessage msg) {
+        Log.d(TAG, "onDvrEntryDelete() called");
+
+        int id = msg.getInt("id");
+        getContentResolver().delete(DataContract.Recordings.CONTENT_URI,
+                DataContract.Recordings.ID + "=?", new String[]{String.valueOf(id)});
+
+        // TODO remove old stuff when possible
+
+        Recording rec = ds.getRecording(msg.getLong("id"));
+
+        if (rec == null || rec.channel == null) {
+            return;
+        }
+
+        rec.channel.recordings.remove(rec);
+        for (Program p : rec.channel.epg) {
+            if (p.recording == rec) {
+                p.recording = null;
+                ds.updateProgram(p);
+                break;
+            }
+        }
+        ds.removeRecording(rec);
+    }
+
+    /**
+     * Server to client method.
+     * A series recording has been added on the server.
+     * @param msg The message with the new series recording data
+     */
+    private void onAutorecEntryAdd(HTSMessage msg) {
+        Log.d(TAG, "onAutorecEntryAdd() called");
+
+        ContentValues values = new ContentValues();
+        values.put(DataContract.SeriesRecordings.ID, msg.getString("id"));                      // str   required   ID (string!) of dvrAutorecEntry.
+        values.put(DataContract.SeriesRecordings.ENABLED, msg.getInt("enabled"));               // u32   required   If autorec entry is enabled (activated).
+        values.put(DataContract.SeriesRecordings.NAME, msg.getString("name"));                  // str   required   Name of the autorec entry (Added in version 18).
+        values.put(DataContract.SeriesRecordings.MIN_DURATION, msg.getInt("minDuration"));      // u32   required   Minimal duration in seconds (0 = Any).
+        values.put(DataContract.SeriesRecordings.MAX_DURATION, msg.getInt("maxDuration"));      // u32   required   Maximal duration in seconds (0 = Any).
+        values.put(DataContract.SeriesRecordings.RETENTION, msg.getInt("retention"));           // u32   required   Retention time (in days).
+        values.put(DataContract.SeriesRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));       // u32   required   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+        values.put(DataContract.SeriesRecordings.PRIORITY, msg.getInt("priority"));             // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+        values.put(DataContract.SeriesRecordings.APPROX_TIME, msg.getInt("approxTime"));        // u32   required   Minutes from midnight (up to 24*60).
+        values.put(DataContract.SeriesRecordings.START, msg.getInt("start"));                   // s32   required   Exact start time (minutes from midnight) (Added in version 18).
+        values.put(DataContract.SeriesRecordings.START_WINDOW, msg.getInt("startWindow"));      // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
+        values.put(DataContract.SeriesRecordings.START_EXTRA, msg.getInt("startExtra"));        // s64   required   Extra start minutes (pre-time).
+        values.put(DataContract.SeriesRecordings.STOP_EXTRA, msg.getInt("stopExtra"));          // s64   required   Extra stop minutes (post-time).
+        values.put(DataContract.SeriesRecordings.TITLE, msg.getString("title", null));          // str   optional   Title.
+        values.put(DataContract.SeriesRecordings.FULLTEXT, msg.getInt("fulltext", 0));          // u32   optional   Fulltext flag (Added in version 20).
+        values.put(DataContract.SeriesRecordings.DIRECTORY, msg.getString("directory", null));  // str   optional   Forced directory name (Added in version 19).
+        values.put(DataContract.SeriesRecordings.CHANNEL, msg.getInt("channel", 0));            // u32   optional   Channel ID.
+        values.put(DataContract.SeriesRecordings.OWNER, msg.getString("owner", null));          // str   optional   Owner of this autorec entry (Added in version 18).
+        values.put(DataContract.SeriesRecordings.CREATOR, msg.getString("creator", null));      // str   optional   Creator of this autorec entry (Added in version 18).
+        values.put(DataContract.SeriesRecordings.DUP_DETECT, msg.getInt("dupDetect", 0));       // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
+
+        getContentResolver().insert(DataContract.SeriesRecordings.CONTENT_URI, values);
+
+        // TODO remove old stuff when possible
+
+        SeriesRecording srec = new SeriesRecording();
+        srec.id = msg.getString("id");
+        srec.enabled = msg.getLong("enabled", 0) != 0;
+        srec.maxDuration = msg.getLong("maxDuration");
+        srec.minDuration = msg.getLong("minDuration");
+        srec.retention = msg.getLong("retention");
+        srec.daysOfWeek = msg.getLong("daysOfWeek");
+        srec.approxTime = msg.getLong("approxTime", -1);
+        srec.priority = msg.getLong("priority");
+        srec.start = msg.getLong("start", -1);
+        srec.startWindow = msg.getLong("startWindow", -1);
+        srec.startExtra = msg.getLong("startExtra", 0);
+        srec.stopExtra = msg.getLong("stopExtra", 0);
+        srec.dupDetect = msg.getLong("dupDetect", 0);
+        srec.title = msg.getString("title");
+        srec.name = msg.getString("name");
+        srec.directory = msg.getString("directory");
+        srec.channel = ds.getChannel(msg.getLong("channel", 0));
+        srec.fulltext = msg.getString("fulltext");
+
+        ds.addSeriesRecording(srec);
+    }
+
+    /**
+     * Server to client method.
+     * A series recording has been updated on the server.
+     * @param msg The message with the updated series recording data
+     */
+    private void onAutorecEntryUpdate(HTSMessage msg) {
+        Log.d(TAG, "onAutorecEntryUpdate() called");
+
+        String id = msg.getString("id");                                                        // str   ID (string!) of dvrAutorecEntry.
+        ContentValues values = new ContentValues();
+        values.put(DataContract.SeriesRecordings.ENABLED, msg.getInt("enabled"));               // u32   If autorec entry is enabled (activated).
+        values.put(DataContract.SeriesRecordings.NAME, msg.getString("name"));                  // str   Name of the autorec entry (Added in version 18).
+        values.put(DataContract.SeriesRecordings.MIN_DURATION, msg.getInt("minDuration"));      // u32   Minimal duration in seconds (0 = Any).
+        values.put(DataContract.SeriesRecordings.MAX_DURATION, msg.getInt("maxDuration"));      // u32   Maximal duration in seconds (0 = Any).
+        values.put(DataContract.SeriesRecordings.RETENTION, msg.getInt("retention"));           // u32   Retention time (in days).
+        values.put(DataContract.SeriesRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));       // u32   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+        values.put(DataContract.SeriesRecordings.PRIORITY, msg.getInt("priority"));             // u32   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+        values.put(DataContract.SeriesRecordings.APPROX_TIME, msg.getInt("approxTime"));        // u32   Minutes from midnight (up to 24*60).
+        values.put(DataContract.SeriesRecordings.START, msg.getInt("start"));                   // s32   Exact start time (minutes from midnight) (Added in version 18).
+        values.put(DataContract.SeriesRecordings.START_WINDOW, msg.getInt("startWindow"));      // s32   Exact stop time (minutes from midnight) (Added in version 18).
+        values.put(DataContract.SeriesRecordings.START_EXTRA, msg.getInt("startExtra"));        // s64   Extra start minutes (pre-time).
+        values.put(DataContract.SeriesRecordings.STOP_EXTRA, msg.getInt("stopExtra"));          // s64   Extra stop minutes (post-time).
+        values.put(DataContract.SeriesRecordings.TITLE, msg.getString("title", null));          // str   Title.
+        values.put(DataContract.SeriesRecordings.FULLTEXT, msg.getInt("fulltext", 0));          // u32   Fulltext flag (Added in version 20).
+        values.put(DataContract.SeriesRecordings.DIRECTORY, msg.getString("directory", null));  // str   Forced directory name (Added in version 19).
+        values.put(DataContract.SeriesRecordings.CHANNEL, msg.getInt("channel", 0));            // u32   Channel ID.
+        values.put(DataContract.SeriesRecordings.OWNER, msg.getString("owner", null));          // str   Owner of this autorec entry (Added in version 18).
+        values.put(DataContract.SeriesRecordings.CREATOR, msg.getString("creator", null));      // str   Creator of this autorec entry (Added in version 18).
+        values.put(DataContract.SeriesRecordings.DUP_DETECT, msg.getInt("dupDetect", 0));       // u32   Duplicate detection (see addAutorecEntry) (Added in version 20).
+
+        getContentResolver().update(DataContract.SeriesRecordings.CONTENT_URI, values,
+                DataContract.SeriesRecordings.ID + "=?", new String[]{id});
+
+        // TODO remove old stuff when possible
+
+        SeriesRecording srec = ds.getSeriesRecording(msg.getString("id"));
+        if (srec == null) {
+            return;
+        }
+        srec.enabled = msg.getLong("enabled", 0) != 0;
+        srec.maxDuration = msg.getLong("maxDuration");
+        srec.minDuration = msg.getLong("minDuration");
+        srec.retention = msg.getLong("retention");
+        srec.daysOfWeek = msg.getLong("daysOfWeek");
+        srec.approxTime = msg.getLong("approxTime", -1);
+        srec.priority = msg.getLong("priority");
+        srec.start = msg.getLong("start", -1);
+        srec.startWindow = msg.getLong("startWindow", -1);
+        srec.startExtra = msg.getLong("startExtra", 0);
+        srec.stopExtra = msg.getLong("stopExtra", 0);
+        srec.dupDetect = msg.getLong("dupDetect", 0);
+        srec.title = msg.getString("title", srec.title);
+        srec.name = msg.getString("name", srec.name);
+        srec.directory = msg.getString("directory", srec.directory);
+        srec.fulltext = msg.getString("fulltext", srec.fulltext);
+
+        ds.updateSeriesRecording(srec);
+    }
+
+    /**
+     * Server to client method.
+     * A series recording has been deleted on the server.
+     * @param msg The message with the series recording id that was deleted
+     */
+    private void onAutorecEntryDelete(HTSMessage msg) {
+        Log.d(TAG, "onAutorecEntryDelete() called");
+
+        String id = msg.getString("id");
+        getContentResolver().delete(DataContract.SeriesRecordings.CONTENT_URI,
+                DataContract.SeriesRecordings.ID + "=?", new String[]{id});
+
+        // TODO remove old stuff when possible
+
+        if (id == null) {
+            return;
+        }
+        // Remove the series recording from the list and also update all
+        // recordings by removing the series id
+        ds.removeSeriesRecording(id);
+        for (Recording rec : ds.getRecordings()) {
+            if (rec.autorecId != null && rec.autorecId.equals(id)) {
+                rec.autorecId = null;
+            }
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A timer recording has been added on the server.
+     * @param msg The message with the new timer recording data
+     */
+    private void onTimerRecEntryAdd(HTSMessage msg) {
+        Log.d(TAG, "onTimerRecEntryAdd() called");
+
+        ContentValues values = new ContentValues();
+        values.put(DataContract.TimerRecordings.ID, msg.getString("id"));                       // str   required   ID (string!) of timerecEntry.
+        values.put(DataContract.TimerRecordings.TITLE, msg.getString("title"));                 // str   required   Title for the recordings.
+        values.put(DataContract.TimerRecordings.DIRECTORY, msg.getString("directory", null));   // str   optional   Forced directory name (Added in version 19).
+        values.put(DataContract.TimerRecordings.ENABLED, msg.getInt("enabled"));                // u32   required   Title for the recordings.
+        values.put(DataContract.TimerRecordings.NAME, msg.getString("name"));                   // str   required   Name for this timerec entry.
+        values.put(DataContract.TimerRecordings.CONFIG_NAME, msg.getString("configName"));      // str   required   DVR Configuration Name / UUID.
+        values.put(DataContract.TimerRecordings.CHANNEL, msg.getInt("channel"));                // u32   required   Channel ID.
+        values.put(DataContract.TimerRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));        // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+        values.put(DataContract.TimerRecordings.PRIORITY, msg.getInt("priority"));              // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+        values.put(DataContract.TimerRecordings.START, msg.getInt("start"));                    // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
+        values.put(DataContract.TimerRecordings.STOP, msg.getInt("stop"));                      // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+        values.put(DataContract.TimerRecordings.RETENTION, msg.getInt("retention"));            // u32   optional   Retention in days.
+        values.put(DataContract.TimerRecordings.OWNER, msg.getString("owner"));                 // str   optional   Owner of this timerec entry.
+        values.put(DataContract.TimerRecordings.CREATOR, msg.getString("creator"));             // str   optional   Creator of this timerec entry.
+
+        getContentResolver().insert(DataContract.TimerRecordings.CONTENT_URI, values);
+
+        // TODO remove old stuff when possible
+
+        TimerRecording rec = new TimerRecording();
+        rec.id = msg.getString("id", "");
+
+        rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
+        rec.retention = msg.getLong("retention", 0);
+        rec.priority = msg.getLong("priority", 0);
+        rec.start = msg.getLong("start", 0);
+        rec.stop = msg.getLong("stop", 0);
+        rec.title = msg.getString("title");
+        rec.name = msg.getString("name");
+        rec.directory = msg.getString("directory");
+        rec.channel = ds.getChannel(msg.getLong("channel", 0));
+
+        // The enabled flag was added in HTSP API version 18. The support for
+        // timer recordings are available since version 17.
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+            rec.enabled = msg.getLong("enabled", 0) != 0;
+        }
+        ds.addTimerRecording(rec);
+    }
+
+    /**
+     * Server to client method.
+     * A timer recording has been updated on the server.
+     * @param msg The message with the updated timer recording data
+     */
+    private void onTimerRecEntryUpdate(HTSMessage msg) {
+        Log.d(TAG, "onTimerRecEntryUpdate() called");
+
+        String id = msg.getString("id");                                                        // str   ID (string!) of timerecEntry.
+        ContentValues values = new ContentValues();
+        values.put(DataContract.TimerRecordings.TITLE, msg.getString("title"));                 // str   Title for the recordings.
+        values.put(DataContract.TimerRecordings.DIRECTORY, msg.getString("directory", null));   // str   Forced directory name (Added in version 19).
+        values.put(DataContract.TimerRecordings.ENABLED, msg.getInt("enabled"));                // u32   Title for the recordings.
+        values.put(DataContract.TimerRecordings.NAME, msg.getString("name"));                   // str   Name for this timerec entry.
+        values.put(DataContract.TimerRecordings.CONFIG_NAME, msg.getString("configName"));      // str   DVR Configuration Name / UUID.
+        values.put(DataContract.TimerRecordings.CHANNEL, msg.getInt("channel"));                // u32   Channel ID.
+        values.put(DataContract.TimerRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));        // u32   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+        values.put(DataContract.TimerRecordings.PRIORITY, msg.getInt("priority"));              // u32   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+        values.put(DataContract.TimerRecordings.START, msg.getInt("start"));                    // u32   Minutes from midnight (up to 24*60) for the start of the time window (including)
+        values.put(DataContract.TimerRecordings.STOP, msg.getInt("stop"));                      // u32   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+        values.put(DataContract.TimerRecordings.RETENTION, msg.getInt("retention"));            // u32   Retention in days.
+        values.put(DataContract.TimerRecordings.OWNER, msg.getString("owner"));                 // str   Owner of this timerec entry.
+        values.put(DataContract.TimerRecordings.CREATOR, msg.getString("creator"));             // str   Creator of this timerec entry.
+
+        getContentResolver().update(DataContract.TimerRecordings.CONTENT_URI, values,
+                DataContract.TimerRecordings.ID + "=?", new String[]{id});
+
+        // TODO remove old stuff when possible
+
+        TimerRecording rec = ds.getTimerRecording(msg.getString("id"));
+        if (rec == null) {
+            return;
+        }
+
+        rec.daysOfWeek = msg.getLong("daysOfWeek", rec.daysOfWeek);
+        rec.retention = msg.getLong("retention", rec.retention);
+        rec.priority = msg.getLong("priority", rec.priority);
+        rec.start = msg.getLong("start", rec.start);
+        rec.stop = msg.getLong("stop", rec.stop);
+        rec.title = msg.getString("title", rec.title);
+        rec.name = msg.getString("name", rec.name);
+        rec.directory = msg.getString("directory", rec.name);
+        rec.channel = ds.getChannel(msg.getLong("channel", 0));
+
+        // The enabled flag was added in HTSP API version 18. The support for
+        // timer recordings are available since version 17.
+        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+            rec.enabled = msg.getLong("enabled", 0) != 0;
+        }
+        ds.updateTimerRecording(rec);
+    }
+
+    /**
+     * Server to client method.
+     * A timer recording has been deleted on the server.
+     * @param msg The message with the recording id that was deleted
+     */
+    private void onTimerRecEntryDelete(HTSMessage msg) {
+        Log.d(TAG, "onTimerRecEntryDelete() called");
+
+        String id = msg.getString("id");
+        getContentResolver().delete(DataContract.TimerRecordings.CONTENT_URI,
+                DataContract.TimerRecordings.ID + "=?", new String[]{id});
+
+        // TODO remove old stuff when possible
+
+        TimerRecording rec = ds.getTimerRecording(msg.getString("id"));
+
+        if (rec == null || rec.channel == null) {
+            return;
+        }
+
+        rec.channel = null;
+        ds.removeTimerRecording(rec);
+    }
+
+    /**
+     * Server to client method.
+     * An epg event has been added on the server.
+     * @param msg The message with the new epg event data
+     */
+    private void onEventAdd(HTSMessage msg) {
+        Log.d(TAG, "onEventAdd() called");
+
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Events.ID, msg.getInt("eventId"));                          // u32   required   Event ID
+        values.put(DataContract.Events.CHANNEL_ID, msg.getInt("channelId"));                // u32   required   The channel this event is related to.
+        values.put(DataContract.Events.START, msg.getInt("start"));                         // u64   required   Start time of event, UNIX time.
+        values.put(DataContract.Events.STOP, msg.getInt("stop"));                           // u64   required   Ending time of event, UNIX time.
+        values.put(DataContract.Events.TITLE, msg.getString("title", null));                // str   optional   Title of event.
+        values.put(DataContract.Events.SUMMARY, msg.getString("summary", null));            // str   optional   Short description of the event (Added in version 6).
+        values.put(DataContract.Events.DESCRIPTION, msg.getString("description", null));    // str   optional   Long description of the event.
+        values.put(DataContract.Events.SERIES_LINK_ID, msg.getInt("serieslinkId", 0));      // u32   optional   Series Link ID (Added in version 6).
+        values.put(DataContract.Events.EPISODE_ID, msg.getInt("episodeId", 0));             // u32   optional   Episode ID (Added in version 6).
+        values.put(DataContract.Events.SEASON_ID, msg.getInt("seasonId", 0));               // u32   optional   Season ID (Added in version 6).
+        values.put(DataContract.Events.BRAND_ID, msg.getInt("brandId", 0));                 // u32   optional   Brand ID (Added in version 6).
+        values.put(DataContract.Events.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
+        values.put(DataContract.Events.AGE_RATING, msg.getInt("ageRating", 0));             // u32   optional   Minimum age rating (Added in version 6).
+        values.put(DataContract.Events.STAR_RATING, msg.getInt("starRating", 0));           // u32   optional   Star rating (1-5) (Added in version 6).
+        values.put(DataContract.Events.FIRST_AIRED, msg.getInt("firstAired", 0));           // s64   optional   Original broadcast time, UNIX time (Added in version 6).
+        values.put(DataContract.Events.SEASON_NUMBER, msg.getInt("seasonNumber", 0));       // u32   optional   Season number (Added in version 6).
+        values.put(DataContract.Events.SEASON_COUNT, msg.getInt("seasonCount", 0));         // u32   optional   Show season count (Added in version 6).
+        values.put(DataContract.Events.EPISODE_NUMBER, msg.getInt("episodeNumber", 0));     // u32   optional   Episode number (Added in version 6).
+        values.put(DataContract.Events.EPISODE_COUNT, msg.getInt("episodeCount", 0));       // u32   optional   Season episode count (Added in version 6).
+        values.put(DataContract.Events.PART_NUMBER, msg.getInt("partNumber", 0));           // u32   optional   Multi-part episode part number (Added in version 6).
+        values.put(DataContract.Events.PART_COUNT, msg.getInt("partCount", 0));             // u32   optional   Multi-part episode part count (Added in version 6).
+        values.put(DataContract.Events.EPISODE_ON_SCREEN, msg.getString("episodeOnscreen", null));  // str   optional   Textual representation of episode number (Added in version 6).
+        values.put(DataContract.Events.IMAGE, msg.getString("image", null));                // str   optional   URL to a still capture from the episode (Added in version 6).
+        values.put(DataContract.Events.DVR_ID, msg.getInt("dvrId", 0));                     // u32   optional   ID of a recording (Added in version 5).
+        values.put(DataContract.Events.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));        // u32   optional   ID of next event on the same channel.
+
+        getContentResolver().insert(DataContract.Events.CONTENT_URI, values);
+    }
+
+    /**
+     * Server to client method.
+     * An epg event has been updated on the server.
+     * @param msg The message with the updated epg event data
+     */
+    private void onEventUpdate(HTSMessage msg) {
+        Log.d(TAG, "onEventUpdate() called");
+
+        int id = msg.getInt("eventId");
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Events.ID, msg.getInt("eventId"));                          // u32   Event ID
+        values.put(DataContract.Events.CHANNEL_ID, msg.getInt("channelId"));                // u32   The channel this event is related to.
+        values.put(DataContract.Events.START, msg.getInt("start"));                         // u64   Start time of event, UNIX time.
+        values.put(DataContract.Events.STOP, msg.getInt("stop"));                           // u64   Ending time of event, UNIX time.
+        values.put(DataContract.Events.TITLE, msg.getString("title", null));                // str   Title of event.
+        values.put(DataContract.Events.SUMMARY, msg.getString("summary", null));            // str   Short description of the event (Added in version 6).
+        values.put(DataContract.Events.DESCRIPTION, msg.getString("description", null));    // str   Long description of the event.
+        values.put(DataContract.Events.SERIES_LINK_ID, msg.getInt("serieslinkId", 0));      // u32   Series Link ID (Added in version 6).
+        values.put(DataContract.Events.EPISODE_ID, msg.getInt("episodeId", 0));             // u32   Episode ID (Added in version 6).
+        values.put(DataContract.Events.SEASON_ID, msg.getInt("seasonId", 0));               // u32   Season ID (Added in version 6).
+        values.put(DataContract.Events.BRAND_ID, msg.getInt("brandId", 0));                 // u32   Brand ID (Added in version 6).
+        values.put(DataContract.Events.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   DVB content code (Added in version 4, Modified in version 6*).
+        values.put(DataContract.Events.AGE_RATING, msg.getInt("ageRating", 0));             // u32   Minimum age rating (Added in version 6).
+        values.put(DataContract.Events.STAR_RATING, msg.getInt("starRating", 0));           // u32   Star rating (1-5) (Added in version 6).
+        values.put(DataContract.Events.FIRST_AIRED, msg.getInt("firstAired", 0));           // s64   Original broadcast time, UNIX time (Added in version 6).
+        values.put(DataContract.Events.SEASON_NUMBER, msg.getInt("seasonNumber", 0));       // u32   Season number (Added in version 6).
+        values.put(DataContract.Events.SEASON_COUNT, msg.getInt("seasonCount", 0));         // u32   Show season count (Added in version 6).
+        values.put(DataContract.Events.EPISODE_NUMBER, msg.getInt("episodeNumber", 0));     // u32   Episode number (Added in version 6).
+        values.put(DataContract.Events.EPISODE_COUNT, msg.getInt("episodeCount", 0));       // u32   Season episode count (Added in version 6).
+        values.put(DataContract.Events.PART_NUMBER, msg.getInt("partNumber", 0));           // u32   Multi-part episode part number (Added in version 6).
+        values.put(DataContract.Events.PART_COUNT, msg.getInt("partCount", 0));             // u32   Multi-part episode part count (Added in version 6).
+        values.put(DataContract.Events.EPISODE_ON_SCREEN, msg.getString("episodeOnscreen", null));  // str   Textual representation of episode number (Added in version 6).
+        values.put(DataContract.Events.IMAGE, msg.getString("image", null));                // str   URL to a still capture from the episode (Added in version 6).
+        values.put(DataContract.Events.DVR_ID, msg.getInt("dvrId", 0));                     // u32   ID of a recording (Added in version 5).
+        values.put(DataContract.Events.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));        // u32   ID of next event on the same channel.
+
+        getContentResolver().update(DataContract.Events.CONTENT_URI, values,
+                DataContract.Events.ID + "=?", new String[]{String.valueOf(id)});
+    }
+
+    /**
+     * Server to client method.
+     * An epg event has been deleted on the server.
+     * @param msg The message with the epg event id that was deleted
+     */
+    private void onEventDelete(HTSMessage msg) {
+        Log.d(TAG, "onEventDelete() called");
+
+        int id = msg.getInt("eventId");
+        getContentResolver().delete(DataContract.Events.CONTENT_URI,
+                DataContract.Events.ID + "=?", new String[]{String.valueOf(id)});
     }
 }
