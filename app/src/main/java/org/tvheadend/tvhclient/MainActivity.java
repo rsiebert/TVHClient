@@ -672,7 +672,7 @@ public class MainActivity extends ActionBarActivity implements SearchView.OnQuer
             startActivityForResult(connIntent, Constants.RESULT_CODE_SETTINGS);
 
         } else {
-            if (!app.isConnected()) {
+            if (!MiscUtils.isNetworkAvailable(this)) {
                 connectionStatus = Constants.ACTION_CONNECTION_STATE_NO_NETWORK;
                 handleMenuSelection(MENU_STATUS);
             } else {
