@@ -46,7 +46,7 @@ public class DataContract {
                 ID, NAME, ADDRESS, PORT, USERNAME, PASSWORD, SELECTED, CHANNEL_TAG, STREAMING_PORT,
                 WOL_ADDRESS, WOL_PORT, WOL_BROADCAST, PLAY_PROFILE_ID, REC_PROFILE_ID, CAST_PROFILE_ID
         };
-        // The default sort order for queries containing NAME fields.
+        // The default sort order for queries
         public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
@@ -81,7 +81,7 @@ public class DataContract {
                 RESOLUTION, AUDIO_CODEC, VIDEO_CODEC, SUBTITLE_CODEC,
         };
 
-        // The default sort order for queries containing NAME fields.
+        // The default sort order for queries
         public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
@@ -116,7 +116,7 @@ public class DataContract {
                 ID, NUMBER, NUMBER_MINOR, NAME, ICON, EVENT_ID, NEXT_EVENT_ID
         };
 
-        // The default sort order for queries containing NAME fields.
+        // The default sort order for queries
         public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
@@ -137,7 +137,7 @@ public class DataContract {
         public static final String NAME = "tagName";                // str   required   Name of tag.
         public static final String INDEX = "tagIndex";              // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
         public static final String ICON = "tagIcon";                // str   optional   URL to an icon representative for the channel.
-        public static final String TITLED_ICON = "tagTitledIcon";   // u32   optional   Icon includes a title" +
+        public static final String TITLED_ICON = "tagTitledIcon";   // u32   optional   Icon includes a title
         // TODO this relation requires a channel id to tag id table?
         public static final String MEMBERS = "members";             // u32[] optional   Channel IDs of those that belong to the tag
 
@@ -146,7 +146,7 @@ public class DataContract {
                 ID, NAME, INDEX, ICON, TITLED_ICON
         };
 
-        // The default sort order for queries containing NAME fields.
+        // The default sort order for queries
         public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
@@ -197,7 +197,7 @@ public class DataContract {
                 PART_COUNT, EPISODE_ON_SCREEN, IMAGE, DVR_ID, NEXT_EVENT_ID
         };
 
-        // The default sort order for queries containing NAME fields.
+        // The default sort order for queries
         public static final String SORT_ORDER_DEFAULT = CHANNEL_ID + " ASC, " + START + " ASC";
     }
 
@@ -251,7 +251,90 @@ public class DataContract {
                 DATA_SIZE, ENABLED
         };
 
-        // The default sort order for queries containing NAME fields.
+        // The default sort order for queries
         public static final String SORT_ORDER_DEFAULT = CHANNEL + " ASC, " + START + " ASC";
+    }
+
+    /**
+     * Constants for the series recordings table of the tvhclient provider.
+     */
+    public static final class SeriesRecordings {
+        // The database table name
+        public static final String TABLE = "series_recordings";
+        // The content URI for this table.
+        public static final Uri CONTENT_URI =  Uri.withAppendedPath(DataContract.CONTENT_URI, "series_recordings");
+        // The mime type of a directory of items.
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/series_recordings";
+        // The mime type of a single item.
+        public static final String CONTENT_SERIES_RECORDING_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/series_recordings";
+
+        public static final String ID = BaseColumns._ID;            // str   required   ID (string!) of dvrAutorecEntry.
+        public static final String ENABLED = "enabled";             // u32   required   If autorec entry is enabled (activated).
+        public static final String NAME = "name";                   // str   required   Name of the autorec entry (Added in version 18).
+        public static final String MIN_DURATION = "minDuration";    // u32   required   Minimal duration in seconds (0 = Any).
+        public static final String MAX_DURATION = "maxDuration";    // u32   required   Maximal duration in seconds (0 = Any).
+        public static final String RETENTION = "retention";         // u32   required   Retention time (in days).
+        public static final String DAYS_OF_WEEK = "daysOfWeek";     // u32   required   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+        public static final String PRIORITY = "priority";           // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+        public static final String APPROX_TIME = "approxTime";      // u32   required   Minutes from midnight (up to 24*60).
+        public static final String START = "start";                 // s32   required   Exact start time (minutes from midnight) (Added in version 18).
+        public static final String START_WINDOW = "startWindow";    // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
+        public static final String START_EXTRA = "startExtra";      // s64   required   Extra start minutes (pre-time).
+        public static final String STOP_EXTRA = "stopExtra";        // s64   required   Extra stop minutes (post-time).
+        public static final String TITLE = "title";                 // str   optional   Title.
+        public static final String FULLTEXT = "fulltext";           // u32   optional   Fulltext flag (Added in version 20).
+        public static final String DIRECTORY = "directory";         // str   optional   Forced directory name (Added in version 19).
+        public static final String CHANNEL = "channel";             // u32   optional   Channel ID.
+        public static final String OWNER = "owner";                 // str   optional   Owner of this autorec entry (Added in version 18).
+        public static final String CREATOR = "creator";             // str   optional   Creator of this autorec entry (Added in version 18).
+        public static final String DUP_DETECT = "dupDetect";        // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
+
+        // A projection of all columns in the items table.
+        public static final String[] PROJECTION_ALL = {
+                ID, ENABLED, NAME, MIN_DURATION, MAX_DURATION, RETENTION, DAYS_OF_WEEK, PRIORITY,
+                APPROX_TIME, START, START_WINDOW, START_EXTRA, STOP_EXTRA, TITLE, FULLTEXT,
+                DIRECTORY, CHANNEL, OWNER, CREATOR, DUP_DETECT
+        };
+
+        // The default sort order for queries
+        public static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
+    }
+
+    /**
+     * Constants for the timer recordings table of the tvhclient provider.
+     */
+    public static final class TimerRecordings {
+        // The database table name
+        public static final String TABLE = "timer_recordings";
+        // The content URI for this table.
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "timer_recordings");
+        // The mime type of a directory of items.
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/timer_recordings";
+        // The mime type of a single item.
+        public static final String CONTENT_TIMER_RECORDING_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/timer_recordings";
+
+        public static final String ID = BaseColumns._ID;        // str   required   ID (string!) of timerecEntry.
+        public static final String TITLE = "title";             // str   required   Title for the recordings.
+        public static final String DIRECTORY = "directory";     // str   optional   Forced directory name (Added in version 19).
+        public static final String ENABLED = "enabled";         // u32   required   Title for the recordings.
+        public static final String NAME = "name";               // str   required   Name for this timerec entry.
+        public static final String CONFIG_NAME = "configName";  // str   required   DVR Configuration Name / UUID.
+        public static final String CHANNEL = "channel";         // u32   required   Channel ID.
+        public static final String DAYS_OF_WEEK = "daysOfWeek"; // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+        public static final String PRIORITY = "priority";       // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+        public static final String START = "start";             // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
+        public static final String STOP = "stop";               // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+        public static final String RETENTION = "retention";     // u32   optional   Retention in days.
+        public static final String OWNER = "owner";             // str   optional   Owner of this timerec entry.
+        public static final String CREATOR = "creator";         // str   optional   Creator of this timerec entry.
+
+        // A projection of all columns in the items table.
+        public static final String[] PROJECTION_ALL = {
+                ID, TITLE, DIRECTORY, ENABLED, NAME, CONFIG_NAME, CHANNEL, DAYS_OF_WEEK,
+                PRIORITY, START, STOP, RETENTION, OWNER, CREATOR
+        };
+
+        // The default sort order for queries
+        public static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
     }
 }
