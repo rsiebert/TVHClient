@@ -22,7 +22,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/connections";
         // The mime type of a single item.
-        public static final String CONTENT_CONNECTION_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/connections";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/connections";
 
         // Database column names
         public static final String ID = BaseColumns._ID;
@@ -61,7 +61,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/profiles";
         // The mime type of a single item.
-        public static final String CONTENT_PROFILE_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/profiles";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/profiles";
 
         // Database column names
         public static final String ID = BaseColumns._ID;
@@ -96,7 +96,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/channels";
         // The mime type of a single item.
-        public static final String CONTENT_CHANNEL_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/channels";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/channels";
 
         // Database column names
         public static final String ID = BaseColumns._ID;                // u32 required   ID of channel
@@ -131,7 +131,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/tags";
         // The mime type of a single item.
-        public static final String CONTENT_TAG_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/tags";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/tags";
 
         public static final String ID = BaseColumns._ID;            // u32   required   ID of tag.
         public static final String NAME = "tagName";                // str   required   Name of tag.
@@ -161,7 +161,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/programs";
         // The mime type of a single item.
-        public static final String CONTENT_PROGRAM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/programs";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/programs";
 
         public static final String ID = BaseColumns._ID;                // u32   required   Event ID
         public static final String CHANNEL_ID = "channelId";            // u32   required   The channel this event is related to.
@@ -212,7 +212,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/recordings";
         // The mime type of a single item.
-        public static final String CONTENT_RECORDING_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/recordings";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/recordings";
 
         public static final String ID = BaseColumns._ID;            // u32   required   ID of dvrEntry.
         public static final String CHANNEL = "channel";             // u32   optional   Channel of dvrEntry.
@@ -266,7 +266,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/series_recordings";
         // The mime type of a single item.
-        public static final String CONTENT_SERIES_RECORDING_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/series_recordings";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/series_recordings";
 
         public static final String ID = BaseColumns._ID;            // str   required   ID (string!) of dvrAutorecEntry.
         public static final String ENABLED = "enabled";             // u32   required   If autorec entry is enabled (activated).
@@ -311,7 +311,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/timer_recordings";
         // The mime type of a single item.
-        public static final String CONTENT_TIMER_RECORDING_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/timer_recordings";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/timer_recordings";
 
         public static final String ID = BaseColumns._ID;        // str   required   ID (string!) of timerecEntry.
         public static final String TITLE = "title";             // str   required   Title for the recordings.
@@ -349,7 +349,7 @@ public class DataContract {
         // The mime type of a directory of items.
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/events";
         // The mime type of a single item.
-        public static final String CONTENT_EVENT_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/events";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/events";
 
         public static final String ID = BaseColumns._ID;                // u32   required   Event ID
         public static final String CHANNEL_ID = "channelId";            // u32   required   The channel this event is related to.

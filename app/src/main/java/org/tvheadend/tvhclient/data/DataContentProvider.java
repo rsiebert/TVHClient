@@ -170,27 +170,27 @@ public class DataContentProvider extends ContentProvider {
         // TODO rename the content_<name>_type to content_id_type or something else
         switch (mUriMatcher.match(uri)) {
             case CONNECTION_ID:
-                return DataContract.Connections.CONTENT_CONNECTION_TYPE;
+                return DataContract.Connections.CONTENT_ITEM_TYPE;
             case CONNECTION_LIST:
                 return DataContract.Connections.CONTENT_TYPE;
             case PROFILE_ID:
-                return DataContract.Profiles.CONTENT_PROFILE_TYPE;
+                return DataContract.Profiles.CONTENT_ITEM_TYPE;
             case PROFILE_LIST:
                 return DataContract.Profiles.CONTENT_TYPE;
             case CHANNEL_ID:
-                return DataContract.Channels.CONTENT_CHANNEL_TYPE;
+                return DataContract.Channels.CONTENT_ITEM_TYPE;
             case CHANNEL_LIST:
                 return DataContract.Channels.CONTENT_TYPE;
             case TAG_ID:
-                return DataContract.Tags.CONTENT_TAG_TYPE;
+                return DataContract.Tags.CONTENT_ITEM_TYPE;
             case TAG_LIST:
                 return DataContract.Tags.CONTENT_TYPE;
             case PROGRAM_ID:
-                return DataContract.Programs.CONTENT_PROGRAM_TYPE;
+                return DataContract.Programs.CONTENT_ITEM_TYPE;
             case PROGRAM_LIST:
                 return DataContract.Programs.CONTENT_TYPE;
             case RECORDING_ID:
-                return DataContract.Recordings.CONTENT_RECORDING_TYPE;
+                return DataContract.Recordings.CONTENT_ITEM_TYPE;
             case RECORDING_LIST:
                 return DataContract.Recordings.CONTENT_TYPE;
             default:
