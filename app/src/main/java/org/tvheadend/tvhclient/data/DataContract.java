@@ -384,5 +384,8 @@ public class DataContract {
                 FIRST_AIRED, SEASON_NUMBER, SEASON_COUNT, EPISODE_NUMBER, EPISODE_COUNT,
                 PART_NUMBER, PART_COUNT, EPISODE_ON_SCREEN, IMAGE, DVR_ID, NEXT_EVENT_ID
         };
+
+        // The default sort order for queries
+        public static final String SORT_ORDER_DEFAULT = CHANNEL_ID + " ASC, " + START + " ASC";
     }
 }
