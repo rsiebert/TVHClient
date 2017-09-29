@@ -7,6 +7,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -409,17 +410,16 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
             case LOADER_ID_COMPLETED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
                         recordingProjection,
-                        DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?",
-                        new String[]{"NULL", "completed"}, null);
+                        DataContract.Recordings.ERROR + " IS NULL AND " + DataContract.Recordings.STATE + "=?",
+                        new String[]{"completed"}, null);
 
             case LOADER_ID_SCHEDULED_RECORDINGS:
-                // TODO Something missing here
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
                         recordingProjection,
-                        DataContract.Recordings.ERROR + "=? AND ("
+                        DataContract.Recordings.ERROR + " IS NULL AND ("
                                 + DataContract.Recordings.STATE + "=? OR "
                                 + DataContract.Recordings.STATE + "=?)",
-                        new String[]{"NULL", "recording", "scheduled"}, null);
+                        new String[]{"recording", "scheduled"}, null);
 
             case LOADER_ID_FAILED_RECORDINGS:
                 // A recording is failed if its either failed, missed or aborted
@@ -428,10 +428,11 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
                 // aborted: error == "Aborted by user" and state == "completed"
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
                         recordingProjection,
-                        "(" + DataContract.Recordings.ERROR + "=? AND " + "(" + DataContract.Recordings.STATE + "=? OR " + DataContract.Recordings.STATE + "=?)) "
-                                + " OR (" + DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?)"
+                        "(" + DataContract.Recordings.ERROR + " IS NOT NULL AND "
+                                + "(" + DataContract.Recordings.STATE + "=? OR " + DataContract.Recordings.STATE + "=?)) "
+                                + " OR (" + DataContract.Recordings.ERROR + " IS NULL AND " + DataContract.Recordings.STATE + "=?)"
                                 + " OR (" + DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?)",
-                        new String[]{"NOT NULL", "missed", "invalid", "NULL", "missed", "Aborted by user", "completed"}, null);
+                        new String[]{"missed", "invalid", "missed", "Aborted by user", "completed"}, null);
 
             case LOADER_ID_REMOVED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
@@ -445,7 +446,12 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        Log.d(TAG, "onLoadFinished() called with: loader = [" + loader.getId() + "]");
+
         int count = (cursor != null) ? cursor.getCount() : 0;
+
+        Log.d(TAG, "onLoadFinished() cursor null " + (cursor == null));
+        Log.d(TAG, "onLoadFinished() cursor count " + count);
 
         switch (loader.getId()) {
             case LOADER_ID_CHANNELS:
