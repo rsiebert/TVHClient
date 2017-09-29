@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.util.Log;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.Logger;
+import org.tvheadend.tvhclient.MiscUtils;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
@@ -24,6 +28,7 @@ import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.DvrCutpoint;
 import org.tvheadend.tvhclient.model.HttpTicket;
@@ -59,12 +64,14 @@ import java.util.concurrent.TimeUnit;
 public class HTSService extends Service implements HTSConnectionListener {
 
     private static final String TAG = HTSService.class.getSimpleName();
-    
+
     private ScheduledExecutorService execService;
     private HTSConnection connection;
     private PackageInfo packInfo;
     private DataStorage ds;
     private Logger logger;
+    private Connection mAccount;
+
 
     private class LocalBinder extends Binder {
         HTSService getService() {
@@ -72,8 +79,36 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
+    private final IBinder mBinder = new LocalBinder();
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
     @Override
     public void onCreate() {
+        Log.d(TAG, "onCreate() called");
+
+        // TODO move this into a account or connection mananger
+        Cursor c = getApplicationContext().getContentResolver().query(
+                DataContract.Connections.CONTENT_URI,
+                DataContract.Connections.PROJECTION_ALL,
+                DataContract.Connections.SELECTED + "=?", new String[] {"1"}, null);
+
+        Log.d(TAG, "onCreate: queried connection data");
+
+        if (c != null && c.getCount() > 0) {
+            Log.d(TAG, "onCreate: Reading connection data");
+            c.moveToFirst();
+            mAccount = new Connection();
+            mAccount.address = c.getString(c.getColumnIndex(DataContract.Connections.ADDRESS));
+            mAccount.port = c.getInt(c.getColumnIndex(DataContract.Connections.PORT));
+            mAccount.username = c.getString(c.getColumnIndex(DataContract.Connections.USERNAME));
+            mAccount.password = c.getString(c.getColumnIndex(DataContract.Connections.PASSWORD));
+            c.close();
+        }
+
         execService = Executors.newScheduledThreadPool(10);
         ds = DataStorage.getInstance();
         logger = Logger.getInstance();
@@ -85,25 +120,23 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand() called with: intent = [" + intent + "], flags = [" + flags + "], startId = [" + startId + "]");
+
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
             logger.log(TAG, "onStartCommand: Connection to server requested");
 
             boolean force = intent.getBooleanExtra("force", false);
-            final String hostname = intent.getStringExtra("hostname");
-            final int port = intent.getIntExtra("port", 9982);
-            final String username = intent.getStringExtra("username");
-            final String password = intent.getStringExtra("password");
-
             if (connection != null && force) {
                 logger.log(TAG, "onStartCommand: Closing existing connection");
                 connection.close();
                 ds.clearAll();
             }
-            if (connection == null || !connection.isConnected()) {
+            if (mAccount != null && connection == null || !connection.isConnected()) {
                 logger.log(TAG, "onStartCommand: Connecting to server");
                 ds.setLoading(true);
                 connection = new HTSConnection(TVHClientApplication.getInstance(), this, packInfo.packageName, packInfo.versionName);
@@ -111,8 +144,8 @@ public class HTSService extends Service implements HTSConnectionListener {
                 // Since this is blocking, spawn to a new thread
                 execService.execute(new Runnable() {
                     public void run() {
-                        connection.open(hostname, port, TVHClientApplication.getInstance().isConnected());
-                        connection.authenticate(username, password);
+                        connection.open(mAccount.address, mAccount.port, MiscUtils.isNetworkAvailable(getApplicationContext()));
+                        connection.authenticate(mAccount.username, mAccount.password);
                     }
                 });
             }
@@ -186,29 +219,29 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
 
         } else if (action.equals(Constants.ACTION_GET_DISC_SPACE)) {
-        	getDiscSpace();
+            getDiscSpace();
 
         } else if (action.equals(Constants.ACTION_GET_DVR_CONFIG)) {
             getDvrConfigs();
-            
+
         } else if (action.equals(Constants.ACTION_GET_PROFILES)) {
             getProfiles();
-            
+
         } else if (action.equals(Constants.ACTION_GET_CHANNEL)) {
             Channel ch = ds.getChannel(intent.getLongExtra("channelId", 0));
             if (ch != null) {
                 getChannel(ch);
             }
-            
+
         } else if (action.equals(Constants.ACTION_SUBSCRIBE_FILTER_STREAM)) {
             subscriptionFilterStream();
-            
+
         } else if (action.equals(Constants.ACTION_GET_DVR_CUTPOINTS)) {
             Recording rec = ds.getRecording(intent.getLongExtra("dvrId", 0));
             if (rec != null) {
                 getDvrCutpoints(rec);
             }
-            
+
         } else if (action.equals(Constants.ACTION_ADD_SERIES_DVR_ENTRY)) {
             addAutorecEntry(intent);
 
@@ -229,6 +262,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy() called");
+
         execService.shutdown();
         if (connection != null) {
             connection.close();
@@ -239,12 +274,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         ds.setLoading(false);
         ds.setConnectionState(error);
     }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
-    private final IBinder mBinder = new LocalBinder();
 
     private void onInitialSyncCompleted() {
         Log.d(TAG, "onInitialSyncCompleted() called");
@@ -495,15 +524,15 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void cacheImage(String url, File f) throws IOException {
         InputStream is;
-        
+
         if (url.startsWith("http")) {
-        	is = new BufferedInputStream(new URL(url).openStream());
+            is = new BufferedInputStream(new URL(url).openStream());
         } else if (connection.getProtocolVersion() > 9) {
-        	is = new HTSFileInputStream(connection, url);
+            is = new HTSFileInputStream(connection, url);
         } else {
             return;
         }
-        
+
         OutputStream os = new FileOutputStream(f);
 
         float scale = getResources().getDisplayMetrics().density;
@@ -548,7 +577,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Boolean showIcons = prefs.getBoolean("showIconPref", true);
         if (!showIcons) {
-            return null; 
+            return null;
         }
 
         if (url == null || url.length() == 0) {
@@ -670,7 +699,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         info.serieslinkId = msg.getInt("serieslinkId", 0);
         return info;
     }
-	
+
     private void epgQuery(final Intent intent) {
 
         final Channel ch = ds.getChannel(intent.getLongExtra("channelId", 0));
@@ -720,7 +749,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
                     ds.showMessage(getString(R.string.error_removing_recording,
-                                response.getString("error", "")));
+                            response.getString("error", "")));
                 } else {
                     ds.showMessage(getString(R.string.success_removing_recording));
                 }
@@ -833,9 +862,8 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Deletes a regular recording from the server with the given id. If the
      * removal was successful a positive message is shown otherwise a negative
      * one.
-     * 
-     * @param id
-     *            The id of the regular recording that shall be deleted
+     *
+     * @param id The id of the regular recording that shall be deleted
      */
     private void deleteDvrEntry(long id) {
         HTSMessage request = new HTSMessage();
@@ -884,7 +912,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // If the eventId is set then an existing program from the program guide
         // shall be recorded. The server will then ignore the other fields
         // automatically.
-        request.putField("eventId", eventId);        
+        request.putField("eventId", eventId);
         request.putField("channelId", channelId);
         request.putField("start", start);
         request.putField("stop", stop);
@@ -943,10 +971,9 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Updates a manual recording to the server with the given values. If the
      * update was successful a positive message is shown otherwise a negative
      * one.
-     * 
-     * @param intent
-     *            Contains the parameters of the manual recording that shall be
-     *            updated
+     *
+     * @param intent Contains the parameters of the manual recording that shall be
+     *               updated
      */
     private void updateTimerRecEntry(final Intent intent) {
 
@@ -998,9 +1025,8 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Deletes a manual recording from the server with the given id. If the
      * removal was successful a positive message is shown otherwise a negative
      * one.
-     * 
-     * @param id
-     *            The id of the manual recording that shall be deleted
+     *
+     * @param id The id of the manual recording that shall be deleted
      */
     private void deleteTimerRecEntry(String id) {
         HTSMessage request = new HTSMessage();
@@ -1023,10 +1049,9 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Adds a manual recording to the server with the given values. If the
      * adding was successful a positive message is shown otherwise a negative
      * one.
-     * 
-     * @param intent
-     *            Contains the parameters of the manual recording that shall be
-     *            added
+     *
+     * @param intent Contains the parameters of the manual recording that shall be
+     *               added
      */
     private void addTimerRecEntry(final Intent intent) {
 
@@ -1128,7 +1153,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 String path = response.getString("path", null);
                 String ticket = response.getString("ticket", null);
                 String webroot = connection.getWebRoot();
-                
+
                 if (path != null && ticket != null) {
                     ds.addTicket(new HttpTicket(webroot + path, ticket));
                 }
@@ -1151,7 +1176,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         });
     }
-    
+
     private void getDiscSpace() {
         HTSMessage request = new HTSMessage();
         request.setMethod("getDiskSpace");
@@ -1209,10 +1234,9 @@ public class HTSService extends Service implements HTSConnectionListener {
      * Updates a series recording to the server with the given values. If the
      * update was successful a positive message is shown otherwise a negative
      * one.
-     * 
-     * @param intent
-     *            Contains the parameters of the series recording that shall be
-     *            updated
+     *
+     * @param intent Contains the parameters of the series recording that shall be
+     *               updated
      */
     private void updateAutorecEntry(final Intent intent) {
 
@@ -1480,6 +1504,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A tag has been added on the server.
+     *
      * @param msg The message with the new tag data
      */
     private void onTagAdd(HTSMessage msg) {
@@ -1508,12 +1533,13 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A tag has been updated on the server.
+     *
      * @param msg The message with the updated tag data
      */
     private void onTagUpdate(HTSMessage msg) {
         Log.d(TAG, "onTagUpdate() called");
 
-        int id =  msg.getInt("tagId");
+        int id = msg.getInt("tagId");
         ContentValues values = new ContentValues();
         values.put(DataContract.Tags.NAME, msg.getString("tagName"));               // str   required   Name of tag.
         values.put(DataContract.Tags.INDEX, msg.getInt("tagIndex", 0));             // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
@@ -1544,6 +1570,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A tag has been deleted on the server.
+     *
      * @param msg The message with the tag id that was deleted
      */
     private void onTagDelete(HTSMessage msg) {
@@ -1560,6 +1587,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A channel has been added on the server.
+     *
      * @param msg The message with the new channel data
      */
     private void onChannelAdd(HTSMessage msg) {
@@ -1613,12 +1641,13 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A channel has been updated on the server.
+     *
      * @param msg The message with the updated channel data
      */
     private void onChannelUpdate(HTSMessage msg) {
         Log.d(TAG, "onChannelUpdate() called");
 
-        int id =  msg.getInt("channelId");
+        int id = msg.getInt("channelId");
         ContentValues values = new ContentValues();
         values.put(DataContract.Channels.NUMBER, msg.getInt("channelNumber"));                  // u32   Channel number, 0 means unconfigured.
         values.put(DataContract.Channels.NUMBER_MINOR, msg.getInt("channelNumberMinor", 0));    // u32   Minor channel number (Added in version 13).
@@ -1692,6 +1721,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A channel has been deleted on the server.
+     *
      * @param msg The message with the channel id that was deleted
      */
     private void onChannelDelete(HTSMessage msg) {
@@ -1708,6 +1738,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A recording has been added on the server.
+     *
      * @param msg The message with the new recording data
      */
     private void onDvrEntryAdd(HTSMessage msg) {
@@ -1812,6 +1843,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A recording has been updated on the server.
+     *
      * @param msg The message with the updated recording data
      */
     private void onDvrEntryUpdate(HTSMessage msg) {
@@ -1902,6 +1934,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A recording has been deleted on the server.
+     *
      * @param msg The message with the recording id that was deleted
      */
     private void onDvrEntryDelete(HTSMessage msg) {
@@ -1933,6 +1966,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A series recording has been added on the server.
+     *
      * @param msg The message with the new series recording data
      */
     private void onAutorecEntryAdd(HTSMessage msg) {
@@ -1990,6 +2024,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A series recording has been updated on the server.
+     *
      * @param msg The message with the updated series recording data
      */
     private void onAutorecEntryUpdate(HTSMessage msg) {
@@ -2049,6 +2084,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A series recording has been deleted on the server.
+     *
      * @param msg The message with the series recording id that was deleted
      */
     private void onAutorecEntryDelete(HTSMessage msg) {
@@ -2076,6 +2112,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A timer recording has been added on the server.
+     *
      * @param msg The message with the new timer recording data
      */
     private void onTimerRecEntryAdd(HTSMessage msg) {
@@ -2125,6 +2162,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A timer recording has been updated on the server.
+     *
      * @param msg The message with the updated timer recording data
      */
     private void onTimerRecEntryUpdate(HTSMessage msg) {
@@ -2177,6 +2215,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * A timer recording has been deleted on the server.
+     *
      * @param msg The message with the recording id that was deleted
      */
     private void onTimerRecEntryDelete(HTSMessage msg) {
@@ -2201,6 +2240,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * An epg event has been added on the server.
+     *
      * @param msg The message with the new epg event data
      */
     private void onEventAdd(HTSMessage msg) {
@@ -2239,6 +2279,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * An epg event has been updated on the server.
+     *
      * @param msg The message with the updated epg event data
      */
     private void onEventUpdate(HTSMessage msg) {
@@ -2279,6 +2320,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     /**
      * Server to client method.
      * An epg event has been deleted on the server.
+     *
      * @param msg The message with the epg event id that was deleted
      */
     private void onEventDelete(HTSMessage msg) {
