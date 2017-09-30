@@ -177,34 +177,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + DataContract.TimerRecordings.OWNER + " TEXT NULL,"            // str   optional   Owner of this timerec entry.
                 + DataContract.TimerRecordings.CREATOR + " TEXT NULL);";        // str   optional   Creator of this timerec entry.
         db.execSQL(query);
-
-        query = "CREATE TABLE IF NOT EXISTS " + DataContract.Events.TABLE + " ("
-                + DataContract.Events.ID + " INTEGER PRIMARY KEY,"              // u32   required   Event ID
-                + DataContract.Events.CHANNEL_ID + " INT DEFAULT 0,"            // u32   required   The channel this event is related to.
-                + DataContract.Events.START + " INT DEFAULT 0,"                 // u64   required   Start time of event, UNIX time.
-                + DataContract.Events.STOP + " INT DEFAULT 0,"                  // u64   required   Ending time of event, UNIX time.
-                + DataContract.Events.TITLE + " TEXT NULL,"                     // str   optional   Title of event.
-                + DataContract.Events.SUMMARY + " TEXT NULL,"                   // str   optional   Short description of the event (Added in version 6).
-                + DataContract.Events.DESCRIPTION + " TEXT NULL,"               // str   optional   Long description of the event.
-                + DataContract.Events.SERIES_LINK_ID + " INT DEFAULT 0,"        // u32   optional   Series Link ID (Added in version 6).
-                + DataContract.Events.EPISODE_ID + " INT DEFAULT 0,"            // u32   optional   Episode ID (Added in version 6).
-                + DataContract.Events.SEASON_ID + " INT DEFAULT 0,"             // u32   optional   Season ID (Added in version 6).
-                + DataContract.Events.BRAND_ID + " INT DEFAULT 0,"              // u32   optional   Brand ID (Added in version 6).
-                + DataContract.Events.TYPE_OF_CONTENT + " INT DEFAULT 0,"       // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
-                + DataContract.Events.AGE_RATING + " INT DEFAULT 0,"            // u32   optional   Minimum age rating (Added in version 6).
-                + DataContract.Events.STAR_RATING + " INT DEFAULT 0,"           // u32   optional   Star rating (1-5) (Added in version 6).
-                + DataContract.Events.FIRST_AIRED + " INT DEFAULT 0,"           // s64   optional   Original broadcast time, UNIX time (Added in version 6).
-                + DataContract.Events.SEASON_NUMBER + " INT DEFAULT 0,"         // u32   optional   Season number (Added in version 6).
-                + DataContract.Events.SEASON_COUNT + " INT DEFAULT 0,"          // u32   optional   Show season count (Added in version 6).
-                + DataContract.Events.EPISODE_NUMBER + " INT DEFAULT 0,"        // u32   optional   Episode number (Added in version 6).
-                + DataContract.Events.EPISODE_COUNT + " INT DEFAULT 0,"         // u32   optional   Season episode count (Added in version 6).
-                + DataContract.Events.PART_NUMBER + " INT DEFAULT 0,"           // u32   optional   Multi-part episode part number (Added in version 6).
-                + DataContract.Events.PART_COUNT + " INT DEFAULT 0,"            // u32   optional   Multi-part episode part count (Added in version 6).
-                + DataContract.Events.EPISODE_ON_SCREEN + " TEXT NULL,"         // str   optional   Textual representation of episode number (Added in version 6).
-                + DataContract.Events.IMAGE + " TEXT NULL,"                     // str   optional   URL to a still capture from the episode (Added in version 6).
-                + DataContract.Events.DVR_ID + " INT DEFAULT 0,"                // u32   optional   ID of a recording (Added in version 5).
-                + DataContract.Events.NEXT_EVENT_ID + " INT DEFAULT 0);";       // u32   optional   ID of next event on the same channel.
-        db.execSQL(query);
     }
 
     /**
@@ -411,34 +383,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + DataContract.TimerRecordings.RETENTION + " INT DEFAULT 0,"    // u32   optional   Retention in days.
                     + DataContract.TimerRecordings.OWNER + " TEXT NULL,"            // str   optional   Owner of this timerec entry.
                     + DataContract.TimerRecordings.CREATOR + " TEXT NULL);";        // str   optional   Creator of this timerec entry.
-            db.execSQL(query);
-
-            query = "CREATE TABLE IF NOT EXISTS " + DataContract.Events.TABLE + " ("
-                    + DataContract.Events.ID + " INTEGER PRIMARY KEY,"              // u32   required   Event ID
-                    + DataContract.Events.CHANNEL_ID + " INT DEFAULT 0,"            // u32   required   The channel this event is related to.
-                    + DataContract.Events.START + " INT DEFAULT 0,"                 // u64   required   Start time of event, UNIX time.
-                    + DataContract.Events.STOP + " INT DEFAULT 0,"                  // u64   required   Ending time of event, UNIX time.
-                    + DataContract.Events.TITLE + " TEXT NULL,"                     // str   optional   Title of event.
-                    + DataContract.Events.SUMMARY + " TEXT NULL,"                   // str   optional   Short description of the event (Added in version 6).
-                    + DataContract.Events.DESCRIPTION + " TEXT NULL,"               // str   optional   Long description of the event.
-                    + DataContract.Events.SERIES_LINK_ID + " INT DEFAULT 0,"        // u32   optional   Series Link ID (Added in version 6).
-                    + DataContract.Events.EPISODE_ID + " INT DEFAULT 0,"            // u32   optional   Episode ID (Added in version 6).
-                    + DataContract.Events.SEASON_ID + " INT DEFAULT 0,"             // u32   optional   Season ID (Added in version 6).
-                    + DataContract.Events.BRAND_ID + " INT DEFAULT 0,"              // u32   optional   Brand ID (Added in version 6).
-                    + DataContract.Events.TYPE_OF_CONTENT + " INT DEFAULT 0,"       // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
-                    + DataContract.Events.AGE_RATING + " INT DEFAULT 0,"            // u32   optional   Minimum age rating (Added in version 6).
-                    + DataContract.Events.STAR_RATING + " INT DEFAULT 0,"           // u32   optional   Star rating (1-5) (Added in version 6).
-                    + DataContract.Events.FIRST_AIRED + " INT DEFAULT 0,"           // s64   optional   Original broadcast time, UNIX time (Added in version 6).
-                    + DataContract.Events.SEASON_NUMBER + " INT DEFAULT 0,"         // u32   optional   Season number (Added in version 6).
-                    + DataContract.Events.SEASON_COUNT + " INT DEFAULT 0,"          // u32   optional   Show season count (Added in version 6).
-                    + DataContract.Events.EPISODE_NUMBER + " INT DEFAULT 0,"        // u32   optional   Episode number (Added in version 6).
-                    + DataContract.Events.EPISODE_COUNT + " INT DEFAULT 0,"         // u32   optional   Season episode count (Added in version 6).
-                    + DataContract.Events.PART_NUMBER + " INT DEFAULT 0,"           // u32   optional   Multi-part episode part number (Added in version 6).
-                    + DataContract.Events.PART_COUNT + " INT DEFAULT 0,"            // u32   optional   Multi-part episode part count (Added in version 6).
-                    + DataContract.Events.EPISODE_ON_SCREEN + " TEXT NULL,"         // str   optional   Textual representation of episode number (Added in version 6).
-                    + DataContract.Events.IMAGE + " TEXT NULL,"                     // str   optional   URL to a still capture from the episode (Added in version 6).
-                    + DataContract.Events.DVR_ID + " INT DEFAULT 0,"                // u32   optional   ID of a recording (Added in version 5).
-                    + DataContract.Events.NEXT_EVENT_ID + " INT DEFAULT 0);";       // u32   optional   ID of next event on the same channel.
             db.execSQL(query);
         }
     }
