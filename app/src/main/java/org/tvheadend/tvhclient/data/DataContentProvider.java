@@ -36,8 +36,6 @@ public class DataContentProvider extends ContentProvider {
     private static final int SERIES_RECORDING_ID = 14;
     private static final int TIMER_RECORDING_LIST = 15;
     private static final int TIMER_RECORDING_ID = 16;
-    private static final int EVENT_LIST = 17;
-    private static final int EVENT_ID = 18;
     private static final UriMatcher mUriMatcher;
 
     // prepare the UriMatcher
@@ -59,15 +57,12 @@ public class DataContentProvider extends ContentProvider {
         mUriMatcher.addURI(DataContract.AUTHORITY, "series_recordings/#", SERIES_RECORDING_ID);
         mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings", TIMER_RECORDING_LIST);
         mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings/#", TIMER_RECORDING_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "events", EVENT_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "events/#", EVENT_ID);
     }
 
     private DatabaseHelper mHelper;
 
     @Override
     public boolean onCreate() {
-        Log.d(TAG, "onCreate() called");
         mHelper = DatabaseHelper.getInstance(getContext());
         return false;
     }
@@ -75,8 +70,6 @@ public class DataContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Log.d(TAG, "query() called with: uri = [" + uri + "]");
-
         SQLiteDatabase db = mHelper.getReadableDatabase();
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         switch (mUriMatcher.match(uri)) {
@@ -184,19 +177,6 @@ public class DataContentProvider extends ContentProvider {
                 builder.appendWhere(DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment());
                 break;
 
-            case EVENT_LIST:
-                builder.setTables(DataContract.Events.TABLE);
-                if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = DataContract.Events.SORT_ORDER_DEFAULT;
-                }
-                break;
-
-            case EVENT_ID:
-                builder.setTables(DataContract.Events.TABLE);
-                // limit query to one row at most
-                builder.appendWhere(DataContract.Events.ID + " = " + uri.getLastPathSegment());
-                break;
-
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -216,8 +196,6 @@ public class DataContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        Log.d(TAG, "getType() called with: uri = [" + uri + "]");
-
         switch (mUriMatcher.match(uri)) {
             case CONNECTION_ID:
                 return DataContract.Connections.CONTENT_ITEM_TYPE;
@@ -251,10 +229,6 @@ public class DataContentProvider extends ContentProvider {
                 return DataContract.TimerRecordings.CONTENT_ITEM_TYPE;
             case TIMER_RECORDING_LIST:
                 return DataContract.TimerRecordings.CONTENT_TYPE;
-            case EVENT_ID:
-                return DataContract.Events.CONTENT_ITEM_TYPE;
-            case EVENT_LIST:
-                return DataContract.Events.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -263,8 +237,6 @@ public class DataContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues contentValues) {
-        Log.d(TAG, "insert() called with: uri = [" + uri + "]");
-
         // Check if the uri is valid
         if (mUriMatcher.match(uri) != CONNECTION_LIST
                 && mUriMatcher.match(uri) != PROFILE_LIST
@@ -273,8 +245,7 @@ public class DataContentProvider extends ContentProvider {
                 && mUriMatcher.match(uri) != PROGRAM_LIST
                 && mUriMatcher.match(uri) != RECORDING_LIST
                 && mUriMatcher.match(uri) != SERIES_RECORDING_LIST
-                && mUriMatcher.match(uri) != TIMER_RECORDING_LIST
-                && mUriMatcher.match(uri) != EVENT_LIST) {
+                && mUriMatcher.match(uri) != TIMER_RECORDING_LIST) {
             throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
         }
 
@@ -323,11 +294,6 @@ public class DataContentProvider extends ContentProvider {
                 id = db.insertWithOnConflict(DataContract.TimerRecordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = getUriForId(id, uri);
                 break;
-
-            case EVENT_LIST:
-                id = db.insertWithOnConflict(DataContract.Events.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = getUriForId(id, uri);
-                break;
         }
 
         return newUri;
@@ -335,8 +301,6 @@ public class DataContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        Log.d(TAG, "delete() called with: uri = [" + uri + "]");
-
         SQLiteDatabase db = mHelper.getWritableDatabase();
         int deletedRows;
         String where;
@@ -422,16 +386,6 @@ public class DataContentProvider extends ContentProvider {
                 deletedRows = db.delete(DataContract.TimerRecordings.TABLE, where, selectionArgs);
                 break;
 
-            case EVENT_LIST:
-                deletedRows = db.delete(DataContract.Events.TABLE, selection, selectionArgs);
-                break;
-
-            case EVENT_ID:
-                where = DataContract.Events.ID + " = " + uri.getLastPathSegment();
-                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
-                deletedRows = db.delete(DataContract.Events.TABLE, where, selectionArgs);
-                break;
-
             default:
                 throw new IllegalArgumentException("Invalid URI: " + uri);
         }
@@ -446,8 +400,6 @@ public class DataContentProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-        Log.d(TAG, "update() called with: uri = [" + uri + "], contentValues = [" + contentValues + "], selection = [" + selection + "], selectionArgs = [" + selectionArgs[0] + "]");
-
         SQLiteDatabase db = mHelper.getWritableDatabase();
         int updateCount;
         String where;
@@ -531,16 +483,6 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 updateCount = db.update(DataContract.TimerRecordings.TABLE, contentValues, where, selectionArgs);
-                break;
-
-            case EVENT_LIST:
-                updateCount = db.update(DataContract.Events.TABLE, contentValues, selection, selectionArgs);
-                break;
-
-            case EVENT_ID:
-                where = DataContract.Events.ID + " = " + uri.getLastPathSegment();
-                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
-                updateCount = db.update(DataContract.Events.TABLE, contentValues, where, selectionArgs);
                 break;
 
             default:
