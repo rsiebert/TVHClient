@@ -10,8 +10,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -2247,33 +2245,33 @@ public class HTSService extends Service implements HTSConnectionListener {
         Log.d(TAG, "onEventAdd() called");
 
         ContentValues values = new ContentValues();
-        values.put(DataContract.Events.ID, msg.getInt("eventId"));                          // u32   required   Event ID
-        values.put(DataContract.Events.CHANNEL_ID, msg.getInt("channelId"));                // u32   required   The channel this event is related to.
-        values.put(DataContract.Events.START, msg.getInt("start"));                         // u64   required   Start time of event, UNIX time.
-        values.put(DataContract.Events.STOP, msg.getInt("stop"));                           // u64   required   Ending time of event, UNIX time.
-        values.put(DataContract.Events.TITLE, msg.getString("title", null));                // str   optional   Title of event.
-        values.put(DataContract.Events.SUMMARY, msg.getString("summary", null));            // str   optional   Short description of the event (Added in version 6).
-        values.put(DataContract.Events.DESCRIPTION, msg.getString("description", null));    // str   optional   Long description of the event.
-        values.put(DataContract.Events.SERIES_LINK_ID, msg.getInt("serieslinkId", 0));      // u32   optional   Series Link ID (Added in version 6).
-        values.put(DataContract.Events.EPISODE_ID, msg.getInt("episodeId", 0));             // u32   optional   Episode ID (Added in version 6).
-        values.put(DataContract.Events.SEASON_ID, msg.getInt("seasonId", 0));               // u32   optional   Season ID (Added in version 6).
-        values.put(DataContract.Events.BRAND_ID, msg.getInt("brandId", 0));                 // u32   optional   Brand ID (Added in version 6).
-        values.put(DataContract.Events.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
-        values.put(DataContract.Events.AGE_RATING, msg.getInt("ageRating", 0));             // u32   optional   Minimum age rating (Added in version 6).
-        values.put(DataContract.Events.STAR_RATING, msg.getInt("starRating", 0));           // u32   optional   Star rating (1-5) (Added in version 6).
-        values.put(DataContract.Events.FIRST_AIRED, msg.getInt("firstAired", 0));           // s64   optional   Original broadcast time, UNIX time (Added in version 6).
-        values.put(DataContract.Events.SEASON_NUMBER, msg.getInt("seasonNumber", 0));       // u32   optional   Season number (Added in version 6).
-        values.put(DataContract.Events.SEASON_COUNT, msg.getInt("seasonCount", 0));         // u32   optional   Show season count (Added in version 6).
-        values.put(DataContract.Events.EPISODE_NUMBER, msg.getInt("episodeNumber", 0));     // u32   optional   Episode number (Added in version 6).
-        values.put(DataContract.Events.EPISODE_COUNT, msg.getInt("episodeCount", 0));       // u32   optional   Season episode count (Added in version 6).
-        values.put(DataContract.Events.PART_NUMBER, msg.getInt("partNumber", 0));           // u32   optional   Multi-part episode part number (Added in version 6).
-        values.put(DataContract.Events.PART_COUNT, msg.getInt("partCount", 0));             // u32   optional   Multi-part episode part count (Added in version 6).
-        values.put(DataContract.Events.EPISODE_ON_SCREEN, msg.getString("episodeOnscreen", null));  // str   optional   Textual representation of episode number (Added in version 6).
-        values.put(DataContract.Events.IMAGE, msg.getString("image", null));                // str   optional   URL to a still capture from the episode (Added in version 6).
-        values.put(DataContract.Events.DVR_ID, msg.getInt("dvrId", 0));                     // u32   optional   ID of a recording (Added in version 5).
-        values.put(DataContract.Events.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));        // u32   optional   ID of next event on the same channel.
+        values.put(DataContract.Programs.ID, msg.getInt("eventId"));                          // u32   required   Event ID
+        values.put(DataContract.Programs.CHANNEL_ID, msg.getInt("channelId"));                // u32   required   The channel this event is related to.
+        values.put(DataContract.Programs.START, msg.getInt("start"));                         // u64   required   Start time of event, UNIX time.
+        values.put(DataContract.Programs.STOP, msg.getInt("stop"));                           // u64   required   Ending time of event, UNIX time.
+        values.put(DataContract.Programs.TITLE, msg.getString("title", null));                // str   optional   Title of event.
+        values.put(DataContract.Programs.SUMMARY, msg.getString("summary", null));            // str   optional   Short description of the event (Added in version 6).
+        values.put(DataContract.Programs.DESCRIPTION, msg.getString("description", null));    // str   optional   Long description of the event.
+        values.put(DataContract.Programs.SERIES_LINK_ID, msg.getInt("serieslinkId", 0));      // u32   optional   Series Link ID (Added in version 6).
+        values.put(DataContract.Programs.EPISODE_ID, msg.getInt("episodeId", 0));             // u32   optional   Episode ID (Added in version 6).
+        values.put(DataContract.Programs.SEASON_ID, msg.getInt("seasonId", 0));               // u32   optional   Season ID (Added in version 6).
+        values.put(DataContract.Programs.BRAND_ID, msg.getInt("brandId", 0));                 // u32   optional   Brand ID (Added in version 6).
+        values.put(DataContract.Programs.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
+        values.put(DataContract.Programs.AGE_RATING, msg.getInt("ageRating", 0));             // u32   optional   Minimum age rating (Added in version 6).
+        values.put(DataContract.Programs.STAR_RATING, msg.getInt("starRating", 0));           // u32   optional   Star rating (1-5) (Added in version 6).
+        values.put(DataContract.Programs.FIRST_AIRED, msg.getInt("firstAired", 0));           // s64   optional   Original broadcast time, UNIX time (Added in version 6).
+        values.put(DataContract.Programs.SEASON_NUMBER, msg.getInt("seasonNumber", 0));       // u32   optional   Season number (Added in version 6).
+        values.put(DataContract.Programs.SEASON_COUNT, msg.getInt("seasonCount", 0));         // u32   optional   Show season count (Added in version 6).
+        values.put(DataContract.Programs.EPISODE_NUMBER, msg.getInt("episodeNumber", 0));     // u32   optional   Episode number (Added in version 6).
+        values.put(DataContract.Programs.EPISODE_COUNT, msg.getInt("episodeCount", 0));       // u32   optional   Season episode count (Added in version 6).
+        values.put(DataContract.Programs.PART_NUMBER, msg.getInt("partNumber", 0));           // u32   optional   Multi-part episode part number (Added in version 6).
+        values.put(DataContract.Programs.PART_COUNT, msg.getInt("partCount", 0));             // u32   optional   Multi-part episode part count (Added in version 6).
+        values.put(DataContract.Programs.EPISODE_ON_SCREEN, msg.getString("episodeOnscreen", null));  // str   optional   Textual representation of episode number (Added in version 6).
+        values.put(DataContract.Programs.IMAGE, msg.getString("image", null));                // str   optional   URL to a still capture from the episode (Added in version 6).
+        values.put(DataContract.Programs.DVR_ID, msg.getInt("dvrId", 0));                     // u32   optional   ID of a recording (Added in version 5).
+        values.put(DataContract.Programs.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));        // u32   optional   ID of next event on the same channel.
 
-        getContentResolver().insert(DataContract.Events.CONTENT_URI, values);
+        getContentResolver().insert(DataContract.Programs.CONTENT_URI, values);
     }
 
     /**
@@ -2287,34 +2285,34 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         int id = msg.getInt("eventId");
         ContentValues values = new ContentValues();
-        values.put(DataContract.Events.ID, msg.getInt("eventId"));                          // u32   Event ID
-        values.put(DataContract.Events.CHANNEL_ID, msg.getInt("channelId"));                // u32   The channel this event is related to.
-        values.put(DataContract.Events.START, msg.getInt("start"));                         // u64   Start time of event, UNIX time.
-        values.put(DataContract.Events.STOP, msg.getInt("stop"));                           // u64   Ending time of event, UNIX time.
-        values.put(DataContract.Events.TITLE, msg.getString("title", null));                // str   Title of event.
-        values.put(DataContract.Events.SUMMARY, msg.getString("summary", null));            // str   Short description of the event (Added in version 6).
-        values.put(DataContract.Events.DESCRIPTION, msg.getString("description", null));    // str   Long description of the event.
-        values.put(DataContract.Events.SERIES_LINK_ID, msg.getInt("serieslinkId", 0));      // u32   Series Link ID (Added in version 6).
-        values.put(DataContract.Events.EPISODE_ID, msg.getInt("episodeId", 0));             // u32   Episode ID (Added in version 6).
-        values.put(DataContract.Events.SEASON_ID, msg.getInt("seasonId", 0));               // u32   Season ID (Added in version 6).
-        values.put(DataContract.Events.BRAND_ID, msg.getInt("brandId", 0));                 // u32   Brand ID (Added in version 6).
-        values.put(DataContract.Events.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   DVB content code (Added in version 4, Modified in version 6*).
-        values.put(DataContract.Events.AGE_RATING, msg.getInt("ageRating", 0));             // u32   Minimum age rating (Added in version 6).
-        values.put(DataContract.Events.STAR_RATING, msg.getInt("starRating", 0));           // u32   Star rating (1-5) (Added in version 6).
-        values.put(DataContract.Events.FIRST_AIRED, msg.getInt("firstAired", 0));           // s64   Original broadcast time, UNIX time (Added in version 6).
-        values.put(DataContract.Events.SEASON_NUMBER, msg.getInt("seasonNumber", 0));       // u32   Season number (Added in version 6).
-        values.put(DataContract.Events.SEASON_COUNT, msg.getInt("seasonCount", 0));         // u32   Show season count (Added in version 6).
-        values.put(DataContract.Events.EPISODE_NUMBER, msg.getInt("episodeNumber", 0));     // u32   Episode number (Added in version 6).
-        values.put(DataContract.Events.EPISODE_COUNT, msg.getInt("episodeCount", 0));       // u32   Season episode count (Added in version 6).
-        values.put(DataContract.Events.PART_NUMBER, msg.getInt("partNumber", 0));           // u32   Multi-part episode part number (Added in version 6).
-        values.put(DataContract.Events.PART_COUNT, msg.getInt("partCount", 0));             // u32   Multi-part episode part count (Added in version 6).
-        values.put(DataContract.Events.EPISODE_ON_SCREEN, msg.getString("episodeOnscreen", null));  // str   Textual representation of episode number (Added in version 6).
-        values.put(DataContract.Events.IMAGE, msg.getString("image", null));                // str   URL to a still capture from the episode (Added in version 6).
-        values.put(DataContract.Events.DVR_ID, msg.getInt("dvrId", 0));                     // u32   ID of a recording (Added in version 5).
-        values.put(DataContract.Events.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));        // u32   ID of next event on the same channel.
+        values.put(DataContract.Programs.ID, msg.getInt("eventId"));                          // u32   Event ID
+        values.put(DataContract.Programs.CHANNEL_ID, msg.getInt("channelId"));                // u32   The channel this event is related to.
+        values.put(DataContract.Programs.START, msg.getInt("start"));                         // u64   Start time of event, UNIX time.
+        values.put(DataContract.Programs.STOP, msg.getInt("stop"));                           // u64   Ending time of event, UNIX time.
+        values.put(DataContract.Programs.TITLE, msg.getString("title", null));                // str   Title of event.
+        values.put(DataContract.Programs.SUMMARY, msg.getString("summary", null));            // str   Short description of the event (Added in version 6).
+        values.put(DataContract.Programs.DESCRIPTION, msg.getString("description", null));    // str   Long description of the event.
+        values.put(DataContract.Programs.SERIES_LINK_ID, msg.getInt("serieslinkId", 0));      // u32   Series Link ID (Added in version 6).
+        values.put(DataContract.Programs.EPISODE_ID, msg.getInt("episodeId", 0));             // u32   Episode ID (Added in version 6).
+        values.put(DataContract.Programs.SEASON_ID, msg.getInt("seasonId", 0));               // u32   Season ID (Added in version 6).
+        values.put(DataContract.Programs.BRAND_ID, msg.getInt("brandId", 0));                 // u32   Brand ID (Added in version 6).
+        values.put(DataContract.Programs.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   DVB content code (Added in version 4, Modified in version 6*).
+        values.put(DataContract.Programs.AGE_RATING, msg.getInt("ageRating", 0));             // u32   Minimum age rating (Added in version 6).
+        values.put(DataContract.Programs.STAR_RATING, msg.getInt("starRating", 0));           // u32   Star rating (1-5) (Added in version 6).
+        values.put(DataContract.Programs.FIRST_AIRED, msg.getInt("firstAired", 0));           // s64   Original broadcast time, UNIX time (Added in version 6).
+        values.put(DataContract.Programs.SEASON_NUMBER, msg.getInt("seasonNumber", 0));       // u32   Season number (Added in version 6).
+        values.put(DataContract.Programs.SEASON_COUNT, msg.getInt("seasonCount", 0));         // u32   Show season count (Added in version 6).
+        values.put(DataContract.Programs.EPISODE_NUMBER, msg.getInt("episodeNumber", 0));     // u32   Episode number (Added in version 6).
+        values.put(DataContract.Programs.EPISODE_COUNT, msg.getInt("episodeCount", 0));       // u32   Season episode count (Added in version 6).
+        values.put(DataContract.Programs.PART_NUMBER, msg.getInt("partNumber", 0));           // u32   Multi-part episode part number (Added in version 6).
+        values.put(DataContract.Programs.PART_COUNT, msg.getInt("partCount", 0));             // u32   Multi-part episode part count (Added in version 6).
+        values.put(DataContract.Programs.EPISODE_ON_SCREEN, msg.getString("episodeOnscreen", null));  // str   Textual representation of episode number (Added in version 6).
+        values.put(DataContract.Programs.IMAGE, msg.getString("image", null));                // str   URL to a still capture from the episode (Added in version 6).
+        values.put(DataContract.Programs.DVR_ID, msg.getInt("dvrId", 0));                     // u32   ID of a recording (Added in version 5).
+        values.put(DataContract.Programs.NEXT_EVENT_ID, msg.getInt("nextEventId", 0));        // u32   ID of next event on the same channel.
 
-        getContentResolver().update(DataContract.Events.CONTENT_URI, values,
-                DataContract.Events.ID + "=?", new String[]{String.valueOf(id)});
+        getContentResolver().update(DataContract.Programs.CONTENT_URI, values,
+                DataContract.Programs.ID + "=?", new String[]{String.valueOf(id)});
     }
 
     /**
@@ -2327,7 +2325,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         Log.d(TAG, "onEventDelete() called");
 
         int id = msg.getInt("eventId");
-        getContentResolver().delete(DataContract.Events.CONTENT_URI,
-                DataContract.Events.ID + "=?", new String[]{String.valueOf(id)});
+        getContentResolver().delete(DataContract.Programs.CONTENT_URI,
+                DataContract.Programs.ID + "=?", new String[]{String.valueOf(id)});
     }
 }

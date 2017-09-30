@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 public class DataContract {
 
     // The authority of the tvhclient provider.
-    static final String AUTHORITY = "org.tvheadend.tvhclient.provider";
+    public static final String AUTHORITY = "org.tvheadend.tvhclient.provider";
     // The content URI for the top-level tvhclient authority.
     private static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
@@ -93,6 +93,7 @@ public class DataContract {
         public static final String TABLE = "channels";
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "channels");
+        public static final Uri CONTENT_URI_ICON = Uri.withAppendedPath(DataContract.CONTENT_URI, "channel_icons");
         // The mime type of a directory of items.
         static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/channels";
         // The mime type of a single item.
@@ -112,7 +113,7 @@ public class DataContract {
         public static final String SERVICES = "services";               // msg[] optional   List of available services (Added in version 5)
 
         // A projection of all columns in the items table.
-        static final String[] PROJECTION_ALL = {
+        public static final String[] PROJECTION_ALL = {
                 ID, NUMBER, NUMBER_MINOR, NAME, ICON, EVENT_ID, NEXT_EVENT_ID
         };
 
@@ -244,7 +245,7 @@ public class DataContract {
         public static final String ENABLED = "enabled";             // u32   optional   Enabled flag (Added in version 23).
 
         // A projection of all columns in the items table.
-        static final String[] PROJECTION_ALL = {
+        public static final String[] PROJECTION_ALL = {
                 ID, CHANNEL, START, STOP, START_EXTRA, STOP_EXTRA, RETENTION, PRIORITY, EVENT_ID,
                 AUTOREC_ID, TIMEREC_ID, TYPE_OF_CONTENT, TITLE, SUBTITLE, SUMMARY, DESCRIPTION,
                 STATE, ERROR, OWNER, CREATOR, SUBSCRIPTION_ERROR, STREAM_ERRORS, DATA_ERRORS, PATH,
@@ -336,56 +337,5 @@ public class DataContract {
 
         // The default sort order for queries
         static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
-    }
-
-    /**
-     * Constants for the timer recordings table of the tvhclient provider.
-     */
-    public static final class Events {
-        // The database table name
-        public static final String TABLE = "events";
-        // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "events");
-        // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/events";
-        // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/events";
-
-        public static final String ID = BaseColumns._ID;                // u32   required   Event ID
-        public static final String CHANNEL_ID = "channelId";            // u32   required   The channel this event is related to.
-        public static final String START = "start";                     // u64   required   Start time of event, UNIX time.
-        public static final String STOP = "stop";                       // u64   required   Ending time of event, UNIX time.
-        public static final String TITLE = "title";                     // str   optional   Title of event.
-        public static final String SUMMARY = "summary";                 // str   optional   Short description of the event (Added in version 6).
-        public static final String DESCRIPTION = "description";         // str   optional   Long description of the event.
-        public static final String SERIES_LINK_ID = "serieslinkId";     // u32   optional   Series Link ID (Added in version 6).
-        public static final String EPISODE_ID = "episodeId";            // u32   optional   Episode ID (Added in version 6).
-        public static final String SEASON_ID = "seasonId";              // u32   optional   Season ID (Added in version 6).
-        public static final String BRAND_ID = "brandId";                // u32   optional   Brand ID (Added in version 6).
-        public static final String TYPE_OF_CONTENT = "contentType";     // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
-        public static final String AGE_RATING = "ageRating";            // u32   optional   Minimum age rating (Added in version 6).
-        public static final String STAR_RATING = "starRating";          // u32   optional   Star rating (1-5) (Added in version 6).
-        public static final String FIRST_AIRED = "firstAired";          // s64   optional   Original broadcast time, UNIX time (Added in version 6).
-        public static final String SEASON_NUMBER = "seasonNumber";      // u32   optional   Season number (Added in version 6).
-        public static final String SEASON_COUNT = "seasonCount";        // u32   optional   Show season count (Added in version 6).
-        public static final String EPISODE_NUMBER = "episodeNumber";    // u32   optional   Episode number (Added in version 6).
-        public static final String EPISODE_COUNT = "episodeCount";      // u32   optional   Season episode count (Added in version 6).
-        public static final String PART_NUMBER = "partNumber";          // u32   optional   Multi-part episode part number (Added in version 6).
-        public static final String PART_COUNT = "partCount";            // u32   optional   Multi-part episode part count (Added in version 6).
-        public static final String EPISODE_ON_SCREEN = "episodeOnscreen";   // str   optional   Textual representation of episode number (Added in version 6).
-        public static final String IMAGE = "image";                     // str   optional   URL to a still capture from the episode (Added in version 6).
-        public static final String DVR_ID = "dvrId";                    // u32   optional   ID of a recording (Added in version 5).
-        public static final String NEXT_EVENT_ID = "nextEventId";       // u32   optional   ID of next event on the same channel.
-
-        // A projection of all columns in the items table.
-        static final String[] PROJECTION_ALL = {
-                ID, CHANNEL_ID, START, STOP, TITLE, SUMMARY, DESCRIPTION, SERIES_LINK_ID,
-                EPISODE_ID, SEASON_ID, BRAND_ID, TYPE_OF_CONTENT, AGE_RATING, STAR_RATING,
-                FIRST_AIRED, SEASON_NUMBER, SEASON_COUNT, EPISODE_NUMBER, EPISODE_COUNT,
-                PART_NUMBER, PART_COUNT, EPISODE_ON_SCREEN, IMAGE, DVR_ID, NEXT_EVENT_ID
-        };
-
-        // The default sort order for queries
-        static final String SORT_ORDER_DEFAULT = CHANNEL_ID + " ASC, " + START + " ASC";
     }
 }
