@@ -69,6 +69,8 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     private static final int LOADER_ID_SCHEDULED_RECORDINGS = 3;
     private static final int LOADER_ID_FAILED_RECORDINGS = 4;
     private static final int LOADER_ID_REMOVED_RECORDINGS = 5;
+    private static final int LOADER_ID_SERIES_RECORDINGS = 6;
+    private static final int LOADER_ID_TIMER_RECORDINGS = 7;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -128,6 +130,21 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         // Bind to LocalService
         Intent intent = new Intent(getActivity(), HTSService.class);
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        // Show how many series recordings are available
+        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+            seriesRec.setVisibility(View.GONE);
+        } else {
+            seriesRec.setVisibility(View.VISIBLE);
+        }
+
+        // Show how many timer recordings are available if the server supports
+        // it and the application is unlocked
+        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
+            timerRec.setVisibility(View.GONE);
+        } else {
+            timerRec.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -389,17 +406,6 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText
                 : getString(R.string.nothing));
 
-        // Show how many series recordings are available
-        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            seriesRec.setVisibility(View.GONE);
-        }
-
-        // Show how many timer recordings are available if the server supports
-        // it and the application is unlocked
-        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
-            timerRec.setVisibility(View.GONE);
-        }
-
         String version = String.valueOf(ds.getProtocolVersion())
                 + "   (" + getString(R.string.server) + ": "
                 + ds.getServerName() + " " + ds.getServerVersion() + ")";
@@ -408,7 +414,6 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // TODO move these repeating queries into a separate uri
         final String[] channelProjection = new String[]{
                 DataContract.Recordings.ID};
 
@@ -446,6 +451,13 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
                         DataContract.Recordings.SELECTION_REMOVED,
                         DataContract.Recordings.SELECTION_ARGS_REMOVED, null);
 
+            case LOADER_ID_SERIES_RECORDINGS:
+                return new CursorLoader(getActivity(), DataContract.SeriesRecordings.CONTENT_URI,
+                        new String[]{DataContract.SeriesRecordings.ID}, null, null, null);
+
+            case LOADER_ID_TIMER_RECORDINGS:
+                return new CursorLoader(getActivity(), DataContract.TimerRecordings.CONTENT_URI,
+                        new String[]{DataContract.TimerRecordings.ID}, null, null, null);
         }
         return null;
     }
@@ -471,6 +483,12 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
             case LOADER_ID_REMOVED_RECORDINGS:
                 removedRec.setText(getResources().getQuantityString(R.plurals.removed_recordings, count, count));
                 break;
+            case LOADER_ID_SERIES_RECORDINGS:
+                seriesRec.setText(getResources().getQuantityString(R.plurals.series_recordings, count, count));
+                break;
+            case LOADER_ID_TIMER_RECORDINGS:
+                timerRec.setText(getResources().getQuantityString(R.plurals.timer_recordings, count, count));
+                break;
         }
     }
 
@@ -492,6 +510,12 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
             case LOADER_ID_REMOVED_RECORDINGS:
                 removedRec.setText(getResources().getQuantityString(R.plurals.removed_recordings, 0, 0));
                 break;
+            case LOADER_ID_SERIES_RECORDINGS:
+                seriesRec.setText(getResources().getQuantityString(R.plurals.series_recordings, 0, 0));
+                break;
+            case LOADER_ID_TIMER_RECORDINGS:
+                timerRec.setText(getResources().getQuantityString(R.plurals.timer_recordings, 0, 0));
+                break;
         }
     }
 
@@ -504,6 +528,8 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         getLoaderManager().initLoader(LOADER_ID_SCHEDULED_RECORDINGS, null, this);
         getLoaderManager().initLoader(LOADER_ID_FAILED_RECORDINGS, null, this);
         getLoaderManager().initLoader(LOADER_ID_REMOVED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_SERIES_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_TIMER_RECORDINGS, null, this);
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
