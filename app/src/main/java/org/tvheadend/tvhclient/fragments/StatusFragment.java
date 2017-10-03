@@ -410,35 +410,26 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
             case LOADER_ID_COMPLETED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
                         recordingProjection,
-                        DataContract.Recordings.ERROR + " IS NULL AND " + DataContract.Recordings.STATE + "=?",
-                        new String[]{"completed"}, null);
+                        DataContract.Recordings.SELECTION_COMPLETED,
+                        DataContract.Recordings.SELECTION_ARGS_COMPLETED, null);
 
             case LOADER_ID_SCHEDULED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
                         recordingProjection,
-                        DataContract.Recordings.ERROR + " IS NULL AND ("
-                                + DataContract.Recordings.STATE + "=? OR "
-                                + DataContract.Recordings.STATE + "=?)",
-                        new String[]{"recording", "scheduled"}, null);
+                        DataContract.Recordings.SELECTION_SCHEDULED,
+                        DataContract.Recordings.SELECTION_ARGS_SCHEDULED, null);
 
             case LOADER_ID_FAILED_RECORDINGS:
-                // A recording is failed if its either failed, missed or aborted
-                // failed: error is set AND (state == missed or state == invalid)
-                // missed: no error and state == missed
-                // aborted: error == "Aborted by user" and state == "completed"
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
                         recordingProjection,
-                        "(" + DataContract.Recordings.ERROR + " IS NOT NULL AND "
-                                + "(" + DataContract.Recordings.STATE + "=? OR " + DataContract.Recordings.STATE + "=?)) "
-                                + " OR (" + DataContract.Recordings.ERROR + " IS NULL AND " + DataContract.Recordings.STATE + "=?)"
-                                + " OR (" + DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?)",
-                        new String[]{"missed", "invalid", "missed", "Aborted by user", "completed"}, null);
+                        DataContract.Recordings.SELECTION_FAILED,
+                        DataContract.Recordings.SELECTION_ARGS_FAILED, null);
 
             case LOADER_ID_REMOVED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
                         recordingProjection,
-                        DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?",
-                        new String[]{"File missing", "completed"}, null);
+                        DataContract.Recordings.SELECTION_REMOVED,
+                        DataContract.Recordings.SELECTION_ARGS_REMOVED, null);
 
         }
         return null;

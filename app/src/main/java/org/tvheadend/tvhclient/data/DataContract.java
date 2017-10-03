@@ -252,6 +252,34 @@ public class DataContract {
                 DATA_SIZE, ENABLED
         };
 
+        public static final String SELECTION_COMPLETED =
+                ERROR + " IS NULL AND (" +
+                        DataContract.Recordings.STATE + "=? OR " +
+                        DataContract.Recordings.STATE + "=?)";
+
+        public static final String SELECTION_SCHEDULED =
+                DataContract.Recordings.ERROR + " IS NULL AND ("
+                        + DataContract.Recordings.STATE + "=? OR "
+                        + DataContract.Recordings.STATE + "=?)";
+
+        // A recording is failed if its either failed, missed or aborted
+        // failed: error is set AND (state == missed or state == invalid)
+        // missed: no error and state == missed
+        // aborted: error == "Aborted by user" and state == "completed"
+        public static final String SELECTION_FAILED =
+                "(" + DataContract.Recordings.ERROR + " IS NOT NULL AND "
+                        + "(" + DataContract.Recordings.STATE + "=? OR " + DataContract.Recordings.STATE + "=?)) "
+                        + " OR (" + DataContract.Recordings.ERROR + " IS NULL AND " + DataContract.Recordings.STATE + "=?)"
+                        + " OR (" + DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?)";
+
+        public static final String SELECTION_REMOVED =
+                DataContract.Recordings.ERROR + "=? AND " + DataContract.Recordings.STATE + "=?";
+
+        public static final String[] SELECTION_ARGS_COMPLETED = {"completed"};
+        public static final String[] SELECTION_ARGS_SCHEDULED = {"recording", "scheduled"};
+        public static final String[] SELECTION_ARGS_FAILED = {"missed", "invalid", "missed", "Aborted by user", "completed"};
+        public static final String[] SELECTION_ARGS_REMOVED = {"File missing", "completed"};
+
         // The default sort order for queries
         static final String SORT_ORDER_DEFAULT = CHANNEL + " ASC, " + START + " ASC";
     }
