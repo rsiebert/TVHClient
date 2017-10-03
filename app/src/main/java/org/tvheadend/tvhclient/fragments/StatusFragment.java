@@ -1,12 +1,17 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.database.Cursor;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,17 +25,20 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataContract;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.Recording;
 
-public class StatusFragment extends Fragment implements HTSListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class StatusFragment extends Fragment implements HTSListener, LoaderManager.LoaderCallbacks<Cursor>, HTSService.Listener {
 
     @SuppressWarnings("unused")
     private final static String TAG = StatusFragment.class.getSimpleName();
 
+    public HTSService mService;
+    boolean mBound = false;
     private Activity activity;
     private ActionBarInterface actionBarInterface;
 
@@ -107,6 +115,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated() called with: savedInstanceState = [" + savedInstanceState + "]");
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -116,19 +125,21 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
             actionBarInterface.setActionBarSubtitle("");
         }
 
-        // Prepare the loader.  Either re-connect with an existing one,
-        // or start a new one.
-        getLoaderManager().initLoader(LOADER_ID_CHANNELS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_COMPLETED_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_SCHEDULED_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_FAILED_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_REMOVED_RECORDINGS, null, this);
+        // Bind to LocalService
+        Intent intent = new Intent(getActivity(), HTSService.class);
+        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume() called");
         app.addListener(this);
+
+        if (mBound) {
+            Log.d(TAG, "onResume: adding listener");
+            mService.addListener(this);
+        }
 
         // Upon resume show the actual status. If stuff is loading hide certain
         // information, otherwise show the connection status and the cause of
@@ -144,13 +155,25 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause() called");
+
         app.removeListener(this);
+        if (mBound) {
+            Log.d(TAG, "onPause: removing listener");
+            mService.removeListener(this);
+        }
     }
 
     @Override
     public void onDestroy() {
         actionBarInterface = null;
         super.onDestroy();
+
+        // Unbind from the service
+        if (mBound) {
+            getActivity().unbindService(mConnection);
+            mBound = false;
+        }
     }
 
     @Override
@@ -369,20 +392,12 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         // Show how many series recordings are available
         if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             seriesRec.setVisibility(View.GONE);
-        } else {
-            final int seriesRecCount = ds.getSeriesRecordings().size();
-            seriesRec.setText(getResources().getQuantityString(
-                    R.plurals.series_recordings, seriesRecCount, seriesRecCount));
         }
 
         // Show how many timer recordings are available if the server supports
         // it and the application is unlocked
         if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
             timerRec.setVisibility(View.GONE);
-        } else {
-            final int timerRecCount = ds.getTimerRecordings().size();
-            timerRec.setText(getResources().getQuantityString(
-                    R.plurals.timer_recordings, timerRecCount, timerRecCount));
         }
 
         String version = String.valueOf(ds.getProtocolVersion())
@@ -440,10 +455,6 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         Log.d(TAG, "onLoadFinished() called with: loader = [" + loader.getId() + "]");
 
         int count = (cursor != null) ? cursor.getCount() : 0;
-
-        Log.d(TAG, "onLoadFinished() cursor null " + (cursor == null));
-        Log.d(TAG, "onLoadFinished() cursor count " + count);
-
         switch (loader.getId()) {
             case LOADER_ID_CHANNELS:
                 channels.setText(count + " " + getString(R.string.available));
@@ -483,4 +494,29 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
                 break;
         }
     }
+
+    @Override
+    public void onInitialSyncCompleted() {
+        Log.d(TAG, "onInitialSyncCompleted() called");
+        // Prepare the loaders. Either re-connect with an existing one, or start a new one.
+        getLoaderManager().initLoader(LOADER_ID_CHANNELS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_COMPLETED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_SCHEDULED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_FAILED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_REMOVED_RECORDINGS, null, this);
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.d(TAG, "onServiceConnected() called with: className = [" + className + "], service = [" + service + "]");
+            mService = ((HTSService.LocalBinder) service).getService();
+            onInitialSyncCompleted();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            Log.d(TAG, "onServiceDisconnected() called with: className = [" + className + "]");
+            mService = null;
+            mBound = false;
+        }
+    };
 }
