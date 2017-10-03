@@ -106,7 +106,7 @@ public class HTSMessage extends HashMap<String, Object> {
         return getLongList(name);
     }
 
-    private List<Integer> getIntList(String name) {
+    public List<Integer> getIntList(String name) {
         ArrayList<Integer> list = new ArrayList<>();
 
         if (!containsField(name)) {
