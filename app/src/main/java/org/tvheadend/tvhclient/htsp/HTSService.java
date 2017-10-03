@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -55,6 +56,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -69,10 +72,10 @@ public class HTSService extends Service implements HTSConnectionListener {
     private DataStorage ds;
     private Logger logger;
     private Connection mAccount;
+    private final Set<Listener> mListeners = new CopyOnWriteArraySet<>();
 
-
-    private class LocalBinder extends Binder {
-        HTSService getService() {
+    public class LocalBinder extends Binder {
+        public HTSService getService() {
             return HTSService.this;
         }
     }
@@ -82,6 +85,26 @@ public class HTSService extends Service implements HTSConnectionListener {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    public interface Listener {
+        void onInitialSyncCompleted();
+    }
+
+    public void addListener(Listener listener) {
+        if (mListeners.contains(listener)) {
+            Log.w(TAG, "Attempted to add duplicate epg sync listener");
+            return;
+        }
+        mListeners.add(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        if (!mListeners.contains(listener)) {
+            Log.w(TAG, "Attempted to remove non existing epg sync listener");
+            return;
+        }
+        mListeners.remove(listener);
     }
 
     @Override
@@ -285,6 +308,21 @@ public class HTSService extends Service implements HTSConnectionListener {
         // Get some additional information after the initial loading has been finished
         getDiscSpace();
         getSystemTime();
+
+
+        for (final Listener listener : mListeners) {
+            Handler handler = null; //TODO listener.getHandler();
+            if (handler == null) {
+                listener.onInitialSyncCompleted();
+            } else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onInitialSyncCompleted();
+                    }
+                });
+            }
+        }
     }
 
     private void onSubscriptionStart(HTSMessage msg) {
@@ -2153,11 +2191,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     private ContentValues convertRecordingToContentValues(HTSMessage msg) {
         ContentValues values = new ContentValues();
         values.put(DataContract.Recordings.CHANNEL, msg.getInt("channel", 0));                  // u32   optional   Channel of dvrEntry.
-        values.put(DataContract.Recordings.START, msg.getInt("start"));                         // s64   required   Time of when this entry was scheduled to start recording.
-        values.put(DataContract.Recordings.STOP, msg.getInt("stop"));                           // s64   required   Time of when this entry was scheduled to stop recording.
-        values.put(DataContract.Recordings.START_EXTRA, msg.getInt("startExtra"));              // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
-        values.put(DataContract.Recordings.STOP_EXTRA, msg.getInt("stopExtra"));                // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
-        values.put(DataContract.Recordings.RETENTION, msg.getInt("retention"));                 // s64   required   DVR Entry retention time in days (Added in version 13).
+        values.put(DataContract.Recordings.START, msg.getLong("start"));                        // s64   required   Time of when this entry was scheduled to start recording.
+        values.put(DataContract.Recordings.STOP, msg.getLong("stop"));                          // s64   required   Time of when this entry was scheduled to stop recording.
+        values.put(DataContract.Recordings.START_EXTRA, msg.getLong("startExtra"));             // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+        values.put(DataContract.Recordings.STOP_EXTRA, msg.getLong("stopExtra"));               // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+        values.put(DataContract.Recordings.RETENTION, msg.getLong("retention"));                // s64   required   DVR Entry retention time in days (Added in version 13).
         values.put(DataContract.Recordings.PRIORITY, msg.getInt("priority"));                   // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
         values.put(DataContract.Recordings.EVENT_ID, msg.getInt("eventId", 0));                 // u32   optional   Associated EPG Event ID (Added in version 13).
         values.put(DataContract.Recordings.AUTOREC_ID, msg.getString("autorecId", null));       // str   optional   Associated Autorec UUID (Added in version 13).
@@ -2175,7 +2213,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         values.put(DataContract.Recordings.STREAM_ERRORS, msg.getString("streamErrors", null)); // str   optional   Number of recording errors (Added in version 20).
         values.put(DataContract.Recordings.DATA_ERRORS, msg.getString("dataErrors", null));     // str   optional   Number of stream data errors (Added in version 20).
         values.put(DataContract.Recordings.PATH, msg.getString("path", null));                  // str   optional   Recording path for playback.
-        values.put(DataContract.Recordings.DATA_SIZE, msg.getInt("dataSize", 0));               // s64   optional   Actual file size of the last recordings (Added in version 21).
+        values.put(DataContract.Recordings.DATA_SIZE, msg.getLong("dataSize", 0));              // s64   optional   Actual file size of the last recordings (Added in version 21).
         values.put(DataContract.Recordings.ENABLED, msg.getInt("enabled", 0));                  // u32   optional   Enabled flag (Added in version 23).
         return values;
     }
@@ -2197,8 +2235,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         values.put(DataContract.SeriesRecordings.APPROX_TIME, msg.getInt("approxTime"));        // u32   Minutes from midnight (up to 24*60).
         values.put(DataContract.SeriesRecordings.START, msg.getInt("start"));                   // s32   Exact start time (minutes from midnight) (Added in version 18).
         values.put(DataContract.SeriesRecordings.START_WINDOW, msg.getInt("startWindow"));      // s32   Exact stop time (minutes from midnight) (Added in version 18).
-        values.put(DataContract.SeriesRecordings.START_EXTRA, msg.getInt("startExtra"));        // s64   Extra start minutes (pre-time).
-        values.put(DataContract.SeriesRecordings.STOP_EXTRA, msg.getInt("stopExtra"));          // s64   Extra stop minutes (post-time).
+        values.put(DataContract.SeriesRecordings.START_EXTRA, msg.getLong("startExtra"));       // s64   Extra start minutes (pre-time).
+        values.put(DataContract.SeriesRecordings.STOP_EXTRA, msg.getLong("stopExtra"));         // s64   Extra stop minutes (post-time).
         values.put(DataContract.SeriesRecordings.TITLE, msg.getString("title", null));          // str   Title.
         values.put(DataContract.SeriesRecordings.FULLTEXT, msg.getInt("fulltext", 0));          // u32   Fulltext flag (Added in version 20).
         values.put(DataContract.SeriesRecordings.DIRECTORY, msg.getString("directory", null));  // str   Forced directory name (Added in version 19).
@@ -2221,7 +2259,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         values.put(DataContract.TimerRecordings.ENABLED, msg.getInt("enabled"));                // u32   Title for the recordings.
         values.put(DataContract.TimerRecordings.NAME, msg.getString("name"));                   // str   Name for this timerec entry.
         values.put(DataContract.TimerRecordings.CONFIG_NAME, msg.getString("configName"));      // str   DVR Configuration Name / UUID.
-        values.put(DataContract.TimerRecordings.CHANNEL, msg.getInt("channel"));                // u32   Channel ID.
+        values.put(DataContract.TimerRecordings.CHANNEL, msg.getInt("channel", 0));                // u32   Channel ID.
         values.put(DataContract.TimerRecordings.DAYS_OF_WEEK, msg.getInt("daysOfWeek"));        // u32   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
         values.put(DataContract.TimerRecordings.PRIORITY, msg.getInt("priority"));              // u32   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
         values.put(DataContract.TimerRecordings.START, msg.getInt("start"));                    // u32   Minutes from midnight (up to 24*60) for the start of the time window (including)
@@ -2240,8 +2278,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     private ContentValues convertProgramToContentValues(HTSMessage msg) {
         ContentValues values = new ContentValues();
         values.put(DataContract.Programs.CHANNEL_ID, msg.getInt("channelId"));                // u32   The channel this event is related to.
-        values.put(DataContract.Programs.START, msg.getInt("start"));                         // u64   Start time of event, UNIX time.
-        values.put(DataContract.Programs.STOP, msg.getInt("stop"));                           // u64   Ending time of event, UNIX time.
+        values.put(DataContract.Programs.START, msg.getLong("start"));                        // u64   Start time of event, UNIX time.
+        values.put(DataContract.Programs.STOP, msg.getLong("stop"));                          // u64   Ending time of event, UNIX time.
         values.put(DataContract.Programs.TITLE, msg.getString("title", null));                // str   Title of event.
         values.put(DataContract.Programs.SUMMARY, msg.getString("summary", null));            // str   Short description of the event (Added in version 6).
         values.put(DataContract.Programs.DESCRIPTION, msg.getString("description", null));    // str   Long description of the event.
@@ -2252,7 +2290,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         values.put(DataContract.Programs.TYPE_OF_CONTENT, msg.getInt("contentType", 0));      // u32   DVB content code (Added in version 4, Modified in version 6*).
         values.put(DataContract.Programs.AGE_RATING, msg.getInt("ageRating", 0));             // u32   Minimum age rating (Added in version 6).
         values.put(DataContract.Programs.STAR_RATING, msg.getInt("starRating", 0));           // u32   Star rating (1-5) (Added in version 6).
-        values.put(DataContract.Programs.FIRST_AIRED, msg.getInt("firstAired", 0));           // s64   Original broadcast time, UNIX time (Added in version 6).
+        values.put(DataContract.Programs.FIRST_AIRED, msg.getLong("firstAired", 0));          // s64   Original broadcast time, UNIX time (Added in version 6).
         values.put(DataContract.Programs.SEASON_NUMBER, msg.getInt("seasonNumber", 0));       // u32   Season number (Added in version 6).
         values.put(DataContract.Programs.SEASON_COUNT, msg.getInt("seasonCount", 0));         // u32   Show season count (Added in version 6).
         values.put(DataContract.Programs.EPISODE_NUMBER, msg.getInt("episodeNumber", 0));     // u32   Episode number (Added in version 6).
