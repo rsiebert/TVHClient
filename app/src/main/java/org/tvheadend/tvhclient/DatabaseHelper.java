@@ -175,10 +175,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < newVersion && newVersion == 13) {
             db.execSQL(getServerInfoQuery());
 
-            // TODO get all defined connection names and add new servers with this name
-
-            // TODO drop the name from the connections table
-
+            // TODO this can be moved to the migration utils class
+            Cursor cursor = db.rawQuery("SELECT * FROM " + DataContract.Connections.TABLE, null);
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                long id = cursor.getLong(cursor.getColumnIndex(DataContract.Connections.ID));
+                db.execSQL("INSERT INTO " + DataContract.ServerInfo.TABLE
+                        + "(" + DataContract.ServerInfo.ID + ") VALUES (" + id + ")");
+            }
         }
     }
 
