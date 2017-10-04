@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
@@ -63,7 +62,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class HTSService extends Service implements HTSConnectionListener {
+public class HTSService extends Service implements HTSConnectionListener, HTSResponseHandler {
 
     private static final String TAG = HTSService.class.getSimpleName();
 
@@ -280,6 +279,32 @@ public class HTSService extends Service implements HTSConnectionListener {
         ds.setConnectionState(error);
     }
 
+    @Override
+    public void handleResponse(HTSMessage response) {
+        Log.d(TAG, "handleResponse() called with: response = [" + response.getMethod() + "]");
+
+        ContentValues values = new ContentValues();
+        switch (response.getMethod()) {
+            case "getDiskSpace":
+                values.put(DataContract.ServerInfo.FREE_DISC_SPACE, response.getLong("freediskspace", 0));
+                values.put(DataContract.ServerInfo.TOTAL_DISC_SPACE, response.getLong("totaldiskspace", 0));
+
+                Log.d(TAG, "handleResponse: updating server info ");
+                getContentResolver().update(DataContract.ServerInfo.CONTENT_URI, values,
+                        DataContract.ServerInfo.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+
+                break;
+            case "getSysTime":
+                values.put(DataContract.ServerInfo.TIME, response.getLong("time", 0));
+                values.put(DataContract.ServerInfo.GMT_OFFSET, response.getInt("gmtoffset", 0));
+
+                Log.d(TAG, "handleResponse: updating server info ");
+                getContentResolver().update(DataContract.ServerInfo.CONTENT_URI, values,
+                        DataContract.ServerInfo.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+                break;
+        }
+    }
+
     private void onInitialSyncCompleted() {
         Log.d(TAG, "onInitialSyncCompleted() called");
 
@@ -292,9 +317,24 @@ public class HTSService extends Service implements HTSConnectionListener {
         ds.setWebRoot(connection.getWebRoot());
 
         // Get some additional information after the initial loading has been finished
-        getDiscSpace();
-        getSystemTime();
+        Log.d(TAG, "onInitialSyncCompleted: get disc space");
+        final HTSService responseHandler = this;
+        execService.execute(new Runnable() {
+            public void run() {
+                HTSMessage request = new HTSMessage();
+                request.setMethod("getDiskSpace");
+                connection.sendMessage(request, responseHandler);
+            }
+        });
 
+        Log.d(TAG, "onInitialSyncCompleted: get system time");
+        execService.execute(new Runnable() {
+            public void run() {
+                HTSMessage request = new HTSMessage();
+                request.setMethod("getSysTime");
+                connection.sendMessage(request, responseHandler);
+            }
+        });
 
         for (final Listener listener : mListeners) {
             Handler handler = null; //TODO listener.getHandler();
@@ -437,11 +477,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         ds.updateSubscription(sub);
     }
 
+
+
+
     public void onMessage(HTSMessage msg) {
         logger.log(TAG, "onMessage() called with: msg = [" + msg.getMethod() + "]");
-        String method = msg.getMethod();
 
-        switch (method) {
+        switch (msg.getMethod()) {
             case "tagAdd":
                 onTagAdd(msg);
                 break;
