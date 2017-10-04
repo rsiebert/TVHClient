@@ -25,6 +25,7 @@ public class DataContentUtils {
         if (c != null && c.getCount() > 0) {
             c.moveToFirst();
             connection = new Connection();
+            connection.id = c.getLong(c.getColumnIndex(DataContract.Connections.ID));
             connection.address = c.getString(c.getColumnIndex(DataContract.Connections.ADDRESS));
             connection.port = c.getInt(c.getColumnIndex(DataContract.Connections.PORT));
             connection.username = c.getString(c.getColumnIndex(DataContract.Connections.USERNAME));
