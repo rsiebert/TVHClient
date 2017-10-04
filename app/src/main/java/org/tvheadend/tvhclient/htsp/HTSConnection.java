@@ -41,6 +41,7 @@ public class HTSConnection extends Thread {
 
     private final HTSConnectionListener listener;
     private final SparseArray<HTSResponseHandler> responseHandlers;
+    private final SparseArray<String> responseHandlerMethods;
     private final LinkedList<HTSMessage> messageQueue;
     private boolean auth = false;
     private Selector selector;
@@ -63,6 +64,7 @@ public class HTSConnection extends Thread {
         inBuf = ByteBuffer.allocateDirect(2048 * 2048 * (bufferSize + 1));
         inBuf.limit(4);
         responseHandlers = new SparseArray<>();
+        responseHandlerMethods = new SparseArray<>();
         messageQueue = new LinkedList<>();
 
         this.listener = listener;
@@ -225,6 +227,7 @@ public class HTSConnection extends Thread {
             seq++;
             message.putField("seq", seq);
             responseHandlers.put(seq, listener);
+            responseHandlerMethods.put(seq, message.getMethod());
             socketChannel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ | SelectionKey.OP_CONNECT);
             messageQueue.add(message);
             selector.wakeup();
@@ -240,6 +243,7 @@ public class HTSConnection extends Thread {
         lock.lock();
         try {
             responseHandlers.clear();
+            responseHandlerMethods.clear();
             messageQueue.clear();
             auth = false;
             running = false;
@@ -330,6 +334,8 @@ public class HTSConnection extends Thread {
             int respSeq = msg.getInt("seq");
             HTSResponseHandler handler = responseHandlers.get(respSeq);
             responseHandlers.remove(respSeq);
+            String method = responseHandlerMethods.get(respSeq);
+            msg.setMethod(method);
 
             if (handler != null) {
             	synchronized (handler) {
