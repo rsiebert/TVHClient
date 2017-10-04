@@ -366,4 +366,49 @@ public class DataContract {
         // The default sort order for queries
         static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
     }
+
+    /**
+     * Constants for the server information table of the tvhclient provider.
+     */
+    public static final class ServerStats {
+        // The database table name
+        public static final String TABLE = "server_statistics";
+        // The content URI for this table.
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "server_statistics");
+        // The mime type of a directory of items.
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/server_statistics";
+        // The mime type of a single item.
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/server_statistics";
+
+        // server time, discspace
+        public static final String ID = BaseColumns._ID;
+        public static final String VERSION = "version";
+        public static final String ACCOUNT_ID = "account_id";               // The connection id where the credentials to the server are stored
+        public static final String TIME = "time";                           // s64   required   UNIX time.
+        public static final String GMT_OFFSET = "gmt_offset";               // s32   optional   Minutes east of GMT.
+        public static final String FREE_DISC_SPACE = "free_disc_space";     // s64   required   Bytes available.
+        public static final String TOTAL_DISC_SPACE = "total_disc_space";   // s64   required   Total capacity.
+        public static final String HTSP_VERSION = "htsp_version";           // u32   required   The server supports all versions of the protocol up to and including this number.
+        public static final String SERVER_NAME = "server_name";             // str   required   Server software name.
+        public static final String SERVER_VERSION = "server_version";       // str   required   Server software version
+        public static final String WEB_ROOT = "web_root";                   // str   optional   Server HTTP webroot (Added in version 8) Note: any access to TVH webserver should include this at start of URL path
+        public static final String CHANNEL_COUNT = "channel_count";
+        public static final String TAG_COUNT = "tag_count";
+        public static final String RECORDING_COUNT = "recording_count";
+        public static final String COMPLETED_RECORDING_COUNT = "completed_recording_count";
+        public static final String SCHEDULED_RECORDING_COUNT = "scheduled_recording_count";
+        public static final String FAILED_RECORDING_COUNT = "failed_recording_count";
+        public static final String REMOVED_RECORDING_COUNT = "removed_recording_count";
+        public static final String SERIES_RECORDING_COUNT = "series_recording_count";
+        public static final String TIMER_RECORDING_COUNT = "timer_recording_count";
+
+        // A projection of all columns in the items table.
+        static final String[] PROJECTION_ALL = {
+                ID, ACCOUNT_ID, TIME, GMT_OFFSET, FREE_DISC_SPACE, TOTAL_DISC_SPACE,
+                HTSP_VERSION, SERVER_NAME, SERVER_VERSION, WEB_ROOT,
+                CHANNEL_COUNT, TAG_COUNT, RECORDING_COUNT, COMPLETED_RECORDING_COUNT,
+                SCHEDULED_RECORDING_COUNT, FAILED_RECORDING_COUNT, REMOVED_RECORDING_COUNT,
+                SERIES_RECORDING_COUNT, TIMER_RECORDING_COUNT
+        };
+    }
 }
