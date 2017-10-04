@@ -38,6 +38,8 @@ public class DataContentProvider extends ContentProvider {
     private static final int TIMER_RECORDING_ID = 16;
     private static final int SERVER_STATS_LIST = 17;
     private static final int SERVER_STATS_ID = 18;
+    // Public constants for custom queries
+    public static final int SERVER_STATS_ID_ACTIVE = 19;
     private static final UriMatcher mUriMatcher;
 
     // prepare the UriMatcher
@@ -59,8 +61,9 @@ public class DataContentProvider extends ContentProvider {
         mUriMatcher.addURI(DataContract.AUTHORITY, "series_recordings/#", SERIES_RECORDING_ID);
         mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings", TIMER_RECORDING_LIST);
         mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings/#", TIMER_RECORDING_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "server_statistics", SERVER_STATS_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "server_statistics/#", SERVER_STATS_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "server_info", SERVER_STATS_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "server_info/#", SERVER_STATS_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, "server_info_active/#", SERVER_STATS_ID_ACTIVE);
     }
 
     private DatabaseHelper mHelper;
@@ -74,6 +77,8 @@ public class DataContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Log.d(TAG, "query() called with: uri = [" + uri + "], projection = [" + projection + "], selection = [" + selection + "], selectionArgs = [" + selectionArgs + "], sortOrder = [" + sortOrder + "]");
+
         SQLiteDatabase db = mHelper.getReadableDatabase();
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         switch (mUriMatcher.match(uri)) {
@@ -194,6 +199,19 @@ public class DataContentProvider extends ContentProvider {
                 builder.appendWhere(DataContract.ServerInfo.ID + " = " + uri.getLastPathSegment());
                 break;
 
+            case SERVER_STATS_ID_ACTIVE:
+                Log.d(TAG, "query: get active server");
+                String query = "SELECT * FROM "
+                        + DataContract.ServerInfo.TABLE + ", " + DataContract.Connections.TABLE + " WHERE "
+                        + DataContract.ServerInfo.TABLE + "." + DataContract.ServerInfo.ID + " = "
+                        + DataContract.Connections.TABLE + "." + DataContract.Connections.ID;
+                Log.d(TAG, "query: " + query);
+                Cursor cursor = db.rawQuery(query, null);
+                if (getContext() != null) {
+                    cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                }
+                return cursor;
+
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -250,6 +268,8 @@ public class DataContentProvider extends ContentProvider {
                 return DataContract.ServerInfo.CONTENT_ITEM_TYPE;
             case SERVER_STATS_LIST:
                 return DataContract.ServerInfo.CONTENT_TYPE;
+            case SERVER_STATS_ID_ACTIVE:
+                return DataContract.ServerInfo.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
