@@ -16,4 +16,13 @@ public class Connection {
     public int playback_profile_id;
     public int recording_profile_id;
     public int cast_profile_id;
+
+    public long time;
+    public int gmtOffset;
+    public int freeDiskSpace;
+    public int totalDiskSpace;
+    public String htspVersion;
+    public String serverName;
+    public String serverVersion;
+    public String webRoot;
 }

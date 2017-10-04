@@ -47,7 +47,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + DataContract.Connections.WOL_BROADCAST + " INT DEFAULT 0, "
                 + DataContract.Connections.PLAY_PROFILE_ID + " INT DEFAULT 0, "
                 + DataContract.Connections.REC_PROFILE_ID + " INT DEFAULT 0,"
-                + DataContract.Connections.CAST_PROFILE_ID + " INT DEFAULT 0);";
+                + DataContract.Connections.CAST_PROFILE_ID + " INT DEFAULT 0,"
+                + DataContract.Connections.TIME + " INT DEFAULT 0,"                 // s64   required   UNIX time.
+                + DataContract.Connections.GMT_OFFSET + " INT DEFAULT 0,"           // s32   optional   Minutes east of GMT.
+                + DataContract.Connections.FREE_DISC_SPACE + " INT DEFAULT 0,"      // s64   required   Bytes available.
+                + DataContract.Connections.TOTAL_DISC_SPACE + " INT DEFAULT 0,"     // s64   required   Total capacity.
+                + DataContract.Connections.HTSP_VERSION + " INT DEFAULT 0,"         // u32   required   The server supports all versions of the protocol up to and including this number.
+                + DataContract.Connections.SERVER_NAME + " TEXT NULL,"              // str   required   Server software name.
+                + DataContract.Connections.SERVER_VERSION + " TEXT NULL,"           // str   required   Server software version
+                + DataContract.Connections.WEB_ROOT + " TEXT NULL);";               // str   optional   Server HTTP webroot
+
         db.execSQL(query);
 
         query = "CREATE TABLE IF NOT EXISTS " + DataContract.Profiles.TABLE + " ("
@@ -69,7 +78,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(getRecordingsQuery());
         db.execSQL(getSeriesRecordingsQuery());
         db.execSQL(getTimerRecordingsQuery());
-        db.execSQL(getServerInfoQuery());
     }
 
     /**
@@ -173,16 +181,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(getTimerRecordingsQuery());
         }
         if (oldVersion < newVersion && newVersion == 13) {
-            db.execSQL(getServerInfoQuery());
-
-            // TODO this can be moved to the migration utils class
-            Cursor cursor = db.rawQuery("SELECT * FROM " + DataContract.Connections.TABLE, null);
-            if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                long id = cursor.getLong(cursor.getColumnIndex(DataContract.Connections.ID));
-                db.execSQL("INSERT INTO " + DataContract.ServerInfo.TABLE
-                        + "(" + DataContract.ServerInfo.ID + ") VALUES (" + id + ")");
-            }
+            db.execSQL("ALTER TABLE " + DataContract.Connections.TABLE + " ADD COLUMN " + DataContract.Connections.TIME + " INT DEFAULT 0;");                 // s64   required   UNIX time.
+            db.execSQL("ALTER TABLE " + DataContract.Connections.TABLE + " ADD COLUMN " + DataContract.Connections.GMT_OFFSET + " INT DEFAULT 0;");           // s32   optional   Minutes east of GMT.
+            db.execSQL("ALTER TABLE " + DataContract.Connections.TABLE + " ADD COLUMN " + DataContract.Connections.FREE_DISC_SPACE + " INT DEFAULT 0;");      // s64   required   Bytes available.
+            db.execSQL("ALTER TABLE " + DataContract.Connections.TABLE + " ADD COLUMN " + DataContract.Connections.TOTAL_DISC_SPACE + " INT DEFAULT 0;");     // s64   required   Total capacity.
+            db.execSQL("ALTER TABLE " + DataContract.Connections.TABLE + " ADD COLUMN " + DataContract.Connections.HTSP_VERSION + " INT DEFAULT 0;");         // u32   required   The server supports all versions of the protocol up to and including this number.
+            db.execSQL("ALTER TABLE " + DataContract.Connections.TABLE + " ADD COLUMN " + DataContract.Connections.SERVER_NAME + " TEXT NULL;");              // str   required   Server software name.
+            db.execSQL("ALTER TABLE " + DataContract.Connections.TABLE + " ADD COLUMN " + DataContract.Connections.SERVER_VERSION + " TEXT NULL;");           // str   required   Server software version
+            db.execSQL("ALTER TABLE " + DataContract.Connections.TABLE + " ADD COLUMN " + DataContract.Connections.WEB_ROOT + " TEXT NULL;");                 // str   optional   Server HTTP webroot
         }
     }
 
@@ -310,29 +316,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + DataContract.TimerRecordings.RETENTION + " INT DEFAULT 0,"    // u32   optional   Retention in days.
                 + DataContract.TimerRecordings.OWNER + " TEXT NULL,"            // str   optional   Owner of this timerec entry.
                 + DataContract.TimerRecordings.CREATOR + " TEXT NULL);";        // str   optional   Creator of this timerec entry.
-        return query;
-    }
-
-    private String getServerInfoQuery() {
-        String query = "CREATE TABLE IF NOT EXISTS " + DataContract.ServerInfo.TABLE + " ("
-                + DataContract.ServerInfo.ID + " INTEGER PRIMARY KEY,"             // The connection id where the credentials to the server are stored
-                + DataContract.ServerInfo.TIME + " INT DEFAULT 0,"                 // s64   required   UNIX time.
-                + DataContract.ServerInfo.GMT_OFFSET + " INT DEFAULT 0,"           // s32   optional   Minutes east of GMT.
-                + DataContract.ServerInfo.FREE_DISC_SPACE + " INT DEFAULT 0,"      // s64   required   Bytes available.
-                + DataContract.ServerInfo.TOTAL_DISC_SPACE + " INT DEFAULT 0,"     // s64   required   Total capacity.
-                + DataContract.ServerInfo.HTSP_VERSION + " INT DEFAULT 0,"         // u32   required   The server supports all versions of the protocol up to and including this number.
-                + DataContract.ServerInfo.SERVER_NAME + " TEXT NULL,"              // str   required   Server software name.
-                + DataContract.ServerInfo.SERVER_VERSION + " TEXT NULL,"           // str   required   Server software version
-                + DataContract.ServerInfo.WEB_ROOT + " TEXT NULL,"                 // str   optional   Server HTTP webroot
-                + DataContract.ServerInfo.CHANNEL_COUNT + " INT DEFAULT 0,"
-                + DataContract.ServerInfo.TAG_COUNT + " INT DEFAULT 0,"
-                + DataContract.ServerInfo.RECORDING_COUNT + " INT DEFAULT 0,"
-                + DataContract.ServerInfo.COMPLETED_RECORDING_COUNT + " INT DEFAULT 0,"
-                + DataContract.ServerInfo.SCHEDULED_RECORDING_COUNT + " INT DEFAULT 0,"
-                + DataContract.ServerInfo.FAILED_RECORDING_COUNT + " INT DEFAULT 0,"
-                + DataContract.ServerInfo.REMOVED_RECORDING_COUNT + " INT DEFAULT 0,"
-                + DataContract.ServerInfo.SERIES_RECORDING_COUNT + " INT DEFAULT 0,"
-                + DataContract.ServerInfo.TIMER_RECORDING_COUNT + " INT DEFAULT 0);";
         return query;
     }
 }

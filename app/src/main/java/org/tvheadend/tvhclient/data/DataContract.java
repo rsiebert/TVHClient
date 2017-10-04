@@ -40,11 +40,21 @@ public class DataContract {
         public static final String PLAY_PROFILE_ID = "playback_profile_id";
         public static final String REC_PROFILE_ID = "recording_profile_id";
         public static final String CAST_PROFILE_ID = "cast_profile_id";
+        public static final String TIME = "time";                           // s64   required   UNIX time.
+        public static final String GMT_OFFSET = "gmt_offset";               // s32   optional   Minutes east of GMT.
+        public static final String FREE_DISC_SPACE = "free_disc_space";     // s64   required   Bytes available.
+        public static final String TOTAL_DISC_SPACE = "total_disc_space";   // s64   required   Total capacity.
+        public static final String HTSP_VERSION = "htsp_version";           // u32   required   The server supports all versions of the protocol up to and including this number.
+        public static final String SERVER_NAME = "server_name";             // str   required   Server software name.
+        public static final String SERVER_VERSION = "server_version";       // str   required   Server software version
+        public static final String WEB_ROOT = "web_root";                   // str   optional   Server HTTP webroot (Added in version 8) Note: any access to TVH webserver should include this at start of URL path
 
         // A projection of all columns in the items table.
         public static final String[] PROJECTION_ALL = {
                 ID, NAME, ADDRESS, PORT, USERNAME, PASSWORD, SELECTED, CHANNEL_TAG, STREAMING_PORT,
-                WOL_ADDRESS, WOL_PORT, WOL_BROADCAST, PLAY_PROFILE_ID, REC_PROFILE_ID, CAST_PROFILE_ID
+                WOL_ADDRESS, WOL_PORT, WOL_BROADCAST, PLAY_PROFILE_ID, REC_PROFILE_ID, CAST_PROFILE_ID,
+                TIME, GMT_OFFSET, FREE_DISC_SPACE, TOTAL_DISC_SPACE,
+                HTSP_VERSION, SERVER_NAME, SERVER_VERSION, WEB_ROOT
         };
         // The default sort order for queries
         static final String SORT_ORDER_DEFAULT = NAME + " ASC";
@@ -365,53 +375,5 @@ public class DataContract {
 
         // The default sort order for queries
         static final String SORT_ORDER_DEFAULT = NAME + " ASC, " + START + " ASC";
-    }
-
-    /**
-     * Constants for the server information table of the tvhclient provider.
-     */
-    public static final class ServerInfo {
-        // The database table name
-        public static final String TABLE = "server_info";
-        // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "server_info");
-        public static final Uri CONTENT_URI_ACTIVE = Uri.withAppendedPath(DataContract.CONTENT_URI, "server_info_active");
-        // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/server_info";
-        // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/server_info";
-
-        // server time, discspace
-        public static final String ID = BaseColumns._ID;                    // This id is identical to the connection id
-        public static final String VERSION = "version";
-        public static final String TIME = "time";                           // s64   required   UNIX time.
-        public static final String GMT_OFFSET = "gmt_offset";               // s32   optional   Minutes east of GMT.
-        public static final String FREE_DISC_SPACE = "free_disc_space";     // s64   required   Bytes available.
-        public static final String TOTAL_DISC_SPACE = "total_disc_space";   // s64   required   Total capacity.
-        public static final String HTSP_VERSION = "htsp_version";           // u32   required   The server supports all versions of the protocol up to and including this number.
-        public static final String SERVER_NAME = "server_name";             // str   required   Server software name.
-        public static final String SERVER_VERSION = "server_version";       // str   required   Server software version
-        public static final String WEB_ROOT = "web_root";                   // str   optional   Server HTTP webroot (Added in version 8) Note: any access to TVH webserver should include this at start of URL path
-        public static final String CHANNEL_COUNT = "channel_count";
-        public static final String TAG_COUNT = "tag_count";
-        public static final String RECORDING_COUNT = "recording_count";
-        public static final String COMPLETED_RECORDING_COUNT = "completed_recording_count";
-        public static final String SCHEDULED_RECORDING_COUNT = "scheduled_recording_count";
-        public static final String FAILED_RECORDING_COUNT = "failed_recording_count";
-        public static final String REMOVED_RECORDING_COUNT = "removed_recording_count";
-        public static final String SERIES_RECORDING_COUNT = "series_recording_count";
-        public static final String TIMER_RECORDING_COUNT = "timer_recording_count";
-
-        // A projection of all columns in the items table.
-        static final String[] PROJECTION_ALL = {
-                ID, TIME, GMT_OFFSET, FREE_DISC_SPACE, TOTAL_DISC_SPACE,
-                HTSP_VERSION, SERVER_NAME, SERVER_VERSION, WEB_ROOT,
-                CHANNEL_COUNT, TAG_COUNT, RECORDING_COUNT, COMPLETED_RECORDING_COUNT,
-                SCHEDULED_RECORDING_COUNT, FAILED_RECORDING_COUNT, REMOVED_RECORDING_COUNT,
-                SERIES_RECORDING_COUNT, TIMER_RECORDING_COUNT
-        };
-
-        // The default sort order for queries
-        static final String SORT_ORDER_DEFAULT = SERVER_NAME + " ASC";
     }
 }

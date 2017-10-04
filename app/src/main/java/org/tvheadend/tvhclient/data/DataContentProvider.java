@@ -36,10 +36,6 @@ public class DataContentProvider extends ContentProvider {
     private static final int SERIES_RECORDING_ID = 14;
     private static final int TIMER_RECORDING_LIST = 15;
     private static final int TIMER_RECORDING_ID = 16;
-    private static final int SERVER_STATS_LIST = 17;
-    private static final int SERVER_STATS_ID = 18;
-    // Public constants for custom queries
-    public static final int SERVER_STATS_ID_ACTIVE = 19;
     private static final UriMatcher mUriMatcher;
 
     // prepare the UriMatcher
@@ -61,9 +57,6 @@ public class DataContentProvider extends ContentProvider {
         mUriMatcher.addURI(DataContract.AUTHORITY, "series_recordings/#", SERIES_RECORDING_ID);
         mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings", TIMER_RECORDING_LIST);
         mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings/#", TIMER_RECORDING_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "server_info", SERVER_STATS_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "server_info/#", SERVER_STATS_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "server_info_active/#", SERVER_STATS_ID_ACTIVE);
     }
 
     private DatabaseHelper mHelper;
@@ -77,7 +70,6 @@ public class DataContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Log.d(TAG, "query() called with: uri = [" + uri + "], projection = [" + projection + "], selection = [" + selection + "], selectionArgs = [" + selectionArgs + "], sortOrder = [" + sortOrder + "]");
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
@@ -186,32 +178,6 @@ public class DataContentProvider extends ContentProvider {
                 builder.appendWhere(DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment());
                 break;
 
-            case SERVER_STATS_LIST:
-                builder.setTables(DataContract.ServerInfo.TABLE);
-                if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = DataContract.ServerInfo.SORT_ORDER_DEFAULT;
-                }
-                break;
-
-            case SERVER_STATS_ID:
-                builder.setTables(DataContract.ServerInfo.TABLE);
-                // limit query to one row at most
-                builder.appendWhere(DataContract.ServerInfo.ID + " = " + uri.getLastPathSegment());
-                break;
-
-            case SERVER_STATS_ID_ACTIVE:
-                Log.d(TAG, "query: get active server");
-                String query = "SELECT * FROM "
-                        + DataContract.ServerInfo.TABLE + ", " + DataContract.Connections.TABLE + " WHERE "
-                        + DataContract.ServerInfo.TABLE + "." + DataContract.ServerInfo.ID + " = "
-                        + DataContract.Connections.TABLE + "." + DataContract.Connections.ID;
-                Log.d(TAG, "query: " + query);
-                Cursor cursor = db.rawQuery(query, null);
-                if (getContext() != null) {
-                    cursor.setNotificationUri(getContext().getContentResolver(), uri);
-                }
-                return cursor;
-
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -264,12 +230,6 @@ public class DataContentProvider extends ContentProvider {
                 return DataContract.TimerRecordings.CONTENT_ITEM_TYPE;
             case TIMER_RECORDING_LIST:
                 return DataContract.TimerRecordings.CONTENT_TYPE;
-            case SERVER_STATS_ID:
-                return DataContract.ServerInfo.CONTENT_ITEM_TYPE;
-            case SERVER_STATS_LIST:
-                return DataContract.ServerInfo.CONTENT_TYPE;
-            case SERVER_STATS_ID_ACTIVE:
-                return DataContract.ServerInfo.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -286,8 +246,7 @@ public class DataContentProvider extends ContentProvider {
                 && mUriMatcher.match(uri) != PROGRAM_LIST
                 && mUriMatcher.match(uri) != RECORDING_LIST
                 && mUriMatcher.match(uri) != SERIES_RECORDING_LIST
-                && mUriMatcher.match(uri) != TIMER_RECORDING_LIST
-                && mUriMatcher.match(uri) != SERVER_STATS_LIST) {
+                && mUriMatcher.match(uri) != TIMER_RECORDING_LIST) {
             throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
         }
 
@@ -336,10 +295,6 @@ public class DataContentProvider extends ContentProvider {
                 id = db.insertWithOnConflict(DataContract.TimerRecordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = getUriForId(id, uri);
                 break;
-
-            case SERVER_STATS_LIST:
-                id = db.insertWithOnConflict(DataContract.ServerInfo.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = getUriForId(id, uri);
         }
 
         return newUri;
@@ -430,16 +385,6 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 deletedRows = db.delete(DataContract.TimerRecordings.TABLE, where, selectionArgs);
-                break;
-
-            case SERVER_STATS_LIST:
-                deletedRows = db.delete(DataContract.ServerInfo.TABLE, selection, selectionArgs);
-                break;
-
-            case SERVER_STATS_ID:
-                where = DataContract.ServerInfo.ID + " = " + uri.getLastPathSegment();
-                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
-                deletedRows = db.delete(DataContract.ServerInfo.TABLE, where, selectionArgs);
                 break;
 
             default:
@@ -539,16 +484,6 @@ public class DataContentProvider extends ContentProvider {
                 where = DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
                 updateCount = db.update(DataContract.TimerRecordings.TABLE, contentValues, where, selectionArgs);
-                break;
-
-            case SERVER_STATS_LIST:
-                updateCount = db.update(DataContract.ServerInfo.TABLE, contentValues, selection, selectionArgs);
-                break;
-
-            case SERVER_STATS_ID:
-                where = DataContract.ServerInfo.ID + " = " + uri.getLastPathSegment();
-                where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
-                updateCount = db.update(DataContract.ServerInfo.TABLE, contentValues, where, selectionArgs);
                 break;
 
             default:

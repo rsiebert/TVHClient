@@ -286,21 +286,21 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         ContentValues values = new ContentValues();
         switch (response.getMethod()) {
             case "getDiskSpace":
-                values.put(DataContract.ServerInfo.FREE_DISC_SPACE, response.getLong("freediskspace", 0));
-                values.put(DataContract.ServerInfo.TOTAL_DISC_SPACE, response.getLong("totaldiskspace", 0));
+                values.put(DataContract.Connections.FREE_DISC_SPACE, response.getLong("freediskspace", 0));
+                values.put(DataContract.Connections.TOTAL_DISC_SPACE, response.getLong("totaldiskspace", 0));
 
                 Log.d(TAG, "handleResponse: updating server info ");
-                getContentResolver().update(DataContract.ServerInfo.CONTENT_URI, values,
-                        DataContract.ServerInfo.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+                getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
+                        DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
 
                 break;
             case "getSysTime":
-                values.put(DataContract.ServerInfo.TIME, response.getLong("time", 0));
-                values.put(DataContract.ServerInfo.GMT_OFFSET, response.getInt("gmtoffset", 0));
+                values.put(DataContract.Connections.TIME, response.getLong("time", 0));
+                values.put(DataContract.Connections.GMT_OFFSET, response.getInt("gmtoffset", 0));
 
                 Log.d(TAG, "handleResponse: updating server info ");
-                getContentResolver().update(DataContract.ServerInfo.CONTENT_URI, values,
-                        DataContract.ServerInfo.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+                getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
+                        DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
                 break;
         }
     }
