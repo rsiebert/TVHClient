@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.MiscUtils;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.data.DataContentUtils;
 import org.tvheadend.tvhclient.data.DataContract;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
@@ -111,24 +112,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     public void onCreate() {
         Log.d(TAG, "onCreate() called");
 
-        // TODO move this into a account or connection mananger
-        Cursor c = getApplicationContext().getContentResolver().query(
-                DataContract.Connections.CONTENT_URI,
-                DataContract.Connections.PROJECTION_ALL,
-                DataContract.Connections.SELECTED + "=?", new String[] {"1"}, null);
-
-        Log.d(TAG, "onCreate: queried connection data");
-
-        if (c != null && c.getCount() > 0) {
-            Log.d(TAG, "onCreate: Reading connection data");
-            c.moveToFirst();
-            mAccount = new Connection();
-            mAccount.address = c.getString(c.getColumnIndex(DataContract.Connections.ADDRESS));
-            mAccount.port = c.getInt(c.getColumnIndex(DataContract.Connections.PORT));
-            mAccount.username = c.getString(c.getColumnIndex(DataContract.Connections.USERNAME));
-            mAccount.password = c.getString(c.getColumnIndex(DataContract.Connections.PASSWORD));
-            c.close();
-        }
+        mAccount = DataContentUtils.getActiveConnection(this);
 
         execService = Executors.newScheduledThreadPool(10);
         ds = DataStorage.getInstance();
@@ -298,6 +282,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void onInitialSyncCompleted() {
         Log.d(TAG, "onInitialSyncCompleted() called");
+
+        // TODO remove old stuff
         ds.setLoading(false);
         ds.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
         ds.setProtocolVersion(connection.getProtocolVersion());
