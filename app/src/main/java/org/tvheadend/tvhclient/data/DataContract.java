@@ -375,15 +375,15 @@ public class DataContract {
         public static final String TABLE = "server_info";
         // The content URI for this table.
         public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "server_info");
+        public static final Uri CONTENT_URI_ACTIVE = Uri.withAppendedPath(DataContract.CONTENT_URI, "server_info_active");
         // The mime type of a directory of items.
         static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/server_info";
         // The mime type of a single item.
         static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/server_info";
 
         // server time, discspace
-        public static final String ID = BaseColumns._ID;
+        public static final String ID = BaseColumns._ID;                    // This id is identical to the connection id
         public static final String VERSION = "version";
-        public static final String ACCOUNT_ID = "account_id";               // The connection id where the credentials to the server are stored
         public static final String TIME = "time";                           // s64   required   UNIX time.
         public static final String GMT_OFFSET = "gmt_offset";               // s32   optional   Minutes east of GMT.
         public static final String FREE_DISC_SPACE = "free_disc_space";     // s64   required   Bytes available.
@@ -404,7 +404,7 @@ public class DataContract {
 
         // A projection of all columns in the items table.
         static final String[] PROJECTION_ALL = {
-                ID, ACCOUNT_ID, TIME, GMT_OFFSET, FREE_DISC_SPACE, TOTAL_DISC_SPACE,
+                ID, TIME, GMT_OFFSET, FREE_DISC_SPACE, TOTAL_DISC_SPACE,
                 HTSP_VERSION, SERVER_NAME, SERVER_VERSION, WEB_ROOT,
                 CHANNEL_COUNT, TAG_COUNT, RECORDING_COUNT, COMPLETED_RECORDING_COUNT,
                 SCHEDULED_RECORDING_COUNT, FAILED_RECORDING_COUNT, REMOVED_RECORDING_COUNT,

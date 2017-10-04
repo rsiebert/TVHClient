@@ -311,8 +311,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private String getServerInfoQuery() {
         String query = "CREATE TABLE IF NOT EXISTS " + DataContract.ServerInfo.TABLE + " ("
-                + DataContract.ServerInfo.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + DataContract.ServerInfo.ACCOUNT_ID + " INT DEFAULT 0,"           // The connection id where the credentials to the server are stored
+                + DataContract.ServerInfo.ID + " INTEGER PRIMARY KEY,"             // The connection id where the credentials to the server are stored
                 + DataContract.ServerInfo.TIME + " INT DEFAULT 0,"                 // s64   required   UNIX time.
                 + DataContract.ServerInfo.GMT_OFFSET + " INT DEFAULT 0,"           // s32   optional   Minutes east of GMT.
                 + DataContract.ServerInfo.FREE_DISC_SPACE + " INT DEFAULT 0,"      // s64   required   Bytes available.
