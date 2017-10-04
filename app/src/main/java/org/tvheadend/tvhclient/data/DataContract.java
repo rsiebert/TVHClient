@@ -370,15 +370,15 @@ public class DataContract {
     /**
      * Constants for the server information table of the tvhclient provider.
      */
-    public static final class ServerStats {
+    public static final class ServerInfo {
         // The database table name
-        public static final String TABLE = "server_statistics";
+        public static final String TABLE = "server_info";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "server_statistics");
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "server_info");
         // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/server_statistics";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/server_info";
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/server_statistics";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/server_info";
 
         // server time, discspace
         public static final String ID = BaseColumns._ID;
@@ -410,5 +410,8 @@ public class DataContract {
                 SCHEDULED_RECORDING_COUNT, FAILED_RECORDING_COUNT, REMOVED_RECORDING_COUNT,
                 SERIES_RECORDING_COUNT, TIMER_RECORDING_COUNT
         };
+
+        // The default sort order for queries
+        static final String SORT_ORDER_DEFAULT = SERVER_NAME + " ASC";
     }
 }

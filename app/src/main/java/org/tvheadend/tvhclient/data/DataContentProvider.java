@@ -182,16 +182,16 @@ public class DataContentProvider extends ContentProvider {
                 break;
 
             case SERVER_STATS_LIST:
-                builder.setTables(DataContract.ServerStats.TABLE);
+                builder.setTables(DataContract.ServerInfo.TABLE);
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = DataContract.ServerStats.SORT_ORDER_DEFAULT;
+                    sortOrder = DataContract.ServerInfo.SORT_ORDER_DEFAULT;
                 }
                 break;
 
             case SERVER_STATS_ID:
-                builder.setTables(DataContract.ServerStats.TABLE);
+                builder.setTables(DataContract.ServerInfo.TABLE);
                 // limit query to one row at most
-                builder.appendWhere(DataContract.ServerStats.ID + " = " + uri.getLastPathSegment());
+                builder.appendWhere(DataContract.ServerInfo.ID + " = " + uri.getLastPathSegment());
                 break;
 
             default:
@@ -247,9 +247,9 @@ public class DataContentProvider extends ContentProvider {
             case TIMER_RECORDING_LIST:
                 return DataContract.TimerRecordings.CONTENT_TYPE;
             case SERVER_STATS_ID:
-                return DataContract.ServerStats.CONTENT_ITEM_TYPE;
+                return DataContract.ServerInfo.CONTENT_ITEM_TYPE;
             case SERVER_STATS_LIST:
-                return DataContract.ServerStats.CONTENT_TYPE;
+                return DataContract.ServerInfo.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -318,7 +318,7 @@ public class DataContentProvider extends ContentProvider {
                 break;
 
             case SERVER_STATS_LIST:
-                id = db.insertWithOnConflict(DataContract.ServerStats.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                id = db.insertWithOnConflict(DataContract.ServerInfo.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = getUriForId(id, uri);
         }
 
@@ -413,13 +413,13 @@ public class DataContentProvider extends ContentProvider {
                 break;
 
             case SERVER_STATS_LIST:
-                deletedRows = db.delete(DataContract.ServerStats.TABLE, selection, selectionArgs);
+                deletedRows = db.delete(DataContract.ServerInfo.TABLE, selection, selectionArgs);
                 break;
 
             case SERVER_STATS_ID:
-                where = DataContract.ServerStats.ID + " = " + uri.getLastPathSegment();
+                where = DataContract.ServerInfo.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
-                deletedRows = db.delete(DataContract.ServerStats.TABLE, where, selectionArgs);
+                deletedRows = db.delete(DataContract.ServerInfo.TABLE, where, selectionArgs);
                 break;
 
             default:
@@ -522,13 +522,13 @@ public class DataContentProvider extends ContentProvider {
                 break;
 
             case SERVER_STATS_LIST:
-                updateCount = db.update(DataContract.ServerStats.TABLE, contentValues, selection, selectionArgs);
+                updateCount = db.update(DataContract.ServerInfo.TABLE, contentValues, selection, selectionArgs);
                 break;
 
             case SERVER_STATS_ID:
-                where = DataContract.ServerStats.ID + " = " + uri.getLastPathSegment();
+                where = DataContract.ServerInfo.ID + " = " + uri.getLastPathSegment();
                 where += TextUtils.isEmpty(selection) ? "" : " AND " + selection;
-                updateCount = db.update(DataContract.ServerStats.TABLE, contentValues, where, selectionArgs);
+                updateCount = db.update(DataContract.ServerInfo.TABLE, contentValues, where, selectionArgs);
                 break;
 
             default:
