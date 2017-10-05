@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -24,6 +25,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.DataContentProvider;
 import org.tvheadend.tvhclient.data.DataContract;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -71,6 +73,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     private static final int LOADER_ID_REMOVED_RECORDINGS = 5;
     private static final int LOADER_ID_SERIES_RECORDINGS = 6;
     private static final int LOADER_ID_TIMER_RECORDINGS = 7;
+    private static final int LOADER_ID_CONNECTIONS = 8;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -167,6 +170,17 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         } else {
             onMessage(connectionStatus, false);
         }
+
+        // Prepare the loaders. Either re-connect with an existing one, or start a new one.
+        Log.d(TAG, "onResume: initializing loaders");
+        getLoaderManager().initLoader(LOADER_ID_CHANNELS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_COMPLETED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_SCHEDULED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_FAILED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_REMOVED_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_SERIES_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_TIMER_RECORDINGS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_CONNECTIONS, null, this);
     }
 
     @Override
@@ -261,7 +275,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
                     @Override
                     public void run() {
                         if (isAdded()) {
-                            showDiscSpace();
+                            //showDiscSpace();
                         }
                     }
                 });
@@ -280,7 +294,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         showConnectionName();
         showConnectionStatus();
         showRecordingStatus();
-        showDiscSpace();
+        //showDiscSpace();
     }
 
     /**
@@ -458,6 +472,12 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
             case LOADER_ID_TIMER_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.TimerRecordings.CONTENT_URI,
                         new String[]{DataContract.TimerRecordings.ID}, null, null, null);
+
+            case LOADER_ID_CONNECTIONS:
+                // TODO change to other uri
+                return new CursorLoader(getActivity(), DataContract.Connections.CONTENT_URI,
+                        DataContract.Connections.PROJECTION_ALL, DataContract.Connections.SELECTED + "=?", new String[]{"1"}, null);
+
         }
         return null;
     }
@@ -466,29 +486,57 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         Log.d(TAG, "onLoadFinished() called with: loader = [" + loader.getId() + "]");
 
-        int count = (cursor != null) ? cursor.getCount() : 0;
-        switch (loader.getId()) {
-            case LOADER_ID_CHANNELS:
-                channels.setText(count + " " + getString(R.string.available));
-                break;
-            case LOADER_ID_COMPLETED_RECORDINGS:
-                completedRec.setText(getResources().getQuantityString(R.plurals.completed_recordings, count, count));
-                break;
-            case LOADER_ID_SCHEDULED_RECORDINGS:
-                upcomingRec.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, count, count));
-                break;
-            case LOADER_ID_FAILED_RECORDINGS:
-                failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, count, count));
-                break;
-            case LOADER_ID_REMOVED_RECORDINGS:
-                removedRec.setText(getResources().getQuantityString(R.plurals.removed_recordings, count, count));
-                break;
-            case LOADER_ID_SERIES_RECORDINGS:
-                seriesRec.setText(getResources().getQuantityString(R.plurals.series_recordings, count, count));
-                break;
-            case LOADER_ID_TIMER_RECORDINGS:
-                timerRec.setText(getResources().getQuantityString(R.plurals.timer_recordings, count, count));
-                break;
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToNext();
+            int count = cursor.getCount();
+            switch (loader.getId()) {
+                case LOADER_ID_CHANNELS:
+                    channels.setText(count + " " + getString(R.string.available));
+                    break;
+                case LOADER_ID_COMPLETED_RECORDINGS:
+                    completedRec.setText(getResources().getQuantityString(R.plurals.completed_recordings, count, count));
+                    break;
+                case LOADER_ID_SCHEDULED_RECORDINGS:
+                    upcomingRec.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, count, count));
+                    break;
+                case LOADER_ID_FAILED_RECORDINGS:
+                    failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, count, count));
+                    break;
+                case LOADER_ID_REMOVED_RECORDINGS:
+                    removedRec.setText(getResources().getQuantityString(R.plurals.removed_recordings, count, count));
+                    break;
+                case LOADER_ID_SERIES_RECORDINGS:
+                    seriesRec.setText(getResources().getQuantityString(R.plurals.series_recordings, count, count));
+                    break;
+                case LOADER_ID_TIMER_RECORDINGS:
+                    timerRec.setText(getResources().getQuantityString(R.plurals.timer_recordings, count, count));
+                    break;
+                case LOADER_ID_CONNECTIONS:
+                    Log.d(TAG, "onLoadFinished: loading data from connection table");
+                    // Get the disc space values and convert them to megabytes
+                    long free = cursor.getLong(cursor.getColumnIndex(DataContract.Connections.FREE_DISC_SPACE)) / 1000000;
+                    long total = cursor.getLong(cursor.getColumnIndex(DataContract.Connections.TOTAL_DISC_SPACE)) / 1000000;
+
+                    String freeDiscSpace;
+                    String totalDiscSpace;
+
+                    // Show the free amount of disc space as GB or MB
+                    if (free > 1000) {
+                        freeDiscSpace = (free / 1000) + " GB " + getString(R.string.available);
+                    } else {
+                        freeDiscSpace = free + " MB " + getString(R.string.available);
+                    }
+                    // Show the total amount of disc space as GB or MB
+                    if (total > 1000) {
+                        totalDiscSpace = (total / 1000) + " GB " + getString(R.string.total);
+                    } else {
+                        totalDiscSpace = total + " MB " + getString(R.string.total);
+                    }
+                    Log.d(TAG, "onLoadFinished: free disk space: " + freeDiscSpace + ", total disk space " + totalDiscSpace);
+                    freediscspace.setText(freeDiscSpace);
+                    totaldiscspace.setText(totalDiscSpace);
+                    break;
+            }
         }
     }
 
@@ -522,14 +570,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     @Override
     public void onInitialSyncCompleted() {
         Log.d(TAG, "onInitialSyncCompleted() called");
-        // Prepare the loaders. Either re-connect with an existing one, or start a new one.
-        getLoaderManager().initLoader(LOADER_ID_CHANNELS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_COMPLETED_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_SCHEDULED_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_FAILED_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_REMOVED_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_SERIES_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_TIMER_RECORDINGS, null, this);
+
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
