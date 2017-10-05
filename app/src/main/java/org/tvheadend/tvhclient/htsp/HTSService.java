@@ -120,20 +120,16 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         ds = DataStorage.getInstance();
         logger = Logger.getInstance();
 
-
         mAccount = DataContentUtils.getActiveConnection(this);
         if (mAccount != null && MiscUtils.isNetworkAvailable(getApplicationContext())) {
-            mConnection = new HTSConnection(TVHClientApplication.getInstance(), this, packInfo.packageName, packInfo.versionName);
+            mConnection = new HTSConnection(TVHClientApplication.getInstance(), this);
             mExecutorService.execute(new Runnable() {
                 public void run() {
-                    mConnection.open(mAccount.address, mAccount.port, true);
+                    mConnection.open(mAccount.address, mAccount.port);
                 }
             });
         }
-
-
     }
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -141,37 +137,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         final String action = intent.getAction();
 
-        if (action.equals(Constants.ACTION_CONNECT)) {
-            logger.log(TAG, "onStartCommand: Connection to server requested");
-/*
-            boolean force = intent.getBooleanExtra("force", false);
-            if (mConnection != null && force) {
-                logger.log(TAG, "onStartCommand: Closing existing mConnection");
-                mConnection.close();
-                ds.clearAll();
-            }
-            if (mAccount != null && mConnection == null || !mConnection.isConnected()) {
-                logger.log(TAG, "onStartCommand: Connecting to server");
-                ds.setLoading(true);
-                mConnection = new HTSConnection(TVHClientApplication.getInstance(), this, packInfo.packageName, packInfo.versionName);
-
-                // Since this is blocking, spawn to a new thread
-                mExecutorService.execute(new Runnable() {
-                    public void run() {
-                        mConnection.open(mAccount.address, mAccount.port, MiscUtils.isNetworkAvailable(getApplicationContext()));
-                        mConnection.authenticate(mAccount.username, mAccount.password);
-                    }
-                });
-            }
-*/
-        } else if (mConnection == null || !mConnection.isConnected()) {
-            logger.log(TAG, "onStartCommand: No mConnection to perform " + action);
-
-        } else if (action.equals(Constants.ACTION_DISCONNECT)) {
-            logger.log(TAG, "onStartCommand: Closing mConnection to server");
-            mConnection.close();
-
-        } else if (action.equals(Constants.ACTION_GET_EVENT)) {
+        if (action.equals(Constants.ACTION_GET_EVENT)) {
             getEvent(intent.getLongExtra("eventId", 0));
 
         } else if (action.equals(Constants.ACTION_GET_EVENTS)) {
@@ -354,10 +320,6 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // TODO remove old stuff
         ds.setLoading(false);
         ds.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
-        ds.setProtocolVersion(mConnection.getProtocolVersion());
-        ds.setServerName(mConnection.getServerName());
-        ds.setServerVersion(mConnection.getServerVersion());
-        ds.setWebRoot(mConnection.getWebRoot());
 
         // Get some additional information after the initial loading has been finished
         Log.d(TAG, "onInitialSyncCompleted: get disc space");
@@ -650,7 +612,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
-        } else if (mConnection.getProtocolVersion() > 9) {
+        } else if (ds.getProtocolVersion() > 9) {
             is = new HTSFileInputStream(mConnection, url);
         } else {
             return;
@@ -670,7 +632,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
-        } else if (mConnection.getProtocolVersion() > 9) {
+        } else if (ds.getProtocolVersion() > 9) {
             is = new HTSFileInputStream(mConnection, url);
         }
 
@@ -1275,7 +1237,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
                 String ticket = response.getString("ticket", null);
-                String webroot = mConnection.getWebRoot();
+                String webroot = ds.getWebRoot();
 
                 if (path != null && ticket != null) {
                     ds.addTicket(new HttpTicket(webroot + path, ticket));
@@ -1862,7 +1824,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 13 and higher
-        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
             rec.startExtra = msg.getLong("startExtra", 0);
@@ -1875,7 +1837,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 17 and higher
-        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
+        if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
             rec.timerecId = msg.getString("timerecId");
         }
 
@@ -1940,7 +1902,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 13 and higher
-        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
             rec.startExtra = msg.getLong("startExtra", 0);
@@ -1953,7 +1915,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 17 and higher
-        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
+        if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
             rec.timerecId = msg.getString("timerecId");
         }
 
@@ -2134,7 +2096,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
-        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+        if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
         ds.addTimerRecording(rec);
@@ -2172,7 +2134,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
-        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+        if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
         ds.updateTimerRecording(rec);

@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.htsp;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.SparseArray;
@@ -32,12 +33,6 @@ public class HTSConnection extends Thread {
     private SocketChannel mSocketChannel;
     private final ByteBuffer inBuf;
     private int seq;
-    private final String mClientName;
-    private final String mClientVersion;
-    private int mProtocolVersion;
-    private String mServerName;
-    private String mServerVersion;
-    private String mWebRoot;
 
     private final HTSConnectionListener mListener;
     private final SparseArray<HTSResponseHandler> mResponseHandlers;
@@ -45,17 +40,15 @@ public class HTSConnection extends Thread {
     private final LinkedList<HTSMessage> mMessageQueue;
     private boolean mAuthenticated = false;
     private Selector mSelector;
-    private final TVHClientApplication app;
     private int mConnectionTimeout = 5000;
 
-    public HTSConnection(TVHClientApplication app, HTSConnectionListener listener, String clientName, String clientVersion) {
-        this.app = app;
+    public HTSConnection(Context context, HTSConnectionListener listener) {
         mLogger = Logger.getInstance();
 
         // Disable the use of IPv6
         System.setProperty("java.net.preferIPv6Addresses", "false");
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         mConnectionTimeout = Integer.parseInt(prefs.getString("connectionTimeout", "5")) * 1000;
         int bufferSize = Integer.parseInt(prefs.getString("bufferSize", "0"));
 
@@ -68,35 +61,15 @@ public class HTSConnection extends Thread {
         mMessageQueue = new LinkedList<>();
 
         this.mListener = listener;
-        this.mClientName = clientName;
-        this.mClientVersion = clientVersion;
-    }
-
-    public void setRunning(boolean b) {
-        try {
-            mLock.lock();
-            mRunning = false;
-        } finally {
-            mLock.unlock();
-        }
     }
 
     // synchronized, non blocking connect
-    public void open(String hostname, int port, boolean connected) {
-        mLogger.log(TAG, "open() called with: hostname = [" + hostname + "], port = [" + port + "], connected = [" + connected + "]");
+    public void open(String hostname, int port) {
+        mLogger.log(TAG, "open() called with: hostname = [" + hostname + "], port = [" + port + "]");
 
         if (mRunning) {
             return;
         }
-        if (!connected) {
-            mListener.onError(Constants.ACTION_CONNECTION_STATE_NO_NETWORK);
-            return;
-        }
-        if (hostname == null) {
-            mListener.onError(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION);
-            return;
-        }
-
         final Object signal = new Object();
 
         mLock.lock();
@@ -144,84 +117,6 @@ public class HTSConnection extends Thread {
                 && mSocketChannel.isOpen()
                 && mSocketChannel.isConnected()
                 && mRunning;
-    }
-
-    // synchronized, blocking mAuthenticated
-    public void authenticate(String username, final String password) {
-        mLogger.log(TAG, "authenticate() called with: username = [" + username + "], password = [secret]");
-
-        if (mAuthenticated || !mRunning) {
-            return;
-        }
-
-        mAuthenticated = false;
-
-        final HTSMessage authMessage = new HTSMessage();
-        authMessage.setMethod("enableAsyncMetadata");
-        authMessage.putField("username", username);
-
-        final HTSResponseHandler authHandler = new HTSResponseHandler() {
-            public void handleResponse(HTSMessage response) {
-                mLogger.log(TAG, "handleResponse: Response to 'authenticate' message");
-                
-                mAuthenticated = response.getInt("noaccess", 0) != 1;
-                mLogger.log(TAG, "handleResponse: Authentication successful: " + mAuthenticated);
-                if (!mAuthenticated) {
-                    mListener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
-                }
-                synchronized (authMessage) {
-                    authMessage.notify();
-                }
-            }
-        };
-
-        mLogger.log(TAG, "authenticate: Sending 'hello' message");
-        HTSMessage helloMessage = new HTSMessage();
-        helloMessage.setMethod("hello");
-        helloMessage.putField("clientname", this.mClientName);
-        helloMessage.putField("clientversion", this.mClientVersion);
-        helloMessage.putField("htspversion", HTSMessage.HTSP_VERSION);
-        helloMessage.putField("username", username);
-
-        sendMessage(helloMessage, new HTSResponseHandler() {
-            public void handleResponse(HTSMessage response) {
-                mLogger.log(TAG, "handleResponse: Response to 'hello' message");
-
-                mProtocolVersion = response.getInt("htspversion");
-                mServerName = response.getString("servername");
-                mServerVersion = response.getString("serverversion");
-                mWebRoot = response.getString("webroot", "");
-
-                MessageDigest md;
-                try {
-                    md = MessageDigest.getInstance("SHA1");
-                    md.update(password.getBytes());
-                    md.update(response.getByteArray("challenge"));
-
-                    mLogger.log(TAG, "authenticate: Sending 'authenticate' message");
-                    authMessage.putField("digest", md.digest());
-                    sendMessage(authMessage, authHandler);
-                } catch (NoSuchAlgorithmException ex) {
-                    mLogger.log(TAG, "handleResponse: Could not sent 'authenticate' message. " + ex.getLocalizedMessage());
-                }
-            }
-        });
-
-        synchronized (authMessage) {
-            try {
-                authMessage.wait(5000);
-                if (!mAuthenticated) {
-                    mLogger.log(TAG, "authenticate: Timeout waiting for authentication response");
-                    mListener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
-                }
-            } catch (InterruptedException ex) {
-                mLogger.log(TAG, "authenticate: Waiting for authentication message was interrupted. " + ex.getLocalizedMessage());
-            }
-        }
-    }
-
-    public boolean isAuthenticated() {
-        return mAuthenticated;
     }
 
     public void sendMessage(HTSMessage message, HTSResponseHandler listener) {
@@ -351,21 +246,5 @@ public class HTSConnection extends Thread {
             }
         }
         mListener.onMessage(msg);
-    }
-    
-    public int getProtocolVersion() {
-    	return this.mProtocolVersion;
-    }
-
-    public String getServerName() {
-        return this.mServerName;
-    }
-
-    public String getServerVersion() {
-        return this.mServerVersion;
-    }
-
-    public String getWebRoot() {
-    	return this.mWebRoot;
     }
 }

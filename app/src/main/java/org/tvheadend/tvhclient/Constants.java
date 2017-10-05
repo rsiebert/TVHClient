@@ -144,7 +144,6 @@ public class Constants {
 
     // HTSP service actions that are called from the client to the server
     public static final String ACTION_CONNECT = "CONNECT";
-    public static final String ACTION_DISCONNECT = "DISCONNECT";
     public static final String ACTION_EPG_QUERY = "EPG_QUERY";
     public static final String ACTION_GET_EVENT = "GET_EVENT";
     public static final String ACTION_GET_EVENTS = "GET_EVENTS";
