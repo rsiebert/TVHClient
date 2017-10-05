@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -25,6 +27,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.DataContentProvider;
 import org.tvheadend.tvhclient.data.DataContract;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -142,15 +145,11 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
         // Show how many series recordings are available
-        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            seriesRec.setVisibility(View.GONE);
-        } else {
-            seriesRec.setVisibility(View.VISIBLE);
-        }
+        seriesRec.setVisibility(View.VISIBLE);
 
         // Show how many timer recordings are available if the server supports
         // it and the application is unlocked
-        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
+        if (!app.isUnlocked()) {
             timerRec.setVisibility(View.GONE);
         } else {
             timerRec.setVisibility(View.VISIBLE);
@@ -193,25 +192,13 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause() called");
-
         app.removeListener(this);
-        if (mBound) {
-            Log.d(TAG, "onPause: removing listener");
-            mService.removeListener(this);
-        }
     }
 
     @Override
     public void onDestroy() {
         actionBarInterface = null;
         super.onDestroy();
-
-        // Unbind from the service
-        if (mBound) {
-            getActivity().unbindService(mConnection);
-            mBound = false;
-        }
     }
 
     @Override
@@ -301,7 +288,6 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         showConnectionName();
         showConnectionStatus();
         showRecordingStatus();
-        //showDiscSpace();
     }
 
     /**
@@ -367,46 +353,6 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     }
 
     /**
-     * Shows the available and total disc space either in MB or GB to avoid
-     * showing large numbers. This depends on the size of the value.
-     */
-    private void showDiscSpace() {
-        DiscSpace discSpace = ds.getDiscSpace();
-        if (discSpace == null) {
-            freediscspace.setText(R.string.unknown);
-            totaldiscspace.setText(R.string.unknown);
-            return;
-        }
-
-        try {
-            // Get the disc space values and convert them to megabytes
-            long free = Long.valueOf(discSpace.freediskspace) / 1000000;
-            long total = Long.valueOf(discSpace.totaldiskspace) / 1000000;
-
-            String freeDiscSpace;
-            String totalDiscSpace;
-
-            // Show the free amount of disc space as GB or MB
-            if (free > 1000) {
-                freeDiscSpace = (free / 1000) + " GB " + getString(R.string.available);
-            } else {
-                freeDiscSpace = free + " MB " + getString(R.string.available);
-            }
-            // Show the total amount of disc space as GB or MB
-            if (total > 1000) {
-                totalDiscSpace = (total / 1000) + " GB " + getString(R.string.total);
-            } else {
-                totalDiscSpace = total + " MB " + getString(R.string.total);
-            }
-            freediscspace.setText(freeDiscSpace);
-            totaldiscspace.setText(totalDiscSpace);
-        } catch (Exception e) {
-            freediscspace.setText(R.string.unknown);
-            totaldiscspace.setText(R.string.unknown);
-        }
-    }
-
-    /**
      * Shows the program that is currently being recorded and the summary about
      * the available, scheduled and failed recordings.
      */
@@ -426,49 +372,36 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         // Show which programs are being recorded
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText
                 : getString(R.string.nothing));
-
-        String version = String.valueOf(ds.getProtocolVersion())
-                + "   (" + getString(R.string.server) + ": "
-                + ds.getServerName() + " " + ds.getServerVersion() + ")";
-        serverApiVersion.setText(version);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        final String[] channelProjection = new String[]{
-                DataContract.Recordings.ID};
-
-        final String[] recordingProjection = new String[]{
-                DataContract.Recordings.ID,
-                DataContract.Recordings.ERROR,
-                DataContract.Recordings.STATE};
-
         switch (i) {
             case LOADER_ID_CHANNELS:
                 return new CursorLoader(getActivity(), DataContract.Channels.CONTENT_URI,
-                        channelProjection, null, null, null);
+                        DataContract.Channels.PROJECTION_ALL, null, null, null);
 
             case LOADER_ID_COMPLETED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
-                        recordingProjection,
+                        DataContract.Recordings.PROJECTION_ALL,
                         DataContract.Recordings.SELECTION_COMPLETED,
                         DataContract.Recordings.SELECTION_ARGS_COMPLETED, null);
 
             case LOADER_ID_SCHEDULED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
-                        recordingProjection,
+                        DataContract.Recordings.PROJECTION_ALL,
                         DataContract.Recordings.SELECTION_SCHEDULED,
                         DataContract.Recordings.SELECTION_ARGS_SCHEDULED, null);
 
             case LOADER_ID_FAILED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
-                        recordingProjection,
+                        DataContract.Recordings.PROJECTION_ALL,
                         DataContract.Recordings.SELECTION_FAILED,
                         DataContract.Recordings.SELECTION_ARGS_FAILED, null);
 
             case LOADER_ID_REMOVED_RECORDINGS:
                 return new CursorLoader(getActivity(), DataContract.Recordings.CONTENT_URI,
-                        recordingProjection,
+                        DataContract.Recordings.PROJECTION_ALL,
                         DataContract.Recordings.SELECTION_REMOVED,
                         DataContract.Recordings.SELECTION_ARGS_REMOVED, null);
 
@@ -481,9 +414,9 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
                         new String[]{DataContract.TimerRecordings.ID}, null, null, null);
 
             case LOADER_ID_SERVER_INFO:
-                // TODO change to other uri
-                return new CursorLoader(getActivity(), DataContract.Connections.CONTENT_URI,
-                        DataContract.Connections.PROJECTION_ALL, DataContract.Connections.SELECTED + "=?", new String[]{"1"}, null);
+                return new CursorLoader(getActivity(), ContentUris.withAppendedId(
+                        DataContract.Connections.CONTENT_URI, DataContentProvider.SERVER_INFO_ID),
+                        DataContract.Connections.PROJECTION_SERVER_INFO, null, null, null);
 
         }
         return null;
@@ -493,33 +426,52 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         Log.d(TAG, "onLoadFinished() called with: loader = [" + loader.getId() + "]");
 
-        int count = (cursor != null) ? cursor.getCount() : 0;
-        if (cursor != null && cursor.getCount() > 0) {
-            switch (loader.getId()) {
-                case LOADER_ID_CHANNELS:
+        switch (loader.getId()) {
+            case LOADER_ID_CHANNELS:
+                if (cursor != null) {
+                    int count = cursor.getCount();
                     channels.setText(count + " " + getString(R.string.available));
-                    break;
-                case LOADER_ID_COMPLETED_RECORDINGS:
+                }
+                break;
+            case LOADER_ID_COMPLETED_RECORDINGS:
+                if (cursor != null) {
+                    int count = cursor.getCount();
                     completedRec.setText(getResources().getQuantityString(R.plurals.completed_recordings, count, count));
-                    break;
-                case LOADER_ID_SCHEDULED_RECORDINGS:
+                }
+                break;
+            case LOADER_ID_SCHEDULED_RECORDINGS:
+                if (cursor != null) {
+                    int count = cursor.getCount();
                     upcomingRec.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, count, count));
-                    break;
-                case LOADER_ID_FAILED_RECORDINGS:
+                }
+                break;
+            case LOADER_ID_FAILED_RECORDINGS:
+                if (cursor != null) {
+                    int count = cursor.getCount();
                     failedRec.setText(getResources().getQuantityString(R.plurals.failed_recordings, count, count));
-                    break;
-                case LOADER_ID_REMOVED_RECORDINGS:
+                }
+                break;
+            case LOADER_ID_REMOVED_RECORDINGS:
+                if (cursor != null) {
+                    int count = cursor.getCount();
                     removedRec.setText(getResources().getQuantityString(R.plurals.removed_recordings, count, count));
-                    break;
-                case LOADER_ID_SERIES_RECORDINGS:
+                }
+                break;
+            case LOADER_ID_SERIES_RECORDINGS:
+                if (cursor != null) {
+                    int count = cursor.getCount();
                     seriesRec.setText(getResources().getQuantityString(R.plurals.series_recordings, count, count));
-                    break;
-                case LOADER_ID_TIMER_RECORDINGS:
+                }
+                break;
+            case LOADER_ID_TIMER_RECORDINGS:
+                if (cursor != null) {
+                    int count = cursor.getCount();
                     timerRec.setText(getResources().getQuantityString(R.plurals.timer_recordings, count, count));
-                    break;
-                case LOADER_ID_SERVER_INFO:
-                    Log.d(TAG, "onLoadFinished: loading data from connection table");
-
+                }
+                break;
+            case LOADER_ID_SERVER_INFO:
+                if (cursor != null && cursor.getCount() > 0) {
+                    cursor.moveToNext();
                     final String serverName = cursor.getString(cursor.getColumnIndex(DataContract.Connections.SERVER_NAME));
                     final String serverVersion = cursor.getString(cursor.getColumnIndex(DataContract.Connections.SERVER_VERSION));
                     final String htspVersion = cursor.getString(cursor.getColumnIndex(DataContract.Connections.HTSP_VERSION));
@@ -535,8 +487,8 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
 
                     freediscspace.setText(freeDiscSpace + getString(R.string.available));
                     totaldiscspace.setText(totalDiscSpace + getString(R.string.total));
-                    break;
-            }
+                }
+                break;
         }
     }
 

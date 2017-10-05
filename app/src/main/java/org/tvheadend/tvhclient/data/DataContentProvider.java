@@ -36,27 +36,31 @@ public class DataContentProvider extends ContentProvider {
     private static final int SERIES_RECORDING_ID = 14;
     private static final int TIMER_RECORDING_LIST = 15;
     private static final int TIMER_RECORDING_ID = 16;
+
+    public static final int SERVER_INFO_ID = 25;
+
     private static final UriMatcher mUriMatcher;
 
     // prepare the UriMatcher
     static {
         mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "connections", CONNECTION_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "connections/#", CONNECTION_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "profiles", PROFILE_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "profiles/#", PROFILE_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "channels", CHANNEL_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "channels/#", CHANNEL_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "tags", TAG_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "tags/#", TAG_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "programs", PROGRAM_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "programs/#", PROGRAM_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "recordings", RECORDING_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "recordings/#", RECORDING_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "series_recordings", SERIES_RECORDING_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "series_recordings/#", SERIES_RECORDING_ID);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings", TIMER_RECORDING_LIST);
-        mUriMatcher.addURI(DataContract.AUTHORITY, "timer_recordings/#", TIMER_RECORDING_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Connections.TABLE, CONNECTION_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Connections.TABLE + "/#", CONNECTION_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Profiles.TABLE, PROFILE_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Profiles.TABLE + "/#", PROFILE_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Channels.TABLE, CHANNEL_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Channels.TABLE + "/#", CHANNEL_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Tags.TABLE, TAG_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Tags.TABLE + "/#", TAG_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Programs.TABLE, PROGRAM_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Programs.TABLE + "/#", PROGRAM_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Recordings.TABLE, RECORDING_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Recordings.TABLE + "/#", RECORDING_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.SeriesRecordings.TABLE, SERIES_RECORDING_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.SeriesRecordings.TABLE + "/#", SERIES_RECORDING_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.TimerRecordings.TABLE, TIMER_RECORDING_LIST);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.TimerRecordings.TABLE + "/#", TIMER_RECORDING_ID);
+        mUriMatcher.addURI(DataContract.AUTHORITY, DataContract.Connections.TABLE + "/#", SERVER_INFO_ID);
     }
 
     private DatabaseHelper mHelper;
@@ -70,6 +74,7 @@ public class DataContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Log.d(TAG, "query() called with: uri = [" + uri + "]");
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
@@ -80,109 +85,88 @@ public class DataContentProvider extends ContentProvider {
                     sortOrder = DataContract.Connections.SORT_ORDER_DEFAULT;
                 }
                 break;
-
             case CONNECTION_ID:
                 builder.setTables(DataContract.Connections.TABLE);
-                // limit query to one row at most
                 builder.appendWhere(DataContract.Connections.ID + " = " + uri.getLastPathSegment());
                 break;
-
             case PROFILE_LIST:
                 builder.setTables(DataContract.Profiles.TABLE);
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = DataContract.Profiles.SORT_ORDER_DEFAULT;
                 }
                 break;
-
             case PROFILE_ID:
                 builder.setTables(DataContract.Profiles.TABLE);
-                // limit query to one row at most
                 builder.appendWhere(DataContract.Profiles.ID + " = " + uri.getLastPathSegment());
                 break;
-
             case CHANNEL_LIST:
                 builder.setTables(DataContract.Channels.TABLE);
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = DataContract.Channels.SORT_ORDER_DEFAULT;
                 }
                 break;
-
             case CHANNEL_ID:
                 builder.setTables(DataContract.Channels.TABLE);
-                // limit query to one row at most
                 builder.appendWhere(DataContract.Channels.ID + " = " + uri.getLastPathSegment());
                 break;
-
             case TAG_LIST:
                 builder.setTables(DataContract.Tags.TABLE);
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = DataContract.Tags.SORT_ORDER_DEFAULT;
                 }
                 break;
-
             case TAG_ID:
                 builder.setTables(DataContract.Tags.TABLE);
-                // limit query to one row at most
                 builder.appendWhere(DataContract.Tags.ID + " = " + uri.getLastPathSegment());
                 break;
-
             case PROGRAM_LIST:
                 builder.setTables(DataContract.Programs.TABLE);
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = DataContract.Programs.SORT_ORDER_DEFAULT;
                 }
                 break;
-
             case PROGRAM_ID:
                 builder.setTables(DataContract.Programs.TABLE);
-                // limit query to one row at most
                 builder.appendWhere(DataContract.Programs.ID + " = " + uri.getLastPathSegment());
                 break;
-
             case RECORDING_LIST:
                 builder.setTables(DataContract.Recordings.TABLE);
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = DataContract.Recordings.SORT_ORDER_DEFAULT;
                 }
                 break;
-
             case RECORDING_ID:
                 builder.setTables(DataContract.Recordings.TABLE);
-                // limit query to one row at most
                 builder.appendWhere(DataContract.Recordings.ID + " = " + uri.getLastPathSegment());
                 break;
-
             case SERIES_RECORDING_LIST:
                 builder.setTables(DataContract.SeriesRecordings.TABLE);
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = DataContract.SeriesRecordings.SORT_ORDER_DEFAULT;
                 }
                 break;
-
             case SERIES_RECORDING_ID:
                 builder.setTables(DataContract.SeriesRecordings.TABLE);
-                // limit query to one row at most
                 builder.appendWhere(DataContract.SeriesRecordings.ID + " = " + uri.getLastPathSegment());
                 break;
-
             case TIMER_RECORDING_LIST:
                 builder.setTables(DataContract.TimerRecordings.TABLE);
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = DataContract.TimerRecordings.SORT_ORDER_DEFAULT;
                 }
                 break;
-
             case TIMER_RECORDING_ID:
                 builder.setTables(DataContract.TimerRecordings.TABLE);
-                // limit query to one row at most
                 builder.appendWhere(DataContract.TimerRecordings.ID + " = " + uri.getLastPathSegment());
                 break;
-
+            case SERVER_INFO_ID:
+                builder.setTables(DataContract.Connections.TABLE);
+                builder.appendWhere(DataContract.Connections.SELECTED + " =1");
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
-        // if you like you can log the query
         Log.d(TAG, "SQL query: " + builder.buildQuery(projection, selection, null, null, sortOrder, null));
 
         Cursor cursor = builder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
@@ -252,52 +236,37 @@ public class DataContentProvider extends ContentProvider {
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
         Uri newUri = null;
-        long id;
+        long id = 0;
 
         // Depending on the uri update the provides values
         switch (mUriMatcher.match(uri)) {
             case CONNECTION_LIST:
                 id = db.insert(DataContract.Connections.TABLE, null, contentValues);
-                newUri = getUriForId(id, uri);
                 break;
-
             case PROFILE_LIST:
                 id = db.insert(DataContract.Profiles.TABLE, null, contentValues);
-                newUri = getUriForId(id, uri);
                 break;
-
             case CHANNEL_LIST:
                 id = db.insertWithOnConflict(DataContract.Channels.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = getUriForId(id, uri);
                 break;
-
             case TAG_LIST:
                 id = db.insertWithOnConflict(DataContract.Tags.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = getUriForId(id, uri);
                 break;
-
             case PROGRAM_LIST:
                 id = db.insertWithOnConflict(DataContract.Programs.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = getUriForId(id, uri);
                 break;
-
             case RECORDING_LIST:
                 id = db.insertWithOnConflict(DataContract.Recordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = getUriForId(id, uri);
                 break;
-
             case SERIES_RECORDING_LIST:
                 id = db.insertWithOnConflict(DataContract.SeriesRecordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = getUriForId(id, uri);
-                break;
-
+                 break;
             case TIMER_RECORDING_LIST:
                 id = db.insertWithOnConflict(DataContract.TimerRecordings.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = getUriForId(id, uri);
                 break;
         }
 
-        return newUri;
+        return getUriForId(id, uri);
     }
 
     @Override

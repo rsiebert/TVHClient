@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 public class DataContract {
 
     // The authority of the tvhclient provider.
-    public static final String AUTHORITY = "org.tvheadend.tvhclient.provider";
+    static final String AUTHORITY = "org.tvheadend.tvhclient.provider";
     // The content URI for the top-level tvhclient authority.
     private static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
@@ -18,11 +18,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "connections";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "connections");
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, TABLE);
         // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/connections";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + TABLE;
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/connections";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + TABLE;
 
         // Database column names
         public static final String ID = BaseColumns._ID;
@@ -56,6 +56,15 @@ public class DataContract {
                 TIME, GMT_OFFSET, FREE_DISC_SPACE, TOTAL_DISC_SPACE,
                 HTSP_VERSION, SERVER_NAME, SERVER_VERSION, WEB_ROOT
         };
+        public static final String[] PROJECTION_ACCOUNT_INFO = {
+                ID, NAME, ADDRESS, PORT, USERNAME, PASSWORD
+        };
+        public static final String[] PROJECTION_SERVER_INFO = {
+                ID, NAME, ADDRESS,
+                TIME, GMT_OFFSET, FREE_DISC_SPACE, TOTAL_DISC_SPACE,
+                HTSP_VERSION, SERVER_NAME, SERVER_VERSION, WEB_ROOT
+        };
+
         // The default sort order for queries
         static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
@@ -67,11 +76,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "profiles";
         // The content URI for this table.
-        static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "profiles");
+        static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, TABLE);
         // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/profiles";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + TABLE;
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/profiles";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + TABLE;
 
         // Database column names
         public static final String ID = BaseColumns._ID;
@@ -102,12 +111,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "channels";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "channels");
-        public static final Uri CONTENT_URI_ICON = Uri.withAppendedPath(DataContract.CONTENT_URI, "channel_icons");
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, TABLE);
         // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/channels";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + TABLE;
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/channels";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + TABLE;
 
         // Database column names
         public static final String ID = BaseColumns._ID;                // u32 required   ID of channel
@@ -138,11 +146,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "tags";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "tags");
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, TABLE);
         // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/tags";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + TABLE;
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/tags";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + TABLE;
 
         public static final String ID = BaseColumns._ID;            // u32   required   ID of tag.
         public static final String NAME = "tagName";                // str   required   Name of tag.
@@ -168,11 +176,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "programs";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "programs");
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, TABLE);
         // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/programs";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + TABLE;
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/programs";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + TABLE;
 
         public static final String ID = BaseColumns._ID;                // u32   required   Event ID
         public static final String CHANNEL_ID = "channelId";            // u32   required   The channel this event is related to.
@@ -219,11 +227,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "recordings";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "recordings");
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, TABLE);
         // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/recordings";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + TABLE;
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/recordings";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + TABLE;
 
         public static final String ID = BaseColumns._ID;            // u32   required   ID of dvrEntry.
         public static final String CHANNEL = "channel";             // u32   optional   Channel of dvrEntry.
@@ -301,11 +309,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "series_recordings";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "series_recordings");
-        // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/series_recordings";
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, TABLE);
+        // The mime type of a directory of items
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + TABLE;
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/series_recordings";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + TABLE;
 
         public static final String ID = BaseColumns._ID;            // str   required   ID (string!) of dvrAutorecEntry.
         public static final String ENABLED = "enabled";             // u32   required   If autorec entry is enabled (activated).
@@ -346,11 +354,11 @@ public class DataContract {
         // The database table name
         public static final String TABLE = "timer_recordings";
         // The content URI for this table.
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, "timer_recordings");
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(DataContract.CONTENT_URI, TABLE);
         // The mime type of a directory of items.
-        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/timer_recordings";
+        static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + TABLE;
         // The mime type of a single item.
-        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/timer_recordings";
+        static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + TABLE;
 
         public static final String ID = BaseColumns._ID;        // str   required   ID (string!) of timerecEntry.
         public static final String TITLE = "title";             // str   required   Title for the recordings.
