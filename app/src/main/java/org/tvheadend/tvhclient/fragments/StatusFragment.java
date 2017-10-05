@@ -2,13 +2,13 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -25,7 +25,6 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataContentProvider;
 import org.tvheadend.tvhclient.data.DataContract;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
@@ -38,14 +37,19 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
 
     @SuppressWarnings("unused")
     private final static String TAG = StatusFragment.class.getSimpleName();
-
+    private static final int LOADER_ID_CHANNELS = 1;
+    private static final int LOADER_ID_COMPLETED_RECORDINGS = 2;
+    private static final int LOADER_ID_SCHEDULED_RECORDINGS = 3;
+    private static final int LOADER_ID_FAILED_RECORDINGS = 4;
+    private static final int LOADER_ID_REMOVED_RECORDINGS = 5;
+    private static final int LOADER_ID_SERIES_RECORDINGS = 6;
+    private static final int LOADER_ID_TIMER_RECORDINGS = 7;
+    private static final int LOADER_ID_SERVER_INFO = 8;
     public HTSService mService;
     boolean mBound = false;
     private Activity activity;
     private ActionBarInterface actionBarInterface;
-
     private LinearLayout additionalInformationLayout;
-
     // This information is always available
     private TextView connection;
     private TextView status;
@@ -61,19 +65,22 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     private TextView totaldiscspace;
     private TextView serverApiVersion;
     private String connectionStatus = "";
-
     private TVHClientApplication app;
     private DatabaseHelper dbh;
     private DataStorage ds;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.d(TAG, "onServiceConnected() called with: className = [" + className + "], service = [" + service + "]");
+            mService = ((HTSService.LocalBinder) service).getService();
+            onInitialSyncCompleted();
+        }
 
-    private static final int LOADER_ID_CHANNELS = 1;
-    private static final int LOADER_ID_COMPLETED_RECORDINGS = 2;
-    private static final int LOADER_ID_SCHEDULED_RECORDINGS = 3;
-    private static final int LOADER_ID_FAILED_RECORDINGS = 4;
-    private static final int LOADER_ID_REMOVED_RECORDINGS = 5;
-    private static final int LOADER_ID_SERIES_RECORDINGS = 6;
-    private static final int LOADER_ID_TIMER_RECORDINGS = 7;
-    private static final int LOADER_ID_CONNECTIONS = 8;
+        public void onServiceDisconnected(ComponentName className) {
+            Log.d(TAG, "onServiceDisconnected() called with: className = [" + className + "]");
+            mService = null;
+            mBound = false;
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -163,7 +170,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
 
         // Upon resume show the actual status. If stuff is loading hide certain
         // information, otherwise show the connection status and the cause of
-        // possible connection problems. 
+        // possible connection problems.
         additionalInformationLayout.setVisibility(View.GONE);
         if (ds.isLoading()) {
             onMessage(Constants.ACTION_LOADING, true);
@@ -180,7 +187,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         getLoaderManager().initLoader(LOADER_ID_REMOVED_RECORDINGS, null, this);
         getLoaderManager().initLoader(LOADER_ID_SERIES_RECORDINGS, null, this);
         getLoaderManager().initLoader(LOADER_ID_TIMER_RECORDINGS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_CONNECTIONS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_SERVER_INFO, null, this);
     }
 
     @Override
@@ -473,7 +480,7 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
                 return new CursorLoader(getActivity(), DataContract.TimerRecordings.CONTENT_URI,
                         new String[]{DataContract.TimerRecordings.ID}, null, null, null);
 
-            case LOADER_ID_CONNECTIONS:
+            case LOADER_ID_SERVER_INFO:
                 // TODO change to other uri
                 return new CursorLoader(getActivity(), DataContract.Connections.CONTENT_URI,
                         DataContract.Connections.PROJECTION_ALL, DataContract.Connections.SELECTED + "=?", new String[]{"1"}, null);
@@ -486,9 +493,8 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         Log.d(TAG, "onLoadFinished() called with: loader = [" + loader.getId() + "]");
 
+        int count = (cursor != null) ? cursor.getCount() : 0;
         if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToNext();
-            int count = cursor.getCount();
             switch (loader.getId()) {
                 case LOADER_ID_CHANNELS:
                     channels.setText(count + " " + getString(R.string.available));
@@ -511,30 +517,24 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
                 case LOADER_ID_TIMER_RECORDINGS:
                     timerRec.setText(getResources().getQuantityString(R.plurals.timer_recordings, count, count));
                     break;
-                case LOADER_ID_CONNECTIONS:
+                case LOADER_ID_SERVER_INFO:
                     Log.d(TAG, "onLoadFinished: loading data from connection table");
+
+                    final String serverName = cursor.getString(cursor.getColumnIndex(DataContract.Connections.SERVER_NAME));
+                    final String serverVersion = cursor.getString(cursor.getColumnIndex(DataContract.Connections.SERVER_VERSION));
+                    final String htspVersion = cursor.getString(cursor.getColumnIndex(DataContract.Connections.HTSP_VERSION));
+                    serverApiVersion.setText(htspVersion + " (" + getString(R.string.server) + ": " + serverName + " " + serverVersion + ")");
+
                     // Get the disc space values and convert them to megabytes
                     long free = cursor.getLong(cursor.getColumnIndex(DataContract.Connections.FREE_DISC_SPACE)) / 1000000;
                     long total = cursor.getLong(cursor.getColumnIndex(DataContract.Connections.TOTAL_DISC_SPACE)) / 1000000;
 
-                    String freeDiscSpace;
-                    String totalDiscSpace;
+                    // Show the amount of disc space as GB or MB
+                    String freeDiscSpace = (free > 1000) ? ((free / 1000) + " GB ") : (free + " MB ");
+                    String totalDiscSpace = (total > 1000) ? ((total / 1000) + " GB ") : (total + " MB ");
 
-                    // Show the free amount of disc space as GB or MB
-                    if (free > 1000) {
-                        freeDiscSpace = (free / 1000) + " GB " + getString(R.string.available);
-                    } else {
-                        freeDiscSpace = free + " MB " + getString(R.string.available);
-                    }
-                    // Show the total amount of disc space as GB or MB
-                    if (total > 1000) {
-                        totalDiscSpace = (total / 1000) + " GB " + getString(R.string.total);
-                    } else {
-                        totalDiscSpace = total + " MB " + getString(R.string.total);
-                    }
-                    Log.d(TAG, "onLoadFinished: free disk space: " + freeDiscSpace + ", total disk space " + totalDiscSpace);
-                    freediscspace.setText(freeDiscSpace);
-                    totaldiscspace.setText(totalDiscSpace);
+                    freediscspace.setText(freeDiscSpace + getString(R.string.available));
+                    totaldiscspace.setText(totalDiscSpace + getString(R.string.total));
                     break;
             }
         }
@@ -572,18 +572,4 @@ public class StatusFragment extends Fragment implements HTSListener, LoaderManag
         Log.d(TAG, "onInitialSyncCompleted() called");
 
     }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.d(TAG, "onServiceConnected() called with: className = [" + className + "], service = [" + service + "]");
-            mService = ((HTSService.LocalBinder) service).getService();
-            onInitialSyncCompleted();
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            Log.d(TAG, "onServiceDisconnected() called with: className = [" + className + "]");
-            mService = null;
-            mBound = false;
-        }
-    };
 }
