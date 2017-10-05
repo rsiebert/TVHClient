@@ -66,8 +66,8 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
     private static final String TAG = HTSService.class.getSimpleName();
 
-    private ScheduledExecutorService execService;
-    private HTSConnection connection;
+    private ScheduledExecutorService mExecutorService;
+    private HTSConnection mConnection;
     private PackageInfo packInfo;
     private DataStorage ds;
     private Logger logger;
@@ -111,17 +111,27 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     public void onCreate() {
         Log.d(TAG, "onCreate() called");
 
-        mAccount = DataContentUtils.getActiveConnection(this);
-
-        execService = Executors.newScheduledThreadPool(10);
-        ds = DataStorage.getInstance();
-        logger = Logger.getInstance();
-
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (NameNotFoundException ex) {
             // NOP
         }
+        mExecutorService = Executors.newScheduledThreadPool(10);
+        ds = DataStorage.getInstance();
+        logger = Logger.getInstance();
+
+
+        mAccount = DataContentUtils.getActiveConnection(this);
+        if (mAccount != null && MiscUtils.isNetworkAvailable(getApplicationContext())) {
+            mConnection = new HTSConnection(TVHClientApplication.getInstance(), this, packInfo.packageName, packInfo.versionName);
+            mExecutorService.execute(new Runnable() {
+                public void run() {
+                    mConnection.open(mAccount.address, mAccount.port, true);
+                }
+            });
+        }
+
+
     }
 
 
@@ -133,33 +143,33 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         if (action.equals(Constants.ACTION_CONNECT)) {
             logger.log(TAG, "onStartCommand: Connection to server requested");
-
+/*
             boolean force = intent.getBooleanExtra("force", false);
-            if (connection != null && force) {
-                logger.log(TAG, "onStartCommand: Closing existing connection");
-                connection.close();
+            if (mConnection != null && force) {
+                logger.log(TAG, "onStartCommand: Closing existing mConnection");
+                mConnection.close();
                 ds.clearAll();
             }
-            if (mAccount != null && connection == null || !connection.isConnected()) {
+            if (mAccount != null && mConnection == null || !mConnection.isConnected()) {
                 logger.log(TAG, "onStartCommand: Connecting to server");
                 ds.setLoading(true);
-                connection = new HTSConnection(TVHClientApplication.getInstance(), this, packInfo.packageName, packInfo.versionName);
+                mConnection = new HTSConnection(TVHClientApplication.getInstance(), this, packInfo.packageName, packInfo.versionName);
 
                 // Since this is blocking, spawn to a new thread
-                execService.execute(new Runnable() {
+                mExecutorService.execute(new Runnable() {
                     public void run() {
-                        connection.open(mAccount.address, mAccount.port, MiscUtils.isNetworkAvailable(getApplicationContext()));
-                        connection.authenticate(mAccount.username, mAccount.password);
+                        mConnection.open(mAccount.address, mAccount.port, MiscUtils.isNetworkAvailable(getApplicationContext()));
+                        mConnection.authenticate(mAccount.username, mAccount.password);
                     }
                 });
             }
-
-        } else if (connection == null || !connection.isConnected()) {
-            logger.log(TAG, "onStartCommand: No connection to perform " + action);
+*/
+        } else if (mConnection == null || !mConnection.isConnected()) {
+            logger.log(TAG, "onStartCommand: No mConnection to perform " + action);
 
         } else if (action.equals(Constants.ACTION_DISCONNECT)) {
-            logger.log(TAG, "onStartCommand: Closing connection to server");
-            connection.close();
+            logger.log(TAG, "onStartCommand: Closing mConnection to server");
+            mConnection.close();
 
         } else if (action.equals(Constants.ACTION_GET_EVENT)) {
             getEvent(intent.getLongExtra("eventId", 0));
@@ -268,9 +278,9 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     public void onDestroy() {
         Log.d(TAG, "onDestroy() called");
 
-        execService.shutdown();
-        if (connection != null) {
-            connection.close();
+        mExecutorService.shutdown();
+        if (mConnection != null) {
+            mConnection.close();
         }
     }
 
@@ -302,6 +312,39 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
                 getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
                         DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
                 break;
+
+            case "hello":
+
+                // TODO put this back into the connection class
+                final HTSMessage authMessage = new HTSMessage();
+                authMessage.setMethod("enableAsyncMetadata");
+                authMessage.putField("username", mAccount.username);
+
+                values.put(DataContract.Connections.HTSP_VERSION, response.getInt("htspversion", 0));
+                values.put(DataContract.Connections.SERVER_NAME, response.getString("servername"));
+                values.put(DataContract.Connections.SERVER_VERSION, response.getString("serverversion"));
+                values.put(DataContract.Connections.WEB_ROOT, response.getString("webroot"));
+                Log.d(TAG, "handleResponse: updating server info ");
+                getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
+                        DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+
+                MessageDigest md;
+                try {
+                    md = MessageDigest.getInstance("SHA1");
+                    md.update(mAccount.password.getBytes());
+                    md.update(response.getByteArray("challenge"));
+                    authMessage.putField("digest", md.digest());
+                    Log.d(TAG, "handleResponse: sending auth message");
+                    mConnection.sendMessage(authMessage, this);
+                } catch (NoSuchAlgorithmException ex) {
+                    Log.d(TAG, "handleResponse: Could not sent 'authenticate' message. " + ex.getLocalizedMessage());
+                }
+                break;
+
+            case "enableAsyncMetadata":
+                boolean authenticated = response.getInt("noaccess", 0) != 1;
+                Log.d(TAG, "handleResponse: authenticated " + authenticated);
+                break;
         }
     }
 
@@ -311,28 +354,28 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // TODO remove old stuff
         ds.setLoading(false);
         ds.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
-        ds.setProtocolVersion(connection.getProtocolVersion());
-        ds.setServerName(connection.getServerName());
-        ds.setServerVersion(connection.getServerVersion());
-        ds.setWebRoot(connection.getWebRoot());
+        ds.setProtocolVersion(mConnection.getProtocolVersion());
+        ds.setServerName(mConnection.getServerName());
+        ds.setServerVersion(mConnection.getServerVersion());
+        ds.setWebRoot(mConnection.getWebRoot());
 
         // Get some additional information after the initial loading has been finished
         Log.d(TAG, "onInitialSyncCompleted: get disc space");
         final HTSService responseHandler = this;
-        execService.execute(new Runnable() {
+        mExecutorService.execute(new Runnable() {
             public void run() {
                 HTSMessage request = new HTSMessage();
                 request.setMethod("getDiskSpace");
-                connection.sendMessage(request, responseHandler);
+                mConnection.sendMessage(request, responseHandler);
             }
         });
 
         Log.d(TAG, "onInitialSyncCompleted: get system time");
-        execService.execute(new Runnable() {
+        mExecutorService.execute(new Runnable() {
             public void run() {
                 HTSMessage request = new HTSMessage();
                 request.setMethod("getSysTime");
-                connection.sendMessage(request, responseHandler);
+                mConnection.sendMessage(request, responseHandler);
             }
         });
 
@@ -484,6 +527,22 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         logger.log(TAG, "onMessage() called with: msg = [" + msg.getMethod() + "]");
 
         switch (msg.getMethod()) {
+            case "open":
+                final HTSMessage helloMessage = new HTSMessage();
+                helloMessage.setMethod("hello");
+                helloMessage.putField("clientname", packInfo.packageName);
+                helloMessage.putField("clientversion", packInfo.versionName);
+                helloMessage.putField("htspversion", HTSMessage.HTSP_VERSION);
+                helloMessage.putField("username", mAccount.username);
+
+                final HTSService responseHandler = this;
+                mExecutorService.execute(new Runnable() {
+                    public void run() {
+                        mConnection.sendMessage(helloMessage, responseHandler);
+                    }
+                });
+                break;
+
             case "tagAdd":
                 onTagAdd(msg);
                 break;
@@ -591,8 +650,8 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
-        } else if (connection.getProtocolVersion() > 9) {
-            is = new HTSFileInputStream(connection, url);
+        } else if (mConnection.getProtocolVersion() > 9) {
+            is = new HTSFileInputStream(mConnection, url);
         } else {
             return;
         }
@@ -611,8 +670,8 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
-        } else if (connection.getProtocolVersion() > 9) {
-            is = new HTSFileInputStream(connection, url);
+        } else if (mConnection.getProtocolVersion() > 9) {
+            is = new HTSFileInputStream(mConnection, url);
         }
 
         // Set the sample size of the image. This is the number of pixels in
@@ -659,7 +718,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     }
 
     private void getChannelIcon(final Channel ch) {
-        execService.execute(new Runnable() {
+        mExecutorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -673,7 +732,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     }
 
     private void getChannelTagIcon(final ChannelTag tag) {
-        execService.execute(new Runnable() {
+        mExecutorService.execute(new Runnable() {
             public void run() {
                 try {
                     tag.iconBitmap = getIcon(tag.icon);
@@ -694,7 +753,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         request.setMethod("getEvents");
         request.putField("eventId", eventId);
         request.putField("numFollowing", cnt);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (!response.containsKey("events")) {
                     return;
@@ -737,7 +796,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         request.setMethod("getEvent");
         request.putField("eventId", eventId);
 
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 Channel ch = ds.getChannel(response.getLong("channelId"));
                 Program p = getProgramFromEventMessage(response);
@@ -785,7 +844,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         if (tagId > 0) {
             request.putField("tagId", tagId);
         }
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (!response.containsKey("eventIds")) {
                     return;
@@ -808,7 +867,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("cancelDvrEntry");
         request.putField("id", id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -833,7 +892,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("stopDvrEntry");
         request.putField("id", id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -905,7 +964,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
             request.putField("enabled", enabled);
         }
 
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -933,7 +992,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteDvrEntry");
         request.putField("id", id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -1008,7 +1067,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // when the recording was added.
         final Channel ch = ds.getChannel(channelId);
 
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (success && ch != null) {
@@ -1072,7 +1131,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
             request.putField("configName", configName);
         }
 
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -1096,7 +1155,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteTimerecEntry");
         request.putField("id", id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -1148,7 +1207,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
             request.putField("configName", configName);
         }
 
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -1176,7 +1235,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         request.putField("audioCodec", aCodec);
         request.putField("videoCodec", vCodec);
         request.putField("subscriptionId", subscriptionId);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
@@ -1189,7 +1248,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("unsubscribe");
         request.putField("subscriptionId", subscriptionId);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
@@ -1201,7 +1260,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         request.setMethod("feedback");
         request.putField("subscriptionId", subscriptionId);
         request.putField("speed", speed);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 //NOP
             }
@@ -1212,11 +1271,11 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("getTicket");
         request.putField("channelId", ch.id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
                 String ticket = response.getString("ticket", null);
-                String webroot = connection.getWebRoot();
+                String webroot = mConnection.getWebRoot();
 
                 if (path != null && ticket != null) {
                     ds.addTicket(new HttpTicket(webroot + path, ticket));
@@ -1229,7 +1288,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("getTicket");
         request.putField("dvrId", rec.id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
                 String ticket = response.getString("ticket", null);
@@ -1244,7 +1303,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     private void getDiscSpace() {
         HTSMessage request = new HTSMessage();
         request.setMethod("getDiskSpace");
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 DiscSpace ds = new DiscSpace();
                 ds.freediskspace = response.getString("freediskspace", null);
@@ -1257,7 +1316,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     private void getSystemTime() {
         HTSMessage request = new HTSMessage();
         request.setMethod("getSysTime");
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 SystemTime st = new SystemTime();
                 st.time = response.getString("time", null);
@@ -1271,7 +1330,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     private void getDvrConfigs() {
         HTSMessage request = new HTSMessage();
         request.setMethod("getDvrConfigs");
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (!response.containsKey("dvrconfigs")) {
                     return;
@@ -1371,7 +1430,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
             request.putField("configName", configName);
         }
 
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -1395,7 +1454,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("deleteAutorecEntry");
         request.putField("id", id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
@@ -1487,7 +1546,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
             request.putField("fulltext", fulltext);
         }
 
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
@@ -1506,7 +1565,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("getDvrCutpoints");
         request.putField("id", rec.id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (!response.containsKey("cutpoints")) {
                     return;
@@ -1534,7 +1593,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         HTSMessage request = new HTSMessage();
         request.setMethod("getChannel");
         request.putField("channelId", ch.id);
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 // NOP
             }
@@ -1544,7 +1603,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     private void getProfiles() {
         HTSMessage request = new HTSMessage();
         request.setMethod("getProfiles");
-        connection.sendMessage(request, new HTSResponseHandler() {
+        mConnection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (!response.containsKey("profiles")) {
                     return;
@@ -1743,7 +1802,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         final long eventId = currEventId != 0 ? currEventId : nextEventId;
         if (eventId > 0 && ch.epg.size() < 2) {
-            execService.schedule(new Runnable() {
+            mExecutorService.schedule(new Runnable() {
                 public void run() {
                     getEvents(ch, eventId, 5);
                 }
@@ -1803,7 +1862,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 13 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
             rec.startExtra = msg.getLong("startExtra", 0);
@@ -1816,7 +1875,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 17 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
+        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
             rec.timerecId = msg.getString("timerecId");
         }
 
@@ -1881,7 +1940,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 13 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             rec.eventId = msg.getLong("eventId", 0);
             rec.autorecId = msg.getString("autorecId");
             rec.startExtra = msg.getLong("startExtra", 0);
@@ -1894,7 +1953,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         // Not all fields can be set with default values, so check if the server
         // provides a supported HTSP API version. These entries are available
         // only on version 17 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
+        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
             rec.timerecId = msg.getString("timerecId");
         }
 
@@ -2075,7 +2134,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
         ds.addTimerRecording(rec);
@@ -2113,7 +2172,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
+        if (mConnection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
         ds.updateTimerRecording(rec);
