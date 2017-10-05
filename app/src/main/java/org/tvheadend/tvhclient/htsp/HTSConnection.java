@@ -64,7 +64,7 @@ public class HTSConnection extends Thread {
     }
 
     // synchronized, non blocking connect
-    public void open(String hostname, int port) {
+    public void open(String hostname, int port, HTSResponseHandler handler) {
         mLogger.log(TAG, "open() called with: hostname = [" + hostname + "], port = [" + port + "]");
 
         if (mRunning) {
@@ -100,10 +100,15 @@ public class HTSConnection extends Thread {
                         mListener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
                         close();
                     } else {
-                        // TODO change this
+
                         HTSMessage msg = new HTSMessage();
                         msg.setMethod("open");
-                        mListener.onMessage(msg);
+                        if (handler != null) {
+                            // TODO synchronized vs post ?
+                            synchronized (handler) {
+                                handler.handleResponse(msg);
+                            }
+                        }
                     }
                 } catch (InterruptedException ex) {
                     mLogger.log(TAG, "open: Waiting for pending connection was interrupted. " + ex.getLocalizedMessage());

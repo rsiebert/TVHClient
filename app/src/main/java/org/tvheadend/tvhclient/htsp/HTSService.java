@@ -66,14 +66,17 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
 
     private static final String TAG = HTSService.class.getSimpleName();
 
+    private HTSService mResponseHandler;
     private ScheduledExecutorService mExecutorService;
     private HTSConnection mConnection;
     private PackageInfo packInfo;
     private DataStorage ds;
-    private Logger logger;
     private Connection mAccount;
     private final Set<Listener> mListeners = new CopyOnWriteArraySet<>();
 
+    public HTSService() {
+        mResponseHandler = this;
+    }
     public class LocalBinder extends Binder {
         public HTSService getService() {
             return HTSService.this;
@@ -116,16 +119,16 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         } catch (NameNotFoundException ex) {
             // NOP
         }
+
         mExecutorService = Executors.newScheduledThreadPool(10);
         ds = DataStorage.getInstance();
-        logger = Logger.getInstance();
 
         mAccount = DataContentUtils.getActiveConnection(this);
         if (mAccount != null && MiscUtils.isNetworkAvailable(getApplicationContext())) {
             mConnection = new HTSConnection(TVHClientApplication.getInstance(), this);
             mExecutorService.execute(new Runnable() {
                 public void run() {
-                    mConnection.open(mAccount.address, mAccount.port);
+                    mConnection.open(mAccount.address, mAccount.port, mResponseHandler);
                 }
             });
         }
@@ -236,17 +239,16 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
             getSystemTime();
 
         }
-        logger.log(TAG, "onStartCommand() returned: " + START_NOT_STICKY);
         return START_NOT_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy() called");
-
         mExecutorService.shutdown();
         if (mConnection != null) {
             mConnection.close();
+            mConnection = null;
         }
     }
 
@@ -258,58 +260,22 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     @Override
     public void handleResponse(HTSMessage response) {
         Log.d(TAG, "handleResponse() called with: response = [" + response.getMethod() + "]");
-
-        ContentValues values = new ContentValues();
         switch (response.getMethod()) {
             case "getDiskSpace":
-                values.put(DataContract.Connections.FREE_DISC_SPACE, response.getLong("freediskspace", 0));
-                values.put(DataContract.Connections.TOTAL_DISC_SPACE, response.getLong("totaldiskspace", 0));
-
-                Log.d(TAG, "handleResponse: updating server info ");
-                getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
-                        DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
-
+                handleGetDiscSpace(response);
                 break;
             case "getSysTime":
-                values.put(DataContract.Connections.TIME, response.getLong("time", 0));
-                values.put(DataContract.Connections.GMT_OFFSET, response.getInt("gmtoffset", 0));
-
-                Log.d(TAG, "handleResponse: updating server info ");
-                getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
-                        DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+                handleGetSysTime(response);
                 break;
-
+            case "connectionOpened":
+                handleConnectionIsOpen();
+                break;
             case "hello":
-
-                // TODO put this back into the connection class
-                final HTSMessage authMessage = new HTSMessage();
-                authMessage.setMethod("enableAsyncMetadata");
-                authMessage.putField("username", mAccount.username);
-
-                values.put(DataContract.Connections.HTSP_VERSION, response.getInt("htspversion", 0));
-                values.put(DataContract.Connections.SERVER_NAME, response.getString("servername"));
-                values.put(DataContract.Connections.SERVER_VERSION, response.getString("serverversion"));
-                values.put(DataContract.Connections.WEB_ROOT, response.getString("webroot"));
-                Log.d(TAG, "handleResponse: updating server info ");
-                getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
-                        DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
-
-                MessageDigest md;
-                try {
-                    md = MessageDigest.getInstance("SHA1");
-                    md.update(mAccount.password.getBytes());
-                    md.update(response.getByteArray("challenge"));
-                    authMessage.putField("digest", md.digest());
-                    Log.d(TAG, "handleResponse: sending auth message");
-                    mConnection.sendMessage(authMessage, this);
-                } catch (NoSuchAlgorithmException ex) {
-                    Log.d(TAG, "handleResponse: Could not sent 'authenticate' message. " + ex.getLocalizedMessage());
-                }
+                handleInitialServerResponse(response);
+                authenticateClientToServer(response);
                 break;
-
             case "enableAsyncMetadata":
-                boolean authenticated = response.getInt("noaccess", 0) != 1;
-                Log.d(TAG, "handleResponse: authenticated " + authenticated);
+                handleAuthenticationResponse(response);
                 break;
         }
     }
@@ -483,28 +449,16 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
     }
 
 
-
-
+    /**
+     *
+     * @param msg
+     */
     public void onMessage(HTSMessage msg) {
-        logger.log(TAG, "onMessage() called with: msg = [" + msg.getMethod() + "]");
-
+        Log.d(TAG, "onMessage() called with: msg = [" + msg.getMethod() + "]");
         switch (msg.getMethod()) {
             case "open":
-                final HTSMessage helloMessage = new HTSMessage();
-                helloMessage.setMethod("hello");
-                helloMessage.putField("clientname", packInfo.packageName);
-                helloMessage.putField("clientversion", packInfo.versionName);
-                helloMessage.putField("htspversion", HTSMessage.HTSP_VERSION);
-                helloMessage.putField("username", mAccount.username);
-
-                final HTSService responseHandler = this;
-                mExecutorService.execute(new Runnable() {
-                    public void run() {
-                        mConnection.sendMessage(helloMessage, responseHandler);
-                    }
-                });
+                handleConnectionIsOpen();
                 break;
-
             case "tagAdd":
                 onTagAdd(msg);
                 break;
@@ -687,7 +641,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
                     ch.iconBitmap = getIcon(ch.icon);
                     ds.updateChannel(ch);
                 } catch (Throwable ex) {
-                    logger.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
+                    Log.d(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -700,7 +654,7 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
                     tag.iconBitmap = getIcon(tag.icon);
                     ds.updateChannelTag(tag);
                 } catch (Throwable ex) {
-                    logger.log(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
+                    Log.d(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
                 }
             }
         });
@@ -1585,7 +1539,98 @@ public class HTSService extends Service implements HTSConnectionListener, HTSRes
         });
     }
 
+    /**
+     * The connection to the server has been established
+     * Send the hello message with the required information
+     * to start the communication with the server
+     */
+    private void handleConnectionIsOpen() {
+        final HTSMessage helloMessage = new HTSMessage();
+        helloMessage.setMethod("hello");
+        helloMessage.putField("clientname", packInfo.packageName);
+        helloMessage.putField("clientversion", packInfo.versionName);
+        helloMessage.putField("htspversion", HTSMessage.HTSP_VERSION);
+        helloMessage.putField("username", mAccount.username);
 
+        mExecutorService.execute(new Runnable() {
+            public void run() {
+                mConnection.sendMessage(helloMessage, mResponseHandler);
+            }
+        });
+    }
+
+    /**
+     *
+     * @param response
+     */
+    private void handleAuthenticationResponse(HTSMessage response) {
+        boolean authenticated = response.getInt("noaccess", 0) != 1;
+
+    }
+
+    /**
+     *
+     * @param response
+     */
+    private void handleInitialServerResponse(HTSMessage response) {
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Connections.HTSP_VERSION, response.getInt("htspversion", 0));
+        values.put(DataContract.Connections.SERVER_NAME, response.getString("servername"));
+        values.put(DataContract.Connections.SERVER_VERSION, response.getString("serverversion"));
+        values.put(DataContract.Connections.WEB_ROOT, response.getString("webroot"));
+        getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
+                DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+    }
+
+    /**
+     *
+     * @param response
+     */
+    private void handleGetSysTime(HTSMessage response) {
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Connections.TIME, response.getLong("time", 0));
+        values.put(DataContract.Connections.GMT_OFFSET, response.getInt("gmtoffset", 0));
+        getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
+                DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+    }
+
+    /**
+     *
+     * @param response
+     */
+    private void handleGetDiscSpace(HTSMessage response) {
+        ContentValues values = new ContentValues();
+        values.put(DataContract.Connections.FREE_DISC_SPACE, response.getLong("freediskspace", 0));
+        values.put(DataContract.Connections.TOTAL_DISC_SPACE, response.getLong("totaldiskspace", 0));
+        getContentResolver().update(DataContract.Connections.CONTENT_URI, values,
+                DataContract.Connections.ID + "=?", new String[]{String.valueOf(mAccount.id)});
+    }
+
+    /**
+     *
+     * @param response
+     */
+    private void authenticateClientToServer(HTSMessage response) {
+        final HTSMessage msg = new HTSMessage();
+        msg.setMethod("enableAsyncMetadata");
+        msg.putField("username", mAccount.username);
+
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA1");
+            md.update(mAccount.password.getBytes());
+            md.update(response.getByteArray("challenge"));
+            msg.putField("digest", md.digest());
+
+            mExecutorService.execute(new Runnable() {
+                public void run() {
+                    mConnection.sendMessage(msg, mResponseHandler);
+                }
+            });
+        } catch (NoSuchAlgorithmException ex) {
+            // TODO handle digest error
+        }
+    }
     /**
      * Server to client method.
      * A tag has been added on the server.
