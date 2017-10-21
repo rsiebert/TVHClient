@@ -383,8 +383,11 @@
     <string name="pref_date_time_format">Formát dátumu a času</string>
     <string name="pref_date_time_format_sum">Zobrazí dátum a čas, ktorý je používaný vo vašej krajine. V opačnom prípade bude použitý formát \'31.12.2017, 21:09\'.</string>
 
+    <string name="pref_crash_reporting_settings">Nastavenie nahlasovania chýb</string>
     <string name="pref_disable_acra">Zapnúť ACRA?</string>
     <string name="pref_acra_enabled">ACRA zapnuté</string>
     <string name="pref_acra_disabled">ACRA vypnuté</string>
+    <string name="pref_show_program_subtitle_sum">Okrem názvu programu, zobrazí aj krátky obsah/popis</string>
+    <string name="pref_show_program_subtitle">Zobraziť krátky popis programu</string>
 
 </resources>
