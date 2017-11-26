@@ -1,12 +1,6 @@
 package org.tvheadend.tvhclient;
 
 public class Constants {
-    private Constants() {
-        throw new IllegalAccessError("Utility class");
-    }
-
-    // Misc Preference Keys and Values
-    public static final String KEY_SETUP_COMPLETE = "tvhclient-setup-complete";
 
     // Product id for the in-app billing item to unlock the application
     public static final String UNLOCKER = "unlocker";

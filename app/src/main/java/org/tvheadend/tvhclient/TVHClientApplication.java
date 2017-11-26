@@ -300,4 +300,28 @@ public class TVHClientApplication extends Application implements BillingProcesso
     public void onPurchaseHistoryRestored() {
         logger.log(TAG, "onPurchaseHistoryRestored() called");
     }
+
+    /**
+     * Check if wifi or mobile network is available. If none of these two are
+     * available show the status page otherwise continue and show the desired
+     * screen.
+     * 
+     * @return True if the application is connected somehow with the network, otherwise false
+     */
+    @SuppressLint("InlinedApi")
+    public boolean isConnected() {
+        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        final NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        final boolean wifiConnected = (wifi != null) && wifi.isConnected();
+        final boolean mobileConnected = (mobile != null) && mobile.isConnected();
+
+        // Get the status of the Ethernet connection, some tablets can use an ethernet cable
+        final NetworkInfo eth = cm.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+        boolean ethConnected = (eth != null) && eth.isConnected();
+
+        return (wifiConnected || mobileConnected || ethConnected);
+    }
+
 }
