@@ -4,8 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -13,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.fragments.settings.SettingsCastingFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsFragment;
@@ -26,7 +32,9 @@ import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
-public class SettingsActivity extends AppCompatActivity implements ActionBarInterface, SettingsInterface {
+import java.io.File;
+
+public class SettingsActivity extends AppCompatActivity implements ActionBarInterface, SettingsInterface, FolderChooserDialog.FolderCallback {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsActivity.class.getSimpleName();
@@ -325,5 +333,22 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onFolderSelection(@NonNull FolderChooserDialog dialog, @NonNull File folder) {
+        String strippedPath = folder.getAbsolutePath().replace(Environment.getExternalStorageDirectory().getAbsolutePath(), "");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putString("pref_download_directory", strippedPath).apply();
+
+        Fragment f = getFragmentManager().findFragmentById(android.R.id.content);
+        if (f != null && f.isAdded() && f instanceof SettingsFragment) {
+            ((SettingsFragment) f).updateDownloadDirSummary();
+        }
+    }
+
+    @Override
+    public void onFolderChooserDismissed(@NonNull FolderChooserDialog dialog) {
+        // NOP
     }
 }
