@@ -6,12 +6,12 @@ apply from: '../acra.gradle'
 apply from: '../git.gradle'
 
 android {
-    compileSdkVersion project.ext.compileSdkVersion
-    buildToolsVersion project.ext.buildToolsVersion
+    compileSdkVersion 27
+    //buildToolsVersion = "26.0.1"
 
     defaultConfig {
-        minSdkVersion project.ext.minSdkVersion
-        targetSdkVersion project.ext.targetSdkVersion
+        minSdkVersion 16
+        targetSdkVersion 27
 
         versionCode project.ext.versionCode
         versionName project.ext.versionName
@@ -22,10 +22,9 @@ android {
         // Set the default values for these build config fields
         buildConfigField "String", "DEVELOPER_EMAIL", "\"\""
         buildConfigField "String", "PUBLIC_KEY_SALT", "\"\""
+        buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
-        jackOptions {
-            enabled true
-        }
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -43,7 +42,7 @@ android {
             }
             // Disable the unlocked features when the app is released.
             // This must be done by the in-app purchase
-            buildConfigField "Boolean", "DEBUG_MODE", "false"
+            buildConfigField "Boolean", "DEBUG_MODE", "true"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -55,15 +54,15 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.google.android.gms:play-services-cast:11.0.4'
-    compile 'com.android.support:mediarouter-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:27.0.1'
+    compile 'com.android.support:design:27.0.1'
+    compile 'com.google.android.gms:play-services-cast:11.6.0'
+    compile 'com.android.support:mediarouter-v7:27.0.1'
     compile 'com.google.android.libraries.cast.companionlibrary:ccl:2.8.3'
-    compile 'com.anjlab.android.iab.v3:library:1.0.32'
+    compile 'com.anjlab.android.iab.v3:library:1.0.44'
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile 'com.afollestad.material-dialogs:core:0.9.0.1'
+    compile 'com.afollestad.material-dialogs:commons:0.9.6.0'
     compile 'ch.acra:acra:4.9.2'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.3'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.3'

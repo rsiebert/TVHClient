@@ -6,9 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0'
-//        classpath 'com.google.gms:google-services:3.0.0'
-//        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'org.ajoberstar:grgit:2.0.0'
         classpath 'co.riiid:gradle-github-plugin:0.4.2'
 
@@ -19,18 +17,9 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenCentral()
-        maven {
-            url 'http://repo.maven.apache.org/maven2'
-        }
         jcenter()
-    }
-
-    project.ext {
-        compileSdkVersion = 25
-        targetSdkVersion = 25
-        minSdkVersion = 16
-        buildToolsVersion = "26.0.1"
+        maven { url 'http://repo.maven.apache.org/maven2' }
+        maven { url "https://maven.google.com" }
     }
 }
 
