@@ -5,7 +5,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -17,7 +17,7 @@ import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class InfoActivity extends ActionBarActivity {
+public class InfoActivity extends AppCompatActivity {
 
     @SuppressWarnings("unused")
     private final static String TAG = InfoActivity.class.getSimpleName();

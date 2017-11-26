@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -42,7 +42,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
     private static final String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
-    private ActionBarActivity activity;
+    private AppCompatActivity activity;
     private ActionBarInterface actionBarInterface;
     private FragmentStatusInterface fragmentStatusInterface;
     private SeriesRecordingListAdapter adapter;
@@ -75,7 +75,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (ActionBarActivity) getActivity();
+        activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
         ds = DataStorage.getInstance();
     }

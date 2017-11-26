@@ -23,7 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -54,7 +54,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
-    private ActionBarActivity activity;
+    private AppCompatActivity activity;
     private ActionBarInterface actionBarInterface;
     private SettingsInterface settingsInterface;
 
@@ -85,7 +85,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = (ActionBarActivity) getActivity();
+        activity = (AppCompatActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(activity);
         logger = Logger.getInstance();

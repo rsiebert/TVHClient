@@ -4,7 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +30,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     @SuppressWarnings("unused")
     private final static String TAG = TimerRecordingDetailsFragment.class.getSimpleName();
 
-    private ActionBarActivity activity;
+    private AppCompatActivity activity;
     private boolean showControls = false;
     private TimerRecording trec;
 
@@ -73,7 +73,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = (ActionBarActivity) getActivity();
+        activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
         ds = DataStorage.getInstance();
 
