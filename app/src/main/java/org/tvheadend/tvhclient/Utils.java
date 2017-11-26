@@ -416,8 +416,14 @@ public class Utils {
             playMenuItem.setVisible(true);
             recordRemoveMenuItem.setTitle(R.string.stop);
             recordRemoveMenuItem.setVisible(true);
+
+        } else if (program.isScheduled()) {
+            recordRemoveMenuItem.setTitle(R.string.cancel);
+            recordRemoveMenuItem.setVisible(true);
+
         } else {
             // Show the delete menu
+            recordRemoveMenuItem.setTitle(R.string.remove);
             recordRemoveMenuItem.setVisible(true);
         }
     }
