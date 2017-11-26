@@ -239,8 +239,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
             // Get the position of the selected profile in the dvrConfigList
             dvrConfigNameValue = 0;
-            final Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
-            final Profile p = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.recording_profile_id);
+            final Connection conn = dbh.getSelectedConnection();
+            final Profile p = dbh.getProfile(conn.recording_profile_id);
             if (p != null) {
                 for (int i = 0; i < dvrConfigList.length; i++) {
                     if (dvrConfigList[i].equals(p.name)) {
@@ -688,8 +688,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         }
 
         // Add the recording profile if available and enabled
-        final Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
-        final Profile p = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.recording_profile_id);
+        final Connection conn = dbh.getSelectedConnection();
+        final Profile p = dbh.getProfile(conn.recording_profile_id);
         if (p != null 
                 && p.enabled
                 && (dvrConfigName.getText().length() > 0)

@@ -8,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -23,7 +22,6 @@ import org.acra.config.ACRAConfiguration;
 import org.acra.config.ACRAConfigurationException;
 import org.acra.config.ConfigurationBuilder;
 import org.acra.sender.HttpSender;
-import org.tvheadend.tvhclient.data.DataContentProviderHelper;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.ChannelTag;
 
@@ -41,18 +39,10 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
 
     private Logger logger = null;
-    private DataContentProviderHelper mDataContentProviderHelper = null;
     private static TVHClientApplication mInstance;
 
     public static synchronized TVHClientApplication getInstance() {
         return mInstance;
-    }
-
-    public synchronized DataContentProviderHelper getContentProviderHelper() {
-        if (mDataContentProviderHelper == null) {
-            mDataContentProviderHelper = new DataContentProviderHelper(getApplicationContext());
-        }
-        return mDataContentProviderHelper;
     }
 
 
@@ -181,7 +171,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
         refWatcher = LeakCanary.install(this);
 
         mInstance = this;
-        logger = Logger.getInstance();
+        logger = new Logger();
         DataStorage ds = DataStorage.getInstance();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -229,7 +219,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
         // The following line triggers the initialization of ACRA
         if (BuildConfig.ACRA_ENABLED) {
-            Log.d(TAG, "attachBaseContext: Initializing ACRA");
+            logger.log(TAG, "attachBaseContext: Initializing ACRA");
             try {
                 final ACRAConfiguration config = new ConfigurationBuilder(this)
                         .setHttpMethod(HttpSender.Method.PUT)
@@ -240,7 +230,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
                         .build();
                 ACRA.init(this, config);
             } catch (ACRAConfigurationException e) {
-                Log.e(TAG, "attachBaseContext: Failed to init ACRA " + e.getLocalizedMessage());
+                logger.log(TAG, "attachBaseContext: Failed to init ACRA " + e.getLocalizedMessage());
             }
         }
     }

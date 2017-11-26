@@ -398,8 +398,8 @@ public class SearchResultActivity extends ActionBarActivity implements SearchVie
                 // correct item in the list of the selection dialog
                 int dvrConfigNameValue = 0;
                 DatabaseHelper dbh = DatabaseHelper.getInstance(this);
-                final Connection conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
-                final Profile p = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.recording_profile_id);
+                final Connection conn = dbh.getSelectedConnection();
+                final Profile p = dbh.getProfile(conn.recording_profile_id);
                 if (p != null) {
                     for (int i = 0; i < dvrConfigList.length; i++) {
                         if (dvrConfigList[i].equals(p.name)) {

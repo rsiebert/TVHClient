@@ -46,7 +46,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
 
         ds = DataStorage.getInstance();
         DatabaseHelper dbh = DatabaseHelper.getInstance(this);
-        conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
+        conn = dbh.getSelectedConnection();
         // Check that a valid channel or recording was specified
         rec = ds.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
         logger = Logger.getInstance();

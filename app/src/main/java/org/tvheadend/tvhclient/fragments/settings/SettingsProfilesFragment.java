@@ -88,12 +88,12 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         prefRecProfiles = (ListPreference) findPreference("pref_recording_profiles");
         prefProgProfiles = (ListPreference) findPreference("pref_playback_profiles");
 
-        conn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
-        progProfile = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.playback_profile_id);
+        conn = dbh.getSelectedConnection();
+        progProfile = dbh.getProfile(conn.playback_profile_id);
         if (progProfile == null) {
             progProfile = new Profile();
         }
-        recProfile = TVHClientApplication.getInstance().getContentProviderHelper().getProfile(conn.recording_profile_id);
+        recProfile = dbh.getProfile(conn.recording_profile_id);
         if (recProfile == null) {
             recProfile = new Profile();
         }
@@ -180,10 +180,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (progProfile.id == 0) {
-            conn.playback_profile_id = (int) TVHClientApplication.getInstance().getContentProviderHelper().addProfile(progProfile);
-            TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(conn);
+            conn.playback_profile_id = (int) dbh.addProfile(progProfile);
+            dbh.updateConnection(conn);
         } else {
-            TVHClientApplication.getInstance().getContentProviderHelper().updateProfile(progProfile);
+            dbh.updateProfile(progProfile);
         }
 
         // Save the values into the recording profile (recording)
@@ -195,10 +195,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (recProfile.id == 0) {
-            conn.recording_profile_id = (int) TVHClientApplication.getInstance().getContentProviderHelper().addProfile(recProfile);
-            TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(conn);
+            conn.recording_profile_id = (int) dbh.addProfile(recProfile);
+            dbh.updateConnection(conn);
         } else {
-            TVHClientApplication.getInstance().getContentProviderHelper().updateProfile(recProfile);
+            dbh.updateProfile(recProfile);
         }
     }
 

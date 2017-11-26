@@ -20,7 +20,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
@@ -136,7 +135,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             // If an index is given then we want to edit this connection
             // Otherwise create a new connection with default values.
             if (connId > 0) {
-                conn = TVHClientApplication.getInstance().getContentProviderHelper().getConnection(connId);
+                conn = dbh.getConnection(connId);
                 if (actionBarInterface != null) {
                     actionBarInterface.setActionBarTitle(getString(R.string.edit_connection));
                     actionBarInterface.setActionBarSubtitle(conn != null ? conn.name : "");
@@ -198,7 +197,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         conn.wol_port = 9;
         conn.wol_broadcast = false;
         // If this is the first connection make it active
-        conn.selected = (TVHClientApplication.getInstance().getContentProviderHelper().getConnections().size() == 0);
+        conn.selected = (dbh.getConnections().size() == 0);
     }
 
     @Override
@@ -371,18 +370,18 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         // If the current connection is set as selected
         // we need to unselect the previous one.
         if (prefSelected.isChecked()) {
-            Connection prevSelectedConn = TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection();
+            Connection prevSelectedConn = dbh.getSelectedConnection();
             if (prevSelectedConn != null) {
                 prevSelectedConn.selected = false;
-                TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(prevSelectedConn);
+                dbh.updateConnection(prevSelectedConn);
             }
         }
 
         // If we have an id then the connection shall be updated
         if (conn.id > 0) {
-            TVHClientApplication.getInstance().getContentProviderHelper().updateConnection(conn);
+            dbh.updateConnection(conn);
         } else {
-            TVHClientApplication.getInstance().getContentProviderHelper().addConnection(conn);
+            dbh.addConnection(conn);
         }
         
         // Nullify the connection so that we start fresh when

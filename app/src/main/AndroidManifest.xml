@@ -37,11 +37,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <provider
-            android:authorities="org.tvheadend.tvhclient.provider"
-            android:name=".data.DataContentProvider"
-            android:exported="false" />
-
         <activity android:name="org.tvheadend.tvhclient.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

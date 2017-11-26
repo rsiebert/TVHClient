@@ -162,10 +162,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (getView() != null) {
-                    if (TVHClientApplication.getInstance().getContentProviderHelper().getConnections().isEmpty()) {
+                    if (dbh.getConnections().isEmpty()) {
                         Snackbar.make(getView(), R.string.no_connection_available_advice,
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection() == null) {
+                    } else if (dbh.getSelectedConnection() == null) {
                         Snackbar.make(getView(), R.string.no_connection_active_advice,
                                 Snackbar.LENGTH_SHORT).show();
                     } else if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
@@ -189,10 +189,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (getView() != null) {
-                    if (TVHClientApplication.getInstance().getContentProviderHelper().getConnections().isEmpty()) {
+                    if (dbh.getConnections().isEmpty()) {
                         Snackbar.make(getView(), R.string.no_connection_available_advice,
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection() == null) {
+                    } else if (dbh.getSelectedConnection() == null) {
                         Snackbar.make(getView(), R.string.no_connection_active_advice,
                                 Snackbar.LENGTH_SHORT).show();
                     } else if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
@@ -217,10 +217,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (getView() != null) {
-                    if (TVHClientApplication.getInstance().getContentProviderHelper().getConnections().isEmpty()) {
+                    if (dbh.getConnections().isEmpty()) {
                         Snackbar.make(getView(), getString(R.string.no_connection_available_advice),
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (TVHClientApplication.getInstance().getContentProviderHelper().getSelectedConnection() == null) {
+                    } else if (dbh.getSelectedConnection() == null) {
                         Snackbar.make(getView(), getString(R.string.no_connection_active_advice),
                                 Snackbar.LENGTH_SHORT).show();
                     } else {
