@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -171,7 +172,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
         refWatcher = LeakCanary.install(this);
 
         mInstance = this;
-        logger = new Logger();
+        logger = Logger.getInstance();
         DataStorage ds = DataStorage.getInstance();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -219,7 +220,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
         // The following line triggers the initialization of ACRA
         if (BuildConfig.ACRA_ENABLED) {
-            logger.log(TAG, "attachBaseContext: Initializing ACRA");
+            Log.d(TAG, "attachBaseContext: Initializing ACRA");
             try {
                 final ACRAConfiguration config = new ConfigurationBuilder(this)
                         .setHttpMethod(HttpSender.Method.PUT)
@@ -230,7 +231,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
                         .build();
                 ACRA.init(this, config);
             } catch (ACRAConfigurationException e) {
-                logger.log(TAG, "attachBaseContext: Failed to init ACRA " + e.getLocalizedMessage());
+                Log.d(TAG, "attachBaseContext: Failed to init ACRA " + e.getLocalizedMessage());
             }
         }
     }
