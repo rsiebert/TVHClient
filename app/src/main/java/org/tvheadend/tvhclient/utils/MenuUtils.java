@@ -11,6 +11,7 @@ import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MenuUtils {
@@ -45,5 +46,40 @@ public class MenuUtils {
                 .title(R.string.genre_color_list)
                 .adapter(new GenreColorDialogAdapter(items), null)
                 .show();
+    }
+
+    public void handleMenuTimeSelection(int currentSelection, MenuTimeSelectionCallback callback) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        // TODO show the next 12h, consider overflow into the next day
+        // Get the current hour of the day and create
+        // a list of the next hours until midnight
+        Calendar c = Calendar.getInstance();
+        final int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+        String[] times = new String[12];
+        times[0] = activity.getString(R.string.current_time);
+
+        // TODO show a locale dependant time representation
+        for (int i = 1; i < 12; i++) {
+            int hour = (hourOfDay + i);
+            times[i] = String.valueOf(hour <= 24 ? hour : hour - 24) + ":00";
+        }
+
+        new MaterialDialog.Builder(activity)
+                .title(R.string.select_time)
+                .items(times)
+                .itemsCallbackSingleChoice(currentSelection, (dialog, itemView, which, text) -> {
+                    // Convert the selected index into hours in seconds
+                    // and reload the data with the given offset
+                    if (callback != null) {
+                        callback.menuTimeSelected(which);
+                    }
+                    return true;
+                })
+                .build()
+                .show();
+
     }
 }

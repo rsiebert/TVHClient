@@ -46,6 +46,7 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuTimeSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -56,7 +57,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface {
+public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
@@ -68,9 +69,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private ArrayList<ChannelTag> tagList = new ArrayList<>();
     private ChannelListAdapter adapter;
     private ListView listView;
-
-    // The dialog that allows the user to select a certain time frame
-    private MaterialDialog channelTimeDialog;
 
     // This is the default view for the channel list adapter. Other views can be
     // passed to the adapter to show less information. This is used in the
@@ -290,8 +288,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_timeframe:
-            createChannelTimeDialog();
-            channelTimeDialog.show();
+            mMenuUtils.handleMenuTimeSelection(channelTimeSelection, this);
             return true;
 
         case R.id.menu_genre_color_info_channels:
@@ -657,60 +654,28 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         return adapter.getCount();
     }
 
-    /**
-     * Prepares a dialog that shows certain times the user can
-     * choose from. These are usually the noon, afternoon and prime times
-     */
-    private void createChannelTimeDialog() {
+    @Override
+    public void menuTimeSelected(int which) {
+        channelTimeSelection = which;
 
+        // Get the current time and create the new time from the selection value.
+        // 0 is the current time, 1 is 2 hours ahead, 2 is 4 hours ahead and so on
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        final int hour = c.get(Calendar.HOUR_OF_DAY);
-
-        final int size = ((24 - hour) / 2);
-        String[] times = new String[(size > 0) ? size : 1];
-        times[0] = getString(R.string.current_time);
-        int j = 1;
-        for (int i = 2; i < (24 - hour); i += 2) {
-            if (times.length > j) {
-                times[j] = String.valueOf(hour + i) + ":00";
+        if (which > 0) {
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            if (which > 0) {
+                c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) + which);
             }
-            j++;
         }
 
-        channelTimeDialog = new MaterialDialog.Builder(activity)
-        .title(R.string.select_time)
-        .items(times)
-        .itemsCallbackSingleChoice(channelTimeSelection, new MaterialDialog.ListCallbackSingleChoice() {
-            @Override
-            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                channelTimeSelection = which;
+        showProgramsFromTime = c.getTimeInMillis();
+        adapter.setTime(showProgramsFromTime);
+        adapter.notifyDataSetChanged();
 
-                // Get the current time and create the new time from the selection value. 
-                // 0 is the current time, 1 is 2 hours ahead, 2 is 4 hours ahead and so on 
-                Calendar c = Calendar.getInstance();
-                if (which > 0) {
-                    c.set(Calendar.MINUTE, 0);
-                    c.set(Calendar.SECOND, 0);
-                    if (which > 0) {
-                        c.set(Calendar.HOUR_OF_DAY, hour + (which*2));
-                    }
-                }
-                channelTimeDialog.dismiss();
-
-                showProgramsFromTime = c.getTimeInMillis();
-                adapter.setTime(showProgramsFromTime);
-                adapter.notifyDataSetChanged();
-
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onChannelTimeSelected(channelTimeSelection, showProgramsFromTime);
-                    fragmentStatusInterface.onListPopulated(TAG);
-                }
-
-                return true;
-            }
-        })
-        .build();
+        if (fragmentStatusInterface != null) {
+            fragmentStatusInterface.onChannelTimeSelected(channelTimeSelection, showProgramsFromTime);
+            fragmentStatusInterface.onListPopulated(TAG);
+        }
     }
 }
