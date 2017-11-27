@@ -19,7 +19,7 @@ import android.widget.ListView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.tasks.AsyncTaskCallback;
+import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
@@ -31,7 +31,7 @@ import org.tvheadend.tvhclient.model.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback, AsyncTaskCallback {
+public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback, WakeOnLanTaskCallback {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();

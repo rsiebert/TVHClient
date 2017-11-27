@@ -25,10 +25,10 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private WeakReference<Context> mContext;
     private final Connection mConnection;
     private final Logger mLogger;
-    private final AsyncTaskCallback mCallback;
+    private final WakeOnLanTaskCallback mCallback;
     private Exception mException;
 
-    public WakeOnLanTask(Context context, AsyncTaskCallback callback, Connection connection) {
+    public WakeOnLanTask(Context context, WakeOnLanTaskCallback callback, Connection connection) {
         mContext = new WeakReference<>(context);
         mConnection = connection;
         mCallback = callback;

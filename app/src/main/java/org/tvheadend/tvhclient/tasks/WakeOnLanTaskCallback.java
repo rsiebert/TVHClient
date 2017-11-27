@@ -1,5 +1,5 @@
 package org.tvheadend.tvhclient.tasks;
 
-public interface AsyncTaskCallback {
+public interface WakeOnLanTaskCallback {
     void notify(String message);
 }
