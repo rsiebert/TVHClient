@@ -29,7 +29,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -336,7 +335,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_play:
-            startActivity(new PlayIntent(activity, program));
+            mMenuUtils.handleMenuPlaySelection(program.channel.id, -1);
             return true;
 
         default:
@@ -383,7 +382,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         case R.id.menu_play:
             // Open a new activity that starts playing the first program that is
             // currently transmitted over this channel 
-            startActivity(new PlayIntent(activity, channel));
+            mMenuUtils.handleMenuPlaySelection(channel.id, -1);
             return true;
 
         case R.id.menu_genre_color_info_programs:

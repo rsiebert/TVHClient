@@ -26,7 +26,6 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
-import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -134,7 +133,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         final Recording rec = adapter.getSelectedItem();
         switch (item.getItemId()) {
         case R.id.menu_play:
-            startActivity(new PlayIntent(activity, rec));
+            mMenuUtils.handleMenuPlaySelection(-1, rec.id);
             return true;
 
         case R.id.menu_download:
@@ -325,7 +324,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_play:
-            startActivity(new PlayIntent(activity, rec));
+            mMenuUtils.handleMenuPlaySelection(-1, rec.id);
             return true;
 
         case R.id.menu_download:

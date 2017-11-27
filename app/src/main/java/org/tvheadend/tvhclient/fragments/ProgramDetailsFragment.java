@@ -27,7 +27,6 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
@@ -327,7 +326,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             playButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new PlayIntent(activity, program));
+                    mMenuUtils.handleMenuPlaySelection(program.channel.id, -1);
                 }
             });
         }

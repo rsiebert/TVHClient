@@ -55,7 +55,6 @@ import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
@@ -453,7 +452,13 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             return true;
 
         case R.id.menu_play:
-            startActivity(new PlayIntent(this, model));
+            if (model instanceof Program) {
+                Program program = (Program) model;
+                mMenuUtils.handleMenuPlaySelection(program.channel.id, -1);
+            } else if (model instanceof Recording) {
+                Recording rec = (Recording) model;
+                mMenuUtils.handleMenuPlaySelection(-1, rec.id);
+            }
             return true;
 
         case R.id.menu_download:

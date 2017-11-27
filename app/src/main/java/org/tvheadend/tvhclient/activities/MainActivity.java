@@ -23,8 +23,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -73,7 +73,6 @@ import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
@@ -88,8 +87,9 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
-import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
+import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -188,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private MiniController mMiniController;
     private Logger logger;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -207,6 +208,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         dbh = DatabaseHelper.getInstance(this);
         ds = DataStorage.getInstance();
         changeLogDialog = new ChangeLogDialog(this);
+
+        mMenuUtils = new MenuUtils(this);
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -1406,9 +1409,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // Play the channel when the channel icon has 
                 // been clicked, otherwise show the channel details
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                if (prefs.getBoolean("playWhenChannelIconSelectedPref", true) && 
-                        tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                    startActivity(new PlayIntent(this, channel));
+                if (prefs.getBoolean("playWhenChannelIconSelectedPref", true)
+                        && tag.equals(Constants.TAG_CHANNEL_ICON)) {
+                    mMenuUtils.handleMenuPlaySelection(channel.id, -1);
 
                 } else {
                     Bundle bundle = new Bundle();
@@ -1428,7 +1431,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         case MENU_PROGRAM_GUIDE:
             // If a channel was selected in the program guide screen, start
             // playing the selected channel
-            startActivity(new PlayIntent(this, channel));
+            mMenuUtils.handleMenuPlaySelection(channel.id, -1);
             break;
         }
     }
@@ -1458,7 +1461,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if (prefs.getBoolean("playWhenChannelIconSelectedPref", true) && 
                     tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                startActivity(new PlayIntent(this, recording));
+                mMenuUtils.handleMenuPlaySelection(-1, recording.id);
             } else {
                 // When a recording has been selected from the recording list fragment,
                 // show its details. In dual mode these are shown in a separate fragment

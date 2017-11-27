@@ -15,6 +15,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.DownloadActivity;
+import org.tvheadend.tvhclient.activities.PlayActivity;
 import org.tvheadend.tvhclient.activities.SearchResultActivity;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
@@ -203,5 +204,16 @@ public class MenuUtils {
             intent.putExtra("configName", profile.name);
         }
         activity.startService(intent);
+    }
+
+    public void handleMenuPlaySelection(long channelId, long dvrId) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        Intent intent = new Intent(activity, PlayActivity.class);
+        intent.putExtra("channelId", channelId);
+        intent.putExtra("dvrId", dvrId);
+        activity.startActivity(intent);
     }
 }

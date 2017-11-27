@@ -31,7 +31,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
@@ -255,7 +254,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         switch (item.getItemId()) {
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            startActivity(new PlayIntent(activity, adapter.getSelectedItem()));
+            mMenuUtils.handleMenuPlaySelection(adapter.getSelectedItem().id, -1);
             return true;
 
         case R.id.menu_tags:
@@ -392,7 +391,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            startActivity(new PlayIntent(activity, channel));
+            mMenuUtils.handleMenuPlaySelection(channel.id, -1);
             return true;
 
         default:

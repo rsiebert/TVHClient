@@ -22,7 +22,6 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -320,7 +319,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             @Override
             public void onClick(View v) {
                 // Open a new activity that starts playing the program
-                startActivity(new PlayIntent(activity, rec));
+                mMenuUtils.handleMenuPlaySelection(-1, rec.id);
             }
         });
         editRecordingButton.setOnClickListener(new OnClickListener() {
