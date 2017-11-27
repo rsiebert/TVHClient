@@ -88,7 +88,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         ds = DataStorage.getInstance();
     }
 

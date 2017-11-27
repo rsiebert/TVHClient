@@ -77,7 +77,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_transcoding);

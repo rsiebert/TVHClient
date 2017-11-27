@@ -74,7 +74,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
 
         activity = getActivity();
         app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
         ds = DataStorage.getInstance();
 

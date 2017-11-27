@@ -77,7 +77,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         ds = DataStorage.getInstance();
 
         // Load the preferences from an XML resource

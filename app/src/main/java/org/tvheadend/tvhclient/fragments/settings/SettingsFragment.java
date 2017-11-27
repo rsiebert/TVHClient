@@ -86,7 +86,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
         activity = (AppCompatActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
         ds = DataStorage.getInstance();
 

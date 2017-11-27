@@ -52,7 +52,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         Utils.setLanguage(this);
 
         ds = DataStorage.getInstance();
-        DatabaseHelper dbh = DatabaseHelper.getInstance(this);
+        DatabaseHelper dbh = DatabaseHelper.getInstance(getApplicationContext());
         conn = dbh.getSelectedConnection();
         // Check that a valid channel or recording was specified
         rec = ds.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));

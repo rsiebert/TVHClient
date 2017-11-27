@@ -126,7 +126,7 @@ public class Utils {
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction(Constants.ACTION_CONNECT);
 
-        final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
+        final DatabaseHelper dbh = DatabaseHelper.getInstance(context.getApplicationContext());
         final Connection conn = dbh.getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
@@ -741,7 +741,7 @@ public class Utils {
     private static int getChannelTagId(final Context context) {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
-        final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
+        final DatabaseHelper dbh = DatabaseHelper.getInstance(context.getApplicationContext());
     	if (dbh != null) {
 	        Connection conn = dbh.getSelectedConnection();
 	        if (conn != null) {
@@ -759,7 +759,7 @@ public class Utils {
      */
     public static void setChannelTagId(final Context context, final int channelTagId) {
         // Save the selected tag for the active connection in the database
-        final DatabaseHelper dbh = DatabaseHelper.getInstance(context);
+        final DatabaseHelper dbh = DatabaseHelper.getInstance(context.getApplicationContext());
     	if (dbh != null) {
 	        Connection conn = dbh.getSelectedConnection();
 	        if (conn != null) {

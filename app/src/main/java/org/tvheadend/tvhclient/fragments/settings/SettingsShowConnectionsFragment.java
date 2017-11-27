@@ -65,7 +65,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
     }
 
     @Override

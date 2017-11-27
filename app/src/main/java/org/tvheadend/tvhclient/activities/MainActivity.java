@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
         logger = Logger.getInstance();
-        dbh = DatabaseHelper.getInstance(this);
+        dbh = DatabaseHelper.getInstance(getApplicationContext());
         ds = DataStorage.getInstance();
         changeLogDialog = new ChangeLogDialog(this);
 

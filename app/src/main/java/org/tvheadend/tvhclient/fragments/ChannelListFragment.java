@@ -351,7 +351,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             // Get the selected recording profile to highlight the 
             // correct item in the list of the selection dialog
             int dvrConfigNameValue = 0;
-            DatabaseHelper dbh = DatabaseHelper.getInstance(activity);
+            DatabaseHelper dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
             final Connection conn = dbh.getSelectedConnection();
             final Profile p = dbh.getProfile(conn.recording_profile_id);
             if (p != null) {

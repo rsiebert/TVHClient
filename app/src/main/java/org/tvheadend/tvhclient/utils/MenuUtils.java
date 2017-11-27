@@ -194,8 +194,8 @@ public class MenuUtils {
         intent.setAction("addDvrEntry");
         intent.putExtra("eventId", eventId);
 
-        final Connection connection = DatabaseHelper.getInstance(activity).getSelectedConnection();
-        final Profile profile = DatabaseHelper.getInstance(activity).getProfile(connection.recording_profile_id);
+        final Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
+        final Profile profile = DatabaseHelper.getInstance(activity.getApplicationContext()).getProfile(connection.recording_profile_id);
         if (profile != null
                 && profile.enabled
                 && mHtspVersion >= 16
@@ -214,8 +214,8 @@ public class MenuUtils {
         intent.setAction("addAutorecEntry");
         intent.putExtra("title", title);
 
-        final Connection connection = DatabaseHelper.getInstance(activity).getSelectedConnection();
-        final Profile profile = DatabaseHelper.getInstance(activity).getProfile(connection.recording_profile_id);
+        final Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
+        final Profile profile = DatabaseHelper.getInstance(activity.getApplicationContext()).getProfile(connection.recording_profile_id);
         if (profile != null
                 && profile.enabled
                 && mHtspVersion >= 16

@@ -112,7 +112,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
         activity = getActivity();
         app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         ds = DataStorage.getInstance();
 
         if (getDialog() != null && getDialog().getWindow() != null) {

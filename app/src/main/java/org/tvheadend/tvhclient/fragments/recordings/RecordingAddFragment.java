@@ -121,7 +121,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
         ds = DataStorage.getInstance();
 

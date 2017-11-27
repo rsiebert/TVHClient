@@ -77,7 +77,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        dbh = DatabaseHelper.getInstance(activity);
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_add_connection);

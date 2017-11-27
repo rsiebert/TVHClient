@@ -96,7 +96,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // Create the url with the credentials and the host and  
         // port configuration. This one is fixed for all actions
-        DatabaseHelper dbh = DatabaseHelper.getInstance(this);
+        DatabaseHelper dbh = DatabaseHelper.getInstance(getApplicationContext());
         Connection conn = dbh.getSelectedConnection();
         if (conn != null) {
             username = conn.username;
