@@ -26,10 +26,7 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -38,6 +35,8 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -338,7 +337,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             return true;
 
         case R.id.menu_search_epg:
-            activity.startActivity(new SearchEPGIntent(activity, selectedProgram.title));
+            mMenuUtils.handleMenuSearchEpgSelection(selectedProgram.title);
             return true;
 
         case R.id.menu_record_remove:

@@ -23,7 +23,6 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.intent.PlayIntent;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -264,7 +263,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 return true;
 
             case R.id.menu_search_epg:
-                startActivity(new SearchEPGIntent(activity, rec.title));
+                mMenuUtils.handleMenuSearchEpgSelection(rec.title);
                 return true;
 
             default:

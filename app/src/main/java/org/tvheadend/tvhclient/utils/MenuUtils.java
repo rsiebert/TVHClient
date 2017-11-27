@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.utils;
 
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.activities.DownloadActivity;
+import org.tvheadend.tvhclient.activities.SearchResultActivity;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -152,6 +154,23 @@ public class MenuUtils {
         } catch (UnsupportedEncodingException e) {
             // NOP
         }
+    }
 
+    public void handleMenuSearchEpgSelection(String title) {
+        handleMenuSearchEpgSelection(title, 0);
+    }
+
+    public void handleMenuSearchEpgSelection(String title, long channelId) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        Intent intent = new Intent(activity, SearchResultActivity.class);
+        intent.setAction(Intent.ACTION_SEARCH);
+        intent.putExtra(SearchManager.QUERY, title);
+        if (channelId > 0) {
+            intent.putExtra("channelId", channelId);
+        }
+        activity.startActivity(intent);
     }
 }

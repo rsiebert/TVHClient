@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.intent.PlayIntent;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
@@ -265,7 +264,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
                 return true;
 
             case R.id.menu_search_epg:
-                startActivity(new SearchEPGIntent(activity, program.title));
+                mMenuUtils.handleMenuSearchEpgSelection(program.title);
                 return true;
 
             default:

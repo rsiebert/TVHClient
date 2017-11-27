@@ -56,7 +56,6 @@ import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.PlayIntent;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
@@ -362,7 +361,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         switch (item.getItemId()) {
         case R.id.menu_search_epg:
             if (model instanceof Program) {
-                startActivity(new SearchEPGIntent(this, ((Program) model).title));
+                final Program program = (Program) model;
+                mMenuUtils.handleMenuSearchEpgSelection(program.title);
             }
             return true;
 

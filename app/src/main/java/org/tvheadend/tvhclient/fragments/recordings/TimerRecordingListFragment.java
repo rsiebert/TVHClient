@@ -26,15 +26,14 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.TimerRecordingListAdapter;
-import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -307,7 +306,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return true;
 
         case R.id.menu_search_epg:
-            startActivity(new SearchEPGIntent(activity, trec.title));
+            mMenuUtils.handleMenuSearchEpgSelection(trec.title);
             return true;
 
         case R.id.menu_record_remove:
