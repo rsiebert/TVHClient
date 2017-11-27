@@ -10,13 +10,19 @@ import android.net.Uri;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
+import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.DownloadActivity;
 import org.tvheadend.tvhclient.activities.SearchResultActivity;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
+import org.tvheadend.tvhclient.model.Profile;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -27,10 +33,14 @@ import java.util.List;
 
 public class MenuUtils {
 
+    private final int mHtspVersion;
+    private final boolean mIsUnlocked;
     private WeakReference<Activity> mActivity;
 
     public MenuUtils(Activity activity) {
         mActivity = new WeakReference<>(activity);
+        mHtspVersion = DataStorage.getInstance().getProtocolVersion();
+        mIsUnlocked = TVHClientApplication.getInstance().isUnlocked();
     }
 
     /**
@@ -172,5 +182,26 @@ public class MenuUtils {
             intent.putExtra("channelId", channelId);
         }
         activity.startActivity(intent);
+    }
+
+    public void handleMenuSeriesRecordSelection(long channelId, String title) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        final Intent intent = new Intent(activity, HTSService.class);
+        intent.setAction("addAutorecEntry");
+        intent.putExtra("title", title);
+        intent.putExtra("channelId", channelId);
+
+        final Connection connection = DatabaseHelper.getInstance(activity).getSelectedConnection();
+        final Profile profile = DatabaseHelper.getInstance(activity).getProfile(connection.recording_profile_id);
+        if (profile != null
+                && profile.enabled
+                && mHtspVersion >= 16
+                && mIsUnlocked) {
+            intent.putExtra("configName", profile.name);
+        }
+        activity.startService(intent);
     }
 }

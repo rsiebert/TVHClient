@@ -447,7 +447,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         case R.id.menu_record_series:
             if (model instanceof Program) {
-                Utils.recordProgram(this, (Program) model, true);
+                Program program = (Program) model;
+                mMenuUtils.handleMenuSeriesRecordSelection(program.channel.id, program.title);
             }
             return true;
 

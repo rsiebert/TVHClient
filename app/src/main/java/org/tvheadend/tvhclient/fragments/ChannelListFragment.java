@@ -387,7 +387,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_record_series:
-            Utils.recordProgram(activity, program, true);
+            mMenuUtils.handleMenuSeriesRecordSelection(program.channel.id, program.title);
             return true;
 
         case R.id.menu_play:
