@@ -393,7 +393,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         case R.id.menu_record_once:
             if (model instanceof Program) {
-                Utils.recordProgram(this, (Program) model, false);
+                Program program = (Program) model;
+                mMenuUtils.handleMenuRecordSelection(program.id);
             }
             return true;
 
@@ -450,7 +451,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         case R.id.menu_record_series:
             if (model instanceof Program) {
                 Program program = (Program) model;
-                mMenuUtils.handleMenuSeriesRecordSelection(program.channel.id, program.title);
+                mMenuUtils.handleMenuSeriesRecordSelection(program.title);
             }
             return true;
 

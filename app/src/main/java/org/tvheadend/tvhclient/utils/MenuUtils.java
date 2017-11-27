@@ -185,7 +185,27 @@ public class MenuUtils {
         activity.startActivity(intent);
     }
 
-    public void handleMenuSeriesRecordSelection(long channelId, String title) {
+    public void handleMenuRecordSelection(long eventId) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        final Intent intent = new Intent(activity, HTSService.class);
+        intent.setAction("addDvrEntry");
+        intent.putExtra("eventId", eventId);
+
+        final Connection connection = DatabaseHelper.getInstance(activity).getSelectedConnection();
+        final Profile profile = DatabaseHelper.getInstance(activity).getProfile(connection.recording_profile_id);
+        if (profile != null
+                && profile.enabled
+                && mHtspVersion >= 16
+                && mIsUnlocked) {
+            intent.putExtra("configName", profile.name);
+        }
+        activity.startService(intent);
+    }
+
+    public void handleMenuSeriesRecordSelection(String title) {
         Activity activity = mActivity.get();
         if (activity == null) {
             return;
@@ -193,7 +213,6 @@ public class MenuUtils {
         final Intent intent = new Intent(activity, HTSService.class);
         intent.setAction("addAutorecEntry");
         intent.putExtra("title", title);
-        intent.putExtra("channelId", channelId);
 
         final Connection connection = DatabaseHelper.getInstance(activity).getSelectedConnection();
         final Profile profile = DatabaseHelper.getInstance(activity).getProfile(connection.recording_profile_id);

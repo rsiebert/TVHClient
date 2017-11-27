@@ -334,7 +334,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordOnceButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.recordProgram(activity, program, false);
+                    mMenuUtils.handleMenuRecordSelection(program.id);
                     if (getDialog() != null) {
                         getDialog().dismiss();
                     }
@@ -345,7 +345,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordSeriesButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.recordProgram(activity, program, true);
+                    mMenuUtils.handleMenuSeriesRecordSelection(program.title);
                     if (getDialog() != null) {
                         getDialog().dismiss();
                     }

@@ -27,7 +27,6 @@ import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
@@ -182,43 +181,6 @@ public class Utils {
         intent.setAction(Constants.ACTION_CANCEL_DVR_ENTRY);
         intent.putExtra("id", rec.id);
         context.startService(intent);
-    }
-
-    /**
-     * Tells the server to record the program with the given id. If the
-     * useSeriesRecording is set then a series recording rule will be created to
-     * record that program repeatedly.
-     *
-     * @param activity           Activity context
-     * @param program            Program
-     * @param useSeriesRecording True if a series recording shall be created and not a regular one
-     */
-    public static void recordProgram(final Activity activity, final Program program, final boolean useSeriesRecording) {
-        if (program == null || program.channel == null) {
-            return;
-        }
-        Intent intent = new Intent(activity, HTSService.class);
-        if (!useSeriesRecording) {
-            intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
-            intent.putExtra("eventId", program.id);
-        } else {
-            intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
-            intent.putExtra("title", program.title);
-        }
-
-        // Add the recording profile if available and enabled
-        final DatabaseHelper dbh = DatabaseHelper.getInstance(activity);
-        final Connection conn = dbh.getSelectedConnection();
-        final Profile p = dbh.getProfile(conn.recording_profile_id);
-        if (p != null 
-                && p.enabled
-                && DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                && TVHClientApplication.getInstance().isUnlocked()) {
-            intent.putExtra("configName", p.name);
-        }
-
-        intent.putExtra("channelId", program.channel.id);
-        activity.startService(intent);
     }
 
     /**
