@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.activities;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -48,6 +48,13 @@ import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCa
 import com.google.android.libraries.cast.companionlibrary.widgets.IntroductoryOverlay;
 import com.google.android.libraries.cast.companionlibrary.widgets.MiniController;
 
+import org.tvheadend.tvhclient.ChangeLogDialog;
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.Logger;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.DrawerMenuAdapter;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;

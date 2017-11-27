@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +15,12 @@ import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.Logger;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;

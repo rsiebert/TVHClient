@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DownloadActivity;
+import org.tvheadend.tvhclient.activities.DownloadActivity;
 import org.tvheadend.tvhclient.model.Recording;
 
 public class DownloadIntent extends Intent {

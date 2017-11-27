@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHClient.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -45,6 +45,12 @@ import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.SuggestionProvider;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;

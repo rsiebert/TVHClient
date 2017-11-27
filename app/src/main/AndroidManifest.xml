@@ -37,7 +37,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name="org.tvheadend.tvhclient.MainActivity">
+        <activity android:name="org.tvheadend.tvhclient.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -49,18 +49,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.SearchResultActivity" android:launchMode="singleTop">
+        <activity android:name="org.tvheadend.tvhclient.activities.SearchResultActivity" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.UnlockerActivity"/>
-        <activity android:name="org.tvheadend.tvhclient.InfoActivity"/>
-        <activity android:name="org.tvheadend.tvhclient.SettingsActivity"/>
-        <activity android:name="org.tvheadend.tvhclient.PlayActivity" android:theme="@android:style/Theme.NoTitleBar"/>
-        <activity android:name="org.tvheadend.tvhclient.DownloadActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="org.tvheadend.tvhclient.activities.UnlockerActivity"/>
+        <activity android:name="org.tvheadend.tvhclient.activities.InfoActivity"/>
+        <activity android:name="org.tvheadend.tvhclient.activities.SettingsActivity"/>
+        <activity android:name="org.tvheadend.tvhclient.activities.PlayActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="org.tvheadend.tvhclient.activities.DownloadActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <service android:name="org.tvheadend.tvhclient.htsp.HTSService" android:enabled="true"/>
         <provider 
             android:name="org.tvheadend.tvhclient.SuggestionProvider" 
@@ -72,12 +72,12 @@
             android:name="com.google.android.libraries.cast.companionlibrary.cast.player.VideoCastControllerActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:parentActivityName="org.tvheadend.tvhclient.MainActivity"
+            android:parentActivityName="org.tvheadend.tvhclient.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.tvheadend.tvhclient.MainActivity" />
+                android:value="org.tvheadend.tvhclient.activities.MainActivity" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

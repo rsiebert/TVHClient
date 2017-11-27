@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.fragments.settings.SettingsCastingFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsManageConnectionFragment;

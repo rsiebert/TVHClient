@@ -90,7 +90,7 @@ public class ChangeLogDialog {
      * @return <code>true</code> if this version of your app is started the
      *         first time
      */
-    boolean firstRun() {
+    public boolean firstRun() {
         return !this.lastVersion.equals(this.thisVersion);
     }
 
@@ -109,7 +109,7 @@ public class ChangeLogDialog {
      *         first run of your app including ChangeLog then the full log
      *         dialog is show.
      */
-    MaterialDialog getLogDialog() {
+    public MaterialDialog getLogDialog() {
         return this.getDialog(this.firstRunEver());
     }
 

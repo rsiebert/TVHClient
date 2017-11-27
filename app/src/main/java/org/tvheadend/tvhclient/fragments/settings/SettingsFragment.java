@@ -38,7 +38,7 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.UnlockerActivity;
+import org.tvheadend.tvhclient.activities.UnlockerActivity;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 

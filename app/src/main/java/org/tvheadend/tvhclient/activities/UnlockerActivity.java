@@ -1,17 +1,15 @@
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
-import org.tvheadend.tvhclient.fragments.InfoFragment;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.fragments.UnlockerFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
-public class InfoActivity extends AppCompatActivity {
-
-    @SuppressWarnings("unused")
-    private final static String TAG = InfoActivity.class.getSimpleName();
+public class UnlockerActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,11 +23,11 @@ public class InfoActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
-            actionBar.setTitle(getString(R.string.pref_information));
+            setTitle(getString(R.string.pref_unlocker));
         }
 
         if (savedInstanceState == null) {
-            InfoFragment fragment = new InfoFragment();
+            UnlockerFragment fragment = new UnlockerFragment();
             fragment.setArguments(getIntent().getExtras());
             getFragmentManager().beginTransaction().add(R.id.main_fragment, fragment).commit();
         }

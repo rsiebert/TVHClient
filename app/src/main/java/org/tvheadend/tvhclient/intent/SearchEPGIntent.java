@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.SearchResultActivity;
+import org.tvheadend.tvhclient.activities.SearchResultActivity;
 import org.tvheadend.tvhclient.model.Channel;
 
 public class SearchEPGIntent extends Intent {

@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -24,6 +24,11 @@ import android.util.Base64;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
+import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.Logger;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
