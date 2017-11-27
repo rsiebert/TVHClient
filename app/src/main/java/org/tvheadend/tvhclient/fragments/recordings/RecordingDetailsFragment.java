@@ -24,7 +24,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -261,7 +260,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         switch (item.getItemId()) {
             case R.id.menu_search_imdb:
-                startActivity(new SearchIMDbIntent(activity, rec.title));
+                mMenuUtils.handleMenuSearchWebSelection(rec.title);
                 return true;
 
             case R.id.menu_search_epg:

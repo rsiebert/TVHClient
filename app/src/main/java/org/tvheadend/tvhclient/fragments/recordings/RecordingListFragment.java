@@ -30,7 +30,6 @@ import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -309,7 +308,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
-            startActivity(new SearchIMDbIntent(activity, rec.title));
+            mMenuUtils.handleMenuSearchWebSelection(rec.title);
             return true;
 
         case R.id.menu_search_epg:

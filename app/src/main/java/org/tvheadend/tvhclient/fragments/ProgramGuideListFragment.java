@@ -26,10 +26,10 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -74,6 +74,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private TVHClientApplication app;
     private Logger logger;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,6 +108,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        mMenuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
@@ -331,7 +334,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
-            activity.startActivity(new SearchIMDbIntent(activity, selectedProgram.title));
+            mMenuUtils.handleMenuSearchWebSelection(selectedProgram.title);
             return true;
 
         case R.id.menu_search_epg:

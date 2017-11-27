@@ -29,13 +29,13 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.tasks.ImageDownloadTask;
 import org.tvheadend.tvhclient.tasks.ImageDownloadTaskCallback;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Date;
@@ -83,6 +83,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private TVHClientApplication app;
     private ImageView imageView;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     public static ProgramDetailsFragment newInstance(Bundle args) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -183,6 +184,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mMenuUtils = new MenuUtils(getActivity());
+
         // If the channel or program is null exit
         if (channel == null || program == null) {
             return;
@@ -258,7 +261,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         switch (item.getItemId()) {
             case R.id.menu_search_imdb:
-                startActivity(new SearchIMDbIntent(activity, program.title));
+                mMenuUtils.handleMenuSearchWebSelection(program.title);
                 return true;
 
             case R.id.menu_search_epg:

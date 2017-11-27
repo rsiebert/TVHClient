@@ -57,7 +57,6 @@ import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
-import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
@@ -369,7 +368,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         case R.id.menu_search_imdb:
             if (model instanceof Program) {
-                startActivity(new SearchIMDbIntent(this, ((Program) model).title));
+                final Program program = (Program) model;
+                mMenuUtils.handleMenuSearchWebSelection(program.title);
             }
             return true;
 

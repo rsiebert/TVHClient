@@ -3,6 +3,8 @@ package org.tvheadend.tvhclient.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -14,7 +16,9 @@ import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -129,5 +133,25 @@ public class MenuUtils {
         intent.putExtra(Constants.BUNDLE_RECORDING_ID, recId);
         intent.putExtra(Constants.BUNDLE_ACTION, Constants.ACTION_DOWNLOAD);
         activity.startActivity(intent);
+    }
+
+    public void handleMenuSearchWebSelection(String title) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        try {
+            String url = URLEncoder.encode(title, "utf-8");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("imdb:///find?s=tt&q=" + url));
+            PackageManager packageManager = activity.getPackageManager();
+            if (packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
+                intent.setData(Uri.parse("http://www.imdb.org/find?s=tt&q=" + url));
+            }
+            activity.startActivity(intent);
+        } catch (UnsupportedEncodingException e) {
+            // NOP
+        }
+
     }
 }
