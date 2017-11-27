@@ -1,8 +1,10 @@
-package org.tvheadend.tvhclient;
+package org.tvheadend.tvhclient.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
+import org.tvheadend.tvhclient.Logger;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.model.Connection;
 
 import java.lang.ref.WeakReference;

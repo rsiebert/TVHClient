@@ -19,10 +19,10 @@ import android.widget.ListView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.AsyncTaskCallback;
+import org.tvheadend.tvhclient.tasks.AsyncTaskCallback;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.WakeOnLanTask;
+import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;

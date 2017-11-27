@@ -81,6 +81,8 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.tasks.AsyncTaskCallback;
+import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.ArrayList;
