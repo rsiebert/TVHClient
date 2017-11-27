@@ -25,7 +25,7 @@ import org.acra.config.ConfigurationBuilder;
 import org.acra.sender.HttpSender;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.BillingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,7 +181,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
             logger.enableLogToFile();
         }
 
-        bp = new BillingProcessor(this, Utils.getPublicKey(this), this);
+        bp = new BillingProcessor(this, BillingUtils.getPublicKey(this), this);
         if (!BillingProcessor.isIabServiceAvailable(this)) {
             logger.log(TAG, "onCreate: billing not available");
         } else {
