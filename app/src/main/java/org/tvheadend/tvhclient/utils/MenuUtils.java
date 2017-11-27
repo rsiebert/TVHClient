@@ -2,10 +2,13 @@ package org.tvheadend.tvhclient.utils;
 
 
 import android.app.Activity;
+import android.content.Intent;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.activities.DownloadActivity;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.model.ChannelTag;
@@ -115,5 +118,16 @@ public class MenuUtils {
             }
         });
         dialog.show();
+    }
+
+    public void handleMenuDownloadSelection(long recId) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        Intent intent = new Intent(activity, DownloadActivity.class);
+        intent.putExtra(Constants.BUNDLE_RECORDING_ID, recId);
+        intent.putExtra(Constants.BUNDLE_ACTION, Constants.ACTION_DOWNLOAD);
+        activity.startActivity(intent);
     }
 }

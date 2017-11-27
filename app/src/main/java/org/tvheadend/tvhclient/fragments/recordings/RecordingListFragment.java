@@ -25,9 +25,9 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
-import org.tvheadend.tvhclient.intent.DownloadIntent;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
@@ -54,6 +54,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     protected TVHClientApplication app;
     private Logger logger;
     protected DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,6 +88,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        mMenuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -137,7 +140,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_download:
-            startActivity(new DownloadIntent(activity, rec));
+            mMenuUtils.handleMenuDownloadSelection(rec.id);
             return true;
 
         case R.id.menu_add:
@@ -328,7 +331,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_download:
-            startActivity(new DownloadIntent(activity, rec));
+            mMenuUtils.handleMenuDownloadSelection(rec.id);
             return true;
 
         case R.id.menu_edit:

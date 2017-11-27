@@ -22,14 +22,14 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.Utils;
-import org.tvheadend.tvhclient.intent.DownloadIntent;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
 
@@ -77,6 +77,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView data_size;
     private TextView statusLabel;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -166,7 +167,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
+        mMenuUtils = new MenuUtils(getActivity());
+
         // If the recording is null exit
         if (rec == null) {
             return;
@@ -356,7 +359,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         downloadRecordingButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new DownloadIntent(activity, rec));
+                mMenuUtils.handleMenuDownloadSelection(rec.id);
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

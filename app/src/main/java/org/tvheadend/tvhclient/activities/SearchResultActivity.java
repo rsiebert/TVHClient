@@ -55,7 +55,6 @@ import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.intent.DownloadIntent;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
@@ -458,7 +457,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         case R.id.menu_download:
             if (model instanceof Recording) {
-                startActivity(new DownloadIntent(this, (Recording) model));
+                final Recording rec = (Recording) model;
+                mMenuUtils.handleMenuDownloadSelection(rec.id);
             }
             return true;
 
