@@ -79,20 +79,22 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private Logger logger;
     private DataStorage ds;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
+        addPreferencesFromResource(R.xml.preferences);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
         ds = DataStorage.getInstance();
-
-        // Set the default values and then load the preferences from the XML resource
-        PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
-        addPreferencesFromResource(R.xml.preferences);
 
         prefManageConnections = findPreference("pref_manage_connections");
         prefMenuProfiles = findPreference("pref_menu_profiles");
@@ -108,11 +110,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
         prefMenuNotifications  = findPreference("pref_menu_notifications");
         prefDownloadDir = findPreference("pref_download_directory");
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;

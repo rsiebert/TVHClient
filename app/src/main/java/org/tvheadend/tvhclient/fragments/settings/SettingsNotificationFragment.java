@@ -47,23 +47,21 @@ public class SettingsNotificationFragment extends PreferenceFragment {
     private NotificationHandler notificationHandler;
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-        notificationHandler = NotificationHandler.getInstance();
-
-        // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences_notifications);
-
-        prefShowNotifications = (CheckBoxPreference) findPreference("pref_show_notifications");
-        prefShowNotificationOffset = (ListPreference) findPreference("pref_show_notification_offset");
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        activity = getActivity();
+        app = (TVHClientApplication) activity.getApplication();
+        notificationHandler = NotificationHandler.getInstance();
+
+        prefShowNotifications = (CheckBoxPreference) findPreference("pref_show_notifications");
+        prefShowNotificationOffset = (ListPreference) findPreference("pref_show_notification_offset");
 
         // Add a listener so that the notifications can be selected.
         prefShowNotifications.setOnPreferenceClickListener(new OnPreferenceClickListener() {

@@ -71,16 +71,26 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private boolean connectionChanged;
 
     private DatabaseHelper dbh;
-    
+
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onDestroy() {
+        actionBarInterface = null;
+        settingsInterface = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_add_connection);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
         dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences_add_connection);
 
         // Get the connectivity preferences for later usage
         prefName = (EditTextPreference) findPreference("pref_name");
@@ -93,18 +103,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefWolAddress = (EditTextPreference) findPreference("pref_wol_address");
         prefWolPort = (EditTextPreference) findPreference("pref_wol_port");
         prefWolBroadcast = (CheckBoxPreference) findPreference("pref_wol_broadcast");
-    }
-
-    @Override
-    public void onDestroy() {
-        actionBarInterface = null;
-        settingsInterface = null;
-        super.onDestroy();
-    }
-    
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;

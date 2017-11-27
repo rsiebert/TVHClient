@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -35,7 +37,6 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -43,6 +44,7 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -91,6 +93,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private TVHClientApplication app;
     private DatabaseHelper dbh;
     private DataStorage ds;
+    private Context mContext;
 
     public static TimerRecordingAddFragment newInstance() {
         return new TimerRecordingAddFragment();
@@ -109,11 +112,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        activity = getActivity();
-        app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        ds = DataStorage.getInstance();
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
@@ -137,8 +135,74 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        // Initialize all the widgets from the layout
+        View v = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
+        channelName = (TextView) v.findViewById(R.id.channel);
+        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
+        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
+        directory = (EditText) v.findViewById(R.id.directory);
+        title = (EditText) v.findViewById(R.id.title);
+        name = (EditText) v.findViewById(R.id.name);
+
+        // For the shown days in each toggle button the array with the short
+        // names is used. If the screen width is not large enough then the short
+        // names of all seven days would not fit. Therefore reduce the number of
+        // shown letters for each day depending on the screen width.
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        wm.getDefaultDisplay().getMetrics(displaymetrics);
+        final int displayWidth = displaymetrics.widthPixels;
+
+        LinearLayout daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
+        String[] shortDays = getResources().getStringArray(R.array.day_short_names);
+        for (int i = 0; i < 7; i++) {
+            final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
+
+            // Show only one character on width below 800, two characters below
+            // 1000 and all characters on all remaining ones
+            if (displayWidth < 800) {
+                dayButton.setTextOn(shortDays[i].subSequence(0, 1));
+                dayButton.setTextOff(shortDays[i].subSequence(0, 1));
+            } else if (displayWidth < 1000) {
+                dayButton.setTextOn(shortDays[i].subSequence(0, 2));
+                dayButton.setTextOff(shortDays[i].subSequence(0, 2));
+            } else {
+                dayButton.setTextOn(shortDays[i]);
+                dayButton.setTextOff(shortDays[i]);
+            }
+
+            // Add the button to the layout and store it in the list to have
+            // access to it later
+            daysOfWeekLayout.addView(dayButton);
+            daysOfWeekButtons[i] = dayButton;
+        }
+
+        startTime = (TextView) v.findViewById(R.id.start_time);
+        stopTime = (TextView) v.findViewById(R.id.stop_time);
+        priority = (TextView) v.findViewById(R.id.priority);
+        dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
+        dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        return v;
+    }
+    
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        activity = getActivity();
+        app = TVHClientApplication.getInstance();
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        ds = DataStorage.getInstance();
 
         // Determine if the server supports recording on all channels
         boolean allowRecordingOnAllChannels = ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
@@ -207,14 +271,14 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 if (rec.channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
                         if (channelList[i].equals(rec.channel.name)) {
-                            // If all channels is available then all entries in the channel 
-                            // list are one index higher because all channels is index 0 
+                            // If all channels is available then all entries in the channel
+                            // list are one index higher because all channels is index 0
                             channelSelectionValue = (allowRecordingOnAllChannels ? (i+1) : i);
                             break;
                         }
-                    }   
+                    }
                 } else {
-                    // If no channel is set preselect either all 
+                    // If no channel is set preselect either all
                     // channels or the first channel available
                     if (allowRecordingOnAllChannels) {
                         channelSelectionValue = 0;
@@ -263,60 +327,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             channelSelectionValue = savedInstanceState.getInt("channelNameValue");
             dvrConfigNameValue = savedInstanceState.getInt("configNameValue");
         }
-
-        // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
-        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
-        directory = (EditText) v.findViewById(R.id.directory);
-        title = (EditText) v.findViewById(R.id.title);
-        name = (EditText) v.findViewById(R.id.name);
-
-        // For the shown days in each toggle button the array with the short
-        // names is used. If the screen width is not large enough then the short
-        // names of all seven days would not fit. Therefore reduce the number of
-        // shown letters for each day depending on the screen width.
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        final int displayWidth = displaymetrics.widthPixels;
-
-        LinearLayout daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
-        String[] shortDays = getResources().getStringArray(R.array.day_short_names);
-        for (int i = 0; i < 7; i++) {
-            final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
-
-            // Show only one character on width below 800, two characters below
-            // 1000 and all characters on all remaining ones
-            if (displayWidth < 800) {
-                dayButton.setTextOn(shortDays[i].subSequence(0, 1));
-                dayButton.setTextOff(shortDays[i].subSequence(0, 1));
-            } else if (displayWidth < 1000) {
-                dayButton.setTextOn(shortDays[i].subSequence(0, 2));
-                dayButton.setTextOff(shortDays[i].subSequence(0, 2));
-            } else {
-                dayButton.setTextOn(shortDays[i]);
-                dayButton.setTextOff(shortDays[i]);
-            }
-
-            // Add the button to the layout and store it in the list to have
-            // access to it later
-            daysOfWeekLayout.addView(dayButton);
-            daysOfWeekButtons[i] = dayButton;
-        }
-
-        startTime = (TextView) v.findViewById(R.id.start_time);
-        stopTime = (TextView) v.findViewById(R.id.stop_time);
-        priority = (TextView) v.findViewById(R.id.priority);
-        dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
-        dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        return v;
-    }
-    
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         isEnabled.setChecked(enabledValue);
         isEnabled.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);

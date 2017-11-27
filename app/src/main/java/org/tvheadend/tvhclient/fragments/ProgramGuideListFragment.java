@@ -95,18 +95,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         activity = getActivity();
         app = TVHClientApplication.getInstance();
         ds = DataStorage.getInstance();
         logger = Logger.getInstance();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         mMenuUtils = new MenuUtils(getActivity());
 

@@ -77,35 +77,31 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return null;
         }
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            channel = ds.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
-            isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
-            showProgramsFromTime = bundle.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, new Date().getTime());
-        }
-
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         activity = getActivity();
         app = TVHClientApplication.getInstance();
         ds = DataStorage.getInstance();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
         }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
+        }
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            channel = ds.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
+            isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+            showProgramsFromTime = bundle.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, new Date().getTime());
         }
 
         // If the channel is null exit

@@ -96,10 +96,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
             setStyle(DialogFragment.STYLE_NO_TITLE, MiscUtils.getThemeId(activity));
@@ -109,16 +105,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        long recId = 0;
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            recId = bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
-        }
-
-        // Get the recording so we can show its details 
-        rec = ds.getRecording(recId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.recording_details_layout, container, false);
@@ -165,7 +151,20 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        activity = (AppCompatActivity) getActivity();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
         mMenuUtils = new MenuUtils(getActivity());
+
+        long recId = 0;
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            recId = bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0);
+            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+        }
+
+        // Get the recording so we can show its details
+        rec = ds.getRecording(recId);
 
         // If the recording is null exit
         if (rec == null) {

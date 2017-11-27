@@ -103,10 +103,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = getActivity();
-        app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
@@ -115,33 +111,6 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        long channelId = 0;
-        long programId = 0;
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            channelId = bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0);
-            programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
-        }
-        
-        // Get the channel of the program
-        channel = ds.getChannel(channelId);
-        if (channel != null) {
-            // Find the program with the given id within this channel so we can
-            // show the program details
-            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
-            Iterator<Program> it = epg.iterator();
-            Program p;
-            while (it.hasNext()) {
-                p = it.next();
-                if (p.id == programId) {
-                    program = p;
-                    break;
-                }
-            }
-        }
 
         // Initialize all the widgets from the layout
         final View v = inflater.inflate(R.layout.program_details_layout, container, false);
@@ -182,12 +151,10 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        activity = getActivity();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
         mMenuUtils = new MenuUtils(getActivity());
-
-        // If the channel or program is null exit
-        if (channel == null || program == null) {
-            return;
-        }
 
         if (toolbarTitle != null) {
             toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
@@ -195,6 +162,39 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         if (toolbarShadow != null) {
             toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         }
+
+        long channelId = 0;
+        long programId = 0;
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            channelId = bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0);
+            programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
+            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+        }
+
+        // Get the channel of the program
+        channel = ds.getChannel(channelId);
+        if (channel != null) {
+            // Find the program with the given id within this channel so we can
+            // show the program details
+            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
+            Iterator<Program> it = epg.iterator();
+            Program p;
+            while (it.hasNext()) {
+                p = it.next();
+                if (p.id == programId) {
+                    program = p;
+                    break;
+                }
+            }
+        }
+
+        // If the channel or program is null exit
+        if (channel == null || program == null) {
+            return;
+        }
+
         if (getDialog() != null && toolbarTitle != null) {
             toolbarTitle.setText(program.title);
         }

@@ -59,11 +59,6 @@ public class StatusFragment extends Fragment implements HTSListener {
             return null;
         }
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            connectionStatus = bundle.getString(Constants.BUNDLE_CONNECTION_STATUS);
-        }
-
         View v = inflater.inflate(R.layout.status_fragment_layout, container, false);
         connection = (TextView) v.findViewById(R.id.connection);
         status = (TextView) v.findViewById(R.id.status);
@@ -84,17 +79,13 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = getActivity();
-        app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        ds = DataStorage.getInstance();
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        activity = getActivity();
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -102,6 +93,11 @@ public class StatusFragment extends Fragment implements HTSListener {
         if (actionBarInterface != null) {
             actionBarInterface.setActionBarTitle(getString(R.string.status));
             actionBarInterface.setActionBarSubtitle("");
+        }
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            connectionStatus = bundle.getString(Constants.BUNDLE_CONNECTION_STATUS);
         }
     }
 

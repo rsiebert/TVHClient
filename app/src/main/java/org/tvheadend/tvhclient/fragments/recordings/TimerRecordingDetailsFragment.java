@@ -75,10 +75,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
@@ -87,16 +83,6 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        String recId = "";
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            recId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
-        }
-
-        // Get the recording so we can show its details 
-        trec = ds.getTimerRecording(recId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.timer_recording_details_layout, container, false);
@@ -124,7 +110,20 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        activity = (AppCompatActivity) getActivity();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
         mMenuUtils = new MenuUtils(getActivity());
+
+        String recId = "";
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            recId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
+            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+        }
+
+        // Get the recording so we can show its details
+        trec = ds.getTimerRecording(recId);
 
         // If the recording is null exit
         if (trec == null) {

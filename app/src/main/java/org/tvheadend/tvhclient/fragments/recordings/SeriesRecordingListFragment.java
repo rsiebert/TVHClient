@@ -61,29 +61,18 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return null;
         }
 
-        // Get the passed argument so we know which recording type to display
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
-        }
-
         View v = inflater.inflate(R.layout.list_layout, container, false);
         listView = (ListView) v.findViewById(R.id.item_list);
         return v;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        activity = (AppCompatActivity) getActivity();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
         mMenuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof ActionBarInterface) {
@@ -91,6 +80,12 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
+        }
+
+        // Get the passed argument so we know which recording type to display
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
         }
 
         // This is the default view for the channel list adapter. Other views can be

@@ -76,10 +76,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
@@ -88,16 +84,6 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        String srecId = "";
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            srecId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
-        }
-
-        // Get the recording so we can show its details 
-        srec = ds.getSeriesRecording(srecId);
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
@@ -129,7 +115,20 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        activity = (AppCompatActivity) getActivity();
+        app = TVHClientApplication.getInstance();
+        ds = DataStorage.getInstance();
         mMenuUtils = new MenuUtils(getActivity());
+
+        String srecId = "";
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            srecId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
+            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+        }
+
+        // Get the recording so we can show its details
+        srec = ds.getSeriesRecording(srecId);
 
         // If the recording is null exit
         if (srec == null) {

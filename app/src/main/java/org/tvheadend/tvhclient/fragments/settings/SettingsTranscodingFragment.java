@@ -73,14 +73,43 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     private DatabaseHelper dbh;
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putLong(CONNECTION_ID, conn.id);
+
+        outState.putString(PROG_PROFILE_CONTAINER, prefProgContainer.getValue());
+        outState.putBoolean(PROG_PROFILE_TRANSCODE, prefProgTranscode.isChecked());
+        outState.putString(PROG_PROFILE_RESOLUTION, prefProgResolution.getValue());
+        outState.putString(PROG_PROFILE_AUDIO_CODEC, prefProgAudioCodec.getValue());
+        outState.putString(PROG_PROFILE_VIDEO_CODEC, prefProgVideoCodec.getValue());
+        outState.putString(PROG_PROFILE_SUBTITLE_CODEC, prefProgSubtitleCodec.getValue());
+
+        outState.putString(REC_PROFILE_CONTAINER, prefRecContainer.getValue());
+        outState.putBoolean(REC_PROFILE_TRANSCODE, prefRecTranscode.isChecked());
+        outState.putString(REC_PROFILE_RESOLUTION, prefRecResolution.getValue());
+        outState.putString(REC_PROFILE_AUDIO_CODEC, prefRecAudioCodec.getValue());
+        outState.putString(REC_PROFILE_VIDEO_CODEC, prefRecVideoCodec.getValue());
+        outState.putString(REC_PROFILE_SUBTITLE_CODEC, prefRecSubtitleCodec.getValue());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        actionBarInterface = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_transcoding);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
         dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences_transcoding);
 
         prefProgContainer = (ListPreference) findPreference("progContainerPref");
         prefProgTranscode = (CheckBoxPreference) findPreference("progTranscodePref");
@@ -94,6 +123,13 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         prefRecAudioCodec = (ListPreference) findPreference("recAcodecPref");
         prefRecVideoCodec = (ListPreference) findPreference("recVcodecPref");
         prefRecSubtitleCodec = (ListPreference) findPreference("recScodecPref");
+
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.pref_transcoding));
+        }
 
         conn = dbh.getSelectedConnection();
         if (conn != null) {
@@ -127,43 +163,6 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
                 recProfile.video_codec = savedInstanceState.getString(REC_PROFILE_VIDEO_CODEC);
                 recProfile.subtitle_codec = savedInstanceState.getString(REC_PROFILE_SUBTITLE_CODEC);
             }
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putLong(CONNECTION_ID, conn.id);
-
-        outState.putString(PROG_PROFILE_CONTAINER, prefProgContainer.getValue());
-        outState.putBoolean(PROG_PROFILE_TRANSCODE, prefProgTranscode.isChecked());
-        outState.putString(PROG_PROFILE_RESOLUTION, prefProgResolution.getValue());
-        outState.putString(PROG_PROFILE_AUDIO_CODEC, prefProgAudioCodec.getValue());
-        outState.putString(PROG_PROFILE_VIDEO_CODEC, prefProgVideoCodec.getValue());
-        outState.putString(PROG_PROFILE_SUBTITLE_CODEC, prefProgSubtitleCodec.getValue());
-
-        outState.putString(REC_PROFILE_CONTAINER, prefRecContainer.getValue());
-        outState.putBoolean(REC_PROFILE_TRANSCODE, prefRecTranscode.isChecked());
-        outState.putString(REC_PROFILE_RESOLUTION, prefRecResolution.getValue());
-        outState.putString(REC_PROFILE_AUDIO_CODEC, prefRecAudioCodec.getValue());
-        outState.putString(REC_PROFILE_VIDEO_CODEC, prefRecVideoCodec.getValue());
-        outState.putString(REC_PROFILE_SUBTITLE_CODEC, prefRecSubtitleCodec.getValue());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        actionBarInterface = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_transcoding));
         }
     }
 

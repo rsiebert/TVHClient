@@ -69,17 +69,39 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     private DataStorage ds;
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(CAST_PROFILE_UUID, prefCastProfiles.getValue());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        actionBarInterface = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_casting);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
+        if (activity instanceof ActionBarInterface) {
+            actionBarInterface = (ActionBarInterface) activity;
+        }
+        if (actionBarInterface != null) {
+            actionBarInterface.setActionBarTitle(getString(R.string.pref_casting));
+        }
+
         app = TVHClientApplication.getInstance();
         dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
         ds = DataStorage.getInstance();
-
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences_casting);
 
         prefEnableCasting = (CheckBoxPreference) findPreference("pref_enable_casting");
         prefCastProfiles = (ListPreference) findPreference("pref_cast_profiles");
@@ -99,31 +121,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         if (savedInstanceState != null) {
             castProfile.uuid = savedInstanceState.getString(CAST_PROFILE_UUID);
         }
-    }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(CAST_PROFILE_UUID, prefCastProfiles.getValue());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        actionBarInterface = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
-        }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_casting));
-        }
-        
         prefEnableCasting.setOnPreferenceClickListener((new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

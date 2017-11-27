@@ -72,16 +72,31 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     private DataStorage ds;
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(PROG_PROFILE_UUID, prefProgProfiles.getValue());
+        outState.putString(REC_PROFILE_UUID, prefRecProfiles.getValue());
+        super.onSaveInstanceState(outState);
+    }
 
+    @Override
+    public void onDestroy() {
+        actionBarInterface = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_profiles);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
         dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         ds = DataStorage.getInstance();
-
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences_profiles);
 
         prefEnableRecProfiles = (CheckBoxPreference) findPreference("pref_enable_recording_profiles");
         prefEnableProgProfiles = (CheckBoxPreference) findPreference("pref_enable_playback_profiles");
@@ -105,24 +120,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             progProfile.uuid = savedInstanceState.getString(PROG_PROFILE_UUID);
             recProfile.uuid = savedInstanceState.getString(REC_PROFILE_UUID);
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(PROG_PROFILE_UUID, prefProgProfiles.getValue());
-        outState.putString(REC_PROFILE_UUID, prefRecProfiles.getValue());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        actionBarInterface = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;

@@ -42,18 +42,6 @@ public class SettingsUserInterfaceFragment extends PreferenceFragment implements
     private TVHClientApplication app;
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences_ui);
-        prefShowProgramArtwork = (CheckBoxPreference) findPreference("pref_show_program_artwork");
-
-        activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-    }
-
-    @Override
     public void onDestroy() {
         settingsInterface = null;
         super.onDestroy();
@@ -73,8 +61,19 @@ public class SettingsUserInterfaceFragment extends PreferenceFragment implements
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_ui);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        prefShowProgramArtwork = (CheckBoxPreference) findPreference("pref_show_program_artwork");
+
+        activity = getActivity();
+        app = (TVHClientApplication) activity.getApplication();
 
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;

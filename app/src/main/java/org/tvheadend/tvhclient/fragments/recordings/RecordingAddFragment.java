@@ -119,12 +119,6 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        logger = Logger.getInstance();
-        ds = DataStorage.getInstance();
-
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         }
@@ -150,6 +144,48 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        // Assume a new recording shall be added. If a recording was given then
+        // show the layouts to edit it. If the recording is already being
+        // recorded show only the title, stop and extra stop times.
+        int layout = R.layout.recording_add_layout;
+        if (rec != null) {
+            layout = (rec.isRecording() ? R.layout.recording_edit_recording_layout
+                    : R.layout.recording_edit_scheduled_layout);
+        }
+        View v = inflater.inflate(layout, container, false);
+
+        // Initialize all the widgets from the layout
+        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
+        title = (EditText) v.findViewById(R.id.title);
+        titelLabel = (TextView) v.findViewById(R.id.title_label);
+        subtitle = (EditText) v.findViewById(R.id.subtitle);
+        subtitleLabel = (TextView) v.findViewById(R.id.subtitle_label);
+        description = (EditText) v.findViewById(R.id.description);
+        descriptionLabel = (TextView) v.findViewById(R.id.description_label);
+        channelName = (TextView) v.findViewById(R.id.channel);
+        startExtra = (EditText) v.findViewById(R.id.start_extra);
+        stopExtra = (EditText) v.findViewById(R.id.stop_extra);
+        startTime = (TextView) v.findViewById(R.id.start_time);
+        stopTime = (TextView) v.findViewById(R.id.stop_time);
+        startDate = (TextView) v.findViewById(R.id.start_date);
+        stopDate = (TextView) v.findViewById(R.id.stop_date);
+        priority = (TextView) v.findViewById(R.id.priority);
+        dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
+        dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
+        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        return v;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        activity = (AppCompatActivity) getActivity();
+        app = TVHClientApplication.getInstance();
+        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        logger = Logger.getInstance();
+        ds = DataStorage.getInstance();
 
         // Create the list of channels that the user can select
         channelList = new String[ds.getChannels().size()];
@@ -213,7 +249,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                             channelSelectionValue = i;
                             break;
                         }
-                    }   
+                    }
                 }
 
             } else {
@@ -255,42 +291,6 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             dvrConfigNameValue = savedInstanceState.getInt("configNameValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
         }
-
-        // Assume a new recording shall be added. If a recording was given then
-        // show the layouts to edit it. If the recording is already being
-        // recorded show only the title, stop and extra stop times.
-        int layout = R.layout.recording_add_layout;
-        if (rec != null) {
-            layout = (rec.isRecording() ? R.layout.recording_edit_recording_layout
-                    : R.layout.recording_edit_scheduled_layout);
-        }
-        View v = inflater.inflate(layout, container, false);
-
-        // Initialize all the widgets from the layout
-        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
-        title = (EditText) v.findViewById(R.id.title);
-        titelLabel = (TextView) v.findViewById(R.id.title_label);
-        subtitle = (EditText) v.findViewById(R.id.subtitle);
-        subtitleLabel = (TextView) v.findViewById(R.id.subtitle_label);
-        description = (EditText) v.findViewById(R.id.description);
-        descriptionLabel = (TextView) v.findViewById(R.id.description_label);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        startExtra = (EditText) v.findViewById(R.id.start_extra);
-        stopExtra = (EditText) v.findViewById(R.id.stop_extra);
-        startTime = (TextView) v.findViewById(R.id.start_time);
-        stopTime = (TextView) v.findViewById(R.id.stop_time);
-        startDate = (TextView) v.findViewById(R.id.start_date);
-        stopDate = (TextView) v.findViewById(R.id.stop_date);
-        priority = (TextView) v.findViewById(R.id.priority);
-        dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
-        dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        return v;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         if (isEnabled != null) {
             isEnabled.setChecked(enabledValue);

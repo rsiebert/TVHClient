@@ -69,16 +69,11 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         viewPager = (ViewPager) v.findViewById(R.id.pager);
         return v;
     }
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = getActivity();
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        activity = getActivity();
 
         // Calculate the max number of fragments in the view pager 
         calcFragmentCount();
