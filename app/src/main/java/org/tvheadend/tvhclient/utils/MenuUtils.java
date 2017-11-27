@@ -6,7 +6,9 @@ import android.app.Activity;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
+import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 
 import java.lang.ref.WeakReference;
@@ -81,5 +83,37 @@ public class MenuUtils {
                 .build()
                 .show();
 
+    }
+
+    /**
+     *
+     * @param channelTagList
+     * @param selectedTagId
+     * @param callback
+     */
+    public void handleMenuTagsSelection(List<ChannelTag> channelTagList, long selectedTagId, MenuTagSelectionCallback callback) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+
+        // Show the dialog that shows all available channel tags. When the
+        // user has selected a tag, restart the loader to get the updated channel list
+        final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(channelTagList, selectedTagId);
+        final MaterialDialog dialog = new MaterialDialog.Builder(activity)
+                .title(R.string.tags)
+                .adapter(channelTagListAdapter, null)
+                .build();
+        // Set the callback to handle clicks. This needs to be done after the
+        // dialog creation so that the inner method has access to the dialog variable
+        channelTagListAdapter.setCallback(which -> {
+            if (callback != null) {
+                callback.menuTagSelected(which);
+            }
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

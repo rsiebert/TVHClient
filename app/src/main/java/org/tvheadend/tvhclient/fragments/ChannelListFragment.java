@@ -30,7 +30,6 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
-import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
@@ -46,6 +45,7 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuTimeSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
@@ -57,7 +57,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback {
+public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
@@ -261,30 +261,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_tags:
-            // Create the adapter that holds the channel tags and the
-            // dialog that will show the adapter contents
-            final ChannelTagListAdapter tagAdapter = new ChannelTagListAdapter(tagList);
-            final MaterialDialog dialog = new MaterialDialog.Builder(activity)
-                    .title(R.string.tags)
-                    .adapter(tagAdapter, null)
-                    .build();
-
-            // Set the callback to handle clicks. This needs to be done after the
-            // dialog creation so that the inner method has access to the dialog variable
-            tagAdapter.setCallback(new ChannelTagListAdapter.Callback() {
-                @Override
-                public void onItemClicked(int which) {
-                    Utils.setChannelTagId(activity, which);
-                    if (fragmentStatusInterface != null) {
-                        fragmentStatusInterface.channelTagChanged(TAG);
-                    }
-                    if (dialog != null) {
-                        dialog.dismiss();
-                    }
-                }
-            });
-
-            dialog.show();
+            ChannelTag tag = Utils.getChannelTag(activity);
+            mMenuUtils.handleMenuTagsSelection(tagList, (tag != null ? tag.id : -1), this);
             return true;
 
         case R.id.menu_timeframe:
@@ -676,6 +654,14 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.onChannelTimeSelected(channelTimeSelection, showProgramsFromTime);
             fragmentStatusInterface.onListPopulated(TAG);
+        }
+    }
+
+    @Override
+    public void menuTagSelected(int which) {
+        Utils.setChannelTagId(activity, which);
+        if (fragmentStatusInterface != null) {
+            fragmentStatusInterface.channelTagChanged(TAG);
         }
     }
 }

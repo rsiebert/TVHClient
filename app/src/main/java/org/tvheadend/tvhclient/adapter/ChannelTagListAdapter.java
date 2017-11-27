@@ -17,40 +17,41 @@ import java.util.List;
 public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAdapter.ViewHolder> {
 
     private Callback mCallback;
-    private List<ChannelTag> list;
-    private boolean showIcons;
+    private List<ChannelTag> mTagList;
+    private long mSelectedTagId;
+    private boolean mShowChannelTagIcons;
 
     public interface Callback {
         void onItemClicked(int index);
     }
 
-    public ChannelTagListAdapter(List<ChannelTag> list) {
-        this.list = list;
+    public ChannelTagListAdapter(List<ChannelTag> mChannelTagList, long selectedTagId) {
+        mTagList = mChannelTagList;
+        mSelectedTagId = selectedTagId;
     }
 
-    public void setCallback(Callback mCallback) {
-        this.mCallback = mCallback;
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
-        showIcons = prefs.getBoolean("showTagIconPref", true);
+        mShowChannelTagIcons = prefs.getBoolean("showTagIconPref", true);
 
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channeltag_list_item, parent, false);
         return new ViewHolder(view, this);
     }
 
     @Override
-    /**
-     * Applies the values to the available layout items
-     */
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final ChannelTag item = list.get(position);
+        final ChannelTag item = mTagList.get(position);
         if (item != null) {
+            // TODO highlight the selected tag using mSelectedTagId, its -1 if not set
+
             if (holder.icon != null) {
-                holder.icon.setImageBitmap((item.iconBitmap != null) ? item.iconBitmap : null);
-                holder.icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
+                holder.icon.setImageBitmap(item.iconBitmap);
+                holder.icon.setVisibility(item.iconBitmap != null && mShowChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
             if (holder.title != null) {
                 holder.title.setText(item.name);
@@ -61,7 +62,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return mTagList.size();
     }
 
     // Provide a reference to the views for each data item
@@ -70,23 +71,21 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final ImageView icon;
         final TextView title;
-        final ChannelTagListAdapter adapter;
+        final ChannelTagListAdapter channelTagListAdapter;
 
-        public ViewHolder(View view, ChannelTagListAdapter adapter) {
+        ViewHolder(View view, ChannelTagListAdapter adapter) {
             super(view);
-            this.icon = (ImageView) view.findViewById(R.id.icon);
-            this.title = (TextView) view.findViewById(R.id.title);
-
-            this.adapter = adapter;
+            icon = view.findViewById(R.id.icon);
+            title = view.findViewById(R.id.title);
+            channelTagListAdapter = adapter;
             view.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (adapter.mCallback == null) {
-                return;
+            if (channelTagListAdapter != null && channelTagListAdapter.mCallback != null) {
+                channelTagListAdapter.mCallback.onItemClicked(getAdapterPosition());
             }
-            adapter.mCallback.onItemClicked(getAdapterPosition());
         }
     }
 }
