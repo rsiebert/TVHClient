@@ -66,18 +66,6 @@ public class Utils {
     private final static int GENRE_COLOR_ALPHA_EPG_OFFSET = 50;
 
     /**
-     * Returns the id of the theme that is currently set in the settings.
-     * 
-     * @param context Context
-     * @return Id of the light or dark theme
-     */
-    public static int getThemeId(final Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean theme = prefs.getBoolean("lightThemePref", true);
-        return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
-    }
-
-    /**
      * Returns the information if channels shall be shown or not
      * 
      * @param context Context

@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.fragments.InfoFragment;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class InfoActivity extends AppCompatActivity {
 
@@ -13,7 +14,7 @@ public class InfoActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(Utils.getThemeId(this));
+        setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         Utils.setLanguage(this);

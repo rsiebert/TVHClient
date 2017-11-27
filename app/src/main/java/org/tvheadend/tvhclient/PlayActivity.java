@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -49,7 +50,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(Utils.getThemeId(this));
+        setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         Utils.setLanguage(this);
 

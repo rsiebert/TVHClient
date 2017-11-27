@@ -27,6 +27,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -129,7 +130,7 @@ public class ChangeLogDialog {
         WebView wv = new WebView(context);
         wv.loadDataWithBaseURL("file:///android_asset/", getLog(full), "text/html", "utf-8", null);
 
-        if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+        if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
             wv.setBackgroundColor(Color.WHITE);
         } else {
             wv.setBackgroundColor(Color.BLACK);
@@ -195,7 +196,7 @@ public class ChangeLogDialog {
         // Add the style sheet depending on the used theme
         sb = new StringBuffer();
         sb.append("<html><head>");
-        if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+        if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
             sb.append("<link href=\"html/styles_light.css\" type=\"text/css\" rel=\"stylesheet\"/>");
         } else {
             sb.append("<link href=\"html/styles_dark.css\" type=\"text/css\" rel=\"stylesheet\"/>");

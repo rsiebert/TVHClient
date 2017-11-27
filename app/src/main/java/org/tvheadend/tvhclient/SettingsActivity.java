@@ -31,6 +31,7 @@ import org.tvheadend.tvhclient.fragments.settings.SettingsUserInterfaceFragment;
 import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
 
@@ -62,7 +63,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(Utils.getThemeId(this));
+        setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         Utils.setLanguage(this);
 

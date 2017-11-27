@@ -81,6 +81,7 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -180,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(Utils.getThemeId(this));
+        setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         Utils.setLanguage(this);

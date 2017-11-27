@@ -29,6 +29,7 @@ import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
 
@@ -103,7 +104,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
-            setStyle(DialogFragment.STYLE_NO_TITLE, Utils.getThemeId(activity));
+            setStyle(DialogFragment.STYLE_NO_TITLE, MiscUtils.getThemeId(activity));
         }
     }
 

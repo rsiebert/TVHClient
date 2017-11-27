@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.Utils;
 import org.tvheadend.tvhclient.model.Connection;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -63,7 +63,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
             holder.summary.setText(summary);
             
            // Set the active / inactive icon depending on the theme and selection status
-           if (Utils.getThemeId(context) == R.style.CustomTheme_Light) {
+           if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
                holder.selected.setImageResource(c.selected ? R.drawable.item_active_light : R.drawable.item_not_active_light);
            } else {
                holder.selected.setImageResource(c.selected ? R.drawable.item_active_dark : R.drawable.item_not_active_dark);

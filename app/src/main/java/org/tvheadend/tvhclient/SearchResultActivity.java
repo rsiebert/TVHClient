@@ -60,6 +60,7 @@ import org.tvheadend.tvhclient.model.Model;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(Utils.getThemeId(this));
+        setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_layout);
 
