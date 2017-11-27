@@ -211,7 +211,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
+            SeriesRecording srec = adapter.getSelectedItem();
+            mMenuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
             return true;
 
         case R.id.menu_record_remove_all:
@@ -321,7 +322,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, srec);
+            mMenuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
             return true;
 
         default:

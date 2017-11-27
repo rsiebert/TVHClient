@@ -375,16 +375,19 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         case R.id.menu_record_remove:
             if (model instanceof Program) {
                 Recording rec = ((Program) model).recording;
-                if (rec != null && rec.isRecording()) {
-                    Utils.confirmStopRecording(this, rec);
-                } else if (rec != null && rec.isScheduled()) {
-                    Utils.confirmCancelRecording(this, rec);
-                } else {
-                    Utils.confirmRemoveRecording(this, rec);
+                if (rec != null) {
+                    if (rec.isRecording()) {
+                        mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                    } else if (rec.isScheduled()) {
+                        mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                    } else {
+                        mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                    }
                 }
             }
             if (model instanceof Recording) {
-                Utils.confirmRemoveRecording(this, (Recording) model);
+                Recording rec = (Recording) model;
+                mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
             }
             return true;
 

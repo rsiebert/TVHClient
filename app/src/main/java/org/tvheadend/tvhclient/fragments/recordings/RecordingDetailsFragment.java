@@ -341,12 +341,14 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         removeRecordingButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (rec != null && rec.isRecording()) {
-                    Utils.confirmStopRecording(activity, rec);
-                } else if (rec != null && rec.isScheduled()) {
-                    Utils.confirmCancelRecording(activity, rec);
-                } else {
-                    Utils.confirmRemoveRecording(activity, rec);
+                if (rec != null) {
+                    if (rec.isRecording()) {
+                        mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                    } else if (rec.isScheduled()) {
+                        mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                    } else {
+                        mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                    }
                 }
                 if (getDialog() != null) {
                     getDialog().dismiss();

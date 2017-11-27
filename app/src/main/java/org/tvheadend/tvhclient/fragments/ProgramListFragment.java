@@ -168,7 +168,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             populateList();
         }
     }
-    
+
     /**
      * Fills the adapter with all program that are part of the given channel
      */
@@ -272,11 +272,11 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             Recording rec = program.recording;
             if (rec != null) {
                 if (rec.isRecording()) {
-                    Utils.confirmStopRecording(activity, rec);
+                    mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
                 } else if (rec.isScheduled()) {
-                    Utils.confirmCancelRecording(activity, rec);
+                    mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
                 } else {
-                    Utils.confirmRemoveRecording(activity, rec);
+                    mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                 }
             }
             return true;
@@ -292,7 +292,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
             }
 
-            // Get the selected recording profile to highlight the 
+            // Get the selected recording profile to highlight the
             // correct item in the list of the selection dialog
             int dvrConfigNameValue = 0;
             DatabaseHelper dbh = DatabaseHelper.getInstance(activity);
@@ -317,7 +317,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                    // Pass over the 
+                    // Pass over the
                     Intent intent = new Intent(activity, HTSService.class);
                     intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
                     intent.putExtra("eventId", program.id);
@@ -347,12 +347,12 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
-        
+
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         Program program = adapter.getItem(info.position);
-        
+
         // Set the title of the context menu and show or hide 
         // the menu items depending on the program state
         if (program != null) {
@@ -381,7 +381,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         switch (item.getItemId()) {
         case R.id.menu_play:
             // Open a new activity that starts playing the first program that is
-            // currently transmitted over this channel 
+            // currently transmitted over this channel
             mMenuUtils.handleMenuPlaySelection(channel.id, -1);
             return true;
 

@@ -156,12 +156,14 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_record_remove:
-            if (rec != null && rec.isRecording()) {
-                Utils.confirmStopRecording(activity, rec);
-            } else if (rec != null && rec.isScheduled()) {
-                Utils.confirmCancelRecording(activity, rec);
-            } else {
-                Utils.confirmRemoveRecording(activity, rec);
+            if (rec != null) {
+                if (rec.isRecording()) {
+                    mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                } else if (rec.isScheduled()) {
+                    mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                } else {
+                    mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                }
             }
             return true;
 
@@ -315,11 +317,11 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         case R.id.menu_record_remove:
             if (rec.isRecording()) {
-                Utils.confirmStopRecording(activity, rec);
+                mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
             } else if (rec.isScheduled()) {
-                Utils.confirmCancelRecording(activity, rec);
+                mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
             } else {
-                Utils.confirmRemoveRecording(activity, rec);
+                mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
             }
             return true;
 

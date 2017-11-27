@@ -216,4 +216,104 @@ public class MenuUtils {
         intent.putExtra("dvrId", dvrId);
         activity.startActivity(intent);
     }
+
+    public void handleMenuStopRecordingSelection(long dvrId, String title) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        // Show a confirmation dialog before stopping the recording
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_stop)
+                .content(activity.getString(R.string.stop_recording, title))
+                .negativeText(R.string.cancel)
+                .positiveText(R.string.stop)
+                .onPositive((dialog, which) -> {
+                    final Intent intent = new Intent(activity, HTSService.class);
+                    intent.setAction("stopDvrEntry");
+                    intent.putExtra("id", dvrId);
+                    activity.startService(intent);
+                })
+                .show();
+    }
+
+    public void handleMenuRemoveRecordingSelection(long dvrId, String title) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        // Show a confirmation dialog before removing the recording
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_remove)
+                .content(activity.getString(R.string.remove_recording, title))
+                .negativeText(R.string.cancel)
+                .positiveText(R.string.remove)
+                .onPositive((dialog, which) -> {
+                    final Intent intent = new Intent(activity, HTSService.class);
+                    intent.setAction("deleteDvrEntry");
+                    intent.putExtra("id", dvrId);
+                    activity.startService(intent);
+                })
+                .show();
+    }
+
+    public void handleMenuCancelRecordingSelection(long dvrId, String title) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        // Show a confirmation dialog before cancelling the recording
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_remove)
+                .content(activity.getString(R.string.cancel_recording, title))
+                .negativeText(R.string.discard)
+                .positiveText(R.string.cancel)
+                .onPositive((dialog, which) -> {
+                    final Intent intent = new Intent(activity, HTSService.class);
+                    intent.setAction("cancelDvrEntry");
+                    intent.putExtra("id", dvrId);
+                    activity.startService(intent);
+                })
+                .show();
+    }
+
+    public void handleMenuRemoveSeriesRecordingSelection(String id, String title) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        // Show a confirmation dialog before removing the recording
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_remove)
+                .content(activity.getString(R.string.remove_series_recording, title))
+                .negativeText(R.string.cancel)
+                .positiveText(R.string.remove)
+                .onPositive((dialog, which) -> {
+                    final Intent intent = new Intent(activity, HTSService.class);
+                    intent.setAction("deleteAutorecEntry");
+                    intent.putExtra("id", id);
+                    activity.startService(intent);
+                })
+                .show();
+    }
+
+    public void handleMenuRemoveTimerRecordingSelection(String id, String title) {
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            return;
+        }
+        // Show a confirmation dialog before removing the recording
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_remove)
+                .content(activity.getString(R.string.remove_timer_recording, title))
+                .negativeText(R.string.cancel)
+                .positiveText(R.string.remove)
+                .onPositive((dialog, which) -> {
+                    final Intent intent = new Intent(activity, HTSService.class);
+                    intent.setAction("deleteTimerecEntry");
+                    intent.putExtra("id", id);
+                    activity.startService(intent);
+                })
+                .show();
+    }
 }

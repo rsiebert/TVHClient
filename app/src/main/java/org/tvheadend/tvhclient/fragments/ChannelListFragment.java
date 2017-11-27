@@ -326,12 +326,14 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             
         case R.id.menu_record_remove:
             Recording rec = program.recording;
-            if (rec != null && rec.isRecording()) {
-                Utils.confirmStopRecording(activity, rec);
-            } else if (rec != null && rec.isScheduled()) {
-                Utils.confirmCancelRecording(activity, rec);
-            } else {
-                Utils.confirmRemoveRecording(activity, rec);
+            if (rec != null) {
+                if (rec.isRecording()) {
+                    mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                } else if (rec.isScheduled()) {
+                    mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                } else {
+                    mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                }
             }
             return true;
 

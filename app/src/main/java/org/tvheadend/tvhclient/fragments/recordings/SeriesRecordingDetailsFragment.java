@@ -19,6 +19,7 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 
@@ -53,6 +54,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private View toolbarShadow;
     private TVHClientApplication app;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
@@ -126,7 +128,9 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
+        mMenuUtils = new MenuUtils(getActivity());
+
         // If the recording is null exit
         if (srec == null) {
             return;
@@ -185,7 +189,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         recordRemoveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.confirmRemoveRecording(activity, srec);
+                mMenuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

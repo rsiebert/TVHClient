@@ -204,7 +204,10 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, adapter.getSelectedItem());
+            TimerRecording trec = adapter.getSelectedItem();
+            final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
+            final String title = trec.title != null ? trec.title : "";
+            mMenuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
             return true;
 
         case R.id.menu_record_remove_all:
@@ -310,7 +313,9 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return true;
 
         case R.id.menu_record_remove:
-            Utils.confirmRemoveRecording(activity, trec);
+            final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
+            final String title = trec.title != null ? trec.title : "";
+            mMenuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
             return true;
 
         default:

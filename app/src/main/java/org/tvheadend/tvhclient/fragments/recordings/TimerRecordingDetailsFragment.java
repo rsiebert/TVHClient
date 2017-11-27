@@ -19,6 +19,7 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
@@ -52,6 +53,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private View toolbarShadow;
     private TVHClientApplication app;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     public static TimerRecordingDetailsFragment newInstance(Bundle args) {
         TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
@@ -121,7 +123,9 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
+        mMenuUtils = new MenuUtils(getActivity());
+
         // If the recording is null exit
         if (trec == null) {
             return;
@@ -189,7 +193,9 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         recordRemoveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.confirmRemoveRecording(activity, trec);
+                final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
+                final String title = trec.title != null ? trec.title : "";
+                mMenuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

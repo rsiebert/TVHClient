@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -17,9 +16,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.Constants;
@@ -35,8 +31,6 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
-import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -152,74 +146,6 @@ public class Utils {
         context.startService(intent);
     }
 
-    public static void confirmRemoveRecording(final Activity activity, final Recording rec) {
-        confirmRemoveRecording(activity, 
-                Constants.ACTION_DELETE_DVR_ENTRY,
-                (rec.title != null ? rec.title : ""),
-                String.valueOf(rec.id),
-                false);
-    }
-
-    public static void confirmRemoveRecording(final Activity activity, final SeriesRecording srec) {
-        confirmRemoveRecording(activity, 
-                Constants.ACTION_DELETE_SERIES_DVR_ENTRY,
-                (srec.title != null ? srec.title : ""),
-                srec.id,
-                false);
-    }
-
-    public static void confirmRemoveRecording(final Activity activity, final TimerRecording trec) {
-        final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
-        final String title = trec.title != null ? trec.title : "";
-        confirmRemoveRecording(activity, 
-                Constants.ACTION_DELETE_TIMER_REC_ENTRY,
-                (name.length() > 0 ? name : title),
-                trec.id,
-                (trec.channel == null));
-    }
-
-    /**
-     * Removes the recording with the given id from the server. A dialog is
-     * shown up front to confirm the deletion.
-     *
-     * @param activity     Activity context
-     * @param type         Type of the recording
-     * @param title        Title to display in the confirmation dialog
-     * @param id           Id of the recording
-     * @param manualRemove True to remove the recording from the internal list and don't wait for the server response
-     */
-    private static void confirmRemoveRecording(final Activity activity,
-            final String type, final String title, final String id,
-            final boolean manualRemove) {
-
-        String message = "";
-        switch (type) {
-            case Constants.ACTION_DELETE_DVR_ENTRY:
-                message = activity.getString(R.string.remove_recording, title);
-                break;
-            case Constants.ACTION_DELETE_SERIES_DVR_ENTRY:
-                message = activity.getString(R.string.remove_series_recording, title);
-                break;
-            case Constants.ACTION_DELETE_TIMER_REC_ENTRY:
-                message = activity.getString(R.string.remove_timer_recording, title);
-                break;
-        }
-
-        // Show a confirmation dialog before deleting the recording
-        new MaterialDialog.Builder(activity)
-                .title(R.string.record_remove)
-                .content(message)
-                .negativeText(R.string.discard)
-                .positiveText(R.string.remove)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        removeRecording(activity, id, type, manualRemove);
-                    }
-                })
-                .show();
-    }
-
     /**
      * Removes the recording with the given id from the server.
      *
@@ -248,62 +174,12 @@ public class Utils {
         }
     }
 
-    public static void confirmCancelRecording(final Context context, final Recording rec) {
-        if (rec == null) {
-            return;
-        }
-
-        // Show a confirmation dialog before canceling the recording
-        new MaterialDialog.Builder(context)
-                .title(R.string.record_remove)
-                .content(context.getString(R.string.cancel_recording, rec.title))
-                .negativeText(R.string.discard)
-                .positiveText(R.string.remove)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        cancelRecording(context, rec);
-                    }
-                })
-                .show();
-    }
-
     public static void cancelRecording(final Context context, final Recording rec) {
         if (rec == null) {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
         intent.setAction(Constants.ACTION_CANCEL_DVR_ENTRY);
-        intent.putExtra("id", rec.id);
-        context.startService(intent);
-    }
-
-    public static void confirmStopRecording(final Context context, final Recording rec) {
-        if (rec == null) {
-            return;
-        }
-
-        // Show a confirmation dialog before stopping the recording
-        new MaterialDialog.Builder(context)
-                .title(R.string.record_stop)
-                .content(context.getString(R.string.stop_recording, rec.title))
-                .negativeText(R.string.cancel)
-                .positiveText(R.string.stop)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        stopRecording(context, rec);
-                    }
-                })
-                .show();
-    }
-
-    private static void stopRecording(final Context context, final Recording rec) {
-        if (rec == null) {
-            return;
-        }
-        final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_STOP_DVR_ENTRY);
         intent.putExtra("id", rec.id);
         context.startService(intent);
     }
