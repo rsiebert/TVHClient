@@ -131,7 +131,8 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="8dip"
-            android:layout_marginTop="2dp" />
+            android:layout_marginTop="2dp"
+            android:scaleY="0.5"/>
 
         <TextView
             android:id="@+id/next_title"
