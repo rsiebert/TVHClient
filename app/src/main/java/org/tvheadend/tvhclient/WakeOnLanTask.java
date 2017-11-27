@@ -1,10 +1,11 @@
 package org.tvheadend.tvhclient;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.model.Connection;
 
+import java.lang.ref.WeakReference;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -12,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
-
     private final static String TAG = WakeOnLanTask.class.getSimpleName();
 
     private final static int WOL_SEND = 0;
@@ -20,26 +20,28 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private final static int WOL_INVALID_MAC = 2;
     private final static int WOL_ERROR = 3;
 
-    private final Connection conn;
-    private final Activity activity;
-    private final Logger logger;
-    private Exception exception;
+    private WeakReference<Context> mContext;
+    private final Connection mConnection;
+    private final Logger mLogger;
+    private final AsyncTaskCallback mCallback;
+    private Exception mException;
 
-    public WakeOnLanTask(Activity context, Connection conn) {
-        this.activity = context;
-        this.conn = conn;
-        logger = Logger.getInstance();
+    public WakeOnLanTask(Context context, AsyncTaskCallback callback, Connection connection) {
+        mContext = new WeakReference<>(context);
+        mConnection = connection;
+        mCallback = callback;
+        mLogger = Logger.getInstance();
     }
 
     @Override
     protected Integer doInBackground(String... params) {
         // Exit if the MAC address is not ok, this should never happen because
         // it is already validated in the settings
-        if (!validateMacAddress(conn.wol_mac_address)) {
+        if (!validateMacAddress(mConnection.wol_mac_address)) {
             return WOL_INVALID_MAC;
         }
         // Get the MAC address parts from the string
-        byte[] macBytes = getMacBytes(conn.wol_mac_address);
+        byte[] macBytes = getMacBytes(mConnection.wol_mac_address);
 
         // Assemble the byte array that the WOL consists of
         byte[] bytes = new byte[6 + 16 * macBytes.length];
@@ -53,36 +55,36 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
         try {
             InetAddress address;
-            if (!conn.wol_broadcast) {
-                address = InetAddress.getByName(conn.address);
-                logger.log(TAG, "doInBackground: Sending WOL packet to " + address);
+            if (!mConnection.wol_broadcast) {
+                address = InetAddress.getByName(mConnection.address);
+                mLogger.log(TAG, "doInBackground: Sending WOL packet to " + address);
             } else {
                 // Replace the last number by 255 to send the packet as a broadcast
-                byte[] ipAddress = InetAddress.getByName(conn.address).getAddress();
+                byte[] ipAddress = InetAddress.getByName(mConnection.address).getAddress();
                 ipAddress[3] = (byte) 255;
                 address = InetAddress.getByAddress(ipAddress);
-                logger.log(TAG, "doInBackground: Sending WOL packet as broadcast to " + address.toString());
+                mLogger.log(TAG, "doInBackground: Sending WOL packet as broadcast to " + address.toString());
             }
-            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, conn.wol_port);
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, mConnection.wol_port);
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);
             socket.close();
 
-            logger.log(TAG, "doInBackground: Datagram packet was sent");
-            if (!conn.wol_broadcast) {
+            mLogger.log(TAG, "doInBackground: Datagram packet was sent");
+            if (!mConnection.wol_broadcast) {
                 return WOL_SEND;
             } else {
                 return WOL_SEND_BROADCAST;
             }
         } catch (Exception e) {
-            this.exception = e;
+            this.mException = e;
             return WOL_ERROR;
         }
     }
 
     /**
      * Checks if the given MAC address is correct.
-     * 
+     *
      * @param macAddress The MAC address that shall be validated
      * @return True if the MAC address is correct, false otherwise
      */
@@ -99,7 +101,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     /**
      * Splits the given MAC address into it's parts and saves it in the bytes
      * array
-     * 
+     *
      * @param macAddress The MAC address that shall be split
      * @return The byte array that holds the MAC address parts
      */
@@ -107,7 +109,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         byte[] macBytes = new byte[6];
 
         // Parse the MAC address elements into the array.
-        String[] hex = macAddress.split("(:|\\-)");
+        String[] hex = macAddress.split("(:|-)");
         for (int i = 0; i < 6; i++) {
             macBytes[i] = (byte) Integer.parseInt(hex[i], 16);
         }
@@ -120,16 +122,19 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
      */
     @Override
     protected void onPostExecute(Integer result) {
-        DataStorage ds = DataStorage.getInstance();
-        if (result == WOL_SEND) {
-            ds.showMessage(activity.getString(R.string.wol_send, conn.address));
-        } else if (result == WOL_SEND_BROADCAST) {
-            ds.showMessage(activity.getString(R.string.wol_send_broadcast, conn.address));
-        } else if (result == WOL_INVALID_MAC) {
-            ds.showMessage(activity.getString(R.string.wol_address_invalid));
-        } else {
-            final String msg = exception.getLocalizedMessage();
-            ds.showMessage(activity.getString(R.string.wol_error, conn.address, msg));
+        String message = "";
+        Context context = mContext.get();
+        if (context != null) {
+            if (result == WOL_SEND) {
+                message = context.getString(R.string.wol_send, mConnection.address);
+            } else if (result == WOL_SEND_BROADCAST) {
+                message = context.getString(R.string.wol_send_broadcast, mConnection.address);
+            } else if (result == WOL_INVALID_MAC) {
+                message = context.getString(R.string.wol_address_invalid);
+            } else {
+                message = context.getString(R.string.wol_error, mConnection.address, mException.getLocalizedMessage());
+            }
         }
+        mCallback.notify(message);
     }
 }

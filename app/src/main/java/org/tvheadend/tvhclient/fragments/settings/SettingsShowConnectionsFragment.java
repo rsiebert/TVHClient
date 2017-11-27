@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.AsyncTaskCallback;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.WakeOnLanTask;
@@ -29,7 +31,7 @@ import org.tvheadend.tvhclient.model.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback {
+public class SettingsShowConnectionsFragment extends Fragment implements ActionMode.Callback, AsyncTaskCallback {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();
@@ -223,7 +225,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             return true;
 
         case R.id.menu_send_wol:
-            WakeOnLanTask task= new WakeOnLanTask(activity, c);
+            WakeOnLanTask task = new WakeOnLanTask(activity, this, c);
             task.execute();
             mode.finish();
             return true;
@@ -303,5 +305,12 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
             mode.setTitle(c.name);
         }
         return true;
+    }
+
+    @Override
+    public void notify(String message) {
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+        }
     }
 }

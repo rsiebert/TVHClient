@@ -87,7 +87,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ActionBarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener, AsyncTaskCallback {
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -840,7 +840,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         case R.id.menu_wol:
             final Connection conn = dbh.getSelectedConnection();
             if (conn != null) {
-                WakeOnLanTask task= new WakeOnLanTask(this, conn);
+                WakeOnLanTask task= new WakeOnLanTask(this, this, conn);
                 task.execute();
             }
             return true;
@@ -1818,5 +1818,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 && prefs.getBoolean("pref_enable_casting", false)
                 && profile != null 
                 && profile.enabled);
+    }
+
+    @Override
+    public void notify(String message) {
+        if (getCurrentFocus() != null) {
+            Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_LONG).show();
+        }
     }
 }
