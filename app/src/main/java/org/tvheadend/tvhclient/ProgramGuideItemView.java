@@ -18,6 +18,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Iterator;
@@ -372,7 +373,7 @@ public class ProgramGuideItemView extends LinearLayout {
         }
 
         if (p != null) {
-            Utils.setGenreColor(activity, itemLayout, p, TAG);
+            MiscUtils.setGenreColor(activity, itemLayout, p, TAG);
 	        itemLayout.setTag(p.id);
 	        title.setText(p.title);
 	        Utils.setState(activity, state, p);

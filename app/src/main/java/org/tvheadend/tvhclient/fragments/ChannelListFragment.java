@@ -29,7 +29,6 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
@@ -47,6 +46,8 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -96,6 +97,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private int channelTimeSelection;
     private long showProgramsFromTime;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -152,6 +154,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
         listView.setAdapter(adapter);
+
+        mMenuUtils = new MenuUtils(getActivity());
 
         // Inform the activity when a channel has been selected.
         if (!showOnlyChannels) {
@@ -291,7 +295,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_genre_color_info_channels:
-            Utils.showGenreColorDialog(activity);
+            mMenuUtils.handleMenuGenreColorSelection();
             return true;
 
         default:

@@ -27,7 +27,6 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.intent.PlayIntent;
@@ -42,6 +41,8 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,6 +69,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
     private TVHClientApplication app;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -114,6 +116,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             activity.finish();
             return;
         }
+
+        mMenuUtils = new MenuUtils(getActivity());
 
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -385,7 +389,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_genre_color_info_programs:
-            Utils.showGenreColorDialog(activity);
+            mMenuUtils.handleMenuGenreColorSelection();
             return true;
 
         default:

@@ -60,6 +60,7 @@ import org.tvheadend.tvhclient.model.Model;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -87,6 +88,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     private SearchView searchView;
     private TVHClientApplication app;
     private DataStorage ds;
+    private MenuUtils mMenuUtils;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,6 +109,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         ListView listView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(listView);
+
+        mMenuUtils = new MenuUtils(this);
 
         // Show the details of the program when the user has selected one
         if (listView != null) {
@@ -326,7 +330,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             return true;
 
         case R.id.menu_genre_color_info:
-            Utils.showGenreColorDialog(this);
+            mMenuUtils.handleMenuGenreColorSelection();
             return true;
 
         default:

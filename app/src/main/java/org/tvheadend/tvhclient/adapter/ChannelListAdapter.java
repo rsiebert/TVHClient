@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
@@ -292,9 +293,9 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
             }
             if (layout == R.layout.program_guide_channel_item) {
-                Utils.setGenreColor(context, holder.channel_item_layout, p, TAG);
+                MiscUtils.setGenreColor(context, holder.channel_item_layout, p, TAG);
             } else {
-                Utils.setGenreColor(context, holder.genre, p, TAG);
+                MiscUtils.setGenreColor(context, holder.genre, p, TAG);
             }
 
         }

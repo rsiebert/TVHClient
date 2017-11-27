@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.model.Program;
 
@@ -92,7 +93,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);
-            Utils.setGenreColor(context, holder.genre, p, TAG);
+            MiscUtils.setGenreColor(context, holder.genre, p, TAG);
 
             if (holder.subtitle != null) {
                 holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
