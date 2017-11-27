@@ -3,12 +3,14 @@ package org.tvheadend.tvhclient.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,10 +25,8 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
-import org.tvheadend.tvhclient.ImageDownloadTask;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.intent.PlayIntent;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;
@@ -34,12 +34,15 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.tasks.ImageDownloadTask;
+import org.tvheadend.tvhclient.tasks.ImageDownloadTaskCallback;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ProgramDetailsFragment extends DialogFragment implements HTSListener {
+public class ProgramDetailsFragment extends DialogFragment implements HTSListener, ImageDownloadTaskCallback {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
@@ -229,7 +232,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         // Show the program image if one exists
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if (app.isUnlocked() && prefs.getBoolean("pref_show_program_artwork", false)) {
-            ImageDownloadTask dt = new ImageDownloadTask(imageView);
+            ImageDownloadTask dt = new ImageDownloadTask(this);
             dt.execute(program.image, String.valueOf(program.id));
         }
 
@@ -392,6 +395,29 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
                     showPlayerControls();
                 }
             });
+        }
+    }
+
+    @Override
+    public void notify(Drawable image) {
+        if (imageView != null && image != null) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageDrawable(image);
+
+            // Get the dimensions of the image so the
+            // width / height ratio can be determined
+            final float w = image.getIntrinsicWidth();
+            final float h = image.getIntrinsicHeight();
+
+            if (h > 0) {
+                // Scale the image view so it fits the width of the dialog or fragment root view
+                final float scale = h / w;
+                final float vw = imageView.getRootView().getWidth() - 128;
+                final float vh = vw * scale;
+                final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams((int)vw, (int)vh);
+                layoutParams.gravity = Gravity.CENTER;
+                imageView.setLayoutParams(layoutParams);
+            }
         }
     }
 }
