@@ -25,7 +25,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.intent.DownloadIntent;
 import org.tvheadend.tvhclient.intent.PlayIntent;

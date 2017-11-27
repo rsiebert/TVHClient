@@ -27,6 +27,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 public class DownloadActivity extends Activity implements OnRequestPermissionsResultCallback {
 

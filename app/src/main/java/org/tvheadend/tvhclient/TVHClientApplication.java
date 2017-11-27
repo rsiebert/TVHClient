@@ -25,6 +25,7 @@ import org.acra.config.ConfigurationBuilder;
 import org.acra.sender.HttpSender;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

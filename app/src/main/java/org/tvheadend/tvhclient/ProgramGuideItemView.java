@@ -18,6 +18,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

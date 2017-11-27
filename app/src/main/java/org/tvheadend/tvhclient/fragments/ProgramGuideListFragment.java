@@ -26,7 +26,7 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter;
 import org.tvheadend.tvhclient.intent.SearchEPGIntent;
 import org.tvheadend.tvhclient.intent.SearchIMDbIntent;

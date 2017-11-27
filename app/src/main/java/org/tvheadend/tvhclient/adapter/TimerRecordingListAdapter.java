@@ -12,7 +12,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.Utils;
+import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.util.Calendar;

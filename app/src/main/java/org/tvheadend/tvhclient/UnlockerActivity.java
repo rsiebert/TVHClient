@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.fragments.UnlockerFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 public class UnlockerActivity extends AppCompatActivity {
 
