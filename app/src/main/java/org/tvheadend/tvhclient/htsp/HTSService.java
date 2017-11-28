@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
@@ -84,6 +85,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand() called with: intent = [" + intent + "], flags = [" + flags + "], startId = [" + startId + "]");
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
@@ -121,45 +123,41 @@ public class HTSService extends Service implements HTSConnectionListener {
             logger.log(TAG, "onStartCommand: Closing connection to server");
             connection.close();
 
-        } else if (action.equals(Constants.ACTION_GET_EVENT)) {
+        } else if (action.equals("getEvent")) {
             getEvent(intent.getLongExtra("eventId", 0));
 
-        } else if (action.equals(Constants.ACTION_GET_EVENTS)) {
+        } else if (action.equals("getEvents")) {
             final Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
             getEvents(ch, intent.getLongExtra("eventId", 0), intent.getIntExtra("count", 10));
 
-        } else if (action.equals(Constants.ACTION_ADD_DVR_ENTRY)) {
+        } else if (action.equals("addDvrEntry")) {
             addDvrEntry(intent);
 
-        } else if (action.equals(Constants.ACTION_UPDATE_DVR_ENTRY)) {
+        } else if (action.equals("updateDvrEntry")) {
             updateDvrEntry(intent);
 
-        } else if (action.equals(Constants.ACTION_DELETE_DVR_ENTRY)) {
-            try {
-                deleteDvrEntry(Long.valueOf(intent.getStringExtra("id")));
-            } catch (NumberFormatException ex) {
-                // NOP
-            }
+        } else if (action.equals("deleteDvrEntry")) {
+            deleteDvrEntry(intent.getLongExtra("id", 0));
 
-        } else if (action.equals(Constants.ACTION_CANCEL_DVR_ENTRY)) {
+        } else if (action.equals("cancelDvrEntry")) {
             cancelDvrEntry(intent.getLongExtra("id", 0));
 
-        } else if (action.equals(Constants.ACTION_STOP_DVR_ENTRY)) {
+        } else if (action.equals("stopDvrEntry")) {
             stopDvrEntry(intent.getLongExtra("id", 0));
 
-        } else if (action.equals(Constants.ACTION_ADD_TIMER_REC_ENTRY)) {
+        } else if (action.equals("addTimerecEntry")) {
             addTimerRecEntry(intent);
 
-        } else if (action.equals(Constants.ACTION_UPDATE_TIMER_REC_ENTRY)) {
+        } else if (action.equals("updateTimerecEntry")) {
             updateTimerRecEntry(intent);
 
-        } else if (action.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
+        } else if (action.equals("deleteTimerecEntry")) {
             deleteTimerRecEntry(intent.getStringExtra("id"));
 
-        } else if (action.equals(Constants.ACTION_EPG_QUERY)) {
+        } else if (action.equals("epgQuery")) {
             epgQuery(intent);
 
-        } else if (action.equals(Constants.ACTION_SUBSCRIBE)) {
+        } else if (action.equals("subscribe")) {
             subscribe(intent.getLongExtra("channelId", 0),
                     intent.getLongExtra("subscriptionId", 0),
                     intent.getIntExtra("maxWidth", 0),
@@ -167,13 +165,13 @@ public class HTSService extends Service implements HTSConnectionListener {
                     intent.getStringExtra("audioCodec"),
                     intent.getStringExtra("videoCodec"));
 
-        } else if (action.equals(Constants.ACTION_UNSUBSCRIBE)) {
+        } else if (action.equals("unsubscribe")) {
             unsubscribe(intent.getLongExtra("subscriptionId", 0));
 
-        } else if (action.equals(Constants.ACTION_FEEDBACK)) {
+        } else if (action.equals("feedback")) {
             feedback(intent.getLongExtra("subscriptionId", 0), intent.getIntExtra("speed", 0));
 
-        } else if (action.equals(Constants.ACTION_GET_TICKET)) {
+        } else if (action.equals("getTicket")) {
             Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
             Recording rec = dataStorage.getRecording(intent.getLongExtra("dvrId", 0));
             if (ch != null) {
@@ -182,41 +180,41 @@ public class HTSService extends Service implements HTSConnectionListener {
                 getTicket(rec);
             }
 
-        } else if (action.equals(Constants.ACTION_GET_DISC_SPACE)) {
+        } else if (action.equals("getDiskSpace")) {
         	getDiscSpace();
 
-        } else if (action.equals(Constants.ACTION_GET_DVR_CONFIG)) {
+        } else if (action.equals("getDvrConfigs")) {
             getDvrConfigs();
             
-        } else if (action.equals(Constants.ACTION_GET_PROFILES)) {
+        } else if (action.equals("getProfiles")) {
             getProfiles();
             
-        } else if (action.equals(Constants.ACTION_GET_CHANNEL)) {
+        } else if (action.equals("getChannel")) {
             Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
             if (ch != null) {
                 getChannel(ch);
             }
             
-        } else if (action.equals(Constants.ACTION_SUBSCRIBE_FILTER_STREAM)) {
+        } else if (action.equals("subscriptionFilterStream")) {
             subscriptionFilterStream();
             
-        } else if (action.equals(Constants.ACTION_GET_DVR_CUTPOINTS)) {
+        } else if (action.equals("getDvrCutpoints")) {
             Recording rec = dataStorage.getRecording(intent.getLongExtra("dvrId", 0));
             if (rec != null) {
                 getDvrCutpoints(rec);
             }
             
-        } else if (action.equals(Constants.ACTION_ADD_SERIES_DVR_ENTRY)) {
+        } else if (action.equals("addAutorecEntry")) {
             addAutorecEntry(intent);
 
-        } else if (action.equals(Constants.ACTION_UPDATE_SERIES_DVR_ENTRY)) {
+        } else if (action.equals("updateAutorecEntry")) {
             updateAutorecEntry(intent);
 
-        } else if (action.equals(Constants.ACTION_DELETE_SERIES_DVR_ENTRY)) {
+        } else if (action.equals("deleteAutorecEntry")) {
             String id = intent.getStringExtra("id");
             deleteAutorecEntry(id);
 
-        } else if (action.equals(Constants.ACTION_GET_SYSTEM_TIME)) {
+        } else if (action.equals("getSysTime")) {
             getSystemTime();
 
         }

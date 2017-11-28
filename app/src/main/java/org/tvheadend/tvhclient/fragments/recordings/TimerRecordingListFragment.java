@@ -236,7 +236,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     final TimerRecording trec = adapter.getItem(i);
                     if (trec != null) {
                         Utils.removeRecording(activity, trec.id,
-                                Constants.ACTION_DELETE_TIMER_REC_ENTRY, false);
+                                "deleteTimerecEntry", false);
                     }
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
@@ -338,7 +338,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     }
                 });
                 break;
-            case Constants.ACTION_TIMER_DVR_ADD:
+            case "timerecEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.add((TimerRecording) obj);
@@ -346,7 +346,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     }
                 });
                 break;
-            case Constants.ACTION_TIMER_DVR_DELETE:
+            case "timerecEntryDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         // Get the position of the recording that is shown before
@@ -362,7 +362,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                     }
                 });
                 break;
-            case Constants.ACTION_TIMER_DVR_UPDATE:
+            case "timerecEntryUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.update((TimerRecording) obj);

@@ -276,7 +276,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // the query would have been passed to the server.
         if (recording == null) {
             intent = new Intent(this, HTSService.class);
-            intent.setAction(Constants.ACTION_EPG_QUERY);
+            intent.setAction("epgQuery");
             intent.putExtra("query", query);
             if (channel != null) {
                 intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
@@ -436,7 +436,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 // Pass over the
                                 Intent intent = new Intent(activity, HTSService.class);
-                                intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+                                intent.setAction("addDvrEntry");
                                 intent.putExtra("eventId", ((Program) model).id);
                                 intent.putExtra("channelId", ((Program) model).channel.id);
                                 intent.putExtra("configName", dcList[which]);
@@ -547,7 +547,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     @Override
     public void onMessage(final String action, final Object obj) {
         switch (action) {
-            case Constants.ACTION_PROGRAM_ADD:
+            case "eventAdd":
                 runOnUiThread(new Runnable() {
                     public void run() {
                         Model m = (Model) obj;
@@ -557,7 +557,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     }
                 });
                 break;
-            case Constants.ACTION_PROGRAM_DELETE:
+            case "eventDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
                         Model m = (Model) obj;
@@ -566,7 +566,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     }
                 });
                 break;
-            case Constants.ACTION_PROGRAM_UPDATE:
+            case "eventUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.update((Model) obj);
@@ -574,7 +574,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     }
                 });
                 break;
-            case Constants.ACTION_DVR_DELETE:
+            case "dvrEntryDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
                         Model m = (Model) obj;
@@ -583,7 +583,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     }
                 });
                 break;
-            case Constants.ACTION_DVR_UPDATE:
+            case "dvrEntryUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.update((Model) obj);

@@ -105,25 +105,6 @@ public class Constants {
     public static final String ACTION_CONNECTION_STATE_NO_CONNECTION = "action_connection_state_no_connection";
 
     // HTSP actions that indicate that the server has sent something
-    public static final String ACTION_CHANNEL_ADD = "CHANNEL_ADD";
-    public static final String ACTION_CHANNEL_DELETE = "CHANNEL_DELETE";
-    public static final String ACTION_CHANNEL_UPDATE = "CHANNEL_UPDATE";
-    public static final String ACTION_TAG_ADD = "TAG_ADD";
-    public static final String ACTION_TAG_DELETE = "TAG_DELETE";
-    public static final String ACTION_TAG_UPDATE = "TAG_UPDATE";
-    public static final String ACTION_DVR_ADD = "DVR_ADD";
-    public static final String ACTION_DVR_DELETE = "DVR_DELETE";
-    public static final String ACTION_DVR_UPDATE = "DVR_UPDATE";
-    public static final String ACTION_DVR_CANCEL = "DVR_CANCEL";
-    public static final String ACTION_TIMER_DVR_ADD = "TIMER_DVR_ADD";
-    public static final String ACTION_TIMER_DVR_DELETE = "TIMER_DVR_DELETE";
-    public static final String ACTION_TIMER_DVR_UPDATE = "TIMER_DVR_UPDATE";
-    public static final String ACTION_SERIES_DVR_ADD = "SERIES_DVR_ADD";
-    public static final String ACTION_SERIES_DVR_DELETE = "SERIES_DVR_DELETE";
-    public static final String ACTION_SERIES_DVR_UPDATE = "SERIES_DVR_UPDATE";
-    public static final String ACTION_PROGRAM_ADD = "PROGRAM_ADD";
-    public static final String ACTION_PROGRAM_DELETE = "PROGRAM_DELETE";
-    public static final String ACTION_PROGRAM_UPDATE = "PROGRAM_UPDATE";
     public static final String ACTION_SUBSCRIPTION_ADD = "SUBSCRIPTION_ADD";
     public static final String ACTION_SUBSCRIPTION_DELETE = "SUBSCRIPTION_DELETE";
     public static final String ACTION_SUBSCRIPTION_UPDATE = "SUBSCRIPTION_UPDATE";
@@ -139,32 +120,6 @@ public class Constants {
     // HTSP service actions that are called from the client to the server
     public static final String ACTION_CONNECT = "CONNECT";
     public static final String ACTION_DISCONNECT = "DISCONNECT";
-    public static final String ACTION_EPG_QUERY = "EPG_QUERY";
-    public static final String ACTION_GET_EVENT = "GET_EVENT";
-    public static final String ACTION_GET_EVENTS = "GET_EVENTS";
-    public static final String ACTION_SUBSCRIBE = "SUBSCRIBE";
-    public static final String ACTION_UNSUBSCRIBE = "UNSUBSCRIBE";
-    public static final String ACTION_FEEDBACK = "FEEDBACK";
-    public static final String ACTION_GET_TICKET = "GET_TICKET";
-    public static final String ACTION_ADD_DVR_ENTRY = "ADD_DVR_ENTRY";
-    public static final String ACTION_UPDATE_DVR_ENTRY = "UPDATE_DVR_ENTRY";
-    public static final String ACTION_CANCEL_DVR_ENTRY = "CANCEL_DVR_ENTRY";
-    public static final String ACTION_STOP_DVR_ENTRY = "STOP_DVR_ENTRY";
-    public static final String ACTION_DELETE_DVR_ENTRY = "DELETE_DVR_ENTRY";
-    public static final String ACTION_ADD_TIMER_REC_ENTRY = "ADD_TIMER_REC_ENTRY";
-    public static final String ACTION_UPDATE_TIMER_REC_ENTRY = "UPDATE_TIMER_REC_ENTRY";
-    public static final String ACTION_DELETE_TIMER_REC_ENTRY = "DELETE_TIMER_REC_ENTRY";
-    public static final String ACTION_GET_DISC_SPACE = "GET_DISC_SPACE";
-    public static final String ACTION_GET_DVR_CONFIG = "GET_DVR_CONFIG";
-    public static final String ACTION_GET_DVR_CUTPOINTS = "GET_DVR_CUTPOINTS";
-    public static final String ACTION_SUBSCRIBE_FILTER_STREAM = "SUBSCRIBE_FILTER_STREAM";
-    public static final String ACTION_GET_PROFILES = "GET_PROFILES";
-    public static final String ACTION_GET_CHANNEL = "GET_CHANNEL";
-    public static final String ACTION_GET_SYSTEM_TIME = "GET_SYSTEM_TIME";
-    public static final String ACTION_ADD_SERIES_DVR_ENTRY = "ADD_SERIES_DVR_ENTRY";
-    public static final String ACTION_UPDATE_SERIES_DVR_ENTRY = "UPDATE_SERIES_DVR_ENTRY";
-    public static final String ACTION_DELETE_SERIES_DVR_ENTRY = "DELETE_SERIES_DVR_ENTRY";
-
     // The default names for the playback and recording profiles
     public static final String PROG_PROFILE_DEFAULT = "htsp";
     public static final String CAST_PROFILE_DEFAULT = "webtv-vp8-vorbis-webm";

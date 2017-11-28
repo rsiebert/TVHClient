@@ -152,9 +152,9 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
                     }
                 }
             });
-        } else if (action.equals(Constants.ACTION_DVR_ADD) 
-                || action.equals(Constants.ACTION_DVR_DELETE)
-                || action.equals(Constants.ACTION_DVR_UPDATE)) {
+        } else if (action.equals("dvrEntryAdd")
+                || action.equals("dvrEntryDelete")
+                || action.equals("dvrEntryUpdate")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     populateList();

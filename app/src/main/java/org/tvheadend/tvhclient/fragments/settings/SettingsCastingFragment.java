@@ -219,13 +219,13 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
 
         // Get the available profiles from the server
         final Intent intent = new Intent(activity, HTSService.class);
-        intent.setAction(Constants.ACTION_GET_PROFILES);
+        intent.setAction("getProfiles");
         activity.startService(intent);
     }
 
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_GET_PROFILES)) {
+        if (action.equals("getProfiles")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Loading is done, remove the loading subtitle

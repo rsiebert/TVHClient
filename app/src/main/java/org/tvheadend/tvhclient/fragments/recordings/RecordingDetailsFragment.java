@@ -384,10 +384,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public void onMessage(String action, Object obj) {
         // An existing recording has been updated, this is valid for all menu options
-        if (action.equals(Constants.ACTION_PROGRAM_UPDATE)
-                || action.equals(Constants.ACTION_DVR_ADD)
-                || action.equals(Constants.ACTION_DVR_DELETE)
-                || action.equals(Constants.ACTION_DVR_UPDATE)) {
+        if (action.equals("eventUpdate")
+                || action.equals("dvrEntryAdd")
+                || action.equals("dvrEntryDelete")
+                || action.equals("dvrEntryUpdate")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     if (showControls) {

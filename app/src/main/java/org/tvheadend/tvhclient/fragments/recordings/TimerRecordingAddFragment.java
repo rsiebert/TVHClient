@@ -567,7 +567,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 // When the removal confirmation was received, add the edited recording. 
                 // This is done in the onMessage method. 
                 Intent intent = new Intent(activity, HTSService.class);
-                intent.setAction(Constants.ACTION_DELETE_TIMER_REC_ENTRY);
+                intent.setAction("deleteTimerecEntry");
                 intent.putExtra("id", rec.id);
                 activity.startService(intent);
     
@@ -631,7 +631,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
     @Override
     public void onMessage(String action, Object obj) {
-        if (action.equals(Constants.ACTION_TIMER_DVR_DELETE)) {
+        if (action.equals("timerecEntryDelete")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Remove the callback to that the timer does not fire and
@@ -650,7 +650,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
      */
     private void addTimerRecording() {
         Intent intent = getIntentData();
-        intent.setAction(Constants.ACTION_ADD_TIMER_REC_ENTRY);
+        intent.setAction("addTimerecEntry");
         activity.startService(intent);
 
         if (getDialog() != null) {
@@ -664,7 +664,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
      */
     private void updateTimerRecording() {
         Intent intent = getIntentData();
-        intent.setAction(Constants.ACTION_UPDATE_TIMER_REC_ENTRY);
+        intent.setAction("updateTimerecEntry");
         intent.putExtra("id", rec.id);
         activity.startService(intent);
 

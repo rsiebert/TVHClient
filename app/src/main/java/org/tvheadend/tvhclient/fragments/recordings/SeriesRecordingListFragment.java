@@ -240,8 +240,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
                 for (int i = 0; i < adapter.getCount(); ++i) {
                     final SeriesRecording srec = adapter.getItem(i);
                     if (srec != null) {
-                        Utils.removeRecording(activity, srec.id,
-                                Constants.ACTION_DELETE_SERIES_DVR_ENTRY, false);
+                        Utils.removeRecording(activity, srec.id, "deleteAutorecEntry", false);
                     }
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
@@ -345,7 +344,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
                     }
                 });
                 break;
-            case Constants.ACTION_SERIES_DVR_ADD:
+            case "autorecEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.add((SeriesRecording) obj);
@@ -353,7 +352,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
                     }
                 });
                 break;
-            case Constants.ACTION_SERIES_DVR_DELETE:
+            case "autorecEntryDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         // Get the position of the recording that is shown before
@@ -369,7 +368,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
                     }
                 });
                 break;
-            case Constants.ACTION_SERIES_DVR_UPDATE:
+            case "autorecEntryUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.update((SeriesRecording) obj);

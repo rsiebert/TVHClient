@@ -119,7 +119,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_TAG_ADD, tag);
+            app.broadcastMessage("tagAdd", tag);
         }
     }
 
@@ -134,7 +134,7 @@ public class DataStorage {
             tags.remove(tag);
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_TAG_DELETE, tag);
+            app.broadcastMessage("tagDelete", tag);
         }
     }
 
@@ -180,7 +180,7 @@ public class DataStorage {
      */
     public void updateChannelTag(ChannelTag tag) {
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_TAG_UPDATE, tag);
+            app.broadcastMessage("tagUpdate", tag);
         }
     }
 
@@ -203,7 +203,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_CHANNEL_ADD, channel);
+            app.broadcastMessage("channelAdd", channel);
         }
     }
 
@@ -230,7 +230,7 @@ public class DataStorage {
             channels.remove(channel);
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_CHANNEL_DELETE, channel);
+            app.broadcastMessage("channelDelete", channel);
         }
     }
 
@@ -276,7 +276,7 @@ public class DataStorage {
      */
     public void updateChannel(Channel ch) {
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_CHANNEL_UPDATE, ch);
+            app.broadcastMessage("channelUpdate", ch);
         }
     }
 
@@ -288,7 +288,7 @@ public class DataStorage {
      */
     public void addProgram(Program p) {
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_PROGRAM_ADD, p);
+            app.broadcastMessage("eventAdd", p);
         }
     }
 
@@ -300,7 +300,7 @@ public class DataStorage {
      */
     public void removeProgram(Program p) {
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_PROGRAM_DELETE, p);
+            app.broadcastMessage("eventDelete", p);
         }
     }
 
@@ -312,7 +312,7 @@ public class DataStorage {
      */
     public void updateProgram(Program p) {
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_PROGRAM_UPDATE, p);
+            app.broadcastMessage("eventUpdate", p);
         }
     }
 
@@ -330,7 +330,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_DVR_ADD, rec);
+            app.broadcastMessage("dvrEntryAdd", rec);
 
             // Add a notification for scheduled recordings
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
@@ -441,7 +441,7 @@ public class DataStorage {
             recordings.remove(rec);
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_DVR_DELETE, rec);
+            app.broadcastMessage("dvrEntryDelete", rec);
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
             if (prefs.getBoolean("pref_show_notifications", false)) {
@@ -476,7 +476,7 @@ public class DataStorage {
      */
     public void updateRecording(Recording rec) {
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_DVR_UPDATE, rec);
+            app.broadcastMessage("dvrEntryUpdate", rec);
         }
     }
 
@@ -501,7 +501,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_SERIES_DVR_ADD, rec);
+            app.broadcastMessage("autorecEntryAdd", rec);
         }
     }
 
@@ -546,7 +546,7 @@ public class DataStorage {
             seriesRecordings.remove(srec);
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_SERIES_DVR_DELETE, srec);
+            app.broadcastMessage("autorecEntryDelete", srec);
         }
     }
 
@@ -575,7 +575,7 @@ public class DataStorage {
      */
     public void updateSeriesRecording(SeriesRecording srec) {
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_SERIES_DVR_UPDATE, srec);
+            app.broadcastMessage("autorecEntryUpdate", srec);
         }
     }
 
@@ -593,7 +593,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_TIMER_DVR_ADD, rec);
+            app.broadcastMessage("timerecEntryAdd", rec);
         }
     }
 
@@ -636,7 +636,7 @@ public class DataStorage {
             timerRecordings.remove(rec);
         }
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_TIMER_DVR_DELETE, rec);
+            app.broadcastMessage("timerecEntryDelete", rec);
         }
     }
 
@@ -665,7 +665,7 @@ public class DataStorage {
      */
     public void updateTimerRecording(TimerRecording rec) {
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_TIMER_DVR_UPDATE, rec);
+            app.broadcastMessage("timerecEntryUpdate", rec);
         }
     }
 
@@ -831,7 +831,7 @@ public class DataStorage {
         Collections.sort(list, Profiles.ProfilesNameSorter);
         dvrConfigs.addAll(list);
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_GET_DVR_CONFIG, null);
+            app.broadcastMessage("getDvrConfigs", null);
         }
     }
 
@@ -844,7 +844,7 @@ public class DataStorage {
         Collections.sort(list, Profiles.ProfilesNameSorter);
         profiles.addAll(list);
         if (!loading) {
-            app.broadcastMessage(Constants.ACTION_GET_PROFILES, null);
+            app.broadcastMessage("getProfiles", null);
         }
     }
 

@@ -371,7 +371,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                     // Pass over the 
                     Intent intent = new Intent(activity, HTSService.class);
-                    intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+                    intent.setAction("addDvrEntry");
                     intent.putExtra("eventId", prog.id);
                     intent.putExtra("channelId", prog.channel.id);
                     intent.putExtra("configName", dcList[which]);
@@ -535,7 +535,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_CHANNEL_ADD:
+            case "channelAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.add((Channel) obj);
@@ -544,7 +544,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_CHANNEL_DELETE:
+            case "channelDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.remove((Channel) obj);
@@ -552,7 +552,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_CHANNEL_UPDATE:
+            case "channelUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.update((Channel) obj);
@@ -560,7 +560,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_TAG_ADD:
+            case "tagAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         ChannelTag tag = (ChannelTag) obj;
@@ -568,7 +568,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_TAG_DELETE:
+            case "tagDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         ChannelTag tag = (ChannelTag) obj;
@@ -576,10 +576,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_PROGRAM_UPDATE:
-            case Constants.ACTION_PROGRAM_DELETE:
-            case Constants.ACTION_DVR_ADD:
-            case Constants.ACTION_DVR_UPDATE:
+            case "eventUpdate":
+            case "eventDelete":
+            case "dvrEntryAdd":
+            case "dvrEntryUpdate":
                 // An existing program has been updated
                 activity.runOnUiThread(new Runnable() {
                     public void run() {

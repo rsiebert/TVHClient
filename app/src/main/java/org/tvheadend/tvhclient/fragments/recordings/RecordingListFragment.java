@@ -236,7 +236,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             public void run() {
                 for (int i = 0; i < idList.size(); ++i) {
                     logger.log(TAG, "Removing recording id " + idList.get(i));
-                    Utils.removeRecording(activity, idList.get(i), Constants.ACTION_DELETE_DVR_ENTRY, false);
+                    Utils.removeRecording(activity, idList.get(i), "deleteDvrEntry", false);
                     try {
                         sleep(Constants.THREAD_SLEEPING_TIME);
                     } catch (InterruptedException e) {
@@ -351,14 +351,14 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public void onMessage(String action, final Object obj) {
         switch (action) {
-            case Constants.ACTION_DVR_ADD:
+            case "dvrEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.add((Recording) obj);
                     }
                 });
                 break;
-            case Constants.ACTION_DVR_DELETE:
+            case "dvrEntryDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         // Get the position of the recording that is shown before
@@ -375,7 +375,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                     }
                 });
                 break;
-            case Constants.ACTION_DVR_UPDATE:
+            case "dvrEntryUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.update((Recording) obj);

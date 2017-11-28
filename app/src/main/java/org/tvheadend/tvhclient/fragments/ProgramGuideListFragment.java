@@ -379,7 +379,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                     }
                 });
                 break;
-            case Constants.ACTION_CHANNEL_ADD:
+            case "channelAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.add((Channel) obj);
@@ -388,7 +388,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                     }
                 });
                 break;
-            case Constants.ACTION_CHANNEL_DELETE:
+            case "channelDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.remove((Channel) obj);
@@ -396,10 +396,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                     }
                 });
                 break;
-            case Constants.ACTION_PROGRAM_UPDATE:
-            case Constants.ACTION_PROGRAM_DELETE:
-            case Constants.ACTION_DVR_ADD:
-            case Constants.ACTION_DVR_UPDATE:
+            case "eventUpdate":
+            case "eventDelete":
+            case "dvrEntryAdd":
+            case "dvrEntryUpdate":
                 // An existing program has been updated
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -407,7 +407,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                     }
                 });
                 break;
-            case Constants.ACTION_CHANNEL_UPDATE:
+            case "channelUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         final Channel ch = (Channel) obj;

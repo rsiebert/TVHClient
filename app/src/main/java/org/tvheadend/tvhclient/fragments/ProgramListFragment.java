@@ -315,7 +315,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                     // Pass over the
                     Intent intent = new Intent(activity, HTSService.class);
-                    intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+                    intent.setAction("addDvrEntry");
                     intent.putExtra("eventId", program.id);
                     intent.putExtra("channelId", program.channel.id);
                     intent.putExtra("configName", dcList[which]);
@@ -410,7 +410,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_PROGRAM_ADD:
+            case "eventAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         Program p = (Program) obj;
@@ -426,7 +426,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_PROGRAM_DELETE:
+            case "eventDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.remove((Program) obj);
@@ -438,7 +438,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_PROGRAM_UPDATE:
+            case "eventUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.update((Program) obj);
@@ -446,7 +446,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_DVR_UPDATE:
+            case "dvrEntryUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         Recording rec = (Recording) obj;
@@ -460,7 +460,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
-            case Constants.ACTION_DVR_ADD:
+            case "dvrEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.notifyDataSetChanged();

@@ -529,10 +529,10 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         // If the recording id was provided, then an existing recording was
         // edited and not a new one was added
         if (rec != null && rec.id > 0) {
-            intent.setAction(Constants.ACTION_UPDATE_DVR_ENTRY);
+            intent.setAction("updateDvrEntry");
             intent.putExtra("id", rec.id);
         } else {
-            intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
+            intent.setAction("addDvrEntry");
 
             // Add the recording profile if available and enabled
             final Connection conn = databaseHelper.getSelectedConnection();

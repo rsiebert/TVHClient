@@ -151,7 +151,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             // to get the url that shall be played. This could either be a
             // channel or a recording.
             Intent intent = new Intent(PlayActivity.this, HTSService.class);
-            intent.setAction(Constants.ACTION_GET_TICKET);
+            intent.setAction("getTicket");
             intent.putExtras(getIntent().getExtras());
             this.startService(intent);
             break;

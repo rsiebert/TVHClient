@@ -702,7 +702,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 // When the removal confirmation was received, add the edited recording. 
                 // This is done in the onMessage method. 
                 Intent intent = new Intent(activity, HTSService.class);
-                intent.setAction(Constants.ACTION_DELETE_SERIES_DVR_ENTRY);
+                intent.setAction("deleteAutorecEntry");
                 intent.putExtra("id", rec.id);
                 activity.startService(intent);
             }
@@ -756,7 +756,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
     @Override
     public void onMessage(String action, Object obj) {
-        if (action.equals(Constants.ACTION_SERIES_DVR_DELETE)) {
+        if (action.equals("autorecEntryDelete")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     addSeriesRecording();
@@ -772,7 +772,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
      */
     private void addSeriesRecording() {
         Intent intent = getIntentData();
-        intent.setAction(Constants.ACTION_ADD_SERIES_DVR_ENTRY);
+        intent.setAction("addAutorecEntry");
         activity.startService(intent);
 
         if (getDialog() != null) {
@@ -786,7 +786,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
      */
     private void updateSeriesRecording() {
         Intent intent = getIntentData();
-        intent.setAction(Constants.ACTION_UPDATE_SERIES_DVR_ENTRY);
+        intent.setAction("updateAutorecEntry");
         intent.putExtra("id", rec.id);
         activity.startService(intent);
 

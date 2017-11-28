@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -33,13 +34,14 @@ import java.util.Calendar;
 import java.util.List;
 
 public class MenuUtils {
+    private final static String TAG = MiscUtils.class.getSimpleName();
 
     private final int mHtspVersion;
     private final boolean mIsUnlocked;
-    private WeakReference<Activity> mActivity;
+    private WeakReference<Activity> activity;
 
     public MenuUtils(Activity activity) {
-        mActivity = new WeakReference<>(activity);
+        this.activity = new WeakReference<>(activity);
         mHtspVersion = DataStorage.getInstance().getProtocolVersion();
         mIsUnlocked = TVHClientApplication.getInstance().isUnlocked();
     }
@@ -50,7 +52,7 @@ public class MenuUtils {
      * can be shown later.
      */
     public void handleMenuGenreColorSelection() {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -71,7 +73,7 @@ public class MenuUtils {
     }
 
     public void handleMenuTimeSelection(int currentSelection, MenuTimeSelectionCallback callback) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -112,7 +114,7 @@ public class MenuUtils {
      * @param callback
      */
     public void handleMenuTagsSelection(List<ChannelTag> channelTagList, long selectedTagId, MenuTagSelectionCallback callback) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -138,7 +140,7 @@ public class MenuUtils {
     }
 
     public void handleMenuDownloadSelection(long recId) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -149,7 +151,7 @@ public class MenuUtils {
     }
 
     public void handleMenuSearchWebSelection(String title) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -172,7 +174,7 @@ public class MenuUtils {
     }
 
     public void handleMenuSearchEpgSelection(String title, long channelId) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -186,7 +188,7 @@ public class MenuUtils {
     }
 
     public void handleMenuRecordSelection(long eventId) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -206,7 +208,7 @@ public class MenuUtils {
     }
 
     public void handleMenuSeriesRecordSelection(String title) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -226,7 +228,7 @@ public class MenuUtils {
     }
 
     public void handleMenuPlaySelection(long channelId, long dvrId) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -237,7 +239,7 @@ public class MenuUtils {
     }
 
     public void handleMenuStopRecordingSelection(long dvrId, String title) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -257,10 +259,12 @@ public class MenuUtils {
     }
 
     public void handleMenuRemoveRecordingSelection(long dvrId, String title) {
-        Activity activity = mActivity.get();
+        Log.d(TAG, "handleMenuRemoveRecordingSelection() called with: dvrId = [" + dvrId + "], title = [" + title + "]");
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
+        Log.d(TAG, "handleMenuRemoveRecordingSelection: ");
         // Show a confirmation dialog before removing the recording
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
@@ -277,7 +281,7 @@ public class MenuUtils {
     }
 
     public void handleMenuCancelRecordingSelection(long dvrId, String title) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -297,7 +301,7 @@ public class MenuUtils {
     }
 
     public void handleMenuRemoveSeriesRecordingSelection(String id, String title) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
@@ -317,7 +321,7 @@ public class MenuUtils {
     }
 
     public void handleMenuRemoveTimerRecordingSelection(String id, String title) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }

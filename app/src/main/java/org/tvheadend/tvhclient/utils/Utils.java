@@ -162,7 +162,7 @@ public class Utils {
         // does not sent a confirmation. So manually remove the recording from
         // the list.
         if (manualRemove) {
-            if (type.equals(Constants.ACTION_DELETE_TIMER_REC_ENTRY)) {
+            if (type.equals("deleteTimerecEntry")) {
                 DataStorage.getInstance().removeTimerRecording(id);
             }
         }
@@ -173,7 +173,7 @@ public class Utils {
             return;
         }
         final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_CANCEL_DVR_ENTRY);
+        intent.setAction("cancelDvrEntry");
         intent.putExtra("id", rec.id);
         context.startService(intent);
     }
@@ -708,7 +708,7 @@ public class Utils {
 
         // Set the required information and start the service command.
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_GET_EVENTS);
+        intent.setAction("getEvents");
         intent.putExtra(Constants.BUNDLE_PROGRAM_ID, nextId);
         intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
         intent.putExtra(Constants.BUNDLE_COUNT, Constants.PREF_PROGRAMS_TO_LOAD);

@@ -1153,7 +1153,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             // available in case the user wants to add a manual recording
                             if (app.isUnlocked()) {
                                 Intent intent = new Intent(ctx, HTSService.class);
-                                intent.setAction(Constants.ACTION_GET_DVR_CONFIG);
+                                intent.setAction("getDvrConfigs");
                                 startService(intent);
                             }
                             // Reload the menu. Only after the initial sync we know the server
@@ -1163,7 +1163,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     }
                 });
                 break;
-            case Constants.ACTION_CHANNEL_UPDATE:
+            case "channelUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
                         final Channel ch = (Channel) obj;
