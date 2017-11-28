@@ -115,7 +115,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             holder.icon = (ImageView) view.findViewById(bigIcon ? R.id.icon_large : R.id.icon);
 
             holder.channel_item_layout = (LinearLayout) view.findViewById(R.id.channel_item_layout);
-            holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
+            holder.icon_text = (TextView) view.findViewById(bigIcon ? R.id.icon_text_large : R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
             holder.nextTitle = (TextView) view.findViewById(R.id.next_title);

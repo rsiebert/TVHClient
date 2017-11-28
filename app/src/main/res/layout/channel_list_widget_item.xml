@@ -23,7 +23,7 @@
 
     <ImageView
         android:id="@+id/icon_large"
-        android:layout_width="68dp"
+        android:layout_width="72dp"
         android:layout_height="52dp"
         android:contentDescription="@null"
         android:paddingEnd="0dp"
@@ -36,12 +36,24 @@
     <TextView
         android:id="@+id/icon_text"
         style="?attr/ContentFont"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:paddingEnd="0dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="0dp"
+        android:paddingStart="16dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/icon_text_large"
+        style="?attr/ContentFont"
         android:layout_width="72dp"
         android:layout_height="wrap_content"
         android:paddingEnd="0dp"
         android:paddingLeft="16dp"
         android:paddingRight="0dp"
-        android:paddingStart="16dp" />
+        android:paddingStart="16dp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="fill_parent"
