@@ -58,6 +58,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
 
     static class ProgramViewHolder {
         public ImageView icon;
+        public TextView icon_text;
         public TextView title;
         public TextView channel;
         public TextView time;
@@ -72,6 +73,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
 
     static class RecordingViewHolder {
         public ImageView icon;
+        public TextView icon_text;
         public TextView title;
         public TextView subtitle;
         public ImageView state;
@@ -106,6 +108,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
             view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, parent, false);
             holder = new RecordingViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
+            holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
             holder.state = (ImageView) view.findViewById(R.id.state);
@@ -138,7 +141,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
                 holder.subtitle.setVisibility(View.GONE);
             }
             
-            Utils.setChannelIcon(holder.icon, null, rec.channel);
+            Utils.setChannelIcon(holder.icon, holder.icon_text, rec.channel);
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
@@ -184,6 +187,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
             view = context.getLayoutInflater().inflate(R.layout.search_result_widget, parent, false);
             holder = new ProgramViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
+            holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.channel = (TextView) view.findViewById(R.id.channel);
             holder.state = (ImageView) view.findViewById(R.id.state);
@@ -206,7 +210,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
             if (holder.channel != null && p.channel != null) {
                 holder.channel.setText(p.channel.name);
             }
-            Utils.setChannelIcon(holder.icon, null, p.channel);
+            Utils.setChannelIcon(holder.icon, holder.icon_text, p.channel);
             Utils.setState(context, holder.state, p);
             Utils.setDate(holder.date, p.start);
             Utils.setTime(holder.time, p.start, p.stop);

@@ -59,6 +59,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
     static class ViewHolder {
         public ImageView icon;
+        public TextView icon_text;
         public TextView title;
         public TextView subtitle;
         public ImageView state;
@@ -84,6 +85,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             view = context.getLayoutInflater().inflate(layout, parent, false);
             holder = new ViewHolder();
             holder.icon = (ImageView) view.findViewById(R.id.icon);
+            holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
             holder.title = (TextView) view.findViewById(R.id.title);
             holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
             holder.state = (ImageView) view.findViewById(R.id.state);
@@ -134,7 +136,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 holder.subtitle.setVisibility(View.GONE);
             }
 
-            Utils.setChannelIcon(holder.icon, null, rec.channel);
+            Utils.setChannelIcon(holder.icon, holder.icon_text, rec.channel);
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
