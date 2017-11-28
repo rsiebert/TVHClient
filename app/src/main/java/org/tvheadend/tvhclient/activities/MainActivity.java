@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private SearchView searchView = null;
 
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
+    private DatabaseHelper databaseHelper;
 
     private int channelTimeSelection = 0;
     private long showProgramsFromTime = new Date().getTime();
@@ -187,8 +187,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private IntroductoryOverlay mOverlay;
     private MiniController mMiniController;
     private Logger logger;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -205,11 +205,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
         logger = Logger.getInstance();
-        dbh = DatabaseHelper.getInstance(getApplicationContext());
-        ds = DataStorage.getInstance();
+        databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+        dataStorage = DataStorage.getInstance();
         changeLogDialog = new ChangeLogDialog(this);
 
-        mMenuUtils = new MenuUtils(this);
+        menuUtils = new MenuUtils(this);
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -357,8 +357,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 logger.log(TAG, "onApplicationConnected() called with: appMetadata = [" + appMetadata + "], sessionId = [" + sessionId + "], wasLaunched = [" + wasLaunched + "]");
                 invalidateOptionsMenu();
 
-                Connection conn = dbh.getSelectedConnection();
-                Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
+                Connection conn = databaseHelper.getSelectedConnection();
+                Profile profile = (conn != null ? databaseHelper.getProfile(conn.cast_profile_id) : null);
 
                 if (profile == null || !profile.enabled || profile.uuid == null || profile.uuid.length() == 0) {
                     logger.log(TAG, "onApplicationConnected: No casting profile set, disconnecting");
@@ -444,10 +444,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // Create a list of available connections names that the
         // selection dialog can display. Additionally preselect the
         // current active connection.
-        final List<Connection> connList = dbh.getConnections();
+        final List<Connection> connList = databaseHelper.getConnections();
         if (connList != null) {
             int currentConnectionListPosition = -1;
-            Connection currentConnection = dbh.getSelectedConnection();
+            Connection currentConnection = databaseHelper.getSelectedConnection();
             String[] items = new String[connList.size()];
             for (int i = 0; i < connList.size(); i++) {
                 items[i] = connList.get(i).name;
@@ -463,7 +463,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 .itemsCallbackSingleChoice(currentConnectionListPosition, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        Connection oldConn = dbh.getSelectedConnection();
+                        Connection oldConn = databaseHelper.getSelectedConnection();
                         Connection newConn = connList.get(which);
     
                         // Switch the active connection and reconnect  
@@ -474,8 +474,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             // Set the new connection as the active one
                             newConn.selected = true;
                             oldConn.selected = false;
-                            dbh.updateConnection(oldConn);
-                            dbh.updateConnection(newConn);
+                            databaseHelper.updateConnection(oldConn);
+                            databaseHelper.updateConnection(newConn);
                             Utils.connect(MainActivity.this, true);
                         }
                         return true;
@@ -502,11 +502,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             serverName.setOnClickListener(null);
             serverSelection.setOnClickListener(null);
 
-            final Connection conn = dbh.getSelectedConnection();
-            if (dbh.getConnections().isEmpty()) {
+            final Connection conn = databaseHelper.getSelectedConnection();
+            if (databaseHelper.getConnections().isEmpty()) {
                 serverName.setText(R.string.no_connection_available);
                 serverSelection.setVisibility(View.GONE);
-            } else if (dbh.getConnections().size() == 1) {
+            } else if (databaseHelper.getConnections().size() == 1) {
                 serverName.setText(conn != null ? conn.name : "");
                 serverSelection.setVisibility(View.GONE);
             } else if (conn == null) {
@@ -540,17 +540,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         // Update the number of recordings in each category
         drawerAdapter.getItemById(MENU_COMPLETED_RECORDINGS).count = 
-                ds.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
+                dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
         drawerAdapter.getItemById(MENU_SCHEDULED_RECORDINGS).count = 
-                ds.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
+                dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).count = 
-                ds.getSeriesRecordings().size();
+                dataStorage.getSeriesRecordings().size();
         drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).count =
-                ds.getTimerRecordings().size();
+                dataStorage.getTimerRecordings().size();
         drawerAdapter.getItemById(MENU_FAILED_RECORDINGS).count = 
-                ds.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
+                dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         drawerAdapter.getItemById(MENU_REMOVED_RECORDINGS).count =
-                ds.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED).size();
+                dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED).size();
         drawerAdapter.notifyDataSetChanged();
     }
 
@@ -677,8 +677,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void reconnectAndResume() {
         if (!connectionSettingsShown
-                && (dbh.getConnections().isEmpty() 
-                        || dbh.getSelectedConnection() == null)) {
+                && (databaseHelper.getConnections().isEmpty()
+                        || databaseHelper.getSelectedConnection() == null)) {
             connectionSettingsShown = true;
 
             Intent connIntent = new Intent(this, SettingsActivity.class);
@@ -697,8 +697,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // Set the connection state to unknown if no connection was added
                 // when the connection fragment was shown. The status fragment is
                 // then shown with the information that no connection is available
-                if (dbh.getConnections().isEmpty() 
-                        || dbh.getSelectedConnection() == null) {
+                if (databaseHelper.getConnections().isEmpty()
+                        || databaseHelper.getSelectedConnection() == null) {
                     connectionStatus = Constants.ACTION_CONNECTION_STATE_NO_CONNECTION;
                     handleMenuSelection(MENU_STATUS);
                 } else {
@@ -779,7 +779,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         // Do not show the search menu on these screens
         if (selectedMenuPosition == MENU_STATUS 
-                || (selectedMenuPosition == MENU_COMPLETED_RECORDINGS && ds.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() == 0)
+                || (selectedMenuPosition == MENU_COMPLETED_RECORDINGS && dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() == 0)
                 || selectedMenuPosition == MENU_SCHEDULED_RECORDINGS
                 || selectedMenuPosition == MENU_FAILED_RECORDINGS
                 || selectedMenuPosition == MENU_REMOVED_RECORDINGS
@@ -792,7 +792,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // the status screen and if the app is unlocked and an address is set
         (menu.findItem(R.id.menu_wol)).setVisible(false);
         if (selectedMenuPosition == MENU_STATUS) {
-            final Connection conn = dbh.getSelectedConnection();
+            final Connection conn = databaseHelper.getSelectedConnection();
             if (app.isUnlocked() && conn != null && conn.wol_mac_address.length() > 0) {
                 (menu.findItem(R.id.menu_wol)).setVisible(true);
             }
@@ -851,7 +851,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             return true;
 
         case R.id.menu_wol:
-            final Connection conn = dbh.getSelectedConnection();
+            final Connection conn = databaseHelper.getSelectedConnection();
             if (conn != null) {
                 WakeOnLanTask task= new WakeOnLanTask(this, this, conn);
                 task.execute();
@@ -1252,7 +1252,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * certain navigation menu items.
      */
     private void showDrawerMenu() {
-        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) && !ds.isLoading();
+        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) && !dataStorage.isLoading();
 
         // Enable the main menus in the drawer
         drawerAdapter.getItemById(MENU_CHANNELS).isVisible = show;
@@ -1263,13 +1263,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         drawerAdapter.getItemById(MENU_PROGRAM_GUIDE).isVisible = show;
 
         // Only show the series recording menu if the server supports it
-        drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (ds
+        drawerAdapter.getItemById(MENU_SERIES_RECORDINGS).isVisible = (show && (dataStorage
                 .getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS));
 
         // Only show the timer recording menu if the server supports it and the
         // application is unlocked
         drawerAdapter.getItemById(MENU_TIMER_RECORDINGS).isVisible = (show
-                && (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS)
+                && (dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS)
                 && app.isUnlocked());
 
         // Show the menu item to unlock the application if it was not yet purchased
@@ -1385,7 +1385,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void moreDataRequired(final Channel channel, final String tag) {
-        if (ds.isLoading() || channel == null) {
+        if (dataStorage.isLoading() || channel == null) {
             return;
         }
 
@@ -1411,7 +1411,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 if (prefs.getBoolean("playWhenChannelIconSelectedPref", true)
                         && tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                    mMenuUtils.handleMenuPlaySelection(channel.id, -1);
+                    menuUtils.handleMenuPlaySelection(channel.id, -1);
 
                 } else {
                     Bundle bundle = new Bundle();
@@ -1431,7 +1431,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         case MENU_PROGRAM_GUIDE:
             // If a channel was selected in the program guide screen, start
             // playing the selected channel
-            mMenuUtils.handleMenuPlaySelection(channel.id, -1);
+            menuUtils.handleMenuPlaySelection(channel.id, -1);
             break;
         }
     }
@@ -1461,7 +1461,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if (prefs.getBoolean("playWhenChannelIconSelectedPref", true) && 
                     tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                mMenuUtils.handleMenuPlaySelection(-1, recording.id);
+                menuUtils.handleMenuPlaySelection(-1, recording.id);
             } else {
                 // When a recording has been selected from the recording list fragment,
                 // show its details. In dual mode these are shown in a separate fragment
@@ -1825,8 +1825,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private boolean showCastMenuItem() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Connection conn = dbh.getSelectedConnection();
-        Profile profile = (conn != null ? dbh.getProfile(conn.cast_profile_id) : null);
+        Connection conn = databaseHelper.getSelectedConnection();
+        Profile profile = (conn != null ? databaseHelper.getProfile(conn.cast_profile_id) : null);
         return (app.isUnlocked()
                 && prefs.getBoolean("pref_enable_casting", false)
                 && profile != null 

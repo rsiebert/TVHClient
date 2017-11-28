@@ -26,7 +26,7 @@ public class RemovedRecordingListFragment extends RecordingListFragment {
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!ds.isLoading()) {
+        if (!dataStorage.isLoading()) {
             populateList();
         }
     }
@@ -71,7 +71,7 @@ public class RemovedRecordingListFragment extends RecordingListFragment {
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (Recording rec : ds.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED)) {
+        for (Recording rec : dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED)) {
             adapter.add(rec);
         }
 

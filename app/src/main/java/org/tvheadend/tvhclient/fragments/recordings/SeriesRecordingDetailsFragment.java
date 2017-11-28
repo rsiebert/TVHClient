@@ -53,8 +53,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
     private TextView toolbarTitle;
     private View toolbarShadow;
     private TVHClientApplication app;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
@@ -117,8 +117,8 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
 
         activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-        mMenuUtils = new MenuUtils(getActivity());
+        dataStorage = DataStorage.getInstance();
+        menuUtils = new MenuUtils(getActivity());
 
         String srecId = "";
         Bundle bundle = getArguments();
@@ -128,7 +128,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         }
 
         // Get the recording so we can show its details
-        srec = ds.getSeriesRecording(srecId);
+        srec = dataStorage.getSeriesRecording(srecId);
 
         // If the recording is null exit
         if (srec == null) {
@@ -153,11 +153,11 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
             recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
         }
 
-        isEnabled.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+        isEnabled.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
         isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directoryLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(srec.directory);
 
         channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
@@ -188,7 +188,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         recordRemoveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMenuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
+                menuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

@@ -80,8 +80,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
     private View toolbarShadow;
     private TVHClientApplication app;
     private ImageView imageView;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     public static ProgramDetailsFragment newInstance(Bundle args) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -153,8 +153,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         activity = getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-        mMenuUtils = new MenuUtils(getActivity());
+        dataStorage = DataStorage.getInstance();
+        menuUtils = new MenuUtils(getActivity());
 
         if (toolbarTitle != null) {
             toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
@@ -174,7 +174,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         }
 
         // Get the channel of the program
-        channel = ds.getChannel(channelId);
+        channel = dataStorage.getChannel(channelId);
         if (channel != null) {
             // Find the program with the given id within this channel so we can
             // show the program details
@@ -259,11 +259,11 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         switch (item.getItemId()) {
             case R.id.menu_search_imdb:
-                mMenuUtils.handleMenuSearchWebSelection(program.title);
+                menuUtils.handleMenuSearchWebSelection(program.title);
                 return true;
 
             case R.id.menu_search_epg:
-                mMenuUtils.handleMenuSearchEpgSelection(program.title);
+                menuUtils.handleMenuSearchEpgSelection(program.title);
                 return true;
 
             default:
@@ -283,7 +283,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         recordOnceButton.setVisibility(View.VISIBLE);
         recordRemoveButton.setVisibility(View.VISIBLE);
 
-        if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             recordSeriesButton.setVisibility(View.VISIBLE);
         } else {
             recordSeriesButton.setVisibility(View.GONE);
@@ -326,7 +326,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             playButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMenuUtils.handleMenuPlaySelection(program.channel.id, -1);
+                    menuUtils.handleMenuPlaySelection(program.channel.id, -1);
                 }
             });
         }
@@ -334,7 +334,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordOnceButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMenuUtils.handleMenuRecordSelection(program.id);
+                    menuUtils.handleMenuRecordSelection(program.id);
                     if (getDialog() != null) {
                         getDialog().dismiss();
                     }
@@ -345,7 +345,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordSeriesButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMenuUtils.handleMenuSeriesRecordSelection(program.title);
+                    menuUtils.handleMenuSeriesRecordSelection(program.title);
                     if (getDialog() != null) {
                         getDialog().dismiss();
                     }
@@ -359,11 +359,11 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
                     Recording rec = program.recording;
                     if (rec != null) {
                         if (rec.isRecording()) {
-                            mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
                         } else if (rec.isScheduled()) {
-                            mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
                         } else {
-                            mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                         }
                     }
                     if (getDialog() != null) {

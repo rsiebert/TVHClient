@@ -52,8 +52,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
     private TextView toolbarTitle;
     private View toolbarShadow;
     private TVHClientApplication app;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     public static TimerRecordingDetailsFragment newInstance(Bundle args) {
         TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
@@ -112,8 +112,8 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
         activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-        mMenuUtils = new MenuUtils(getActivity());
+        dataStorage = DataStorage.getInstance();
+        menuUtils = new MenuUtils(getActivity());
 
         String recId = "";
         Bundle bundle = getArguments();
@@ -123,7 +123,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         }
 
         // Get the recording so we can show its details
-        trec = ds.getTimerRecording(recId);
+        trec = dataStorage.getTimerRecording(recId);
 
         // If the recording is null exit
         if (trec == null) {
@@ -152,11 +152,11 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             recordEditButton.setVisibility(View.VISIBLE);
         }
 
-        isEnabled.setVisibility((ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
+        isEnabled.setVisibility((dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
         isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directoryLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(trec.directory);
 
         if (trec.channel != null) {
@@ -194,7 +194,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
             public void onClick(View v) {
                 final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
                 final String title = trec.title != null ? trec.title : "";
-                mMenuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
+                menuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

@@ -89,8 +89,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
     private SearchView searchView;
     private TVHClientApplication app;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +99,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         setContentView(R.layout.list_layout);
 
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
 
         // Setup the action bar and show the title
         actionBar = getSupportActionBar();
@@ -112,7 +112,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         ListView listView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(listView);
 
-        mMenuUtils = new MenuUtils(this);
+        menuUtils = new MenuUtils(this);
 
         // Show the details of the program when the user has selected one
         if (listView != null) {
@@ -157,8 +157,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // a single channel or the completed recordings.
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
-            channel = ds.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
-            recording = ds.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID));
+            channel = dataStorage.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
+            recording = dataStorage.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID));
         } else {
             channel = null;
             recording = null;
@@ -168,7 +168,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // available data. Either add all completed recordings or add all
         // available programs from one or all channels.
         if (recording != null) {
-            for (Recording rec : ds.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
+            for (Recording rec : dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
                 if (rec != null && rec.title != null && rec.title.length() > 0) {
                     list.add(rec);
                 }
@@ -176,7 +176,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         } else {
             if (channel == null) {
                 // Get all available programs from all channels.
-                for (Channel ch : ds.getChannels()) {
+                for (Channel ch : dataStorage.getChannels()) {
                     if (ch != null) {
                         CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(ch.epg);
                         for (Program p : epg) {
@@ -332,7 +332,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             return true;
 
         case R.id.menu_genre_color_info:
-            mMenuUtils.handleMenuGenreColorSelection();
+            menuUtils.handleMenuGenreColorSelection();
             return true;
 
         default:
@@ -361,14 +361,14 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         case R.id.menu_search_epg:
             if (model instanceof Program) {
                 final Program program = (Program) model;
-                mMenuUtils.handleMenuSearchEpgSelection(program.title);
+                menuUtils.handleMenuSearchEpgSelection(program.title);
             }
             return true;
 
         case R.id.menu_search_imdb:
             if (model instanceof Program) {
                 final Program program = (Program) model;
-                mMenuUtils.handleMenuSearchWebSelection(program.title);
+                menuUtils.handleMenuSearchWebSelection(program.title);
             }
             return true;
 
@@ -377,24 +377,24 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                 Recording rec = ((Program) model).recording;
                 if (rec != null) {
                     if (rec.isRecording()) {
-                        mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
                     } else if (rec.isScheduled()) {
-                        mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
                     } else {
-                        mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                     }
                 }
             }
             if (model instanceof Recording) {
                 Recording rec = (Recording) model;
-                mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
             }
             return true;
 
         case R.id.menu_record_once:
             if (model instanceof Program) {
                 Program program = (Program) model;
-                mMenuUtils.handleMenuRecordSelection(program.id);
+                menuUtils.handleMenuRecordSelection(program.id);
             }
             return true;
 
@@ -403,17 +403,17 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             // TODO hide this menu if no profiles are available
             if (model instanceof Program) {
                 // Create the list of available recording profiles that the user can select from
-                String[] dvrConfigList = new String[ds.getDvrConfigs().size()];
-                for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
-                    dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
+                String[] dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
+                for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
+                    dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
                 }
 
                 // Get the selected recording profile to highlight the
                 // correct item in the list of the selection dialog
                 int dvrConfigNameValue = 0;
-                DatabaseHelper dbh = DatabaseHelper.getInstance(getApplicationContext());
-                final Connection conn = dbh.getSelectedConnection();
-                final Profile p = dbh.getProfile(conn.recording_profile_id);
+                DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+                final Connection conn = databaseHelper.getSelectedConnection();
+                final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
                 if (p != null) {
                     for (int i = 0; i < dvrConfigList.length; i++) {
                         if (dvrConfigList[i].equals(p.name)) {
@@ -451,24 +451,24 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         case R.id.menu_record_series:
             if (model instanceof Program) {
                 Program program = (Program) model;
-                mMenuUtils.handleMenuSeriesRecordSelection(program.title);
+                menuUtils.handleMenuSeriesRecordSelection(program.title);
             }
             return true;
 
         case R.id.menu_play:
             if (model instanceof Program) {
                 Program program = (Program) model;
-                mMenuUtils.handleMenuPlaySelection(program.channel.id, -1);
+                menuUtils.handleMenuPlaySelection(program.channel.id, -1);
             } else if (model instanceof Recording) {
                 Recording rec = (Recording) model;
-                mMenuUtils.handleMenuPlaySelection(-1, rec.id);
+                menuUtils.handleMenuPlaySelection(-1, rec.id);
             }
             return true;
 
         case R.id.menu_download:
             if (model instanceof Recording) {
                 final Recording rec = (Recording) model;
-                mMenuUtils.handleMenuDownloadSelection(rec.id);
+                menuUtils.handleMenuDownloadSelection(rec.id);
             }
             return true;
 

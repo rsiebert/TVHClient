@@ -126,8 +126,8 @@ public class Utils {
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction(Constants.ACTION_CONNECT);
 
-        final DatabaseHelper dbh = DatabaseHelper.getInstance(context.getApplicationContext());
-        final Connection conn = dbh.getSelectedConnection();
+        final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(context.getApplicationContext());
+        final Connection conn = databaseHelper.getSelectedConnection();
         // If we got one connection, get the values
         if (conn != null) {
             intent.putExtra("hostname", conn.address);
@@ -741,9 +741,9 @@ public class Utils {
     private static int getChannelTagId(final Context context) {
         // Get the selected tag for the active connection in the database. If
         // none exist then use the variable here.
-        final DatabaseHelper dbh = DatabaseHelper.getInstance(context.getApplicationContext());
-    	if (dbh != null) {
-	        Connection conn = dbh.getSelectedConnection();
+        final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(context.getApplicationContext());
+    	if (databaseHelper != null) {
+	        Connection conn = databaseHelper.getSelectedConnection();
 	        if (conn != null) {
 	            return conn.channelTag;
 	        }
@@ -759,12 +759,12 @@ public class Utils {
      */
     public static void setChannelTagId(final Context context, final int channelTagId) {
         // Save the selected tag for the active connection in the database
-        final DatabaseHelper dbh = DatabaseHelper.getInstance(context.getApplicationContext());
-    	if (dbh != null) {
-	        Connection conn = dbh.getSelectedConnection();
+        final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(context.getApplicationContext());
+    	if (databaseHelper != null) {
+	        Connection conn = databaseHelper.getSelectedConnection();
 	        if (conn != null) {
 	            conn.channelTag = channelTagId;
-	            dbh.updateConnection(conn);
+	            databaseHelper.updateConnection(conn);
 	        }
 	    }
     }

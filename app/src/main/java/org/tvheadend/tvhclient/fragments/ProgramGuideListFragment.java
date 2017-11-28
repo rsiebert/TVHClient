@@ -72,8 +72,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
     private TVHClientApplication app;
     private Logger logger;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,10 +99,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
         logger = Logger.getInstance();
 
-        mMenuUtils = new MenuUtils(getActivity());
+        menuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
@@ -216,7 +216,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         adapter.clear();
 
         // Make a copy of the channel list before iterating over it
-        List<Channel> channels = ds.getChannels();
+        List<Channel> channels = dataStorage.getChannels();
         for (Channel ch : channels) {
             if (currentTag == null || ch.hasTag(currentTag.id)) {
                 adapter.add(ch);
@@ -238,7 +238,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!ds.isLoading()) {
+        if (!dataStorage.isLoading()) {
             populateList();
         }
 
@@ -327,32 +327,32 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
-            mMenuUtils.handleMenuSearchWebSelection(selectedProgram.title);
+            menuUtils.handleMenuSearchWebSelection(selectedProgram.title);
             return true;
 
         case R.id.menu_search_epg:
-            mMenuUtils.handleMenuSearchEpgSelection(selectedProgram.title);
+            menuUtils.handleMenuSearchEpgSelection(selectedProgram.title);
             return true;
 
         case R.id.menu_record_remove:
             Recording rec = selectedProgram.recording;
             if (rec != null) {
                 if (rec.isRecording()) {
-                    mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
                 } else if (rec.isScheduled()) {
-                    mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
                 } else {
-                    mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                 }
             }
             return true;
 
         case R.id.menu_record_once:
-            mMenuUtils.handleMenuRecordSelection(selectedProgram.id);
+            menuUtils.handleMenuRecordSelection(selectedProgram.id);
             return true;
 
         case R.id.menu_record_series:
-            mMenuUtils.handleMenuSeriesRecordSelection(selectedProgram.title);
+            menuUtils.handleMenuSeriesRecordSelection(selectedProgram.title);
             return true;
 
         default:

@@ -70,7 +70,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     private static final String REC_PROFILE_VIDEO_CODEC = "rec_profile_vodeo_codec";
     private static final String REC_PROFILE_SUBTITLE_CODEC = "rec_profile_subtitle_codec";
 
-    private DatabaseHelper dbh;
+    private DatabaseHelper databaseHelper;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -109,7 +109,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
 
         prefProgContainer = (ListPreference) findPreference("progContainerPref");
         prefProgTranscode = (CheckBoxPreference) findPreference("progTranscodePref");
@@ -131,13 +131,13 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
             actionBarInterface.setActionBarTitle(getString(R.string.pref_transcoding));
         }
 
-        conn = dbh.getSelectedConnection();
+        conn = databaseHelper.getSelectedConnection();
         if (conn != null) {
-            progProfile = dbh.getProfile(conn.playback_profile_id);
+            progProfile = databaseHelper.getProfile(conn.playback_profile_id);
             if (progProfile == null) {
                 progProfile = new Profile();
             }
-            recProfile = dbh.getProfile(conn.recording_profile_id);
+            recProfile = databaseHelper.getProfile(conn.recording_profile_id);
             if (recProfile == null) {
                 recProfile = new Profile();
             }
@@ -147,7 +147,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         // the first time. If the state is not null then the screen has
         // been rotated and we have to reuse the values.
         if (savedInstanceState != null) {
-            conn = dbh.getSelectedConnection();
+            conn = databaseHelper.getSelectedConnection();
             if (conn != null) {
                 progProfile.container = savedInstanceState.getString(PROG_PROFILE_CONTAINER);
                 progProfile.transcode = savedInstanceState.getBoolean(PROG_PROFILE_TRANSCODE);
@@ -201,10 +201,10 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (progProfile.id == 0) {
-            conn.playback_profile_id = (int) dbh.addProfile(progProfile);
-            dbh.updateConnection(conn);
+            conn.playback_profile_id = (int) databaseHelper.addProfile(progProfile);
+            databaseHelper.updateConnection(conn);
         } else {
-            dbh.updateProfile(progProfile);
+            databaseHelper.updateProfile(progProfile);
         }
 
         // Save the values into the profile
@@ -219,10 +219,10 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (recProfile.id == 0) {
-            conn.recording_profile_id = (int) dbh.addProfile(recProfile);
-            dbh.updateConnection(conn);
+            conn.recording_profile_id = (int) databaseHelper.addProfile(recProfile);
+            databaseHelper.updateConnection(conn);
         } else {
-            dbh.updateProfile(recProfile);
+            databaseHelper.updateProfile(recProfile);
         }
     }
 

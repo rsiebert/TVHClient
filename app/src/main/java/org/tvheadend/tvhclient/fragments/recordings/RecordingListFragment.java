@@ -50,8 +50,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
     protected TVHClientApplication app;
     private Logger logger;
-    protected DataStorage ds;
-    private MenuUtils mMenuUtils;
+    protected DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,8 +74,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
         logger = Logger.getInstance();
-        ds = DataStorage.getInstance();
-        mMenuUtils = new MenuUtils(getActivity());
+        dataStorage = DataStorage.getInstance();
+        menuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -128,11 +128,11 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         final Recording rec = adapter.getSelectedItem();
         switch (item.getItemId()) {
         case R.id.menu_play:
-            mMenuUtils.handleMenuPlaySelection(-1, rec.id);
+            menuUtils.handleMenuPlaySelection(-1, rec.id);
             return true;
 
         case R.id.menu_download:
-            mMenuUtils.handleMenuDownloadSelection(rec.id);
+            menuUtils.handleMenuDownloadSelection(rec.id);
             return true;
 
         case R.id.menu_add:
@@ -153,11 +153,11 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         case R.id.menu_record_remove:
             if (rec != null) {
                 if (rec.isRecording()) {
-                    mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
                 } else if (rec.isScheduled()) {
-                    mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
                 } else {
-                    mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                 }
             }
             return true;
@@ -303,29 +303,29 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
-            mMenuUtils.handleMenuSearchWebSelection(rec.title);
+            menuUtils.handleMenuSearchWebSelection(rec.title);
             return true;
 
         case R.id.menu_search_epg:
-            mMenuUtils.handleMenuSearchEpgSelection(rec.title);
+            menuUtils.handleMenuSearchEpgSelection(rec.title);
             return true;
 
         case R.id.menu_record_remove:
             if (rec.isRecording()) {
-                mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
             } else if (rec.isScheduled()) {
-                mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
             } else {
-                mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
             }
             return true;
 
         case R.id.menu_play:
-            mMenuUtils.handleMenuPlaySelection(-1, rec.id);
+            menuUtils.handleMenuPlaySelection(-1, rec.id);
             return true;
 
         case R.id.menu_download:
-            mMenuUtils.handleMenuDownloadSelection(rec.id);
+            menuUtils.handleMenuDownloadSelection(rec.id);
             return true;
 
         case R.id.menu_edit:

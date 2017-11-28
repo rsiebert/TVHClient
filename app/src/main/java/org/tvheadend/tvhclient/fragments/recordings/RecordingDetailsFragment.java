@@ -73,8 +73,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView data_errors;
     private TextView data_size;
     private TextView statusLabel;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     public static RecordingDetailsFragment newInstance(Bundle args) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -153,8 +153,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-        mMenuUtils = new MenuUtils(getActivity());
+        dataStorage = DataStorage.getInstance();
+        menuUtils = new MenuUtils(getActivity());
 
         long recId = 0;
         Bundle bundle = getArguments();
@@ -164,7 +164,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         }
 
         // Get the recording so we can show its details
-        rec = ds.getRecording(recId);
+        rec = dataStorage.getRecording(recId);
 
         // If the recording is null exit
         if (rec == null) {
@@ -205,7 +205,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         is_series_recording.setVisibility((rec.autorecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
         is_timer_recording.setVisibility((rec.timerecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
 
-        isEnabled.setVisibility((ds.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
+        isEnabled.setVisibility((dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
         isEnabled.setText(rec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
 
         // Only show the status details in the 
@@ -257,11 +257,11 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         switch (item.getItemId()) {
             case R.id.menu_search_imdb:
-                mMenuUtils.handleMenuSearchWebSelection(rec.title);
+                menuUtils.handleMenuSearchWebSelection(rec.title);
                 return true;
 
             case R.id.menu_search_epg:
-                mMenuUtils.handleMenuSearchEpgSelection(rec.title);
+                menuUtils.handleMenuSearchEpgSelection(rec.title);
                 return true;
 
             default:
@@ -318,7 +318,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             @Override
             public void onClick(View v) {
                 // Open a new activity that starts playing the program
-                mMenuUtils.handleMenuPlaySelection(-1, rec.id);
+                menuUtils.handleMenuPlaySelection(-1, rec.id);
             }
         });
         editRecordingButton.setOnClickListener(new OnClickListener() {
@@ -342,11 +342,11 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             public void onClick(View v) {
                 if (rec != null) {
                     if (rec.isRecording()) {
-                        mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
                     } else if (rec.isScheduled()) {
-                        mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
                     } else {
-                        mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                     }
                 }
                 if (getDialog() != null) {
@@ -357,7 +357,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         downloadRecordingButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMenuUtils.handleMenuDownloadSelection(rec.id);
+                menuUtils.handleMenuDownloadSelection(rec.id);
                 if (getDialog() != null) {
                     getDialog().dismiss();
                 }

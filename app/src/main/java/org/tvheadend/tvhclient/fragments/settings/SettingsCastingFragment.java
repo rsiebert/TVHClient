@@ -64,9 +64,9 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     private CheckBoxPreference prefEnableCasting;
     private ListPreference prefCastProfiles;
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
+    private DatabaseHelper databaseHelper;
     private Logger logger;
-    private DataStorage ds;
+    private DataStorage dataStorage;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -99,15 +99,15 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         }
 
         app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
 
         prefEnableCasting = (CheckBoxPreference) findPreference("pref_enable_casting");
         prefCastProfiles = (ListPreference) findPreference("pref_cast_profiles");
 
-        conn = dbh.getSelectedConnection();
-        castProfile = dbh.getProfile(conn.cast_profile_id);
+        conn = databaseHelper.getSelectedConnection();
+        castProfile = databaseHelper.getProfile(conn.cast_profile_id);
         if (castProfile == null) {
             logger.log(TAG, "No casting profile defined in the connection");
             castProfile = new Profile();
@@ -136,7 +136,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         prefCastProfiles.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                for (Profiles p : ds.getProfiles()) {
+                for (Profiles p : dataStorage.getProfiles()) {
                     if (p.uuid.equals(newValue) && !p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
                         new MaterialDialog.Builder(activity)
                                 .content(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
@@ -181,10 +181,10 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (castProfile.id == 0) {
-            conn.cast_profile_id = (int) dbh.addProfile(castProfile);
-            dbh.updateConnection(conn);
+            conn.cast_profile_id = (int) databaseHelper.addProfile(castProfile);
+            databaseHelper.updateConnection(conn);
         } else {
-            dbh.updateProfile(castProfile);
+            databaseHelper.updateProfile(castProfile);
         }
     }
 
@@ -234,7 +234,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
                     }
 
                     if (prefCastProfiles != null && prefEnableCasting != null) {
-                        addProfiles(prefCastProfiles, ds.getProfiles());
+                        addProfiles(prefCastProfiles, dataStorage.getProfiles());
                         prefCastProfiles.setEnabled(prefEnableCasting.isChecked());
                         prefEnableCasting.setEnabled(true);
                         setCastProfile();
@@ -252,7 +252,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
             || (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
             logger.log(TAG, "No valid casting profile defined in the current connection, setting default");
 
-            for (Profiles p : ds.getProfiles()) {
+            for (Profiles p : dataStorage.getProfiles()) {
                 if (p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
                     castProfile.uuid = p.uuid;
                     break;

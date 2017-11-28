@@ -38,7 +38,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
 
     private final static String TAG = DownloadActivity.class.getSimpleName();
 
-    private DataStorage ds;
+    private DataStorage dataStorage;
     private Connection conn;
     private DownloadManager dm;
 
@@ -51,11 +51,11 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         super.onCreate(savedInstanceState);
         Utils.setLanguage(this);
 
-        ds = DataStorage.getInstance();
-        DatabaseHelper dbh = DatabaseHelper.getInstance(getApplicationContext());
-        conn = dbh.getSelectedConnection();
+        dataStorage = DataStorage.getInstance();
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+        conn = databaseHelper.getSelectedConnection();
         // Check that a valid channel or recording was specified
-        rec = ds.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+        rec = dataStorage.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
         logger = Logger.getInstance();
     }
 

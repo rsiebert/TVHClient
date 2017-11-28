@@ -49,8 +49,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private boolean isDualPane;
 
     private TVHClientApplication app;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,8 +72,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
 
         activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-        mMenuUtils = new MenuUtils(getActivity());
+        dataStorage = DataStorage.getInstance();
+        menuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -124,7 +124,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!ds.isLoading()) {
+        if (!dataStorage.isLoading()) {
             populateList();
         }
     }
@@ -158,7 +158,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (TimerRecording trec : ds.getTimerRecordings()) {
+        for (TimerRecording trec : dataStorage.getTimerRecordings()) {
             adapter.add(trec);
         }
         // Show the newest scheduled recordings first 
@@ -202,7 +202,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             TimerRecording trec = adapter.getSelectedItem();
             final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
             final String title = trec.title != null ? trec.title : "";
-            mMenuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
+            menuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
             return true;
 
         case R.id.menu_record_remove_all:
@@ -300,17 +300,17 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return true;
 
         case R.id.menu_search_imdb:
-            mMenuUtils.handleMenuSearchWebSelection(trec.title);
+            menuUtils.handleMenuSearchWebSelection(trec.title);
             return true;
 
         case R.id.menu_search_epg:
-            mMenuUtils.handleMenuSearchEpgSelection(trec.title);
+            menuUtils.handleMenuSearchEpgSelection(trec.title);
             return true;
 
         case R.id.menu_record_remove:
             final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
             final String title = trec.title != null ? trec.title : "";
-            mMenuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
+            menuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
             return true;
 
         default:

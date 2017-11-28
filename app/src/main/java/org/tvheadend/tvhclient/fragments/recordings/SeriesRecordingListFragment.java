@@ -49,8 +49,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private boolean isDualPane;
 
     private TVHClientApplication app;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,8 +72,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
         activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
-        mMenuUtils = new MenuUtils(getActivity());
+        dataStorage = DataStorage.getInstance();
+        menuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -125,7 +125,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!ds.isLoading()) {
+        if (!dataStorage.isLoading()) {
             populateList();
         }
     }
@@ -165,7 +165,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (SeriesRecording srec : ds.getSeriesRecordings()) {
+        for (SeriesRecording srec : dataStorage.getSeriesRecordings()) {
             adapter.add(srec);
         }
         // Show the newest scheduled recordings first 
@@ -207,7 +207,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
 
         case R.id.menu_record_remove:
             SeriesRecording srec = adapter.getSelectedItem();
-            mMenuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
+            menuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
             return true;
 
         case R.id.menu_record_remove_all:
@@ -309,15 +309,15 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return true;
 
         case R.id.menu_search_imdb:
-            mMenuUtils.handleMenuSearchWebSelection(srec.title);
+            menuUtils.handleMenuSearchWebSelection(srec.title);
             return true;
 
         case R.id.menu_search_epg:
-            mMenuUtils.handleMenuSearchEpgSelection(srec.title);
+            menuUtils.handleMenuSearchEpgSelection(srec.title);
             return true;
 
         case R.id.menu_record_remove:
-            mMenuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
+            menuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
             return true;
 
         default:

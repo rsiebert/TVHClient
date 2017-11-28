@@ -75,9 +75,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private String[] logfileList;
 
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
+    private DatabaseHelper databaseHelper;
     private Logger logger;
-    private DataStorage ds;
+    private DataStorage dataStorage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,9 +92,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
         activity = (AppCompatActivity) getActivity();
         app = (TVHClientApplication) activity.getApplication();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
 
         prefManageConnections = findPreference("pref_manage_connections");
         prefMenuProfiles = findPreference("pref_menu_profiles");
@@ -131,8 +131,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         List<String> menuEntryValues = new ArrayList<>();
 
         for (int i = 0; i < e.length; i++) {
-            if (i < 8 || (i == 3 && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS)
-                    || (i == 4 && (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS && app.isUnlocked()))) {
+            if (i < 8 || (i == 3 && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS)
+                    || (i == 4 && (dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS && app.isUnlocked()))) {
                 menuEntries.add(e[i]);
                 menuEntryValues.add(ev[i]);
             }
@@ -158,13 +158,13 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (getView() != null) {
-                    if (dbh.getConnections().isEmpty()) {
+                    if (databaseHelper.getConnections().isEmpty()) {
                         Snackbar.make(getView(), R.string.no_connection_available_advice,
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (dbh.getSelectedConnection() == null) {
+                    } else if (databaseHelper.getSelectedConnection() == null) {
                         Snackbar.make(getView(), R.string.no_connection_active_advice,
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                    } else if (dataStorage.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
                         Snackbar.make(getView(), R.string.feature_not_supported_by_server,
                                 Snackbar.LENGTH_SHORT).show();
                     } else if (!app.isUnlocked()) {
@@ -185,13 +185,13 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (getView() != null) {
-                    if (dbh.getConnections().isEmpty()) {
+                    if (databaseHelper.getConnections().isEmpty()) {
                         Snackbar.make(getView(), R.string.no_connection_available_advice,
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (dbh.getSelectedConnection() == null) {
+                    } else if (databaseHelper.getSelectedConnection() == null) {
                         Snackbar.make(getView(), R.string.no_connection_active_advice,
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
+                    } else if (dataStorage.getProtocolVersion() < Constants.MIN_API_VERSION_PROFILES) {
                         Snackbar.make(getView(), R.string.feature_not_supported_by_server,
                                 Snackbar.LENGTH_SHORT).show();
                     } else if (!app.isUnlocked()) {
@@ -213,10 +213,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (getView() != null) {
-                    if (dbh.getConnections().isEmpty()) {
+                    if (databaseHelper.getConnections().isEmpty()) {
                         Snackbar.make(getView(), getString(R.string.no_connection_available_advice),
                                 Snackbar.LENGTH_SHORT).show();
-                    } else if (dbh.getSelectedConnection() == null) {
+                    } else if (databaseHelper.getSelectedConnection() == null) {
                         Snackbar.make(getView(), getString(R.string.no_connection_active_advice),
                                 Snackbar.LENGTH_SHORT).show();
                     } else {

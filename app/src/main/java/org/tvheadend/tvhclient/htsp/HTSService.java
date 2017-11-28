@@ -60,7 +60,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private ScheduledExecutorService execService;
     private HTSConnection connection;
     private PackageInfo packInfo;
-    private DataStorage ds;
+    private DataStorage dataStorage;
     private Logger logger;
 
     private class LocalBinder extends Binder {
@@ -72,7 +72,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     @Override
     public void onCreate() {
         execService = Executors.newScheduledThreadPool(10);
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
         logger = Logger.getInstance();
 
         try {
@@ -98,11 +98,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             if (connection != null && force) {
                 logger.log(TAG, "onStartCommand: Closing existing connection");
                 connection.close();
-                ds.clearAll();
+                dataStorage.clearAll();
             }
             if (connection == null || !connection.isConnected()) {
                 logger.log(TAG, "onStartCommand: Connecting to server");
-                ds.setLoading(true);
+                dataStorage.setLoading(true);
                 connection = new HTSConnection(TVHClientApplication.getInstance(), this, packInfo.packageName, packInfo.versionName);
 
                 // Since this is blocking, spawn to a new thread
@@ -125,7 +125,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             getEvent(intent.getLongExtra("eventId", 0));
 
         } else if (action.equals(Constants.ACTION_GET_EVENTS)) {
-            final Channel ch = ds.getChannel(intent.getLongExtra("channelId", 0));
+            final Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
             getEvents(ch, intent.getLongExtra("eventId", 0), intent.getIntExtra("count", 10));
 
         } else if (action.equals(Constants.ACTION_ADD_DVR_ENTRY)) {
@@ -174,8 +174,8 @@ public class HTSService extends Service implements HTSConnectionListener {
             feedback(intent.getLongExtra("subscriptionId", 0), intent.getIntExtra("speed", 0));
 
         } else if (action.equals(Constants.ACTION_GET_TICKET)) {
-            Channel ch = ds.getChannel(intent.getLongExtra("channelId", 0));
-            Recording rec = ds.getRecording(intent.getLongExtra("dvrId", 0));
+            Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
+            Recording rec = dataStorage.getRecording(intent.getLongExtra("dvrId", 0));
             if (ch != null) {
                 getTicket(ch);
             } else if (rec != null) {
@@ -192,7 +192,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             getProfiles();
             
         } else if (action.equals(Constants.ACTION_GET_CHANNEL)) {
-            Channel ch = ds.getChannel(intent.getLongExtra("channelId", 0));
+            Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
             if (ch != null) {
                 getChannel(ch);
             }
@@ -201,7 +201,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             subscriptionFilterStream();
             
         } else if (action.equals(Constants.ACTION_GET_DVR_CUTPOINTS)) {
-            Recording rec = ds.getRecording(intent.getLongExtra("dvrId", 0));
+            Recording rec = dataStorage.getRecording(intent.getLongExtra("dvrId", 0));
             if (rec != null) {
                 getDvrCutpoints(rec);
             }
@@ -233,8 +233,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     public void onError(final String error) {
-        ds.setLoading(false);
-        ds.setConnectionState(error);
+        dataStorage.setLoading(false);
+        dataStorage.setConnectionState(error);
     }
 
     @Override
@@ -248,14 +248,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         tag.id = msg.getLong("tagId");
         tag.name = msg.getString("tagName", null);
         tag.icon = msg.getString("tagIcon", null);
-        ds.addChannelTag(tag);
+        dataStorage.addChannelTag(tag);
         if (tag.icon != null) {
             getChannelTagIcon(tag);
         }
     }
 
     private void onTagUpdate(HTSMessage msg) {
-        ChannelTag tag = ds.getChannelTag(msg.getLong("tagId"));
+        ChannelTag tag = dataStorage.getChannelTag(msg.getLong("tagId"));
         if (tag == null) {
             return;
         }
@@ -272,7 +272,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onTagDelete(HTSMessage msg) {
-        ds.removeChannelTag(msg.getLong("tagId"));
+        dataStorage.removeChannelTag(msg.getLong("tagId"));
     }
 
     private void onChannelAdd(HTSMessage msg) {
@@ -292,7 +292,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             ch.number = (int) (ch.id + 25000);
         }
 
-        ds.addChannel(ch);
+        dataStorage.addChannel(ch);
         if (ch.icon != null) {
             getChannelIcon(ch);
         }
@@ -309,7 +309,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onChannelUpdate(HTSMessage msg) {
-        final Channel ch = ds.getChannel(msg.getLong("channelId"));
+        final Channel ch = dataStorage.getChannel(msg.getLong("channelId"));
         if (ch == null) {
             return;
         }
@@ -351,7 +351,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         ch.epg.removeAll(tmp);
 
         for (Program p : tmp) {
-            ds.removeProgram(p);
+            dataStorage.removeProgram(p);
         }
 
         final long eventId = currEventId != 0 ? currEventId : nextEventId;
@@ -362,12 +362,12 @@ public class HTSService extends Service implements HTSConnectionListener {
                 }
             }, 30, TimeUnit.SECONDS);
         } else {
-            ds.updateChannel(ch);
+            dataStorage.updateChannel(ch);
         }
     }
 
     private void onChannelDelete(HTSMessage msg) {
-        ds.removeChannel(msg.getLong("channelId"));
+        dataStorage.removeChannel(msg.getLong("channelId"));
     }
 
     private void onDvrEntryAdd(HTSMessage msg) {
@@ -383,7 +383,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.subtitle = msg.getString("subtitle");
         rec.enabled = msg.getLong("enabled", 1) != 0;
 
-        rec.channel = ds.getChannel(msg.getLong("channel", 0));
+        rec.channel = dataStorage.getChannel(msg.getLong("channel", 0));
         if (rec.channel != null) {
             rec.channel.recordings.add(rec);
         }
@@ -432,11 +432,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.path = msg.getString("path", null);
         rec.files = msg.getString("files", null);
 
-        ds.addRecording(rec);
+        dataStorage.addRecording(rec);
     }
 
     private void onDvrEntryUpdate(HTSMessage msg) {
-        Recording rec = ds.getRecording(msg.getLong("id"));
+        Recording rec = dataStorage.getRecording(msg.getLong("id"));
         if (rec == null) {
             return;
         }
@@ -482,11 +482,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.path = msg.getString("path", rec.path);
         rec.files = msg.getString("files", rec.files);
 
-        ds.updateRecording(rec);
+        dataStorage.updateRecording(rec);
     }
 
     private void onDvrEntryDelete(HTSMessage msg) {
-        Recording rec = ds.getRecording(msg.getLong("id"));
+        Recording rec = dataStorage.getRecording(msg.getLong("id"));
 
         if (rec == null || rec.channel == null) {
             return;
@@ -496,11 +496,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         for (Program p : rec.channel.epg) {
             if (p.recording == rec) {
                 p.recording = null;
-                ds.updateProgram(p);
+                dataStorage.updateProgram(p);
                 break;
             }
         }
-        ds.removeRecording(rec);
+        dataStorage.removeRecording(rec);
     }
 
     private void onTimerRecEntryAdd(HTSMessage msg) {
@@ -515,18 +515,18 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.title = msg.getString("title");
         rec.name = msg.getString("name");
         rec.directory = msg.getString("directory");
-        rec.channel = ds.getChannel(msg.getLong("channel", 0));
+        rec.channel = dataStorage.getChannel(msg.getLong("channel", 0));
 
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
-        ds.addTimerRecording(rec);
+        dataStorage.addTimerRecording(rec);
     }
 
     private void onTimerRecEntryUpdate(HTSMessage msg) {
-        TimerRecording rec = ds.getTimerRecording(msg.getString("id"));
+        TimerRecording rec = dataStorage.getTimerRecording(msg.getString("id"));
         if (rec == null) {
             return;
         }
@@ -539,35 +539,35 @@ public class HTSService extends Service implements HTSConnectionListener {
         rec.title = msg.getString("title", rec.title);
         rec.name = msg.getString("name", rec.name);
         rec.directory = msg.getString("directory", rec.name);
-        rec.channel = ds.getChannel(msg.getLong("channel", 0));
+        rec.channel = dataStorage.getChannel(msg.getLong("channel", 0));
 
         // The enabled flag was added in HTSP API version 18. The support for
         // timer recordings are available since version 17.
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
-        ds.updateTimerRecording(rec);
+        dataStorage.updateTimerRecording(rec);
     }
 
     private void onTimerRecEntryDelete(HTSMessage msg) {
-        TimerRecording rec = ds.getTimerRecording(msg.getString("id"));
+        TimerRecording rec = dataStorage.getTimerRecording(msg.getString("id"));
 
         if (rec == null || rec.channel == null) {
             return;
         }
 
         rec.channel = null;
-        ds.removeTimerRecording(rec);
+        dataStorage.removeTimerRecording(rec);
     }
 
     private void onInitialSyncCompleted() {
         logger.log(TAG, "onInitialSyncCompleted() called");
-        ds.setLoading(false);
-        ds.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
-        ds.setProtocolVersion(connection.getProtocolVersion());
-        ds.setServerName(connection.getServerName());
-        ds.setServerVersion(connection.getServerVersion());
-        ds.setWebRoot(connection.getWebRoot());
+        dataStorage.setLoading(false);
+        dataStorage.setConnectionState(Constants.ACTION_CONNECTION_STATE_OK);
+        dataStorage.setProtocolVersion(connection.getProtocolVersion());
+        dataStorage.setServerName(connection.getServerName());
+        dataStorage.setServerVersion(connection.getServerVersion());
+        dataStorage.setWebRoot(connection.getWebRoot());
 
         // Get some additional information after the initial loading has been finished
         getDiscSpace();
@@ -575,7 +575,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onSubscriptionStart(HTSMessage msg) {
-        Subscription subscription = ds.getSubscription(msg.getLong("subscriptionId"));
+        Subscription subscription = dataStorage.getSubscription(msg.getLong("subscriptionId"));
         if (subscription == null) {
             return;
         }
@@ -611,44 +611,44 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onSubscriptionStatus(HTSMessage msg) {
-        Subscription s = ds.getSubscription(msg.getLong("subscriptionId"));
+        Subscription s = dataStorage.getSubscription(msg.getLong("subscriptionId"));
         if (s == null) {
             return;
         }
         String status = msg.getString("status", null);
         if (s.status == null ? status != null : !s.status.equals(status)) {
             s.status = status;
-            ds.updateSubscription(s);
+            dataStorage.updateSubscription(s);
         }
     }
 
     private void onSubscriptionStop(HTSMessage msg) {
-        Subscription s = ds.getSubscription(msg.getLong("subscriptionId"));
+        Subscription s = dataStorage.getSubscription(msg.getLong("subscriptionId"));
         if (s == null) {
             return;
         }
         String status = msg.getString("status", null);
         if (s.status == null ? status != null : !s.status.equals(status)) {
             s.status = status;
-            ds.updateSubscription(s);
+            dataStorage.updateSubscription(s);
         }
-        ds.removeSubscription(s);
+        dataStorage.removeSubscription(s);
     }
 
     private void onSubscriptionGrace(HTSMessage msg) {
-        Subscription s = ds.getSubscription(msg.getLong("subscriptionId"));
+        Subscription s = dataStorage.getSubscription(msg.getLong("subscriptionId"));
         if (s == null) {
             return;
         }
         long gt = msg.getLong("graceTimeout", 0);
         if (s.graceTimeout != gt) {
             s.graceTimeout = gt;
-            ds.updateSubscription(s);
+            dataStorage.updateSubscription(s);
         }
     }
 
     private void onSubscriptionSignalStatus(HTSMessage msg) {
-        Subscription s = ds.getSubscription(msg.getLong("subscriptionId"));
+        Subscription s = dataStorage.getSubscription(msg.getLong("subscriptionId"));
         if (s == null) {
             return;
         }
@@ -660,7 +660,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onMuxPacket(HTSMessage msg) {
-        Subscription sub = ds.getSubscription(msg.getLong("subscriptionId"));
+        Subscription sub = dataStorage.getSubscription(msg.getLong("subscriptionId"));
         if (sub == null) {
             return;
         }
@@ -678,11 +678,11 @@ public class HTSService extends Service implements HTSConnectionListener {
             }
         }
         packet.subscription = sub;
-        ds.broadcastPacket(packet);
+        dataStorage.broadcastPacket(packet);
     }
 
     private void onQueueStatus(HTSMessage msg) {
-        Subscription sub = ds.getSubscription(msg.getLong("subscriptionId"));
+        Subscription sub = dataStorage.getSubscription(msg.getLong("subscriptionId"));
         if (sub == null) {
             return;
         }
@@ -697,7 +697,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         sub.packetCount = msg.getLong("packets", sub.packetCount);
         sub.queSize = msg.getLong("bytes", sub.queSize);
 
-        ds.updateSubscription(sub);
+        dataStorage.updateSubscription(sub);
     }
 
     private void onAutorecEntryDelete(HTSMessage msg) {
@@ -707,8 +707,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
         // Remove the series recording from the list and also update all
         // recordings by removing the series id
-        ds.removeSeriesRecording(id);
-        for (Recording rec : ds.getRecordings()) {
+        dataStorage.removeSeriesRecording(id);
+        for (Recording rec : dataStorage.getRecordings()) {
             if (rec.autorecId != null && rec.autorecId.equals(id)) {
                 rec.autorecId = null;
             }
@@ -716,7 +716,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onAutorecEntryUpdate(HTSMessage msg) {
-        SeriesRecording srec = ds.getSeriesRecording(msg.getString("id"));
+        SeriesRecording srec = dataStorage.getSeriesRecording(msg.getString("id"));
         if (srec == null) {
             return;
         }
@@ -737,7 +737,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.directory = msg.getString("directory", srec.directory);
         srec.fulltext = msg.getString("fulltext", srec.fulltext);
 
-        ds.updateSeriesRecording(srec);
+        dataStorage.updateSeriesRecording(srec);
     }
 
     private void onAutorecEntryAdd(HTSMessage msg) {
@@ -758,10 +758,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         srec.title = msg.getString("title");
         srec.name = msg.getString("name");
         srec.directory = msg.getString("directory");
-        srec.channel = ds.getChannel(msg.getLong("channel", 0));
+        srec.channel = dataStorage.getChannel(msg.getLong("channel", 0));
         srec.fulltext = msg.getString("fulltext");
 
-        ds.addSeriesRecording(srec);
+        dataStorage.addSeriesRecording(srec);
     }
 
     public void onMessage(HTSMessage msg) {
@@ -949,7 +949,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void run() {
                 try {
                     ch.iconBitmap = getIcon(ch.icon);
-                    ds.updateChannel(ch);
+                    dataStorage.updateChannel(ch);
                 } catch (Throwable ex) {
                     logger.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
                 }
@@ -962,7 +962,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void run() {
                 try {
                     tag.iconBitmap = getIcon(tag.icon);
-                    ds.updateChannelTag(tag);
+                    dataStorage.updateChannelTag(tag);
                 } catch (Throwable ex) {
                     logger.log(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
                 }
@@ -991,10 +991,10 @@ public class HTSService extends Service implements HTSConnectionListener {
                     p.channel = ch;
 
                     if (ch.epg.add(p)) {
-                        ds.addProgram(p);
+                        dataStorage.addProgram(p);
                     }
                 }
-                ds.updateChannel(ch);
+                dataStorage.updateChannel(ch);
             }
         });
     }
@@ -1006,7 +1006,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         p.description = sub.getString("description");
         p.summary = sub.getString("summary");
         p.subtitle = sub.getString("subtitle");
-        p.recording = ds.getRecording(sub.getLong("dvrId", 0));
+        p.recording = dataStorage.getRecording(sub.getLong("dvrId", 0));
         p.contentType = sub.getInt("contentType", -1);
         p.title = sub.getString("title");
         p.start = sub.getDate("start");
@@ -1024,13 +1024,13 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                Channel ch = ds.getChannel(response.getLong("channelId"));
+                Channel ch = dataStorage.getChannel(response.getLong("channelId"));
                 Program p = getProgramFromEventMessage(response);
                 p.channel = ch;
 
                 if (ch.epg.add(p)) {
-                    ds.addProgram(p);
-                    ds.updateChannel(ch);
+                    dataStorage.addProgram(p);
+                    dataStorage.updateChannel(ch);
                 }
             }
         });
@@ -1051,7 +1051,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 	
     private void epgQuery(final Intent intent) {
 
-        final Channel ch = ds.getChannel(intent.getLongExtra("channelId", 0));
+        final Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
         final String query = intent.getStringExtra("query");
         final long tagId = intent.getLongExtra("tagId", 0);
 
@@ -1097,10 +1097,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_removing_recording,
+                    dataStorage.showMessage(getString(R.string.error_removing_recording,
                                 response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_removing_recording));
+                    dataStorage.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1124,7 +1124,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (!success) {
                     cancelDvrEntry(id);
                 } else {
-                    ds.showMessage(getString(R.string.success_removing_recording));
+                    dataStorage.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1171,16 +1171,16 @@ public class HTSService extends Service implements HTSConnectionListener {
 
             // Do not add these fields if not supported by the server. Updating
             // these strings was fixed in server version v4.1-111-g807b9c8
-            if (title != null && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
+            if (title != null && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
                 request.putField("title", title);
             }
-            if (subtitle != null && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE) {
+            if (subtitle != null && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE) {
                 request.putField("subtitle", subtitle);
             }
-            if (description != null && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION) {
+            if (description != null && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION) {
                 request.putField("description", description);
             }
-            if (channelId != 0 && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_UPDATE_CHANNEL) {
+            if (channelId != 0 && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_UPDATE_CHANNEL) {
                 request.putField("channelId", channelId);
             }
             if (configName != null) {
@@ -1194,10 +1194,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_updating_recording,
+                    dataStorage.showMessage(getString(R.string.error_updating_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_updating_recording));
+                    dataStorage.showMessage(getString(R.string.success_updating_recording));
 
                     // Force a reconnect. This is a workaround because no
                     // onDvrUpdate event is sent
@@ -1223,10 +1223,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_removing_recording,
+                    dataStorage.showMessage(getString(R.string.error_removing_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_removing_recording));
+                    dataStorage.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1292,7 +1292,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         // Get the channel from the id to update the program list of the channel
         // when the recording was added.
-        final Channel ch = ds.getChannel(channelId);
+        final Channel ch = dataStorage.getChannel(channelId);
 
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
@@ -1300,18 +1300,18 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (success && ch != null) {
                     for (Program p : ch.epg) {
                         if (p.id == eventId) {
-                            p.recording = ds.getRecording(response.getLong("id", 0));
-                            ds.updateProgram(p);
+                            p.recording = dataStorage.getRecording(response.getLong("id", 0));
+                            dataStorage.updateProgram(p);
                             break;
                         }
                     }
                 }
 
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_adding_recording,
+                    dataStorage.showMessage(getString(R.string.error_adding_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_adding_recording));
+                    dataStorage.showMessage(getString(R.string.success_adding_recording));
                 }
             }
         });
@@ -1363,10 +1363,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_adding_recording,
+                    dataStorage.showMessage(getString(R.string.error_adding_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_adding_recording));
+                    dataStorage.showMessage(getString(R.string.success_adding_recording));
                 }
             }
         });
@@ -1388,10 +1388,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_removing_recording,
+                    dataStorage.showMessage(getString(R.string.error_removing_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_removing_recording));
+                    dataStorage.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1441,10 +1441,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_adding_recording,
+                    dataStorage.showMessage(getString(R.string.error_adding_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_adding_recording));
+                    dataStorage.showMessage(getString(R.string.success_adding_recording));
                 }
             }
         });
@@ -1455,7 +1455,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         subscription.id = subscriptionId;
         subscription.status = "Subscribing";
 
-        ds.addSubscription(subscription);
+        dataStorage.addSubscription(subscription);
 
         HTSMessage request = new HTSMessage();
         request.setMethod("subscribe");
@@ -1473,7 +1473,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void unsubscribe(long subscriptionId) {
-        ds.removeSubscription(subscriptionId);
+        dataStorage.removeSubscription(subscriptionId);
 
         HTSMessage request = new HTSMessage();
         request.setMethod("unsubscribe");
@@ -1508,7 +1508,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 String webroot = connection.getWebRoot();
                 
                 if (path != null && ticket != null) {
-                    ds.addTicket(new HttpTicket(webroot + path, ticket));
+                    dataStorage.addTicket(new HttpTicket(webroot + path, ticket));
                 }
             }
         });
@@ -1524,7 +1524,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 String ticket = response.getString("ticket", null);
 
                 if (path != null && ticket != null) {
-                    ds.addTicket(new HttpTicket(path, ticket));
+                    dataStorage.addTicket(new HttpTicket(path, ticket));
                 }
             }
         });
@@ -1538,7 +1538,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 DiscSpace ds = new DiscSpace();
                 ds.freediskspace = response.getString("freediskspace", null);
                 ds.totaldiskspace = response.getString("totaldiskspace", null);
-                HTSService.this.ds.addDiscSpace(ds);
+                dataStorage.addDiscSpace(ds);
             }
         });
     }
@@ -1552,7 +1552,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 st.time = response.getString("time", null);
                 st.timezone = response.getString("timezone", null);
                 st.gmtoffset = response.getString("gmtoffset", null);
-                ds.addSystemTime(st);
+                dataStorage.addSystemTime(st);
             }
         });
     }
@@ -1578,7 +1578,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     p.comment = sub.getString("comment");
                     pList.add(p);
                 }
-                ds.addDvrConfigs(pList);
+                dataStorage.addDvrConfigs(pList);
             }
         });
     }
@@ -1665,10 +1665,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_adding_recording,
+                    dataStorage.showMessage(getString(R.string.error_adding_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_adding_recording));
+                    dataStorage.showMessage(getString(R.string.success_adding_recording));
                 }
             }
         });
@@ -1689,10 +1689,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_removing_recording,
+                    dataStorage.showMessage(getString(R.string.error_removing_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_removing_recording));
+                    dataStorage.showMessage(getString(R.string.success_removing_recording));
                 }
             }
         });
@@ -1782,10 +1782,10 @@ public class HTSService extends Service implements HTSConnectionListener {
                 @SuppressWarnings("unused")
                 boolean success = response.getInt("success", 0) == 1;
                 if (!success) {
-                    ds.showMessage(getString(R.string.error_adding_recording,
+                    dataStorage.showMessage(getString(R.string.error_adding_recording,
                             response.getString("error", "")));
                 } else {
-                    ds.showMessage(getString(R.string.success_adding_recording));
+                    dataStorage.showMessage(getString(R.string.success_adding_recording));
                 }
             }
         });
@@ -1849,7 +1849,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     p.comment = sub.getString("comment");
                     pList.add(p);
                 }
-                ds.addProfiles(pList);
+                dataStorage.addProfiles(pList);
             }
         });
     }

@@ -94,12 +94,12 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private String[] dvrConfigList;
 
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
+    private DatabaseHelper databaseHelper;
 
     private static final int DEFAULT_START_EXTRA = 2;
     private static final int DEFAULT_STOP_EXTRA = 2;
     private Logger logger;
-    private DataStorage ds;
+    private DataStorage dataStorage;
 
     public static RecordingAddFragment newInstance() {
         return new RecordingAddFragment();
@@ -183,14 +183,14 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         activity = (AppCompatActivity) getActivity();
         app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
 
         // Create the list of channels that the user can select
-        channelList = new String[ds.getChannels().size()];
-        for (int i = 0; i < ds.getChannels().size(); i++) {
-            channelList[i] = ds.getChannels().get(i).name;
+        channelList = new String[dataStorage.getChannels().size()];
+        for (int i = 0; i < dataStorage.getChannels().size(); i++) {
+            channelList[i] = dataStorage.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name
@@ -209,9 +209,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         });
 
         // Create the list of available configurations that the user can select from
-        dvrConfigList = new String[ds.getDvrConfigs().size()];
-        for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
-            dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
+        dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
+        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
+            dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
         }
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
@@ -228,7 +228,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             }
 
             // Get the recording so we can show its detail
-            rec = ds.getRecording(recId);
+            rec = dataStorage.getRecording(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
                 startExtraValue = rec.startExtra;
@@ -266,8 +266,8 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
             // Get the position of the selected profile in the dvrConfigList
             dvrConfigNameValue = 0;
-            final Connection conn = dbh.getSelectedConnection();
-            final Profile p = dbh.getProfile(conn.recording_profile_id);
+            final Connection conn = databaseHelper.getSelectedConnection();
+            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
             if (p != null) {
                 for (int i = 0; i < dvrConfigList.length; i++) {
                     if (dvrConfigList[i].equals(p.name)) {
@@ -294,21 +294,21 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         if (isEnabled != null) {
             isEnabled.setChecked(enabledValue);
-            isEnabled.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+            isEnabled.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED ? View.VISIBLE : View.GONE);
         }
         if (title != null && titelLabel != null) {
-            title.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
-            titelLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
+            title.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
+            titelLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
             title.setText(titleValue);
         }
         if (subtitle != null && subtitleLabel != null) {
-            subtitle.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
-            subtitleLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
+            subtitle.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
+            subtitleLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
             subtitle.setText(subtitleValue);
         }
         if (description != null && descriptionLabel != null) {
-            description.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
-            descriptionLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
+            description.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
+            descriptionLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
             description.setText(descriptionValue);
         }
 
@@ -518,7 +518,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         getValues();
 
         // The title must not be empty
-        if (titleValue.length() == 0 && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
+        if (titleValue.length() == 0 && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
             Toast.makeText(activity, getString(R.string.error_empty_title),
                     Toast.LENGTH_SHORT).show();
             return;
@@ -535,12 +535,12 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             intent.setAction(Constants.ACTION_ADD_DVR_ENTRY);
 
             // Add the recording profile if available and enabled
-            final Connection conn = dbh.getSelectedConnection();
-            final Profile p = dbh.getProfile(conn.recording_profile_id);
+            final Connection conn = databaseHelper.getSelectedConnection();
+            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
             if (p != null 
                     && p.enabled
                     && (dvrConfigName.getText().length() > 0) 
-                    && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                    && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                     && app.isUnlocked()) {
                 // Use the selected profile. If no change was done in the 
                 // selection then the default one from the connection setting will be used
@@ -550,7 +550,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         // The id must be passed on to the server, not the name. So go through
         // all available channels and get the id for the selected channel name.
-        for (Channel c : ds.getChannels()) {
+        for (Channel c : dataStorage.getChannels()) {
             if (c.name.equals(channelList[channelSelectionValue])) {
                 intent.putExtra("channelId", c.id);
                 break;

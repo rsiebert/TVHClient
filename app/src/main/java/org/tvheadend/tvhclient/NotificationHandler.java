@@ -22,13 +22,13 @@ public class NotificationHandler {
 
     private static NotificationHandler mInstance;
     private final Logger logger;
-    private final TVHClientApplication tvh;
-    private final DataStorage ds;
+    private final TVHClientApplication app;
+    private final DataStorage dataStorage;
 
     public NotificationHandler() {
         logger = Logger.getInstance();
-        tvh = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
+        app = TVHClientApplication.getInstance();
+        dataStorage = DataStorage.getInstance();
     }
 
     public static synchronized NotificationHandler getInstance() {
@@ -68,25 +68,25 @@ public class NotificationHandler {
         Logger logger = Logger.getInstance();
         logger.log(TAG, "addNotification() called with: id = [" + id + "], offset = [" + offset + "]");
 
-        final Recording rec = ds.getRecording(id);
-        if (ds.isLoading() || rec == null) {
+        final Recording rec = dataStorage.getRecording(id);
+        if (dataStorage.isLoading() || rec == null) {
             return;
         }
 
         // The start time when the notification shall be shown
-        String msg = tvh.getString(R.string.recording_started);
+        String msg = app.getString(R.string.recording_started);
         long time = rec.start.getTime();
         if (time > (new Date()).getTime()) {
             logger.log(TAG, "addNotification: Recording added");
             if (offset > 0) {
                 // Subtract the offset from the time when the notification shall be shown.
                 time -= (offset * 60000);
-                msg = tvh.getString(R.string.recording_starts_in, offset);
+                msg = app.getString(R.string.recording_starts_in, offset);
             }
 
             // Create the intent for the start and stop notifications
             createNotification(rec.id, time, msg);
-            createNotification(rec.id * 100, rec.stop.getTime(), tvh.getString(R.string.recording_completed));
+            createNotification(rec.id * 100, rec.stop.getTime(), app.getString(R.string.recording_completed));
         } else {
             logger.log(TAG, "addNotification: Recording not added, start time is in the past");
         }
@@ -104,14 +104,14 @@ public class NotificationHandler {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy, HH.mm", Locale.US);
         logger.log(TAG, "createNotification() called with: id = [" + id + "], time = [" + sdf.format(time) + "], msg = [" + msg + "]");
 
-        Intent intent = new Intent(tvh.getApplicationContext(), NotificationReceiver.class);
+        Intent intent = new Intent(app.getApplicationContext(), NotificationReceiver.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constants.BUNDLE_RECORDING_ID, id);
         bundle.putString(Constants.BUNDLE_NOTIFICATION_MSG, msg);
         intent.putExtras(bundle);
 
-        PendingIntent pi = PendingIntent.getBroadcast(tvh.getApplicationContext(), (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager am = (AlarmManager) tvh.getSystemService(Service.ALARM_SERVICE);
+        PendingIntent pi = PendingIntent.getBroadcast(app.getApplicationContext(), (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager am = (AlarmManager) app.getSystemService(Service.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, time, pi);
     }
 
@@ -122,7 +122,7 @@ public class NotificationHandler {
      */
     public void cancelNotification(long id) {
         logger.log(TAG, "cancelNotification() called with: id = [" + id + "]");
-        NotificationManager nm = (NotificationManager) tvh.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager nm = (NotificationManager) app.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel((int) id);
         nm.cancel((int) id * 100);
     }
@@ -133,7 +133,7 @@ public class NotificationHandler {
      * @param offset Time in minutes that the notification shall be shown earlier
      */
     public void addNotifications(final long offset) {
-        for (Recording rec : ds.getRecordings()) {
+        for (Recording rec : dataStorage.getRecordings()) {
             if (rec.isScheduled()) {
                 addNotification(rec.id, offset);
             }
@@ -144,7 +144,7 @@ public class NotificationHandler {
      * Cancels all pending notifications related to recordings
      */
     public void cancelNotifications() {
-        for (Recording rec : ds.getRecordings()) {
+        for (Recording rec : dataStorage.getRecordings()) {
             cancelNotification(rec.id);
         }
     }

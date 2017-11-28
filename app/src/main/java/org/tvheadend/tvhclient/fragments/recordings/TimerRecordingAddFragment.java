@@ -91,8 +91,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private String[] dvrConfigList;
 
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
-    private DataStorage ds;
+    private DatabaseHelper databaseHelper;
+    private DataStorage dataStorage;
     private Context mContext;
 
     public static TimerRecordingAddFragment newInstance() {
@@ -201,22 +201,22 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
         activity = getActivity();
         app = TVHClientApplication.getInstance();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        ds = DataStorage.getInstance();
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        dataStorage = DataStorage.getInstance();
 
         // Determine if the server supports recording on all channels
-        boolean allowRecordingOnAllChannels = ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
+        boolean allowRecordingOnAllChannels = dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
         final int offset = (allowRecordingOnAllChannels ? 1 : 0);
 
         // Create the list of channels that the user can select. If recording on
         // all channels are available the add the 'all channels' string to
         // the beginning of the list before adding the available channels.
-        channelList = new String[ds.getChannels().size() + offset];
+        channelList = new String[dataStorage.getChannels().size() + offset];
         if (allowRecordingOnAllChannels) {
             channelList[0] = activity.getString(R.string.all_channels);
         }
-        for (int i = 0; i < ds.getChannels().size(); i++) {
-            channelList[i + offset] = ds.getChannels().get(i).name;
+        for (int i = 0; i < dataStorage.getChannels().size(); i++) {
+            channelList[i + offset] = dataStorage.getChannels().get(i).name;
         }
 
         // Sort the channels in the list by name
@@ -235,9 +235,9 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         });
 
         // Create the list of available configurations that the user can select from
-        dvrConfigList = new String[ds.getDvrConfigs().size()];
-        for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
-            dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
+        dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
+        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
+            dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
         }
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
@@ -254,7 +254,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             }
 
             // Get the recording so we can show its details
-            rec = ds.getTimerRecording(recId);
+            rec = dataStorage.getTimerRecording(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
                 startTimeValue = rec.start;
@@ -303,8 +303,8 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
             // Get the position of the selected profile in the dvrConfigList
             dvrConfigNameValue = 0;
-            final Connection conn = dbh.getSelectedConnection();
-            final Profile p = dbh.getProfile(conn.recording_profile_id);
+            final Connection conn = databaseHelper.getSelectedConnection();
+            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
             if (p != null) {
                 for (int i = 0; i < dvrConfigList.length; i++) {
                     if (dvrConfigList[i].equals(p.name)) {
@@ -329,10 +329,10 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         }
 
         isEnabled.setChecked(enabledValue);
-        isEnabled.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+        isEnabled.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
 
-        directoryLabel.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setVisibility(ds.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directoryLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(directoryValue);
 
         title.setText(titleValue);
@@ -558,7 +558,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         // Update the timer recording if it has been edited, otherwise add a new one.
         if (rec != null && rec.id != null && rec.id.length() > 0) {
  
-            if (ds.getProtocolVersion() >= Constants.MIN_API_VERSION_UPDATE_TIMER_RECORDINGS) {
+            if (dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_UPDATE_TIMER_RECORDINGS) {
                 // If the API version supports it, use the native service call method
                 updateTimerRecording();
             } else {
@@ -690,7 +690,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
         // The id must be passed on to the server, not the name. So go through
         // all available channels and get the id for the selected channel name.
-        for (Channel c : ds.getChannels()) {
+        for (Channel c : dataStorage.getChannels()) {
             if (c.name.equals(channelName.getText().toString())) {
                 intent.putExtra("channelId", c.id);
                 break;
@@ -698,12 +698,12 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         }
 
         // Add the recording profile if available and enabled
-        final Connection conn = dbh.getSelectedConnection();
-        final Profile p = dbh.getProfile(conn.recording_profile_id);
+        final Connection conn = databaseHelper.getSelectedConnection();
+        final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
         if (p != null 
                 && p.enabled
                 && (dvrConfigName.getText().length() > 0)
-                && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                 && app.isUnlocked()) {
             // Use the selected profile. If no change was done in the 
             // selection then the default one from the connection setting will be used

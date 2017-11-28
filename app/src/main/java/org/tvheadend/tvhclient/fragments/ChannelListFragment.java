@@ -91,8 +91,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     private int channelTimeSelection;
     private long showProgramsFromTime;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -130,7 +130,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -145,7 +145,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
         listView.setAdapter(adapter);
 
-        mMenuUtils = new MenuUtils(getActivity());
+        menuUtils = new MenuUtils(getActivity());
 
         // Inform the activity when a channel has been selected.
         if (!showOnlyChannels) {
@@ -249,20 +249,20 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         switch (item.getItemId()) {
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            mMenuUtils.handleMenuPlaySelection(adapter.getSelectedItem().id, -1);
+            menuUtils.handleMenuPlaySelection(adapter.getSelectedItem().id, -1);
             return true;
 
         case R.id.menu_tags:
             ChannelTag tag = Utils.getChannelTag(activity);
-            mMenuUtils.handleMenuTagsSelection(tagList, (tag != null ? tag.id : -1), this);
+            menuUtils.handleMenuTagsSelection(tagList, (tag != null ? tag.id : -1), this);
             return true;
 
         case R.id.menu_timeframe:
-            mMenuUtils.handleMenuTimeSelection(channelTimeSelection, this);
+            menuUtils.handleMenuTimeSelection(channelTimeSelection, this);
             return true;
 
         case R.id.menu_genre_color_info_channels:
-            mMenuUtils.handleMenuGenreColorSelection();
+            menuUtils.handleMenuGenreColorSelection();
             return true;
 
         default:
@@ -312,43 +312,43 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
-            mMenuUtils.handleMenuSearchWebSelection(program.title);
+            menuUtils.handleMenuSearchWebSelection(program.title);
             return true;
 
         case R.id.menu_search_epg:
-            mMenuUtils.handleMenuSearchEpgSelection(program.title, channel.id);
+            menuUtils.handleMenuSearchEpgSelection(program.title, channel.id);
             return true;
             
         case R.id.menu_record_remove:
             Recording rec = program.recording;
             if (rec != null) {
                 if (rec.isRecording()) {
-                    mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
                 } else if (rec.isScheduled()) {
-                    mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
                 } else {
-                    mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                 }
             }
             return true;
 
         case R.id.menu_record_once:
-            mMenuUtils.handleMenuRecordSelection(program.id);
+            menuUtils.handleMenuRecordSelection(program.id);
             return true;
 
         case R.id.menu_record_once_custom_profile:
             // Create the list of available recording profiles that the user can select from
-            String[] dvrConfigList = new String[ds.getDvrConfigs().size()];
-            for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
-                dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
+            String[] dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
+            for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
+                dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
             }
 
             // Get the selected recording profile to highlight the 
             // correct item in the list of the selection dialog
             int dvrConfigNameValue = 0;
-            DatabaseHelper dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-            final Connection conn = dbh.getSelectedConnection();
-            final Profile p = dbh.getProfile(conn.recording_profile_id);
+            DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+            final Connection conn = databaseHelper.getSelectedConnection();
+            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
             if (p != null) {
                 for (int i = 0; i < dvrConfigList.length; i++) {
                     if (dvrConfigList[i].equals(p.name)) {
@@ -383,12 +383,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_record_series:
-            mMenuUtils.handleMenuSeriesRecordSelection(program.title);
+            menuUtils.handleMenuSeriesRecordSelection(program.title);
             return true;
 
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            mMenuUtils.handleMenuPlaySelection(channel.id, -1);
+            menuUtils.handleMenuPlaySelection(channel.id, -1);
             return true;
 
         default:
@@ -436,7 +436,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Add only those channels that contain the selected channel tag
         adapter.clear();
-        CopyOnWriteArrayList<Channel> channelList = new CopyOnWriteArrayList<>(ds.getChannels());
+        CopyOnWriteArrayList<Channel> channelList = new CopyOnWriteArrayList<>(dataStorage.getChannels());
         Iterator<Channel> cIt = channelList.iterator();
         Channel ch;
         while (cIt.hasNext()) {
@@ -452,7 +452,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Fill the channel tag adapter with the available channel tags
         tagList.clear();
-        CopyOnWriteArrayList<ChannelTag> channelTagList = new CopyOnWriteArrayList<>(ds.getChannelTags());
+        CopyOnWriteArrayList<ChannelTag> channelTagList = new CopyOnWriteArrayList<>(dataStorage.getChannelTags());
         Iterator<ChannelTag> ctIt = channelTagList.iterator();
         ChannelTag tag;
         while (ctIt.hasNext()) {
@@ -489,7 +489,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!ds.isLoading()) {
+        if (!dataStorage.isLoading()) {
             populateList();
         }
 

@@ -68,8 +68,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     private static final String REC_PROFILE_UUID = "rec_profile_uuid";
 
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
-    private DataStorage ds;
+    private DatabaseHelper databaseHelper;
+    private DataStorage dataStorage;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -95,20 +95,20 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
         app = (TVHClientApplication) activity.getApplication();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        ds = DataStorage.getInstance();
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        dataStorage = DataStorage.getInstance();
 
         prefEnableRecProfiles = (CheckBoxPreference) findPreference("pref_enable_recording_profiles");
         prefEnableProgProfiles = (CheckBoxPreference) findPreference("pref_enable_playback_profiles");
         prefRecProfiles = (ListPreference) findPreference("pref_recording_profiles");
         prefProgProfiles = (ListPreference) findPreference("pref_playback_profiles");
 
-        conn = dbh.getSelectedConnection();
-        progProfile = dbh.getProfile(conn.playback_profile_id);
+        conn = databaseHelper.getSelectedConnection();
+        progProfile = databaseHelper.getProfile(conn.playback_profile_id);
         if (progProfile == null) {
             progProfile = new Profile();
         }
-        recProfile = dbh.getProfile(conn.recording_profile_id);
+        recProfile = databaseHelper.getProfile(conn.recording_profile_id);
         if (recProfile == null) {
             recProfile = new Profile();
         }
@@ -177,10 +177,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (progProfile.id == 0) {
-            conn.playback_profile_id = (int) dbh.addProfile(progProfile);
-            dbh.updateConnection(conn);
+            conn.playback_profile_id = (int) databaseHelper.addProfile(progProfile);
+            databaseHelper.updateConnection(conn);
         } else {
-            dbh.updateProfile(progProfile);
+            databaseHelper.updateProfile(progProfile);
         }
 
         // Save the values into the recording profile (recording)
@@ -192,10 +192,10 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
         if (recProfile.id == 0) {
-            conn.recording_profile_id = (int) dbh.addProfile(recProfile);
-            dbh.updateConnection(conn);
+            conn.recording_profile_id = (int) databaseHelper.addProfile(recProfile);
+            databaseHelper.updateConnection(conn);
         } else {
-            dbh.updateProfile(recProfile);
+            databaseHelper.updateProfile(recProfile);
         }
     }
 
@@ -249,7 +249,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                     }
 
                     if (prefRecProfiles != null && prefEnableRecProfiles != null) {
-                        addProfiles(prefRecProfiles, ds.getDvrConfigs());
+                        addProfiles(prefRecProfiles, dataStorage.getDvrConfigs());
 
                         prefRecProfiles.setEnabled(prefEnableRecProfiles.isChecked());
                         prefEnableRecProfiles.setEnabled(true);
@@ -257,7 +257,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
                         if (recProfile.uuid == null || recProfile.uuid.length() == 0) {
-                            for (Profiles p : ds.getDvrConfigs()) {
+                            for (Profiles p : dataStorage.getDvrConfigs()) {
                                 if (p.name.equals(Constants.REC_PROFILE_DEFAULT)) {
                                     recProfile.uuid = p.uuid;
                                     break;
@@ -279,14 +279,14 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
                     }
 
                     if (prefProgProfiles != null && prefEnableProgProfiles != null) {
-                        addProfiles(prefProgProfiles, ds.getProfiles());
+                        addProfiles(prefProgProfiles, dataStorage.getProfiles());
                         prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());
                         prefEnableProgProfiles.setEnabled(true);
 
                         // If no uuid is set, no selected profile exists.
                         // Preselect the default one.
                         if (progProfile.uuid == null || progProfile.uuid.length() == 0) {
-                            for (Profiles p : ds.getProfiles()) {
+                            for (Profiles p : dataStorage.getProfiles()) {
                                 if (p.name.equals(Constants.PROG_PROFILE_DEFAULT)) {
                                     progProfile.uuid = p.uuid;
                                     break;

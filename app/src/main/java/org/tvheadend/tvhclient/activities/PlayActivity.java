@@ -53,7 +53,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private int streamingPort;
     private String title = "";
     private Logger logger;
-    private DataStorage ds;
+    private DataStorage dataStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +63,14 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         app = TVHClientApplication.getInstance();
         logger = Logger.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
         
         // If a play intent was sent no action is given, so default to play
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, Constants.ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
-        ch = ds.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
-        rec = ds.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+        ch = dataStorage.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
+        rec = dataStorage.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
 
         // Get the title from either the channel or recording
         if (ch != null) {
@@ -96,15 +96,15 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // Create the url with the credentials and the host and  
         // port configuration. This one is fixed for all actions
-        DatabaseHelper dbh = DatabaseHelper.getInstance(getApplicationContext());
-        Connection conn = dbh.getSelectedConnection();
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+        Connection conn = databaseHelper.getSelectedConnection();
         if (conn != null) {
             username = conn.username;
             password = conn.password;
             address = conn.address;
             streamingPort = conn.streaming_port;
-            playbackProfile = dbh.getProfile(conn.playback_profile_id);
-            castingProfile = dbh.getProfile(conn.cast_profile_id);
+            playbackProfile = databaseHelper.getProfile(conn.playback_profile_id);
+            castingProfile = databaseHelper.getProfile(conn.cast_profile_id);
         }
 
         String encodedUsername = "";
@@ -228,7 +228,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // If a profile was given, use it instead of the old values
         if (playbackProfile.enabled
-                && ds.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
                 && app.isUnlocked()) {
             playUrl += "&profile=" + playbackProfile.name;
         } else {
@@ -321,8 +321,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private void startCasting() {
         logger.log(TAG, "startCasting() called");
 
-        String iconUrl = baseUrl + ds.getWebRoot();
-        String castUrl = baseUrl + ds.getWebRoot();
+        String iconUrl = baseUrl + dataStorage.getWebRoot();
+        String castUrl = baseUrl + dataStorage.getWebRoot();
         String subtitle = "";
         long duration = 0;
         int streamType = MediaInfo.STREAM_TYPE_NONE;

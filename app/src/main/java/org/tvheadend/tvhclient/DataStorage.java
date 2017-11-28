@@ -33,7 +33,7 @@ public class DataStorage {
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
-    private final TVHClientApplication tvh;
+    private final TVHClientApplication app;
     private SystemTime systemTime = new SystemTime();
     private DiscSpace discSpace = new DiscSpace();
     private volatile boolean loading = false;
@@ -47,7 +47,7 @@ public class DataStorage {
     private static DataStorage mInstance = null;
 
     public DataStorage() {
-        tvh = TVHClientApplication.getInstance();
+        app = TVHClientApplication.getInstance();
     }
 
     public static synchronized DataStorage getInstance() {
@@ -60,7 +60,7 @@ public class DataStorage {
      * Informs all listeners about the current connection state.
      */
     public void setConnectionState(final String state) {
-        tvh.broadcastMessage(state, null);
+        app.broadcastMessage(state, null);
     }
 
     /**
@@ -70,7 +70,7 @@ public class DataStorage {
      * @param p Packet
      */
     public void broadcastPacket(Packet p) {
-        tvh.broadcastMessage(Constants.ACTION_PLAYBACK_PACKET, p);
+        app.broadcastMessage(Constants.ACTION_PLAYBACK_PACKET, p);
     }
 
     /**
@@ -85,7 +85,7 @@ public class DataStorage {
             Collections.sort(tags, new Comparator<ChannelTag>() {
                 public int compare(ChannelTag x, ChannelTag y) {
                     if (x != null && y != null && x.name != null && y.name != null) {
-                        if (y.name.equals(tvh.getString(R.string.all_channels))) {
+                        if (y.name.equals(app.getString(R.string.all_channels))) {
                             return 1;
                         } else {
                             return x.name.toLowerCase(Locale.getDefault())
@@ -119,7 +119,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_TAG_ADD, tag);
+            app.broadcastMessage(Constants.ACTION_TAG_ADD, tag);
         }
     }
 
@@ -134,7 +134,7 @@ public class DataStorage {
             tags.remove(tag);
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_TAG_DELETE, tag);
+            app.broadcastMessage(Constants.ACTION_TAG_DELETE, tag);
         }
     }
 
@@ -180,7 +180,7 @@ public class DataStorage {
      */
     public void updateChannelTag(ChannelTag tag) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_TAG_UPDATE, tag);
+            app.broadcastMessage(Constants.ACTION_TAG_UPDATE, tag);
         }
     }
 
@@ -203,7 +203,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_CHANNEL_ADD, channel);
+            app.broadcastMessage(Constants.ACTION_CHANNEL_ADD, channel);
         }
     }
 
@@ -230,7 +230,7 @@ public class DataStorage {
             channels.remove(channel);
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_CHANNEL_DELETE, channel);
+            app.broadcastMessage(Constants.ACTION_CHANNEL_DELETE, channel);
         }
     }
 
@@ -276,7 +276,7 @@ public class DataStorage {
      */
     public void updateChannel(Channel ch) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_CHANNEL_UPDATE, ch);
+            app.broadcastMessage(Constants.ACTION_CHANNEL_UPDATE, ch);
         }
     }
 
@@ -288,7 +288,7 @@ public class DataStorage {
      */
     public void addProgram(Program p) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_PROGRAM_ADD, p);
+            app.broadcastMessage(Constants.ACTION_PROGRAM_ADD, p);
         }
     }
 
@@ -300,7 +300,7 @@ public class DataStorage {
      */
     public void removeProgram(Program p) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_PROGRAM_DELETE, p);
+            app.broadcastMessage(Constants.ACTION_PROGRAM_DELETE, p);
         }
     }
 
@@ -312,7 +312,7 @@ public class DataStorage {
      */
     public void updateProgram(Program p) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_PROGRAM_UPDATE, p);
+            app.broadcastMessage(Constants.ACTION_PROGRAM_UPDATE, p);
         }
     }
 
@@ -330,10 +330,10 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_DVR_ADD, rec);
+            app.broadcastMessage(Constants.ACTION_DVR_ADD, rec);
 
             // Add a notification for scheduled recordings
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(tvh);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
             if (prefs.getBoolean("pref_show_notifications", false) && rec.isScheduled()) {
                 NotificationHandler.getInstance().addNotification(rec.id);
             }
@@ -441,9 +441,9 @@ public class DataStorage {
             recordings.remove(rec);
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_DVR_DELETE, rec);
+            app.broadcastMessage(Constants.ACTION_DVR_DELETE, rec);
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(tvh);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
             if (prefs.getBoolean("pref_show_notifications", false)) {
                 NotificationHandler.getInstance().cancelNotification(rec.id);
             }
@@ -476,7 +476,7 @@ public class DataStorage {
      */
     public void updateRecording(Recording rec) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_DVR_UPDATE, rec);
+            app.broadcastMessage(Constants.ACTION_DVR_UPDATE, rec);
         }
     }
 
@@ -501,7 +501,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_SERIES_DVR_ADD, rec);
+            app.broadcastMessage(Constants.ACTION_SERIES_DVR_ADD, rec);
         }
     }
 
@@ -546,7 +546,7 @@ public class DataStorage {
             seriesRecordings.remove(srec);
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_SERIES_DVR_DELETE, srec);
+            app.broadcastMessage(Constants.ACTION_SERIES_DVR_DELETE, srec);
         }
     }
 
@@ -575,7 +575,7 @@ public class DataStorage {
      */
     public void updateSeriesRecording(SeriesRecording srec) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_SERIES_DVR_UPDATE, srec);
+            app.broadcastMessage(Constants.ACTION_SERIES_DVR_UPDATE, srec);
         }
     }
 
@@ -593,7 +593,7 @@ public class DataStorage {
             }
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_TIMER_DVR_ADD, rec);
+            app.broadcastMessage(Constants.ACTION_TIMER_DVR_ADD, rec);
         }
     }
 
@@ -636,7 +636,7 @@ public class DataStorage {
             timerRecordings.remove(rec);
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_TIMER_DVR_DELETE, rec);
+            app.broadcastMessage(Constants.ACTION_TIMER_DVR_DELETE, rec);
         }
     }
 
@@ -665,7 +665,7 @@ public class DataStorage {
      */
     public void updateTimerRecording(TimerRecording rec) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_TIMER_DVR_UPDATE, rec);
+            app.broadcastMessage(Constants.ACTION_TIMER_DVR_UPDATE, rec);
         }
     }
 
@@ -676,11 +676,11 @@ public class DataStorage {
      */
     public void setLoading(boolean b) {
         if (loading != b) {
-            tvh.broadcastMessage(Constants.ACTION_LOADING, b);
+            app.broadcastMessage(Constants.ACTION_LOADING, b);
         }
         loading = b;
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(tvh);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
         if (!loading && prefs.getBoolean("pref_show_notifications", false)) {
             long offset = 0;
             try {
@@ -716,7 +716,7 @@ public class DataStorage {
         // Add the default tag (all channels) to the list
         ChannelTag tag = new ChannelTag();
         tag.id = 0;
-        tag.name = tvh.getString(R.string.all_channels);
+        tag.name = app.getString(R.string.all_channels);
         addChannelTag(tag);
     }
 
@@ -732,7 +732,7 @@ public class DataStorage {
             subscriptions.add(s);
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_SUBSCRIPTION_ADD, s);
+            app.broadcastMessage(Constants.ACTION_SUBSCRIPTION_ADD, s);
         }
     }
 
@@ -758,7 +758,7 @@ public class DataStorage {
             subscriptions.remove(s);
         }
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_SUBSCRIPTION_DELETE, s);
+            app.broadcastMessage(Constants.ACTION_SUBSCRIPTION_DELETE, s);
         }
     }
 
@@ -803,7 +803,7 @@ public class DataStorage {
      */
     public void updateSubscription(Subscription s) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_SUBSCRIPTION_UPDATE, s);
+            app.broadcastMessage(Constants.ACTION_SUBSCRIPTION_UPDATE, s);
         }
     }
 
@@ -813,7 +813,7 @@ public class DataStorage {
      * @param t Ticket id
      */
     public void addTicket(HttpTicket t) {
-        tvh.broadcastMessage(Constants.ACTION_TICKET_ADD, t);
+        app.broadcastMessage(Constants.ACTION_TICKET_ADD, t);
     }
 
     /**
@@ -831,7 +831,7 @@ public class DataStorage {
         Collections.sort(list, Profiles.ProfilesNameSorter);
         dvrConfigs.addAll(list);
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_GET_DVR_CONFIG, null);
+            app.broadcastMessage(Constants.ACTION_GET_DVR_CONFIG, null);
         }
     }
 
@@ -844,7 +844,7 @@ public class DataStorage {
         Collections.sort(list, Profiles.ProfilesNameSorter);
         profiles.addAll(list);
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_GET_PROFILES, null);
+            app.broadcastMessage(Constants.ACTION_GET_PROFILES, null);
         }
     }
 
@@ -856,14 +856,14 @@ public class DataStorage {
     public void addSystemTime(SystemTime st) {
         systemTime = st;
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_SYSTEM_TIME, st);
+            app.broadcastMessage(Constants.ACTION_SYSTEM_TIME, st);
         }
     }
 
-    public void addDiscSpace(DiscSpace ds) {
-        discSpace = ds;
+    public void addDiscSpace(DiscSpace dataStorage) {
+        discSpace = dataStorage;
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_DISC_SPACE, ds);
+            app.broadcastMessage(Constants.ACTION_DISC_SPACE, dataStorage);
         }
     }
 
@@ -925,7 +925,7 @@ public class DataStorage {
 
     public void showMessage(String msg) {
         if (!loading) {
-            tvh.broadcastMessage(Constants.ACTION_SHOW_MESSAGE, msg);
+            app.broadcastMessage(Constants.ACTION_SHOW_MESSAGE, msg);
         }
     }
 

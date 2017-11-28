@@ -65,8 +65,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private boolean allowLoading = false;
 
     private TVHClientApplication app;
-    private DataStorage ds;
-    private MenuUtils mMenuUtils;
+    private DataStorage dataStorage;
+    private MenuUtils menuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         activity = getActivity();
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -99,7 +99,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            channel = ds.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
+            channel = dataStorage.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0));
             isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
             showProgramsFromTime = bundle.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, new Date().getTime());
         }
@@ -110,7 +110,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return;
         }
 
-        mMenuUtils = new MenuUtils(getActivity());
+        menuUtils = new MenuUtils(getActivity());
 
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -160,7 +160,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void onResume() {
         super.onResume();
         app.addListener(this);
-        if (!ds.isLoading()) {
+        if (!dataStorage.isLoading()) {
             populateList();
         }
     }
@@ -257,43 +257,43 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         switch (item.getItemId()) {
         case R.id.menu_search_imdb:
-            mMenuUtils.handleMenuSearchWebSelection(program.title);
+            menuUtils.handleMenuSearchWebSelection(program.title);
             return true;
 
         case R.id.menu_search_epg:
-            mMenuUtils.handleMenuSearchEpgSelection(program.title);
+            menuUtils.handleMenuSearchEpgSelection(program.title);
             return true;
 
         case R.id.menu_record_remove:
             Recording rec = program.recording;
             if (rec != null) {
                 if (rec.isRecording()) {
-                    mMenuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
                 } else if (rec.isScheduled()) {
-                    mMenuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
                 } else {
-                    mMenuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                    menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                 }
             }
             return true;
 
         case R.id.menu_record_once:
-            mMenuUtils.handleMenuRecordSelection(program.id);
+            menuUtils.handleMenuRecordSelection(program.id);
             return true;
 
         case R.id.menu_record_once_custom_profile:
             // Create the list of available recording profiles that the user can select from
-            String[] dvrConfigList = new String[ds.getDvrConfigs().size()];
-            for (int i = 0; i < ds.getDvrConfigs().size(); i++) {
-                dvrConfigList[i] = ds.getDvrConfigs().get(i).name;
+            String[] dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
+            for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
+                dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
             }
 
             // Get the selected recording profile to highlight the
             // correct item in the list of the selection dialog
             int dvrConfigNameValue = 0;
-            DatabaseHelper dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-            final Connection conn = dbh.getSelectedConnection();
-            final Profile p = dbh.getProfile(conn.recording_profile_id);
+            DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+            final Connection conn = databaseHelper.getSelectedConnection();
+            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
             if (p != null) {
                 for (int i = 0; i < dvrConfigList.length; i++) {
                     if (dvrConfigList[i].equals(p.name)) {
@@ -327,11 +327,11 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_record_series:
-            mMenuUtils.handleMenuSeriesRecordSelection(program.title);
+            menuUtils.handleMenuSeriesRecordSelection(program.title);
             return true;
 
         case R.id.menu_play:
-            mMenuUtils.handleMenuPlaySelection(program.channel.id, -1);
+            menuUtils.handleMenuPlaySelection(program.channel.id, -1);
             return true;
 
         default:
@@ -378,11 +378,11 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         case R.id.menu_play:
             // Open a new activity that starts playing the first program that is
             // currently transmitted over this channel
-            mMenuUtils.handleMenuPlaySelection(channel.id, -1);
+            menuUtils.handleMenuPlaySelection(channel.id, -1);
             return true;
 
         case R.id.menu_genre_color_info_programs:
-            mMenuUtils.handleMenuGenreColorSelection();
+            menuUtils.handleMenuGenreColorSelection();
             return true;
 
         default:

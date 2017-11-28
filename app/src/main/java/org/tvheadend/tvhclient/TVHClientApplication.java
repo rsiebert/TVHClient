@@ -37,17 +37,14 @@ public class TVHClientApplication extends Application implements BillingProcesso
     private final List<HTSListener> listeners = new ArrayList<>();
     // This handles all billing related activities like purchasing and checking
     // if a purchase was made 
-    private BillingProcessor bp;
-
+    private BillingProcessor billingProcessor;
 
     private Logger logger = null;
-    private static TVHClientApplication mInstance;
+    private static TVHClientApplication instance;
 
     public static synchronized TVHClientApplication getInstance() {
-        return mInstance;
+        return instance;
     }
-
-
 
     /**
      * Adds a single listener to the list.
@@ -172,20 +169,20 @@ public class TVHClientApplication extends Application implements BillingProcesso
         }
         refWatcher = LeakCanary.install(this);
 
-        mInstance = this;
+        instance = this;
         logger = Logger.getInstance();
-        DataStorage ds = DataStorage.getInstance();
+        DataStorage dataStorage = DataStorage.getInstance();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("pref_debug_mode", false)) {
             logger.enableLogToFile();
         }
 
-        bp = new BillingProcessor(this, BillingUtils.getPublicKey(this), this);
+        billingProcessor = new BillingProcessor(this, BillingUtils.getPublicKey(this), this);
         if (!BillingProcessor.isIabServiceAvailable(this)) {
             logger.log(TAG, "onCreate: billing not available");
         } else {
-            if (!bp.loadOwnedPurchasesFromGoogle()) {
+            if (!billingProcessor.loadOwnedPurchasesFromGoogle()) {
                 logger.log(TAG, "onCreate: Could not load purchase information");
             }
         }
@@ -194,7 +191,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
         ChannelTag tag = new ChannelTag();
         tag.id = 0;
         tag.name = getString(R.string.all_channels);
-        ds.addChannelTag(tag);
+        dataStorage.addChannelTag(tag);
 
         // Build a CastConfiguration object and initialize VideoCastManager
         CastConfiguration options = new CastConfiguration.Builder(Constants.CAST_APPLICATION_ID)
@@ -244,13 +241,13 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return BuildConfig.DEBUG_MODE || bp.isPurchased(Constants.UNLOCKER);
+        return BuildConfig.DEBUG_MODE || billingProcessor.isPurchased(Constants.UNLOCKER);
     }
 
     @Override
     public void onTerminate() {
-        if (bp != null) {
-            bp.release();
+        if (billingProcessor != null) {
+            billingProcessor.release();
         }
 
         logger.disableLogToFile();
@@ -264,7 +261,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
      * @return The billing processor object
      */
     public BillingProcessor getBillingProcessor() {
-        return bp;
+        return billingProcessor;
     }
 
     @Override
@@ -279,7 +276,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
-        if (bp.isValidTransactionDetails(details)) {
+        if (billingProcessor.isValidTransactionDetails(details)) {
             Snackbar.make(null, getString(R.string.unlocker_purchase_successful),
                     Snackbar.LENGTH_LONG).show();
         } else {

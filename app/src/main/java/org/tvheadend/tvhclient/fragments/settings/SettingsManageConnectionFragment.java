@@ -70,7 +70,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private Connection conn = null;
     private boolean connectionChanged;
 
-    private DatabaseHelper dbh;
+    private DatabaseHelper databaseHelper;
 
     @Override
     public void onDestroy() {
@@ -90,7 +90,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
 
         // Get the connectivity preferences for later usage
         prefName = (EditTextPreference) findPreference("pref_name");
@@ -133,7 +133,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             // If an index is given then we want to edit this connection
             // Otherwise create a new connection with default values.
             if (connId > 0) {
-                conn = dbh.getConnection(connId);
+                conn = databaseHelper.getConnection(connId);
                 if (actionBarInterface != null) {
                     actionBarInterface.setActionBarTitle(getString(R.string.edit_connection));
                     actionBarInterface.setActionBarSubtitle(conn != null ? conn.name : "");
@@ -195,7 +195,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         conn.wol_port = 9;
         conn.wol_broadcast = false;
         // If this is the first connection make it active
-        conn.selected = (dbh.getConnections().size() == 0);
+        conn.selected = (databaseHelper.getConnections().size() == 0);
     }
 
     @Override
@@ -368,18 +368,18 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         // If the current connection is set as selected
         // we need to unselect the previous one.
         if (prefSelected.isChecked()) {
-            Connection prevSelectedConn = dbh.getSelectedConnection();
+            Connection prevSelectedConn = databaseHelper.getSelectedConnection();
             if (prevSelectedConn != null) {
                 prevSelectedConn.selected = false;
-                dbh.updateConnection(prevSelectedConn);
+                databaseHelper.updateConnection(prevSelectedConn);
             }
         }
 
         // If we have an id then the connection shall be updated
         if (conn.id > 0) {
-            dbh.updateConnection(conn);
+            databaseHelper.updateConnection(conn);
         } else {
-            dbh.addConnection(conn);
+            databaseHelper.addConnection(conn);
         }
         
         // Nullify the connection so that we start fresh when

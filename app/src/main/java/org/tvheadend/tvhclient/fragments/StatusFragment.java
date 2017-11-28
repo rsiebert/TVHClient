@@ -47,8 +47,8 @@ public class StatusFragment extends Fragment implements HTSListener {
     private String connectionStatus = "";
 
     private TVHClientApplication app;
-    private DatabaseHelper dbh;
-    private DataStorage ds;
+    private DatabaseHelper databaseHelper;
+    private DataStorage dataStorage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,9 +83,9 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        dbh = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         app = TVHClientApplication.getInstance();
-        ds = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
 
         if (activity instanceof ActionBarInterface) {
             actionBarInterface = (ActionBarInterface) activity;
@@ -110,7 +110,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         // information, otherwise show the connection status and the cause of
         // possible connection problems. 
         additionalInformationLayout.setVisibility(View.GONE);
-        if (ds.isLoading()) {
+        if (dataStorage.isLoading()) {
             onMessage(Constants.ACTION_LOADING, true);
         } else {
             onMessage(connectionStatus, false);
@@ -219,7 +219,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         showDiscSpace();
 
         // Show the number of available channels
-        final String text = ds.getChannels().size() + " " + getString(R.string.available);
+        final String text = dataStorage.getChannels().size() + " " + getString(R.string.available);
         channels.setText(text);
     }
 
@@ -231,9 +231,9 @@ public class StatusFragment extends Fragment implements HTSListener {
 	    // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
-        if (dbh != null) {
-            noConnectionsDefined = dbh.getConnections().isEmpty();
-            conn = dbh.getSelectedConnection();
+        if (databaseHelper != null) {
+            noConnectionsDefined = databaseHelper.getConnections().isEmpty();
+            conn = databaseHelper.getSelectedConnection();
         }
 
         // Show the details about the current connection or an information that
@@ -290,7 +290,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * showing large numbers. This depends on the size of the value.
      */
     private void showDiscSpace() {
-        DiscSpace discSpace = ds.getDiscSpace();
+        DiscSpace discSpace = dataStorage.getDiscSpace();
         if (discSpace == null) {
             freediscspace.setText(R.string.unknown);
             totaldiscspace.setText(R.string.unknown);
@@ -333,7 +333,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         String currentRecText = "";
 
         // Get the programs that are currently being recorded
-        for (Recording rec : ds.getRecordings()) {
+        for (Recording rec : dataStorage.getRecordings()) {
             if (rec.isRecording()) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
                 if (rec.channel != null) {
@@ -346,13 +346,13 @@ public class StatusFragment extends Fragment implements HTSListener {
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText
                 : getString(R.string.nothing));
 
-        final int completedRecCount = ds.getRecordingsByType(
+        final int completedRecCount = dataStorage.getRecordingsByType(
                 Constants.RECORDING_TYPE_COMPLETED).size();
-        final int scheduledRecCount = ds.getRecordingsByType(
+        final int scheduledRecCount = dataStorage.getRecordingsByType(
                 Constants.RECORDING_TYPE_SCHEDULED).size();
-        final int failedRecCount = ds.getRecordingsByType(
+        final int failedRecCount = dataStorage.getRecordingsByType(
                 Constants.RECORDING_TYPE_FAILED).size();
-        final int removedRecCount = ds.getRecordingsByType(
+        final int removedRecCount = dataStorage.getRecordingsByType(
                 Constants.RECORDING_TYPE_REMOVED).size();
 
         // Show how many different recordings are available
@@ -368,27 +368,27 @@ public class StatusFragment extends Fragment implements HTSListener {
                 R.plurals.removed_recordings, removedRecCount, removedRecCount));
 
         // Show how many series recordings are available
-        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (dataStorage.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             seriesRec.setVisibility(View.GONE);
         } else {
-            final int seriesRecCount = ds.getSeriesRecordings().size();
+            final int seriesRecCount = dataStorage.getSeriesRecordings().size();
             seriesRec.setText(getResources().getQuantityString(
                     R.plurals.series_recordings, seriesRecCount, seriesRecCount));
         }
 
         // Show how many timer recordings are available if the server supports
         // it and the application is unlocked
-        if (ds.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
+        if (dataStorage.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
             timerRec.setVisibility(View.GONE);
         } else {
-            final int timerRecCount = ds.getTimerRecordings().size();
+            final int timerRecCount = dataStorage.getTimerRecordings().size();
             timerRec.setText(getResources().getQuantityString(
                     R.plurals.timer_recordings, timerRecCount, timerRecCount));
         }
 
-        String version = String.valueOf(ds.getProtocolVersion())
+        String version = String.valueOf(dataStorage.getProtocolVersion())
                 + "   (" + getString(R.string.server) + ": "
-                + ds.getServerName() + " " + ds.getServerVersion() + ")";
+                + dataStorage.getServerName() + " " + dataStorage.getServerVersion() + ")";
         serverApiVersion.setText(version);
     }
 }

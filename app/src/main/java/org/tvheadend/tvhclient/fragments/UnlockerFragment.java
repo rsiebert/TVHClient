@@ -20,14 +20,14 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class UnlockerFragment extends Fragment {
 
-    private WebView mWebView;
-    private TVHClientApplication mMainApplication;
+    private WebView webView;
+    private TVHClientApplication app;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.webview_layout, container, false);
-        mWebView = view.findViewById(R.id.webview);
+        webView = view.findViewById(R.id.webview);
         return view;
     }
 
@@ -35,19 +35,19 @@ public class UnlockerFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        mMainApplication = (TVHClientApplication) getActivity().getApplication();
+        app = (TVHClientApplication) getActivity().getApplication();
         loadContents();
     }
 
     private void loadContents() {
         // TODO put the loading stuff into a separate task
         String content = MiscUtils.loadHtmlFromFile(getActivity(), "features", "en");
-        mWebView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
         // TODO assign a style to the webview
         if (MiscUtils.getThemeId(getActivity()) == R.style.CustomTheme_Light) {
-            mWebView.setBackgroundColor(Color.WHITE);
+            webView.setBackgroundColor(Color.WHITE);
         } else {
-            mWebView.setBackgroundColor(Color.BLACK);
+            webView.setBackgroundColor(Color.BLACK);
         }
     }
 
@@ -65,13 +65,13 @@ public class UnlockerFragment extends Fragment {
                 return true;
             case R.id.menu_purchase:
                 // Open the activity where the user can actually make the purchase
-                if (mMainApplication.getBillingProcessor().isInitialized()) {
-                    mMainApplication.getBillingProcessor().purchase(getActivity(), Constants.UNLOCKER);
+                if (app.getBillingProcessor().isInitialized()) {
+                    app.getBillingProcessor().purchase(getActivity(), Constants.UNLOCKER);
                 }
                 // Check if the user has already made the purchase. We check this
                 // here because this activity is not information about any changes
                 // via the billing event interface.
-                if (mMainApplication.getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
+                if (app.getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
                     if (getView() != null) {
                         Snackbar.make(getView(), getString(R.string.unlocker_already_purchased),
                                 Snackbar.LENGTH_SHORT).show();
@@ -86,7 +86,7 @@ public class UnlockerFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!mMainApplication.getBillingProcessor().handleActivityResult(requestCode, resultCode, data)) {
+        if (!app.getBillingProcessor().handleActivityResult(requestCode, resultCode, data)) {
             // The billing activity was not shown or did nothing. Nothing needs to be done
             super.onActivityResult(requestCode, resultCode, data);
         }

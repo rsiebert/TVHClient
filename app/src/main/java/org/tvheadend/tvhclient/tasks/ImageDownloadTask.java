@@ -12,10 +12,10 @@ import java.net.URL;
 
 
 public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
-    private final ImageDownloadTaskCallback mCallback;
+    private final ImageDownloadTaskCallback callback;
 
     public ImageDownloadTask(ImageDownloadTaskCallback callback) {
-        mCallback = callback;
+        this.callback = callback;
     }
 
     @Override
@@ -24,8 +24,8 @@ public class ImageDownloadTask extends AsyncTask<String, Integer, Drawable> {
     }
 
     protected void onPostExecute(Drawable image) {
-        if (mCallback != null) {
-            mCallback.notify(image);
+        if (callback != null) {
+            callback.notify(image);
         }
     }
 

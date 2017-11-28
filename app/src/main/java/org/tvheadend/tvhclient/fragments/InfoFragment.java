@@ -20,13 +20,13 @@ import java.util.regex.Pattern;
 
 public class InfoFragment extends Fragment {
 
-    private WebView mWebView;
+    private WebView webView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.webview_layout, container, false);
-        mWebView = v.findViewById(R.id.webview);
+        webView = v.findViewById(R.id.webview);
         return v;
     }
 
@@ -44,12 +44,12 @@ public class InfoFragment extends Fragment {
         String version = BuildConfig.VERSION_NAME + " (" + BuildConfig.BUILD_VERSION + ")";
         content = (Pattern.compile("APP_VERSION").matcher(content).replaceAll(version));
 
-        mWebView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
         // TODO assign a style to the webview
         if (MiscUtils.getThemeId(getActivity()) == R.style.CustomTheme_Light) {
-            mWebView.setBackgroundColor(Color.WHITE);
+            webView.setBackgroundColor(Color.WHITE);
         } else {
-            mWebView.setBackgroundColor(Color.BLACK);
+            webView.setBackgroundColor(Color.BLACK);
         }
     }
 
