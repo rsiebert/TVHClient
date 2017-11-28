@@ -10,11 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.model.Model;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Comparator;

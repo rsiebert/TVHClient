@@ -16,7 +16,6 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
 import org.tvheadend.tvhclient.model.Channel;
@@ -35,6 +34,7 @@ import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.SystemTime;
 import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.io.BufferedInputStream;
 import java.io.File;

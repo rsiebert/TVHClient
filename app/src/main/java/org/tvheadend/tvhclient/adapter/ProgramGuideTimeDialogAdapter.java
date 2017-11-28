@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

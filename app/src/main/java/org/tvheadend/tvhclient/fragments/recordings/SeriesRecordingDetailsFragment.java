@@ -19,9 +19,9 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
-import org.tvheadend.tvhclient.model.SeriesRecording;
 
 public class SeriesRecordingDetailsFragment extends DialogFragment {
 
