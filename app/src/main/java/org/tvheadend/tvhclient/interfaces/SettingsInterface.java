@@ -14,4 +14,5 @@ public interface SettingsInterface {
     void showNotifications();
     void showCasting();
     void showUserInterface();
+    void showAdvanced();
 }

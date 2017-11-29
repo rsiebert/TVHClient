@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.fragments.settings.SettingsAdvancedFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsCastingFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsManageConnectionFragment;
@@ -61,6 +62,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     private final static int NOTIFICATIONS = 7;
     private final static int CASTING = 8;
     private final static int USER_INTERFACE = 9;
+    private final static int ADVANCED = 10;
 
     private int currentSettingsMode = MAIN_SETTINGS;
 
@@ -167,6 +169,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
         case NOTIFICATIONS:
         case CASTING:
         case USER_INTERFACE:
+        case ADVANCED:
             // Any changes in these fragments need to be changed when the back
             // or home key was pressed. This is only available in the activity,
             // not in the fragment. Therefore trigger the saving from here.
@@ -331,9 +334,19 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
 
     @Override
     public void showUserInterface() {
-        currentSettingsMode = PROFILES;
+        currentSettingsMode = USER_INTERFACE;
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsUserInterfaceFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void showAdvanced() {
+        currentSettingsMode = ADVANCED;
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsAdvancedFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
