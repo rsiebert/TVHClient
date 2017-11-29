@@ -141,44 +141,6 @@ public class Utils {
     }
 
     /**
-     * Removes the recording with the given id from the server.
-     *
-     * @param activity     Activity context
-     * @param id           Id of the recording
-     * @param type         Type of the recording
-     * @param manualRemove True to remove the recording from the internal list and don't wait for the server response
-     */
-    public static void removeRecording(final Activity activity, final String id,
-            final String type, boolean manualRemove) {
-
-        final Intent intent = new Intent(activity, HTSService.class);
-        intent.setAction(type);
-        intent.putExtra("id", id);
-        activity.startService(intent);
-
-        // If the channel is not set then the 'all channels' was set.
-        // This is usually only the case in the timer recording screen.
-        // When a recording without a channel is removed, the server
-        // does not sent a confirmation. So manually remove the recording from
-        // the list.
-        if (manualRemove) {
-            if (type.equals("deleteTimerecEntry")) {
-                DataStorage.getInstance().removeTimerRecording(id);
-            }
-        }
-    }
-
-    public static void cancelRecording(final Context context, final Recording rec) {
-        if (rec == null) {
-            return;
-        }
-        final Intent intent = new Intent(context, HTSService.class);
-        intent.setAction("cancelDvrEntry");
-        intent.putExtra("id", rec.id);
-        context.startService(intent);
-    }
-
-    /**
      * Shows or hides certain items from the program menu. This depends on the
      * current state of the program.
      *

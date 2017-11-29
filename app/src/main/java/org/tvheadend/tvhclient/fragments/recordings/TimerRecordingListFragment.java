@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.fragments.recordings;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -19,9 +18,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
@@ -33,9 +29,9 @@ import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TimerRecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
@@ -206,46 +202,13 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return true;
 
         case R.id.menu_record_remove_all:
-            // Show a confirmation dialog before deleting all recordings
-            new MaterialDialog.Builder(activity)
-                    .title(R.string.record_remove_all)
-                    .content(R.string.remove_all_recordings)
-                    .positiveText(getString(R.string.remove))
-                    .negativeText(getString(R.string.cancel))
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            removeAllRecordings();
-                        }
-                    }).show();
+            CopyOnWriteArrayList<TimerRecording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
+            menuUtils.handleMenuRemoveAllTimerRecordingSelection(list);
             return true;
 
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * Calls the service to remove the timer recordings. The service is
-     * called in a certain interval to prevent too many calls to the interface.
-     */
-    private void removeAllRecordings() {
-        new Thread() {
-            public void run() {
-                for (int i = 0; i < adapter.getCount(); ++i) {
-                    final TimerRecording trec = adapter.getItem(i);
-                    if (trec != null) {
-                        Utils.removeRecording(activity, trec.id,
-                                "deleteTimerecEntry", false);
-                    }
-                    try {
-                        sleep(Constants.THREAD_SLEEPING_TIME);
-                    } catch (InterruptedException e) {
-                        // NOP
-                    }
-                }
-            }
-        }.start();
     }
 
     @Override

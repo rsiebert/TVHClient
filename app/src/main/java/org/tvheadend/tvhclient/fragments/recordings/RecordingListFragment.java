@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +16,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.Logger;
@@ -32,9 +28,9 @@ import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
@@ -163,88 +159,13 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_record_remove_all:
-            // Show a confirmation dialog before deleting all recordings
-            new MaterialDialog.Builder(activity)
-                    .title(R.string.record_remove_all)
-                    .content(R.string.confirm_remove_all)
-                    .positiveText(getString(R.string.remove))
-                    .negativeText(getString(R.string.cancel))
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            if (rec != null && (rec.isRecording() || rec.isScheduled())) {
-                                cancelAllRecordings();
-                            } else {
-                                removeAllRecordings();
-                            }
-                        }
-                    }).show();
+            CopyOnWriteArrayList<Recording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
+            menuUtils.handleMenuRemoveAllRecordingsSelection(list);
             return true;
 
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * Calls the service to cancel the scheduled recordings. The service is
-     * called in a certain interval to prevent too many calls to the interface.
-     */
-    private void cancelAllRecordings() {
-
-        // Create a copy of all recordings from the adapter. This ensures that
-        // we still have the same id's at the correct index in the array when the
-        // adapter contents were refreshed.
-        final ArrayList<Recording> idList = new ArrayList<>();
-        for (int i = 0; i < adapter.getCount(); ++i) {
-            idList.add(adapter.getItem(i));
-        }
-
-        new Thread() {
-            public void run() {
-                for (int i = 0; i < idList.size(); ++i) {
-                    logger.log(TAG, "Cancelling recording id " + idList.get(i).title);
-                    Utils.cancelRecording(activity, idList.get(i));
-                    try {
-                        sleep(Constants.THREAD_SLEEPING_TIME);
-                    } catch (InterruptedException e) {
-                        logger.log(TAG, "Error cancelling all recordings, " + e.getLocalizedMessage());
-                    }
-                }
-            }
-        }.start();
-    }
-
-    /**
-     * Calls the service to remove the scheduled recordings. The service is
-     * called in a certain interval to prevent too many calls to the interface.
-     */
-    private void removeAllRecordings() {
-
-        // Create a copy of all recordings id's from the adapter. This ensures that
-        // we still have the same id's at the correct index in the array when the
-        // adapter contents were refreshed.
-        final ArrayList<String> idList = new ArrayList<>();
-        for (int i = 0; i < adapter.getCount(); ++i) {
-            final Recording rec = adapter.getItem(i);
-            if (rec != null) {
-                idList.add(String.valueOf(rec.id));
-            }
-        }
-
-        new Thread() {
-            public void run() {
-                for (int i = 0; i < idList.size(); ++i) {
-                    logger.log(TAG, "Removing recording id " + idList.get(i));
-                    Utils.removeRecording(activity, idList.get(i), "deleteDvrEntry", false);
-                    try {
-                        sleep(Constants.THREAD_SLEEPING_TIME);
-                    } catch (InterruptedException e) {
-                        logger.log(TAG, "Error removing all recordings, " + e.getLocalizedMessage());
-                    }
-                }
-            }
-        }.start();
     }
 
     @Override

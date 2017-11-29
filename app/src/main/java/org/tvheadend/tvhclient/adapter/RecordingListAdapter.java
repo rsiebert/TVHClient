@@ -57,6 +57,10 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         selectedPosition = pos;
     }
 
+    public List<Recording> getAllItems() {
+        return list;
+    }
+
     static class ViewHolder {
         public ImageView icon;
         public TextView icon_text;

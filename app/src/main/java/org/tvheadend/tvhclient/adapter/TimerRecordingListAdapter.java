@@ -169,4 +169,8 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         }
         return null;
     }
+
+    public List<TimerRecording> getAllItems() {
+        return list;
+    }
 }

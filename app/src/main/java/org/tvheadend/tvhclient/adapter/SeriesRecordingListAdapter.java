@@ -156,4 +156,8 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         }
         return null;
     }
+
+    public List<SeriesRecording> getAllItems() {
+        return list;
+    }
 }

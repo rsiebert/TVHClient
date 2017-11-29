@@ -6,8 +6,10 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
@@ -25,6 +27,9 @@ import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Profile;
+import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -338,5 +343,105 @@ public class MenuUtils {
                     activity.startService(intent);
                 })
                 .show();
+    }
+
+    public void handleMenuRemoveAllRecordingsSelection(List<Recording> items) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_remove_all)
+                .content(R.string.confirm_remove_all)
+                .positiveText(activity.getString(R.string.remove))
+                .negativeText(activity.getString(R.string.cancel))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        new Thread() {
+                            public void run() {
+                                for (Recording item : items) {
+                                    final Intent intent = new Intent(activity, HTSService.class);
+                                    intent.putExtra("id", item.id);
+                                    if (item.isRecording() || item.isScheduled()) {
+                                        intent.setAction("cancelDvrEntry");
+                                    } else {
+                                        intent.setAction("deleteDvrEntry");
+                                    }
+                                    activity.startService(intent);
+                                    try {
+                                        sleep(500);
+                                    } catch (InterruptedException e) {
+                                        // NOP
+                                    }
+                                }
+                            }
+                        }.start();
+                    }
+                }).show();
+    }
+
+    public void handleMenuRemoveAllSeriesRecordingSelection(List<SeriesRecording> items) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_remove_all)
+                .content(R.string.remove_all_recordings)
+                .positiveText(activity.getString(R.string.remove))
+                .negativeText(activity.getString(R.string.cancel))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        new Thread() {
+                            public void run() {
+                                for (SeriesRecording item : items) {
+                                    final Intent intent = new Intent(activity, HTSService.class);
+                                    intent.setAction("deleteAutorecEntry");
+                                    intent.putExtra("id", item.id);
+                                    activity.startService(intent);
+                                    try {
+                                        sleep(500);
+                                    } catch (InterruptedException e) {
+                                        // NOP
+                                    }
+                                }
+                            }
+                        }.start();
+                    }
+                }).show();
+    }
+
+    public void handleMenuRemoveAllTimerRecordingSelection(List<TimerRecording> items) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        new MaterialDialog.Builder(activity)
+                .title(R.string.record_remove_all)
+                .content(R.string.remove_all_recordings)
+                .positiveText(activity.getString(R.string.remove))
+                .negativeText(activity.getString(R.string.cancel))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        new Thread() {
+                            public void run() {
+                                for (TimerRecording item : items) {
+                                    final Intent intent = new Intent(activity, HTSService.class);
+                                    intent.setAction("deleteTimerecEntry");
+                                    intent.putExtra("id", item.id);
+                                    activity.startService(intent);
+                                    try {
+                                        sleep(500);
+                                    } catch (InterruptedException e) {
+                                        // NOP
+                                    }
+                                }
+                            }
+                        }.start();
+                    }
+                }).show();
     }
 }
