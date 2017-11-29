@@ -50,10 +50,6 @@ public class Constants {
     public static final String BUNDLE_NOTIFICATION_MSG = "notificationMsg";
     public static final String BUNDLE_DOWNLOAD_DIR = "downloadDirectory";
 
-    // Defines what action shall be done
-    public static final int ACTION_PLAY = 1;
-    public static final int ACTION_CAST = 3;
-
     // Differentiates the different types of recordings
     public static final int RECORDING_TYPE_COMPLETED = 1;
     public static final int RECORDING_TYPE_SCHEDULED = 2;

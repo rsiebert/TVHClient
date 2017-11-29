@@ -39,6 +39,10 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
     private final static String TAG = PlayActivity.class.getSimpleName();
 
+    // Defines what action shall be done
+    private final int ACTION_PLAY = 1;
+    private final int ACTION_CAST = 2;
+
     private TVHClientApplication app;
     private int action;
 
@@ -66,7 +70,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         dataStorage = DataStorage.getInstance();
         
         // If a play intent was sent no action is given, so default to play
-        action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, Constants.ACTION_PLAY);
+        action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
         ch = dataStorage.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
@@ -84,7 +88,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // If the cast menu button is connected then assume playing means casting
         if (VideoCastManager.getInstance().isConnected()) {
-            action = Constants.ACTION_CAST;
+            action = ACTION_CAST;
         }
     }
 
@@ -134,7 +138,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         baseUrl += address + ":" + streamingPort;
 
         switch (action) {
-        case Constants.ACTION_PLAY:
+        case ACTION_PLAY:
             // Check if the recording exists in the download folder, if not
             // stream it from the server
             if (rec != null && app.isUnlocked()) {
@@ -156,7 +160,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             this.startService(intent);
             break;
 
-        case Constants.ACTION_CAST:
+        case ACTION_CAST:
             if (ch != null && ch.number > 0) {
                 logger.log(TAG, "initAction: Starting to cast channel '" + ch.name + "'");
                 startCasting();
