@@ -97,7 +97,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            connectionStatus = bundle.getString(Constants.BUNDLE_CONNECTION_STATUS);
+            connectionStatus = bundle.getString("connection_status");
         }
     }
 

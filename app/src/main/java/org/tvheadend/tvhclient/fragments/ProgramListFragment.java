@@ -100,8 +100,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         Bundle bundle = getArguments();
         if (bundle != null) {
             channel = dataStorage.getChannel(bundle.getLong("channelId", 0));
-            isDualPane = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
-            showProgramsFromTime = bundle.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, new Date().getTime());
+            isDualPane = bundle.getBoolean("dual_pane", false);
+            showProgramsFromTime = bundle.getLong("show_programs_from_time", new Date().getTime());
         }
 
         // If the channel is null exit

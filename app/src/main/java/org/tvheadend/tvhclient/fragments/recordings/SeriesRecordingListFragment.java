@@ -81,7 +81,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Get the passed argument so we know which recording type to display
         Bundle bundle = getArguments();
         if (bundle != null) {
-            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+            isDualPane  = bundle.getBoolean("dual_pane", false);
         }
 
         // This is the default view for the channel list adapter. Other views can be

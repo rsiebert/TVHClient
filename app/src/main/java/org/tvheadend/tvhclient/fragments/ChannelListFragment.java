@@ -109,9 +109,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         Bundle bundle = getArguments();
         if (bundle != null) {
             showOnlyChannels = bundle.getBoolean(Constants.BUNDLE_SHOWS_ONLY_CHANNELS, false);
-            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
-            channelTimeSelection = bundle.getInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION);
-            showProgramsFromTime = bundle.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME);
+            isDualPane  = bundle.getBoolean("dual_pane", false);
+            channelTimeSelection = bundle.getInt("channel_time_selection");
+            showProgramsFromTime = bundle.getLong("show_programs_from_time");
         }
         // When only channels shall be seen, a reduced adapter layout and list
         // view layout is used.

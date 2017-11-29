@@ -217,7 +217,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         // Get the connection status to check if the profile can be loaded from
         // the server. If not show a message and return
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final String connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, "");
+        final String connectionStatus = prefs.getString("last_connection_state", "");
         if (!connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
             if (getView() != null) {
                 Snackbar.make(getView(), R.string.err_connect, Snackbar.LENGTH_LONG).show();

@@ -133,7 +133,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                         Bundle args = new Bundle();
                         args.putLong("eventId", program.id);
                         args.putLong("channelId", program.channel.id);
-                        args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
+                        args.putBoolean("dual_pane", false);
                         args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
                         DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
                         newFragment.show(getSupportFragmentManager(), "dialog");
@@ -144,7 +144,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                         final Recording recording = (Recording) model;
                         Bundle args = new Bundle();
                         args.putLong("dvrId", recording.id);
-                        args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
+                        args.putBoolean("dual_pane", false);
                         args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
                         DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
                         newFragment.show(getSupportFragmentManager(), "dialog");

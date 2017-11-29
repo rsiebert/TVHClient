@@ -80,7 +80,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            isDualPane  = bundle.getBoolean(Constants.BUNDLE_DUAL_PANE, false);
+            isDualPane  = bundle.getBoolean("dual_pane", false);
         }
 
         // This is the default view for the channel list adapter. Other views can be

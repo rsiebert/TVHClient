@@ -21,52 +21,28 @@ public class Constants {
 
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";
-    public static final String BUNDLE_RECORDING_TYPE = "recordingType";
-    public static final String BUNDLE_DUAL_PANE = "isDualPane";
     public static final String BUNDLE_SERIES_RECORDING_ID = "autorecId";
     public static final String BUNDLE_TIMER_RECORDING_ID = "timerId";
     public static final String BUNDLE_RECONNECT = "reconnect";
     public static final String BUNDLE_RESTART = "reload";
     public static final String BUNDLE_COUNT = "count";
-    public static final String BUNDLE_MENU_POSITION = "menuPosition";
     public static final String BUNDLE_SHOW_CONTROLS = "showControls";
     public static final String BUNDLE_EPG_START_TIME = "epgStartTime";
     public static final String BUNDLE_EPG_END_TIME = "epgEndTime";
-    public static final String BUNDLE_EPG_HOURS_TO_SHOW = "epgHoursToShow";
     public static final String BUNDLE_EPG_INDEX = "showControls";
-    public static final String BUNDLE_CONNECTION_SETTINGS_SHOWN = "connectionSettingsShown";
-    public static final String BUNDLE_CONNECTION_STATUS = "connectionStatus";
     public static final String BUNDLE_CONNECTION_ID = "connectionId";
     public static final String BUNDLE_MANAGE_CONNECTIONS = "manageConnections";
     public static final String BUNDLE_SETTINGS_MODE = "settingsMode";
     public static final String BUNDLE_EPG_PIXELS_PER_MINUTE = "pixelsPerMinute";
     public static final String BUNDLE_EPG_DISPLAY_WIDTH = "displayWidth";
     public static final String BUNDLE_ACTION = "action";
-    public static final String BUNDLE_SHOW_PROGRAMS_FROM_TIME = "programsFromTime";
-    public static final String BUNDLE_CHANNEL_TIME_SELECTION = "channelTimeDialogSelection";
     public static final String BUNDLE_NOTIFICATION_MSG = "notificationMsg";
-    public static final String BUNDLE_DOWNLOAD_DIR = "downloadDirectory";
 
     // Differentiates the different types of recordings
     public static final int RECORDING_TYPE_COMPLETED = 1;
     public static final int RECORDING_TYPE_SCHEDULED = 2;
     public static final int RECORDING_TYPE_FAILED = 3;
     public static final int RECORDING_TYPE_REMOVED = 4;
-
-    // Strings that determine the navigation drawer menu position and the list
-    // positions so it can be reselected after an orientation change.
-    public static final String MENU_STACK = "menu_stack";
-    public static final String MENU_POSITION = "menu_position";
-    public static final String CHANNEL_LIST_POSITION = "channel_list_position";
-    public static final String PROGRAM_LIST_POSITION = "program_list_position";
-    public static final String COMPLETED_RECORDING_LIST_POSITION = "completed_recording_list_position";
-    public static final String SCHEDULED_RECORDING_LIST_POSITION = "scheduled_recording_list_position";
-    public static final String SERIES_RECORDING_LIST_POSITION = "series_recording_list_position";
-    public static final String TIMER_RECORDING_LIST_POSITION = "timer_recording_list_position";
-    public static final String FAILED_RECORDING_LIST_POSITION = "failed_recording_list_position";
-    public static final String REMOVED_RECORDING_LIST_POSITION = "removed_recording_list_position";
-    public static final String LAST_CONNECTION_STATE = "last_connection_state";
-    public static final String LAST_CONNECTION_SETTINGS_SHOWN = "last_connection_settings_shown";
 
     // Default values for the program guide
     public static final String EPG_DEFAULT_MAX_DAYS = "7";

@@ -305,19 +305,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // change. The drawer menu could be open, so update the recording
         // counts. Also get any saved values from the bundle.
         if (savedInstanceState != null) {
-            menuStack = savedInstanceState.getIntegerArrayList(Constants.MENU_STACK);
-            selectedMenuPosition = savedInstanceState.getInt(Constants.MENU_POSITION, MENU_UNKNOWN);
-            channelListPosition = savedInstanceState.getInt(Constants.CHANNEL_LIST_POSITION, 0);
-            completedRecordingListPosition = savedInstanceState.getInt(Constants.COMPLETED_RECORDING_LIST_POSITION, 0);
-            scheduledRecordingListPosition = savedInstanceState.getInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, 0);
-            seriesRecordingListPosition = savedInstanceState.getInt(Constants.SERIES_RECORDING_LIST_POSITION, 0);
-            timerRecordingListPosition = savedInstanceState.getInt(Constants.TIMER_RECORDING_LIST_POSITION, 0);
-            failedRecordingListPosition = savedInstanceState.getInt(Constants.FAILED_RECORDING_LIST_POSITION, 0);
-            removedRecordingListPosition = savedInstanceState.getInt(Constants.REMOVED_RECORDING_LIST_POSITION, 0);
-            connectionStatus = savedInstanceState.getString(Constants.BUNDLE_CONNECTION_STATUS);
-            connectionSettingsShown = savedInstanceState.getBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN);
-            channelTimeSelection = savedInstanceState.getInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION);
-            showProgramsFromTime = savedInstanceState.getLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME);
+            menuStack = savedInstanceState.getIntegerArrayList("menu_stack");
+            selectedMenuPosition = savedInstanceState.getInt("menu_position", MENU_UNKNOWN);
+            channelListPosition = savedInstanceState.getInt("channel_list_position", 0);
+            completedRecordingListPosition = savedInstanceState.getInt("completed_recording_list_position", 0);
+            scheduledRecordingListPosition = savedInstanceState.getInt("scheduled_recording_list_position", 0);
+            seriesRecordingListPosition = savedInstanceState.getInt("series_recording_list_position", 0);
+            timerRecordingListPosition = savedInstanceState.getInt("timer_recording_list_position", 0);
+            failedRecordingListPosition = savedInstanceState.getInt("failed_recording_list_position", 0);
+            removedRecordingListPosition = savedInstanceState.getInt("removed_recording_list_position", 0);
+            connectionStatus = savedInstanceState.getString("connection_status");
+            connectionSettingsShown = savedInstanceState.getBoolean("connection_settings_shown");
+            channelTimeSelection = savedInstanceState.getInt("channel_time_selection");
+            showProgramsFromTime = savedInstanceState.getLong("show_programs_from_time");
         }
 
         // Resets the loading indication and updates the action 
@@ -645,8 +645,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         }
 
-        connectionStatus = prefs.getString(Constants.LAST_CONNECTION_STATE, Constants.ACTION_CONNECTION_STATE_OK);
-        connectionSettingsShown = prefs.getBoolean(Constants.LAST_CONNECTION_SETTINGS_SHOWN, false);
+        connectionStatus = prefs.getString("last_connection_state", Constants.ACTION_CONNECTION_STATE_OK);
+        connectionSettingsShown = prefs.getBoolean("last_connection_settings_shown", false);
 
         // Update the time so that the correct programs are shown
         showProgramsFromTime = new Date().getTime();
@@ -731,8 +731,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // settings have been already shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(Constants.LAST_CONNECTION_STATE, connectionStatus);
-        editor.putBoolean(Constants.LAST_CONNECTION_SETTINGS_SHOWN, connectionSettingsShown);
+        editor.putString("last_connection_state", connectionStatus);
+        editor.putBoolean("last_connection_settings_shown", connectionSettingsShown);
         editor.apply();
     }
 
@@ -752,19 +752,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putIntegerArrayList(Constants.MENU_STACK, menuStack);
-        outState.putInt(Constants.MENU_POSITION, selectedMenuPosition);
-        outState.putInt(Constants.CHANNEL_LIST_POSITION, channelListPosition);
-        outState.putInt(Constants.COMPLETED_RECORDING_LIST_POSITION, completedRecordingListPosition);
-        outState.putInt(Constants.SCHEDULED_RECORDING_LIST_POSITION, scheduledRecordingListPosition);
-        outState.putInt(Constants.SERIES_RECORDING_LIST_POSITION, seriesRecordingListPosition);
-        outState.putInt(Constants.TIMER_RECORDING_LIST_POSITION, timerRecordingListPosition);
-        outState.putInt(Constants.FAILED_RECORDING_LIST_POSITION, failedRecordingListPosition);
-        outState.putInt(Constants.REMOVED_RECORDING_LIST_POSITION, removedRecordingListPosition);
-        outState.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
-        outState.putBoolean(Constants.BUNDLE_CONNECTION_SETTINGS_SHOWN, connectionSettingsShown);
-        outState.putInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION, channelTimeSelection);
-        outState.putLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, showProgramsFromTime);
+        outState.putIntegerArrayList("menu_stack", menuStack);
+        outState.putInt("menu_position", selectedMenuPosition);
+        outState.putInt("channel_list_position", channelListPosition);
+        outState.putInt("completed_recording_list_position", completedRecordingListPosition);
+        outState.putInt("scheduled_recording_list_position", scheduledRecordingListPosition);
+        outState.putInt("series_recording_list_position", seriesRecordingListPosition);
+        outState.putInt("timer_recording_list_position", timerRecordingListPosition);
+        outState.putInt("failed_recording_list_position", failedRecordingListPosition);
+        outState.putInt("removed_recording_list_position", removedRecordingListPosition);
+        outState.putString("connection_status", connectionStatus);
+        outState.putBoolean("connection_settings_shown", connectionSettingsShown);
+        outState.putInt("channel_time_selection", channelTimeSelection);
+        outState.putLong("show_programs_from_time", showProgramsFromTime);
         super.onSaveInstanceState(outState);
     }
 
@@ -963,39 +963,39 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // Show the channel list fragment. If the information to show only
             // the channels as required in the program guide is not passed then
             // the full channel list fragment will be shown.
-            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
-            bundle.putInt(Constants.BUNDLE_CHANNEL_TIME_SELECTION, channelTimeSelection);
-            bundle.putLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, showProgramsFromTime);
+            bundle.putBoolean("dual_pane", isDualPane);
+            bundle.putInt("channel_time_selection", channelTimeSelection);
+            bundle.putLong("show_programs_from_time", showProgramsFromTime);
             showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_COMPLETED_RECORDINGS:
-            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            bundle.putBoolean("dual_pane", isDualPane);
             showFragment(CompletedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_SCHEDULED_RECORDINGS:
-            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            bundle.putBoolean("dual_pane", isDualPane);
             showFragment(ScheduledRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_SERIES_RECORDINGS:
-            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            bundle.putBoolean("dual_pane", isDualPane);
             showFragment(SeriesRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_TIMER_RECORDINGS:
-            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            bundle.putBoolean("dual_pane", isDualPane);
             showFragment(TimerRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_FAILED_RECORDINGS:
-            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            bundle.putBoolean("dual_pane", isDualPane);
             showFragment(FailedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
         case MENU_REMOVED_RECORDINGS:
-            bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
+            bundle.putBoolean("dual_pane", isDualPane);
             showFragment(RemovedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
@@ -1006,7 +1006,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             break;
 
         case MENU_STATUS:
-            bundle.putString(Constants.BUNDLE_CONNECTION_STATUS, connectionStatus);
+            bundle.putString("connection_status", connectionStatus);
             showFragment(StatusFragment.class.getName(), R.id.main_fragment, bundle);
             break;
 
@@ -1418,8 +1418,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putLong("channelId", channel.id);
-                    bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
-                    bundle.putLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, showProgramsFromTime);
+                    bundle.putBoolean("dual_pane", isDualPane);
+                    bundle.putLong("show_programs_from_time", showProgramsFromTime);
     
                     if (isDualPane) {
                         showFragment(ProgramListFragment.class.getName(), R.id.right_fragment, bundle);
