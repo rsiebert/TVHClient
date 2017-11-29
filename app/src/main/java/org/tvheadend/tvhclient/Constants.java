@@ -88,10 +88,6 @@ public class Constants {
     public static final int RECORDING_SORT_ASCENDING = 0;
     public static final int RECORDING_SORT_DESCENDING = 1;
 
-    // Time to wait for the thread before the next service call is made when
-    // either all recorded or scheduled programs are being removed.
-    public static final int THREAD_SLEEPING_TIME = 2000;
-
     // HTSP connection status
     public static final String ACTION_CONNECTION_STATE_LOST = "action_connection_state_lost";
     public static final String ACTION_CONNECTION_STATE_TIMEOUT = "action_connection_state_timeout";
