@@ -62,18 +62,18 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.program_list_widget, parent, false);
             holder = new ViewHolder();
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.time = (TextView) view.findViewById(R.id.time);
-            holder.date = (TextView) view.findViewById(R.id.date);
-            holder.duration = (TextView) view.findViewById(R.id.duration);
-            holder.progress = (TextView) view.findViewById(R.id.progress);
-            holder.seriesInfo = (TextView) view.findViewById(R.id.series_info);
-            holder.contentType = (TextView) view.findViewById(R.id.content_type);
-            holder.summary = (TextView) view.findViewById(R.id.summary);
-            holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
-            holder.description = (TextView) view.findViewById(R.id.description);
-            holder.genre = (TextView) view.findViewById(R.id.genre);
+            holder.title = view.findViewById(R.id.title);
+            holder.state = view.findViewById(R.id.state);
+            holder.time = view.findViewById(R.id.time);
+            holder.date = view.findViewById(R.id.date);
+            holder.duration = view.findViewById(R.id.duration);
+            holder.progress = view.findViewById(R.id.progress);
+            holder.seriesInfo = view.findViewById(R.id.series_info);
+            holder.contentType = view.findViewById(R.id.content_type);
+            holder.summary = view.findViewById(R.id.summary);
+            holder.subtitle = view.findViewById(R.id.subtitle);
+            holder.description = view.findViewById(R.id.description);
+            holder.genre = view.findViewById(R.id.genre);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

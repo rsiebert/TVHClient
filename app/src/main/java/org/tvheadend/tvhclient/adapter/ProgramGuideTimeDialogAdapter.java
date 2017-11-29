@@ -92,9 +92,9 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
 
         public ViewHolder(View view, ProgramGuideTimeDialogAdapter adapter) {
             super(view);
-            this.date1 = (TextView) view.findViewById(R.id.date1);
-            this.date2 = (TextView) view.findViewById(R.id.date2);
-            this.time = (TextView) view.findViewById(R.id.time);
+            this.date1 = view.findViewById(R.id.date1);
+            this.date2 = view.findViewById(R.id.date2);
+            this.time = view.findViewById(R.id.time);
 
             this.adapter = adapter;
             view.setOnClickListener(this);

@@ -82,8 +82,8 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
             actionBar.setHomeButtonEnabled(true);
         }
         // Get the widgets so we can use them later and do not need to inflate again
-        actionBarTitle = (TextView) toolbar.findViewById(R.id.actionbar_title);
-        actionBarSubtitle = (TextView) toolbar.findViewById(R.id.actionbar_subtitle);
+        actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
+        actionBarSubtitle = toolbar.findViewById(R.id.actionbar_subtitle);
 
         // Get any saved values from the bundle
         if (savedInstanceState != null) {

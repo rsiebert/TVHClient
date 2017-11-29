@@ -91,7 +91,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
         if (view == null) {
             view = inflater.inflate(R.layout.program_guide_pager_list_item, parent, false);
             holder = new ViewHolder();
-            holder.timeline = (LinearLayout) view.findViewById(R.id.timeline);
+            holder.timeline = view.findViewById(R.id.timeline);
             holder.item = new ProgramGuideItemView(activity, fragment, holder.timeline, bundle);
             view.setTag(holder);
         } else {

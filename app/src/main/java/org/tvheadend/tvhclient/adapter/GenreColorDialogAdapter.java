@@ -58,8 +58,8 @@ public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDial
 
         public ViewHolder(View view, GenreColorDialogAdapter adapter) {
             super(view);
-            this.color = (TextView) view.findViewById(R.id.color);
-            this.genre = (TextView) view.findViewById(R.id.genre);
+            this.color = view.findViewById(R.id.color);
+            this.genre = view.findViewById(R.id.genre);
 
             this.adapter = adapter;
         }

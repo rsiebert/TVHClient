@@ -88,22 +88,22 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         if (view == null) {
             view = context.getLayoutInflater().inflate(layout, parent, false);
             holder = new ViewHolder();
-            holder.icon = (ImageView) view.findViewById(R.id.icon);
-            holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
-            holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.is_series_recording = (TextView) view.findViewById(R.id.is_series_recording);
-            holder.is_timer_recording = (TextView) view.findViewById(R.id.is_timer_recording);
-            holder.channel = (TextView) view.findViewById(R.id.channel);
-            holder.time = (TextView) view.findViewById(R.id.time);
-            holder.date = (TextView) view.findViewById(R.id.date);
-            holder.duration = (TextView) view.findViewById(R.id.duration);
-            holder.summary = (TextView) view.findViewById(R.id.summary);
-            holder.description = (TextView) view.findViewById(R.id.description);
-            holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
-            holder.isEnabled = (TextView) view.findViewById(R.id.enabled);
-            holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
+            holder.icon = view.findViewById(R.id.icon);
+            holder.icon_text = view.findViewById(R.id.icon_text);
+            holder.title = view.findViewById(R.id.title);
+            holder.subtitle = view.findViewById(R.id.subtitle);
+            holder.state = view.findViewById(R.id.state);
+            holder.is_series_recording = view.findViewById(R.id.is_series_recording);
+            holder.is_timer_recording = view.findViewById(R.id.is_timer_recording);
+            holder.channel = view.findViewById(R.id.channel);
+            holder.time = view.findViewById(R.id.time);
+            holder.date = view.findViewById(R.id.date);
+            holder.duration = view.findViewById(R.id.duration);
+            holder.summary = view.findViewById(R.id.summary);
+            holder.description = view.findViewById(R.id.description);
+            holder.failed_reason = view.findViewById(R.id.failed_reason);
+            holder.isEnabled = view.findViewById(R.id.enabled);
+            holder.dual_pane_list_item_selection = view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

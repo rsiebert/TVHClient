@@ -82,14 +82,14 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         if (view == null) {
             view = context.getLayoutInflater().inflate(layout, parent, false);
             holder = new ViewHolder();
-            holder.icon = (ImageView) view.findViewById(R.id.icon);
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.channel = (TextView) view.findViewById(R.id.channel);
-            holder.daysOfWeek = (TextView) view.findViewById(R.id.daysOfWeek);
-            holder.time = (TextView) view.findViewById(R.id.time);
-            holder.duration = (TextView) view.findViewById(R.id.duration);
-            holder.isEnabled = (TextView) view.findViewById(R.id.enabled);
-            holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
+            holder.icon = view.findViewById(R.id.icon);
+            holder.title = view.findViewById(R.id.title);
+            holder.channel = view.findViewById(R.id.channel);
+            holder.daysOfWeek = view.findViewById(R.id.daysOfWeek);
+            holder.time = view.findViewById(R.id.time);
+            holder.duration = view.findViewById(R.id.duration);
+            holder.isEnabled = view.findViewById(R.id.enabled);
+            holder.dual_pane_list_item_selection = view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

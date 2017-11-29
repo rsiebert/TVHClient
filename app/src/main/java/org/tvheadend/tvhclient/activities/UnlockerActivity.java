@@ -31,8 +31,8 @@ public class UnlockerActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
         }
 
-        TextView actionBarTitle = (TextView) toolbar.findViewById(R.id.actionbar_title);
-        TextView actionBarSubtitle = (TextView) toolbar.findViewById(R.id.actionbar_subtitle);
+        TextView actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
+        TextView actionBarSubtitle = toolbar.findViewById(R.id.actionbar_subtitle);
         actionBarTitle.setText(getString(R.string.pref_unlocker));
         actionBarTitle.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         actionBarSubtitle.setVisibility(View.GONE);

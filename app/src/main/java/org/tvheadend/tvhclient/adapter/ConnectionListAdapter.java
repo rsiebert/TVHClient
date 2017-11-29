@@ -47,9 +47,9 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.connection_list_widget, parent, false);
             holder = new ViewHolder();
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.summary = (TextView) view.findViewById(R.id.summary);
-            holder.selected = (ImageView) view.findViewById(R.id.selected);
+            holder.title = view.findViewById(R.id.title);
+            holder.summary = view.findViewById(R.id.summary);
+            holder.selected = view.findViewById(R.id.selected);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

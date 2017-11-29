@@ -107,20 +107,20 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, parent, false);
             holder = new RecordingViewHolder();
-            holder.icon = (ImageView) view.findViewById(R.id.icon);
-            holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
-            holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.is_series_recording = (TextView) view.findViewById(R.id.is_series_recording);
-            holder.is_timer_recording = (TextView) view.findViewById(R.id.is_timer_recording);
-            holder.channel = (TextView) view.findViewById(R.id.channel);
-            holder.time = (TextView) view.findViewById(R.id.time);
-            holder.date = (TextView) view.findViewById(R.id.date);
-            holder.duration = (TextView) view.findViewById(R.id.duration);
-            holder.summary = (TextView) view.findViewById(R.id.summary);
-            holder.description = (TextView) view.findViewById(R.id.description);
-            holder.failed_reason = (TextView) view.findViewById(R.id.failed_reason);
+            holder.icon = view.findViewById(R.id.icon);
+            holder.icon_text = view.findViewById(R.id.icon_text);
+            holder.title = view.findViewById(R.id.title);
+            holder.subtitle = view.findViewById(R.id.subtitle);
+            holder.state = view.findViewById(R.id.state);
+            holder.is_series_recording = view.findViewById(R.id.is_series_recording);
+            holder.is_timer_recording = view.findViewById(R.id.is_timer_recording);
+            holder.channel = view.findViewById(R.id.channel);
+            holder.time = view.findViewById(R.id.time);
+            holder.date = view.findViewById(R.id.date);
+            holder.duration = view.findViewById(R.id.duration);
+            holder.summary = view.findViewById(R.id.summary);
+            holder.description = view.findViewById(R.id.description);
+            holder.failed_reason = view.findViewById(R.id.failed_reason);
             view.setTag(holder);
         } else {
             holder = (RecordingViewHolder) view.getTag();
@@ -186,18 +186,18 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.search_result_widget, parent, false);
             holder = new ProgramViewHolder();
-            holder.icon = (ImageView) view.findViewById(R.id.icon);
-            holder.icon_text = (TextView) view.findViewById(R.id.icon_text);
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.channel = (TextView) view.findViewById(R.id.channel);
-            holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.time = (TextView) view.findViewById(R.id.time);
-            holder.date = (TextView) view.findViewById(R.id.date);
-            holder.duration = (TextView) view.findViewById(R.id.duration);
-            holder.seriesInfo = (TextView) view.findViewById(R.id.series_info);
-            holder.contentType = (TextView) view.findViewById(R.id.content_type);
-            holder.description = (TextView) view.findViewById(R.id.description);
-            holder.genre = (TextView) view.findViewById(R.id.genre);
+            holder.icon = view.findViewById(R.id.icon);
+            holder.icon_text = view.findViewById(R.id.icon_text);
+            holder.title = view.findViewById(R.id.title);
+            holder.channel = view.findViewById(R.id.channel);
+            holder.state = view.findViewById(R.id.state);
+            holder.time = view.findViewById(R.id.time);
+            holder.date = view.findViewById(R.id.date);
+            holder.duration = view.findViewById(R.id.duration);
+            holder.seriesInfo = view.findViewById(R.id.series_info);
+            holder.contentType = view.findViewById(R.id.content_type);
+            holder.description = view.findViewById(R.id.description);
+            holder.genre = view.findViewById(R.id.genre);
             view.setTag(holder);
         } else {
             holder = (ProgramViewHolder) view.getTag();

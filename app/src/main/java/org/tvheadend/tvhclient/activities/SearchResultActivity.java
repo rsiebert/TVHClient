@@ -111,11 +111,10 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         }
-        TextView actionBarTitle = (TextView) toolbar.findViewById(R.id.actionbar_title);
-        TextView actionBarSubtitle = (TextView) toolbar.findViewById(R.id.actionbar_subtitle);
+        TextView actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
         actionBarTitle.setText(getString(R.string.search));
 
-        ListView listView = (ListView) findViewById(R.id.item_list);
+        ListView listView = findViewById(R.id.item_list);
         registerForContextMenu(listView);
 
         menuUtils = new MenuUtils(this);

@@ -56,10 +56,10 @@ public class DrawerMenuAdapter extends ArrayAdapter<DrawerMenuItem> {
                 view = context.getLayoutInflater().inflate(R.layout.drawer_list_item_empty, parent, false);
             }
         }
-        RelativeLayout itemLayout = (RelativeLayout) view.findViewById(R.id.item_layout);
-        ImageView icon = (ImageView) view.findViewById(R.id.icon);
-        TextView title = (TextView) view.findViewById(R.id.title);
-        TextView count = (TextView) view.findViewById(R.id.count);
+        RelativeLayout itemLayout = view.findViewById(R.id.item_layout);
+        ImageView icon = view.findViewById(R.id.icon);
+        TextView title = view.findViewById(R.id.title);
+        TextView count = view.findViewById(R.id.count);
 
         // Highlight the selected position with a different color. This can't be
         // done with the list position because the section menu items mess up

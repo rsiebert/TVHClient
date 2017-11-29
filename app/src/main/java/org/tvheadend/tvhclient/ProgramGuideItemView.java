@@ -182,7 +182,7 @@ public class ProgramGuideItemView extends LinearLayout {
         // If the program that was last added was added in the view and it was
         // the last program in the guide then try to load more programs.
         // Also load programs when no program at all was added.
-        if ((programAdded && lastProgramFound) || !programAdded) {
+        if (!programAdded || lastProgramFound) {
             if (fragmentStatusInterface != null) {
                 fragmentStatusInterface.moreDataRequired(channel, Constants.TAG_PROGRAM_GUIDE);
             }
@@ -354,10 +354,10 @@ public class ProgramGuideItemView extends LinearLayout {
     private void addCurrentProgramToView(final Program p, final int layoutWidth, ViewGroup parent) {
 
         View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, parent, false);
-        final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
-        final TextView title = (TextView) v.findViewById(R.id.title);
-        final ImageView state = (ImageView) v.findViewById(R.id.state);
-        final TextView duration = (TextView) v.findViewById(R.id.time);
+        final LinearLayout itemLayout = v.findViewById(R.id.timeline_item);
+        final TextView title = v.findViewById(R.id.title);
+        final ImageView state = v.findViewById(R.id.state);
+        final TextView duration = v.findViewById(R.id.time);
 
         // Set the layout width
         if (layoutWidth > 0) {
@@ -449,7 +449,7 @@ public class ProgramGuideItemView extends LinearLayout {
 
     private void addEmptyProgramToView() {
         View v = inflate(getContext(), R.layout.program_guide_data_item_empty, null);
-        final LinearLayout itemLayout = (LinearLayout) v.findViewById(R.id.timeline_item);
+        final LinearLayout itemLayout = v.findViewById(R.id.timeline_item);
         LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(displayWidth, LayoutParams.MATCH_PARENT);
         itemLayout.setLayoutParams(parms);
         layout.addView(v);

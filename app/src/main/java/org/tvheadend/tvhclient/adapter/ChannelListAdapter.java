@@ -112,20 +112,20 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             final boolean bigIcon = prefs.getBoolean("showBigIconPref", false);
-            holder.icon = (ImageView) view.findViewById(bigIcon ? R.id.icon_large : R.id.icon);
+            holder.icon = view.findViewById(bigIcon ? R.id.icon_large : R.id.icon);
 
-            holder.channel_item_layout = (LinearLayout) view.findViewById(R.id.channel_item_layout);
-            holder.icon_text = (TextView) view.findViewById(bigIcon ? R.id.icon_text_large : R.id.icon_text);
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.subtitle = (TextView) view.findViewById(R.id.subtitle);
-            holder.nextTitle = (TextView) view.findViewById(R.id.next_title);
-            holder.channel = (TextView) view.findViewById(R.id.channel);
-            holder.progressbar = (ProgressBar) view.findViewById(R.id.progressbar);
-            holder.time = (TextView) view.findViewById(R.id.time);
-            holder.duration = (TextView) view.findViewById(R.id.duration);
-            holder.state = (ImageView) view.findViewById(R.id.state);
-            holder.genre = (TextView) view.findViewById(R.id.genre);
-            holder.dual_pane_list_item_selection = (ImageView) view.findViewById(R.id.dual_pane_list_item_selection);
+            holder.channel_item_layout = view.findViewById(R.id.channel_item_layout);
+            holder.icon_text = view.findViewById(bigIcon ? R.id.icon_text_large : R.id.icon_text);
+            holder.title = view.findViewById(R.id.title);
+            holder.subtitle = view.findViewById(R.id.subtitle);
+            holder.nextTitle = view.findViewById(R.id.next_title);
+            holder.channel = view.findViewById(R.id.channel);
+            holder.progressbar = view.findViewById(R.id.progressbar);
+            holder.time = view.findViewById(R.id.time);
+            holder.duration = view.findViewById(R.id.duration);
+            holder.state = view.findViewById(R.id.state);
+            holder.genre = view.findViewById(R.id.genre);
+            holder.dual_pane_list_item_selection = view.findViewById(R.id.dual_pane_list_item_selection);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
