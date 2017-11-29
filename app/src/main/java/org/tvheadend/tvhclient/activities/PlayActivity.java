@@ -73,8 +73,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
-        ch = dataStorage.getChannel(getIntent().getLongExtra(Constants.BUNDLE_CHANNEL_ID, 0));
-        rec = dataStorage.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+        ch = dataStorage.getChannel(getIntent().getLongExtra("channelId", 0));
+        rec = dataStorage.getRecording(getIntent().getLongExtra("dvrId", 0));
 
         // Get the title from either the channel or recording
         if (ch != null) {

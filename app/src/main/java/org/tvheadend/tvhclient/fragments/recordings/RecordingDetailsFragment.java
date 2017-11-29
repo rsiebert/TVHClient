@@ -159,7 +159,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         long recId = 0;
         Bundle bundle = getArguments();
         if (bundle != null) {
-            recId = bundle.getLong(Constants.BUNDLE_RECORDING_ID, 0);
+            recId = bundle.getLong("dvrId", 0);
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 
@@ -328,7 +328,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 if (rec != null) {
                     DialogFragment editFragment = RecordingAddFragment.newInstance();
                     Bundle bundle = new Bundle();
-                    bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+                    bundle.putLong("dvrId", rec.id);
                     editFragment.setArguments(bundle);
                     editFragment.show(activity.getSupportFragmentManager(), "dialog");
                 }

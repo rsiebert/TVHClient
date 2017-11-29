@@ -224,7 +224,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             long recId = 0;
             Bundle bundle = getArguments();
             if (bundle != null) {
-                recId = bundle.getLong(Constants.BUNDLE_RECORDING_ID);
+                recId = bundle.getLong("dvrId");
             }
 
             // Get the recording so we can show its detail

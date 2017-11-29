@@ -1415,7 +1415,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 } else {
                     Bundle bundle = new Bundle();
-                    bundle.putLong(Constants.BUNDLE_CHANNEL_ID, channel.id);
+                    bundle.putLong("channelId", channel.id);
                     bundle.putBoolean(Constants.BUNDLE_DUAL_PANE, isDualPane);
                     bundle.putLong(Constants.BUNDLE_SHOW_PROGRAMS_FROM_TIME, showProgramsFromTime);
     
@@ -1468,7 +1468,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // to the right of the recording list, otherwise replace the recording
                 // list with the details fragment.
                 Bundle args = new Bundle();
-                args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
+                args.putLong("dvrId", recording.id);
                 args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
                 if (isDualPane) {
@@ -1542,8 +1542,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // separate dialog fragment
         if (program != null) {
             Bundle args = new Bundle();
-            args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
-            args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+            args.putLong("eventId", program.id);
+            args.putLong("channelId", program.channel.id);
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
 
             DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
@@ -1769,7 +1769,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 Object o = ((FragmentControlInterface) f).getSelectedItem();
                 if (o instanceof Channel) {
                     final Channel ch = (Channel) o;
-                    bundle.putLong(Constants.BUNDLE_CHANNEL_ID, ch.id);
+                    bundle.putLong("channelId", ch.id);
                 }
             }
         }
@@ -1781,7 +1781,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Object o = ((FragmentControlInterface) f).getSelectedItem();
             if (o instanceof Recording) {
                 final Recording rec = (Recording) o;
-                bundle.putLong(Constants.BUNDLE_RECORDING_ID, rec.id);
+                bundle.putLong("dvrId", rec.id);
             }
         }
 

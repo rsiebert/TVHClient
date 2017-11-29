@@ -55,7 +55,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
         conn = databaseHelper.getSelectedConnection();
         // Check that a valid channel or recording was specified
-        rec = dataStorage.getRecording(getIntent().getLongExtra(Constants.BUNDLE_RECORDING_ID, 0));
+        rec = dataStorage.getRecording(getIntent().getLongExtra("dvrId", 0));
         logger = Logger.getInstance();
     }
 

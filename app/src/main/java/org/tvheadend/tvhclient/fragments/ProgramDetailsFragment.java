@@ -168,8 +168,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            channelId = bundle.getLong(Constants.BUNDLE_CHANNEL_ID, 0);
-            programId = bundle.getLong(Constants.BUNDLE_PROGRAM_ID, 0);
+            channelId = bundle.getLong("channelId", 0);
+            programId = bundle.getLong("eventId", 0);
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 

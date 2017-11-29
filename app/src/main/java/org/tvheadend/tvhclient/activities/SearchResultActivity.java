@@ -125,8 +125,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     if (model instanceof Program) {
                         final Program program = (Program) model;
                         Bundle args = new Bundle();
-                        args.putLong(Constants.BUNDLE_PROGRAM_ID, program.id);
-                        args.putLong(Constants.BUNDLE_CHANNEL_ID, program.channel.id);
+                        args.putLong("eventId", program.id);
+                        args.putLong("channelId", program.channel.id);
                         args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
                         args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
                         DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
@@ -137,7 +137,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     if (model instanceof Recording) {
                         final Recording recording = (Recording) model;
                         Bundle args = new Bundle();
-                        args.putLong(Constants.BUNDLE_RECORDING_ID, recording.id);
+                        args.putLong("dvrId", recording.id);
                         args.putBoolean(Constants.BUNDLE_DUAL_PANE, false);
                         args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
                         DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
@@ -157,8 +157,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // a single channel or the completed recordings.
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
-            channel = dataStorage.getChannel(bundle.getLong(Constants.BUNDLE_CHANNEL_ID));
-            recording = dataStorage.getRecording(bundle.getLong(Constants.BUNDLE_RECORDING_ID));
+            channel = dataStorage.getChannel(bundle.getLong("channelId"));
+            recording = dataStorage.getRecording(bundle.getLong("dvrId"));
         } else {
             channel = null;
             recording = null;
@@ -279,7 +279,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             intent.setAction("epgQuery");
             intent.putExtra("query", query);
             if (channel != null) {
-                intent.putExtra(Constants.BUNDLE_CHANNEL_ID, channel.id);
+                intent.putExtra("channelId", channel.id);
             }
             startService(intent);
         }

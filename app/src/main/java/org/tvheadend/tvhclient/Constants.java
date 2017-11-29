@@ -23,9 +23,6 @@ public class Constants {
     public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";
     public static final String BUNDLE_RECORDING_TYPE = "recordingType";
     public static final String BUNDLE_DUAL_PANE = "isDualPane";
-    public static final String BUNDLE_CHANNEL_ID = "channelId";
-    public static final String BUNDLE_PROGRAM_ID = "eventId";
-    public static final String BUNDLE_RECORDING_ID = "dvrId";
     public static final String BUNDLE_SERIES_RECORDING_ID = "autorecId";
     public static final String BUNDLE_TIMER_RECORDING_ID = "timerId";
     public static final String BUNDLE_RECONNECT = "reconnect";

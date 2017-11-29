@@ -12,7 +12,6 @@ import android.util.Log;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
@@ -150,7 +149,7 @@ public class MenuUtils {
             return;
         }
         Intent intent = new Intent(activity, DownloadActivity.class);
-        intent.putExtra(Constants.BUNDLE_RECORDING_ID, recId);
+        intent.putExtra("dvrId", recId);
         activity.startActivity(intent);
     }
 

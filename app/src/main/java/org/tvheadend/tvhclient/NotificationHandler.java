@@ -106,7 +106,7 @@ public class NotificationHandler {
 
         Intent intent = new Intent(app.getApplicationContext(), NotificationReceiver.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constants.BUNDLE_RECORDING_ID, id);
+        bundle.putLong("dvrId", id);
         bundle.putString(Constants.BUNDLE_NOTIFICATION_MSG, msg);
         intent.putExtras(bundle);
 

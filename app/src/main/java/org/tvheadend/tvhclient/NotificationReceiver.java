@@ -16,7 +16,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         // Get the recording of interest
-        long recId = intent.getLongExtra(Constants.BUNDLE_RECORDING_ID, 0);
+        long recId = intent.getLongExtra("dvrId", 0);
         String msg = intent.getStringExtra(Constants.BUNDLE_NOTIFICATION_MSG);
         final Recording rec = DataStorage.getInstance().getRecording(recId);
 
