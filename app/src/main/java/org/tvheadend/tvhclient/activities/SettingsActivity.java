@@ -12,10 +12,10 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
@@ -70,22 +70,21 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
         Utils.setLanguage(this);
 
         // Setup the action bar and show the title
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            actionBar.setCustomView(R.layout.actionbar_title);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
-
-            // Get the widgets so we can use them later and do not need to inflate again
-            actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
-            actionBarSubtitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_subtitle);
-            ImageView actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
-            actionBarIcon.setVisibility(View.GONE);
         }
+        // Get the widgets so we can use them later and do not need to inflate again
+        actionBarTitle = (TextView) toolbar.findViewById(R.id.actionbar_title);
+        actionBarSubtitle = (TextView) toolbar.findViewById(R.id.actionbar_subtitle);
+
         // Get any saved values from the bundle
         if (savedInstanceState != null) {
             currentSettingsMode = savedInstanceState.getInt(Constants.BUNDLE_SETTINGS_MODE);
@@ -104,7 +103,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
         // When the orientation was changed the last visible fragment is
         // available from the manager. If this is the case get it and show it
         // again.
-        fragment = getFragmentManager().findFragmentById(android.R.id.content);
+        fragment = getFragmentManager().findFragmentById(R.id.main);
         if (fragment == null) {
             // Get the information if the connection fragment shall be shown.
             // This is the case when the user has selected the connection menu
@@ -122,7 +121,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
         } else {
             // Show the available fragment
             getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, fragment)
+                    .replace(R.id.main, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         }
@@ -158,7 +157,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
 
         case ADD_CONNECTION:
         case EDIT_CONNECTION:
-            fragment = getFragmentManager().findFragmentById(android.R.id.content);
+            fragment = getFragmentManager().findFragmentById(R.id.main);
             if (fragment != null && fragment instanceof BackPressedInterface) {
                 ((BackPressedInterface) fragment).onBackPressed();
             }
@@ -173,7 +172,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
             // Any changes in these fragments need to be changed when the back
             // or home key was pressed. This is only available in the activity,
             // not in the fragment. Therefore trigger the saving from here.
-            fragment = getFragmentManager().findFragmentById(android.R.id.content);
+            fragment = getFragmentManager().findFragmentById(R.id.main);
             if (fragment != null && fragment instanceof BackPressedInterface) {
                 ((BackPressedInterface) fragment).onBackPressed();
             }
@@ -188,7 +187,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
      * navigating back would not show the old fragment again.
      */
     private void removePreviousFragment() {
-        Fragment f = getFragmentManager().findFragmentById(android.R.id.content);
+        Fragment f = getFragmentManager().findFragmentById(R.id.main);
         if (f != null) {
             getFragmentManager()
                     .beginTransaction()
@@ -254,7 +253,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
         removePreviousFragment();
 
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(R.id.main, new SettingsFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }
@@ -263,7 +262,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void showConnections() {
         currentSettingsMode = LIST_CONNECTIONS;
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsShowConnectionsFragment())
+                .replace(R.id.main, new SettingsShowConnectionsFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -273,7 +272,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void showAddConnection() {
         currentSettingsMode = ADD_CONNECTION;
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsManageConnectionFragment())
+                .replace(R.id.main, new SettingsManageConnectionFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -286,7 +285,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
         bundle.putLong(Constants.BUNDLE_CONNECTION_ID, id);
         Fragment f = Fragment.instantiate(this, SettingsManageConnectionFragment.class.getName());
         f.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, f)
+        getFragmentManager().beginTransaction().replace(R.id.main, f)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -296,7 +295,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void showProfiles() {
         currentSettingsMode = PROFILES;
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsProfilesFragment())
+                .replace(R.id.main, new SettingsProfilesFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -306,7 +305,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void showTranscodingSettings() {
         currentSettingsMode = TRANSCODING;
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsTranscodingFragment())
+                .replace(R.id.main, new SettingsTranscodingFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -316,7 +315,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void showNotifications() {
         currentSettingsMode = TRANSCODING;
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsNotificationFragment())
+                .replace(R.id.main, new SettingsNotificationFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -326,7 +325,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void showCasting() {
         currentSettingsMode = CASTING;
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsCastingFragment())
+                .replace(R.id.main, new SettingsCastingFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -336,7 +335,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void showUserInterface() {
         currentSettingsMode = USER_INTERFACE;
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsUserInterfaceFragment())
+                .replace(R.id.main, new SettingsUserInterfaceFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -346,7 +345,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
     public void showAdvanced() {
         currentSettingsMode = ADVANCED;
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsAdvancedFragment())
+                .replace(R.id.main, new SettingsAdvancedFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
@@ -358,7 +357,7 @@ public class SettingsActivity extends AppCompatActivity implements ActionBarInte
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putString("pref_download_directory", strippedPath).apply();
 
-        Fragment f = getFragmentManager().findFragmentById(android.R.id.content);
+        Fragment f = getFragmentManager().findFragmentById(R.id.main);
         if (f != null && f.isAdded() && f instanceof SettingsFragment) {
             ((SettingsFragment) f).updateDownloadDirSummary();
         }

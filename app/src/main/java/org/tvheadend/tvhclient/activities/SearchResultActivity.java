@@ -34,6 +34,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -42,6 +43,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -102,12 +104,16 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         dataStorage = DataStorage.getInstance();
 
         // Setup the action bar and show the title
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
-            actionBar.setTitle(R.string.search);
         }
+        TextView actionBarTitle = (TextView) toolbar.findViewById(R.id.actionbar_title);
+        TextView actionBarSubtitle = (TextView) toolbar.findViewById(R.id.actionbar_subtitle);
+        actionBarTitle.setText(getString(R.string.search));
 
         ListView listView = (ListView) findViewById(R.id.item_list);
         registerForContextMenu(listView);

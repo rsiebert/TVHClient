@@ -26,6 +26,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private DrawerMenuAdapter drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
 
-    private ActionBar actionBar = null;
+    private ActionBar actionBar;
     private ChangeLogDialog changeLogDialog;
 
     // Indication weather the layout supports two fragments. This is usually
@@ -211,10 +212,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         menuUtils = new MenuUtils(this);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            actionBar.setCustomView(R.layout.actionbar_title);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
@@ -223,9 +225,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
         // Get the widgets so we can use them later and do not need to inflate again
-        actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_title);
-        actionBarSubtitle = (TextView) actionBar.getCustomView().findViewById(R.id.actionbar_subtitle);
-        actionBarIcon = (ImageView) actionBar.getCustomView().findViewById(R.id.actionbar_icon);
+        actionBarTitle = (TextView) toolbar.findViewById(R.id.actionbar_title);
+        actionBarSubtitle = (TextView) toolbar.findViewById(R.id.actionbar_subtitle);
+        actionBarIcon = (ImageView) toolbar.findViewById(R.id.actionbar_icon);
         actionBarIcon.setVisibility(View.GONE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

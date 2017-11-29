@@ -135,7 +135,11 @@
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
-    <style name="CustomTheme" parent="Theme.AppCompat">
+    <style name="CustomTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeBackground">@android:color/background_dark</item>
+        <item name="actionModeBackground">@android:color/background_dark</item>
+
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
         <item name="ic_menu_save">@drawable/ic_menu_save_dark</item>
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_dark</item>
@@ -187,7 +191,11 @@
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
-    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light">
+    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeBackground">@android:color/background_light</item>
+        <item name="actionModeBackground">@android:color/background_light</item>
+
         <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
         <item name="ic_menu_save">@drawable/ic_menu_save_light</item>
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_light</item>
