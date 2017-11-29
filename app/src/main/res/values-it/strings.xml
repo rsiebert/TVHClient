@@ -178,6 +178,7 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="rating">Valutazione</string>
     <string name="ready">Pronto</string>
     <string name="record_once">Registra</string>
+    <string name="record_cancel">Annullare registrazione</string>
     <string name="record_remove">Elimina registrazione</string>
     <string name="record_remove_all">Elimina tutte registrazioni</string>
     <string name="record_series">Registra serie (autorec)</string>

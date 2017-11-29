@@ -11,6 +11,8 @@
     <string name="record_once">Spela in</string>
     <string name="record_series">Spela in (Autorec)</string>
     <string name="record_remove">Ta bort inspelning</string>
+    <string name="record_cancel">Avbryta inspelning</string>
+    <string name="record_stop">Sluta inspelning</string>
     <string name="record_remove_all">Ta bort alla inspelningar</string>
     <string name="search_imdb">Sök på IMDB</string>
     <string name="search_epg">Sök i EPG</string>

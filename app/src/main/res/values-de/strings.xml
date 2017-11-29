@@ -28,6 +28,7 @@
     <string name="record_once_custom_profile">Aufnehmen mit anderem Profil</string>
     <string name="record_series">Automatisch Aufnehmen</string>
     <string name="record_stop">Aufnahme stoppen</string>
+    <string name="record_cancel">Aufnahme abbrechen</string>
     <string name="record_remove">Aufnahme entfernen</string>
     <string name="record_remove_all">Alle Aufnahmen entfernen</string>
     <string name="confirm_remove_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>

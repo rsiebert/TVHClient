@@ -10,6 +10,8 @@
     <string name="search">Hledat</string>
     <string name="record_once">Nahrát</string>
     <string name="record_series">Nahrát (Autorec)</string>
+    <string name="record_stop">Zastavte nahrávku</string>
+    <string name="record_cancel">Zrušte nahrávku</string>
     <string name="record_remove">Smazat nahrávku</string>
     <string name="record_remove_all">Smazat všechny nahrávky</string>
     <string name="search_imdb">Hledat v IMDB</string>

@@ -292,7 +292,7 @@ public class MenuUtils {
         }
         // Show a confirmation dialog before cancelling the recording
         new MaterialDialog.Builder(activity)
-                .title(R.string.record_remove)
+                .title(R.string.record_cancel)
                 .content(activity.getString(R.string.cancel_recording, title))
                 .negativeText(R.string.discard)
                 .positiveText(R.string.cancel)

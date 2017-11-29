@@ -30,6 +30,7 @@
     <string name="record_once_custom_profile">Nagraj z innym profilem</string>
     <string name="record_series">Nagrywanie serii(Autorec)</string>
     <string name="record_stop">Zatrzymaj nagranie</string>
+    <string name="record_cancel">Anuluj nagranie</string>
     <string name="record_remove">Usuń nagranie</string>
     <string name="record_remove_all">Usuń wszystkie nagrania</string>
     <string name="confirm_remove_all">Czy na pewno chcesz usunąć wszystkie nagrania?</string>

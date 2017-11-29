@@ -30,6 +30,7 @@
     <string name="record_once_custom_profile">Enregistrer avec un profil différent</string>
     <string name="record_series">Enregistrement auto(Autorec)</string>
     <string name="record_stop">Arreter l\'enregistrement</string>
+    <string name="record_cancel">Annuler l\'enregistrement</string>
     <string name="record_remove">Effacer un enregistrement</string>
     <string name="record_remove_all">Effacer tous les enregistrements</string>
     <string name="confirm_remove_all">Etes-vous sur de vouloir effacer tous les enregistrements?</string>
