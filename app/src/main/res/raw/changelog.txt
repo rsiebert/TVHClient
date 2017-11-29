@@ -1,3 +1,10 @@
+$ 1.9.11
+  % VERSION 1.9.11
+  _ 29.11.2017
+    * Allow playing recordings with no user or password set
+    * Fixed menu name when removing deleted recordings
+    * Updated Slovak translation
+    * Small UI changes
 $ 1.9.10
   % VERSION 1.9.10
   _ 14.09.2017
