@@ -52,7 +52,6 @@ public class Constants {
 
     // Defines what action shall be done
     public static final int ACTION_PLAY = 1;
-    public static final int ACTION_DOWNLOAD = 2;
     public static final int ACTION_CAST = 3;
 
     // Differentiates the different types of recordings
@@ -90,7 +89,7 @@ public class Constants {
     public static final int RECORDING_SORT_DESCENDING = 1;
 
     // Time to wait for the thread before the next service call is made when
-    // either all recorded or scheduled programs are being removed. 
+    // either all recorded or scheduled programs are being removed.
     public static final int THREAD_SLEEPING_TIME = 2000;
 
     // HTSP connection status

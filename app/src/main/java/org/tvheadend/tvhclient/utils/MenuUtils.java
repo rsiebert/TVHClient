@@ -151,7 +151,6 @@ public class MenuUtils {
         }
         Intent intent = new Intent(activity, DownloadActivity.class);
         intent.putExtra(Constants.BUNDLE_RECORDING_ID, recId);
-        intent.putExtra(Constants.BUNDLE_ACTION, Constants.ACTION_DOWNLOAD);
         activity.startActivity(intent);
     }
 
