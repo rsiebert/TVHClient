@@ -42,8 +42,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ProgramGuideListFragment extends Fragment implements HTSListener, FragmentControlInterface, ProgramContextMenuInterface {
 
@@ -62,8 +60,13 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private Bundle bundle;
     private Program selectedProgram = null;
     private int tabIndex;
+
+    private Handler updateEpgHandler;
     private Runnable updateEpgTask;
-    private final Handler updateEpgHandler = new Handler();
+    private Handler updateViewHandler;
+    private Runnable updateViewTask;
+    private Handler updateTimeIndicationHandler;
+    private Runnable updateTimeIndicationTask;
 
     // Enables scrolling when the user has touch the screen and starts
     // scrolling. When the user is done, scrolling will be disabled to prevent
@@ -169,30 +172,41 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         // Allow the selection of the items within the list
         listView.setItemsCanFocus(true);
 
-        // Create the handler and the timer task that will update the current
-        // time indication every minute.
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
-            @Override
+        // Create the handler and the timer task that will update the
+        // entire view every 30 minutes if the first screen is visible.
+        // This prevents the time indication from moving to far to the right
+        updateViewHandler = new Handler();
+        updateViewTask = new Runnable() {
             public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        setCurrentTimeIndication();
-                    }
-                });
+                updateViewHandler.postDelayed(this, 1200000);
+                if (tabIndex == 0) {
+                    adapter.notifyDataSetChanged();
+                }
             }
         };
-        timer.schedule(doAsynchronousTask, 0, 60000);
+
+        // Create the handler and the timer task that will update the current
+        // time indication every minute.
+        updateTimeIndicationHandler = new Handler();
+        updateTimeIndicationTask = new Runnable() {
+            public void run() {
+                updateTimeIndicationHandler.postDelayed(this, 60000);
+                setCurrentTimeIndication();
+            }
+        };
 
         // This task will be called when the timer to delay the adapter update
         // has expired. It triggers the update of the program guide view. The
         // timer is started in the startDelayedAdapterUpdate method.
+        updateEpgHandler = new Handler();
         updateEpgTask = new Runnable() {
             public void run() {
                 adapter.notifyDataSetChanged();
             }
-        }; 
+        };
+
+        updateTimeIndicationHandler.post(updateTimeIndicationTask);
+        updateViewHandler.post(updateViewTask);
     }
 
     /**
@@ -241,31 +255,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         if (!dataStorage.isLoading()) {
             populateList();
         }
-
-        // Create the handler and the timer task that will update the
-        // entire view every fifteen minutes if the first screen is visible.
-        // This prevents the time indication from moving to far to the right
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        // Check if the first fragment is visible.
-                        // This can be checked with the time indication
-                        if (tabIndex == 0) {
-                            logger.log(TAG, "First fragment visible in the EPG, updating entire view");
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            logger.log(TAG, "First fragment not visible in the EPG, not updating entire view");
-                        }
-                    }
-                });
-            }
-        };
-
-        timer.schedule(doAsynchronousTask, 0, 900000);
     }
 
     /**
@@ -276,7 +265,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     @SuppressLint("InlinedApi")
     private void setCurrentTimeIndication() {
         if (bundle != null && currentTimeIndication != null && activity != null) {
-
             if (tabIndex == 0) {
                 // Get the difference between the current time and the given
                 // start time. Calculate from this value in minutes the width in
@@ -314,6 +302,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
     @Override
     public void onDestroy() {
+        updateEpgHandler.removeCallbacks(updateEpgTask);
+        updateViewHandler.removeCallbacks(updateViewTask);
+        updateTimeIndicationHandler.removeCallbacks(updateTimeIndicationTask);
+
         fragmentStatusInterface = null;
         fragmentScrollInterface = null;
         super.onDestroy();
