@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -441,5 +442,54 @@ public class MenuUtils {
                         }.start();
                     }
                 }).show();
+    }
+
+    public void handleMenuCustomRecordSelection(final long eventId, final long channelId) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        DataStorage dataStorage = DataStorage.getInstance();
+        String[] dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
+        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
+            dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
+        }
+
+        // Get the selected recording profile to highlight the
+        // correct item in the list of the selection dialog
+        int dvrConfigNameValue = 0;
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
+        final Connection conn = databaseHelper.getSelectedConnection();
+        final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
+        if (p != null) {
+            for (int i = 0; i < dvrConfigList.length; i++) {
+                if (dvrConfigList[i].equals(p.name)) {
+                    dvrConfigNameValue = i;
+                    break;
+                }
+            }
+        }
+
+        // Create new variables because the dialog needs them as final
+        final String[] dcList = dvrConfigList;
+
+        // Create the dialog to show the available profiles
+        new MaterialDialog.Builder(activity)
+                .title(R.string.select_dvr_config)
+                .items(dvrConfigList)
+                .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        // Pass over the
+                        Intent intent = new Intent(activity, HTSService.class);
+                        intent.setAction("addDvrEntry");
+                        intent.putExtra("eventId", eventId);
+                        intent.putExtra("channelId", channelId);
+                        intent.putExtra("configName", dcList[which]);
+                        activity.startService(intent);
+                        return true;
+                    }
+                })
+                .show();
     }
 }
