@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
@@ -85,7 +84,6 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand() called with: intent = [" + intent + "], flags = [" + flags + "], startId = [" + startId + "]");
         final String action = intent.getAction();
 
         if (action.equals(Constants.ACTION_CONNECT)) {
@@ -218,7 +216,6 @@ public class HTSService extends Service implements HTSConnectionListener {
             getSystemTime();
 
         }
-        logger.log(TAG, "onStartCommand() returned: " + START_NOT_STICKY);
         return START_NOT_STICKY;
     }
 
