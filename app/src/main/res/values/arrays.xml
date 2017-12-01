@@ -106,17 +106,16 @@
 
     <string-array name="pref_menu_names">
         <item>Channels</item>
+        <item>Program Guide</item>
         <item>Completed Recordings</item>
         <item>Scheduled Recordings</item>
         <item>Series Recordings</item>
         <item>Timer Recordings</item>
         <item>Failed Recordings</item>
         <item>Removed Recordings</item>
-        <item>Program Guide</item>
         <item>Status</item>
-        <item>Settings</item>
-        <item>Connections</item>
         <item>Info \u0026 Help</item>
+        <item>Settings</item>
         <item>Enable Extras</item>
     </string-array>
 

@@ -21,17 +21,16 @@
 
     <string-array name="pref_menu_names">
         <item>Kanały</item>
+        <item>Przewodnik programów</item>
         <item>Zakończone nagrania</item>
         <item>Zaplanowane nagrania</item>
         <item>Automatyczne nagrania</item>
         <item>Czasowe nagrania</item>
         <item>Nieudane nagrania</item>
         <item>Usunięte nagrania</item>
-        <item>Przewodnik programów</item>
         <item>Status</item>
-        <item>Ustawienia</item>
-        <item>Połączenia</item>
         <item>Informacje i pomoc</item>
+        <item>Ustawienia</item>
         <item>Włącz dodatki</item>
     </string-array>
 

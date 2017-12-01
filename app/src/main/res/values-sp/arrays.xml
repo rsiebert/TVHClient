@@ -7,17 +7,16 @@
 
     <string-array name="pref_menu_names">
         <item>Canales</item>
+        <item>Guía de programas</item>
         <item>Grabaciones completadas</item>
         <item>Grabaciones programadas</item>
         <item>Grabaciones en serie</item>
         <item>Programar grabaciones</item>
         <item>Grabaciones fallidas</item>
         <item>Grabaciones eliminadas</item>
-        <item>Guía de programas</item>
         <item>Estado</item>
-        <item>Ajustes</item>
-        <item>Conexiones</item>
         <item>Información y ayuda</item>
+        <item>Ajustes</item>
         <item>Habilitar extras</item>
     </string-array>
 

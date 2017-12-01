@@ -7,17 +7,16 @@
 
     <string-array name="pref_menu_names">
         <item>Kanály</item>
+        <item>Programový sprievodca</item>
         <item>Dokončené nahrávky</item>
         <item>Naplánované nahrávky</item>
         <item>Sériové nahrávky</item>
         <item>Ručné nahrávky</item>
         <item>Neúspešné nahrávky</item>
         <item>Odstránené nahrávky</item>
-        <item>Programový sprievodca</item>
         <item>Stav</item>
-        <item>Nastavenia</item>
-        <item>Pripojenia</item>
         <item>Informácie a pomoc</item>
+        <item>Nastavenia</item>
         <item>Povoliť doplnky</item>
     </string-array>
 

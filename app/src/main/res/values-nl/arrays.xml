@@ -7,17 +7,16 @@
 
     <string-array name="pref_menu_names">
         <item>Kanalen</item>
+        <item>Programmagids</item>
         <item>Voltooide opnames</item>
         <item>Geplande opnames</item>
         <item>Automatische opnames</item>
         <item>Handmatige opnames</item>
         <item>Gefaalde opnames</item>
         <item>Verwijderde opnames</item>
-        <item>Programmagids</item>
         <item>Status</item>
-        <item>Instellingen</item>
-        <item>Connecties</item>
         <item>Informatie en hulp</item>
+        <item>Instellingen</item>
         <item>Inschakelen Extras</item>
     </string-array>
 

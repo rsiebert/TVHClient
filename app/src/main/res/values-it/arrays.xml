@@ -133,17 +133,16 @@
     </string-array>
     <string-array name="pref_menu_names">
         <item>Canali</item>
+        <item>Guida programmi</item>
         <item>Registrazioni completate</item>
         <item>Registrazioni programmate</item>
         <item>Registrazioni in serie</item>
         <item>Registrazioni manuali</item>
         <item>Registrazioni fallite</item>
         <item>Registrazioni rimosse</item>
-        <item>Guida programmi</item>
         <item>Stato</item>
-        <item>Impostazioni</item>
-        <item>Connessioni</item>
         <item>Informazioni e aiuto</item>
+        <item>Impostazioni</item>
         <item>Abilita extra</item>
     </string-array>
     <string-array name="pref_scodec_list_display">

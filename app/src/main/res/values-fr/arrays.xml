@@ -7,17 +7,16 @@
 
     <string-array name="pref_menu_names">
         <item>Chaines</item>
+        <item>Guide des programmes</item>
         <item>Enregistrements terminés</item>
         <item>Enregistrements programmés</item>
         <item>Enregistrements auto</item>
         <item>Enregistrements manuel</item>
         <item>Enregistrements en erreur</item>
         <item>Enregistrements supprimés</item>
-        <item>Guide des programmes</item>
         <item>Etat</item>
-        <item>Paramétres</item>
-        <item>Connexions</item>
         <item>Information et aide</item>
+        <item>Paramétres</item>
         <item>activer extras</item>
     </string-array>
 

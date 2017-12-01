@@ -7,17 +7,16 @@
     
     <string-array name="pref_menu_names">
         <item>Kanaler</item>
+        <item>Programguide</item>
         <item>Färdiga Inspelningar</item>
         <item>Schemalagda Inspelningar</item>
         <item>Serieinspelningar</item>
         <item>Timerinspelningar</item>
         <item>Misslyckade Inspelningar</item>
         <item>Borttagna Inspelningar</item>
-        <item>Programguide</item>
         <item>Status</item>
-        <item>Inställningar</item>
-        <item>Anslutningar</item>
         <item>Information och hjälp</item>
+        <item>Inställningar</item>
         <item>Aktivera extra</item>
     </string-array>
 

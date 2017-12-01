@@ -182,6 +182,18 @@
         <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_dark</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
 
+        <item name="ic_menu_channels">@drawable/ic_menu_channels_dark</item>
+        <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_dark</item>
+        <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_dark</item>
+        <item name="ic_menu_scheduled_recordings">@drawable/ic_menu_scheduled_recordings_dark</item>
+        <item name="ic_menu_series_recordings">@drawable/ic_menu_scheduled_recordings_dark</item>
+        <item name="ic_menu_timer_recordings">@drawable/ic_menu_scheduled_recordings_dark</item>
+        <item name="ic_menu_failed_recordings">@drawable/ic_menu_failed_recordings_dark</item>
+        <item name="ic_menu_removed_recordings">@drawable/ic_menu_failed_recordings_dark</item>
+        <item name="ic_menu_status">@drawable/ic_menu_status_dark</item>
+        <item name="ic_menu_information">@drawable/ic_menu_info_dark</item>
+        <item name="ic_menu_extras">@drawable/ic_menu_extras_dark</item>
+
         <!-- For the resting Spinner style -->
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Dark</item>
         <!-- For each individual Spinner list item once clicked on -->
@@ -237,6 +249,18 @@
         <item name="android:windowBackground">@color/window_background_color_light</item>
         <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_light</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
+
+        <item name="ic_menu_channels">@drawable/ic_menu_channels_light</item>
+        <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_light</item>
+        <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_light</item>
+        <item name="ic_menu_scheduled_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
+        <item name="ic_menu_series_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
+        <item name="ic_menu_timer_recordings">@drawable/ic_menu_scheduled_recordings_light</item>
+        <item name="ic_menu_failed_recordings">@drawable/ic_menu_failed_recordings_light</item>
+        <item name="ic_menu_removed_recordings">@drawable/ic_menu_failed_recordings_light</item>
+        <item name="ic_menu_status">@drawable/ic_menu_status_light</item>
+        <item name="ic_menu_information">@drawable/ic_menu_info_light</item>
+        <item name="ic_menu_extras">@drawable/ic_menu_extras_light</item>
 
         <!-- For the resting Spinner style -->
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Light</item>

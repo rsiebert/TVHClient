@@ -7,17 +7,16 @@
 
     <string-array name="pref_menu_names">
         <item>TV-Sender</item>
+        <item>TV-Programm</item>
         <item>Fertige Aufnahmen</item>
         <item>Geplante Aufnahmen</item>
         <item>Serienaufnahmen</item>
         <item>Manuelle Aufnahmen</item>
         <item>Fehlerhafte Aufnahmen</item>
         <item>Gelöschte Aufnahmen</item>
-        <item>TV-Programm</item>
         <item>Status</item>
-        <item>Einstellungen</item>
-        <item>Verbindungen</item>
         <item>Infos \u0026 Hilfe</item>
+        <item>Einstellungen</item>
         <item>Extras freischalten</item>
     </string-array>
 
