@@ -37,7 +37,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private final static String TAG = ProgramGuidePagerFragment.class.getSimpleName();
 
     private Activity activity;
-    private static ViewPager viewPager = null;
+    private ViewPager viewPager = null;
     private ProgramGuidePagerAdapter adapter = null;
 
     // This is the width in pixels from the icon in the program_guide_list.xml
