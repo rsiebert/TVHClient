@@ -96,12 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
-    //private ListView drawerList;
-    //private DrawerLayout drawerLayout;
     private CoordinatorLayout coordinatorLayout;
-    //private DrawerMenuAdapter drawerAdapter;
-    //private ActionBarDrawerToggle drawerToggle;
-
     private ActionBar actionBar;
     private ChangeLogDialog changeLogDialog;
 
